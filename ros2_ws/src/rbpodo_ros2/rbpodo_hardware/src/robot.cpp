@@ -45,7 +45,9 @@ Robot::Robot(const string& ip, bool simulation, const rclcpp::Logger& logger)
   } else {
     set_operation_mode(OperationMode::Real);
   }
-  set_speed_bar(1.0);
+  // Start hardware conservatively. Increase this only after validating the
+  // robot model, joint directions, limits, and physical workcell.
+  set_speed_bar(0.1);
 
   read_thread_stop_.store(false);
   read_thread_ = thread([this]() {

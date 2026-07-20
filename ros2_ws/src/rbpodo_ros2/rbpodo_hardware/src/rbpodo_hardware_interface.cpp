@@ -293,11 +293,6 @@ hardware_interface::return_type RBPodoHardwareInterface::write(const rclcpp::Tim
       if (data.sdata.robot_state != 1) {
         mode_changed_ = false;
       }
-    } else {
-      if (data.sdata.robot_state == 1) {
-        RCLCPP_ERROR(getLogger(), "Unexpected robot state changed");
-        return hardware_interface::return_type::ERROR;
-      }
     }
   }
 

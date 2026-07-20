@@ -15,6 +15,7 @@ use_fake_hardware = LaunchConfiguration("use_fake_hardware")
 fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
 model_id = LaunchConfiguration("model_id")
 cb_simulation = LaunchConfiguration("cb_simulation")
+activate_arm_controller = LaunchConfiguration("activate_arm_controller")
 
 def generate_launch_description():
 
@@ -60,6 +61,13 @@ def generate_launch_description():
             "model_id",
             default_value="rb5_farmily",
             description="RB Series currently using",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "activate_arm_controller",
+            default_value="true",
+            description="Activate the trajectory controller at startup",
         )
     )
     return LaunchDescription(
@@ -161,10 +169,23 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    arm_controller_spawner = Node(
+    active_arm_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
+        condition=IfCondition(activate_arm_controller),
+    )
+
+    inactive_arm_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_trajectory_controller",
+            "-c",
+            "/controller_manager",
+            "--inactive",
+        ],
+        condition=UnlessCondition(activate_arm_controller),
     )
 
     nodes_to_start = [
@@ -174,7 +195,8 @@ def launch_setup(context, *args, **kwargs):
         run_move_group_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,
-        arm_controller_spawner,
+        active_arm_controller_spawner,
+        inactive_arm_controller_spawner,
     ]
 
     return nodes_to_start
