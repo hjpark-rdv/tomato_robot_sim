@@ -32,4 +32,18 @@
     <child link="$(arg prefix)tomato_gripper" />
   </joint>
 
+  <!--
+    Planning TCP at the distal center of the tomato gripper. The STL is in
+    millimetres and extends to x=-211.6 mm; y=10.75 mm is the center of the
+    rounded tip at that section. Keep this fixed joint separate so the TCP can
+    be calibrated without moving the visual/collision mesh.
+  -->
+  <link name="$(arg prefix)tomato_gripper_tip" />
+
+  <joint name="$(arg prefix)tomato_gripper_tip_joint" type="fixed">
+    <origin xyz="-0.2116 0.01075 0" rpy="0 0 0" />
+    <parent link="$(arg prefix)tomato_gripper" />
+    <child link="$(arg prefix)tomato_gripper_tip" />
+  </joint>
+
 </robot>

@@ -16,6 +16,7 @@ fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
 model_id = LaunchConfiguration("model_id")
 cb_simulation = LaunchConfiguration("cb_simulation")
 activate_arm_controller = LaunchConfiguration("activate_arm_controller")
+show_tomato_scene = LaunchConfiguration("show_tomato_scene")
 
 def generate_launch_description():
 
@@ -70,12 +71,52 @@ def generate_launch_description():
             description="Activate the trajectory controller at startup",
         )
     )
+    declared_arguments.extend(
+        [
+            DeclareLaunchArgument(
+                "show_tomato_scene",
+                default_value="true",
+                description="Show the procedural tomato vine scene in RViz",
+            ),
+            DeclareLaunchArgument("tomato_x", default_value="0.455"),
+            DeclareLaunchArgument("tomato_y", default_value="-0.175"),
+            DeclareLaunchArgument("tomato_z", default_value="0.34"),
+            DeclareLaunchArgument("tomato_radius_scale", default_value="0.5"),
+            DeclareLaunchArgument(
+                "show_vine_row",
+                default_value="false",
+                description="Repeat the first tomato vine along the Y axis",
+            ),
+            DeclareLaunchArgument(
+                "publish_tomato_collisions",
+                default_value="false",
+                description="Add tomato plants to the MoveIt planning scene as collision objects",
+            ),
+        ]
+    )
     return LaunchDescription(
         declared_arguments + [OpaqueFunction(function=launch_setup)]
     )
 
 
 def launch_setup(context, *args, **kwargs):
+    tomato_position = [
+        float(LaunchConfiguration("tomato_x").perform(context)),
+        float(LaunchConfiguration("tomato_y").perform(context)),
+        float(LaunchConfiguration("tomato_z").perform(context)),
+    ]
+    tomato_radius_scale = float(
+        LaunchConfiguration("tomato_radius_scale").perform(context)
+    )
+    show_vine_row_value = (
+        LaunchConfiguration("show_vine_row").perform(context).lower()
+        in {"1", "true", "yes", "on"}
+    )
+    publish_tomato_collisions = (
+        LaunchConfiguration("publish_tomato_collisions").perform(context).lower()
+        in {"1", "true", "yes", "on"}
+    )
+
     mappings = {
         "robot_ip": robot_ip,
         "use_fake_hardware": use_fake_hardware,
@@ -188,6 +229,36 @@ def launch_setup(context, *args, **kwargs):
         condition=UnlessCondition(activate_arm_controller),
     )
 
+    tomato_scene_node = Node(
+        package="tomato_moveit_teach",
+        executable="tomato_scene_node",
+        name="tomato_scene_node",
+        parameters=[
+            {
+                "base_frame": "link0",
+                "world_frame": "world",
+                "floor_frame": "tomato_floor_tf",
+                "tomato_frame": "tomato_tf",
+                "object_position": tomato_position,
+                "tomato_radius_scale": tomato_radius_scale,
+                "show_vine_row": show_vine_row_value,
+                "publish_planning_scene": publish_tomato_collisions,
+                "include_other_tomato_collision": publish_tomato_collisions,
+                "include_target_tomato_collision": False,
+                "include_target_branch_collision": False,
+                "include_ground_collision": False,
+                "include_ceiling_collision": False,
+                "include_rear_wall_collision": False,
+                "include_robot_rear_wall_collision": False,
+                "include_robot_front_wall_collision": False,
+                "include_robot_side_wall_collision": False,
+                "include_rail_pipe_collision": False,
+            }
+        ],
+        condition=IfCondition(show_tomato_scene),
+        output="screen",
+    )
+
     nodes_to_start = [
         rviz_node,
         static_tf,
@@ -197,6 +268,7 @@ def launch_setup(context, *args, **kwargs):
         joint_state_broadcaster_spawner,
         active_arm_controller_spawner,
         inactive_arm_controller_spawner,
+        tomato_scene_node,
     ]
 
     return nodes_to_start
