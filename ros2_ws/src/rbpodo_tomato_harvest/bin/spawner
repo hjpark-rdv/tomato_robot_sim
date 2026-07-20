@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec /usr/bin/python3.10 /opt/ros/humble/lib/controller_manager/spawner "$@"

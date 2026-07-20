@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro
+    name="tomato_tool_with_camera"
+    params="
+      enable_tool_camera:=true
+      tool_camera_offset_z:=0.05
+      tool_camera_size_x:=0.085
+      tool_camera_size_y:=0.028
+      tool_camera_size_z:=0.028
+      tool_length:=0.15
+      tool_radius:=0.006
+      tool_tilt_x_deg:=0.0
+      tool_bend_straight_ratio:=0.5
+      tool_gripper_under_offset_ratio:=0.5
+      gripper_opening:=0.0525
+      gripper_x_roll_deg:=90.0
+      gripper_spin_zero_offset_rad:=0.0">
+
+    <xacro:property name="finger_len" value="${0.075 * 0.70}"/>
+    <xacro:property name="finger_thickness" value="0.007"/>
+    <xacro:property name="palm_depth" value="0.012"/>
+    <xacro:property name="grasp_z" value="${palm_depth + finger_len * 0.62}"/>
+    <xacro:property name="opening" value="${float(gripper_opening)}"/>
+    <xacro:property name="tool_tilt_x_rad" value="${float(tool_tilt_x_deg) * 3.141592653589793 / 180.0}"/>
+    <xacro:property name="gripper_x_roll_rad" value="${float(gripper_x_roll_deg) * 3.141592653589793 / 180.0}"/>
+    <xacro:property name="motor_box_narrow" value="${float(tool_radius) * 4.2}"/>
+    <xacro:property name="motor_box_long" value="${float(tool_radius) * 11.7}"/>
+    <xacro:property name="motor_box_z" value="${float(tool_radius) * 8.0}"/>
+    <xacro:property name="bend_motor_y" value="${max(motor_box_long - 0.01, 0.001)}"/>
+    <xacro:property name="straight_ratio" value="${min(max(float(tool_bend_straight_ratio), 0.0), 0.95)}"/>
+    <xacro:property name="straight_len" value="${float(tool_length) * straight_ratio}"/>
+    <xacro:property name="slanted_len" value="${max(float(tool_length) - straight_len, 0.0)}"/>
+    <xacro:property name="tool_box_thickness" value="${float(tool_radius) * 5.0}"/>
+    <xacro:property name="straight_tool_box_thickness" value="${tool_box_thickness * 1.5}"/>
+    <xacro:property name="under_offset" value="${tool_box_thickness * float(tool_gripper_under_offset_ratio)}"/>
+    <xacro:property name="slanted_center_x" value="${slanted_len * 0.5}"/>
+    <xacro:property name="bend_motor_z" value="${-tool_box_thickness * 0.5}"/>
+
+    <material name="tool_camera_body">
+      <color rgba="0.08 0.10 0.12 1.0"/>
+    </material>
+    <material name="tool_camera_lens">
+      <color rgba="0.02 0.02 0.025 1.0"/>
+    </material>
+    <material name="tool_yellow">
+      <color rgba="0.95 0.86 0.18 1.0"/>
+    </material>
+    <material name="gripper_dark">
+      <color rgba="0.24 0.26 0.28 1.0"/>
+    </material>
+    <material name="gripper_blue">
+      <color rgba="0.0 0.35 1.0 1.0"/>
+    </material>
+    <material name="gripper_orange">
+      <color rgba="1.0 0.45 0.0 1.0"/>
+    </material>
+    <material name="gripper_blue_tip">
+      <color rgba="0.0 0.75 1.0 1.0"/>
+    </material>
+    <material name="gripper_orange_tip">
+      <color rgba="1.0 0.80 0.0 1.0"/>
+    </material>
+    <material name="gripper_motor">
+      <color rgba="0.12 0.16 0.20 1.0"/>
+    </material>
+    <material name="bend_motor_gray">
+      <color rgba="0.45 0.45 0.45 1.0"/>
+    </material>
+
+    <xacro:if value="${enable_tool_camera}">
+      <xacro:property name="camera_size_x" value="${float(tool_camera_size_x)}"/>
+      <xacro:property name="camera_size_y" value="${float(tool_camera_size_y)}"/>
+      <xacro:property name="camera_size_z" value="${float(tool_camera_size_z)}"/>
+      <xacro:property name="lens_size_x" value="${max(camera_size_x * 0.08, 0.003)}"/>
+      <xacro:property name="lens_size_y" value="${max(camera_size_y * 0.50, 0.006)}"/>
+      <xacro:property name="lens_size_z" value="${max(camera_size_z * 0.50, 0.006)}"/>
+      <xacro:property name="lens_origin_x" value="${camera_size_x * 0.5 + lens_size_x * 0.5}"/>
+
+      <link name="tool_camera_link">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${camera_size_x} ${camera_size_y} ${camera_size_z}"/>
+          </geometry>
+          <material name="tool_camera_body"/>
+        </visual>
+        <visual>
+          <origin xyz="${lens_origin_x} 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${lens_size_x} ${lens_size_y} ${lens_size_z}"/>
+          </geometry>
+          <material name="tool_camera_lens"/>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${camera_size_x} ${camera_size_y} ${camera_size_z}"/>
+          </geometry>
+        </collision>
+      </link>
+      <joint name="tool0_to_tool_camera" type="fixed">
+        <parent link="tool0"/>
+        <child link="tool_camera_link"/>
+        <origin xyz="0 0 ${float(tool_camera_offset_z)}" rpy="0 0 0"/>
+      </joint>
+      <link name="tool_camera_depth_optical_frame"/>
+      <joint name="tool_camera_to_depth_optical_frame" type="fixed">
+        <parent link="tool_camera_link"/>
+        <child link="tool_camera_depth_optical_frame"/>
+        <origin xyz="${camera_size_x * 0.5} 0 0" rpy="-1.570796326795 0 -1.570796326795"/>
+      </joint>
+      <link name="tool_camera_color_optical_frame"/>
+      <joint name="tool_camera_to_color_optical_frame" type="fixed">
+        <parent link="tool_camera_link"/>
+        <child link="tool_camera_color_optical_frame"/>
+        <origin xyz="${camera_size_x * 0.5} 0 0" rpy="-1.570796326795 0 -1.570796326795"/>
+      </joint>
+    </xacro:if>
+
+    <link name="tool_rod_link">
+      <xacro:if value="${straight_len > 1e-6}">
+        <visual>
+          <origin xyz="${straight_len * 0.5} 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${straight_len} ${straight_tool_box_thickness} ${straight_tool_box_thickness}"/>
+          </geometry>
+          <material name="tool_yellow"/>
+        </visual>
+        <collision>
+          <origin xyz="${straight_len * 0.5} 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${straight_len} ${straight_tool_box_thickness} ${straight_tool_box_thickness}"/>
+          </geometry>
+        </collision>
+      </xacro:if>
+    </link>
+    <joint name="tool0_to_tool_rod" type="fixed">
+      <parent link="tool0"/>
+      <child link="tool_rod_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:if value="${straight_len > 1e-6 and slanted_len > 1e-6}">
+      <link name="tool_bend_motor_link">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${motor_box_narrow} ${bend_motor_y} ${motor_box_z}"/>
+          </geometry>
+          <material name="bend_motor_gray"/>
+        </visual>
+      </link>
+      <joint name="tool0_to_tool_bend_motor" type="fixed">
+        <parent link="tool0"/>
+        <child link="tool_bend_motor_link"/>
+        <origin xyz="${straight_len} 0 ${bend_motor_z}" rpy="0 0 0"/>
+      </joint>
+    </xacro:if>
+
+    <link name="tool_bent_rod_link">
+      <xacro:if value="${slanted_len > 1e-6}">
+        <visual>
+          <origin xyz="${slanted_center_x} 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${slanted_len} ${tool_box_thickness} ${tool_box_thickness}"/>
+          </geometry>
+          <material name="tool_yellow"/>
+        </visual>
+        <collision>
+          <origin xyz="${slanted_center_x} 0 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${slanted_len} ${tool_box_thickness} ${tool_box_thickness}"/>
+          </geometry>
+        </collision>
+      </xacro:if>
+    </link>
+    <joint name="tool_bend_joint" type="revolute">
+      <parent link="tool_rod_link"/>
+      <child link="tool_bent_rod_link"/>
+      <origin xyz="${straight_len} 0 0" rpy="${tool_tilt_x_rad} 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-0.78539816339" upper="0.78539816339" effort="4.0" velocity="1.57079632679"/>
+    </joint>
+
+    <link name="tool_tip_link"/>
+    <joint name="tool_bent_rod_to_tool_tip" type="fixed">
+      <parent link="tool_bent_rod_link"/>
+      <child link="tool_tip_link"/>
+      <origin xyz="${slanted_len} 0 ${under_offset}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="tool_gripper_spin_link">
+      <visual>
+        <origin xyz="0 0 ${-motor_box_z * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${motor_box_long} ${motor_box_narrow} ${motor_box_z}"/>
+        </geometry>
+        <material name="gripper_motor"/>
+      </visual>
+    </link>
+    <joint name="tool_gripper_z_joint" type="revolute">
+      <parent link="tool_tip_link"/>
+      <child link="tool_gripper_spin_link"/>
+      <origin xyz="0 0 0" rpy="0 0 ${float(gripper_spin_zero_offset_rad)}"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-3.14159265359" upper="3.14159265359" effort="1.0" velocity="3.14159265359"/>
+    </joint>
+
+    <link name="tool_gripper_link">
+      <visual>
+        <origin xyz="0 0 ${palm_depth * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${opening * 1.24} 0.028 ${palm_depth}"/>
+        </geometry>
+        <material name="gripper_dark"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${palm_depth * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${opening * 1.24} 0.028 ${palm_depth}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${-opening * 0.5} 0 ${palm_depth + finger_len * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness} 0.012 ${finger_len}"/>
+        </geometry>
+        <material name="gripper_blue"/>
+      </visual>
+      <collision>
+        <origin xyz="${-opening * 0.5} 0 ${palm_depth + finger_len * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness} 0.012 ${finger_len}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${opening * 0.5} 0 ${palm_depth + finger_len * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness} 0.012 ${finger_len}"/>
+        </geometry>
+        <material name="gripper_orange"/>
+      </visual>
+      <collision>
+        <origin xyz="${opening * 0.5} 0 ${palm_depth + finger_len * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness} 0.012 ${finger_len}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${-opening * 0.5} 0 ${palm_depth + finger_len}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness * 1.6} 0.014 0.010"/>
+        </geometry>
+        <material name="gripper_blue_tip"/>
+      </visual>
+      <collision>
+        <origin xyz="${-opening * 0.5} 0 ${palm_depth + finger_len}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness * 1.6} 0.014 0.010"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${opening * 0.5} 0 ${palm_depth + finger_len}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness * 1.6} 0.014 0.010"/>
+        </geometry>
+        <material name="gripper_orange_tip"/>
+      </visual>
+      <collision>
+        <origin xyz="${opening * 0.5} 0 ${palm_depth + finger_len}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_thickness * 1.6} 0.014 0.010"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="tool_gripper_spin_to_tool_gripper" type="fixed">
+      <parent link="tool_gripper_spin_link"/>
+      <child link="tool_gripper_link"/>
+      <origin xyz="0 0 0" rpy="${gripper_x_roll_rad} 0 0"/>
+    </joint>
+
+    <link name="grasp_tf"/>
+    <joint name="tool_gripper_to_grasp_tf" type="fixed">
+      <parent link="tool_gripper_link"/>
+      <child link="grasp_tf"/>
+      <origin xyz="0 0 ${grasp_z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

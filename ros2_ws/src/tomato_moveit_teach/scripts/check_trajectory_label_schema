@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import tempfile
+from pathlib import Path
+
+from tomato_moveit_teach.trajectory_dataset import (
+    append_jsonl,
+    build_trajectory_label_record,
+    read_jsonl,
+    validate_trajectory_label_record,
+)
+
+
+def _dummy_payload() -> dict:
+    return {
+        "planning_request_id": "req_schema_check",
+        "side": "both",
+        "perception_observation": {
+            "frame": "base_link",
+            "selected_object_id": "tomato_schema_check",
+            "selected_grasp_pose_base": {"xyz": [0.10, 0.20, 0.30], "rpy_rad": [0.0, 0.1, 0.2]},
+            "selected_tomato": {
+                "object_id": "tomato_schema_check",
+                "tomato_pose_base": {"xyz": [0.40, 0.50, 0.60], "rpy_rad": [0.0, 0.0, 0.0]},
+                "calyx_position_base": [0.41, 0.50, 0.63],
+                "stem_pose_base": {"xyz": [0.38, 0.48, 0.62], "rpy_rad": [0.0, 0.0, 1.57]},
+            },
+        },
+    }
+
+
+def _dummy_candidate() -> dict:
+    return {
+        "planning_request_id": "req_schema_check",
+        "candidate_id": "cand_schema_check",
+        "planning_pose": {
+            "position": {"x": 0.20, "y": 0.30, "z": 0.40},
+            "orientation_xyzw": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0},
+        },
+        "gripper_spin_deg": 12.0,
+        "gripper_x_sign": -1.0,
+        "trajectory": {
+            "joint_names": ["j1", "j2"],
+            "points": [
+                {"time_from_start_sec": 0.0, "positions": [0.0, 0.0]},
+                {"time_from_start_sec": 1.0, "positions": [0.2, -0.1]},
+            ],
+        },
+        "trajectory_metrics": {"trajectory_duration_sec": 1.0, "total_path_motion": 0.3},
+        "candidate_metrics": {"gripper_tomato_y_parallel_angle_deg": 0.7},
+        "entry": {"this_field": "must_not_be_saved"},
+        "tomato_rotation": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Check trajectory_label.v1 JSONL serialization and validation.")
+    parser.add_argument("--append-path", default="", help="Optional JSONL path to append to. Defaults to a temp file.")
+    args = parser.parse_args()
+
+    record = build_trajectory_label_record(_dummy_payload(), _dummy_candidate(), "good", human_score=1.0, candidate_rank=1)
+    validate_trajectory_label_record(record)
+    json.dumps(record, ensure_ascii=False, allow_nan=False)
+
+    bad_record = dict(record)
+    bad_record["candidate"] = dict(record["candidate"])
+    bad_record["candidate"].pop("start_state")
+    try:
+        validate_trajectory_label_record(bad_record)
+    except ValueError:
+        pass
+    else:
+        raise SystemExit("validation did not reject missing start_state")
+
+    output_path = Path(args.append_path).expanduser() if args.append_path else Path(tempfile.gettempdir()) / "trajectory_label_schema_check.jsonl"
+    append_jsonl(output_path, record)
+    parsed = read_jsonl(output_path)
+    if not parsed:
+        raise SystemExit(f"could not parse appended JSONL: {output_path}")
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "path": str(output_path),
+                "schema": record["schema"],
+                "sample_id": record["sample_id"],
+                "planning_request_id": record["planning_request_id"],
+                "candidate_id": record["candidate_id"],
+                "point_count": len(record["candidate"]["trajectory"]["points"]),
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
+
+
+if __name__ == "__main__":
+    main()

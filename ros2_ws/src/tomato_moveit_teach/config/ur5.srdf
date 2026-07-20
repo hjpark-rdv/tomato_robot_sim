@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot name="ur5_robot">
+  <virtual_joint name="fixed_base" type="fixed" parent_frame="world" child_link="base_link"/>
+
+  <group name="ur5_arm">
+    <chain base_link="base_link" tip_link="tool0"/>
+  </group>
+
+  <group name="ur5_harvest">
+    <chain base_link="base_link" tip_link="grasp_tf"/>
+  </group>
+
+  <group_state name="home" group="ur5_arm">
+    <joint name="shoulder_pan_joint" value="-1.4379491029641744"/>
+    <joint name="shoulder_lift_joint" value="-1.1907401577003016"/>
+    <joint name="elbow_joint" value="-2.116742584205267"/>
+    <joint name="wrist_1_joint" value="-1.3810410438314462"/>
+    <joint name="wrist_2_joint" value="1.5765461198564021"/>
+    <joint name="wrist_3_joint" value="-8.504489148035646e-05"/>
+  </group_state>
+
+  <group_state name="camera_pose_1" group="ur5_arm">
+    <joint name="shoulder_pan_joint" value="-2.0833208673687627"/>
+    <joint name="shoulder_lift_joint" value="-2.2110201405771672"/>
+    <joint name="elbow_joint" value="2.065575540187694"/>
+    <joint name="wrist_1_joint" value="-1.4005050279378464"/>
+    <joint name="wrist_2_joint" value="-1.5889925652798451"/>
+    <joint name="wrist_3_joint" value="2.4489445202703615"/>
+  </group_state>
+
+  <group_state name="home_right" group="ur5_arm">
+    <joint name="shoulder_pan_joint" value="-1.4379491029641744"/>
+    <joint name="shoulder_lift_joint" value="-1.1907401577003016"/>
+    <joint name="elbow_joint" value="-2.116742584205267"/>
+    <joint name="wrist_1_joint" value="-1.3810410438314462"/>
+    <joint name="wrist_2_joint" value="1.5765461198564021"/>
+    <joint name="wrist_3_joint" value="-8.504489148035646e-05"/>
+  </group_state>
+
+  <group_state name="home" group="ur5_harvest">
+    <joint name="shoulder_pan_joint" value="-1.4379491029641744"/>
+    <joint name="shoulder_lift_joint" value="-1.1907401577003016"/>
+    <joint name="elbow_joint" value="-2.116742584205267"/>
+    <joint name="wrist_1_joint" value="-1.3810410438314462"/>
+    <joint name="wrist_2_joint" value="1.5765461198564021"/>
+    <joint name="wrist_3_joint" value="-8.504489148035646e-05"/>
+    <joint name="tool_bend_joint" value="0.6673960827876584"/>
+    <joint name="tool_gripper_z_joint" value="0.035107627975484376"/>
+  </group_state>
+
+  <group_state name="camera_pose_1" group="ur5_harvest">
+    <joint name="shoulder_pan_joint" value="-2.0833208673687627"/>
+    <joint name="shoulder_lift_joint" value="-2.2110201405771672"/>
+    <joint name="elbow_joint" value="2.065575540187694"/>
+    <joint name="wrist_1_joint" value="-1.4005050279378464"/>
+    <joint name="wrist_2_joint" value="-1.5889925652798451"/>
+    <joint name="wrist_3_joint" value="2.4489445202703615"/>
+    <joint name="tool_bend_joint" value="0.7853623578606673"/>
+    <joint name="tool_gripper_z_joint" value="4.9755180068314074e-05"/>
+  </group_state>
+
+  <group_state name="home_right" group="ur5_harvest">
+    <joint name="shoulder_pan_joint" value="-1.4379491029641744"/>
+    <joint name="shoulder_lift_joint" value="-1.1907401577003016"/>
+    <joint name="elbow_joint" value="-2.116742584205267"/>
+    <joint name="wrist_1_joint" value="-1.3810410438314462"/>
+    <joint name="wrist_2_joint" value="1.5765461198564021"/>
+    <joint name="wrist_3_joint" value="-8.504489148035646e-05"/>
+    <joint name="tool_bend_joint" value="0.6673960827876584"/>
+    <joint name="tool_gripper_z_joint" value="0.035107627975484376"/>
+  </group_state>
+
+  <disable_collisions link1="base_link" link2="base_link_inertia" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="mobile_base_link" reason="Mobile base fixed mount"/>
+  <disable_collisions link1="base_link_inertia" link2="mobile_base_link" reason="Mobile base fixed mount"/>
+  <disable_collisions link1="mobile_base_link" link2="shoulder_link" reason="Mobile base fixed mount"/>
+  <disable_collisions link1="base_link_inertia" link2="shoulder_link" reason="Adjacent"/>
+  <disable_collisions link1="shoulder_link" link2="upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="upper_arm_link" link2="forearm_link" reason="Adjacent"/>
+  <disable_collisions link1="forearm_link" link2="wrist_1_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_1_link" link2="wrist_2_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_2_link" link2="wrist_3_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_3_link" link2="flange" reason="Adjacent"/>
+  <disable_collisions link1="flange" link2="tool0" reason="Adjacent"/>
+  <disable_collisions link1="flange" link2="tool_camera_link" reason="Tool camera fixed mount"/>
+  <disable_collisions link1="tool0" link2="tool_camera_link" reason="Tool camera fixed mount"/>
+  <disable_collisions link1="wrist_3_link" link2="tool_camera_link" reason="Tool camera fixed mount"/>
+  <disable_collisions link1="wrist_3_link" link2="tool_rod_link" reason="Tool mount interface"/>
+  <disable_collisions link1="tool0" link2="tool_rod_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_rod_link" link2="tool_bent_rod_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_bent_rod_link" link2="tool_tip_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_tip_link" link2="tool_gripper_spin_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_gripper_spin_link" link2="tool_gripper_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_tip_link" link2="tool_gripper_link" reason="Adjacent"/>
+  <disable_collisions link1="tool_rod_link" link2="tool_gripper_link" reason="Tool assembly"/>
+  <disable_collisions link1="tool_bent_rod_link" link2="tool_gripper_link" reason="Tool assembly"/>
+</robot>

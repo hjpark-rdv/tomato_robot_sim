@@ -1,0 +1,14 @@
+object_position: [0.455, -0.175, 0.34]
+object_radius: 0.036
+tomato_radius_scale: 0.5
+tomato_z_spin_deg: -40.0
+base_frame: base_link
+tomato_frame: tomato_tf
+tool_frame: grasp_tf
+tool_tilt_x_deg: 0.0
+tool_tilt_y_deg: -45.0
+tool_bend_straight_ratio: 0.5
+tool_gripper_under_offset_ratio: 0.5
+gripper_opening: 0.0525
+gripper_x_roll_deg: 90.0
+output_path: /root/pybullet_ur_approach/taught_grasps_moveit.json

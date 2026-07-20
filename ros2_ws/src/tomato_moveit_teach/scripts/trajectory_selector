@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec /usr/bin/python3.10 -m tomato_moveit_teach.trajectory_selector "$@"

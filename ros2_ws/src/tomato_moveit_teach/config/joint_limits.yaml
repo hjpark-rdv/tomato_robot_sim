@@ -1,0 +1,71 @@
+joint_limits:
+  shoulder_pan_joint:
+    has_position_limits: true
+    min_position: -3.14159265359
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  shoulder_lift_joint:
+    has_position_limits: true
+    min_position: -3.141592
+    max_position: 3.141592
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  elbow_joint:
+    has_position_limits: true
+    min_position: -3.141592
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  wrist_1_joint:
+    has_position_limits: true
+    min_position: -3.14159265359
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  wrist_2_joint:
+    has_position_limits: true
+    min_position: -3.14159265359
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  wrist_3_joint:
+    has_position_limits: true
+    min_position: -3.14159265359
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+  tool_bend_joint:
+    has_position_limits: true
+    min_position: -0.78539816339
+    max_position: 0.78539816339
+    has_velocity_limits: true
+    max_velocity: 1.5708
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+  tool_gripper_z_joint:
+    has_position_limits: true
+    min_position: -3.14159265359
+    max_position: 3.14159265359
+    has_velocity_limits: true
+    max_velocity: 3.14159
+    has_acceleration_limits: true
+    max_acceleration: 4.0
+
+cartesian_limits:
+  max_trans_vel: 0.35
+  max_trans_acc: 0.80
+  max_trans_dec: -1.50
+  max_rot_vel: 1.00
