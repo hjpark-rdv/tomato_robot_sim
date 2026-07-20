@@ -12,6 +12,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
+find_package(action_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(hardware_interface REQUIRED)
@@ -19,7 +20,7 @@ find_package(pluginlib REQUIRED)
 find_package(rbpodo REQUIRED)
 find_package(rbpodo_msgs REQUIRED)
 
-add_library(rbpodo_hardware 
+add_library(rbpodo_hardware
   src/rbpodo_hardware_interface.cpp
   src/robot.cpp
   src/robot_node.cpp)
@@ -29,6 +30,7 @@ target_include_directories(rbpodo_hardware PUBLIC
   $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(
   rbpodo_hardware
+  action_msgs
   rclcpp
   rclcpp_action
   hardware_interface

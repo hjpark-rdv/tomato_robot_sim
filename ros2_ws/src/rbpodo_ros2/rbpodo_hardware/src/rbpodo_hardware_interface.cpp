@@ -277,7 +277,7 @@ hardware_interface::return_type RBPodoHardwareInterface::write(const rclcpp::Tim
                                                                const rclcpp::Duration& period) {
   (void)time;
   (void)period;
-  
+
   if (!robot_) {
     RCLCPP_ERROR(getLogger(), "Robot is not initialized yet");
     return hardware_interface::return_type::ERROR;
@@ -308,7 +308,8 @@ hardware_interface::return_type RBPodoHardwareInterface::write(const rclcpp::Tim
     hw_cartesian_pose_commands_[5] = data.sdata.tcp_pos[5] * DEG2RAD;
   }
 
-  if (isValidCommand(hw_position_commands_) && joint_position_interface_state_.running) {
+  if (isValidCommand(hw_position_commands_) && joint_position_interface_state_.running &&
+      robot_node_->trajectory_execution_active()) {
     robot_->write_once_joint_positions(hw_position_commands_, period.seconds());
   }
   if (isValidCommand(hw_velocity_commands_) && joint_velocity_interface_state_.running) {

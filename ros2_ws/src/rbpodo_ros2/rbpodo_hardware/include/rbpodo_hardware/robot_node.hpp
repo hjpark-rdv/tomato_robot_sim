@@ -16,6 +16,9 @@
 
 #pragma once
 
+#include <atomic>
+
+#include "action_msgs/msg/goal_status_array.hpp"
 #include "rbpodo_hardware/robot.hpp"
 #include "rbpodo_msgs/action/move_j.hpp"
 #include "rbpodo_msgs/action/move_jb2.hpp"
@@ -71,7 +74,11 @@ class RobotNode : public rclcpp::Node {
 
   ~RobotNode() noexcept;
 
+  bool trajectory_execution_active() const noexcept { return trajectory_execution_active_.load(); }
+
  private:
+  void trajectory_status_callback(const action_msgs::msg::GoalStatusArray::SharedPtr msg);
+
   void response_callback();
 
   rbpodo_msgs::msg::SystemState convert_to_ros_msg(const rb::podo::SystemState& state);
@@ -139,7 +146,7 @@ class RobotNode : public rclcpp::Node {
   void move_l_execute(const std::shared_ptr<GoalHandleMoveL> goal_handle);
 
   rclcpp_action::GoalResponse move_jb2_handle_goal(const rclcpp_action::GoalUUID& uuid,
-                                                 std::shared_ptr<const MoveJb2::Goal> goal);
+                                                   std::shared_ptr<const MoveJb2::Goal> goal);
 
   rclcpp_action::CancelResponse move_jb2_handle_cancel(const std::shared_ptr<GoalHandleMoveJb2> goal_handle);
 
@@ -148,7 +155,7 @@ class RobotNode : public rclcpp::Node {
   void move_jb2_execute(const std::shared_ptr<GoalHandleMoveJb2> goal_handle);
 
   rclcpp_action::GoalResponse move_pb_handle_goal(const rclcpp_action::GoalUUID& uuid,
-                                                 std::shared_ptr<const MovePb::Goal> goal);
+                                                  std::shared_ptr<const MovePb::Goal> goal);
 
   rclcpp_action::CancelResponse move_pb_handle_cancel(const std::shared_ptr<GoalHandleMovePb> goal_handle);
 
@@ -188,6 +195,9 @@ class RobotNode : public rclcpp::Node {
   rclcpp_action::Server<MoveL>::SharedPtr move_l_server_;
   rclcpp_action::Server<MoveJb2>::SharedPtr move_jb2_server_;
   rclcpp_action::Server<MovePb>::SharedPtr move_pb_server_;
+
+  std::atomic_bool trajectory_execution_active_{false};
+  rclcpp::Subscription<action_msgs::msg::GoalStatusArray>::SharedPtr trajectory_status_sub_;
 };
 
 class RobotExecutor : public rclcpp::executors::MultiThreadedExecutor {

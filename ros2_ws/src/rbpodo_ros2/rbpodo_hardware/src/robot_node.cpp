@@ -16,6 +16,11 @@
 
 #include "rbpodo_hardware/robot_node.hpp"
 
+#include <algorithm>
+
+#include "action_msgs/msg/goal_status.hpp"
+#include "rclcpp_action/qos.hpp"
+
 using namespace std;
 using namespace rb;
 using namespace std::chrono_literals;
@@ -26,6 +31,14 @@ namespace rbpodo_hardware {
 RobotNode::RobotNode(const rclcpp::NodeOptions& options, shared_ptr<Robot> robot)
     : rclcpp::Node("rbpodo_hardware", options), robot_(robot), res_receiver_(robot_->ip()) {
   res_publisher_ = this->create_publisher<rbpodo_msgs::msg::Response>("~/response", 10);
+
+  // Keep the ros2_control trajectory controller active so MoveIt can send a
+  // goal at any time, but only forward position commands to the robot while
+  // that action goal is actually being executed. This releases the robot for
+  // direct teaching before and after Plan & Execute.
+  trajectory_status_sub_ = create_subscription<action_msgs::msg::GoalStatusArray>(
+      "/joint_trajectory_controller/follow_joint_trajectory/_action/status", rclcpp_action::DefaultActionStatusQoS(),
+      bind(&RobotNode::trajectory_status_callback, this, _1));
   //
   run_ = true;
   msg_thread_ = thread([this]() {
@@ -77,6 +90,20 @@ RobotNode::~RobotNode() {
   run_ = false;
   if (msg_thread_.joinable()) {
     msg_thread_.join();
+  }
+}
+
+void RobotNode::trajectory_status_callback(const action_msgs::msg::GoalStatusArray::SharedPtr msg) {
+  const bool active = any_of(msg->status_list.begin(), msg->status_list.end(), [](const auto& goal) {
+    return goal.status == action_msgs::msg::GoalStatus::STATUS_ACCEPTED ||
+           goal.status == action_msgs::msg::GoalStatus::STATUS_EXECUTING ||
+           goal.status == action_msgs::msg::GoalStatus::STATUS_CANCELING;
+  });
+
+  const bool previous = trajectory_execution_active_.exchange(active);
+  if (active != previous) {
+    RCLCPP_INFO(get_logger(), "Robot trajectory execution %s; position command forwarding %s",
+                active ? "started" : "finished", active ? "enabled" : "disabled");
   }
 }
 
