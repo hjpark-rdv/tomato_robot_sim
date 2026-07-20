@@ -15,7 +15,7 @@ export DISPLAY="${DISPLAY:-:0}"
 # second time here races the launch spawners and fails once they are active.
 exec /usr/bin/python3.10 /opt/ros/humble/bin/ros2 launch \
   rbpodo_moveit_config moveit.launch.py \
-  model_id:=rb5_850e \
+  model_id:=rb5_farmily \
   use_fake_hardware:=true \
   fake_sensor_commands:=true \
   cb_simulation:=Simulation

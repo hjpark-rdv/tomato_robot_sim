@@ -78,7 +78,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 model_id_parameter_name,
-                default_value="rb5_850e",
+                default_value="rb5_farmily",
                 description="Model ID for Rainbow Robotics Cobot",
             ),
             DeclareLaunchArgument(

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rb5_farmily">
+
+  <!-- Keep the Rainbow Robotics RB5 model as the unmodified base robot. -->
+  <xacro:include filename="$(find rbpodo_description)/robots/rb5_850e.urdf.xacro" />
+
+  <!-- Farmily-specific links and joints belong below this line. -->
+  <link name="$(arg prefix)tomato_gripper">
+    <visual>
+      <geometry>
+        <!-- The CAD mesh is authored in millimetres. -->
+        <mesh
+          filename="package://rbpodo_description/meshes/tomato_gripper/tomato_gripper.stl"
+          scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="tomato_gripper_gray">
+        <color rgba="0.25 0.25 0.28 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh
+          filename="package://rbpodo_description/meshes/tomato_gripper/tomato_gripper.stl"
+          scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="$(arg prefix)tomato_gripper_joint" type="fixed">
+    <origin xyz="0 0.01 0" rpy="3.14 0 0" />
+    <parent link="$(arg prefix)tcp" />
+    <child link="$(arg prefix)tomato_gripper" />
+  </joint>
+
+</robot>

@@ -58,7 +58,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "model_id",
-            default_value="rb5_850e",
+            default_value="rb5_farmily",
             description="RB Series currently using",
         )
     )
