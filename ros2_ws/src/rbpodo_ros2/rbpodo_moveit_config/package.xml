@@ -4,7 +4,7 @@
   <name>rbpodo_moveit_config</name>
   <version>0.3.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the rb3_730es_u with the MoveIt Motion Planning Framework
+     MoveIt configuration and launch files for the Rainbow Robotics RB5-850E.
   </description>
   <maintainer email="support@rainbow-robotics.com">Rainbow Robotics</maintainer>
   <maintainer email="keunjun.choi@rainbow-robotics.com">Keunjun Choi</maintainer>
