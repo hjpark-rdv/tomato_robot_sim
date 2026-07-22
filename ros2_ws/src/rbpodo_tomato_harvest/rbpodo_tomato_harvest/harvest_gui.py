@@ -17,14 +17,29 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
 
+PLANNER_CONFIGS = {
+    "OMPL / RRTConnect": ("ompl", "RRTConnectkConfigDefault"),
+    "CHOMP": ("chomp", "RRTConnectkConfigDefault"),
+    "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN"),
+}
+
+
 def harvest_command(
     tomato_index: int,
     execute: bool,
+    planning_pipeline_id: str = "ompl",
+    planner_id: str = "RRTConnectkConfigDefault",
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
     if tomato_index < 0:
         raise ValueError("tomato_index must be zero or greater")
+    planner_config = (planning_pipeline_id, planner_id)
+    if planner_config not in PLANNER_CONFIGS.values():
+        raise ValueError(
+            f"unsupported planner: pipeline={planning_pipeline_id} "
+            f"planner_id={planner_id}"
+        )
     executable = python_executable or sys.executable
     return [
         executable,
@@ -35,6 +50,10 @@ def harvest_command(
         f"tomato_frame:=detected_tomato_{tomato_index}_tf",
         "-p",
         f"execute:={'true' if execute else 'false'}",
+        "-p",
+        f"planning_pipeline_id:={planning_pipeline_id}",
+        "-p",
+        f"planner_id:={planner_id}",
     ]
 
 
@@ -69,6 +88,7 @@ class HarvestGui(Node):
             "detections_topic", "/tomato_detection/detections"
         )
         self.declare_parameter("scene_node", "/tomato_scene_node")
+        self.declare_parameter("default_planner", "ompl")
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -106,10 +126,20 @@ class HarvestGui(Node):
         self._configure_korean_font()
 
         self.selected_tomato = tk.StringVar(value="")
-        self.scene_x = tk.StringVar(value="0.455")
-        self.scene_y = tk.StringVar(value="-0.175")
+        default_planner = str(self.get_parameter("default_planner").value)
+        planner_label = next(
+            (
+                label
+                for label, config in PLANNER_CONFIGS.items()
+                if config[0] == default_planner
+            ),
+            "OMPL / RRTConnect",
+        )
+        self.selected_planner = tk.StringVar(value=planner_label)
+        self.scene_x = tk.StringVar(value="0.355")
+        self.scene_y = tk.StringVar(value="-0.375")
         self.scene_z = tk.StringVar(value="0.340")
-        self.scene_rotation = tk.StringVar(value="0.0")
+        self.scene_rotation = tk.StringVar(value="45.0")
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
         self.root.after(50, self._spin_ros)
@@ -237,10 +267,26 @@ class HarvestGui(Node):
             state="disabled",
         )
         self.execute_button.grid(row=0, column=3, padx=(4, 0))
+        ttk.Label(motion_frame, text="플래너").grid(
+            row=1, column=0, sticky="w", pady=(8, 0)
+        )
+        self.planner_combo = ttk.Combobox(
+            motion_frame,
+            textvariable=self.selected_planner,
+            values=list(PLANNER_CONFIGS),
+            state="readonly",
+            width=28,
+        )
+        self.planner_combo.grid(
+            row=1, column=1, sticky="w", padx=8, pady=(8, 0)
+        )
+        self.planner_combo.bind(
+            "<<ComboboxSelected>>", self._planner_selection_changed
+        )
         ttk.Label(
             motion_frame,
             text="실제 실행은 현재 선택한 토마토의 Plan-only 성공 후 활성화됩니다.",
-        ).grid(row=1, column=0, columnspan=4, sticky="w", pady=(8, 0))
+        ).grid(row=2, column=0, columnspan=4, sticky="w", pady=(8, 0))
 
         scene_frame = ttk.LabelFrame(
             outer, text="토마토 줄기 위치 / 회전", padding=10
@@ -425,6 +471,18 @@ class HarvestGui(Node):
         if index is not None:
             self.status.set(f"토마토 {index} 선택됨 — Plan-only를 먼저 실행하세요.")
 
+    def _planner_selection_changed(self, _event=None) -> None:
+        self._invalidate_plan()
+        self.status.set(
+            f"{self.selected_planner.get()} 선택됨 — Plan-only를 다시 실행하세요."
+        )
+
+    def _selected_planner_config(self) -> tuple[str, str]:
+        return PLANNER_CONFIGS.get(
+            self.selected_planner.get(),
+            PLANNER_CONFIGS["OMPL / RRTConnect"],
+        )
+
     def _invalidate_plan(self) -> None:
         self.verified_plan = None
         self.execute_button.configure(state="disabled")
@@ -437,7 +495,13 @@ class HarvestGui(Node):
         if self.harvest_process is not None:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
-        verification = (self.detection_generation, index)
+        pipeline, planner_id = self._selected_planner_config()
+        verification = (
+            self.detection_generation,
+            index,
+            pipeline,
+            planner_id,
+        )
         if execute and self.verified_plan != verification:
             messagebox.showwarning(
                 "Plan-only 필요",
@@ -452,11 +516,19 @@ class HarvestGui(Node):
         ):
             return
 
-        command = harvest_command(index, execute)
+        command = harvest_command(
+            index,
+            execute,
+            planning_pipeline_id=pipeline,
+            planner_id=planner_id,
+        )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
         mode = "실제 수확" if execute else "Plan-only"
-        self._append_log(f"{mode} 시작: detected_tomato_{index}_tf")
+        self._append_log(
+            f"{mode} 시작: detected_tomato_{index}_tf "
+            f"planner={pipeline}/{planner_id}"
+        )
         self.status.set(f"{mode} 실행 중...")
         self._set_busy(True)
         try:
@@ -527,6 +599,7 @@ class HarvestGui(Node):
         self.read_scene_button.configure(state=state)
         self.set_scene_button.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
+        self.planner_combo.configure(state="disabled" if busy else "readonly")
         if busy or not self.detected_tomatoes:
             self.plan_button.configure(state="disabled")
         else:
@@ -536,6 +609,7 @@ class HarvestGui(Node):
         elif self.verified_plan == (
             self.detection_generation,
             self._selected_index(),
+            *self._selected_planner_config(),
         ):
             self.execute_button.configure(state="normal")
 

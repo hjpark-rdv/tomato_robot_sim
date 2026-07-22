@@ -6,7 +6,12 @@ from rbpodo_tomato_harvest.harvest_gui import harvest_command, scene_parameters
 
 
 def test_harvest_command_builds_plan_only_command():
-    command = harvest_command(3, False, python_executable="/usr/bin/python3")
+    command = harvest_command(
+        3,
+        False,
+        planning_pipeline_id="chomp",
+        python_executable="/usr/bin/python3",
+    )
 
     assert command[0:3] == [
         "/usr/bin/python3",
@@ -15,6 +20,8 @@ def test_harvest_command_builds_plan_only_command():
     ]
     assert "tomato_frame:=detected_tomato_3_tf" in command
     assert "execute:=false" in command
+    assert "planning_pipeline_id:=chomp" in command
+    assert "planner_id:=RRTConnectkConfigDefault" in command
 
 
 def test_harvest_command_builds_execute_command():
@@ -22,11 +29,34 @@ def test_harvest_command_builds_execute_command():
 
     assert "tomato_frame:=detected_tomato_7_tf" in command
     assert "execute:=true" in command
+    assert "planning_pipeline_id:=ompl" in command
+    assert "planner_id:=RRTConnectkConfigDefault" in command
+
+
+def test_harvest_command_builds_pilz_lin_command():
+    command = harvest_command(
+        3,
+        False,
+        planning_pipeline_id="pilz_industrial_motion_planner",
+        planner_id="LIN",
+    )
+
+    assert "planning_pipeline_id:=pilz_industrial_motion_planner" in command
+    assert "planner_id:=LIN" in command
 
 
 def test_harvest_command_rejects_negative_index():
     with pytest.raises(ValueError):
         harvest_command(-1, False)
+
+
+def test_harvest_command_rejects_unknown_planner():
+    with pytest.raises(ValueError):
+        harvest_command(
+            0,
+            False,
+            planning_pipeline_id="unknown",
+        )
 
 
 def test_scene_parameters_include_position_and_rotation():

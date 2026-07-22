@@ -4,6 +4,8 @@ from geometry_msgs.msg import Pose
 from rbpodo_tomato_harvest.harvest_planner import (
     make_harvest_geometry,
     make_tip_local_harvest_motion,
+    planning_pose_from_tip_pose,
+    quaternion_from_rotation,
     stemward_and_outward_from_tomato_rotation,
 )
 
@@ -126,3 +128,65 @@ def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
     assert np.allclose(positions[2], [1.0, 2.035, 3.020])
     assert np.allclose(positions[3], [1.0, 2.035, 3.030])
     assert np.allclose(positions[4], [1.0, 2.005, 3.030])
+
+
+def test_tip_goal_is_converted_to_equivalent_planning_link_goal():
+    base_to_planning_rotation = np.array(
+        [
+            [0.0, -1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    base_to_planning_translation = np.array([0.4, -0.2, 0.5])
+    planning_to_tip_rotation = np.array(
+        [
+            [-1.0, 0.0, 0.0],
+            [0.0, 0.0, -1.0],
+            [0.0, -1.0, 0.0],
+        ]
+    )
+    planning_to_tip_translation = np.array([-0.2116, -0.00075, 0.0])
+
+    expected_tip_rotation = base_to_planning_rotation @ planning_to_tip_rotation
+    expected_tip_translation = (
+        base_to_planning_translation
+        + base_to_planning_rotation @ planning_to_tip_translation
+    )
+    tip_goal = Pose()
+    tip_goal.position.x, tip_goal.position.y, tip_goal.position.z = (
+        expected_tip_translation
+    )
+    (
+        tip_goal.orientation.x,
+        tip_goal.orientation.y,
+        tip_goal.orientation.z,
+        tip_goal.orientation.w,
+    ) = quaternion_from_rotation(expected_tip_rotation)
+
+    planning_goal = planning_pose_from_tip_pose(
+        tip_goal,
+        planning_to_tip_translation,
+        planning_to_tip_rotation,
+    )
+
+    assert np.allclose(_position(planning_goal), base_to_planning_translation)
+    assert np.allclose(_rotation(planning_goal), base_to_planning_rotation)
+
+
+def test_planning_link_goal_accounts_for_rotated_tip_offset():
+    tip_goal = Pose()
+    tip_goal.position.x = 0.1
+    tip_goal.position.y = 0.2
+    tip_goal.position.z = 0.3
+    tip_goal.orientation.z = np.sqrt(0.5)
+    tip_goal.orientation.w = np.sqrt(0.5)
+
+    planning_goal = planning_pose_from_tip_pose(
+        tip_goal,
+        planning_to_tip_translation=[0.2, 0.0, 0.0],
+        planning_to_tip_rotation=np.eye(3),
+    )
+
+    assert np.allclose(_position(planning_goal), [0.1, 0.0, 0.3])
+    assert np.allclose(_rotation(planning_goal), _rotation(tip_goal))

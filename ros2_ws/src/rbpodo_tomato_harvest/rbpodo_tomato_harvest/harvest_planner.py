@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import rclpy
-from geometry_msgs.msg import Pose, PoseStamped
+from geometry_msgs.msg import Pose
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
     Constraints,
@@ -13,7 +13,7 @@ from moveit_msgs.msg import (
     MoveItErrorCodes,
     RobotState,
 )
-from moveit_msgs.srv import GetCartesianPath, GetPositionIK
+from moveit_msgs.srv import GetCartesianPath
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -107,6 +107,50 @@ def rotation_from_pose(pose: Pose) -> np.ndarray:
         ],
         dtype=float,
     )
+
+
+def planning_pose_from_tip_pose(
+    tip_pose: Pose,
+    planning_to_tip_translation,
+    planning_to_tip_rotation,
+) -> Pose:
+    """Convert a desired tip pose into an equivalent planning-link pose.
+
+    ``planning_to_tip_*`` describes the fixed planning-link -> tip transform.
+    The returned pose places the planning link so that the rigidly attached tip
+    reaches exactly ``tip_pose``.
+    """
+    tip_translation = np.asarray(planning_to_tip_translation, dtype=float)
+    tip_rotation = np.asarray(planning_to_tip_rotation, dtype=float)
+    if tip_translation.shape != (3,):
+        raise ValueError("planning_to_tip_translation must contain three values")
+    if tip_rotation.shape != (3, 3):
+        raise ValueError("planning_to_tip_rotation must be a 3x3 matrix")
+
+    base_to_tip_rotation = rotation_from_pose(tip_pose)
+    base_to_planning_rotation = base_to_tip_rotation @ tip_rotation.T
+    base_to_tip_translation = np.array(
+        [tip_pose.position.x, tip_pose.position.y, tip_pose.position.z],
+        dtype=float,
+    )
+    base_to_planning_translation = (
+        base_to_tip_translation
+        - base_to_planning_rotation @ tip_translation
+    )
+
+    pose = Pose()
+    pose.position.x, pose.position.y, pose.position.z = (
+        float(base_to_planning_translation[0]),
+        float(base_to_planning_translation[1]),
+        float(base_to_planning_translation[2]),
+    )
+    (
+        pose.orientation.x,
+        pose.orientation.y,
+        pose.orientation.z,
+        pose.orientation.w,
+    ) = quaternion_from_rotation(base_to_planning_rotation)
+    return pose
 
 
 def make_tip_local_harvest_motion(
@@ -243,6 +287,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tomato_frame", "detected_tomato_3_tf")
         self.declare_parameter("gripper_link", "tomato_gripper")
         self.declare_parameter("tip_link", "tomato_gripper_tip")
+        self.declare_parameter("planning_link", "tcp")
         self.declare_parameter("group_name", "mainpulation")
         self.declare_parameter("robot_model_id", "rb")
         self.declare_parameter(
@@ -265,7 +310,6 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("pick_ready_planning_attempts", 5)
         self.declare_parameter("pick_ready_velocity_scale", 0.20)
         self.declare_parameter("pick_ready_acceleration_scale", 0.20)
-        self.declare_parameter("preapproach_ik_timeout_sec", 2.0)
         self.declare_parameter("planning_pipeline_id", "ompl")
         self.declare_parameter("planner_id", "RRTConnectkConfigDefault")
         self.declare_parameter("tip_standoff", 0.025)
@@ -289,6 +333,7 @@ class CartesianHarvestPlanner(Node):
         self.tomato_frame = str(self.get_parameter("tomato_frame").value)
         self.gripper_link = str(self.get_parameter("gripper_link").value)
         self.tip_link = str(self.get_parameter("tip_link").value)
+        self.planning_link = str(self.get_parameter("planning_link").value)
         self.group_name = str(self.get_parameter("group_name").value)
         self.robot_model_id = str(self.get_parameter("robot_model_id").value)
 
@@ -297,7 +342,6 @@ class CartesianHarvestPlanner(Node):
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
         )
-        self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
         self.execute_client = ActionClient(
             self, ExecuteTrajectory, "/execute_trajectory"
@@ -446,65 +490,6 @@ class CartesianHarvestPlanner(Node):
             return None
         return trajectory, result.trajectory_start
 
-    def _solve_pose_ik(
-        self,
-        pose: Pose,
-        start_state: RobotState,
-        label: str,
-    ):
-        timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
-        if not self.ik_client.wait_for_service(timeout_sec=timeout):
-            self.get_logger().error("MoveIt compute_ik service is unavailable")
-            return None
-
-        request = GetPositionIK.Request()
-        request.ik_request.group_name = self.group_name
-        request.ik_request.robot_state = start_state
-        request.ik_request.avoid_collisions = bool(
-            self.get_parameter("avoid_collisions").value
-        )
-        request.ik_request.ik_link_name = self.tip_link
-        stamped_pose = PoseStamped()
-        stamped_pose.header.frame_id = self.base_frame
-        stamped_pose.header.stamp = self.get_clock().now().to_msg()
-        stamped_pose.pose = pose
-        request.ik_request.pose_stamped = stamped_pose
-        ik_timeout = max(
-            0.01,
-            float(self.get_parameter("preapproach_ik_timeout_sec").value),
-        )
-        request.ik_request.timeout = Duration(seconds=ik_timeout).to_msg()
-
-        future = self.ik_client.call_async(request)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
-        response = future.result() if future.done() else None
-        if response is None:
-            self.get_logger().error(f"{label} IK request timed out")
-            return None
-        if response.error_code.val != MoveItErrorCodes.SUCCESS:
-            self.get_logger().error(
-                f"{label} IK failed: error_code={response.error_code.val}"
-            )
-            return None
-
-        solution = response.solution.joint_state
-        positions_by_name = dict(zip(solution.name, solution.position))
-        joint_names = [
-            str(name) for name in self.get_parameter("pick_ready_joint_names").value
-        ]
-        missing = [name for name in joint_names if name not in positions_by_name]
-        if missing:
-            self.get_logger().error(
-                f"{label} IK solution is missing joints: {missing}"
-            )
-            return None
-        joint_positions = [float(positions_by_name[name]) for name in joint_names]
-        self.get_logger().info(
-            f"{label} IK success=True joints="
-            f"{[round(value, 4) for value in joint_positions]}"
-        )
-        return joint_names, joint_positions
-
     @staticmethod
     def _trajectory_end_state(planned_trajectory) -> RobotState:
         state = RobotState()
@@ -524,7 +509,7 @@ class CartesianHarvestPlanner(Node):
         request.header.frame_id = self.base_frame
         request.start_state = start_state
         request.group_name = self.group_name
-        request.link_name = self.tip_link
+        request.link_name = self.planning_link
         request.waypoints = list(waypoints)
         request.max_step = max(0.0001, float(self.get_parameter("max_step").value))
         request.jump_threshold = max(
@@ -576,8 +561,13 @@ class CartesianHarvestPlanner(Node):
         gripper_to_tip_tf = self._lookup_transform(
             self.tip_link, parent_frame=self.gripper_link
         )
+        planning_to_tip_tf = self._lookup_transform(
+            self.tip_link, parent_frame=self.planning_link
+        )
         if (
-            tip_tf is None or gripper_to_tip_tf is None
+            tip_tf is None
+            or gripper_to_tip_tf is None
+            or planning_to_tip_tf is None
         ):
             return None
 
@@ -637,27 +627,30 @@ class CartesianHarvestPlanner(Node):
                 self.get_parameter("harvest_second_x_back").value
             ),
         )
+        planning_to_tip_translation = self._translation(planning_to_tip_tf)
+        planning_to_tip_rotation = self._rotation_matrix(planning_to_tip_tf)
+
+        def as_planning_pose(tip_pose: Pose) -> Pose:
+            return planning_pose_from_tip_pose(
+                tip_pose,
+                planning_to_tip_translation,
+                planning_to_tip_rotation,
+            )
+
+        preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
         pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
-        preapproach_ik = self._solve_pose_ik(
-            geometry.preapproach_pose,
+        preapproach_trajectory = self._plan_cartesian(
+            [preapproach_planning_pose],
             pick_ready_end,
-            "Pre-approach",
+            "TCP direct pre-approach",
         )
-        if preapproach_ik is None:
+        if preapproach_trajectory is None:
             return None
-        preapproach_plan = self._plan_joint_target(
-            *preapproach_ik,
-            start_state=pick_ready_end,
-            label="Pre-approach",
-        )
-        if preapproach_plan is None:
-            return None
-        preapproach_trajectory, _preapproach_start = preapproach_plan
         preapproach_end = self._trajectory_end_state(preapproach_trajectory)
 
         approach_waypoints = (
-            geometry.target_pose,
-            *tip_motion.before_wait_waypoints,
+            as_planning_pose(geometry.target_pose),
+            *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
         approach_trajectory = self._plan_cartesian(
             approach_waypoints,
@@ -669,7 +662,7 @@ class CartesianHarvestPlanner(Node):
 
         approach_end = self._trajectory_end_state(approach_trajectory)
         after_wait_trajectory = self._plan_cartesian(
-            [tip_motion.after_wait_pose],
+            [as_planning_pose(tip_motion.after_wait_pose)],
             approach_end,
             "Post-wait harvest",
         )
@@ -707,8 +700,8 @@ class CartesianHarvestPlanner(Node):
         )
         self.display_publisher.publish(display)
         self.get_logger().info(
-            "Full harvest plan ready: PICK_READY -> OMPL pre-approach -> "
-            "Cartesian approach -> "
+            "Full harvest plan ready: PICK_READY -> TCP Cartesian pre-approach -> "
+            f"{self.planning_link}-based Cartesian approach -> "
             "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> "
             "-X30mm -> PICK_READY"
         )

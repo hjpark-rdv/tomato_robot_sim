@@ -79,9 +79,10 @@ def generate_launch_description():
                 default_value="true",
                 description="Show the procedural tomato vine scene in RViz",
             ),
-            DeclareLaunchArgument("tomato_x", default_value="0.455"),
-            DeclareLaunchArgument("tomato_y", default_value="-0.175"),
+            DeclareLaunchArgument("tomato_x", default_value="0.355"),
+            DeclareLaunchArgument("tomato_y", default_value="-0.375"),
             DeclareLaunchArgument("tomato_z", default_value="0.34"),
+            DeclareLaunchArgument("tomato_z_spin_deg", default_value="45.0"),
             DeclareLaunchArgument("tomato_radius_scale", default_value="0.5"),
             DeclareLaunchArgument(
                 "show_vine_row",
@@ -128,6 +129,9 @@ def launch_setup(context, *args, **kwargs):
     ]
     tomato_radius_scale = float(
         LaunchConfiguration("tomato_radius_scale").perform(context)
+    )
+    tomato_z_spin_deg = float(
+        LaunchConfiguration("tomato_z_spin_deg").perform(context)
     )
     show_vine_row_value = (
         LaunchConfiguration("show_vine_row").perform(context).lower()
@@ -261,6 +265,7 @@ def launch_setup(context, *args, **kwargs):
                 "floor_frame": "tomato_floor_tf",
                 "tomato_frame": "tomato_tf",
                 "object_position": tomato_position,
+                "tomato_z_spin_deg": tomato_z_spin_deg,
                 "tomato_radius_scale": tomato_radius_scale,
                 "show_vine_row": show_vine_row_value,
                 "publish_planning_scene": publish_tomato_collisions,
