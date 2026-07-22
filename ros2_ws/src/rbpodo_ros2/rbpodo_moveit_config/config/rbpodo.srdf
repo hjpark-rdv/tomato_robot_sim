@@ -37,4 +37,5 @@
     <disable_collisions link1="link4" link2="link6" reason="Never"/>
     <disable_collisions link1="link5" link2="link6" reason="Adjacent"/>
     <disable_collisions link1="link6" link2="tomato_gripper" reason="Adjacent"/>
+    <disable_collisions link1="tomato_gripper" link2="d435_link" reason="Mounted"/>
 </robot>

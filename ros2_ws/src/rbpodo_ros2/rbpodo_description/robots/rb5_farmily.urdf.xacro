@@ -3,6 +3,14 @@
 
   <!-- Keep the Rainbow Robotics RB5 model as the unmodified base robot. -->
   <xacro:include filename="$(find rbpodo_description)/robots/rb5_850e.urdf.xacro" />
+  <xacro:include filename="$(find rbpodo_description)/robots/realsense_d435.urdf.xacro" />
+
+  <xacro:arg name="d435_mount_x" default="-0.11" />
+  <xacro:arg name="d435_mount_y" default="-0.10" />
+  <xacro:arg name="d435_mount_z" default="0.0" />
+  <xacro:arg name="d435_mount_roll" default="-1.57" />
+  <xacro:arg name="d435_mount_pitch" default="0.0" />
+  <xacro:arg name="d435_mount_yaw" default="3.141592" />
 
   <!-- Farmily-specific links and joints belong below this line. -->
   <link name="$(arg prefix)tomato_gripper">
@@ -41,9 +49,23 @@
   <link name="$(arg prefix)tomato_gripper_tip" />
 
   <joint name="$(arg prefix)tomato_gripper_tip_joint" type="fixed">
-    <origin xyz="-0.2116 0.01075 0" rpy="0 0 0" />
+    <origin xyz="-0.2116 0.01075 0" rpy="1.57 3.14 0" />
     <parent link="$(arg prefix)tomato_gripper" />
     <child link="$(arg prefix)tomato_gripper_tip" />
   </joint>
+
+  <!--
+    D435 mounted above the gripper with its optical axis facing the gripper
+    tip. These six mount arguments are calibration values and can be adjusted
+    without editing the reusable camera model.
+  -->
+  <xacro:realsense_d435
+    parent="$(arg prefix)tomato_gripper"
+    name="$(arg prefix)d435"
+    use_mesh="true">
+    <origin
+      xyz="$(arg d435_mount_x) $(arg d435_mount_y) $(arg d435_mount_z)"
+      rpy="$(arg d435_mount_roll) $(arg d435_mount_pitch) $(arg d435_mount_yaw)" />
+  </xacro:realsense_d435>
 
 </robot>

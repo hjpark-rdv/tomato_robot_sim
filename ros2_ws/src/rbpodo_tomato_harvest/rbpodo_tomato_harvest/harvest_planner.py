@@ -83,14 +83,16 @@ def make_harvest_geometry(
     tip_below_center: float,
     preapproach_clearance: float,
     outward_hint=None,
+    tip_rotation_from_gripper=None,
 ) -> HarvestGeometry:
     """Create a level gripper pose with tomato between tip and main vine.
 
-    The gripper tip's +X axis points from the tomato toward the robot and its
-    -X axis points toward the tomato. The +Y axis points vertically down, which
-    puts the gripper's X-Z plane parallel to the ground (nominal roll -90 deg).
-    If no approach-direction hint is supplied, the direction away from the
-    nearest point on the vine is used.
+    The physical gripper's +X axis points from the tomato toward the robot and
+    its -X axis points toward the tomato. Its +Y axis points vertically down,
+    which puts the gripper's X-Z plane parallel to the ground (nominal roll
+    -90 deg). The fixed gripper-to-tip rotation is then composed into the
+    MoveIt target-link orientation. If no approach-direction hint is supplied,
+    the direction away from the nearest point on the vine is used.
     """
 
     tomato = np.asarray(tomato_position, dtype=float)
@@ -109,8 +111,14 @@ def make_harvest_geometry(
     gripper_lateral = _unit(
         np.cross(outward, gripper_down), "gripper lateral axis"
     )
-    rotation = np.column_stack((outward, gripper_down, gripper_lateral))
-    quaternion = quaternion_from_rotation(rotation)
+    gripper_rotation = np.column_stack((outward, gripper_down, gripper_lateral))
+    if tip_rotation_from_gripper is None:
+        tip_rotation_from_gripper = np.eye(3, dtype=float)
+    tip_rotation_from_gripper = np.asarray(tip_rotation_from_gripper, dtype=float)
+    if tip_rotation_from_gripper.shape != (3, 3):
+        raise ValueError("tip_rotation_from_gripper must be a 3x3 matrix")
+    tip_rotation = gripper_rotation @ tip_rotation_from_gripper
+    quaternion = quaternion_from_rotation(tip_rotation)
 
     target_position = (
         tomato
@@ -148,8 +156,10 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("base_frame", "link0")
         self.declare_parameter("tomato_frame", "tomato_3_tf")
         self.declare_parameter("vine_frame", "main_vine_tf")
+        self.declare_parameter("gripper_link", "tomato_gripper")
         self.declare_parameter("tip_link", "tomato_gripper_tip")
         self.declare_parameter("group_name", "mainpulation")
+        self.declare_parameter("robot_model_id", "rb")
         self.declare_parameter(
             "pick_ready_joint_names",
             ["base", "shoulder", "elbow", "wrist1", "wrist2", "wrist3"],
@@ -187,8 +197,10 @@ class CartesianHarvestPlanner(Node):
         self.base_frame = str(self.get_parameter("base_frame").value)
         self.tomato_frame = str(self.get_parameter("tomato_frame").value)
         self.vine_frame = str(self.get_parameter("vine_frame").value)
+        self.gripper_link = str(self.get_parameter("gripper_link").value)
         self.tip_link = str(self.get_parameter("tip_link").value)
         self.group_name = str(self.get_parameter("group_name").value)
+        self.robot_model_id = str(self.get_parameter("robot_model_id").value)
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -205,18 +217,19 @@ class CartesianHarvestPlanner(Node):
         self._pick_ready_trajectory = None
         self._pick_ready_start_state = None
 
-    def _lookup_transform(self, child_frame: str):
+    def _lookup_transform(self, child_frame: str, parent_frame: str | None = None):
+        target_frame = self.base_frame if parent_frame is None else parent_frame
         timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
         deadline = self.get_clock().now() + Duration(seconds=timeout)
         while rclpy.ok() and self.get_clock().now() < deadline:
             try:
                 return self.tf_buffer.lookup_transform(
-                    self.base_frame, child_frame, Time()
+                    target_frame, child_frame, Time()
                 )
             except TransformException:
                 rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().error(
-            f"TF not found within {timeout:.1f}s: {self.base_frame} -> {child_frame}"
+            f"TF not found within {timeout:.1f}s: {target_frame} -> {child_frame}"
         )
         return None
 
@@ -343,7 +356,15 @@ class CartesianHarvestPlanner(Node):
         tomato_tf = self._lookup_transform(self.tomato_frame)
         vine_tf = self._lookup_transform(self.vine_frame)
         tip_tf = self._lookup_transform(self.tip_link)
-        if tomato_tf is None or vine_tf is None or tip_tf is None:
+        gripper_to_tip_tf = self._lookup_transform(
+            self.tip_link, parent_frame=self.gripper_link
+        )
+        if (
+            tomato_tf is None
+            or vine_tf is None
+            or tip_tf is None
+            or gripper_to_tip_tf is None
+        ):
             return None
 
         tomato_position = self._translation(tomato_tf)
@@ -366,6 +387,7 @@ class CartesianHarvestPlanner(Node):
                 self.get_parameter("preapproach_clearance").value
             ),
             outward_hint=outward_hint,
+            tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
         )
 
         target = geometry.target_pose.position
@@ -432,7 +454,7 @@ class CartesianHarvestPlanner(Node):
             return None
 
         display = DisplayTrajectory()
-        display.model_id = self.group_name
+        display.model_id = self.robot_model_id
         if execute_requested:
             display.trajectory_start = response.start_state
         else:

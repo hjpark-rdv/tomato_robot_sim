@@ -53,3 +53,35 @@ def test_gripper_longitudinal_axis_and_roll_are_level():
     assert np.allclose(rotation[:, 0], result.outward_axis)
     assert np.allclose(rotation[:, 1], [0.0, 0.0, -1.0])
     assert abs(rotation[2, 2]) < 1e-12
+
+
+def test_tip_fixed_rotation_is_composed_after_level_gripper_rotation():
+    tip_from_gripper = np.array(
+        [
+            [-1.0, 0.0, 0.0],
+            [0.0, 0.0, -1.0],
+            [0.0, -1.0, 0.0],
+        ]
+    )
+    result = make_harvest_geometry(
+        tomato_position=[0.45, -0.18, 0.34],
+        vine_origin=[0.42, -0.14, 0.35],
+        vine_axis=[0.0, 0.0, 1.0],
+        tip_standoff=0.025,
+        tip_below_center=0.018,
+        preapproach_clearance=0.040,
+        outward_hint=[-1.0, 0.0, 0.0],
+        tip_rotation_from_gripper=tip_from_gripper,
+    )
+
+    desired_gripper_rotation = np.column_stack(
+        (
+            result.outward_axis,
+            np.array([0.0, 0.0, -1.0]),
+            np.cross(result.outward_axis, np.array([0.0, 0.0, -1.0])),
+        )
+    )
+    assert np.allclose(
+        _rotation(result.target_pose),
+        desired_gripper_rotation @ tip_from_gripper,
+    )

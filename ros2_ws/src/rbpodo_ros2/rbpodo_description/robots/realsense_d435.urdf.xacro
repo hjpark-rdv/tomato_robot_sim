@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+
+<!--
+  Intel RealSense D435 dimensions and frame layout.
+
+  Derived from realsense-ros/realsense2_description/urdf/_d435.urdf.xacro,
+  Copyright 2023 RealSense, Inc., licensed under Apache License 2.0.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro
+    name="realsense_d435"
+    params="parent name:=d435 use_mesh:=true *origin">
+
+    <xacro:property name="d435_pi" value="3.1415926535897931" />
+    <xacro:property name="camera_width" value="0.090" />
+    <xacro:property name="camera_height" value="0.025" />
+    <xacro:property name="camera_depth" value="0.02505" />
+    <xacro:property name="mount_from_center" value="0.0149" />
+    <xacro:property name="glass_to_front" value="0.0001" />
+    <xacro:property name="zero_depth_to_glass" value="0.0042" />
+    <xacro:property
+      name="mesh_x_offset"
+      value="${mount_from_center - glass_to_front - zero_depth_to_glass}" />
+    <xacro:property name="depth_y" value="0.0175" />
+
+    <!-- The mounting origin is the physical bottom 1/4-20 screw point. -->
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_bottom_screw_frame" />
+    </joint>
+    <link name="${name}_bottom_screw_frame" />
+
+    <joint name="${name}_link_joint" type="fixed">
+      <origin xyz="${mesh_x_offset} ${depth_y} ${camera_height / 2.0}" rpy="0 0 0" />
+      <parent link="${name}_bottom_screw_frame" />
+      <child link="${name}_link" />
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <xacro:if value="${use_mesh}">
+          <origin
+            xyz="${zero_depth_to_glass + glass_to_front} ${-depth_y} 0"
+            rpy="${d435_pi / 2.0} 0 ${d435_pi / 2.0}" />
+          <geometry>
+            <mesh filename="package://rbpodo_description/meshes/realsense_d435/d435.dae" />
+          </geometry>
+        </xacro:if>
+        <xacro:unless value="${use_mesh}">
+          <origin xyz="0 ${-depth_y} 0" rpy="0 0 0" />
+          <geometry>
+            <box size="${camera_depth} ${camera_width} ${camera_height}" />
+          </geometry>
+          <material name="d435_aluminum">
+            <color rgba="0.55 0.57 0.60 1.0" />
+          </material>
+        </xacro:unless>
+      </visual>
+      <collision>
+        <origin xyz="0 ${-depth_y} 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${camera_depth} ${camera_width} ${camera_height}" />
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.072" />
+        <origin xyz="0 ${-depth_y} 0" rpy="0 0 0" />
+        <inertia
+          ixx="0.00005313" ixy="0" ixz="0"
+          iyy="0.00000493" iyz="0" izz="0.00005313" />
+      </inertial>
+    </link>
+
+    <!-- Nominal D435 sensor frames. Optical frames use ROS REP-103 axes. -->
+    <joint name="${name}_depth_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${name}_link" />
+      <child link="${name}_depth_frame" />
+    </joint>
+    <link name="${name}_depth_frame" />
+
+    <joint name="${name}_depth_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-d435_pi / 2.0} 0 ${-d435_pi / 2.0}" />
+      <parent link="${name}_depth_frame" />
+      <child link="${name}_depth_optical_frame" />
+    </joint>
+    <link name="${name}_depth_optical_frame" />
+
+    <joint name="${name}_infra1_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${name}_link" />
+      <child link="${name}_infra1_frame" />
+    </joint>
+    <link name="${name}_infra1_frame" />
+
+    <joint name="${name}_infra1_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-d435_pi / 2.0} 0 ${-d435_pi / 2.0}" />
+      <parent link="${name}_infra1_frame" />
+      <child link="${name}_infra1_optical_frame" />
+    </joint>
+    <link name="${name}_infra1_optical_frame" />
+
+    <joint name="${name}_infra2_joint" type="fixed">
+      <origin xyz="0 -0.050 0" rpy="0 0 0" />
+      <parent link="${name}_link" />
+      <child link="${name}_infra2_frame" />
+    </joint>
+    <link name="${name}_infra2_frame" />
+
+    <joint name="${name}_infra2_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-d435_pi / 2.0} 0 ${-d435_pi / 2.0}" />
+      <parent link="${name}_infra2_frame" />
+      <child link="${name}_infra2_optical_frame" />
+    </joint>
+    <link name="${name}_infra2_optical_frame" />
+
+    <joint name="${name}_color_joint" type="fixed">
+      <origin xyz="0 0.015 0" rpy="0 0 0" />
+      <parent link="${name}_link" />
+      <child link="${name}_color_frame" />
+    </joint>
+    <link name="${name}_color_frame" />
+
+    <joint name="${name}_color_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-d435_pi / 2.0} 0 ${-d435_pi / 2.0}" />
+      <parent link="${name}_color_frame" />
+      <child link="${name}_color_optical_frame" />
+    </joint>
+    <link name="${name}_color_optical_frame" />
+  </xacro:macro>
+</robot>
