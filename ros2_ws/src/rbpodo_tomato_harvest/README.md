@@ -62,14 +62,54 @@ ros2 service call /fake_tomato_camera/detect_tomatoes \
   farmily_tomato_interfaces/srv/DetectTomatoes '{}'
 ```
 
-새 TF의 parent는 `d435_color_optical_frame`이다. 토마토 Z축은 `link0`의
-수직 상향축과 일치하도록 카메라 좌표계에서 계산하고, X축은 지면에 투영한
-토마토 중심→줄기 점 방향을 바라본다.
+검출 좌표의 입력 기준은 `d435_color_optical_frame`이지만, 새 TF를 생성할
+때 좌표를 로봇 베이스 `link0`로 변환하여 parent로 사용한다. 따라서 검출 후
+로봇 관절과 카메라가 움직여도 토마토 TF는 움직이지 않는다. 토마토 Z축은
+`link0`의 수직 상향축과 일치하고, X축은 지면에 투영한 토마토 중심→줄기 점
+방향을 바라본다.
 
 ## Cartesian harvest test
 
+### 수확 작업 GUI
+
+MoveIt과 fake/real 카메라 서비스를 각각 실행한 뒤, 별도 터미널에서 수확 GUI를
+실행한다.
+
+```bash
+./scripts/run_harvest_gui.sh
+```
+
+동일한 GUI를 ROS launch 명령으로 직접 실행해도 된다.
+
+```bash
+ros2 launch rbpodo_tomato_harvest harvest_gui.launch.py
+```
+
+GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
+
+1. 카메라 서비스 호출 및 모든 검출 토마토 목록 확인
+2. 수확할 `detected_tomato_N_tf` 선택
+3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
+4. Plan-only 성공 후 실제 수확 모션 실행
+5. 메인 토마토 줄기의 X/Y/Z 위치와 줄기 축 기준 회전 각도 조회 및 변경
+
+안전을 위해 새 검출 결과가 들어오거나 줄기 위치/회전을 변경하면 기존
+Plan-only 성공 상태는 취소된다. 회전값은 `tomato_z_spin_deg`에 도 단위로
+적용되어 메인 줄기 축을 기준으로 가지와 토마토 전체를 회전시킨다. 실제 수확
+버튼은 현재 검출 결과에서 선택한 토마토의 Plan-only가 정상 완료된 경우에만
+활성화된다. 줄기 위치나 회전을 바꾼 다음에는 GUI의 `토마토 촬영 / 검출`
+버튼을 다시 눌러 TF를 갱신해야 한다.
+
+실제 카메라 팀의 서비스 이름이 다른 경우 launch 인자로 연결한다.
+
+```bash
+./scripts/run_harvest_gui.sh \
+  camera_service:=/real_camera/detect_tomatoes
+```
+
 From the repository root, select a tomato and start the real robot motion with
-one command:
+one command. Run the camera detection service first so that the corresponding
+`detected_tomato_N_tf` exists:
 
 ```bash
 ./scripts/harvest_tomato.sh 3
@@ -84,24 +124,46 @@ the complete path in RViz without moving the robot:
 ```
 
 With the RB5 MoveIt launch already running, plan a level Cartesian approach to
-`tomato_3_tf` without moving the robot:
+`detected_tomato_3_tf` without moving the robot:
 
 ```bash
 ros2 run rbpodo_tomato_harvest tomato_harvest_test
 ```
 
 Every harvest starts from the `PICK_READY` named state captured from the real
-robot. In plan-only mode RViz receives both trajectories in order:
+robot. In plan-only mode RViz receives the complete trajectory sequence in
+order:
 
 1. Current joint state to `PICK_READY`
-2. `PICK_READY` to the pre-approach point and tomato
+2. OMPL joint-space motion from `PICK_READY` to the pre-approach pose
+3. Cartesian motion from pre-approach through the tomato harvest sequence
+4. Cartesian post-wait retreat
+5. OMPL return to `PICK_READY`
 
-The target keeps the tomato between `tomato_gripper_tip` and `main_vine_tf`,
-places the tip 18 mm below the tomato center, preserves the current horizontal
-approach direction, and corrects the gripper roll to its -90 degree ground-level
-orientation. The Cartesian path first retracts 40 mm to a pre-approach point and
-then advances to the tomato. Inspect the published path in RViz before explicitly
-enabling execution:
+The separate OMPL pre-approach motion allows MoveIt to change IK branches when
+the tomato-facing orientation is far from the `PICK_READY` tool orientation.
+Only the short, straight motion near the tomato is constrained to Cartesian
+planning.
+
+The detected tomato TF's +X axis points toward the stem, so harvesting approaches
+from its -X axis. The target keeps the tomato between `tomato_gripper_tip` and
+the detected stem direction, places the tip 18 mm below the tomato center, and
+corrects the gripper roll to its -90 degree ground-level orientation. After the
+initial Cartesian approach, the complete sequence uses the local axes of
+`tomato_gripper_tip`:
+
+1. Move +50 mm along tip X.
+2. Move +20 mm along tip Z.
+3. Move -15 mm along tip X.
+4. Move +10 mm along tip Z.
+5. Hold for 2 seconds.
+6. Move -30 mm along tip X.
+7. Return to PICK_READY.
+
+The dwell separates the Cartesian motion into pre-wait and post-wait
+trajectories. Plan-only mode publishes the complete five-trajectory sequence to
+RViz without waiting or moving the robot. Inspect it before explicitly enabling
+execution:
 
 ```bash
 ros2 run rbpodo_tomato_harvest tomato_harvest_test --ros-args -p execute:=true
@@ -111,7 +173,7 @@ Select another tomato or tune the offsets with ROS parameters, for example:
 
 ```bash
 ros2 run rbpodo_tomato_harvest tomato_harvest_test --ros-args \
-  -p tomato_frame:=tomato_5_tf \
+  -p tomato_frame:=detected_tomato_5_tf \
   -p tip_standoff:=0.025 \
   -p tip_below_center:=0.018
 ```

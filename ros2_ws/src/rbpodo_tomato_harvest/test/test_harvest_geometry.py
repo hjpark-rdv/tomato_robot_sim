@@ -1,6 +1,11 @@
 import numpy as np
+from geometry_msgs.msg import Pose
 
-from rbpodo_tomato_harvest.harvest_planner import make_harvest_geometry
+from rbpodo_tomato_harvest.harvest_planner import (
+    make_harvest_geometry,
+    make_tip_local_harvest_motion,
+    stemward_and_outward_from_tomato_rotation,
+)
 
 
 def _position(pose):
@@ -85,3 +90,39 @@ def test_tip_fixed_rotation_is_composed_after_level_gripper_rotation():
         _rotation(result.target_pose),
         desired_gripper_rotation @ tip_from_gripper,
     )
+
+
+def test_detected_tomato_x_axis_defines_opposite_outward_approach():
+    rotation = np.array(
+        [
+            [0.6, -0.8, 0.0],
+            [0.8, 0.6, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+
+    stemward, outward = stemward_and_outward_from_tomato_rotation(rotation)
+
+    assert np.allclose(stemward, [0.6, 0.8, 0.0])
+    assert np.allclose(outward, [-0.6, -0.8, 0.0])
+
+
+def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
+    start = Pose()
+    start.position.x = 1.0
+    start.position.y = 2.0
+    start.position.z = 3.0
+    start.orientation.z = np.sqrt(0.5)
+    start.orientation.w = np.sqrt(0.5)
+
+    motion = make_tip_local_harvest_motion(start)
+    positions = [
+        _position(pose)
+        for pose in (*motion.before_wait_waypoints, motion.after_wait_pose)
+    ]
+
+    assert np.allclose(positions[0], [1.0, 2.050, 3.0])
+    assert np.allclose(positions[1], [1.0, 2.050, 3.020])
+    assert np.allclose(positions[2], [1.0, 2.035, 3.020])
+    assert np.allclose(positions[3], [1.0, 2.035, 3.030])
+    assert np.allclose(positions[4], [1.0, 2.005, 3.030])

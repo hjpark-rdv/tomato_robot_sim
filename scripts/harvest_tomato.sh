@@ -48,8 +48,8 @@ if [[ "${mode}" == "--plan-only" ]]; then
   execute="false"
 fi
 
-echo "Tomato ${tomato_number}: PICK_READY -> Cartesian approach (execute=${execute})"
+echo "Detected tomato ${tomato_number}: full harvest sequence (execute=${execute})"
 
 exec ros2 run rbpodo_tomato_harvest tomato_harvest_test --ros-args \
-  -p tomato_frame:="tomato_${tomato_number}_tf" \
+  -p tomato_frame:="detected_tomato_${tomato_number}_tf" \
   -p execute:="${execute}"

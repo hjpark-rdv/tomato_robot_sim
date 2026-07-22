@@ -101,7 +101,12 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "tomato_camera_frame",
                 default_value="d435_color_optical_frame",
-                description="Parent camera frame for newly detected tomato TFs",
+                description="Input frame used by camera tomato detections",
+            ),
+            DeclareLaunchArgument(
+                "tomato_parent_frame",
+                default_value="link0",
+                description="Fixed robot-base parent for detected tomato TFs",
             ),
             DeclareLaunchArgument(
                 "auto_create_detected_tomato_tf",
@@ -282,6 +287,7 @@ def launch_setup(context, *args, **kwargs):
         parameters=[
             {
                 "camera_frame": LaunchConfiguration("tomato_camera_frame"),
+                "parent_frame": LaunchConfiguration("tomato_parent_frame"),
                 "sky_frame": "link0",
                 "auto_create_on_detection": LaunchConfiguration(
                     "auto_create_detected_tomato_tf"

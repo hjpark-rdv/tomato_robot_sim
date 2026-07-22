@@ -20,14 +20,13 @@ def _unit(vector: np.ndarray, label: str) -> np.ndarray:
     return vector / norm
 
 
-def camera_parent_tomato_rotation(
-    sky_axis_in_camera,
-    stem_direction_in_camera,
+def parent_frame_tomato_rotation(
+    sky_axis_in_parent,
+    stem_direction_in_parent,
 ) -> np.ndarray:
-    """Return camera<-tomato rotation with Z skyward and X stemward."""
-
-    z_axis = _unit(np.asarray(sky_axis_in_camera, dtype=float), "sky axis")
-    stem_direction = np.asarray(stem_direction_in_camera, dtype=float)
+    """Return parent<-tomato rotation with Z skyward and X stemward."""
+    z_axis = _unit(np.asarray(sky_axis_in_parent, dtype=float), "sky axis")
+    stem_direction = np.asarray(stem_direction_in_parent, dtype=float)
     horizontal_stem = stem_direction - np.dot(stem_direction, z_axis) * z_axis
     x_axis = _unit(horizontal_stem, "horizontal stem direction")
     y_axis = _unit(np.cross(z_axis, x_axis), "tomato Y axis")
@@ -81,11 +80,12 @@ def rotation_from_quaternion(quaternion) -> np.ndarray:
 
 
 class TomatoTfGenerator(Node):
-    """Snapshot camera detections as persistent, camera-parented tomato TFs."""
+    """Snapshot camera detections as persistent, base-parented tomato TFs."""
 
     def __init__(self) -> None:
         super().__init__("tomato_tf_generator")
         self.declare_parameter("camera_frame", "d435_color_optical_frame")
+        self.declare_parameter("parent_frame", "link0")
         self.declare_parameter("sky_frame", "link0")
         self.declare_parameter("center_topic", "/tomato_detection/center")
         self.declare_parameter("stem_point_topic", "/tomato_detection/stem_point")
@@ -100,6 +100,7 @@ class TomatoTfGenerator(Node):
         self.declare_parameter("broadcast_rate_hz", 20.0)
 
         self.camera_frame = str(self.get_parameter("camera_frame").value)
+        self.parent_frame = str(self.get_parameter("parent_frame").value)
         self.sky_frame = str(self.get_parameter("sky_frame").value)
         self.tf_prefix = str(self.get_parameter("tf_prefix").value)
         self.start_index = int(self.get_parameter("start_index").value)
@@ -135,9 +136,9 @@ class TomatoTfGenerator(Node):
         period = 1.0 / max(1.0, float(self.get_parameter("broadcast_rate_hz").value))
         self.create_timer(period, self._broadcast_transforms)
         self.get_logger().info(
-            "Ready to create camera-parented tomato TFs: "
-            f"service=/{self.get_name()}/create_tf camera={self.camera_frame} "
-            f"sky={self.sky_frame} auto_create="
+            "Ready to create base-parented tomato TFs: "
+            f"service=/{self.get_name()}/create_tf input={self.camera_frame} "
+            f"parent={self.parent_frame} sky={self.sky_frame} auto_create="
             f"{self.get_parameter('auto_create_on_detection').value}"
         )
 
@@ -227,14 +228,14 @@ class TomatoTfGenerator(Node):
                 f"TF lookup failed: {target_frame} <- {source_frame}: {error}"
             ) from error
 
-    def _point_in_camera(self, message: PointStamped) -> np.ndarray:
+    def _point_in_parent(self, message: PointStamped) -> np.ndarray:
         point = np.array(
             [message.point.x, message.point.y, message.point.z], dtype=float
         )
         source_frame = str(message.header.frame_id) or self.camera_frame
-        if source_frame == self.camera_frame:
+        if source_frame == self.parent_frame:
             return point
-        transform = self._lookup_transform(self.camera_frame, source_frame)
+        transform = self._lookup_transform(self.parent_frame, source_frame)
         rotation = rotation_from_quaternion(
             (
                 transform.transform.rotation.x,
@@ -248,8 +249,10 @@ class TomatoTfGenerator(Node):
             [translation.x, translation.y, translation.z], dtype=float
         )
 
-    def _sky_axis_in_camera(self) -> np.ndarray:
-        transform = self._lookup_transform(self.camera_frame, self.sky_frame)
+    def _sky_axis_in_parent(self) -> np.ndarray:
+        if self.sky_frame == self.parent_frame:
+            return np.array([0.0, 0.0, 1.0], dtype=float)
+        transform = self._lookup_transform(self.parent_frame, self.sky_frame)
         rotation = rotation_from_quaternion(
             (
                 transform.transform.rotation.x,
@@ -276,17 +279,17 @@ class TomatoTfGenerator(Node):
             return False, "검출값이 오래되었습니다. 카메라 검출을 다시 수행하세요."
 
         try:
-            center = self._point_in_camera(center_message)
-            stem_point = self._point_in_camera(stem_point_message)
-            rotation = camera_parent_tomato_rotation(
-                self._sky_axis_in_camera(), stem_point - center
+            center = self._point_in_parent(center_message)
+            stem_point = self._point_in_parent(stem_point_message)
+            rotation = parent_frame_tomato_rotation(
+                self._sky_axis_in_parent(), stem_point - center
             )
         except (RuntimeError, ValueError) as error:
             return False, str(error)
 
         child_frame = f"{self.tf_prefix}{self.next_index}_tf"
         transform = TransformStamped()
-        transform.header.frame_id = self.camera_frame
+        transform.header.frame_id = self.parent_frame
         transform.child_frame_id = child_frame
         transform.transform.translation.x = float(center[0])
         transform.transform.translation.y = float(center[1])
@@ -302,7 +305,7 @@ class TomatoTfGenerator(Node):
         self._broadcast_transforms()
 
         message = (
-            f"{child_frame} 생성 완료: parent={self.camera_frame}, "
+            f"{child_frame} 생성 완료: parent={self.parent_frame}, "
             f"center={center.round(4).tolist()}"
         )
         return True, message

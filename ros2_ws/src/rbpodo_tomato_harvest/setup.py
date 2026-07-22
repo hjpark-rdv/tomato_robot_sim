@@ -25,6 +25,7 @@ setup(
             "tomato_harvest_test = rbpodo_tomato_harvest.tomato_harvest_test:main",
             "tomato_tf_generator = rbpodo_tomato_harvest.tomato_tf_generator:main",
             "fake_camera_service = rbpodo_tomato_harvest.fake_camera_service:main",
+            "harvest_gui = rbpodo_tomato_harvest.harvest_gui:main",
         ],
     },
 )
