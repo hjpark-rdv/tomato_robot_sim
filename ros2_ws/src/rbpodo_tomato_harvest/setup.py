@@ -1,3 +1,5 @@
+from glob import glob
+
 from setuptools import find_packages, setup
 
 
@@ -10,6 +12,7 @@ setup(
     data_files=[
         ("share/ament_index/resource_index/packages", [f"resource/{package_name}"]),
         (f"share/{package_name}", ["package.xml"]),
+        (f"share/{package_name}/launch", glob("launch/*.launch.py")),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
@@ -20,6 +23,8 @@ setup(
     entry_points={
         "console_scripts": [
             "tomato_harvest_test = rbpodo_tomato_harvest.tomato_harvest_test:main",
+            "tomato_tf_generator = rbpodo_tomato_harvest.tomato_tf_generator:main",
+            "fake_camera_service = rbpodo_tomato_harvest.fake_camera_service:main",
         ],
     },
 )

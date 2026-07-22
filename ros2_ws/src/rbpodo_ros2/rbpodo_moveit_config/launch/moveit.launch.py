@@ -17,6 +17,7 @@ model_id = LaunchConfiguration("model_id")
 cb_simulation = LaunchConfiguration("cb_simulation")
 activate_arm_controller = LaunchConfiguration("activate_arm_controller")
 show_tomato_scene = LaunchConfiguration("show_tomato_scene")
+enable_detected_tomato_tf = LaunchConfiguration("enable_detected_tomato_tf")
 
 def generate_launch_description():
 
@@ -91,6 +92,21 @@ def generate_launch_description():
                 "publish_tomato_collisions",
                 default_value="false",
                 description="Add tomato plants to the MoveIt planning scene as collision objects",
+            ),
+            DeclareLaunchArgument(
+                "enable_detected_tomato_tf",
+                default_value="true",
+                description="Enable service-driven camera tomato TF generation",
+            ),
+            DeclareLaunchArgument(
+                "tomato_camera_frame",
+                default_value="d435_color_optical_frame",
+                description="Parent camera frame for newly detected tomato TFs",
+            ),
+            DeclareLaunchArgument(
+                "auto_create_detected_tomato_tf",
+                default_value="true",
+                description="Create a TF as soon as a new camera detection pair arrives",
             ),
         ]
     )
@@ -259,6 +275,23 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
     )
 
+    tomato_tf_generator = Node(
+        package="rbpodo_tomato_harvest",
+        executable="tomato_tf_generator",
+        name="tomato_tf_generator",
+        parameters=[
+            {
+                "camera_frame": LaunchConfiguration("tomato_camera_frame"),
+                "sky_frame": "link0",
+                "auto_create_on_detection": LaunchConfiguration(
+                    "auto_create_detected_tomato_tf"
+                ),
+            }
+        ],
+        condition=IfCondition(enable_detected_tomato_tf),
+        output="screen",
+    )
+
     nodes_to_start = [
         rviz_node,
         static_tf,
@@ -269,6 +302,7 @@ def launch_setup(context, *args, **kwargs):
         active_arm_controller_spawner,
         inactive_arm_controller_spawner,
         tomato_scene_node,
+        tomato_tf_generator,
     ]
 
     return nodes_to_start

@@ -18,6 +18,54 @@ Planned package split:
 The exact packages will be created after the robot `model_id` and gripper
 interface/geometry are selected.
 
+## 카메라 검출 기반 토마토 TF 생성
+
+MoveIt 실행 시 `tomato_tf_generator`가 함께 시작된다. 카메라 팀의 서비스는
+한 번의 촬영에서 검출한 모든 토마토를 배열 메시지 하나로 발행한다. 좌표는
+기본적으로 `d435_color_optical_frame` 기준이다.
+
+```text
+/tomato_detection/detections
+farmily_tomato_interfaces/msg/TomatoDetectionArray
+```
+
+배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 새 배열이
+들어오면 이전 `detected_tomato_*` 목록을 교체하고
+`detected_tomato_0_tf`부터 다시 생성한다. 따라서 여러 번 촬영해도 TF가
+누적되지 않으며, 운영 시 사용자는 카메라 팀이 제공하는 촬영 서비스만 호출한다.
+
+카메라 서비스의 응답값은 그 서비스를 호출한 클라이언트만 받을 수 있으므로,
+카메라 노드는 서비스 응답과 별개로 위 배열 토픽도 발행해야 한다. 각 토마토의
+줄기 방향점은 중심과 다른 위치여야 한다.
+
+기존 단일 중심점/줄기점 토픽과 `/tomato_tf_generator/create_tf` 서비스는
+수동 디버깅 호환용으로 유지한다. 자동 생성은 launch 인자
+`auto_create_detected_tomato_tf:=false`로 끌 수 있다.
+
+### Fake 카메라 서비스
+
+실제 카메라 서비스와 독립적으로 통신 흐름을 시험할 수 있도록 fake 카메라는
+별도 launch로 제공한다. MoveIt/로봇 launch에는 포함되지 않으며 필요할 때만
+다른 터미널에서 실행한다.
+
+```bash
+ros2 launch rbpodo_tomato_harvest fake_camera.launch.py
+```
+
+fake 카메라는 `tomato_0_tf`부터 `tomato_7_tf`까지 총 8개를 한 번에 검출하고
+줄기 방향점으로 `main_vine_tf`를 사용한다. 다음 서비스를 호출하면 모든 TF를
+카메라 좌표로 변환해 응답과 배열 토픽으로 내보내고, `tomato_tf_generator`가
+각 토마토의 TF를 자동 생성한다.
+
+```bash
+ros2 service call /fake_tomato_camera/detect_tomatoes \
+  farmily_tomato_interfaces/srv/DetectTomatoes '{}'
+```
+
+새 TF의 parent는 `d435_color_optical_frame`이다. 토마토 Z축은 `link0`의
+수직 상향축과 일치하도록 카메라 좌표계에서 계산하고, X축은 지면에 투영한
+토마토 중심→줄기 점 방향을 바라본다.
+
 ## Cartesian harvest test
 
 From the repository root, select a tomato and start the real robot motion with

@@ -1,0 +1,4 @@
+---
+bool success
+string message
+farmily_tomato_interfaces/TomatoDetectionArray detections
