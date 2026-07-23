@@ -21,7 +21,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "default_planner",
-                default_value="ompl",
+                default_value="cartesian",
             ),
             Node(
                 package="rbpodo_tomato_harvest",

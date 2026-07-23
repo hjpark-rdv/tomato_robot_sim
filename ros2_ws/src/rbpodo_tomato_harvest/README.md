@@ -92,7 +92,7 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
 4. Plan-only 성공 후 실제 수확 모션 실행
 5. 메인 토마토 줄기의 X/Y/Z 위치와 줄기 축 기준 회전 각도 조회 및 변경
-6. PICK_READY에서 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
+6. wrist3 선회 후 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
 7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
 8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
 
@@ -112,11 +112,18 @@ pre-grasp에 도달할 때까지의 관절별 최소각, 최대각, 변화폭 �
 Pre-grasp 이전에 실패하면서 MoveIt 응답에 부분 trajectory가 있으면 그 구간까지
 합산한다. trajectory point가 하나도 생성되지 않은 실패는 표시할 궤적이 없다고
 기록한다.
-`Cartesian`은 PICK_READY에서 pre-approach까지 TCP 직선 경로를 계산한다.
+기본 수확 순서는 `PICK_READY → wrist3 선회 → Cartesian pre-approach`이다.
+PICK_READY의 TCP 자세에서 목표 pre-grasp TCP 자세까지의 회전 중 wrist3의
+로컬 Y축 성분만 투영해 필요한 선회량을 계산한다. 이 사전 회전은 TCP 위치를
+PICK_READY 위치에 고정한 Cartesian 경로로 수행한다. 따라서 OMPL 관절 목표를
+사용하지 않으며, 회전 중 필요한 관절값은 MoveIt의 연속 IK가 계산한다.
+이후 `Cartesian`은 선회가 끝난 상태에서 pre-approach까지 TCP 직선 경로를
+계산한다. GUI의 기본 선택도 `Cartesian`이다.
 OMPL, CHOMP, PILZ LIN은 같은 pre-approach TCP pose를 각 planning pipeline의
-목표로 전달한다. PICK_READY 진입과 복귀는 관절 목표에 적합한 OMPL
-RRTConnect를 사용한다. Pre-approach 이후의 40 mm 접근과 수확 동작은 선택과
-관계없이 TCP Cartesian 경로를 유지한다. PILZ LIN은 TCP 직선 이동 중 연속 IK가
+목표로 전달한다. 최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다. 마지막
+복귀는 OMPL 탐색 없이 PILZ PTP가 6개 PICK_READY 관절값으로 한 번에 동기
+이동한다. Pre-approach 이후의 40 mm 접근과 수확 동작은 선택과 관계없이 TCP
+Cartesian 경로를 유지한다. PILZ LIN은 TCP 직선 이동 중 연속 IK가
 존재해야 하므로 토마토 위치와 자세에 따라 `NO_IK_SOLUTION`으로 실패할 수 있다.
 CHOMP는 pose goal을 직접 처리하지 못하므로 PILZ LIN으로 collision-free endpoint
 관절 상태를 먼저 구한 뒤, 그 endpoint로 향하는 실제 궤적을 CHOMP가 최적화한다.
@@ -169,20 +176,18 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 - `results.csv`: 스프레드시트 분석용 요약 결과
 - `summary.json`: 완료 시 성공률과 실패 단계별 합계
 
-실패 단계는 `OMPL_PICK_READY`, `CARTESIAN_PREAPPROACH`,
+실패 단계는 `OMPL_PICK_READY`, `FK_PRE_ROTATION`,
+`CARTESIAN_PRE_ROTATION`, `CARTESIAN_PREAPPROACH`,
 `OMPL_PREAPPROACH`, `CHOMP_PREAPPROACH`,
 `PILZ_INDUSTRIAL_MOTION_PLANNER_PREAPPROACH`, `CARTESIAN_APPROACH`,
-`CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`, `TF_TARGET` 등으로 구분된다.
+`CARTESIAN_POST_WAIT`, `PILZ_PTP_RETURN_PICK_READY`, `TF_TARGET` 등으로
+구분된다.
 Cartesian 실패에는 경로 fraction과 MoveIt 오류 코드가, OMPL/CHOMP/PILZ
 실패에는 pipeline, planner ID와 MoveIt 오류 코드가 기록된다.
 
-OMPL의 `Return PICK_READY` 계획이 실패하면 PICK_READY 관절 상태의 TCP 자세를
-`/compute_fk`로 계산한 뒤 `CARTESIAN_RETURN_PICK_READY`를 한 번 시도한다.
-Cartesian 대체 복귀가 성공하면 전체 Plan 결과는 성공으로 처리하지만,
-`failure_stage=OMPL_RETURN_PICK_READY`,
-`recovery_reason=OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED`를 함께 기록한다.
-GUI 최근 결과에는 `OMPL 실패 → Cartesian 복귀 성공` 사유가 표시되고 실시간
-통계의 `대체복귀` 항목에 별도로 집계된다.
+마지막 복귀에는 OMPL과 Cartesian 대체 복귀를 사용하지 않는다. PILZ PTP가
+실패하면 `failure_stage=PILZ_PTP_RETURN_PICK_READY`로 기록하고 전체 Plan을
+실패 처리한다.
 
 저장된 세션을 한눈에 확인할 수 있는 HTML 분석 보고서는 다음 명령으로 생성한다.
 
@@ -286,10 +291,11 @@ order:
 The planner selected in the GUI controls the motion from `PICK_READY` to the
 pre-approach pose. `Cartesian` preserves the original direct TCP path, while
 OMPL, CHOMP, and PILZ LIN receive the same TCP pose as a planning-pipeline goal.
-Entering and returning to `PICK_READY` always uses OMPL RRTConnect because it is
-a joint-space target. The harvest target and local offsets are still defined at
-`tomato_gripper_tip`, but every target pose is converted through the fixed
-TCP-to-tip transform before MoveIt plans with `tcp` as its controlled link.
+Entering `PICK_READY` uses OMPL RRTConnect. The final return uses a synchronized
+PILZ PTP move directly to all six `PICK_READY` joint targets. The harvest target
+and local offsets are still defined at `tomato_gripper_tip`, but every target
+pose is converted through the fixed TCP-to-tip transform before MoveIt plans
+with `tcp` as its controlled link.
 
 The detected tomato TF's +X axis points toward the stem, so harvesting approaches
 from its -X axis. The target keeps the tomato between `tomato_gripper_tip` and
@@ -304,10 +310,10 @@ initial Cartesian approach, the complete sequence uses the local axes of
 4. Move +10 mm along tip Z.
 5. Hold for 2 seconds.
 6. Move -30 mm along tip X.
-7. Return to PICK_READY.
+7. Return directly to all PICK_READY joint targets with PILZ PTP.
 
 The dwell separates the Cartesian motion into pre-wait and post-wait
-trajectories. Plan-only mode publishes the complete five-trajectory sequence to
+trajectories. Plan-only mode publishes the complete six-trajectory sequence to
 RViz without waiting or moving the robot. Inspect it before explicitly enabling
 execution:
 

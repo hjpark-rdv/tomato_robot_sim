@@ -287,7 +287,7 @@ class HarvestGui(Node):
             "detections_topic", "/tomato_detection/detections"
         )
         self.declare_parameter("scene_node", "/tomato_scene_node")
-        self.declare_parameter("default_planner", "ompl")
+        self.declare_parameter("default_planner", "cartesian")
         self.declare_parameter(
             "result_markers_topic", "/harvest_result_markers"
         )

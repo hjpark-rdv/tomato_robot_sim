@@ -51,6 +51,7 @@ class HarvestMotionPlan:
     """Trajectories for the complete PICK_READY-to-harvest sequence."""
 
     pick_ready_trajectory: object
+    pre_rotation_trajectory: object
     preapproach_trajectory: object
     approach_trajectory: object
     after_wait_trajectory: object
@@ -74,6 +75,43 @@ def make_centered_joint_path_constraints(
         joint_constraint.weight = 1.0
         constraints.joint_constraints.append(joint_constraint)
     return constraints
+
+
+def local_y_alignment_delta(current_pose: Pose, target_pose: Pose) -> float:
+    """Project the current-to-target orientation change onto local +Y."""
+    relative_rotation = (
+        rotation_from_pose(current_pose).T @ rotation_from_pose(target_pose)
+    )
+    sine = float(relative_rotation[0, 2] - relative_rotation[2, 0])
+    cosine = float(relative_rotation[0, 0] + relative_rotation[2, 2])
+    if math.hypot(sine, cosine) < 1e-12:
+        raise ValueError("Target orientation has no unique wrist3 projection")
+    return math.atan2(sine, cosine)
+
+
+def pose_rotated_about_local_y(pose: Pose, angle_rad: float) -> Pose:
+    """Keep position fixed and rotate a pose about its local +Y axis."""
+    sine = math.sin(float(angle_rad))
+    cosine = math.cos(float(angle_rad))
+    local_y_rotation = np.array(
+        [
+            [cosine, 0.0, sine],
+            [0.0, 1.0, 0.0],
+            [-sine, 0.0, cosine],
+        ],
+        dtype=float,
+    )
+    target = Pose()
+    target.position.x = float(pose.position.x)
+    target.position.y = float(pose.position.y)
+    target.position.z = float(pose.position.z)
+    (
+        target.orientation.x,
+        target.orientation.y,
+        target.orientation.z,
+        target.orientation.w,
+    ) = quaternion_from_rotation(rotation_from_pose(pose) @ local_y_rotation)
+    return target
 
 
 def summarize_joint_trajectory_ranges(
@@ -408,6 +446,11 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_mode", "cartesian")
         self.declare_parameter("joint_planning_pipeline_id", "ompl")
         self.declare_parameter("joint_planner_id", "RRTConnect")
+        self.declare_parameter(
+            "return_planning_pipeline_id",
+            "pilz_industrial_motion_planner",
+        )
+        self.declare_parameter("return_planner_id", "PTP")
         self.declare_parameter(
             "ompl_limited_joint_names",
             ["base", "shoulder", "elbow", "wrist1", "wrist2"],
@@ -902,6 +945,48 @@ class CartesianHarvestPlanner(Node):
         )
         return trajectory, result.trajectory_start
 
+    def _plan_cartesian_pre_rotation(
+        self,
+        preapproach_pose: Pose,
+        pick_ready_end: RobotState,
+    ):
+        pick_ready_pose = self._compute_planning_link_pose(
+            pick_ready_end,
+            stage="FK_PRE_ROTATION",
+            planner_type="fk",
+        )
+        if pick_ready_pose is None:
+            return None
+
+        try:
+            rotation_delta = local_y_alignment_delta(
+                pick_ready_pose,
+                preapproach_pose,
+            )
+            rotation_pose = pose_rotated_about_local_y(
+                pick_ready_pose,
+                rotation_delta,
+            )
+        except ValueError as error:
+            self.get_logger().error(str(error))
+            self._record_plan_stage(
+                "CARTESIAN_PRE_ROTATION",
+                "cartesian",
+                False,
+                0.0,
+                "PRE_ROTATION_ORIENTATION_AMBIGUOUS",
+            )
+            return None
+        self.get_logger().info(
+            "Cartesian TCP pre-rotation at the PICK_READY position: "
+            f"local +Y delta={math.degrees(rotation_delta):+.1f}°"
+        )
+        return self._plan_cartesian(
+            [rotation_pose],
+            pick_ready_end,
+            "TCP in-place pre-rotation",
+        )
+
     def _plan_chomp_pose_target(
         self,
         planning_target_pose: Pose,
@@ -1110,13 +1195,18 @@ class CartesianHarvestPlanner(Node):
         state.joint_state.position = list(trajectory.points[-1].positions)
         return state
 
-    def _compute_planning_link_pose(self, robot_state: RobotState):
+    def _compute_planning_link_pose(
+        self,
+        robot_state: RobotState,
+        stage: str = "CARTESIAN_RETURN_FK",
+        planner_type: str = "cartesian",
+    ):
         stage_started = time.monotonic()
         timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
         if not self.fk_client.wait_for_service(timeout_sec=timeout):
             self._record_plan_stage(
-                "CARTESIAN_RETURN_FK",
-                "cartesian",
+                stage,
+                planner_type,
                 False,
                 time.monotonic() - stage_started,
                 "FK_SERVICE_UNAVAILABLE",
@@ -1139,8 +1229,8 @@ class CartesianHarvestPlanner(Node):
                 int(response.error_code.val) if response is not None else 0
             )
             self._record_plan_stage(
-                "CARTESIAN_RETURN_FK",
-                "cartesian",
+                stage,
+                planner_type,
                 False,
                 time.monotonic() - stage_started,
                 "FK_FAILED_OR_TIMEOUT",
@@ -1148,8 +1238,8 @@ class CartesianHarvestPlanner(Node):
             )
             return None
         self._record_plan_stage(
-            "CARTESIAN_RETURN_FK",
-            "cartesian",
+            stage,
+            planner_type,
             True,
             time.monotonic() - stage_started,
             moveit_error_code=int(response.error_code.val),
@@ -1159,6 +1249,7 @@ class CartesianHarvestPlanner(Node):
     def _plan_cartesian(self, waypoints, start_state: RobotState, label: str):
         stage_started = time.monotonic()
         stage_names = {
+            "TCP in-place pre-rotation": "CARTESIAN_PRE_ROTATION",
             "TCP direct pre-approach": "CARTESIAN_PREAPPROACH",
             "Approach and pre-wait harvest": "CARTESIAN_APPROACH",
             "Post-wait harvest": "CARTESIAN_POST_WAIT",
@@ -1214,7 +1305,10 @@ class CartesianHarvestPlanner(Node):
             stage,
             response.solution,
             success,
-            pregrasp=(stage == "CARTESIAN_PREAPPROACH"),
+            pregrasp=(
+                stage == "CARTESIAN_PRE_ROTATION"
+                or stage == "CARTESIAN_PREAPPROACH"
+            ),
         )
         self.get_logger().info(
             f"{label} Cartesian success={success} "
@@ -1245,43 +1339,29 @@ class CartesianHarvestPlanner(Node):
     def _plan_return_to_pick_ready(
         self,
         after_wait_end: RobotState,
-        pick_ready_end: RobotState,
     ):
-        return_plan = self._plan_pick_ready(
+        joint_names = [
+            str(name)
+            for name in self.get_parameter("pick_ready_joint_names").value
+        ]
+        joint_positions = [
+            float(position)
+            for position in self.get_parameter("pick_ready_joint_positions").value
+        ]
+        pipeline = str(
+            self.get_parameter("return_planning_pipeline_id").value
+        )
+        planner_id = str(self.get_parameter("return_planner_id").value)
+        return_plan = self._plan_joint_target(
+            joint_names,
+            joint_positions,
             start_state=after_wait_end,
             label="Return PICK_READY",
+            pipeline_id=pipeline,
+            planner_id=planner_id,
+            stage_name="PILZ_PTP_RETURN_PICK_READY",
         )
-        if return_plan is not None:
-            return_trajectory, _return_start = return_plan
-            return return_trajectory
-
-        pipeline = str(self.get_parameter("joint_planning_pipeline_id").value)
-        if pipeline != "ompl":
-            return None
-        self.last_plan_report["recovery_used"] = True
-        self.last_plan_report["recovery_trigger"] = "OMPL_RETURN_PICK_READY"
-        pick_ready_pose = self._compute_planning_link_pose(pick_ready_end)
-        if pick_ready_pose is None:
-            self.last_plan_report["recovery_success"] = False
-            self.last_plan_report["recovery_reason"] = "PICK_READY_FK_FAILED"
-            return None
-        return_trajectory = self._plan_cartesian(
-            [pick_ready_pose],
-            after_wait_end,
-            "Fallback return PICK_READY",
-        )
-        if return_trajectory is None:
-            self.last_plan_report["recovery_success"] = False
-            self.last_plan_report["recovery_reason"] = (
-                "CARTESIAN_RETURN_PICK_READY_FAILED"
-            )
-            return None
-        self.last_plan_report["recovery_success"] = True
-        self.last_plan_report["recovery_stage"] = "CARTESIAN_RETURN_PICK_READY"
-        self.last_plan_report["recovery_reason"] = (
-            "OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED"
-        )
-        return return_trajectory
+        return return_plan[0] if return_plan is not None else None
 
     def _plan_preapproach(
         self,
@@ -1464,9 +1544,18 @@ class CartesianHarvestPlanner(Node):
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
         pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
-        preapproach_trajectory = self._plan_preapproach(
+        pre_rotation_trajectory = self._plan_cartesian_pre_rotation(
             preapproach_planning_pose,
             pick_ready_end,
+        )
+        if pre_rotation_trajectory is None:
+            return None
+        pre_rotation_end = self._trajectory_end_state(
+            pre_rotation_trajectory
+        )
+        preapproach_trajectory = self._plan_preapproach(
+            preapproach_planning_pose,
+            pre_rotation_end,
         )
         if preapproach_trajectory is None:
             return None
@@ -1496,13 +1585,13 @@ class CartesianHarvestPlanner(Node):
         after_wait_end = self._trajectory_end_state(after_wait_trajectory)
         return_trajectory = self._plan_return_to_pick_ready(
             after_wait_end,
-            pick_ready_end,
         )
         if return_trajectory is None:
             return None
 
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
+            pre_rotation_trajectory=pre_rotation_trajectory,
             preapproach_trajectory=preapproach_trajectory,
             approach_trajectory=approach_trajectory,
             after_wait_trajectory=after_wait_trajectory,
@@ -1511,6 +1600,7 @@ class CartesianHarvestPlanner(Node):
         )
         planned_trajectories = [
             pick_ready_trajectory,
+            pre_rotation_trajectory,
             preapproach_trajectory,
             approach_trajectory,
             after_wait_trajectory,
@@ -1523,12 +1613,13 @@ class CartesianHarvestPlanner(Node):
             display.trajectory.extend(planned_trajectories)
             self.display_publisher.publish(display)
         self.get_logger().info(
-            "Full harvest plan ready: PICK_READY -> TCP pre-approach "
+            "Full harvest plan ready: PICK_READY -> Cartesian TCP pre-rotation -> "
+            "TCP pre-approach "
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian approach -> "
             "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> "
-            "-X30mm -> PICK_READY"
+            "-X30mm -> PILZ PTP joint return to PICK_READY"
         )
         return plan
 
@@ -1540,6 +1631,11 @@ class CartesianHarvestPlanner(Node):
             return True
 
         if not self._execute_trajectory(plan.pick_ready_trajectory, "PICK_READY"):
+            return False
+        if not self._execute_trajectory(
+            plan.pre_rotation_trajectory,
+            "Cartesian TCP pre-rotation",
+        ):
             return False
         if not self._execute_trajectory(
             plan.preapproach_trajectory,

@@ -4,7 +4,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, Pose
+from moveit_msgs.msg import RobotState
 from rcl_interfaces.msg import ParameterType
 
 from rbpodo_tomato_harvest.harvest_gui import (
@@ -151,42 +152,45 @@ def test_plan_report_keeps_first_failure_with_cartesian_details():
     assert planner.last_plan_report["cartesian_fraction"] == pytest.approx(0.84)
 
 
-def test_ompl_return_failure_uses_successful_cartesian_fallback():
-    cartesian_calls = []
-    fallback_trajectory = object()
+def test_return_to_pick_ready_uses_single_pilz_ptp_joint_target():
+    planning_calls = []
+    return_trajectory = object()
+    parameter_values = {
+        "pick_ready_joint_names": [
+            "base",
+            "shoulder",
+            "elbow",
+            "wrist1",
+            "wrist2",
+            "wrist3",
+        ],
+        "pick_ready_joint_positions": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+        "return_planning_pipeline_id": "pilz_industrial_motion_planner",
+        "return_planner_id": "PTP",
+    }
     planner = SimpleNamespace(
-        last_plan_report={
-            "failure_stage": "OMPL_RETURN_PICK_READY",
-            "failure_reason": "MOVEIT_PLANNING_FAILED",
-        },
-        _plan_pick_ready=lambda **_kwargs: None,
-        get_parameter=lambda _name: SimpleNamespace(value="ompl"),
-        _compute_planning_link_pose=lambda _state: "pick_ready_pose",
-        _plan_cartesian=lambda waypoints, start_state, label: (
-            cartesian_calls.append((waypoints, start_state, label))
-            or fallback_trajectory
+        get_parameter=lambda name: SimpleNamespace(
+            value=parameter_values[name]
+        ),
+        _plan_joint_target=lambda names, positions, **kwargs: (
+            planning_calls.append((names, positions, kwargs))
+            or (return_trajectory, "trajectory_start")
         ),
     )
 
     result = CartesianHarvestPlanner._plan_return_to_pick_ready(
         planner,
         after_wait_end="after_wait_state",
-        pick_ready_end="pick_ready_state",
     )
 
-    assert result is fallback_trajectory
-    assert cartesian_calls == [
-        (
-            ["pick_ready_pose"],
-            "after_wait_state",
-            "Fallback return PICK_READY",
-        )
-    ]
-    assert planner.last_plan_report["recovery_success"] is True
-    assert (
-        planner.last_plan_report["recovery_reason"]
-        == "OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED"
-    )
+    assert result is return_trajectory
+    names, positions, kwargs = planning_calls[0]
+    assert names == parameter_values["pick_ready_joint_names"]
+    assert positions == parameter_values["pick_ready_joint_positions"]
+    assert kwargs["start_state"] == "after_wait_state"
+    assert kwargs["pipeline_id"] == "pilz_industrial_motion_planner"
+    assert kwargs["planner_id"] == "PTP"
+    assert kwargs["stage_name"] == "PILZ_PTP_RETURN_PICK_READY"
 
 
 def test_harvest_command_builds_plan_only_command():
@@ -309,6 +313,41 @@ def test_chomp_preapproach_uses_ik_joint_target_route():
 
     assert result == "chomp_trajectory"
     assert calls == [("planning_target_pose", "pick_ready_state")]
+
+
+def test_pre_rotation_uses_cartesian_path_at_pick_ready_position():
+    calls = []
+    pick_ready_pose = Pose()
+    pick_ready_pose.position.x = 0.4
+    pick_ready_pose.position.y = -0.2
+    pick_ready_pose.position.z = 0.6
+    pick_ready_pose.orientation.w = 1.0
+    target_pose = Pose()
+    target_pose.orientation.y = 0.25881904510252074
+    target_pose.orientation.w = 0.9659258262890683
+    start_state = RobotState()
+    planner = SimpleNamespace(
+        get_logger=lambda: SimpleNamespace(info=lambda message: None),
+        _compute_planning_link_pose=lambda state, **kwargs: pick_ready_pose,
+        _plan_cartesian=lambda waypoints, state, label: (
+            calls.append((waypoints, state, label))
+            or "cartesian_rotation_trajectory"
+        ),
+    )
+
+    result = CartesianHarvestPlanner._plan_cartesian_pre_rotation(
+        planner,
+        target_pose,
+        start_state,
+    )
+
+    assert result == "cartesian_rotation_trajectory"
+    waypoints, state, label = calls[0]
+    assert state is start_state
+    assert label == "TCP in-place pre-rotation"
+    assert waypoints[0].position.x == pytest.approx(0.4)
+    assert waypoints[0].position.y == pytest.approx(-0.2)
+    assert waypoints[0].position.z == pytest.approx(0.6)
 
 
 def test_harvest_command_rejects_negative_index():
