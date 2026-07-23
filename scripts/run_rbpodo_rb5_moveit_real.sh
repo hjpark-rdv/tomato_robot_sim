@@ -53,4 +53,5 @@ exec /usr/bin/python3.10 /opt/ros/humble/bin/ros2 launch \
   use_fake_hardware:=false \
   fake_sensor_commands:=false \
   cb_simulation:=Real \
-  activate_arm_controller:=true
+  activate_arm_controller:=true \
+  "$@"

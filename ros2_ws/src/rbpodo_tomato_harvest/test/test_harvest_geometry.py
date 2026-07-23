@@ -1,12 +1,17 @@
 import numpy as np
 from geometry_msgs.msg import Pose
+from moveit_msgs.msg import RobotTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
+    format_joint_trajectory_ranges,
+    make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
     stemward_and_outward_from_tomato_rotation,
+    summarize_joint_trajectory_ranges,
 )
 
 
@@ -190,3 +195,68 @@ def test_planning_link_goal_accounts_for_rotated_tip_offset():
 
     assert np.allclose(_position(planning_goal), [0.1, 0.0, 0.3])
     assert np.allclose(_rotation(planning_goal), _rotation(tip_goal))
+
+
+def test_ompl_joint_constraints_use_start_centers_and_exclude_wrist3():
+    start_positions = {
+        "base": 0.4,
+        "shoulder": -0.3,
+        "elbow": 0.2,
+        "wrist1": -0.1,
+        "wrist2": 0.5,
+    }
+    constraints = make_centered_joint_path_constraints(
+        start_positions,
+        np.deg2rad(120.0),
+    )
+
+    constrained_names = [
+        item.joint_name for item in constraints.joint_constraints
+    ]
+    assert constrained_names == [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+    ]
+    assert "wrist3" not in constrained_names
+    for item in constraints.joint_constraints:
+        assert np.isclose(item.position, start_positions[item.joint_name])
+        assert np.isclose(item.tolerance_above, np.deg2rad(120.0))
+        assert np.isclose(item.tolerance_below, np.deg2rad(120.0))
+
+
+def test_joint_trajectory_summary_uses_joint_names_across_segments():
+    first = RobotTrajectory()
+    first.joint_trajectory.joint_names = ["base", "wrist3"]
+    first.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=[-1.0, 2.0]),
+        JointTrajectoryPoint(positions=[0.5, 3.0]),
+    ]
+    second = RobotTrajectory()
+    second.joint_trajectory.joint_names = ["wrist3", "base"]
+    second.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=[-2.0, 1.0]),
+    ]
+
+    summary = summarize_joint_trajectory_ranges(
+        [first, second],
+        start_positions={"base": 0.25, "wrist3": -0.5},
+    )
+
+    assert [item["joint_name"] for item in summary] == ["base", "wrist3"]
+    assert np.isclose(summary[0]["start_rad"], 0.25)
+    assert np.isclose(summary[0]["min_rad"], -1.0)
+    assert np.isclose(summary[0]["max_rad"], 1.0)
+    assert summary[0]["sample_count"] == 3
+    assert np.isclose(summary[1]["start_rad"], -0.5)
+    assert np.isclose(summary[1]["min_rad"], -2.0)
+    assert np.isclose(summary[1]["max_rad"], 3.0)
+    assert summary[1]["sample_count"] == 3
+    formatted = format_joint_trajectory_ranges(summary)
+    assert "Joint" in formatted
+    assert "Start" in formatted
+    assert "base" in formatted
+    assert "wrist3" in formatted
+    assert "Points" in formatted

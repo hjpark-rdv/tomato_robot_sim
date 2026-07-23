@@ -72,6 +72,16 @@ def generate_launch_description():
             description="Activate the trajectory controller at startup",
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "start_at_pick_ready",
+            default_value="true",
+            description=(
+                "Initialize fake hardware at the SRDF PICK_READY joint pose. "
+                "This never commands or overrides the real robot state."
+            ),
+        )
+    )
     declared_arguments.extend(
         [
             DeclareLaunchArgument(
@@ -94,6 +104,24 @@ def generate_launch_description():
                 default_value="false",
                 description="Add tomato plants to the MoveIt planning scene as collision objects",
             ),
+            DeclareLaunchArgument(
+                "publish_workspace_collisions",
+                default_value="true",
+                description="Add the robot guard walls and base pedestal to the MoveIt planning scene",
+            ),
+            DeclareLaunchArgument("workspace_left_wall_x", default_value="-0.55"),
+            DeclareLaunchArgument("workspace_right_wall_x", default_value="0.65"),
+            DeclareLaunchArgument("workspace_wall_thickness", default_value="0.04"),
+            DeclareLaunchArgument("workspace_wall_width", default_value="1.20"),
+            DeclareLaunchArgument("workspace_wall_height", default_value="1.15"),
+            DeclareLaunchArgument("workspace_ceiling_z", default_value="1.10"),
+            DeclareLaunchArgument("workspace_ceiling_thickness", default_value="0.04"),
+            DeclareLaunchArgument("workspace_ceiling_width", default_value="1.24"),
+            DeclareLaunchArgument("workspace_ceiling_depth", default_value="1.20"),
+            DeclareLaunchArgument("robot_pedestal_size_x", default_value="0.40"),
+            DeclareLaunchArgument("robot_pedestal_size_y", default_value="0.40"),
+            DeclareLaunchArgument("robot_pedestal_height", default_value="0.18"),
+            DeclareLaunchArgument("robot_pedestal_top_z", default_value="0.0"),
             DeclareLaunchArgument(
                 "enable_detected_tomato_tf",
                 default_value="true",
@@ -122,6 +150,25 @@ def generate_launch_description():
 
 
 def launch_setup(context, *args, **kwargs):
+    fake_hardware_enabled = (
+        use_fake_hardware.perform(context).lower() in {"1", "true", "yes", "on"}
+    )
+    start_at_pick_ready = (
+        LaunchConfiguration("start_at_pick_ready").perform(context).lower()
+        in {"1", "true", "yes", "on"}
+    )
+    if fake_hardware_enabled and start_at_pick_ready:
+        initial_positions = [
+            1.543469497691539,
+            1.1810132733317547,
+            -2.058567995722523,
+            -0.6538175657861676,
+            -1.5872183101827066,
+            3.269133302406451,
+        ]
+    else:
+        initial_positions = [0.0] * 6
+
     tomato_position = [
         float(LaunchConfiguration("tomato_x").perform(context)),
         float(LaunchConfiguration("tomato_y").perform(context)),
@@ -141,6 +188,49 @@ def launch_setup(context, *args, **kwargs):
         LaunchConfiguration("publish_tomato_collisions").perform(context).lower()
         in {"1", "true", "yes", "on"}
     )
+    publish_workspace_collisions = (
+        LaunchConfiguration("publish_workspace_collisions").perform(context).lower()
+        in {"1", "true", "yes", "on"}
+    )
+    workspace_left_wall_x = float(
+        LaunchConfiguration("workspace_left_wall_x").perform(context)
+    )
+    workspace_right_wall_x = float(
+        LaunchConfiguration("workspace_right_wall_x").perform(context)
+    )
+    workspace_wall_thickness = float(
+        LaunchConfiguration("workspace_wall_thickness").perform(context)
+    )
+    workspace_wall_width = float(
+        LaunchConfiguration("workspace_wall_width").perform(context)
+    )
+    workspace_wall_height = float(
+        LaunchConfiguration("workspace_wall_height").perform(context)
+    )
+    workspace_ceiling_z = float(
+        LaunchConfiguration("workspace_ceiling_z").perform(context)
+    )
+    workspace_ceiling_thickness = float(
+        LaunchConfiguration("workspace_ceiling_thickness").perform(context)
+    )
+    workspace_ceiling_width = float(
+        LaunchConfiguration("workspace_ceiling_width").perform(context)
+    )
+    workspace_ceiling_depth = float(
+        LaunchConfiguration("workspace_ceiling_depth").perform(context)
+    )
+    robot_pedestal_size_x = float(
+        LaunchConfiguration("robot_pedestal_size_x").perform(context)
+    )
+    robot_pedestal_size_y = float(
+        LaunchConfiguration("robot_pedestal_size_y").perform(context)
+    )
+    robot_pedestal_height = float(
+        LaunchConfiguration("robot_pedestal_height").perform(context)
+    )
+    robot_pedestal_top_z = float(
+        LaunchConfiguration("robot_pedestal_top_z").perform(context)
+    )
 
     mappings = {
         "robot_ip": robot_ip,
@@ -148,6 +238,12 @@ def launch_setup(context, *args, **kwargs):
         "fake_sensor_commands": fake_sensor_commands,
         "model_id": model_id,
         "cb_simulation": cb_simulation,
+        "initial_base": str(initial_positions[0]),
+        "initial_shoulder": str(initial_positions[1]),
+        "initial_elbow": str(initial_positions[2]),
+        "initial_wrist1": str(initial_positions[3]),
+        "initial_wrist2": str(initial_positions[4]),
+        "initial_wrist3": str(initial_positions[5]),
     }
 
     moveit_config = (
@@ -268,16 +364,36 @@ def launch_setup(context, *args, **kwargs):
                 "tomato_z_spin_deg": tomato_z_spin_deg,
                 "tomato_radius_scale": tomato_radius_scale,
                 "show_vine_row": show_vine_row_value,
-                "publish_planning_scene": publish_tomato_collisions,
+                "publish_planning_scene": (
+                    publish_tomato_collisions or publish_workspace_collisions
+                ),
+                "include_main_vine_collision": publish_tomato_collisions,
                 "include_other_tomato_collision": publish_tomato_collisions,
                 "include_target_tomato_collision": False,
                 "include_target_branch_collision": False,
                 "include_ground_collision": False,
-                "include_ceiling_collision": False,
+                "include_ceiling_collision": publish_workspace_collisions,
+                "ceiling_z": workspace_ceiling_z,
+                "ceiling_thickness": workspace_ceiling_thickness,
+                "ceiling_width": workspace_ceiling_width,
+                "ceiling_depth": workspace_ceiling_depth,
                 "include_rear_wall_collision": False,
-                "include_robot_rear_wall_collision": False,
-                "include_robot_front_wall_collision": False,
+                "include_robot_rear_wall_collision": publish_workspace_collisions,
+                "robot_rear_wall_x": workspace_left_wall_x,
+                "robot_rear_wall_thickness": workspace_wall_thickness,
+                "robot_rear_wall_width": workspace_wall_width,
+                "robot_rear_wall_height": workspace_wall_height,
+                "include_robot_front_wall_collision": publish_workspace_collisions,
+                "robot_front_wall_x": workspace_right_wall_x,
+                "robot_front_wall_thickness": workspace_wall_thickness,
+                "robot_front_wall_width": workspace_wall_width,
+                "robot_front_wall_height": workspace_wall_height,
                 "include_robot_side_wall_collision": False,
+                "include_robot_pedestal_collision": publish_workspace_collisions,
+                "robot_pedestal_size_x": robot_pedestal_size_x,
+                "robot_pedestal_size_y": robot_pedestal_size_y,
+                "robot_pedestal_height": robot_pedestal_height,
+                "robot_pedestal_top_z": robot_pedestal_top_z,
                 "include_rail_pipe_collision": False,
             }
         ],

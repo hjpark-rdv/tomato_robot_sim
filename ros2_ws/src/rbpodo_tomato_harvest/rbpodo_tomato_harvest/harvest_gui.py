@@ -31,9 +31,10 @@ from visualization_msgs.msg import Marker, MarkerArray
 
 
 PLANNER_CONFIGS = {
-    "OMPL / RRTConnect": ("ompl", "RRTConnectkConfigDefault"),
-    "CHOMP": ("chomp", "RRTConnectkConfigDefault"),
-    "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN"),
+    "Cartesian": ("ompl", "RRTConnect", "cartesian"),
+    "OMPL / RRTConnect": ("ompl", "RRTConnect", "planner"),
+    "CHOMP": ("chomp", "RRTConnect", "planner"),
+    "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN", "planner"),
 }
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
@@ -49,6 +50,7 @@ SWEEP_CSV_FIELDS = (
     "success",
     "pipeline",
     "planner_id",
+    "preapproach_mode",
     "failure_stage",
     "failure_planner_type",
     "failure_reason",
@@ -123,14 +125,19 @@ def harvest_command(
     tomato_index: int,
     execute: bool,
     planning_pipeline_id: str = "ompl",
-    planner_id: str = "RRTConnectkConfigDefault",
+    planner_id: str = "RRTConnect",
+    preapproach_mode: str = "cartesian",
     publish_display_trajectory: bool = True,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
     if tomato_index < 0:
         raise ValueError("tomato_index must be zero or greater")
-    planner_config = (planning_pipeline_id, planner_id)
+    planner_config = (
+        planning_pipeline_id,
+        planner_id,
+        preapproach_mode,
+    )
     if planner_config not in PLANNER_CONFIGS.values():
         raise ValueError(
             f"unsupported planner: pipeline={planning_pipeline_id} "
@@ -150,6 +157,8 @@ def harvest_command(
         f"planning_pipeline_id:={planning_pipeline_id}",
         "-p",
         f"planner_id:={planner_id}",
+        "-p",
+        f"preapproach_mode:={preapproach_mode}",
         "-p",
         "publish_display_trajectory:="
         f"{'true' if publish_display_trajectory else 'false'}",
@@ -372,7 +381,13 @@ class HarvestGui(Node):
             (
                 label
                 for label, config in PLANNER_CONFIGS.items()
-                if config[0] == default_planner
+                if (
+                    (default_planner == "cartesian" and config[2] == "cartesian")
+                    or (
+                        config[0] == default_planner
+                        and config[2] == "planner"
+                    )
+                )
             ),
             "OMPL / RRTConnect",
         )
@@ -836,11 +851,14 @@ class HarvestGui(Node):
         session_name = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         session_directory = base_directory / session_name
         session_directory.mkdir(parents=True, exist_ok=False)
-        pipeline, planner_id = self._selected_planner_config()
+        pipeline, planner_id, preapproach_mode = (
+            self._selected_planner_config()
+        )
         metadata = {
             "created_at": datetime.now().astimezone().isoformat(),
             "pipeline": pipeline,
             "planner_id": planner_id,
+            "preapproach_mode": preapproach_mode,
             "tomato_indices": list(range(8)),
             "case_count": len(cases),
             "plan_count": len(cases) * 8,
@@ -1193,12 +1211,15 @@ class HarvestGui(Node):
         self.tomato_tree.selection_set(target_item)
         self.tomato_tree.focus(target_item)
         self.tomato_tree.see(target_item)
-        pipeline, planner_id = self._selected_planner_config()
+        pipeline, planner_id, preapproach_mode = (
+            self._selected_planner_config()
+        )
         verification = (
             self.detection_generation,
             tomato_index,
             pipeline,
             planner_id,
+            preapproach_mode,
         )
         self.sweep_summary.set(
             f"{self.sweep_completed + 1} / {self.sweep_total} — "
@@ -1218,6 +1239,7 @@ class HarvestGui(Node):
             "tomato_frame": f"detected_tomato_{tomato_index}_tf",
             "planning_pipeline_id": pipeline,
             "planner_id": planner_id,
+            "preapproach_mode": preapproach_mode,
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -1404,7 +1426,7 @@ class HarvestGui(Node):
             f"{self.selected_planner.get()} 선택됨 — Plan-only를 다시 실행하세요."
         )
 
-    def _selected_planner_config(self) -> tuple[str, str]:
+    def _selected_planner_config(self) -> tuple[str, str, str]:
         return PLANNER_CONFIGS.get(
             self.selected_planner.get(),
             PLANNER_CONFIGS["OMPL / RRTConnect"],
@@ -1422,12 +1444,15 @@ class HarvestGui(Node):
         if self.harvest_process is not None or self.batch_active or self.sweep_active:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
-        pipeline, planner_id = self._selected_planner_config()
+        pipeline, planner_id, preapproach_mode = (
+            self._selected_planner_config()
+        )
         verification = (
             self.detection_generation,
             index,
             pipeline,
             planner_id,
+            preapproach_mode,
         )
         if execute and self.verified_plan != verification:
             messagebox.showwarning(
@@ -1473,7 +1498,8 @@ class HarvestGui(Node):
         self._clear_harvest_results()
         self._append_log(
             f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
-            f"planner={self.batch_planner[0]}/{self.batch_planner[1]}"
+            f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
+            f"preapproach={self.batch_planner[2]}"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -1493,12 +1519,13 @@ class HarvestGui(Node):
             return
 
         index, execute = self.batch_jobs.popleft()
-        pipeline, planner_id = self.batch_planner
+        pipeline, planner_id, preapproach_mode = self.batch_planner
         verification = (
             self.batch_generation,
             index,
             pipeline,
             planner_id,
+            preapproach_mode,
         )
         if execute and self.verified_plan != verification:
             self._finish_batch(
@@ -1524,12 +1551,13 @@ class HarvestGui(Node):
         execute: bool,
         verification,
     ) -> bool:
-        pipeline, planner_id = verification[2], verification[3]
+        pipeline, planner_id, preapproach_mode = verification[2:5]
         command = harvest_command(
             index,
             execute,
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
+            preapproach_mode=preapproach_mode,
             publish_display_trajectory=not self.sweep_active,
         )
         environment = os.environ.copy()
@@ -1543,7 +1571,8 @@ class HarvestGui(Node):
         )
         self._append_log(
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
-            f"planner={pipeline}/{planner_id}"
+            f"planner={pipeline}/{planner_id}, "
+            f"preapproach={preapproach_mode}"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
         self._set_busy(True)
@@ -1683,6 +1712,7 @@ class HarvestGui(Node):
             "success": success,
             "pipeline": verification[2],
             "planner_id": verification[3],
+            "preapproach_mode": verification[4],
             "failure_stage": report.get("failure_stage", ""),
             "failure_planner_type": report.get(
                 "failure_planner_type", ""

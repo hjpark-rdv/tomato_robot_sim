@@ -181,6 +181,7 @@ def build_report(session_directory: Path) -> str:
     created_at = session.get("created_at", "—")
     pipeline = session.get("pipeline", "—")
     planner_id = session.get("planner_id", "—")
+    preapproach_mode = session.get("preapproach_mode", "—")
     success_rate = _percentage(len(successes), total)
     average_duration = mean(durations) if durations else 0.0
     stage_rows = _bar_rows(failure_stages.most_common(), len(failures), "#f85149")
@@ -238,7 +239,8 @@ tr:hover td {{ background:#1f242c; }}
 <h1>Farmily 수확 Plan 분석 보고서</h1>
 <div class="muted">세션: {html.escape(session_directory.name)} · 생성: {generated_at}</div>
 <div class="muted">테스트 시작: {html.escape(str(created_at))} ·
-Pipeline: {html.escape(str(pipeline))} · Planner: {html.escape(str(planner_id))}</div>
+Pipeline: {html.escape(str(pipeline))} · Planner: {html.escape(str(planner_id))} ·
+Pre-approach: {html.escape(str(preapproach_mode))}</div>
 <section class="cards">
   <div class="card"><div class="muted">전체 Plan</div><div class="value">{total}</div></div>
   <div class="card"><div class="muted">성공</div><div class="value good">{len(successes)}</div></div>

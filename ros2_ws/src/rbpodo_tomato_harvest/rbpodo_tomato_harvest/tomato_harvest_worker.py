@@ -20,7 +20,11 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
         ),
         Parameter(
             "planner_id",
-            value=str(request.get("planner_id", "RRTConnectkConfigDefault")),
+            value=str(request.get("planner_id", "RRTConnect")),
+        ),
+        Parameter(
+            "preapproach_mode",
+            value=str(request.get("preapproach_mode", "cartesian")),
         ),
         Parameter("execute", value=False),
         Parameter("publish_display_trajectory", value=False),

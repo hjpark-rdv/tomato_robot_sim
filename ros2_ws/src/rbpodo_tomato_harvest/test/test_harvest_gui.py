@@ -9,6 +9,7 @@ from rcl_interfaces.msg import ParameterType
 
 from rbpodo_tomato_harvest.harvest_gui import (
     HarvestGui,
+    PLANNER_CONFIGS,
     generate_sweep_cases,
     harvest_all_jobs,
     harvest_command,
@@ -117,13 +118,15 @@ def test_persistent_worker_updates_target_and_disables_display():
         {
             "tomato_frame": "detected_tomato_7_tf",
             "planning_pipeline_id": "chomp",
-            "planner_id": "RRTConnectkConfigDefault",
+            "planner_id": "RRTConnect",
+            "preapproach_mode": "planner",
         },
     )
 
     values = {parameter.name: parameter.value for parameter in received}
     assert node.tomato_frame == "detected_tomato_7_tf"
     assert values["planning_pipeline_id"] == "chomp"
+    assert values["preapproach_mode"] == "planner"
     assert values["execute"] is False
     assert values["publish_display_trajectory"] is False
 
@@ -191,6 +194,7 @@ def test_harvest_command_builds_plan_only_command():
         3,
         False,
         planning_pipeline_id="chomp",
+        preapproach_mode="planner",
         python_executable="/usr/bin/python3",
     )
 
@@ -202,7 +206,8 @@ def test_harvest_command_builds_plan_only_command():
     assert "tomato_frame:=detected_tomato_3_tf" in command
     assert "execute:=false" in command
     assert "planning_pipeline_id:=chomp" in command
-    assert "planner_id:=RRTConnectkConfigDefault" in command
+    assert "planner_id:=RRTConnect" in command
+    assert "preapproach_mode:=planner" in command
     assert "publish_display_trajectory:=true" in command
 
 
@@ -212,7 +217,8 @@ def test_harvest_command_builds_execute_command():
     assert "tomato_frame:=detected_tomato_7_tf" in command
     assert "execute:=true" in command
     assert "planning_pipeline_id:=ompl" in command
-    assert "planner_id:=RRTConnectkConfigDefault" in command
+    assert "planner_id:=RRTConnect" in command
+    assert "preapproach_mode:=cartesian" in command
 
 
 def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
@@ -227,10 +233,82 @@ def test_harvest_command_builds_pilz_lin_command():
         False,
         planning_pipeline_id="pilz_industrial_motion_planner",
         planner_id="LIN",
+        preapproach_mode="planner",
     )
 
     assert "planning_pipeline_id:=pilz_industrial_motion_planner" in command
     assert "planner_id:=LIN" in command
+    assert "preapproach_mode:=planner" in command
+
+
+def test_planner_options_include_cartesian_and_pipeline_modes():
+    assert PLANNER_CONFIGS["Cartesian"] == (
+        "ompl",
+        "RRTConnect",
+        "cartesian",
+    )
+    assert PLANNER_CONFIGS["OMPL / RRTConnect"] == (
+        "ompl",
+        "RRTConnect",
+        "planner",
+    )
+
+
+@pytest.mark.parametrize(
+    ("mode", "expected"),
+    [
+        ("cartesian", "cartesian_trajectory"),
+        ("planner", "pipeline_trajectory"),
+    ],
+)
+def test_preapproach_selection_routes_to_requested_planner(mode, expected):
+    calls = []
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value=mode if name == "preapproach_mode" else ""
+        ),
+        _plan_cartesian=lambda waypoints, start_state, label: (
+            calls.append(("cartesian", waypoints, start_state, label))
+            or "cartesian_trajectory"
+        ),
+        _plan_pose_target=lambda pose, start_state, label: (
+            calls.append(("planner", pose, start_state, label))
+            or "pipeline_trajectory"
+        ),
+    )
+
+    result = CartesianHarvestPlanner._plan_preapproach(
+        planner,
+        "target_pose",
+        "pick_ready_state",
+    )
+
+    assert result == expected
+    assert calls[0][0] == mode
+
+
+def test_chomp_preapproach_uses_ik_joint_target_route():
+    calls = []
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "preapproach_mode": "planner",
+                "planning_pipeline_id": "chomp",
+            }.get(name, "")
+        ),
+        _plan_chomp_pose_target=lambda pose, start_state: (
+            calls.append((pose, start_state)) or "chomp_trajectory"
+        ),
+    )
+
+    result = CartesianHarvestPlanner._plan_preapproach(
+        planner,
+        "planning_target_pose",
+        "pick_ready_state",
+    )
+
+    assert result == "chomp_trajectory"
+    assert calls == [("planning_target_pose", "pick_ready_state")]
 
 
 def test_harvest_command_rejects_negative_index():
@@ -373,7 +451,7 @@ def test_batch_plan_failure_marks_yellow_skips_execute_and_continues():
         gui,
         return_code=1,
         execute=False,
-        verification=(4, 0, "ompl", "RRTConnectkConfigDefault"),
+        verification=(4, 0, "ompl", "RRTConnect", "planner"),
     )
 
     assert gui.batch_skipped == 1
@@ -403,7 +481,7 @@ def test_batch_execution_failure_marks_yellow_and_stops():
         gui,
         return_code=1,
         execute=True,
-        verification=(4, 0, "ompl", "RRTConnectkConfigDefault"),
+        verification=(4, 0, "ompl", "RRTConnect", "planner"),
     )
 
     assert ("marker", 0, False) in events

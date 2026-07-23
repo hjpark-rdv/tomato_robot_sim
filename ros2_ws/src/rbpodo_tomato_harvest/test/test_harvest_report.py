@@ -8,6 +8,7 @@ def test_write_report_summarizes_failures_and_successes(tmp_path):
         "created_at": "2026-07-23T12:00:00+09:00",
         "pipeline": "ompl",
         "planner_id": "RRTConnectkConfigDefault",
+        "preapproach_mode": "planner",
     }
     results = [
         {
@@ -51,3 +52,4 @@ def test_write_report_summarizes_failures_and_successes(tmp_path):
     assert "50.0%" in report
     assert "CARTESIAN_PREAPPROACH" in report
     assert "CARTESIAN_FRACTION_LOW" in report
+    assert "Pre-approach: planner" in report

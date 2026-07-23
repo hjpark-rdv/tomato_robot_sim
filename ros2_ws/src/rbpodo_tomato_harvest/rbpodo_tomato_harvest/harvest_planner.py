@@ -7,10 +7,14 @@ import rclpy
 from geometry_msgs.msg import Pose
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
+    BoundingVolume,
     Constraints,
     DisplayTrajectory,
+    GenericTrajectory,
     JointConstraint,
     MoveItErrorCodes,
+    OrientationConstraint,
+    PositionConstraint,
     RobotState,
 )
 from moveit_msgs.srv import GetCartesianPath, GetPositionFK
@@ -18,6 +22,8 @@ from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.time import Time
+from sensor_msgs.msg import JointState
+from shape_msgs.msg import SolidPrimitive
 from tf2_ros import Buffer, TransformException, TransformListener
 
 
@@ -50,6 +56,93 @@ class HarvestMotionPlan:
     after_wait_trajectory: object
     return_trajectory: object
     display_start_state: RobotState
+
+
+def make_centered_joint_path_constraints(
+    joint_positions: dict[str, float],
+    tolerance_rad: float,
+) -> Constraints:
+    """Limit selected joints around their planning-stage start positions."""
+    constraints = Constraints()
+    constraints.name = "OMPL start-centered joint range limits"
+    for joint_name, position in joint_positions.items():
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = str(joint_name)
+        joint_constraint.position = float(position)
+        joint_constraint.tolerance_above = float(tolerance_rad)
+        joint_constraint.tolerance_below = float(tolerance_rad)
+        joint_constraint.weight = 1.0
+        constraints.joint_constraints.append(joint_constraint)
+    return constraints
+
+
+def summarize_joint_trajectory_ranges(
+    trajectories,
+    start_positions: dict[str, float] | None = None,
+) -> list[dict]:
+    """Return per-joint extrema across one or more RobotTrajectory messages."""
+    samples: dict[str, list[float]] = {}
+    joint_order: list[str] = []
+    for robot_trajectory in trajectories:
+        trajectory = robot_trajectory.joint_trajectory
+        names = list(trajectory.joint_names)
+        for name in names:
+            if name not in samples:
+                samples[name] = []
+                joint_order.append(name)
+        for point in trajectory.points:
+            for name, position in zip(names, point.positions):
+                samples[name].append(float(position))
+
+    summary = []
+    for name in joint_order:
+        values = samples[name]
+        if not values:
+            continue
+        start = (
+            float(start_positions[name])
+            if start_positions is not None and name in start_positions
+            else values[0]
+        )
+        minimum = min(start, *values)
+        maximum = max(start, *values)
+        summary.append(
+            {
+                "joint_name": name,
+                "start_rad": start,
+                "min_rad": minimum,
+                "max_rad": maximum,
+                "span_rad": maximum - minimum,
+                "start_deg": math.degrees(start),
+                "min_deg": math.degrees(minimum),
+                "max_deg": math.degrees(maximum),
+                "span_deg": math.degrees(maximum - minimum),
+                "sample_count": len(values),
+            }
+        )
+    return summary
+
+
+def format_joint_trajectory_ranges(
+    summary: list[dict],
+    heading: str = "Pre-grasp까지의 관절 범위 (단위: deg)",
+) -> str:
+    """Format trajectory extrema as a fixed-width GUI/log table."""
+    lines = [
+        heading,
+        "  Joint       Start       Min        Max       Span   Points",
+        "  ---------- ---------  ---------  ---------  --------- ------",
+    ]
+    for item in summary:
+        lines.append(
+            f"  {item['joint_name']:<10} "
+            f"{item['start_deg']:>9.2f}  "
+            f"{item['min_deg']:>9.2f}  "
+            f"{item['max_deg']:>9.2f}  "
+            f"{item['span_deg']:>9.2f} "
+            f"{item['sample_count']:>6}"
+        )
+    return "\n".join(lines)
 
 
 def _unit(vector: np.ndarray, label: str) -> np.ndarray:
@@ -311,7 +404,17 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("pick_ready_velocity_scale", 0.20)
         self.declare_parameter("pick_ready_acceleration_scale", 0.20)
         self.declare_parameter("planning_pipeline_id", "ompl")
-        self.declare_parameter("planner_id", "RRTConnectkConfigDefault")
+        self.declare_parameter("planner_id", "RRTConnect")
+        self.declare_parameter("preapproach_mode", "cartesian")
+        self.declare_parameter("joint_planning_pipeline_id", "ompl")
+        self.declare_parameter("joint_planner_id", "RRTConnect")
+        self.declare_parameter(
+            "ompl_limited_joint_names",
+            ["base", "shoulder", "elbow", "wrist1", "wrist2"],
+        )
+        self.declare_parameter("ompl_joint_tolerance_deg", 120.0)
+        self.declare_parameter("preapproach_position_tolerance", 0.002)
+        self.declare_parameter("preapproach_orientation_tolerance", 0.02)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.040)
@@ -351,14 +454,57 @@ class CartesianHarvestPlanner(Node):
         self.display_publisher = self.create_publisher(
             DisplayTrajectory, "/display_planned_path", 10
         )
+        self._latest_joint_positions: dict[str, float] = {}
+        self._plan_start_joint_positions: dict[str, float] = {}
+        self.joint_state_subscription = self.create_subscription(
+            JointState,
+            "/joint_states",
+            self._joint_state_callback,
+            10,
+        )
         self.last_plan_report = {}
+        self._trajectory_range_records = []
+
+    def _joint_state_callback(self, message: JointState) -> None:
+        for name, position in zip(message.name, message.position):
+            if math.isfinite(position):
+                self._latest_joint_positions[str(name)] = float(position)
+
+    def _wait_for_current_joint_positions(
+        self,
+        timeout_sec: float = 2.0,
+    ) -> dict[str, float]:
+        required_names = [
+            str(name)
+            for name in self.get_parameter("pick_ready_joint_names").value
+        ]
+        deadline = time.monotonic() + max(0.0, timeout_sec)
+        while rclpy.ok() and time.monotonic() < deadline:
+            if all(name in self._latest_joint_positions for name in required_names):
+                break
+            rclpy.spin_once(self, timeout_sec=0.05)
+        return {
+            name: self._latest_joint_positions[name]
+            for name in required_names
+            if name in self._latest_joint_positions
+        }
 
     def _begin_plan_report(self) -> None:
+        self._trajectory_range_records = []
+        self._plan_start_joint_positions = (
+            self._wait_for_current_joint_positions()
+        )
         self.last_plan_report = {
             "success": False,
             "tomato_frame": self.tomato_frame,
             "pipeline": str(self.get_parameter("planning_pipeline_id").value),
             "planner_id": str(self.get_parameter("planner_id").value),
+            "preapproach_mode": str(
+                self.get_parameter("preapproach_mode").value
+            ),
+            "start_joint_positions": dict(
+                self._plan_start_joint_positions
+            ),
             "stages": [],
             "_started_monotonic": time.monotonic(),
         }
@@ -397,6 +543,25 @@ class CartesianHarvestPlanner(Node):
                 }
             )
 
+    def _record_trajectory_range_input(
+        self,
+        stage: str,
+        trajectory,
+        accepted: bool,
+        pregrasp: bool,
+    ) -> None:
+        point_count = len(trajectory.joint_trajectory.points)
+        if point_count:
+            self._trajectory_range_records.append(
+                {
+                    "stage": stage,
+                    "trajectory": trajectory,
+                    "accepted": bool(accepted),
+                    "pregrasp": bool(pregrasp),
+                    "point_count": point_count,
+                }
+            )
+
     def _finish_plan_report(self, success: bool) -> None:
         started = self.last_plan_report.pop(
             "_started_monotonic", time.monotonic()
@@ -405,6 +570,39 @@ class CartesianHarvestPlanner(Node):
         self.last_plan_report["duration_sec"] = round(
             time.monotonic() - started, 6
         )
+        records = [
+            record
+            for record in self._trajectory_range_records
+            if record["pregrasp"] and (record["accepted"] or not success)
+        ]
+        joint_ranges = summarize_joint_trajectory_ranges(
+            [record["trajectory"] for record in records],
+            start_positions=self._plan_start_joint_positions,
+        )
+        self.last_plan_report["joint_ranges"] = joint_ranges
+        self.last_plan_report["joint_range_stages"] = [
+            {
+                "stage": record["stage"],
+                "accepted": record["accepted"],
+                "pregrasp": record["pregrasp"],
+                "point_count": record["point_count"],
+            }
+            for record in records
+        ]
+        if joint_ranges:
+            heading = (
+                "Pre-grasp까지의 관절 범위 (단위: deg)"
+                if success
+                else "실패한 Plan의 Pre-grasp까지 관절 범위 "
+                "(실패 지점이 Pre-grasp이면 부분 궤적 포함, 단위: deg)"
+            )
+            self.get_logger().info(
+                format_joint_trajectory_ranges(joint_ranges, heading)
+            )
+        else:
+            self.get_logger().info(
+                "계획 궤적 관절 범위: 표시할 trajectory point가 없습니다."
+            )
 
     def _lookup_transform(self, child_frame: str, parent_frame: str | None = None):
         target_frame = self.base_frame if parent_frame is None else parent_frame
@@ -440,6 +638,59 @@ class CartesianHarvestPlanner(Node):
             dtype=float,
         )
 
+    def _apply_ompl_joint_path_constraints(
+        self,
+        request,
+        pipeline: str,
+        start_state: RobotState | None,
+    ) -> bool:
+        if pipeline.strip().lower() != "ompl":
+            return True
+        joint_names = [
+            str(name)
+            for name in self.get_parameter("ompl_limited_joint_names").value
+        ]
+        if start_state is not None and start_state.joint_state.name:
+            start_positions = dict(
+                zip(
+                    start_state.joint_state.name,
+                    start_state.joint_state.position,
+                )
+            )
+        else:
+            start_positions = dict(self._plan_start_joint_positions)
+            if not start_positions:
+                start_positions = self._wait_for_current_joint_positions()
+        missing_names = [
+            name for name in joint_names if name not in start_positions
+        ]
+        if missing_names:
+            self.get_logger().error(
+                "OMPL 시작 자세 중심 constraint를 만들 수 없습니다. "
+                f"관절 상태 누락: {', '.join(missing_names)}"
+            )
+            return False
+
+        tolerance_deg = float(
+            self.get_parameter("ompl_joint_tolerance_deg").value
+        )
+        constrained_positions = {
+            name: float(start_positions[name]) for name in joint_names
+        }
+        request.path_constraints = make_centered_joint_path_constraints(
+            constrained_positions,
+            math.radians(tolerance_deg),
+        )
+        centers = ", ".join(
+            f"{name}={math.degrees(position):.1f}°"
+            for name, position in constrained_positions.items()
+        )
+        self.get_logger().info(
+            f"OMPL 시작 자세 중심 constraint ±{tolerance_deg:.1f}°: "
+            f"{centers}; wrist3=제외"
+        )
+        return True
+
     def _plan_pick_ready(
         self,
         start_state: RobotState | None = None,
@@ -454,7 +705,9 @@ class CartesianHarvestPlanner(Node):
         ]
         if len(joint_names) != 6 or len(joint_names) != len(joint_positions):
             self.get_logger().error("PICK_READY must contain exactly six joint values")
-            pipeline = str(self.get_parameter("planning_pipeline_id").value)
+            pipeline = str(
+                self.get_parameter("joint_planning_pipeline_id").value
+            )
             stage = (
                 f"{pipeline.upper()}_PICK_READY"
                 if label == "PICK_READY"
@@ -482,10 +735,19 @@ class CartesianHarvestPlanner(Node):
         joint_positions,
         start_state: RobotState | None,
         label: str,
+        pipeline_id: str | None = None,
+        planner_id: str | None = None,
+        stage_name: str | None = None,
+        reference_trajectory=None,
     ):
         stage_started = time.monotonic()
-        pipeline = str(self.get_parameter("planning_pipeline_id").value)
-        stage = (
+        pipeline = pipeline_id or str(
+            self.get_parameter("joint_planning_pipeline_id").value
+        )
+        selected_planner_id = planner_id or str(
+            self.get_parameter("joint_planner_id").value
+        )
+        stage = stage_name or (
             f"{pipeline.upper()}_PICK_READY"
             if label == "PICK_READY"
             else f"{pipeline.upper()}_RETURN_PICK_READY"
@@ -528,10 +790,8 @@ class CartesianHarvestPlanner(Node):
 
         goal = MoveGroup.Goal()
         goal.request.group_name = self.group_name
-        goal.request.pipeline_id = str(
-            self.get_parameter("planning_pipeline_id").value
-        )
-        goal.request.planner_id = str(self.get_parameter("planner_id").value)
+        goal.request.pipeline_id = pipeline
+        goal.request.planner_id = selected_planner_id
         goal.request.num_planning_attempts = int(
             self.get_parameter("pick_ready_planning_attempts").value
         )
@@ -549,6 +809,26 @@ class CartesianHarvestPlanner(Node):
         else:
             goal.request.start_state = start_state
         goal.request.goal_constraints.append(constraints)
+        if not self._apply_ompl_joint_path_constraints(
+            goal.request,
+            pipeline,
+            start_state,
+        ):
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "OMPL_CONSTRAINT_START_STATE_MISSING",
+            )
+            return None
+        if reference_trajectory is not None:
+            reference = GenericTrajectory()
+            reference.header.frame_id = self.base_frame
+            reference.joint_trajectory.append(
+                reference_trajectory.joint_trajectory
+            )
+            goal.request.reference_trajectories.append(reference)
         goal.planning_options.plan_only = True
         goal.planning_options.replan = True
         goal.planning_options.replan_attempts = 2
@@ -586,6 +866,15 @@ class CartesianHarvestPlanner(Node):
         success = (
             result.error_code.val == MoveItErrorCodes.SUCCESS and point_count > 0
         )
+        self._record_trajectory_range_input(
+            stage,
+            trajectory,
+            success,
+            pregrasp=(
+                label == "PICK_READY"
+                or stage.endswith("_PREAPPROACH")
+            ),
+        )
         self.get_logger().info(
             f"{label} plan success={success} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
@@ -612,6 +901,205 @@ class CartesianHarvestPlanner(Node):
             planning_time_sec=float(result.planning_time),
         )
         return trajectory, result.trajectory_start
+
+    def _plan_chomp_pose_target(
+        self,
+        planning_target_pose: Pose,
+        start_state: RobotState,
+    ):
+        pipeline = str(self.get_parameter("planning_pipeline_id").value)
+        planner_id = str(self.get_parameter("planner_id").value)
+        seed_trajectory = self._plan_pose_target(
+            planning_target_pose,
+            start_state,
+            "CHOMP pre-approach endpoint seed",
+            pipeline_id="pilz_industrial_motion_planner",
+            planner_id="LIN",
+            stage_name="CHOMP_PREAPPROACH_SEED",
+            report_trajectory=False,
+        )
+        if seed_trajectory is None:
+            return None
+        seed_end = self._trajectory_end_state(seed_trajectory)
+        result = self._plan_joint_target(
+            list(seed_end.joint_state.name),
+            list(seed_end.joint_state.position),
+            start_state=start_state,
+            label="TCP planned pre-approach",
+            pipeline_id=pipeline,
+            planner_id=planner_id,
+            stage_name=f"{pipeline.upper()}_PREAPPROACH",
+            reference_trajectory=seed_trajectory,
+        )
+        return result[0] if result is not None else None
+
+    def _plan_pose_target(
+        self,
+        target_pose: Pose,
+        start_state: RobotState,
+        label: str,
+        pipeline_id: str | None = None,
+        planner_id: str | None = None,
+        stage_name: str | None = None,
+        report_trajectory: bool = True,
+    ):
+        stage_started = time.monotonic()
+        pipeline = pipeline_id or str(
+            self.get_parameter("planning_pipeline_id").value
+        )
+        selected_planner_id = planner_id or str(
+            self.get_parameter("planner_id").value
+        )
+        stage = stage_name or f"{pipeline.upper()}_PREAPPROACH"
+        timeout = max(1.0, float(self.get_parameter("service_timeout_sec").value))
+        if not self.move_group_client.wait_for_server(timeout_sec=timeout):
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "ACTION_SERVER_UNAVAILABLE",
+            )
+            return None
+
+        position_tolerance = max(
+            0.0001,
+            float(
+                self.get_parameter("preapproach_position_tolerance").value
+            ),
+        )
+        orientation_tolerance = max(
+            0.0001,
+            float(
+                self.get_parameter("preapproach_orientation_tolerance").value
+            ),
+        )
+
+        position_region = SolidPrimitive()
+        position_region.type = SolidPrimitive.SPHERE
+        position_region.dimensions = [position_tolerance]
+        region_pose = Pose()
+        region_pose.position = target_pose.position
+        region_pose.orientation.w = 1.0
+
+        bounding_volume = BoundingVolume()
+        bounding_volume.primitives.append(position_region)
+        bounding_volume.primitive_poses.append(region_pose)
+
+        position_constraint = PositionConstraint()
+        position_constraint.header.frame_id = self.base_frame
+        position_constraint.link_name = self.planning_link
+        position_constraint.constraint_region = bounding_volume
+        position_constraint.weight = 1.0
+
+        orientation_constraint = OrientationConstraint()
+        orientation_constraint.header.frame_id = self.base_frame
+        orientation_constraint.link_name = self.planning_link
+        orientation_constraint.orientation = target_pose.orientation
+        orientation_constraint.absolute_x_axis_tolerance = orientation_tolerance
+        orientation_constraint.absolute_y_axis_tolerance = orientation_tolerance
+        orientation_constraint.absolute_z_axis_tolerance = orientation_tolerance
+        orientation_constraint.weight = 1.0
+
+        constraints = Constraints()
+        constraints.name = label
+        constraints.position_constraints.append(position_constraint)
+        constraints.orientation_constraints.append(orientation_constraint)
+
+        goal = MoveGroup.Goal()
+        goal.request.group_name = self.group_name
+        goal.request.pipeline_id = pipeline
+        goal.request.planner_id = selected_planner_id
+        goal.request.num_planning_attempts = int(
+            self.get_parameter("pick_ready_planning_attempts").value
+        )
+        goal.request.allowed_planning_time = float(
+            self.get_parameter("pick_ready_planning_time").value
+        )
+        goal.request.max_velocity_scaling_factor = float(
+            self.get_parameter("pick_ready_velocity_scale").value
+        )
+        goal.request.max_acceleration_scaling_factor = float(
+            self.get_parameter("pick_ready_acceleration_scale").value
+        )
+        goal.request.start_state = start_state
+        goal.request.goal_constraints.append(constraints)
+        if not self._apply_ompl_joint_path_constraints(
+            goal.request,
+            pipeline,
+            start_state,
+        ):
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "OMPL_CONSTRAINT_START_STATE_MISSING",
+            )
+            return None
+        goal.planning_options.plan_only = True
+        goal.planning_options.replan = True
+        goal.planning_options.replan_attempts = 2
+        goal.planning_options.replan_delay = 0.2
+
+        goal_future = self.move_group_client.send_goal_async(goal)
+        rclpy.spin_until_future_complete(self, goal_future, timeout_sec=timeout)
+        goal_handle = goal_future.result() if goal_future.done() else None
+        if goal_handle is None or not goal_handle.accepted:
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "GOAL_REJECTED_OR_RESPONSE_TIMEOUT",
+            )
+            return None
+
+        result_future = goal_handle.get_result_async()
+        rclpy.spin_until_future_complete(self, result_future, timeout_sec=timeout)
+        wrapped_result = result_future.result() if result_future.done() else None
+        if wrapped_result is None:
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "PLANNING_RESULT_TIMEOUT",
+            )
+            return None
+
+        result = wrapped_result.result
+        trajectory = result.planned_trajectory
+        point_count = len(trajectory.joint_trajectory.points)
+        success = (
+            result.error_code.val == MoveItErrorCodes.SUCCESS
+            and point_count > 0
+        )
+        if report_trajectory:
+            self._record_trajectory_range_input(
+                stage,
+                trajectory,
+                success,
+                pregrasp=True,
+            )
+        self.get_logger().info(
+            f"{label} plan success={success} pipeline={pipeline} "
+            f"planner={selected_planner_id} error_code={result.error_code.val} "
+            f"points={point_count} planning_time={result.planning_time:.3f}s"
+        )
+        reason = "" if success else "MOVEIT_PLANNING_FAILED"
+        self._record_plan_stage(
+            stage,
+            pipeline,
+            success,
+            time.monotonic() - stage_started,
+            reason,
+            moveit_error_code=int(result.error_code.val),
+            point_count=point_count,
+            planning_time_sec=float(result.planning_time),
+            planner_id=selected_planner_id,
+        )
+        return trajectory if success else None
 
     @staticmethod
     def _trajectory_end_state(planned_trajectory) -> RobotState:
@@ -722,6 +1210,12 @@ class CartesianHarvestPlanner(Node):
             and response.fraction >= minimum_fraction
             and point_count > 0
         )
+        self._record_trajectory_range_input(
+            stage,
+            response.solution,
+            success,
+            pregrasp=(stage == "CARTESIAN_PREAPPROACH"),
+        )
         self.get_logger().info(
             f"{label} Cartesian success={success} "
             f"fraction={response.fraction:.3f}/{minimum_fraction:.3f} "
@@ -761,7 +1255,7 @@ class CartesianHarvestPlanner(Node):
             return_trajectory, _return_start = return_plan
             return return_trajectory
 
-        pipeline = str(self.get_parameter("planning_pipeline_id").value)
+        pipeline = str(self.get_parameter("joint_planning_pipeline_id").value)
         if pipeline != "ompl":
             return None
         self.last_plan_report["recovery_used"] = True
@@ -788,6 +1282,41 @@ class CartesianHarvestPlanner(Node):
             "OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED"
         )
         return return_trajectory
+
+    def _plan_preapproach(
+        self,
+        preapproach_pose: Pose,
+        pick_ready_end: RobotState,
+    ):
+        mode = str(self.get_parameter("preapproach_mode").value)
+        if mode == "cartesian":
+            return self._plan_cartesian(
+                [preapproach_pose],
+                pick_ready_end,
+                "TCP direct pre-approach",
+            )
+        if mode == "planner":
+            pipeline = str(self.get_parameter("planning_pipeline_id").value)
+            if pipeline == "chomp":
+                return self._plan_chomp_pose_target(
+                    preapproach_pose,
+                    pick_ready_end,
+                )
+            return self._plan_pose_target(
+                preapproach_pose,
+                pick_ready_end,
+                "TCP planned pre-approach",
+            )
+        self.get_logger().error(f"Unsupported preapproach_mode: {mode}")
+        self._record_plan_stage(
+            "PREAPPROACH_CONFIGURATION",
+            "internal",
+            False,
+            0.0,
+            "UNSUPPORTED_PREAPPROACH_MODE",
+            preapproach_mode=mode,
+        )
+        return None
 
     def plan(self):
         self._begin_plan_report()
@@ -935,10 +1464,9 @@ class CartesianHarvestPlanner(Node):
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
         pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
-        preapproach_trajectory = self._plan_cartesian(
-            [preapproach_planning_pose],
+        preapproach_trajectory = self._plan_preapproach(
+            preapproach_planning_pose,
             pick_ready_end,
-            "TCP direct pre-approach",
         )
         if preapproach_trajectory is None:
             return None
@@ -981,22 +1509,23 @@ class CartesianHarvestPlanner(Node):
             return_trajectory=return_trajectory,
             display_start_state=display_start_state,
         )
+        planned_trajectories = [
+            pick_ready_trajectory,
+            preapproach_trajectory,
+            approach_trajectory,
+            after_wait_trajectory,
+            return_trajectory,
+        ]
         if bool(self.get_parameter("publish_display_trajectory").value):
             display = DisplayTrajectory()
             display.model_id = self.robot_model_id
             display.trajectory_start = display_start_state
-            display.trajectory.extend(
-                [
-                    pick_ready_trajectory,
-                    preapproach_trajectory,
-                    approach_trajectory,
-                    after_wait_trajectory,
-                    return_trajectory,
-                ]
-            )
+            display.trajectory.extend(planned_trajectories)
             self.display_publisher.publish(display)
         self.get_logger().info(
-            "Full harvest plan ready: PICK_READY -> TCP Cartesian pre-approach -> "
+            "Full harvest plan ready: PICK_READY -> TCP pre-approach "
+            f"({self.get_parameter('preapproach_mode').value}/"
+            f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian approach -> "
             "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> "
             "-X30mm -> PICK_READY"

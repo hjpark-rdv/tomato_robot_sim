@@ -92,7 +92,7 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
 4. Plan-only 성공 후 실제 수확 모션 실행
 5. 메인 토마토 줄기의 X/Y/Z 위치와 줄기 축 기준 회전 각도 조회 및 변경
-6. PICK_READY 진입과 복귀 구간에 사용할 OMPL/CHOMP/PILZ LIN planner 선택
+6. PICK_READY에서 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
 7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
 8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
 
@@ -106,8 +106,23 @@ Plan-only 성공 상태는 취소된다. 회전값은 `tomato_z_spin_deg`에 도
 토마토 장면의 기본 위치는 `[0.355, -0.375, 0.340]`, 메인 줄기 축 기준 회전은
 `45°`이다. GUI에서 planner를 바꾸면 기존 Plan-only 성공 상태가 취소되며,
 선택한 planner로 Plan-only를 다시 완료해야 실제 수확 버튼이 활성화된다.
-PILZ LIN은 TCP 직선 이동 중 연속 IK가 존재해야 하므로 토마토 위치와 자세에
-따라 `NO_IK_SOLUTION`으로 실패할 수 있다.
+Plan-only가 끝나면 GUI 실행 로그에 최초 시작 관절값과 `PICK_READY`를 거쳐
+pre-grasp에 도달할 때까지의 관절별 최소각, 최대각, 변화폭 및 trajectory point
+수가 도 단위 표로 표시된다. 수확 동작과 복귀 trajectory는 이 통계에서 제외된다.
+Pre-grasp 이전에 실패하면서 MoveIt 응답에 부분 trajectory가 있으면 그 구간까지
+합산한다. trajectory point가 하나도 생성되지 않은 실패는 표시할 궤적이 없다고
+기록한다.
+`Cartesian`은 PICK_READY에서 pre-approach까지 TCP 직선 경로를 계산한다.
+OMPL, CHOMP, PILZ LIN은 같은 pre-approach TCP pose를 각 planning pipeline의
+목표로 전달한다. PICK_READY 진입과 복귀는 관절 목표에 적합한 OMPL
+RRTConnect를 사용한다. Pre-approach 이후의 40 mm 접근과 수확 동작은 선택과
+관계없이 TCP Cartesian 경로를 유지한다. PILZ LIN은 TCP 직선 이동 중 연속 IK가
+존재해야 하므로 토마토 위치와 자세에 따라 `NO_IK_SOLUTION`으로 실패할 수 있다.
+CHOMP는 pose goal을 직접 처리하지 못하므로 PILZ LIN으로 collision-free endpoint
+관절 상태를 먼저 구한 뒤, 그 endpoint로 향하는 실제 궤적을 CHOMP가 최적화한다.
+각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
+`wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
+`wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
 
 `검출 토마토 전체 연속 수확`은 현재 검출 목록을 0번부터 순서대로 처리한다.
 각 토마토마다 Plan-only를 먼저 수행하고 성공한 경우에만 실제 수확하며, 로봇은
@@ -152,9 +167,11 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 - `summary.json`: 완료 시 성공률과 실패 단계별 합계
 
 실패 단계는 `OMPL_PICK_READY`, `CARTESIAN_PREAPPROACH`,
-`CARTESIAN_APPROACH`, `CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`,
-`TF_TARGET` 등으로 구분된다. Cartesian 실패에는 경로 fraction과 MoveIt 오류
-코드가, OMPL/CHOMP 실패에는 pipeline, planner ID와 MoveIt 오류 코드가 기록된다.
+`OMPL_PREAPPROACH`, `CHOMP_PREAPPROACH`,
+`PILZ_INDUSTRIAL_MOTION_PLANNER_PREAPPROACH`, `CARTESIAN_APPROACH`,
+`CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`, `TF_TARGET` 등으로 구분된다.
+Cartesian 실패에는 경로 fraction과 MoveIt 오류 코드가, OMPL/CHOMP/PILZ
+실패에는 pipeline, planner ID와 MoveIt 오류 코드가 기록된다.
 
 OMPL의 `Return PICK_READY` 계획이 실패하면 PICK_READY 관절 상태의 TCP 자세를
 `/compute_fk`로 계산한 뒤 `CARTESIAN_RETURN_PICK_READY`를 한 번 시도한다.
@@ -180,6 +197,54 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 ```bash
 ./scripts/run_harvest_gui.sh \
   camera_service:=/real_camera/detect_tomatoes
+```
+
+## 시뮬레이션 초기 자세
+
+`run_rbpodo_rb5_moveit.sh`로 fake hardware를 실행하면 6개 관절이 SRDF에
+등록된 `PICK_READY` 자세에서 시작한다. 기존 영점 자세로 시작해야 할 때는
+launch 인자를 추가한다.
+
+```bash
+./scripts/run_rbpodo_rb5_moveit.sh start_at_pick_ready:=false
+```
+
+`run_rbpodo_rb5_moveit_real.sh`로 실제 로봇에 연결할 때는 이 설정으로 로봇을
+움직이지 않으며, 하드웨어에서 수신한 현재 관절 자세를 그대로 사용한다.
+
+## 로봇 작업 공간 가벽과 받침대
+
+RB5 MoveIt launch는 기본적으로 `link0`에 고정된 작업 공간 collision을 생성한다.
+두 개의 수직 가벽과 상단 가벽은 로봇의 좌우 및 상단 동작 범위를 제한하고,
+로봇 바닥에는 베이스 하단 `z=0`에 맞닿는 받침대가 추가된다. 토마토와 줄기
+collision은 별도 옵션이므로 가벽을 켜도 자동으로 활성화되지 않는다.
+
+기본 가벽과 받침대를 사용하지 않으려면 다음과 같이 실행한다.
+
+```bash
+./scripts/run_rbpodo_rb5_moveit.sh --no-wall
+```
+
+가벽을 명시적으로 켜서 실행할 수도 있다.
+
+```bash
+./scripts/run_rbpodo_rb5_moveit.sh --wall
+```
+
+기본 크기는 `scripts/run_rbpodo_rb5_moveit.sh` 상단의
+`Robot workspace collision dimensions` 설정 블록에서 변경할 수 있다.
+
+직접 `ros2 launch`를 실행할 때는 다음 인자로 치수를 조정할 수 있다.
+
+```bash
+ros2 launch rbpodo_moveit_config moveit.launch.py \
+  workspace_left_wall_x:=-0.55 \
+  workspace_right_wall_x:=0.65 \
+  workspace_wall_height:=1.15 \
+  workspace_ceiling_z:=1.10 \
+  robot_pedestal_size_x:=0.40 \
+  robot_pedestal_size_y:=0.40 \
+  robot_pedestal_height:=0.18
 ```
 
 From the repository root, select a tomato and start the real robot motion with
@@ -210,19 +275,18 @@ robot. In plan-only mode RViz receives the complete trajectory sequence in
 order:
 
 1. Current joint state to `PICK_READY`
-2. Cartesian TCP position/orientation motion directly to the pre-approach pose
+2. Selected Cartesian/OMPL/CHOMP/PILZ motion to the pre-approach TCP pose
 3. Cartesian motion from pre-approach through the tomato harvest sequence
 4. Cartesian post-wait retreat
-5. Selected planning pipeline return to `PICK_READY`
+5. OMPL RRTConnect return to `PICK_READY`
 
-The planner selected in the GUI is used to reach `PICK_READY` and return to it.
-From `PICK_READY` through the harvest and retreat, motion is constrained to TCP
-Cartesian planning. The harvest target and local offsets are still defined at
+The planner selected in the GUI controls the motion from `PICK_READY` to the
+pre-approach pose. `Cartesian` preserves the original direct TCP path, while
+OMPL, CHOMP, and PILZ LIN receive the same TCP pose as a planning-pipeline goal.
+Entering and returning to `PICK_READY` always uses OMPL RRTConnect because it is
+a joint-space target. The harvest target and local offsets are still defined at
 `tomato_gripper_tip`, but every target pose is converted through the fixed
 TCP-to-tip transform before MoveIt plans with `tcp` as its controlled link.
-This keeps the physical tip goal unchanged while allowing wrist alignment to be
-planned together with TCP translation instead of a separate in-place rotation
-or a large artificial straight-line movement of the offset tip link.
 
 The detected tomato TF's +X axis points toward the stem, so harvesting approaches
 from its -X axis. The target keeps the tomato between `tomato_gripper_tip` and

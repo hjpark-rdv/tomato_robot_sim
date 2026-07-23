@@ -46,6 +46,7 @@ class TomatoSceneNode(Node):
         self.declare_parameter("show_target_tomato_only", False)
         self.declare_parameter("show_other_tomatoes", True)
         self.declare_parameter("publish_planning_scene", True)
+        self.declare_parameter("include_main_vine_collision", True)
         self.declare_parameter("include_other_tomato_collision", True)
         self.declare_parameter("include_target_tomato_collision", False)
         self.declare_parameter("include_target_branch_collision", False)
@@ -75,6 +76,11 @@ class TomatoSceneNode(Node):
         self.declare_parameter("robot_side_wall_thickness", 0.040, numeric_descriptor)
         self.declare_parameter("robot_side_wall_depth", 1.60, numeric_descriptor)
         self.declare_parameter("robot_side_wall_height", 1.20, numeric_descriptor)
+        self.declare_parameter("include_robot_pedestal_collision", False)
+        self.declare_parameter("robot_pedestal_size_x", 0.40, numeric_descriptor)
+        self.declare_parameter("robot_pedestal_size_y", 0.40, numeric_descriptor)
+        self.declare_parameter("robot_pedestal_height", 0.18, numeric_descriptor)
+        self.declare_parameter("robot_pedestal_top_z", 0.0, numeric_descriptor)
         self.declare_parameter("include_rail_pipe_collision", True)
         self.declare_parameter("rail_pipe_length", 10.0, numeric_descriptor)
         self.declare_parameter("rail_pipe_diameter", 0.050, numeric_descriptor)
@@ -122,6 +128,9 @@ class TomatoSceneNode(Node):
         self.show_target_tomato_only = bool(self.get_parameter("show_target_tomato_only").value)
         self.show_other_tomatoes = bool(self.get_parameter("show_other_tomatoes").value)
         self.publish_planning_scene = bool(self.get_parameter("publish_planning_scene").value)
+        self.include_main_vine_collision = bool(
+            self.get_parameter("include_main_vine_collision").value
+        )
         self.include_other_tomato_collision = bool(self.get_parameter("include_other_tomato_collision").value)
         self.include_target_tomato_collision = bool(self.get_parameter("include_target_tomato_collision").value)
         self.include_target_branch_collision = bool(self.get_parameter("include_target_branch_collision").value)
@@ -151,6 +160,21 @@ class TomatoSceneNode(Node):
         self.robot_side_wall_thickness = float(self.get_parameter("robot_side_wall_thickness").value)
         self.robot_side_wall_depth = float(self.get_parameter("robot_side_wall_depth").value)
         self.robot_side_wall_height = float(self.get_parameter("robot_side_wall_height").value)
+        self.include_robot_pedestal_collision = bool(
+            self.get_parameter("include_robot_pedestal_collision").value
+        )
+        self.robot_pedestal_size_x = float(
+            self.get_parameter("robot_pedestal_size_x").value
+        )
+        self.robot_pedestal_size_y = float(
+            self.get_parameter("robot_pedestal_size_y").value
+        )
+        self.robot_pedestal_height = float(
+            self.get_parameter("robot_pedestal_height").value
+        )
+        self.robot_pedestal_top_z = float(
+            self.get_parameter("robot_pedestal_top_z").value
+        )
         self.include_rail_pipe_collision = bool(self.get_parameter("include_rail_pipe_collision").value)
         self.rail_pipe_length = float(self.get_parameter("rail_pipe_length").value)
         self.rail_pipe_diameter = float(self.get_parameter("rail_pipe_diameter").value)
@@ -253,6 +277,9 @@ class TomatoSceneNode(Node):
                     self.show_other_tomatoes = bool(parameter.value)
                 elif parameter.name == "publish_planning_scene":
                     self.publish_planning_scene = bool(parameter.value)
+                elif parameter.name == "include_main_vine_collision":
+                    self.include_main_vine_collision = bool(parameter.value)
+                    layout_changed = True
                 elif parameter.name == "include_other_tomato_collision":
                     self.include_other_tomato_collision = bool(parameter.value)
                     layout_changed = True
@@ -339,6 +366,21 @@ class TomatoSceneNode(Node):
                     layout_changed = True
                 elif parameter.name == "robot_side_wall_height":
                     self.robot_side_wall_height = float(parameter.value)
+                    layout_changed = True
+                elif parameter.name == "include_robot_pedestal_collision":
+                    self.include_robot_pedestal_collision = bool(parameter.value)
+                    layout_changed = True
+                elif parameter.name == "robot_pedestal_size_x":
+                    self.robot_pedestal_size_x = float(parameter.value)
+                    layout_changed = True
+                elif parameter.name == "robot_pedestal_size_y":
+                    self.robot_pedestal_size_y = float(parameter.value)
+                    layout_changed = True
+                elif parameter.name == "robot_pedestal_height":
+                    self.robot_pedestal_height = float(parameter.value)
+                    layout_changed = True
+                elif parameter.name == "robot_pedestal_top_z":
+                    self.robot_pedestal_top_z = float(parameter.value)
                     layout_changed = True
                 elif parameter.name == "include_rail_pipe_collision":
                     self.include_rail_pipe_collision = bool(parameter.value)
@@ -577,7 +619,7 @@ class TomatoSceneNode(Node):
         suppressed = self._suppressed_collision_ids()
         harvested = self._harvested_tomato_ids()
         target_harvested = self.target_harvested or "target_tomato" in harvested
-        if not self.show_target_tomato_only:
+        if self.include_main_vine_collision and not self.show_target_tomato_only:
             if "main_vine" not in suppressed:
                 objects.append(
                     self._cylinder_collision_object(
@@ -635,6 +677,15 @@ class TomatoSceneNode(Node):
         if self.include_robot_side_wall_collision:
             for wall_id, wall_position, wall_size in self._robot_side_wall_specs():
                 objects.append(self._box_collision_object(wall_id, wall_position, wall_size))
+        if self.include_robot_pedestal_collision:
+            pedestal_position, pedestal_size = self._robot_pedestal_pose_and_size()
+            objects.append(
+                self._box_collision_object(
+                    "robot_base_pedestal",
+                    pedestal_position,
+                    pedestal_size,
+                )
+            )
         if self.include_rail_pipe_collision:
             for object_id, start, end, radius in self._rail_pipe_specs():
                 objects.append(self._cylinder_collision_object(object_id, start, end, radius))
@@ -752,6 +803,7 @@ class TomatoSceneNode(Node):
             self._append_robot_front_wall_marker(markers, stamp)
             self._append_ceiling_marker(markers, stamp)
             self._append_robot_side_wall_markers(markers, stamp)
+            self._append_robot_pedestal_marker(markers, stamp)
             self._append_rail_pipe_markers(markers, stamp)
             self._append_vine_row_markers(markers, stamp)
             return markers
@@ -771,6 +823,7 @@ class TomatoSceneNode(Node):
         self._append_robot_front_wall_marker(markers, stamp)
         self._append_ceiling_marker(markers, stamp)
         self._append_robot_side_wall_markers(markers, stamp)
+        self._append_robot_pedestal_marker(markers, stamp)
         self._append_rail_pipe_markers(markers, stamp)
         self._append_vine_row_markers(markers, stamp)
 
@@ -1079,6 +1132,42 @@ class TomatoSceneNode(Node):
             marker.color.b = 0.55
             marker.color.a = 0.22
             markers.markers.append(marker)
+
+    def _robot_pedestal_pose_and_size(self) -> tuple[np.ndarray, list[float]]:
+        height = max(0.001, float(self.robot_pedestal_height))
+        position = np.array(
+            [0.0, 0.0, float(self.robot_pedestal_top_z) - height * 0.5],
+            dtype=float,
+        )
+        size = [
+            max(0.001, float(self.robot_pedestal_size_x)),
+            max(0.001, float(self.robot_pedestal_size_y)),
+            height,
+        ]
+        return position, size
+
+    def _append_robot_pedestal_marker(self, markers: MarkerArray, stamp) -> None:
+        if not self.include_robot_pedestal_collision:
+            markers.markers.append(
+                self._delete_marker(0, stamp, "robot_base_pedestal")
+            )
+            return
+        pedestal_position, pedestal_size = self._robot_pedestal_pose_and_size()
+        marker = Marker()
+        self._set_visual_marker_header(marker)
+        marker.ns = "robot_base_pedestal"
+        marker.id = 0
+        marker.type = Marker.CUBE
+        marker.action = Marker.ADD
+        marker.pose = self._visual_pose(pedestal_position)
+        marker.scale.x = pedestal_size[0]
+        marker.scale.y = pedestal_size[1]
+        marker.scale.z = pedestal_size[2]
+        marker.color.r = 0.18
+        marker.color.g = 0.20
+        marker.color.b = 0.24
+        marker.color.a = 0.85
+        markers.markers.append(marker)
 
     def _rail_pipe_specs(self) -> list[tuple[str, np.ndarray, np.ndarray, float]]:
         half_length = max(0.0, float(self.rail_pipe_length)) * 0.5
