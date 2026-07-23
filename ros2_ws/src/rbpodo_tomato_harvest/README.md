@@ -123,6 +123,9 @@ CHOMP는 pose goal을 직접 처리하지 못하므로 PILZ LIN으로 collision-
 각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
 `wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
 `wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
+Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `0.05 rad`
+(약 `2.86°`)이다. 이후 수확 목표까지는 Cartesian 경로가 정확한 pose로
+보정한다.
 
 `검출 토마토 전체 연속 수확`은 현재 검출 목록을 0번부터 순서대로 처리한다.
 각 토마토마다 Plan-only를 먼저 수행하고 성공한 경우에만 실제 수확하며, 로봇은

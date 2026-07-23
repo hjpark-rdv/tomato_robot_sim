@@ -413,8 +413,8 @@ class CartesianHarvestPlanner(Node):
             ["base", "shoulder", "elbow", "wrist1", "wrist2"],
         )
         self.declare_parameter("ompl_joint_tolerance_deg", 120.0)
-        self.declare_parameter("preapproach_position_tolerance", 0.002)
-        self.declare_parameter("preapproach_orientation_tolerance", 0.02)
+        self.declare_parameter("preapproach_position_tolerance", 0.005)
+        self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.040)
