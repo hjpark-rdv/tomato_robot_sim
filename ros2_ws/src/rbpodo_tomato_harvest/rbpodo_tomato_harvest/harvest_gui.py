@@ -363,6 +363,8 @@ class HarvestGui(Node):
         self.sweep_case_number = 0
         self.sweep_total = 0
         self.sweep_completed = 0
+        self.sweep_case_tomato_total = 0
+        self.sweep_case_tomato_completed = 0
         self.sweep_tomato_queue = deque()
         self.sweep_current_case = None
         self.closing = False
@@ -681,7 +683,8 @@ class HarvestGui(Node):
         ttk.Label(
             frame,
             text=(
-                "각 위치/회전에서 토마토 0번부터 7번까지 Plan합니다.\n"
+                "각 위치/회전에서 필터 조건을 만족한 토마토 전체를 Plan합니다.\n"
+                "검출된 토마토가 없는 케이스는 건너뜁니다.\n"
                 "가장 먼저 종료값에 도달하는 축에서 테스트가 끝납니다.\n"
                 "랜덤 축은 범위에서 추출하며 변화량/종료 조건에서 제외됩니다."
             ),
@@ -859,9 +862,9 @@ class HarvestGui(Node):
             "pipeline": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
-            "tomato_indices": list(range(8)),
+            "tomato_selection": "all_detected_tomatoes_per_case",
             "case_count": len(cases),
-            "plan_count": len(cases) * 8,
+            "plan_count": None,
             "input": input_config,
             "cases": [
                 {
@@ -928,9 +931,8 @@ class HarvestGui(Node):
         elapsed = max(0.0, time.monotonic() - self.sweep_started_monotonic)
         average = elapsed / completed
         self.sweep_statistics.set(
-            f"완료 {completed}/{self.sweep_total} | "
-            f"성공 {self.sweep_success_count} | 실패 {failures} | "
-            f"대체복귀 {self.sweep_recovery_count} | "
+            f"완료 {completed} | 성공 {self.sweep_success_count} | "
+            f"실패 {failures} | 대체복귀 {self.sweep_recovery_count} | "
             f"성공률 {success_rate:.1f}% | 평균 {average:.2f}s"
         )
         if self.sweep_failure_counts:
@@ -996,17 +998,19 @@ class HarvestGui(Node):
         self.sweep_cases = deque(cases)
         self.sweep_case_total = len(cases)
         self.sweep_case_number = 0
-        self.sweep_total = len(cases) * 8
+        self.sweep_total = 0
         self.sweep_completed = 0
+        self.sweep_case_tomato_total = 0
+        self.sweep_case_tomato_completed = 0
         self.sweep_tomato_queue.clear()
         self.sweep_current_case = None
         self.sweep_pending_verification = None
         self.sweep_summary.set(
-            f"0 / {self.sweep_total} — 토마토 0~7 테스트 시작"
+            f"케이스 0 / {self.sweep_case_total} — 테스트 시작"
         )
         self._append_log(
             f"자동 Plan 테스트 시작: {self.sweep_case_total}개 케이스, "
-            f"총 {self.sweep_total}회 Plan"
+            "각 케이스에서 검출된 토마토 전체를 Plan"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -1123,7 +1127,7 @@ class HarvestGui(Node):
         self.sweep_pending_verification = None
         self._shutdown_sweep_worker()
         self._set_busy(False)
-        self.sweep_summary.set(f"{completed} / {total} — {message}")
+        self.sweep_summary.set(f"전체 완료 {completed}개 — {message}")
         self.status.set(message)
         self._append_log(message)
 
@@ -1187,16 +1191,35 @@ class HarvestGui(Node):
             response = future.result()
             if not response.success:
                 raise RuntimeError(response.message)
+
             self._detections_callback(response.detections)
-            if len(self.detected_tomatoes) < 8:
-                raise RuntimeError(
-                    f"토마토가 {len(self.detected_tomatoes)}개만 검출되었습니다. "
-                    "자동 테스트에는 0~7번 토마토가 모두 필요합니다."
-                )
-            self.sweep_tomato_queue = deque(range(8))
+            tomato_count = len(self.detected_tomatoes)
+
+            self.sweep_tomato_queue = deque(range(tomato_count))
+            self.sweep_case_tomato_total = tomato_count
+            self.sweep_case_tomato_completed = 0
+            self.sweep_total += tomato_count
+
+            self._append_log(
+                f"[케이스 {self.sweep_case_number}/"
+                f"{self.sweep_case_total}] 검출 토마토 {tomato_count}개"
+            )
         except Exception as error:
             self._finish_sweep(f"자동 테스트 검출 실패: {error}")
             return
+
+        if not self.sweep_tomato_queue:
+            self.sweep_summary.set(
+                f"케이스 {self.sweep_case_number} / "
+                f"{self.sweep_case_total} — 검출 토마토 없음, 다음 케이스 이동"
+            )
+            self.root.after(100, self._start_next_sweep_case)
+            return
+
+        self.sweep_summary.set(
+            f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
+            f"토마토 0 / {self.sweep_case_tomato_total} 준비 완료"
+        )
         self.root.after(100, self._start_sweep_plan)
 
     def _start_sweep_plan(self) -> None:
@@ -1221,9 +1244,11 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
         )
+        current_number = self.sweep_case_tomato_completed + 1
         self.sweep_summary.set(
-            f"{self.sweep_completed + 1} / {self.sweep_total} — "
-            f"토마토 {tomato_index} Plan 중"
+            f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
+            f"토마토 {current_number} / {self.sweep_case_tomato_total} "
+            f"(index {tomato_index}) Plan 중"
         )
         process = self.sweep_worker_process
         if process is None or process.poll() is not None or process.stdin is None:
@@ -1768,14 +1793,20 @@ class HarvestGui(Node):
             self.clear_markers_button.configure(state="normal")
             self._publish_harvest_result_markers()
         self.sweep_completed += 1
+        self.sweep_case_tomato_completed += 1
         result = "성공" if return_code == 0 else "실패"
         self.sweep_summary.set(
-            f"{self.sweep_completed} / {self.sweep_total} — "
-            f"토마토 {tomato_index} Plan {result}"
+            f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
+            f"토마토 {self.sweep_case_tomato_completed} / "
+            f"{self.sweep_case_tomato_total} Plan {result} "
+            f"(전체 완료 {self.sweep_completed})"
         )
         self._append_log(
-            f"[자동 {self.sweep_completed}/{self.sweep_total}] "
-            f"토마토 {tomato_index} Plan {result}"
+            f"[케이스 {self.sweep_case_number}/{self.sweep_case_total}] "
+            f"[토마토 {self.sweep_case_tomato_completed}/"
+            f"{self.sweep_case_tomato_total}] "
+            f"index {tomato_index} Plan {result} "
+            f"(전체 완료 {self.sweep_completed})"
         )
         self.root.after(100, self._start_sweep_plan)
 
