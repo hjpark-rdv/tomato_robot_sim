@@ -55,7 +55,6 @@ class HarvestMotionPlan:
     preapproach_trajectory: object
     approach_trajectory: object
     after_wait_trajectory: object
-    return_trajectory: object
     display_start_state: RobotState
 
 
@@ -429,7 +428,7 @@ class CartesianHarvestPlanner(Node):
             "pick_ready_joint_positions",
             [
                 1.543469497691539,
-                1.1810132733317547,
+                1.181013622733317547,
                 -2.058567995722523,
                 -0.6538175657861676,
                 -1.5872183101827066,
@@ -446,11 +445,6 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_mode", "cartesian")
         self.declare_parameter("joint_planning_pipeline_id", "ompl")
         self.declare_parameter("joint_planner_id", "RRTConnect")
-        self.declare_parameter(
-            "return_planning_pipeline_id",
-            "pilz_industrial_motion_planner",
-        )
-        self.declare_parameter("return_planner_id", "PTP")
         self.declare_parameter(
             "ompl_limited_joint_names",
             ["base", "shoulder", "elbow", "wrist1", "wrist2"],
@@ -1336,33 +1330,6 @@ class CartesianHarvestPlanner(Node):
         )
         return response.solution if success else None
 
-    def _plan_return_to_pick_ready(
-        self,
-        after_wait_end: RobotState,
-    ):
-        joint_names = [
-            str(name)
-            for name in self.get_parameter("pick_ready_joint_names").value
-        ]
-        joint_positions = [
-            float(position)
-            for position in self.get_parameter("pick_ready_joint_positions").value
-        ]
-        pipeline = str(
-            self.get_parameter("return_planning_pipeline_id").value
-        )
-        planner_id = str(self.get_parameter("return_planner_id").value)
-        return_plan = self._plan_joint_target(
-            joint_names,
-            joint_positions,
-            start_state=after_wait_end,
-            label="Return PICK_READY",
-            pipeline_id=pipeline,
-            planner_id=planner_id,
-            stage_name="PILZ_PTP_RETURN_PICK_READY",
-        )
-        return return_plan[0] if return_plan is not None else None
-
     def _plan_preapproach(
         self,
         preapproach_pose: Pose,
@@ -1582,20 +1549,12 @@ class CartesianHarvestPlanner(Node):
         if after_wait_trajectory is None:
             return None
 
-        after_wait_end = self._trajectory_end_state(after_wait_trajectory)
-        return_trajectory = self._plan_return_to_pick_ready(
-            after_wait_end,
-        )
-        if return_trajectory is None:
-            return None
-
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
             pre_rotation_trajectory=pre_rotation_trajectory,
             preapproach_trajectory=preapproach_trajectory,
             approach_trajectory=approach_trajectory,
             after_wait_trajectory=after_wait_trajectory,
-            return_trajectory=return_trajectory,
             display_start_state=display_start_state,
         )
         planned_trajectories = [
@@ -1604,7 +1563,6 @@ class CartesianHarvestPlanner(Node):
             preapproach_trajectory,
             approach_trajectory,
             after_wait_trajectory,
-            return_trajectory,
         ]
         if bool(self.get_parameter("publish_display_trajectory").value):
             display = DisplayTrajectory()
@@ -1618,8 +1576,7 @@ class CartesianHarvestPlanner(Node):
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian approach -> "
-            "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> "
-            "-X30mm -> PILZ PTP joint return to PICK_READY"
+            "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> -X30mm"
         )
         return plan
 
@@ -1659,7 +1616,11 @@ class CartesianHarvestPlanner(Node):
             "Post-wait harvest",
         ):
             return False
-        return self._execute_trajectory(plan.return_trajectory, "Return PICK_READY")
+
+        self.get_logger().info(
+            "Harvest sequence complete; keeping the final post-wait pose."
+        )
+        return True
 
     def _execute_trajectory(self, trajectory, label: str) -> bool:
 
