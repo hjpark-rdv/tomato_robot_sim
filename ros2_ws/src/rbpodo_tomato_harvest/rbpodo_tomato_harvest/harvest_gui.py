@@ -1,3 +1,5 @@
+import csv
+import json
 import math
 import os
 import queue
@@ -6,8 +8,11 @@ import signal
 import subprocess
 import sys
 import threading
+import time
 import tkinter as tk
-from collections import deque
+from collections import Counter, deque
+from datetime import datetime
+from pathlib import Path
 from tkinter import font as tkfont
 from tkinter import messagebox, ttk
 
@@ -32,6 +37,26 @@ PLANNER_CONFIGS = {
 }
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
+SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
+SWEEP_CSV_FIELDS = (
+    "timestamp",
+    "case",
+    "tomato",
+    "x",
+    "y",
+    "z",
+    "rotation_deg",
+    "success",
+    "pipeline",
+    "planner_id",
+    "failure_stage",
+    "failure_planner_type",
+    "failure_reason",
+    "moveit_error_code",
+    "cartesian_fraction",
+    "required_fraction",
+    "duration_sec",
+)
 
 
 def generate_sweep_cases(
@@ -42,7 +67,7 @@ def generate_sweep_cases(
     rng=None,
     maximum_cases: int = 500,
 ) -> list[tuple[float, float, float, float]]:
-    """Generate synchronized XYZ/rotation test cases, optionally randomized."""
+    """Advance by exact steps until the first changing axis reaches its end."""
     starts = [float(value) for value in start]
     ends = [float(value) for value in end]
     steps = [abs(float(value)) for value in step]
@@ -50,14 +75,25 @@ def generate_sweep_cases(
     if not all(len(values) == 4 for values in (starts, ends, steps, random_flags)):
         raise ValueError("start, end, step and randomized must contain four values")
 
-    intervals = 0
-    for begin, finish, increment in zip(starts, ends, steps):
+    interval_counts = []
+    has_random_range = False
+    for begin, finish, increment, use_random in zip(
+        starts, ends, steps, random_flags
+    ):
         distance = abs(finish - begin)
         if distance == 0.0:
             continue
+        if use_random:
+            has_random_range = True
+            continue
         if increment == 0.0:
             raise ValueError("변경되는 항목의 변화량은 0보다 커야 합니다.")
-        intervals = max(intervals, int(math.ceil(distance / increment)))
+        interval_counts.append(int(math.ceil(distance / increment)))
+    if not interval_counts and has_random_range:
+        raise ValueError(
+            "종료 기준이 될 비랜덤 변화 축을 하나 이상 설정하세요."
+        )
+    intervals = min(interval_counts) if interval_counts else 0
     case_count = intervals + 1
     if case_count > maximum_cases:
         raise ValueError(f"자동 테스트는 최대 {maximum_cases}개까지 실행할 수 있습니다.")
@@ -65,13 +101,16 @@ def generate_sweep_cases(
     random_source = rng or random.Random()
     cases = []
     for case_index in range(case_count):
-        ratio = case_index / intervals if intervals else 0.0
         values = []
-        for begin, finish, use_random in zip(starts, ends, random_flags):
+        for begin, finish, increment, use_random in zip(
+            starts, ends, steps, random_flags
+        ):
             if use_random and begin != finish:
                 values.append(random_source.uniform(min(begin, finish), max(begin, finish)))
             else:
-                values.append(begin + (finish - begin) * ratio)
+                direction = 1.0 if finish >= begin else -1.0
+                moved = min(case_index * increment, abs(finish - begin))
+                values.append(begin + direction * moved)
         cases.append(tuple(values))
     return cases
 
@@ -81,6 +120,7 @@ def harvest_command(
     execute: bool,
     planning_pipeline_id: str = "ompl",
     planner_id: str = "RRTConnectkConfigDefault",
+    publish_display_trajectory: bool = True,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -106,6 +146,9 @@ def harvest_command(
         f"planning_pipeline_id:={planning_pipeline_id}",
         "-p",
         f"planner_id:={planner_id}",
+        "-p",
+        "publish_display_trajectory:="
+        f"{'true' if publish_display_trajectory else 'false'}",
     ]
 
 
@@ -238,6 +281,10 @@ class HarvestGui(Node):
         self.declare_parameter("result_marker_parent_frame", "link0")
         self.declare_parameter("result_arrow_stem_margin", 0.008)
         self.declare_parameter("result_arrow_minimum_length", 0.015)
+        self.declare_parameter(
+            "results_directory",
+            str(Path.home() / "farmily_tomato" / "harvest_results"),
+        )
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -287,12 +334,22 @@ class HarvestGui(Node):
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
         self.sweep_markers: list[Marker] = []
+        self.sweep_marker_next_id = 0
+        self.sweep_worker_process = None
+        self.sweep_request_id = 0
+        self.sweep_pending_verification = None
+        self.sweep_session_dir = None
+        self.sweep_started_monotonic = 0.0
+        self.sweep_success_count = 0
+        self.sweep_failure_counts = Counter()
         self.sweep_active = False
         self.sweep_cancel_requested = False
         self.sweep_cases = deque()
+        self.sweep_case_total = 0
+        self.sweep_case_number = 0
         self.sweep_total = 0
         self.sweep_completed = 0
-        self.sweep_target_index = 0
+        self.sweep_tomato_queue = deque()
         self.sweep_current_case = None
         self.closing = False
 
@@ -604,8 +661,9 @@ class HarvestGui(Node):
         ttk.Label(
             frame,
             text=(
-                "대상은 자동 실행을 누를 때 선택된 토마토입니다.\n"
-                "랜덤 체크 항목은 시작~종료 범위에서 매 케이스 추출됩니다."
+                "각 위치/회전에서 토마토 0번부터 7번까지 Plan합니다.\n"
+                "가장 먼저 종료값에 도달하는 축에서 테스트가 끝납니다.\n"
+                "랜덤 축은 범위에서 추출하며 변화량/종료 조건에서 제외됩니다."
             ),
         ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(10, 6))
         self.sweep_start_button = ttk.Button(
@@ -623,6 +681,71 @@ class HarvestGui(Node):
         ttk.Label(frame, textvariable=self.sweep_summary).grid(
             row=7, column=0, columnspan=5, sticky="w", pady=(10, 0)
         )
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=8, column=0, columnspan=5, sticky="ew", pady=10
+        )
+        self.sweep_statistics = tk.StringVar(
+            value="완료 0 | 성공 0 | 실패 0 | 성공률 0.0%"
+        )
+        self.sweep_failure_summary = tk.StringVar(value="실패 단계: 없음")
+        self.sweep_result_path = tk.StringVar(value="결과 파일: 생성 전")
+        ttk.Label(frame, text="실시간 통계").grid(
+            row=9, column=0, columnspan=5, sticky="w"
+        )
+        ttk.Label(frame, textvariable=self.sweep_statistics).grid(
+            row=10, column=0, columnspan=5, sticky="w", pady=(4, 0)
+        )
+        ttk.Label(
+            frame,
+            textvariable=self.sweep_failure_summary,
+            wraplength=430,
+        ).grid(row=11, column=0, columnspan=5, sticky="w", pady=(4, 0))
+        ttk.Label(
+            frame,
+            textvariable=self.sweep_result_path,
+            wraplength=430,
+        ).grid(row=12, column=0, columnspan=5, sticky="w", pady=(4, 8))
+
+        result_columns = ("case", "tomato", "result", "stage", "time")
+        self.sweep_result_tree = ttk.Treeview(
+            frame,
+            columns=result_columns,
+            show="headings",
+            height=12,
+        )
+        headings = {
+            "case": "케이스",
+            "tomato": "토마토",
+            "result": "결과",
+            "stage": "실패 단계",
+            "time": "시간(s)",
+        }
+        widths = {
+            "case": 55,
+            "tomato": 55,
+            "result": 55,
+            "stage": 175,
+            "time": 70,
+        }
+        for column in result_columns:
+            self.sweep_result_tree.heading(column, text=headings[column])
+            self.sweep_result_tree.column(
+                column,
+                width=widths[column],
+                anchor="center",
+                stretch=column == "stage",
+            )
+        result_scrollbar = ttk.Scrollbar(
+            frame,
+            orient="vertical",
+            command=self.sweep_result_tree.yview,
+        )
+        self.sweep_result_tree.configure(yscrollcommand=result_scrollbar.set)
+        self.sweep_result_tree.grid(
+            row=13, column=0, columnspan=4, sticky="nsew", pady=(0, 4)
+        )
+        result_scrollbar.grid(row=13, column=4, sticky="ns", pady=(0, 4))
+        frame.rowconfigure(13, weight=1)
 
     def _append_log(self, message: str) -> None:
         self.log_text.configure(state="normal")
@@ -659,6 +782,7 @@ class HarvestGui(Node):
         self.result_marker_publisher.publish(message)
         self.harvest_results.clear()
         self.sweep_markers.clear()
+        self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
 
     def clear_harvest_result_markers(self) -> None:
@@ -684,17 +808,135 @@ class HarvestGui(Node):
         randomized = [
             self.sweep_inputs[f"random_{key}"].get() for key in keys
         ]
-        return generate_sweep_cases(start, end, step, randomized)
+        random_seed = random.SystemRandom().randrange(0, 2**32)
+        cases = generate_sweep_cases(
+            start,
+            end,
+            step,
+            randomized,
+            rng=random.Random(random_seed),
+        )
+        return cases, {
+            "start": start,
+            "end": end,
+            "step": step,
+            "randomized": randomized,
+            "random_seed": random_seed,
+        }
+
+    def _start_sweep_session(self, cases, input_config) -> None:
+        base_directory = Path(
+            str(self.get_parameter("results_directory").value)
+        ).expanduser()
+        session_name = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        session_directory = base_directory / session_name
+        session_directory.mkdir(parents=True, exist_ok=False)
+        pipeline, planner_id = self._selected_planner_config()
+        metadata = {
+            "created_at": datetime.now().astimezone().isoformat(),
+            "pipeline": pipeline,
+            "planner_id": planner_id,
+            "tomato_indices": list(range(8)),
+            "case_count": len(cases),
+            "plan_count": len(cases) * 8,
+            "input": input_config,
+            "cases": [
+                {
+                    "case": index,
+                    "x": values[0],
+                    "y": values[1],
+                    "z": values[2],
+                    "rotation_deg": values[3],
+                }
+                for index, values in enumerate(cases, start=1)
+            ],
+        }
+        (session_directory / "session.json").write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        with (session_directory / "results.csv").open(
+            "w", encoding="utf-8", newline=""
+        ) as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=SWEEP_CSV_FIELDS)
+            writer.writeheader()
+        (session_directory / "results.jsonl").touch()
+
+        self.sweep_session_dir = session_directory
+        self.sweep_started_monotonic = time.monotonic()
+        self.sweep_success_count = 0
+        self.sweep_failure_counts.clear()
+        for item in self.sweep_result_tree.get_children():
+            self.sweep_result_tree.delete(item)
+        self.sweep_statistics.set("완료 0 | 성공 0 | 실패 0 | 성공률 0.0%")
+        self.sweep_failure_summary.set("실패 단계: 없음")
+        self.sweep_result_path.set(f"결과 파일: {session_directory}")
+
+    def _save_sweep_result(self, record) -> None:
+        if self.sweep_session_dir is None:
+            return
+        with (self.sweep_session_dir / "results.jsonl").open(
+            "a", encoding="utf-8"
+        ) as jsonl_file:
+            jsonl_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+            jsonl_file.flush()
+        with (self.sweep_session_dir / "results.csv").open(
+            "a", encoding="utf-8", newline=""
+        ) as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=SWEEP_CSV_FIELDS)
+            writer.writerow({field: record.get(field, "") for field in SWEEP_CSV_FIELDS})
+            csv_file.flush()
+
+    def _update_sweep_statistics(self, record) -> None:
+        if record["success"]:
+            self.sweep_success_count += 1
+        else:
+            self.sweep_failure_counts[
+                record.get("failure_stage") or "UNKNOWN"
+            ] += 1
+        completed = self.sweep_completed + 1
+        failures = completed - self.sweep_success_count
+        success_rate = 100.0 * self.sweep_success_count / completed
+        elapsed = max(0.0, time.monotonic() - self.sweep_started_monotonic)
+        average = elapsed / completed
+        self.sweep_statistics.set(
+            f"완료 {completed}/{self.sweep_total} | "
+            f"성공 {self.sweep_success_count} | 실패 {failures} | "
+            f"성공률 {success_rate:.1f}% | 평균 {average:.2f}s"
+        )
+        if self.sweep_failure_counts:
+            failures_by_stage = ", ".join(
+                f"{stage} {count}"
+                for stage, count in self.sweep_failure_counts.most_common()
+            )
+            self.sweep_failure_summary.set(f"실패 단계: {failures_by_stage}")
+        else:
+            self.sweep_failure_summary.set("실패 단계: 없음")
+
+        item_id = self.sweep_result_tree.insert(
+            "",
+            0,
+            values=(
+                record["case"],
+                record["tomato"],
+                "성공" if record["success"] else "실패",
+                record.get("failure_stage", ""),
+                f"{record.get('duration_sec', 0.0):.2f}",
+            ),
+        )
+        self.sweep_result_tree.selection_set(item_id)
+        children = self.sweep_result_tree.get_children()
+        for old_item in children[100:]:
+            self.sweep_result_tree.delete(old_item)
 
     def start_sweep(self) -> None:
-        if self.harvest_process is not None or self.batch_active or self.sweep_active:
+        if (
+            self.harvest_process is not None
+            or self.batch_active
+            or self.sweep_active
+            or self.sweep_worker_process is not None
+        ):
             messagebox.showinfo("실행 중", "현재 작업이 끝날 때까지 기다려 주세요.")
-            return
-        target_index = self._selected_index()
-        if target_index is None:
-            messagebox.showwarning(
-                "토마토 선택", "먼저 촬영/검출 후 테스트할 토마토를 선택하세요."
-            )
             return
         if not self.scene_set_client.service_is_ready():
             if not self.scene_set_client.wait_for_service(timeout_sec=0.05):
@@ -709,46 +951,147 @@ class HarvestGui(Node):
                 )
                 return
         try:
-            cases = self._read_sweep_inputs()
-        except ValueError as error:
+            cases, input_config = self._read_sweep_inputs()
+            self._start_sweep_session(cases, input_config)
+        except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
+            return
+        if not self._start_sweep_worker():
+            messagebox.showerror(
+                "Planner 시작 실패", "자동 테스트 Planner를 시작하지 못했습니다."
+            )
             return
 
         self.sweep_active = True
         self.sweep_cancel_requested = False
         self.sweep_cases = deque(cases)
-        self.sweep_total = len(cases)
+        self.sweep_case_total = len(cases)
+        self.sweep_case_number = 0
+        self.sweep_total = len(cases) * 8
         self.sweep_completed = 0
-        self.sweep_target_index = target_index
+        self.sweep_tomato_queue.clear()
         self.sweep_current_case = None
+        self.sweep_pending_verification = None
         self.sweep_summary.set(
-            f"0 / {self.sweep_total} — 토마토 {target_index} 테스트 시작"
+            f"0 / {self.sweep_total} — 토마토 0~7 테스트 시작"
         )
         self._append_log(
-            f"자동 Plan 테스트 시작: {self.sweep_total}개 케이스, "
-            f"대상 토마토 {target_index}"
+            f"자동 Plan 테스트 시작: {self.sweep_case_total}개 케이스, "
+            f"총 {self.sweep_total}회 Plan"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
+
+    def _start_sweep_worker(self) -> bool:
+        command = [
+            sys.executable,
+            "-m",
+            "rbpodo_tomato_harvest.tomato_harvest_worker",
+        ]
+        environment = os.environ.copy()
+        environment["PYTHONUNBUFFERED"] = "1"
+        try:
+            process = subprocess.Popen(
+                command,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                env=environment,
+            )
+        except OSError as error:
+            self._append_log(f"지속 Planner 시작 오류: {error}")
+            return False
+        self.sweep_worker_process = process
+        thread = threading.Thread(
+            target=self._read_sweep_worker,
+            args=(process,),
+            daemon=True,
+        )
+        thread.start()
+        self._append_log("자동 테스트용 지속 Planner 프로세스 시작")
+        return True
+
+    def _read_sweep_worker(self, process) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                line = line.rstrip()
+                if line.startswith(SWEEP_RESULT_PREFIX):
+                    try:
+                        result = json.loads(line[len(SWEEP_RESULT_PREFIX):])
+                    except json.JSONDecodeError as error:
+                        self.process_queue.put(
+                            ("log", f"Planner 결과 해석 실패: {error}")
+                        )
+                        continue
+                    self.process_queue.put(("sweep_result", result, process))
+                else:
+                    self.process_queue.put(("log", line))
+        return_code = process.wait()
+        self.process_queue.put(("sweep_worker_done", return_code, process))
+
+    def _shutdown_sweep_worker(self, force: bool = False) -> None:
+        process = self.sweep_worker_process
+        if process is None or process.poll() is not None:
+            return
+        if force:
+            process.terminate()
+            return
+        try:
+            if process.stdin is not None:
+                process.stdin.write('{"command":"quit"}\n')
+                process.stdin.flush()
+        except (BrokenPipeError, OSError):
+            process.terminate()
 
     def stop_sweep(self) -> None:
         if not self.sweep_active:
             return
         self.sweep_cancel_requested = True
         self.sweep_cases.clear()
+        self.sweep_tomato_queue.clear()
         if self.harvest_process is not None:
             self.harvest_process.terminate()
             self.status.set("자동 테스트 Plan 프로세스 종료 중...")
             return
+        self._shutdown_sweep_worker(force=True)
         self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
 
     def _finish_sweep(self, message: str) -> None:
         completed = self.sweep_completed
         total = self.sweep_total
+        if self.sweep_session_dir is not None:
+            elapsed = max(
+                0.0, time.monotonic() - self.sweep_started_monotonic
+            )
+            summary = {
+                "finished_at": datetime.now().astimezone().isoformat(),
+                "message": message,
+                "completed": completed,
+                "total": total,
+                "success": self.sweep_success_count,
+                "failure": completed - self.sweep_success_count,
+                "success_rate": (
+                    self.sweep_success_count / completed if completed else 0.0
+                ),
+                "elapsed_sec": elapsed,
+                "failure_stages": dict(self.sweep_failure_counts),
+            }
+            try:
+                (self.sweep_session_dir / "summary.json").write_text(
+                    json.dumps(summary, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
+            except OSError as error:
+                self._append_log(f"통계 요약 저장 실패: {error}")
         self.sweep_active = False
         self.sweep_cancel_requested = False
         self.sweep_cases.clear()
+        self.sweep_tomato_queue.clear()
         self.sweep_current_case = None
+        self.sweep_pending_verification = None
+        self._shutdown_sweep_worker()
         self._set_busy(False)
         self.sweep_summary.set(f"{completed} / {total} — {message}")
         self.status.set(message)
@@ -767,6 +1110,7 @@ class HarvestGui(Node):
             return
 
         self.sweep_current_case = self.sweep_cases.popleft()
+        self.sweep_case_number += 1
         x, y, z, rotation = self.sweep_current_case
         self.scene_x.set(f"{x:.4f}")
         self.scene_y.set(f"{y:.4f}")
@@ -776,12 +1120,12 @@ class HarvestGui(Node):
         request.parameters = scene_parameters((x, y, z), rotation)
         future = self.scene_set_client.call_async(request)
         future.add_done_callback(self._sweep_scene_set_done)
-        case_number = self.sweep_completed + 1
+        case_number = self.sweep_case_number
         self.sweep_summary.set(
-            f"{case_number} / {self.sweep_total} — 위치/회전 적용 중"
+            f"케이스 {case_number} / {self.sweep_case_total} — 위치/회전 적용 중"
         )
         self._append_log(
-            f"[자동 {case_number}/{self.sweep_total}] "
+            f"[케이스 {case_number}/{self.sweep_case_total}] "
             f"X={x:.4f}, Y={y:.4f}, Z={z:.4f}, 회전={rotation:.1f}°"
         )
 
@@ -800,7 +1144,7 @@ class HarvestGui(Node):
             return
         self.detection_signature = None
         self.sweep_summary.set(
-            f"{self.sweep_completed + 1} / {self.sweep_total} — 촬영/검출 중"
+            f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — 촬영/검출 중"
         )
         future = self.camera_client.call_async(DetectTomatoes.Request())
         future.add_done_callback(self._sweep_detection_done)
@@ -814,15 +1158,12 @@ class HarvestGui(Node):
             if not response.success:
                 raise RuntimeError(response.message)
             self._detections_callback(response.detections)
-            if self.sweep_target_index >= len(self.detected_tomatoes):
+            if len(self.detected_tomatoes) < 8:
                 raise RuntimeError(
-                    f"토마토 {self.sweep_target_index}가 검출되지 않았습니다."
+                    f"토마토가 {len(self.detected_tomatoes)}개만 검출되었습니다. "
+                    "자동 테스트에는 0~7번 토마토가 모두 필요합니다."
                 )
-            self.tomato_combo.current(self.sweep_target_index)
-            target_item = str(self.sweep_target_index)
-            self.tomato_tree.selection_set(target_item)
-            self.tomato_tree.focus(target_item)
-            self.tomato_tree.see(target_item)
+            self.sweep_tomato_queue = deque(range(8))
         except Exception as error:
             self._finish_sweep(f"자동 테스트 검출 실패: {error}")
             return
@@ -831,20 +1172,46 @@ class HarvestGui(Node):
     def _start_sweep_plan(self) -> None:
         if not self.sweep_active or self.sweep_cancel_requested:
             return
+        if not self.sweep_tomato_queue:
+            self.root.after(100, self._start_next_sweep_case)
+            return
+        tomato_index = self.sweep_tomato_queue.popleft()
+        self.tomato_combo.current(tomato_index)
+        target_item = str(tomato_index)
+        self.tomato_tree.selection_set(target_item)
+        self.tomato_tree.focus(target_item)
+        self.tomato_tree.see(target_item)
         pipeline, planner_id = self._selected_planner_config()
         verification = (
             self.detection_generation,
-            self.sweep_target_index,
+            tomato_index,
             pipeline,
             planner_id,
         )
         self.sweep_summary.set(
-            f"{self.sweep_completed + 1} / {self.sweep_total} — Plan 중"
+            f"{self.sweep_completed + 1} / {self.sweep_total} — "
+            f"토마토 {tomato_index} Plan 중"
         )
-        if not self._launch_harvest_process(
-            self.sweep_target_index, False, verification
-        ):
-            self._finish_sweep("자동 테스트 Plan 프로세스 시작 실패")
+        process = self.sweep_worker_process
+        if process is None or process.poll() is not None or process.stdin is None:
+            self._finish_sweep("자동 테스트 지속 Planner가 종료되었습니다.")
+            return
+        self.sweep_request_id += 1
+        self.sweep_pending_verification = (
+            self.sweep_request_id,
+            verification,
+        )
+        request = {
+            "request_id": self.sweep_request_id,
+            "tomato_frame": f"detected_tomato_{tomato_index}_tf",
+            "planning_pipeline_id": pipeline,
+            "planner_id": planner_id,
+        }
+        try:
+            process.stdin.write(json.dumps(request) + "\n")
+            process.stdin.flush()
+        except (BrokenPipeError, OSError) as error:
+            self._finish_sweep(f"지속 Planner 요청 전송 실패: {error}")
 
     def _source_to_result_parent_quaternion(self, source_frame: str):
         parent_frame = str(
@@ -1151,6 +1518,7 @@ class HarvestGui(Node):
             execute,
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
+            publish_display_trajectory=not self.sweep_active,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -1208,6 +1576,52 @@ class HarvestGui(Node):
             if item[0] == "log":
                 self._append_log(item[1])
                 continue
+            if item[0] == "sweep_result":
+                _, result, process = item
+                if process is not self.sweep_worker_process:
+                    continue
+                pending = self.sweep_pending_verification
+                if pending is None:
+                    self._append_log("대기 중인 요청이 없어 Planner 결과를 무시합니다.")
+                    continue
+                request_id, verification = pending
+                if int(result.get("request_id", -1)) != request_id:
+                    self._append_log(
+                        f"Planner 요청 ID 불일치: expected={request_id}, "
+                        f"received={result.get('request_id')}"
+                    )
+                    continue
+                self.sweep_pending_verification = None
+                if result.get("error"):
+                    self._append_log(f"지속 Planner 오류: {result['error']}")
+                report = result.get("report") or {}
+                if not bool(result.get("success")) and not report.get(
+                    "failure_stage"
+                ):
+                    report = {
+                        **report,
+                        "failure_stage": "WORKER_ERROR",
+                        "failure_planner_type": "worker",
+                        "failure_reason": result.get("error")
+                        or "UNKNOWN_WORKER_FAILURE",
+                    }
+                self._handle_sweep_plan_done(
+                    0 if bool(result.get("success")) else 1,
+                    verification,
+                    report,
+                )
+                continue
+            if item[0] == "sweep_worker_done":
+                _, return_code, process = item
+                if process is not self.sweep_worker_process:
+                    continue
+                self.sweep_worker_process = None
+                if self.sweep_active:
+                    self._finish_sweep(
+                        f"자동 테스트 지속 Planner가 비정상 종료했습니다. "
+                        f"(종료 코드 {return_code})"
+                    )
+                continue
             _, return_code, execute, verification, process = item
             if process is not self.harvest_process:
                 continue
@@ -1238,11 +1652,38 @@ class HarvestGui(Node):
         if not self.closing:
             self.root.after(50, self._drain_process_queue)
 
-    def _handle_sweep_plan_done(self, return_code, verification) -> None:
+    def _handle_sweep_plan_done(self, return_code, verification, report=None) -> None:
         if self.sweep_cancel_requested:
             self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
             return
         tomato_index = verification[1]
+        report = report or {}
+        success = return_code == 0
+        x, y, z, rotation = self.sweep_current_case
+        record = {
+            "timestamp": datetime.now().astimezone().isoformat(),
+            "case": self.sweep_case_number,
+            "tomato": tomato_index,
+            "x": x,
+            "y": y,
+            "z": z,
+            "rotation_deg": rotation,
+            "success": success,
+            "pipeline": verification[2],
+            "planner_id": verification[3],
+            "failure_stage": report.get("failure_stage", ""),
+            "failure_planner_type": report.get(
+                "failure_planner_type", ""
+            ),
+            "failure_reason": report.get("failure_reason", ""),
+            "moveit_error_code": report.get("moveit_error_code", ""),
+            "cartesian_fraction": report.get("cartesian_fraction", ""),
+            "required_fraction": report.get("required_fraction", ""),
+            "duration_sec": report.get("duration_sec", 0.0),
+            "stages": report.get("stages", []),
+        }
+        self._save_sweep_result(record)
+        self._update_sweep_statistics(record)
         self._update_result_arrow_length(tomato_index)
         parent_frame = str(
             self.get_parameter("result_marker_parent_frame").value
@@ -1255,28 +1696,32 @@ class HarvestGui(Node):
                 Time(),
             )
         except TransformException as error:
-            self._finish_sweep(f"결과 마커용 TF 조회 실패: {error}")
-            return
+            self._append_log(f"결과 마커용 TF 조회 실패: {error}")
+            transform = None
 
-        marker = sweep_result_marker(
-            self.sweep_completed,
-            return_code == 0,
-            self.result_arrow_lengths.get(tomato_index, 0.04),
-            parent_frame,
-            transform,
-        )
-        self.sweep_markers.append(marker)
-        self.clear_markers_button.configure(state="normal")
-        self._publish_harvest_result_markers()
+        if transform is not None:
+            marker = sweep_result_marker(
+                self.sweep_marker_next_id,
+                success,
+                self.result_arrow_lengths.get(tomato_index, 0.04),
+                parent_frame,
+                transform,
+            )
+            self.sweep_marker_next_id += 1
+            self.sweep_markers.append(marker)
+            self.clear_markers_button.configure(state="normal")
+            self._publish_harvest_result_markers()
         self.sweep_completed += 1
         result = "성공" if return_code == 0 else "실패"
         self.sweep_summary.set(
-            f"{self.sweep_completed} / {self.sweep_total} — Plan {result}"
+            f"{self.sweep_completed} / {self.sweep_total} — "
+            f"토마토 {tomato_index} Plan {result}"
         )
         self._append_log(
-            f"[자동 {self.sweep_completed}/{self.sweep_total}] Plan {result}"
+            f"[자동 {self.sweep_completed}/{self.sweep_total}] "
+            f"토마토 {tomato_index} Plan {result}"
         )
-        self.root.after(100, self._start_next_sweep_case)
+        self.root.after(100, self._start_sweep_plan)
 
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
         index = verification[1]
@@ -1460,7 +1905,7 @@ class HarvestGui(Node):
         self.root.after(30, self._spin_ros)
 
     def _on_close(self) -> None:
-        if self.harvest_process is not None:
+        if self.harvest_process is not None or self.sweep_worker_process is not None:
             if not messagebox.askyesno(
                 "모션 작업 실행 중",
                 "현재 프로세스를 종료하고 GUI를 닫을까요?\n"
@@ -1468,13 +1913,16 @@ class HarvestGui(Node):
                 icon="warning",
             ):
                 return
-            self.harvest_process.terminate()
+            if self.harvest_process is not None:
+                self.harvest_process.terminate()
+            self._shutdown_sweep_worker(force=True)
         self.closing = True
         self.root.quit()
 
     def _signal_close(self, _signum, _frame) -> None:
         if self.harvest_process is not None:
             self.harvest_process.terminate()
+        self._shutdown_sweep_worker(force=True)
         self.closing = True
         self.root.quit()
 

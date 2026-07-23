@@ -327,6 +327,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("avoid_collisions", True)
         self.declare_parameter("service_timeout_sec", 30.0)
         self.declare_parameter("execution_timeout_sec", 60.0)
+        self.declare_parameter("publish_display_trajectory", True)
         self.declare_parameter("execute", False)
 
         self.base_frame = str(self.get_parameter("base_frame").value)
@@ -348,6 +349,60 @@ class CartesianHarvestPlanner(Node):
         )
         self.display_publisher = self.create_publisher(
             DisplayTrajectory, "/display_planned_path", 10
+        )
+        self.last_plan_report = {}
+
+    def _begin_plan_report(self) -> None:
+        self.last_plan_report = {
+            "success": False,
+            "tomato_frame": self.tomato_frame,
+            "pipeline": str(self.get_parameter("planning_pipeline_id").value),
+            "planner_id": str(self.get_parameter("planner_id").value),
+            "stages": [],
+            "_started_monotonic": time.monotonic(),
+        }
+
+    def _record_plan_stage(
+        self,
+        stage: str,
+        planner_type: str,
+        success: bool,
+        duration_sec: float,
+        reason: str = "",
+        **details,
+    ) -> None:
+        record = {
+            "stage": stage,
+            "planner_type": planner_type,
+            "success": bool(success),
+            "duration_sec": round(float(duration_sec), 6),
+            "reason": reason,
+        }
+        record.update(details)
+        self.last_plan_report.setdefault("stages", []).append(record)
+        if not success and "failure_stage" not in self.last_plan_report:
+            self.last_plan_report["failure_stage"] = stage
+            self.last_plan_report["failure_planner_type"] = planner_type
+            self.last_plan_report["failure_reason"] = reason
+            self.last_plan_report.update(
+                {
+                    key: value
+                    for key, value in details.items()
+                    if key in {
+                        "moveit_error_code",
+                        "cartesian_fraction",
+                        "required_fraction",
+                    }
+                }
+            )
+
+    def _finish_plan_report(self, success: bool) -> None:
+        started = self.last_plan_report.pop(
+            "_started_monotonic", time.monotonic()
+        )
+        self.last_plan_report["success"] = bool(success)
+        self.last_plan_report["duration_sec"] = round(
+            time.monotonic() - started, 6
         )
 
     def _lookup_transform(self, child_frame: str, parent_frame: str | None = None):
@@ -398,6 +453,19 @@ class CartesianHarvestPlanner(Node):
         ]
         if len(joint_names) != 6 or len(joint_names) != len(joint_positions):
             self.get_logger().error("PICK_READY must contain exactly six joint values")
+            pipeline = str(self.get_parameter("planning_pipeline_id").value)
+            stage = (
+                f"{pipeline.upper()}_PICK_READY"
+                if label == "PICK_READY"
+                else f"{pipeline.upper()}_RETURN_PICK_READY"
+            )
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                0.0,
+                "INVALID_PICK_READY_CONFIGURATION",
+            )
             return None
 
         return self._plan_joint_target(
@@ -414,12 +482,33 @@ class CartesianHarvestPlanner(Node):
         start_state: RobotState | None,
         label: str,
     ):
+        stage_started = time.monotonic()
+        pipeline = str(self.get_parameter("planning_pipeline_id").value)
+        stage = (
+            f"{pipeline.upper()}_PICK_READY"
+            if label == "PICK_READY"
+            else f"{pipeline.upper()}_RETURN_PICK_READY"
+        )
         timeout = max(1.0, float(self.get_parameter("service_timeout_sec").value))
         if not self.move_group_client.wait_for_server(timeout_sec=timeout):
             self.get_logger().error("MoveIt move_action server is unavailable")
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "ACTION_SERVER_UNAVAILABLE",
+            )
             return None
         if not joint_names or len(joint_names) != len(joint_positions):
             self.get_logger().error(f"{label} joint target is invalid")
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "INVALID_JOINT_TARGET",
+            )
             return None
 
         tolerance = max(
@@ -469,12 +558,26 @@ class CartesianHarvestPlanner(Node):
         goal_handle = goal_future.result() if goal_future.done() else None
         if goal_handle is None or not goal_handle.accepted:
             self.get_logger().error(f"MoveIt rejected the {label} planning request")
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "GOAL_REJECTED_OR_RESPONSE_TIMEOUT",
+            )
             return None
         result_future = goal_handle.get_result_async()
         rclpy.spin_until_future_complete(self, result_future, timeout_sec=timeout)
         wrapped_result = result_future.result() if result_future.done() else None
         if wrapped_result is None:
             self.get_logger().error(f"{label} planning timed out")
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "PLANNING_RESULT_TIMEOUT",
+            )
             return None
         result = wrapped_result.result
         trajectory = result.planned_trajectory
@@ -487,7 +590,26 @@ class CartesianHarvestPlanner(Node):
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
         if not success:
+            self._record_plan_stage(
+                stage,
+                pipeline,
+                False,
+                time.monotonic() - stage_started,
+                "MOVEIT_PLANNING_FAILED",
+                moveit_error_code=int(result.error_code.val),
+                point_count=point_count,
+                planning_time_sec=float(result.planning_time),
+            )
             return None
+        self._record_plan_stage(
+            stage,
+            pipeline,
+            True,
+            time.monotonic() - stage_started,
+            moveit_error_code=int(result.error_code.val),
+            point_count=point_count,
+            planning_time_sec=float(result.planning_time),
+        )
         return trajectory, result.trajectory_start
 
     @staticmethod
@@ -500,9 +622,23 @@ class CartesianHarvestPlanner(Node):
         return state
 
     def _plan_cartesian(self, waypoints, start_state: RobotState, label: str):
+        stage_started = time.monotonic()
+        stage_names = {
+            "TCP direct pre-approach": "CARTESIAN_PREAPPROACH",
+            "Approach and pre-wait harvest": "CARTESIAN_APPROACH",
+            "Post-wait harvest": "CARTESIAN_POST_WAIT",
+        }
+        stage = stage_names.get(label, f"CARTESIAN_{label.upper()}")
         timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
         if not self.cartesian_client.wait_for_service(timeout_sec=timeout):
             self.get_logger().error("MoveIt compute_cartesian_path service is unavailable")
+            self._record_plan_stage(
+                stage,
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "CARTESIAN_SERVICE_UNAVAILABLE",
+            )
             return None
 
         request = GetCartesianPath.Request()
@@ -522,6 +658,13 @@ class CartesianHarvestPlanner(Node):
         response = future.result() if future.done() else None
         if response is None:
             self.get_logger().error(f"{label} Cartesian planning timed out")
+            self._record_plan_stage(
+                stage,
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "CARTESIAN_SERVICE_TIMEOUT",
+            )
             return None
 
         point_count = len(response.solution.joint_trajectory.points)
@@ -536,11 +679,54 @@ class CartesianHarvestPlanner(Node):
             f"fraction={response.fraction:.3f}/{minimum_fraction:.3f} "
             f"points={point_count} error_code={response.error_code.val}"
         )
+        reason = ""
+        if not success:
+            if response.fraction < minimum_fraction:
+                reason = "CARTESIAN_FRACTION_LOW"
+            elif response.error_code.val != MoveItErrorCodes.SUCCESS:
+                reason = "MOVEIT_CARTESIAN_FAILED"
+            else:
+                reason = "EMPTY_CARTESIAN_TRAJECTORY"
+        self._record_plan_stage(
+            stage,
+            "cartesian",
+            success,
+            time.monotonic() - stage_started,
+            reason,
+            moveit_error_code=int(response.error_code.val),
+            cartesian_fraction=float(response.fraction),
+            required_fraction=minimum_fraction,
+            point_count=point_count,
+        )
         return response.solution if success else None
 
     def plan(self):
+        self._begin_plan_report()
+        try:
+            result = self._plan_impl()
+        except Exception as error:
+            self._record_plan_stage(
+                "UNEXPECTED_EXCEPTION",
+                "internal",
+                False,
+                0.0,
+                repr(error),
+            )
+            self._finish_plan_report(False)
+            raise
+        self._finish_plan_report(result is not None)
+        return result
+
+    def _plan_impl(self):
         tomato_tf = self._lookup_transform(self.tomato_frame)
         if tomato_tf is None:
+            self._record_plan_stage(
+                "TF_TARGET",
+                "tf",
+                False,
+                0.0,
+                "TF_NOT_FOUND",
+            )
             return None
         tomato_position = self._translation(tomato_tf)
         tomato_rotation = self._rotation_matrix(tomato_tf)
@@ -550,6 +736,13 @@ class CartesianHarvestPlanner(Node):
             )
         except ValueError as error:
             self.get_logger().error(str(error))
+            self._record_plan_stage(
+                "TARGET_GEOMETRY",
+                "geometry",
+                False,
+                0.0,
+                "INVALID_TOMATO_ORIENTATION",
+            )
             return None
 
         pick_ready_plan = self._plan_pick_ready()
@@ -569,6 +762,13 @@ class CartesianHarvestPlanner(Node):
             or gripper_to_tip_tf is None
             or planning_to_tip_tf is None
         ):
+            self._record_plan_stage(
+                "TF_ROBOT_TOOL",
+                "tf",
+                False,
+                0.0,
+                "TOOL_TF_NOT_FOUND",
+            )
             return None
 
         virtual_vine_origin = tomato_position + stemward
@@ -608,6 +808,13 @@ class CartesianHarvestPlanner(Node):
         if order_dot <= 0.0:
             self.get_logger().error(
                 "Tomato is not between the gripper tip and detected stem direction"
+            )
+            self._record_plan_stage(
+                "TARGET_GEOMETRY",
+                "geometry",
+                False,
+                0.0,
+                "INVALID_GRIPPER_STEM_ORDER",
             )
             return None
 
@@ -686,19 +893,20 @@ class CartesianHarvestPlanner(Node):
             return_trajectory=return_trajectory,
             display_start_state=display_start_state,
         )
-        display = DisplayTrajectory()
-        display.model_id = self.robot_model_id
-        display.trajectory_start = display_start_state
-        display.trajectory.extend(
-            [
-                pick_ready_trajectory,
-                preapproach_trajectory,
-                approach_trajectory,
-                after_wait_trajectory,
-                return_trajectory,
-            ]
-        )
-        self.display_publisher.publish(display)
+        if bool(self.get_parameter("publish_display_trajectory").value):
+            display = DisplayTrajectory()
+            display.model_id = self.robot_model_id
+            display.trajectory_start = display_start_state
+            display.trajectory.extend(
+                [
+                    pick_ready_trajectory,
+                    preapproach_trajectory,
+                    approach_trajectory,
+                    after_wait_trajectory,
+                    return_trajectory,
+                ]
+            )
+            self.display_publisher.publish(display)
         self.get_logger().info(
             "Full harvest plan ready: PICK_READY -> TCP Cartesian pre-approach -> "
             f"{self.planning_link}-based Cartesian approach -> "

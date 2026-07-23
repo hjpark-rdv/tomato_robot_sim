@@ -17,9 +17,11 @@ from rbpodo_tomato_harvest.harvest_gui import (
     sweep_result_marker,
     tomato_stem_arrow_length,
 )
+from rbpodo_tomato_harvest.harvest_planner import CartesianHarvestPlanner
+from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
 
-def test_generate_sweep_cases_uses_largest_required_interval_count():
+def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
     cases = generate_sweep_cases(
         start=(0.0, 0.0, 0.0, 0.0),
         end=(0.02, 0.01, 0.0, 10.0),
@@ -29,8 +31,22 @@ def test_generate_sweep_cases_uses_largest_required_interval_count():
 
     assert cases == [
         (0.0, 0.0, 0.0, 0.0),
-        (0.01, 0.005, 0.0, 5.0),
-        (0.02, 0.01, 0.0, 10.0),
+        (0.01, 0.01, 0.0, 5.0),
+    ]
+
+
+def test_generate_sweep_cases_uses_exact_steps_until_earliest_end():
+    cases = generate_sweep_cases(
+        start=(0.0, 0.0, 0.0, 0.0),
+        end=(1.0, 0.6, 0.0, 90.0),
+        step=(0.1, 0.3, 0.0, 5.0),
+        randomized=(False, False, False, False),
+    )
+
+    assert cases == [
+        (0.0, 0.0, 0.0, 0.0),
+        (0.1, 0.3, 0.0, 5.0),
+        (0.2, 0.6, 0.0, 10.0),
     ]
 
 
@@ -52,6 +68,30 @@ def test_generate_sweep_cases_randomizes_only_checked_axis():
     ]
 
 
+def test_random_axis_step_does_not_control_termination():
+    cases = generate_sweep_cases(
+        start=(0.0, 0.0, 0.0, 0.0),
+        end=(10.0, 0.0, 0.0, 10.0),
+        step=(0.0, 0.0, 0.0, 5.0),
+        randomized=(True, False, False, False),
+        rng=random.Random(3),
+    )
+
+    assert len(cases) == 3
+    assert all(0.0 <= case[0] <= 10.0 for case in cases)
+    assert [case[3] for case in cases] == [0.0, 5.0, 10.0]
+
+
+def test_all_changing_axes_random_requires_nonrandom_termination_axis():
+    with pytest.raises(ValueError):
+        generate_sweep_cases(
+            start=(0.0, 0.0, 0.0, 0.0),
+            end=(1.0, 1.0, 0.0, 0.0),
+            step=(0.0, 0.0, 0.0, 0.0),
+            randomized=(True, True, False, False),
+        )
+
+
 def test_generate_sweep_cases_rejects_zero_step_for_changed_axis():
     with pytest.raises(ValueError):
         generate_sweep_cases(
@@ -60,6 +100,52 @@ def test_generate_sweep_cases_rejects_zero_step_for_changed_axis():
             (0.0, 0.0, 0.0, 0.0),
             (False, False, False, False),
         )
+
+
+def test_persistent_worker_updates_target_and_disables_display():
+    received = []
+    node = SimpleNamespace(
+        tomato_frame="old_frame",
+        set_parameters=lambda parameters: (
+            received.extend(parameters)
+            or [SimpleNamespace(successful=True, reason="") for _ in parameters]
+        ),
+    )
+
+    _apply_request(
+        node,
+        {
+            "tomato_frame": "detected_tomato_7_tf",
+            "planning_pipeline_id": "chomp",
+            "planner_id": "RRTConnectkConfigDefault",
+        },
+    )
+
+    values = {parameter.name: parameter.value for parameter in received}
+    assert node.tomato_frame == "detected_tomato_7_tf"
+    assert values["planning_pipeline_id"] == "chomp"
+    assert values["execute"] is False
+    assert values["publish_display_trajectory"] is False
+
+
+def test_plan_report_keeps_first_failure_with_cartesian_details():
+    planner = SimpleNamespace(last_plan_report={"stages": []})
+
+    CartesianHarvestPlanner._record_plan_stage(
+        planner,
+        "CARTESIAN_APPROACH",
+        "cartesian",
+        False,
+        0.35,
+        "CARTESIAN_FRACTION_LOW",
+        moveit_error_code=1,
+        cartesian_fraction=0.84,
+        required_fraction=0.98,
+    )
+
+    assert planner.last_plan_report["failure_stage"] == "CARTESIAN_APPROACH"
+    assert planner.last_plan_report["failure_reason"] == "CARTESIAN_FRACTION_LOW"
+    assert planner.last_plan_report["cartesian_fraction"] == pytest.approx(0.84)
 
 
 def test_harvest_command_builds_plan_only_command():
@@ -79,6 +165,7 @@ def test_harvest_command_builds_plan_only_command():
     assert "execute:=false" in command
     assert "planning_pipeline_id:=chomp" in command
     assert "planner_id:=RRTConnectkConfigDefault" in command
+    assert "publish_display_trajectory:=true" in command
 
 
 def test_harvest_command_builds_execute_command():
@@ -88,6 +175,12 @@ def test_harvest_command_builds_execute_command():
     assert "execute:=true" in command
     assert "planning_pipeline_id:=ompl" in command
     assert "planner_id:=RRTConnectkConfigDefault" in command
+
+
+def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
+    command = harvest_command(0, False, publish_display_trajectory=False)
+
+    assert "publish_display_trajectory:=false" in command
 
 
 def test_harvest_command_builds_pilz_lin_command():
