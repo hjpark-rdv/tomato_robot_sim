@@ -65,6 +65,33 @@ SWEEP_CSV_FIELDS = (
 )
 
 
+def _inclusive_step_values(
+    begin: float,
+    finish: float,
+    increment: float,
+    label: str,
+) -> list[float]:
+    """Return begin-to-finish values, including the exact finish value."""
+    begin = float(begin)
+    finish = float(finish)
+    increment = abs(float(increment))
+    distance = abs(finish - begin)
+
+    if distance < 1e-12:
+        return [begin]
+    if increment <= 0.0:
+        raise ValueError(f"{label} 변화량은 0보다 커야 합니다.")
+
+    direction = 1.0 if finish >= begin else -1.0
+    interval_count = int(math.ceil(distance / increment))
+    values = [
+        begin + direction * min(index * increment, distance)
+        for index in range(interval_count + 1)
+    ]
+    values[-1] = finish
+    return values
+
+
 def generate_sweep_cases(
     start,
     end,
@@ -73,51 +100,86 @@ def generate_sweep_cases(
     rng=None,
     maximum_cases: int = 500,
 ) -> list[tuple[float, float, float, float]]:
-    """Advance by exact steps until the first changing axis reaches its end."""
+    """Generate XYZ positions, then test every rotation at each position.
+
+    X/Y/Z retain the previous behavior: deterministic axes advance together and
+    random axes are sampled once per XYZ position. Rotation is never randomized;
+    every value from its start to end is tested before moving to the next XYZ
+    position.
+    """
     starts = [float(value) for value in start]
     ends = [float(value) for value in end]
     steps = [abs(float(value)) for value in step]
     random_flags = [bool(value) for value in randomized]
     if not all(len(values) == 4 for values in (starts, ends, steps, random_flags)):
-        raise ValueError("start, end, step and randomized must contain four values")
+        raise ValueError(
+            "start, end, step and randomized must contain four values"
+        )
 
-    interval_counts = []
-    has_random_range = False
+    # X/Y/Z determine how many distinct positions are generated.
+    position_interval_counts = []
+    has_random_position_range = False
     for begin, finish, increment, use_random in zip(
-        starts, ends, steps, random_flags
+        starts[:3], ends[:3], steps[:3], random_flags[:3]
     ):
         distance = abs(finish - begin)
-        if distance == 0.0:
+        if distance < 1e-12:
             continue
         if use_random:
-            has_random_range = True
+            has_random_position_range = True
             continue
-        if increment == 0.0:
-            raise ValueError("변경되는 항목의 변화량은 0보다 커야 합니다.")
-        interval_counts.append(int(math.ceil(distance / increment)))
-    if not interval_counts and has_random_range:
+        if increment <= 0.0:
+            raise ValueError(
+                "변경되는 X/Y/Z 항목의 변화량은 0보다 커야 합니다."
+            )
+        position_interval_counts.append(int(math.ceil(distance / increment)))
+
+    if not position_interval_counts and has_random_position_range:
         raise ValueError(
-            "종료 기준이 될 비랜덤 변화 축을 하나 이상 설정하세요."
+            "XYZ 랜덤 범위를 반복하려면 종료 기준이 될 "
+            "비랜덤 X/Y/Z 변화 축을 하나 이상 설정하세요."
         )
-    intervals = min(interval_counts) if interval_counts else 0
-    case_count = intervals + 1
-    if case_count > maximum_cases:
-        raise ValueError(f"자동 테스트는 최대 {maximum_cases}개까지 실행할 수 있습니다.")
+
+    position_intervals = (
+        min(position_interval_counts) if position_interval_counts else 0
+    )
+    position_count = position_intervals + 1
+
+    rotation_values = _inclusive_step_values(
+        starts[3],
+        ends[3],
+        steps[3],
+        "회전",
+    )
+    total_case_count = position_count * len(rotation_values)
+    if total_case_count > maximum_cases:
+        raise ValueError(
+            f"자동 테스트는 최대 {maximum_cases}개 케이스까지 실행할 수 있습니다. "
+            f"현재 설정: XYZ 위치 {position_count}개 × "
+            f"회전 {len(rotation_values)}개 = {total_case_count}개"
+        )
 
     random_source = rng or random.Random()
     cases = []
-    for case_index in range(case_count):
-        values = []
+    for position_index in range(position_count):
+        xyz = []
         for begin, finish, increment, use_random in zip(
-            starts, ends, steps, random_flags
+            starts[:3], ends[:3], steps[:3], random_flags[:3]
         ):
-            if use_random and begin != finish:
-                values.append(random_source.uniform(min(begin, finish), max(begin, finish)))
+            distance = abs(finish - begin)
+            if use_random and distance >= 1e-12:
+                xyz.append(
+                    random_source.uniform(min(begin, finish), max(begin, finish))
+                )
             else:
                 direction = 1.0 if finish >= begin else -1.0
-                moved = min(case_index * increment, abs(finish - begin))
-                values.append(begin + direction * moved)
-        cases.append(tuple(values))
+                moved = min(position_index * increment, distance)
+                xyz.append(begin + direction * moved)
+
+        # Keep this XYZ position fixed while every rotation is tested.
+        for rotation in rotation_values:
+            cases.append((xyz[0], xyz[1], xyz[2], rotation))
+
     return cases
 
 
@@ -674,19 +736,22 @@ class HarvestGui(Node):
                     textvariable=self.sweep_inputs[f"{prefix}_{key}"],
                     width=10,
                 ).grid(row=row, column=column, padx=3, pady=3)
-            ttk.Checkbutton(
+            random_checkbox = ttk.Checkbutton(
                 frame,
                 variable=self.sweep_inputs[f"random_{key}"],
-            ).grid(row=row, column=4)
+            )
+            if key == "rotation":
+                random_checkbox.configure(state="disabled")
+            random_checkbox.grid(row=row, column=4)
 
         self.sweep_summary = tk.StringVar(value="대기 중")
         ttk.Label(
             frame,
             text=(
-                "각 위치/회전에서 필터 조건을 만족한 토마토 전체를 Plan합니다.\n"
-                "검출된 토마토가 없는 케이스는 건너뜁니다.\n"
-                "가장 먼저 종료값에 도달하는 축에서 테스트가 끝납니다.\n"
-                "랜덤 축은 범위에서 추출하며 변화량/종료 조건에서 제외됩니다."
+                "각 XYZ 위치에서 회전 시작~종료 각도를 모두 Plan합니다.\n"
+                "모든 회전 테스트가 끝나면 다음 XYZ 위치로 이동합니다.\n"
+                "X/Y/Z 랜덤 축은 위치마다 한 번 추출되어 전체 회전에 유지됩니다.\n"
+                "검출된 토마토가 없는 위치/회전 케이스는 건너뜁니다."
             ),
         ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(10, 6))
         self.sweep_start_button = ttk.Button(
@@ -831,6 +896,8 @@ class HarvestGui(Node):
         randomized = [
             self.sweep_inputs[f"random_{key}"].get() for key in keys
         ]
+        # Rotation is exhaustive, not random. Only X/Y/Z support random sampling.
+        randomized[3] = False
         random_seed = random.SystemRandom().randrange(0, 2**32)
         cases = generate_sweep_cases(
             start,
