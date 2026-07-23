@@ -1,3 +1,4 @@
+import math
 import os
 import queue
 import signal
@@ -5,16 +6,22 @@ import subprocess
 import sys
 import threading
 import tkinter as tk
+from collections import deque
 from tkinter import font as tkfont
 from tkinter import messagebox, ttk
 
 import rclpy
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DetectTomatoes
+from geometry_msgs.msg import Point
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from rclpy.time import Time
+from tf2_ros import Buffer, TransformException, TransformListener
+from visualization_msgs.msg import Marker, MarkerArray
 
 
 PLANNER_CONFIGS = {
@@ -22,6 +29,7 @@ PLANNER_CONFIGS = {
     "CHOMP": ("chomp", "RRTConnectkConfigDefault"),
     "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN"),
 }
+HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 
 
 def harvest_command(
@@ -57,6 +65,73 @@ def harvest_command(
     ]
 
 
+def harvest_all_jobs(tomato_count: int) -> list[tuple[int, bool]]:
+    """Build plan-only/execute jobs for every detected tomato in order."""
+    if tomato_count < 0:
+        raise ValueError("tomato_count must be zero or greater")
+    return [
+        (index, execute)
+        for index in range(tomato_count)
+        for execute in (False, True)
+    ]
+
+
+def tomato_stem_arrow_length(
+    center,
+    stem_point,
+    source_to_parent_quaternion=None,
+    stem_margin: float = 0.008,
+    minimum_length: float = 0.015,
+) -> float:
+    """Return the horizontal tomato-center to just-before-stem distance."""
+    x = float(stem_point.x) - float(center.x)
+    y = float(stem_point.y) - float(center.y)
+    z = float(stem_point.z) - float(center.z)
+    if source_to_parent_quaternion is not None:
+        qx, qy, qz, qw = [float(value) for value in source_to_parent_quaternion]
+        rotated_x = (
+            (1 - 2 * (qy * qy + qz * qz)) * x
+            + 2 * (qx * qy - qz * qw) * y
+            + 2 * (qx * qz + qy * qw) * z
+        )
+        rotated_y = (
+            2 * (qx * qy + qz * qw) * x
+            + (1 - 2 * (qx * qx + qz * qz)) * y
+            + 2 * (qy * qz - qx * qw) * z
+        )
+        horizontal_distance = math.hypot(rotated_x, rotated_y)
+    else:
+        horizontal_distance = math.sqrt(x * x + y * y + z * z)
+    return max(float(minimum_length), horizontal_distance - float(stem_margin))
+
+
+def harvest_result_marker(
+    tomato_index: int,
+    success: bool,
+    arrow_length: float,
+) -> Marker:
+    """Create a +X arrow at a detected tomato TF for one planning result."""
+    if tomato_index < 0:
+        raise ValueError("tomato_index must be zero or greater")
+    if arrow_length <= 0.0:
+        raise ValueError("arrow_length must be greater than zero")
+    marker = Marker()
+    marker.header.frame_id = f"detected_tomato_{tomato_index}_tf"
+    marker.ns = HARVEST_RESULT_NAMESPACE
+    marker.id = tomato_index
+    marker.type = Marker.ARROW
+    marker.action = Marker.ADD
+    marker.points = [Point(), Point(x=float(arrow_length))]
+    marker.scale.x = 0.008
+    marker.scale.y = 0.016
+    marker.scale.z = 0.020
+    marker.color.r = 0.0 if success else 1.0
+    marker.color.g = 1.0
+    marker.color.b = 0.0
+    marker.color.a = 1.0
+    return marker
+
+
 def scene_parameters(position, rotation_deg: float) -> list[Parameter]:
     """Build scene position and main-vine-axis rotation parameters."""
     coordinates = [float(value) for value in position]
@@ -89,6 +164,12 @@ class HarvestGui(Node):
         )
         self.declare_parameter("scene_node", "/tomato_scene_node")
         self.declare_parameter("default_planner", "ompl")
+        self.declare_parameter(
+            "result_markers_topic", "/harvest_result_markers"
+        )
+        self.declare_parameter("result_marker_parent_frame", "link0")
+        self.declare_parameter("result_arrow_stem_margin", 0.008)
+        self.declare_parameter("result_arrow_minimum_length", 0.015)
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -106,6 +187,18 @@ class HarvestGui(Node):
             self._detections_callback,
             10,
         )
+        result_marker_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self.result_marker_publisher = self.create_publisher(
+            MarkerArray,
+            str(self.get_parameter("result_markers_topic").value),
+            result_marker_qos,
+        )
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.camera_service = camera_service
         self.scene_node = scene_node
@@ -115,6 +208,16 @@ class HarvestGui(Node):
         self.verified_plan = None
         self.harvest_process = None
         self.process_queue = queue.Queue()
+        self.batch_active = False
+        self.batch_jobs = deque()
+        self.batch_generation = None
+        self.batch_total = 0
+        self.batch_completed = 0
+        self.batch_skipped = 0
+        self.batch_planner = None
+        self.harvest_results: dict[int, bool] = {}
+        self.result_arrow_lengths: dict[int, float] = {}
+        self.result_detection_frame = ""
         self.closing = False
 
         self.root = tk.Tk()
@@ -283,10 +386,41 @@ class HarvestGui(Node):
         self.planner_combo.bind(
             "<<ComboboxSelected>>", self._planner_selection_changed
         )
+        self.harvest_all_button = ttk.Button(
+            motion_frame,
+            text="검출 토마토 전체 연속 수확",
+            command=self.start_harvest_all,
+            state="disabled",
+        )
+        self.harvest_all_button.grid(
+            row=1,
+            column=2,
+            columnspan=2,
+            sticky="ew",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        self.clear_markers_button = ttk.Button(
+            motion_frame,
+            text="결과 마커 지우기",
+            command=self.clear_harvest_result_markers,
+            state="disabled",
+        )
+        self.clear_markers_button.grid(
+            row=2,
+            column=2,
+            columnspan=2,
+            sticky="ew",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
         ttk.Label(
             motion_frame,
-            text="실제 실행은 현재 선택한 토마토의 Plan-only 성공 후 활성화됩니다.",
-        ).grid(row=2, column=0, columnspan=4, sticky="w", pady=(8, 0))
+            text=(
+                "개별 실제 실행은 Plan-only 성공 후 활성화됩니다. "
+                "전체 수확은 토마토마다 Plan-only 후 실제 실행합니다."
+            ),
+        ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         scene_frame = ttk.LabelFrame(
             outer, text="토마토 줄기 위치 / 회전", padding=10
@@ -351,6 +485,82 @@ class HarvestGui(Node):
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
 
+    def _publish_harvest_result_markers(self) -> None:
+        if not self.harvest_results:
+            return
+        message = MarkerArray()
+        message.markers = [
+            harvest_result_marker(
+                index,
+                success,
+                self.result_arrow_lengths.get(index, 0.04),
+            )
+            for index, success in sorted(self.harvest_results.items())
+        ]
+        self.result_marker_publisher.publish(message)
+
+    def _set_harvest_result(self, tomato_index: int, success: bool) -> None:
+        self._update_result_arrow_length(tomato_index)
+        self.harvest_results[tomato_index] = success
+        self.clear_markers_button.configure(state="normal")
+        self._publish_harvest_result_markers()
+
+    def _clear_harvest_results(self) -> None:
+        marker = Marker()
+        marker.action = Marker.DELETEALL
+        message = MarkerArray()
+        message.markers = [marker]
+        self.result_marker_publisher.publish(message)
+        self.harvest_results.clear()
+        self.clear_markers_button.configure(state="disabled")
+
+    def clear_harvest_result_markers(self) -> None:
+        self._clear_harvest_results()
+        self.result_arrow_lengths.clear()
+        self.status.set("수확 결과 마커를 지웠습니다.")
+        self._append_log("수확 결과 마커 전체 삭제")
+
+    def _source_to_result_parent_quaternion(self, source_frame: str):
+        parent_frame = str(
+            self.get_parameter("result_marker_parent_frame").value
+        )
+        if source_frame == parent_frame:
+            return (0.0, 0.0, 0.0, 1.0)
+        try:
+            transform = self.tf_buffer.lookup_transform(
+                parent_frame,
+                source_frame,
+                Time(),
+            )
+        except TransformException as error:
+            self._append_log(
+                f"화살표 길이용 TF를 찾지 못해 3D 거리를 사용합니다: {error}"
+            )
+            return None
+        rotation = transform.transform.rotation
+        return (rotation.x, rotation.y, rotation.z, rotation.w)
+
+    def _update_result_arrow_length(self, tomato_index: int) -> None:
+        if not 0 <= tomato_index < len(self.detected_tomatoes):
+            return
+        source_to_parent_quaternion = self._source_to_result_parent_quaternion(
+            self.result_detection_frame
+        )
+        minimum_length = float(
+            self.get_parameter("result_arrow_minimum_length").value
+        )
+        if source_to_parent_quaternion is None:
+            self.result_arrow_lengths[tomato_index] = minimum_length
+            return
+        detection = self.detected_tomatoes[tomato_index]
+        self.result_arrow_lengths[tomato_index] = tomato_stem_arrow_length(
+            detection.center,
+            detection.stem_point,
+            source_to_parent_quaternion,
+            float(self.get_parameter("result_arrow_stem_margin").value),
+            minimum_length,
+        )
+
     def _detection_key(self, message: TomatoDetectionArray):
         stamp = message.header.stamp
         points = tuple(
@@ -371,6 +581,8 @@ class HarvestGui(Node):
         signature = self._detection_key(message)
         if signature == self.detection_signature:
             return
+        self.result_arrow_lengths.clear()
+        self.result_detection_frame = message.header.frame_id
         self.detection_signature = signature
         self.detected_tomatoes = list(message.detections)
         self.detection_generation += 1
@@ -397,14 +609,19 @@ class HarvestGui(Node):
                 ),
             )
         self.tomato_combo.configure(values=choices)
+        busy = self.harvest_process is not None or self.batch_active
         if choices:
             self.tomato_combo.current(0)
             self.tomato_tree.selection_set("0")
             self.tomato_tree.focus("0")
-            self.plan_button.configure(state="normal")
+            self.plan_button.configure(state="disabled" if busy else "normal")
+            self.harvest_all_button.configure(
+                state="disabled" if busy else "normal"
+            )
         else:
             self.selected_tomato.set("")
             self.plan_button.configure(state="disabled")
+            self.harvest_all_button.configure(state="disabled")
         self.status.set(f"토마토 {len(choices)}개 검출됨")
         self._append_log(
             f"[{message.header.frame_id}] 새 검출 결과: 토마토 {len(choices)}개"
@@ -473,6 +690,7 @@ class HarvestGui(Node):
 
     def _planner_selection_changed(self, _event=None) -> None:
         self._invalidate_plan()
+        self._clear_harvest_results()
         self.status.set(
             f"{self.selected_planner.get()} 선택됨 — Plan-only를 다시 실행하세요."
         )
@@ -492,7 +710,7 @@ class HarvestGui(Node):
         if index is None:
             messagebox.showwarning("토마토 선택", "수확할 토마토를 먼저 선택하세요.")
             return
-        if self.harvest_process is not None:
+        if self.harvest_process is not None or self.batch_active:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
         pipeline, planner_id = self._selected_planner_config()
@@ -516,6 +734,88 @@ class HarvestGui(Node):
         ):
             return
 
+        self._launch_harvest_process(index, execute, verification)
+
+    def start_harvest_all(self) -> None:
+        if self.harvest_process is not None or self.batch_active:
+            messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
+            return
+        tomato_count = len(self.detected_tomatoes)
+        if tomato_count == 0:
+            messagebox.showwarning("토마토 검출", "수확할 토마토를 먼저 검출하세요.")
+            return
+        if not messagebox.askyesno(
+            "검출 토마토 전체 연속 수확",
+            f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
+            "Plan-only 실패 토마토는 건너뛰며, 실제 실행 실패 시 중단됩니다.\n"
+            "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
+            icon="warning",
+        ):
+            return
+
+        self.batch_active = True
+        self.batch_jobs = deque(harvest_all_jobs(tomato_count))
+        self.batch_generation = self.detection_generation
+        self.batch_total = tomato_count
+        self.batch_completed = 0
+        self.batch_skipped = 0
+        self.batch_planner = self._selected_planner_config()
+        self._invalidate_plan()
+        self._clear_harvest_results()
+        self._append_log(
+            f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
+            f"planner={self.batch_planner[0]}/{self.batch_planner[1]}"
+        )
+        self._set_busy(True)
+        self._start_next_batch_job()
+
+    def _start_next_batch_job(self) -> None:
+        if not self.batch_active:
+            return
+        if self.batch_generation != self.detection_generation:
+            self._finish_batch(False, "검출 결과가 변경되어 전체 수확을 중단했습니다.")
+            return
+        if not self.batch_jobs:
+            self._finish_batch(
+                True,
+                f"전체 연속 수확 완료: 수확 {self.batch_completed}개, "
+                f"계획 실패 {self.batch_skipped}개",
+            )
+            return
+
+        index, execute = self.batch_jobs.popleft()
+        pipeline, planner_id = self.batch_planner
+        verification = (
+            self.batch_generation,
+            index,
+            pipeline,
+            planner_id,
+        )
+        if execute and self.verified_plan != verification:
+            self._finish_batch(
+                False,
+                f"토마토 {index}의 Plan-only 검증이 없어 전체 수확을 중단했습니다.",
+            )
+            return
+
+        if self.tomato_tree.exists(str(index)):
+            self.tomato_combo.current(index)
+            self.tomato_tree.selection_set(str(index))
+            self.tomato_tree.focus(str(index))
+            self.tomato_tree.see(str(index))
+        if not self._launch_harvest_process(index, execute, verification):
+            self._finish_batch(
+                False,
+                f"토마토 {index} 작업 프로세스를 시작하지 못해 전체 수확을 중단했습니다.",
+            )
+
+    def _launch_harvest_process(
+        self,
+        index: int,
+        execute: bool,
+        verification,
+    ) -> bool:
+        pipeline, planner_id = verification[2], verification[3]
         command = harvest_command(
             index,
             execute,
@@ -525,11 +825,17 @@ class HarvestGui(Node):
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
         mode = "실제 수확" if execute else "Plan-only"
+        batch_prefix = (
+            f"[전체 {self.batch_completed + self.batch_skipped + 1}/"
+            f"{self.batch_total}] "
+            if self.batch_active
+            else ""
+        )
         self._append_log(
-            f"{mode} 시작: detected_tomato_{index}_tf "
+            f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}"
         )
-        self.status.set(f"{mode} 실행 중...")
+        self.status.set(f"{batch_prefix}{mode} 실행 중...")
         self._set_busy(True)
         try:
             self.harvest_process = subprocess.Popen(
@@ -545,13 +851,14 @@ class HarvestGui(Node):
             self._set_busy(False)
             self.status.set(f"{mode} 시작 실패")
             self._append_log(f"프로세스 시작 오류: {error}")
-            return
+            return False
         thread = threading.Thread(
             target=self._read_process,
             args=(self.harvest_process, execute, verification),
             daemon=True,
         )
         thread.start()
+        return True
 
     def _read_process(self, process, execute: bool, verification) -> None:
         if process.stdout is not None:
@@ -575,9 +882,13 @@ class HarvestGui(Node):
             if process is not self.harvest_process:
                 continue
             self.harvest_process = None
+            if self.batch_active:
+                self._handle_batch_job_done(return_code, execute, verification)
+                continue
             self._set_busy(False)
             mode = "실제 수확" if execute else "Plan-only"
             if return_code == 0:
+                self._set_harvest_result(verification[1], True)
                 self.status.set(f"{mode} 완료")
                 self._append_log(f"{mode} 완료 (종료 코드 0)")
                 if not execute and verification[0] == self.detection_generation:
@@ -587,11 +898,62 @@ class HarvestGui(Node):
                 else:
                     self._invalidate_plan()
             else:
+                self._set_harvest_result(verification[1], False)
                 self.status.set(f"{mode} 실패 — 로그를 확인하세요.")
                 self._append_log(f"{mode} 실패 (종료 코드 {return_code})")
                 self._invalidate_plan()
         if not self.closing:
             self.root.after(50, self._drain_process_queue)
+
+    def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
+        index = verification[1]
+        mode = "실제 수확" if execute else "Plan-only"
+        if return_code != 0:
+            self._set_harvest_result(index, False)
+            if not execute:
+                self.batch_skipped += 1
+                if self.batch_jobs and self.batch_jobs[0] == (index, True):
+                    self.batch_jobs.popleft()
+                self._invalidate_plan()
+                self._append_log(
+                    f"[전체 {self.batch_completed + self.batch_skipped}/"
+                    f"{self.batch_total}] 토마토 {index} Plan-only 실패 — 건너뜀"
+                )
+                self._start_next_batch_job()
+                return
+            self._finish_batch(
+                False,
+                f"토마토 {index} {mode} 실패로 전체 수확을 중단했습니다. "
+                f"(종료 코드 {return_code})",
+            )
+            return
+        if verification[0] != self.detection_generation:
+            self._finish_batch(False, "검출 결과가 변경되어 전체 수확을 중단했습니다.")
+            return
+
+        self._set_harvest_result(index, True)
+        self._append_log(
+            f"[전체 {self.batch_completed + self.batch_skipped + 1}/"
+            f"{self.batch_total}] "
+            f"토마토 {index} {mode} 완료"
+        )
+        if execute:
+            self.batch_completed += 1
+            self._invalidate_plan()
+        else:
+            self.verified_plan = verification
+        self._start_next_batch_job()
+
+    def _finish_batch(self, success: bool, message: str) -> None:
+        self.batch_active = False
+        self.batch_jobs.clear()
+        self.batch_generation = None
+        self.batch_planner = None
+        self._invalidate_plan()
+        self._set_busy(False)
+        self.status.set(message)
+        result = "완료" if success else "중단"
+        self._append_log(f"[전체 연속 수확 {result}] {message}")
 
     def _set_busy(self, busy: bool) -> None:
         state = "disabled" if busy else "normal"
@@ -600,6 +962,12 @@ class HarvestGui(Node):
         self.set_scene_button.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.planner_combo.configure(state="disabled" if busy else "readonly")
+        self.harvest_all_button.configure(
+            state="disabled" if busy or not self.detected_tomatoes else "normal"
+        )
+        self.clear_markers_button.configure(
+            state="disabled" if busy or not self.harvest_results else "normal"
+        )
         if busy or not self.detected_tomatoes:
             self.plan_button.configure(state="disabled")
         else:
@@ -681,6 +1049,9 @@ class HarvestGui(Node):
             self._append_log(f"줄기 위치/회전 변경 거부: {reasons}")
             return
         self.detected_tomatoes = []
+        self._clear_harvest_results()
+        self.result_arrow_lengths.clear()
+        self.result_detection_frame = ""
         self.detection_signature = None
         self.detection_generation += 1
         for item in self.tomato_tree.get_children():
@@ -688,6 +1059,7 @@ class HarvestGui(Node):
         self.tomato_combo.configure(values=[])
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
+        self.harvest_all_button.configure(state="disabled")
         self._invalidate_plan()
         self.status.set(
             "줄기 위치/회전 적용 완료 — 카메라 검출을 다시 실행하세요."

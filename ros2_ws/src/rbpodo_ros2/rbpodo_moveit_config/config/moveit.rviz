@@ -179,6 +179,18 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /tomato_markers
       Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: HarvestPlanResults
+      Namespaces:
+        harvest_plan_result: true
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /harvest_result_markers
+      Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
       Frame Timeout: 15
