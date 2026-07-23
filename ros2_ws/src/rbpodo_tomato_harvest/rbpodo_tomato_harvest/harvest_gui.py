@@ -52,6 +52,10 @@ SWEEP_CSV_FIELDS = (
     "failure_stage",
     "failure_planner_type",
     "failure_reason",
+    "recovery_used",
+    "recovery_success",
+    "recovery_stage",
+    "recovery_reason",
     "moveit_error_code",
     "cartesian_fraction",
     "required_fraction",
@@ -341,6 +345,7 @@ class HarvestGui(Node):
         self.sweep_session_dir = None
         self.sweep_started_monotonic = 0.0
         self.sweep_success_count = 0
+        self.sweep_recovery_count = 0
         self.sweep_failure_counts = Counter()
         self.sweep_active = False
         self.sweep_cancel_requested = False
@@ -685,7 +690,7 @@ class HarvestGui(Node):
             row=8, column=0, columnspan=5, sticky="ew", pady=10
         )
         self.sweep_statistics = tk.StringVar(
-            value="완료 0 | 성공 0 | 실패 0 | 성공률 0.0%"
+            value="완료 0 | 성공 0 | 실패 0 | 대체복귀 0 | 성공률 0.0%"
         )
         self.sweep_failure_summary = tk.StringVar(value="실패 단계: 없음")
         self.sweep_result_path = tk.StringVar(value="결과 파일: 생성 전")
@@ -865,10 +870,13 @@ class HarvestGui(Node):
         self.sweep_session_dir = session_directory
         self.sweep_started_monotonic = time.monotonic()
         self.sweep_success_count = 0
+        self.sweep_recovery_count = 0
         self.sweep_failure_counts.clear()
         for item in self.sweep_result_tree.get_children():
             self.sweep_result_tree.delete(item)
-        self.sweep_statistics.set("완료 0 | 성공 0 | 실패 0 | 성공률 0.0%")
+        self.sweep_statistics.set(
+            "완료 0 | 성공 0 | 실패 0 | 대체복귀 0 | 성공률 0.0%"
+        )
         self.sweep_failure_summary.set("실패 단계: 없음")
         self.sweep_result_path.set(f"결과 파일: {session_directory}")
 
@@ -890,6 +898,8 @@ class HarvestGui(Node):
     def _update_sweep_statistics(self, record) -> None:
         if record["success"]:
             self.sweep_success_count += 1
+            if record.get("recovery_success"):
+                self.sweep_recovery_count += 1
         else:
             self.sweep_failure_counts[
                 record.get("failure_stage") or "UNKNOWN"
@@ -902,6 +912,7 @@ class HarvestGui(Node):
         self.sweep_statistics.set(
             f"완료 {completed}/{self.sweep_total} | "
             f"성공 {self.sweep_success_count} | 실패 {failures} | "
+            f"대체복귀 {self.sweep_recovery_count} | "
             f"성공률 {success_rate:.1f}% | 평균 {average:.2f}s"
         )
         if self.sweep_failure_counts:
@@ -920,7 +931,7 @@ class HarvestGui(Node):
                 record["case"],
                 record["tomato"],
                 "성공" if record["success"] else "실패",
-                record.get("failure_stage", ""),
+                record.get("display_stage", ""),
                 f"{record.get('duration_sec', 0.0):.2f}",
             ),
         )
@@ -1072,6 +1083,7 @@ class HarvestGui(Node):
                 "total": total,
                 "success": self.sweep_success_count,
                 "failure": completed - self.sweep_success_count,
+                "cartesian_return_recovery": self.sweep_recovery_count,
                 "success_rate": (
                     self.sweep_success_count / completed if completed else 0.0
                 ),
@@ -1676,12 +1688,26 @@ class HarvestGui(Node):
                 "failure_planner_type", ""
             ),
             "failure_reason": report.get("failure_reason", ""),
+            "recovery_used": bool(report.get("recovery_used", False)),
+            "recovery_success": bool(report.get("recovery_success", False)),
+            "recovery_stage": report.get("recovery_stage", ""),
+            "recovery_reason": report.get("recovery_reason", ""),
             "moveit_error_code": report.get("moveit_error_code", ""),
             "cartesian_fraction": report.get("cartesian_fraction", ""),
             "required_fraction": report.get("required_fraction", ""),
             "duration_sec": report.get("duration_sec", 0.0),
             "stages": report.get("stages", []),
         }
+        if record["recovery_success"]:
+            record["display_stage"] = (
+                f"{record['failure_stage']}: OMPL 실패 → Cartesian 복귀 성공"
+            )
+        elif record["failure_stage"]:
+            record["display_stage"] = (
+                f"{record['failure_stage']}: {record['failure_reason']}"
+            )
+        else:
+            record["display_stage"] = ""
         self._save_sweep_result(record)
         self._update_sweep_statistics(record)
         self._update_result_arrow_length(tomato_index)

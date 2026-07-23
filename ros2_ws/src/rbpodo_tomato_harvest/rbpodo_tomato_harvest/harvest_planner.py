@@ -13,7 +13,7 @@ from moveit_msgs.msg import (
     MoveItErrorCodes,
     RobotState,
 )
-from moveit_msgs.srv import GetCartesianPath
+from moveit_msgs.srv import GetCartesianPath, GetPositionFK
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -343,6 +343,7 @@ class CartesianHarvestPlanner(Node):
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
         )
+        self.fk_client = self.create_client(GetPositionFK, "/compute_fk")
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
         self.execute_client = ActionClient(
             self, ExecuteTrajectory, "/execute_trajectory"
@@ -621,12 +622,59 @@ class CartesianHarvestPlanner(Node):
         state.joint_state.position = list(trajectory.points[-1].positions)
         return state
 
+    def _compute_planning_link_pose(self, robot_state: RobotState):
+        stage_started = time.monotonic()
+        timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
+        if not self.fk_client.wait_for_service(timeout_sec=timeout):
+            self._record_plan_stage(
+                "CARTESIAN_RETURN_FK",
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "FK_SERVICE_UNAVAILABLE",
+            )
+            return None
+        request = GetPositionFK.Request()
+        request.header.frame_id = self.base_frame
+        request.fk_link_names = [self.planning_link]
+        request.robot_state = robot_state
+        future = self.fk_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
+        response = future.result() if future.done() else None
+        success = (
+            response is not None
+            and response.error_code.val == MoveItErrorCodes.SUCCESS
+            and bool(response.pose_stamped)
+        )
+        if not success:
+            error_code = (
+                int(response.error_code.val) if response is not None else 0
+            )
+            self._record_plan_stage(
+                "CARTESIAN_RETURN_FK",
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "FK_FAILED_OR_TIMEOUT",
+                moveit_error_code=error_code,
+            )
+            return None
+        self._record_plan_stage(
+            "CARTESIAN_RETURN_FK",
+            "cartesian",
+            True,
+            time.monotonic() - stage_started,
+            moveit_error_code=int(response.error_code.val),
+        )
+        return response.pose_stamped[0].pose
+
     def _plan_cartesian(self, waypoints, start_state: RobotState, label: str):
         stage_started = time.monotonic()
         stage_names = {
             "TCP direct pre-approach": "CARTESIAN_PREAPPROACH",
             "Approach and pre-wait harvest": "CARTESIAN_APPROACH",
             "Post-wait harvest": "CARTESIAN_POST_WAIT",
+            "Fallback return PICK_READY": "CARTESIAN_RETURN_PICK_READY",
         }
         stage = stage_names.get(label, f"CARTESIAN_{label.upper()}")
         timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
@@ -699,6 +747,47 @@ class CartesianHarvestPlanner(Node):
             point_count=point_count,
         )
         return response.solution if success else None
+
+    def _plan_return_to_pick_ready(
+        self,
+        after_wait_end: RobotState,
+        pick_ready_end: RobotState,
+    ):
+        return_plan = self._plan_pick_ready(
+            start_state=after_wait_end,
+            label="Return PICK_READY",
+        )
+        if return_plan is not None:
+            return_trajectory, _return_start = return_plan
+            return return_trajectory
+
+        pipeline = str(self.get_parameter("planning_pipeline_id").value)
+        if pipeline != "ompl":
+            return None
+        self.last_plan_report["recovery_used"] = True
+        self.last_plan_report["recovery_trigger"] = "OMPL_RETURN_PICK_READY"
+        pick_ready_pose = self._compute_planning_link_pose(pick_ready_end)
+        if pick_ready_pose is None:
+            self.last_plan_report["recovery_success"] = False
+            self.last_plan_report["recovery_reason"] = "PICK_READY_FK_FAILED"
+            return None
+        return_trajectory = self._plan_cartesian(
+            [pick_ready_pose],
+            after_wait_end,
+            "Fallback return PICK_READY",
+        )
+        if return_trajectory is None:
+            self.last_plan_report["recovery_success"] = False
+            self.last_plan_report["recovery_reason"] = (
+                "CARTESIAN_RETURN_PICK_READY_FAILED"
+            )
+            return None
+        self.last_plan_report["recovery_success"] = True
+        self.last_plan_report["recovery_stage"] = "CARTESIAN_RETURN_PICK_READY"
+        self.last_plan_report["recovery_reason"] = (
+            "OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED"
+        )
+        return return_trajectory
 
     def plan(self):
         self._begin_plan_report()
@@ -877,13 +966,12 @@ class CartesianHarvestPlanner(Node):
             return None
 
         after_wait_end = self._trajectory_end_state(after_wait_trajectory)
-        return_plan = self._plan_pick_ready(
-            start_state=after_wait_end,
-            label="Return PICK_READY",
+        return_trajectory = self._plan_return_to_pick_ready(
+            after_wait_end,
+            pick_ready_end,
         )
-        if return_plan is None:
+        if return_trajectory is None:
             return None
-        return_trajectory, _return_start = return_plan
 
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,

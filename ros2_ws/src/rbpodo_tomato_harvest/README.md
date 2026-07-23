@@ -156,6 +156,25 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 `TF_TARGET` 등으로 구분된다. Cartesian 실패에는 경로 fraction과 MoveIt 오류
 코드가, OMPL/CHOMP 실패에는 pipeline, planner ID와 MoveIt 오류 코드가 기록된다.
 
+OMPL의 `Return PICK_READY` 계획이 실패하면 PICK_READY 관절 상태의 TCP 자세를
+`/compute_fk`로 계산한 뒤 `CARTESIAN_RETURN_PICK_READY`를 한 번 시도한다.
+Cartesian 대체 복귀가 성공하면 전체 Plan 결과는 성공으로 처리하지만,
+`failure_stage=OMPL_RETURN_PICK_READY`,
+`recovery_reason=OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED`를 함께 기록한다.
+GUI 최근 결과에는 `OMPL 실패 → Cartesian 복귀 성공` 사유가 표시되고 실시간
+통계의 `대체복귀` 항목에 별도로 집계된다.
+
+저장된 세션을 한눈에 확인할 수 있는 HTML 분석 보고서는 다음 명령으로 생성한다.
+
+```bash
+ros2 run rbpodo_tomato_harvest harvest_report \
+  ~/farmily_tomato/harvest_results/20260723_124228_043000
+```
+
+세션 폴더에 `report.html`이 생성된다. 보고서에는 전체 성공률, 실패 단계와 이유,
+토마토 번호별 성공률, 회전 구간별 성공률, 회전–Y 위치 분포와 Cartesian fraction이
+낮은 실패 사례가 포함된다. 외부 웹 서버나 추가 파이썬 패키지는 필요하지 않다.
+
 실제 카메라 팀의 서비스 이름이 다른 경우 launch 인자로 연결한다.
 
 ```bash

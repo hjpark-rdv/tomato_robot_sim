@@ -148,6 +148,44 @@ def test_plan_report_keeps_first_failure_with_cartesian_details():
     assert planner.last_plan_report["cartesian_fraction"] == pytest.approx(0.84)
 
 
+def test_ompl_return_failure_uses_successful_cartesian_fallback():
+    cartesian_calls = []
+    fallback_trajectory = object()
+    planner = SimpleNamespace(
+        last_plan_report={
+            "failure_stage": "OMPL_RETURN_PICK_READY",
+            "failure_reason": "MOVEIT_PLANNING_FAILED",
+        },
+        _plan_pick_ready=lambda **_kwargs: None,
+        get_parameter=lambda _name: SimpleNamespace(value="ompl"),
+        _compute_planning_link_pose=lambda _state: "pick_ready_pose",
+        _plan_cartesian=lambda waypoints, start_state, label: (
+            cartesian_calls.append((waypoints, start_state, label))
+            or fallback_trajectory
+        ),
+    )
+
+    result = CartesianHarvestPlanner._plan_return_to_pick_ready(
+        planner,
+        after_wait_end="after_wait_state",
+        pick_ready_end="pick_ready_state",
+    )
+
+    assert result is fallback_trajectory
+    assert cartesian_calls == [
+        (
+            ["pick_ready_pose"],
+            "after_wait_state",
+            "Fallback return PICK_READY",
+        )
+    ]
+    assert planner.last_plan_report["recovery_success"] is True
+    assert (
+        planner.last_plan_report["recovery_reason"]
+        == "OMPL_RETURN_FAILED_CARTESIAN_RETURN_SUCCEEDED"
+    )
+
+
 def test_harvest_command_builds_plan_only_command():
     command = harvest_command(
         3,
