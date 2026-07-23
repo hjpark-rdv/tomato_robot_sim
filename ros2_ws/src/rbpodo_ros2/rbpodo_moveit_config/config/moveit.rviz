@@ -184,6 +184,7 @@ Visualization Manager:
       Name: HarvestPlanResults
       Namespaces:
         harvest_plan_result: true
+        harvest_sweep_result: true
       Topic:
         Depth: 5
         Durability Policy: Transient Local

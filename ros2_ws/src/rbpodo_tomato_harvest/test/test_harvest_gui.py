@@ -1,4 +1,5 @@
 from collections import deque
+import random
 from types import SimpleNamespace
 
 import pytest
@@ -8,12 +9,57 @@ from rcl_interfaces.msg import ParameterType
 
 from rbpodo_tomato_harvest.harvest_gui import (
     HarvestGui,
+    generate_sweep_cases,
     harvest_all_jobs,
     harvest_command,
     harvest_result_marker,
     scene_parameters,
+    sweep_result_marker,
     tomato_stem_arrow_length,
 )
+
+
+def test_generate_sweep_cases_uses_largest_required_interval_count():
+    cases = generate_sweep_cases(
+        start=(0.0, 0.0, 0.0, 0.0),
+        end=(0.02, 0.01, 0.0, 10.0),
+        step=(0.01, 0.01, 0.0, 5.0),
+        randomized=(False, False, False, False),
+    )
+
+    assert cases == [
+        (0.0, 0.0, 0.0, 0.0),
+        (0.01, 0.005, 0.0, 5.0),
+        (0.02, 0.01, 0.0, 10.0),
+    ]
+
+
+def test_generate_sweep_cases_randomizes_only_checked_axis():
+    cases = generate_sweep_cases(
+        start=(0.0, 1.0, 2.0, 0.0),
+        end=(0.02, 1.0, 2.0, 10.0),
+        step=(0.01, 0.0, 0.0, 5.0),
+        randomized=(True, False, False, False),
+        rng=random.Random(7),
+    )
+
+    assert len(cases) == 3
+    assert all(0.0 <= case[0] <= 0.02 for case in cases)
+    assert [case[1:] for case in cases] == [
+        (1.0, 2.0, 0.0),
+        (1.0, 2.0, 5.0),
+        (1.0, 2.0, 10.0),
+    ]
+
+
+def test_generate_sweep_cases_rejects_zero_step_for_changed_axis():
+    with pytest.raises(ValueError):
+        generate_sweep_cases(
+            (0.0, 0.0, 0.0, 0.0),
+            (1.0, 0.0, 0.0, 0.0),
+            (0.0, 0.0, 0.0, 0.0),
+            (False, False, False, False),
+        )
 
 
 def test_harvest_command_builds_plan_only_command():
@@ -116,6 +162,22 @@ def test_failure_marker_is_yellow():
         0.0,
         1.0,
     )
+
+
+def test_sweep_marker_is_frozen_in_robot_base_frame():
+    transform = SimpleNamespace(
+        transform=SimpleNamespace(
+            translation=SimpleNamespace(x=0.4, y=-0.2, z=0.7),
+            rotation=SimpleNamespace(x=0.0, y=0.0, z=0.0, w=1.0),
+        )
+    )
+
+    marker = sweep_result_marker(12, True, 0.03, "link0", transform)
+
+    assert marker.header.frame_id == "link0"
+    assert marker.ns == "harvest_sweep_result"
+    assert marker.id == 12
+    assert marker.pose.position == Point(x=0.4, y=-0.2, z=0.7)
 
 
 def test_harvest_result_marker_rejects_negative_index():

@@ -1,6 +1,7 @@
 import math
 import os
 import queue
+import random
 import signal
 import subprocess
 import sys
@@ -30,6 +31,49 @@ PLANNER_CONFIGS = {
     "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN"),
 }
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
+HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
+
+
+def generate_sweep_cases(
+    start,
+    end,
+    step,
+    randomized,
+    rng=None,
+    maximum_cases: int = 500,
+) -> list[tuple[float, float, float, float]]:
+    """Generate synchronized XYZ/rotation test cases, optionally randomized."""
+    starts = [float(value) for value in start]
+    ends = [float(value) for value in end]
+    steps = [abs(float(value)) for value in step]
+    random_flags = [bool(value) for value in randomized]
+    if not all(len(values) == 4 for values in (starts, ends, steps, random_flags)):
+        raise ValueError("start, end, step and randomized must contain four values")
+
+    intervals = 0
+    for begin, finish, increment in zip(starts, ends, steps):
+        distance = abs(finish - begin)
+        if distance == 0.0:
+            continue
+        if increment == 0.0:
+            raise ValueError("변경되는 항목의 변화량은 0보다 커야 합니다.")
+        intervals = max(intervals, int(math.ceil(distance / increment)))
+    case_count = intervals + 1
+    if case_count > maximum_cases:
+        raise ValueError(f"자동 테스트는 최대 {maximum_cases}개까지 실행할 수 있습니다.")
+
+    random_source = rng or random.Random()
+    cases = []
+    for case_index in range(case_count):
+        ratio = case_index / intervals if intervals else 0.0
+        values = []
+        for begin, finish, use_random in zip(starts, ends, random_flags):
+            if use_random and begin != finish:
+                values.append(random_source.uniform(min(begin, finish), max(begin, finish)))
+            else:
+                values.append(begin + (finish - begin) * ratio)
+        cases.append(tuple(values))
+    return cases
 
 
 def harvest_command(
@@ -132,6 +176,30 @@ def harvest_result_marker(
     return marker
 
 
+def sweep_result_marker(
+    case_id: int,
+    success: bool,
+    arrow_length: float,
+    parent_frame: str,
+    transform,
+) -> Marker:
+    """Create a result arrow frozen in the robot-base coordinate frame."""
+    marker = harvest_result_marker(0, success, arrow_length)
+    marker.header.frame_id = parent_frame
+    marker.ns = HARVEST_SWEEP_NAMESPACE
+    marker.id = case_id
+    translation = transform.transform.translation
+    rotation = transform.transform.rotation
+    marker.pose.position.x = translation.x
+    marker.pose.position.y = translation.y
+    marker.pose.position.z = translation.z
+    marker.pose.orientation.x = rotation.x
+    marker.pose.orientation.y = rotation.y
+    marker.pose.orientation.z = rotation.z
+    marker.pose.orientation.w = rotation.w
+    return marker
+
+
 def scene_parameters(position, rotation_deg: float) -> list[Parameter]:
     """Build scene position and main-vine-axis rotation parameters."""
     coordinates = [float(value) for value in position]
@@ -218,11 +286,19 @@ class HarvestGui(Node):
         self.harvest_results: dict[int, bool] = {}
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
+        self.sweep_markers: list[Marker] = []
+        self.sweep_active = False
+        self.sweep_cancel_requested = False
+        self.sweep_cases = deque()
+        self.sweep_total = 0
+        self.sweep_completed = 0
+        self.sweep_target_index = 0
+        self.sweep_current_case = None
         self.closing = False
 
         self.root = tk.Tk()
         self.root.title("Farmily Tomato Harvest")
-        self.root.minsize(820, 650)
+        self.root.minsize(1320, 650)
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         signal.signal(signal.SIGINT, self._signal_close)
         signal.signal(signal.SIGTERM, self._signal_close)
@@ -281,6 +357,7 @@ class HarvestGui(Node):
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         outer.columnconfigure(0, weight=1)
+        outer.columnconfigure(1, weight=0)
         outer.rowconfigure(1, weight=1)
         outer.rowconfigure(4, weight=1)
 
@@ -479,6 +556,74 @@ class HarvestGui(Node):
             row=5, column=0, sticky="ew", pady=(8, 0)
         )
 
+        sweep_frame = ttk.LabelFrame(
+            outer, text="4. 줄기 위치/회전 Plan 자동 테스트", padding=10
+        )
+        sweep_frame.grid(
+            row=0, column=1, rowspan=6, sticky="nsew", padx=(14, 0)
+        )
+        self._build_sweep_ui(sweep_frame)
+
+    def _build_sweep_ui(self, frame) -> None:
+        self.sweep_inputs = {}
+        defaults = {
+            "start": ("0.355", "-0.375", "0.340", "45.0"),
+            "end": ("0.355", "-0.375", "0.340", "45.0"),
+            "step": ("0.010", "0.010", "0.010", "5.0"),
+        }
+        keys = ("x", "y", "z", "rotation")
+        for prefix, values in defaults.items():
+            for key, value in zip(keys, values):
+                self.sweep_inputs[f"{prefix}_{key}"] = tk.StringVar(value=value)
+        for key in keys:
+            self.sweep_inputs[f"random_{key}"] = tk.BooleanVar(value=False)
+
+        headers = ("항목", "시작", "종료", "변화량", "랜덤")
+        for column, header in enumerate(headers):
+            ttk.Label(frame, text=header).grid(row=0, column=column, padx=4)
+        rows = (
+            ("X (m)", "x"),
+            ("Y (m)", "y"),
+            ("Z (m)", "z"),
+            ("회전 (°)", "rotation"),
+        )
+        for row, (label, key) in enumerate(rows, start=1):
+            ttk.Label(frame, text=label).grid(row=row, column=0, sticky="w")
+            for column, prefix in enumerate(("start", "end", "step"), start=1):
+                ttk.Entry(
+                    frame,
+                    textvariable=self.sweep_inputs[f"{prefix}_{key}"],
+                    width=10,
+                ).grid(row=row, column=column, padx=3, pady=3)
+            ttk.Checkbutton(
+                frame,
+                variable=self.sweep_inputs[f"random_{key}"],
+            ).grid(row=row, column=4)
+
+        self.sweep_summary = tk.StringVar(value="대기 중")
+        ttk.Label(
+            frame,
+            text=(
+                "대상은 자동 실행을 누를 때 선택된 토마토입니다.\n"
+                "랜덤 체크 항목은 시작~종료 범위에서 매 케이스 추출됩니다."
+            ),
+        ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(10, 6))
+        self.sweep_start_button = ttk.Button(
+            frame, text="자동 실행", command=self.start_sweep
+        )
+        self.sweep_start_button.grid(
+            row=6, column=0, columnspan=3, sticky="ew", pady=(4, 0)
+        )
+        self.sweep_stop_button = ttk.Button(
+            frame, text="중지", command=self.stop_sweep, state="disabled"
+        )
+        self.sweep_stop_button.grid(
+            row=6, column=3, columnspan=2, sticky="ew", padx=(6, 0), pady=(4, 0)
+        )
+        ttk.Label(frame, textvariable=self.sweep_summary).grid(
+            row=7, column=0, columnspan=5, sticky="w", pady=(10, 0)
+        )
+
     def _append_log(self, message: str) -> None:
         self.log_text.configure(state="normal")
         self.log_text.insert("end", message.rstrip() + "\n")
@@ -486,7 +631,7 @@ class HarvestGui(Node):
         self.log_text.configure(state="disabled")
 
     def _publish_harvest_result_markers(self) -> None:
-        if not self.harvest_results:
+        if not self.harvest_results and not self.sweep_markers:
             return
         message = MarkerArray()
         message.markers = [
@@ -497,6 +642,7 @@ class HarvestGui(Node):
             )
             for index, success in sorted(self.harvest_results.items())
         ]
+        message.markers.extend(self.sweep_markers)
         self.result_marker_publisher.publish(message)
 
     def _set_harvest_result(self, tomato_index: int, success: bool) -> None:
@@ -512,6 +658,7 @@ class HarvestGui(Node):
         message.markers = [marker]
         self.result_marker_publisher.publish(message)
         self.harvest_results.clear()
+        self.sweep_markers.clear()
         self.clear_markers_button.configure(state="disabled")
 
     def clear_harvest_result_markers(self) -> None:
@@ -519,6 +666,185 @@ class HarvestGui(Node):
         self.result_arrow_lengths.clear()
         self.status.set("수확 결과 마커를 지웠습니다.")
         self._append_log("수확 결과 마커 전체 삭제")
+
+    def _read_sweep_inputs(self):
+        keys = ("x", "y", "z", "rotation")
+        try:
+            start = [
+                float(self.sweep_inputs[f"start_{key}"].get()) for key in keys
+            ]
+            end = [
+                float(self.sweep_inputs[f"end_{key}"].get()) for key in keys
+            ]
+            step = [
+                float(self.sweep_inputs[f"step_{key}"].get()) for key in keys
+            ]
+        except ValueError as error:
+            raise ValueError("시작, 종료, 변화량에 숫자를 입력하세요.") from error
+        randomized = [
+            self.sweep_inputs[f"random_{key}"].get() for key in keys
+        ]
+        return generate_sweep_cases(start, end, step, randomized)
+
+    def start_sweep(self) -> None:
+        if self.harvest_process is not None or self.batch_active or self.sweep_active:
+            messagebox.showinfo("실행 중", "현재 작업이 끝날 때까지 기다려 주세요.")
+            return
+        target_index = self._selected_index()
+        if target_index is None:
+            messagebox.showwarning(
+                "토마토 선택", "먼저 촬영/검출 후 테스트할 토마토를 선택하세요."
+            )
+            return
+        if not self.scene_set_client.service_is_ready():
+            if not self.scene_set_client.wait_for_service(timeout_sec=0.05):
+                messagebox.showerror(
+                    "장면 노드 연결 실패", f"연결되지 않음: {self.scene_node}"
+                )
+                return
+        if not self.camera_client.service_is_ready():
+            if not self.camera_client.wait_for_service(timeout_sec=0.05):
+                messagebox.showerror(
+                    "카메라 연결 실패", f"연결되지 않음: {self.camera_service}"
+                )
+                return
+        try:
+            cases = self._read_sweep_inputs()
+        except ValueError as error:
+            messagebox.showerror("자동 테스트 입력 오류", str(error))
+            return
+
+        self.sweep_active = True
+        self.sweep_cancel_requested = False
+        self.sweep_cases = deque(cases)
+        self.sweep_total = len(cases)
+        self.sweep_completed = 0
+        self.sweep_target_index = target_index
+        self.sweep_current_case = None
+        self.sweep_summary.set(
+            f"0 / {self.sweep_total} — 토마토 {target_index} 테스트 시작"
+        )
+        self._append_log(
+            f"자동 Plan 테스트 시작: {self.sweep_total}개 케이스, "
+            f"대상 토마토 {target_index}"
+        )
+        self._set_busy(True)
+        self._start_next_sweep_case()
+
+    def stop_sweep(self) -> None:
+        if not self.sweep_active:
+            return
+        self.sweep_cancel_requested = True
+        self.sweep_cases.clear()
+        if self.harvest_process is not None:
+            self.harvest_process.terminate()
+            self.status.set("자동 테스트 Plan 프로세스 종료 중...")
+            return
+        self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+
+    def _finish_sweep(self, message: str) -> None:
+        completed = self.sweep_completed
+        total = self.sweep_total
+        self.sweep_active = False
+        self.sweep_cancel_requested = False
+        self.sweep_cases.clear()
+        self.sweep_current_case = None
+        self._set_busy(False)
+        self.sweep_summary.set(f"{completed} / {total} — {message}")
+        self.status.set(message)
+        self._append_log(message)
+
+    def _start_next_sweep_case(self) -> None:
+        if not self.sweep_active:
+            return
+        if self.sweep_cancel_requested:
+            self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+            return
+        if not self.sweep_cases:
+            self._finish_sweep(
+                f"자동 Plan 테스트 완료: {self.sweep_completed}개"
+            )
+            return
+
+        self.sweep_current_case = self.sweep_cases.popleft()
+        x, y, z, rotation = self.sweep_current_case
+        self.scene_x.set(f"{x:.4f}")
+        self.scene_y.set(f"{y:.4f}")
+        self.scene_z.set(f"{z:.4f}")
+        self.scene_rotation.set(f"{rotation:.1f}")
+        request = SetParameters.Request()
+        request.parameters = scene_parameters((x, y, z), rotation)
+        future = self.scene_set_client.call_async(request)
+        future.add_done_callback(self._sweep_scene_set_done)
+        case_number = self.sweep_completed + 1
+        self.sweep_summary.set(
+            f"{case_number} / {self.sweep_total} — 위치/회전 적용 중"
+        )
+        self._append_log(
+            f"[자동 {case_number}/{self.sweep_total}] "
+            f"X={x:.4f}, Y={y:.4f}, Z={z:.4f}, 회전={rotation:.1f}°"
+        )
+
+    def _sweep_scene_set_done(self, future) -> None:
+        if not self.sweep_active or self.sweep_cancel_requested:
+            self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+            return
+        try:
+            response = future.result()
+            failures = [result for result in response.results if not result.successful]
+            if failures:
+                reasons = "; ".join(result.reason for result in failures)
+                raise RuntimeError(reasons or "장면 변경 거부")
+        except Exception as error:
+            self._finish_sweep(f"자동 테스트 장면 적용 실패: {error}")
+            return
+        self.detection_signature = None
+        self.sweep_summary.set(
+            f"{self.sweep_completed + 1} / {self.sweep_total} — 촬영/검출 중"
+        )
+        future = self.camera_client.call_async(DetectTomatoes.Request())
+        future.add_done_callback(self._sweep_detection_done)
+
+    def _sweep_detection_done(self, future) -> None:
+        if not self.sweep_active or self.sweep_cancel_requested:
+            self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+            return
+        try:
+            response = future.result()
+            if not response.success:
+                raise RuntimeError(response.message)
+            self._detections_callback(response.detections)
+            if self.sweep_target_index >= len(self.detected_tomatoes):
+                raise RuntimeError(
+                    f"토마토 {self.sweep_target_index}가 검출되지 않았습니다."
+                )
+            self.tomato_combo.current(self.sweep_target_index)
+            target_item = str(self.sweep_target_index)
+            self.tomato_tree.selection_set(target_item)
+            self.tomato_tree.focus(target_item)
+            self.tomato_tree.see(target_item)
+        except Exception as error:
+            self._finish_sweep(f"자동 테스트 검출 실패: {error}")
+            return
+        self.root.after(100, self._start_sweep_plan)
+
+    def _start_sweep_plan(self) -> None:
+        if not self.sweep_active or self.sweep_cancel_requested:
+            return
+        pipeline, planner_id = self._selected_planner_config()
+        verification = (
+            self.detection_generation,
+            self.sweep_target_index,
+            pipeline,
+            planner_id,
+        )
+        self.sweep_summary.set(
+            f"{self.sweep_completed + 1} / {self.sweep_total} — Plan 중"
+        )
+        if not self._launch_harvest_process(
+            self.sweep_target_index, False, verification
+        ):
+            self._finish_sweep("자동 테스트 Plan 프로세스 시작 실패")
 
     def _source_to_result_parent_quaternion(self, source_frame: str):
         parent_frame = str(
@@ -609,7 +935,11 @@ class HarvestGui(Node):
                 ),
             )
         self.tomato_combo.configure(values=choices)
-        busy = self.harvest_process is not None or self.batch_active
+        busy = (
+            self.harvest_process is not None
+            or self.batch_active
+            or self.sweep_active
+        )
         if choices:
             self.tomato_combo.current(0)
             self.tomato_tree.selection_set("0")
@@ -710,7 +1040,7 @@ class HarvestGui(Node):
         if index is None:
             messagebox.showwarning("토마토 선택", "수확할 토마토를 먼저 선택하세요.")
             return
-        if self.harvest_process is not None or self.batch_active:
+        if self.harvest_process is not None or self.batch_active or self.sweep_active:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
         pipeline, planner_id = self._selected_planner_config()
@@ -737,7 +1067,7 @@ class HarvestGui(Node):
         self._launch_harvest_process(index, execute, verification)
 
     def start_harvest_all(self) -> None:
-        if self.harvest_process is not None or self.batch_active:
+        if self.harvest_process is not None or self.batch_active or self.sweep_active:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
         tomato_count = len(self.detected_tomatoes)
@@ -882,6 +1212,9 @@ class HarvestGui(Node):
             if process is not self.harvest_process:
                 continue
             self.harvest_process = None
+            if self.sweep_active:
+                self._handle_sweep_plan_done(return_code, verification)
+                continue
             if self.batch_active:
                 self._handle_batch_job_done(return_code, execute, verification)
                 continue
@@ -904,6 +1237,46 @@ class HarvestGui(Node):
                 self._invalidate_plan()
         if not self.closing:
             self.root.after(50, self._drain_process_queue)
+
+    def _handle_sweep_plan_done(self, return_code, verification) -> None:
+        if self.sweep_cancel_requested:
+            self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+            return
+        tomato_index = verification[1]
+        self._update_result_arrow_length(tomato_index)
+        parent_frame = str(
+            self.get_parameter("result_marker_parent_frame").value
+        )
+        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        try:
+            transform = self.tf_buffer.lookup_transform(
+                parent_frame,
+                tomato_frame,
+                Time(),
+            )
+        except TransformException as error:
+            self._finish_sweep(f"결과 마커용 TF 조회 실패: {error}")
+            return
+
+        marker = sweep_result_marker(
+            self.sweep_completed,
+            return_code == 0,
+            self.result_arrow_lengths.get(tomato_index, 0.04),
+            parent_frame,
+            transform,
+        )
+        self.sweep_markers.append(marker)
+        self.clear_markers_button.configure(state="normal")
+        self._publish_harvest_result_markers()
+        self.sweep_completed += 1
+        result = "성공" if return_code == 0 else "실패"
+        self.sweep_summary.set(
+            f"{self.sweep_completed} / {self.sweep_total} — Plan {result}"
+        )
+        self._append_log(
+            f"[자동 {self.sweep_completed}/{self.sweep_total}] Plan {result}"
+        )
+        self.root.after(100, self._start_next_sweep_case)
 
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
         index = verification[1]
@@ -966,7 +1339,15 @@ class HarvestGui(Node):
             state="disabled" if busy or not self.detected_tomatoes else "normal"
         )
         self.clear_markers_button.configure(
-            state="disabled" if busy or not self.harvest_results else "normal"
+            state=(
+                "disabled"
+                if busy or (not self.harvest_results and not self.sweep_markers)
+                else "normal"
+            )
+        )
+        self.sweep_start_button.configure(state=state)
+        self.sweep_stop_button.configure(
+            state="normal" if self.sweep_active else "disabled"
         )
         if busy or not self.detected_tomatoes:
             self.plan_button.configure(state="disabled")
