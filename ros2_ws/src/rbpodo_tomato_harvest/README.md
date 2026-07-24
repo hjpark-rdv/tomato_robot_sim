@@ -120,16 +120,24 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
 표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
 기본 수확 순서는 `PICK_READY → wrist3 선회 → Cartesian pre-approach`이다.
+`PICK_READY` 관절값은
+`rbpodo_moveit_config/config/rbpodo.srdf`의
+`PICK_READY/mainpulation` named state를 단일 원본으로 사용한다. 수확 planner와
+fake hardware 초기 자세가 모두 이 값을 읽으므로 SRDF를 수정한 뒤 두 패키지를
+다시 빌드하고 MoveIt을 재시작해야 한다.
 PICK_READY의 TCP 자세에서 목표 pre-grasp TCP 자세까지의 회전 중 wrist3의
 로컬 Y축 성분만 투영해 필요한 선회량을 계산한다. 이 사전 회전은 TCP 위치를
 PICK_READY 위치에 고정한 Cartesian 경로로 수행한다. 따라서 OMPL 관절 목표를
 사용하지 않으며, 회전 중 필요한 관절값은 MoveIt의 연속 IK가 계산한다.
 이후 `Cartesian`은 선회가 끝난 상태에서 pre-approach까지 TCP 직선 경로를
 계산한다. GUI의 기본 선택도 `Cartesian`이다.
-사전 회전, pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면
-해당 구간만 OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확
-구간은 동작을 생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 이 fallback에도
-각 단계 시작 자세 중심의 `±120°` 관절 path constraint가 동일하게 적용된다.
+사전 제자리 Cartesian 회전이 실패하면 동일한 제자리 회전을 OMPL로 반복하지
+않는다. 대신 원래 PICK_READY 상태에서 최종 pre-grasp pose까지 OMPL
+RRTConnect로 한 번에 계획하며, 이것도 실패할 때 전체 Plan을 실패 처리한다.
+pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면 해당 구간만
+OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확 구간은 동작을
+생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 모든 OMPL fallback에는 각
+단계 시작 자세 중심의 `±120°` 관절 path constraint가 동일하게 적용된다.
 Cartesian 실패 후 OMPL fallback이 성공하면 전체 Plan은 성공으로 처리하고,
 결과 로그의 `cartesian_fallbacks`와 단계별 기록에 전환 구간을 남긴다.
 OMPL, CHOMP, PILZ LIN은 같은 pre-approach TCP pose를 각 planning pipeline의
@@ -146,27 +154,16 @@ Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `
 (약 `2.86°`)이다. 이후 수확 목표까지는 Cartesian 경로가 정확한 pose로
 보정한다.
 
-OMPL Pose 계획은 기본적으로 목표를 바로 goal sampler에 넘기지 않는다.
-서로 다른 seed로 TCP IK 후보를 먼저 만들고, 시작 자세 중심 `±120°` constraint,
-collision 검사와 FK Pose 오차 검증을 통과한 후보 중 현재 관절 자세와 가장
-가까운 joint goal을 선택한다. 이 joint goal로 기존 constrained OMPL 계획을
-수행하므로 goal sampler에서 불가능한 IK를 반복 탐색하며 planning time을 모두
-사용하는 경우를 줄인다. 유효 후보가 없거나 joint-goal OMPL이 실패하면 기존
-Pose goal 방식으로 자동 fallback한다.
+`mainpulation` 그룹은 `rbpodo_moveit_config/config/ompl_planning.yaml`에
+명시된 `RRTConnect` 설정을 사용한다. OMPL Pose goal은 기본 planning time
+`2초`, attempts `2회`로 제한하며, 다음 ROS 파라미터로 조정할 수 있다.
 
-- `ompl_ik_goal_acceleration_enabled`: 사전 IK joint-goal 가속 사용, 기본 `true`
-- `ompl_ik_candidate_count`: 생성할 IK seed/후보 수, 기본 `12`
-- `ompl_ik_plan_candidate_count`: OMPL을 시도할 상위 후보 수, 기본 `1`
-- `ompl_ik_seed_span_deg`: wrist3 이외 seed 변화 범위, 기본 `110.0`
-- `ompl_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.08`
-- `ompl_ik_random_seed`: 반복 가능한 후보 생성을 위한 seed, 기본 `17`
-- `ompl_ik_joint_weights`: 가까운 후보 점수의 6개 관절 가중치,
-  기본 `[1.0, 1.2, 1.1, 1.0, 0.8, 0.5]`
+- `ompl_pose_planning_time`: OMPL Pose goal 최대 계획 시간, 기본 `2.0`
+- `ompl_pose_planning_attempts`: OMPL Pose goal 계획 시도 수, 기본 `2`
 
-자동 테스트의 GUI 상세 정보와 CSV에는 IK seed 수, IK 성공 수, 유효 후보 수,
-준비 시간, joint-goal 사용 여부와 기존 Pose goal fallback 여부가 기록된다.
-단계별 후보 점수와 탈락 사유 개수는 `results.jsonl`의
-`ik_goal_acceleration`에서 확인할 수 있다.
+PICK_READY joint goal은 기존 `pick_ready_planning_time=10.0`,
+`pick_ready_planning_attempts=5`를 유지한다. `±120°` constraint는 관절의
+허용 범위를 제한하는 조건이며 최단 trajectory를 보장하는 품질 기준은 아니다.
 
 Pre-grasp 접근 방향은 토마토 TF의 `-X`를 기본으로 하되 로봇 베이스
 (`link0` 원점)를 향하도록 토마토 로컬 `+Y` 쪽으로 필요한 만큼만 회전한다.
@@ -187,10 +184,14 @@ Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적�
 않고 건너뛴 뒤 다음 토마토를 계속 처리한다. 실제 실행이 실패하거나 작업 도중
 새 검출 결과가 들어오면 남은 수확은 실행하지 않고 즉시 중단한다.
 
-RViz의 `HarvestPlanResults` 화살표는 `detected_tomato_N_tf` 중심에서 토마토
-로컬 +X축 방향을 가리킨다. 길이는 검출된 중심→줄기점 거리를 지면에 투영한 뒤
-8 mm를 줄여 화살표 끝이 줄기 중심 바로 전에 멈추도록 계산한다. Plan-only
-회전 없는 성공은 초록색, 적응 접근각이 적용된 성공은 하늘색, 실패는 빨간색이다.
+RViz의 `HarvestPlanResults` 화살표는 성공·실패 여부와 관계없이 planner가
+실제로 사용한 토마토 로컬 pre-grasp 진입 벡터를 표시한다. 보정이 없으면
+토마토 로컬 +X축이고, 보정이 있으면 +X축에서 -Y축 방향으로 회전한다.
+pre-grasp 위치 벡터가 -X에서 +Y로 회전하는 것과 화살표가 나타내는 토마토
+방향 진입 벡터는 서로 반대이기 때문이다. 길이는 검출된 중심→줄기점
+거리를 지면에 투영한 뒤 8 mm를
+줄인 값을 사용한다. Plan-only 회전 없는 성공은 초록색, 적응 접근각이 적용된
+성공은 하늘색, 실패는 빨간색이다.
 결과가 바뀔 때만 Transient Local 마커를
 발행하므로 깜빡이지 않고 유지된다. 새 검출 결과가 들어와도 기존 결과 마커는
 유지되며, GUI의 `결과 마커 지우기` 버튼을 눌렀을 때 전체 마커를 삭제한다.

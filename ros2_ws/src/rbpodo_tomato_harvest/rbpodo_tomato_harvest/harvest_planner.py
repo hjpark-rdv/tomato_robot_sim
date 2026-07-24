@@ -1,11 +1,13 @@
 import math
 import time
-from copy import deepcopy
 from dataclasses import dataclass
+from pathlib import Path
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import rclpy
-from geometry_msgs.msg import Pose, PoseStamped
+from ament_index_python.packages import get_package_share_directory
+from geometry_msgs.msg import Pose
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
     BoundingVolume,
@@ -18,12 +20,7 @@ from moveit_msgs.msg import (
     PositionConstraint,
     RobotState,
 )
-from moveit_msgs.srv import (
-    GetCartesianPath,
-    GetPositionFK,
-    GetPositionIK,
-    GetStateValidity,
-)
+from moveit_msgs.srv import GetCartesianPath, GetPositionFK
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -31,6 +28,56 @@ from rclpy.time import Time
 from sensor_msgs.msg import JointState
 from shape_msgs.msg import SolidPrimitive
 from tf2_ros import Buffer, TransformException, TransformListener
+
+
+def load_srdf_group_state(
+    srdf_path,
+    state_name: str,
+    group_name: str,
+    joint_names,
+) -> list[float]:
+    """Load an ordered named joint state from an SRDF file."""
+    path = Path(srdf_path)
+    root = ET.parse(path).getroot()
+    group_state = next(
+        (
+            element
+            for element in root.findall("group_state")
+            if element.get("name") == state_name
+            and element.get("group") == group_name
+        ),
+        None,
+    )
+    if group_state is None:
+        raise ValueError(
+            f"SRDF group_state not found: {state_name}/{group_name} ({path})"
+        )
+    values = {
+        str(joint.get("name")): float(joint.get("value"))
+        for joint in group_state.findall("joint")
+    }
+    missing = [str(name) for name in joint_names if str(name) not in values]
+    if missing:
+        raise ValueError(
+            f"SRDF group_state {state_name} is missing joints: "
+            + ", ".join(missing)
+        )
+    return [values[str(name)] for name in joint_names]
+
+
+def default_pick_ready_joint_positions(joint_names) -> list[float]:
+    """Load PICK_READY from the installed rbpodo MoveIt SRDF."""
+    srdf_path = (
+        Path(get_package_share_directory("rbpodo_moveit_config"))
+        / "config"
+        / "rbpodo.srdf"
+    )
+    return load_srdf_group_state(
+        srdf_path,
+        "PICK_READY",
+        "mainpulation",
+        joint_names,
+    )
 
 
 @dataclass(frozen=True)
@@ -90,66 +137,6 @@ def make_centered_joint_path_constraints(
         joint_constraint.weight = 1.0
         constraints.joint_constraints.append(joint_constraint)
     return constraints
-
-
-def joint_goal_distance(
-    joint_names,
-    start_positions,
-    goal_positions,
-    weights=None,
-) -> float:
-    """Return a weighted joint distance with wrist3 angle wrapping."""
-    names = [str(name) for name in joint_names]
-    start = [float(value) for value in start_positions]
-    goal = [float(value) for value in goal_positions]
-    if not names or len(names) != len(start) or len(names) != len(goal):
-        raise ValueError("joint names/start/goal lengths must match")
-    if weights is None:
-        joint_weights = [1.0] * len(names)
-    else:
-        joint_weights = [max(0.0, float(value)) for value in weights]
-        if len(joint_weights) != len(names):
-            raise ValueError("joint weights must match joint names")
-
-    total = 0.0
-    for name, source, target, weight in zip(
-        names,
-        start,
-        goal,
-        joint_weights,
-    ):
-        delta = target - source
-        if name == "wrist3":
-            delta = math.atan2(math.sin(delta), math.cos(delta))
-        total += weight * delta * delta
-    return math.sqrt(total)
-
-
-def pose_error(target_pose: Pose, actual_pose: Pose) -> tuple[float, float]:
-    """Return Euclidean position error and rotation-angle error in radians."""
-    target_position = np.array(
-        [
-            target_pose.position.x,
-            target_pose.position.y,
-            target_pose.position.z,
-        ],
-        dtype=float,
-    )
-    actual_position = np.array(
-        [
-            actual_pose.position.x,
-            actual_pose.position.y,
-            actual_pose.position.z,
-        ],
-        dtype=float,
-    )
-    position_error = float(np.linalg.norm(target_position - actual_position))
-    relative_rotation = (
-        rotation_from_pose(target_pose).T @ rotation_from_pose(actual_pose)
-    )
-    cosine = float((np.trace(relative_rotation) - 1.0) * 0.5)
-    orientation_error = math.acos(max(-1.0, min(1.0, cosine)))
-    return position_error, orientation_error
 
 
 def local_y_alignment_delta(current_pose: Pose, target_pose: Pose) -> float:
@@ -574,24 +561,27 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("planning_link", "tcp")
         self.declare_parameter("group_name", "mainpulation")
         self.declare_parameter("robot_model_id", "rb")
+        pick_ready_joint_names = [
+            "base",
+            "shoulder",
+            "elbow",
+            "wrist1",
+            "wrist2",
+            "wrist3",
+        ]
         self.declare_parameter(
             "pick_ready_joint_names",
-            ["base", "shoulder", "elbow", "wrist1", "wrist2", "wrist3"],
+            pick_ready_joint_names,
         )
         self.declare_parameter(
             "pick_ready_joint_positions",
-            [
-                1.543469497691539,
-                1.181013622733317547,
-                -2.058567995722523,
-                -0.6538175657861676,
-                -1.5872183101827066,
-                3.269133302406451,
-            ],
+            default_pick_ready_joint_positions(pick_ready_joint_names),
         )
         self.declare_parameter("pick_ready_joint_tolerance", 0.005)
         self.declare_parameter("pick_ready_planning_time", 10.0)
         self.declare_parameter("pick_ready_planning_attempts", 5)
+        self.declare_parameter("ompl_pose_planning_time", 2.0)
+        self.declare_parameter("ompl_pose_planning_attempts", 2)
         self.declare_parameter("pick_ready_velocity_scale", 0.20)
         self.declare_parameter("pick_ready_acceleration_scale", 0.20)
         self.declare_parameter("planning_pipeline_id", "ompl")
@@ -604,16 +594,6 @@ class CartesianHarvestPlanner(Node):
             ["base", "shoulder", "elbow", "wrist1", "wrist2"],
         )
         self.declare_parameter("ompl_joint_tolerance_deg", 120.0)
-        self.declare_parameter("ompl_ik_goal_acceleration_enabled", True)
-        self.declare_parameter("ompl_ik_candidate_count", 12)
-        self.declare_parameter("ompl_ik_plan_candidate_count", 1)
-        self.declare_parameter("ompl_ik_seed_span_deg", 110.0)
-        self.declare_parameter("ompl_ik_timeout_sec", 0.08)
-        self.declare_parameter("ompl_ik_random_seed", 17)
-        self.declare_parameter(
-            "ompl_ik_joint_weights",
-            [1.0, 1.2, 1.1, 1.0, 0.8, 0.5],
-        )
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
@@ -649,11 +629,6 @@ class CartesianHarvestPlanner(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
-        )
-        self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
-        self.state_validity_client = self.create_client(
-            GetStateValidity,
-            "/check_state_validity",
         )
         self.fk_client = self.create_client(GetPositionFK, "/compute_fk")
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
@@ -715,7 +690,6 @@ class CartesianHarvestPlanner(Node):
                 self._plan_start_joint_positions
             ),
             "stages": [],
-            "ik_goal_acceleration": [],
             "_started_monotonic": time.monotonic(),
         }
 
@@ -802,7 +776,14 @@ class CartesianHarvestPlanner(Node):
         records = [
             record
             for record in self._trajectory_range_records
-            if record["pregrasp"] and (record["accepted"] or not success)
+            if (
+                record["pregrasp"]
+                and record["stage"]
+                not in self.last_plan_report.get(
+                    "discarded_trajectory_stages", []
+                )
+                and (record["accepted"] or not success)
+            )
         ]
         joint_ranges = summarize_joint_trajectory_ranges(
             [record["trajectory"] for record in records],
@@ -968,8 +949,6 @@ class CartesianHarvestPlanner(Node):
         planner_id: str | None = None,
         stage_name: str | None = None,
         reference_trajectory=None,
-        terminal_failure: bool = True,
-        pregrasp: bool | None = None,
     ):
         stage_started = time.monotonic()
         pipeline = pipeline_id or str(
@@ -983,11 +962,6 @@ class CartesianHarvestPlanner(Node):
             if label == "PICK_READY"
             else f"{pipeline.upper()}_RETURN_PICK_READY"
         )
-        include_in_pregrasp_range = (
-            (label == "PICK_READY" or stage.endswith("_PREAPPROACH"))
-            if pregrasp is None
-            else bool(pregrasp)
-        )
         timeout = max(1.0, float(self.get_parameter("service_timeout_sec").value))
         if not self.move_group_client.wait_for_server(timeout_sec=timeout):
             self.get_logger().error("MoveIt move_action server is unavailable")
@@ -997,7 +971,6 @@ class CartesianHarvestPlanner(Node):
                 False,
                 time.monotonic() - stage_started,
                 "ACTION_SERVER_UNAVAILABLE",
-                terminal_failure=terminal_failure,
             )
             return None
         if not joint_names or len(joint_names) != len(joint_positions):
@@ -1008,7 +981,6 @@ class CartesianHarvestPlanner(Node):
                 False,
                 time.monotonic() - stage_started,
                 "INVALID_JOINT_TARGET",
-                terminal_failure=terminal_failure,
             )
             return None
 
@@ -1058,7 +1030,6 @@ class CartesianHarvestPlanner(Node):
                 False,
                 time.monotonic() - stage_started,
                 "OMPL_CONSTRAINT_START_STATE_MISSING",
-                terminal_failure=terminal_failure,
             )
             return None
         if reference_trajectory is not None:
@@ -1084,7 +1055,6 @@ class CartesianHarvestPlanner(Node):
                 False,
                 time.monotonic() - stage_started,
                 "GOAL_REJECTED_OR_RESPONSE_TIMEOUT",
-                terminal_failure=terminal_failure,
             )
             return None
         result_future = goal_handle.get_result_async()
@@ -1098,7 +1068,6 @@ class CartesianHarvestPlanner(Node):
                 False,
                 time.monotonic() - stage_started,
                 "PLANNING_RESULT_TIMEOUT",
-                terminal_failure=terminal_failure,
             )
             return None
         result = wrapped_result.result
@@ -1111,22 +1080,23 @@ class CartesianHarvestPlanner(Node):
             stage,
             trajectory,
             success,
-            pregrasp=include_in_pregrasp_range,
+            pregrasp=(
+                label == "PICK_READY"
+                or stage.endswith("_PREAPPROACH")
+            ),
         )
         self.get_logger().info(
             f"{label} plan success={success} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
-        if not success and terminal_failure:
-            self._record_failure_robot_state(stage, trajectory)
         if not success:
+            self._record_failure_robot_state(stage, trajectory)
             self._record_plan_stage(
                 stage,
                 pipeline,
                 False,
                 time.monotonic() - stage_started,
                 "MOVEIT_PLANNING_FAILED",
-                terminal_failure=terminal_failure,
                 moveit_error_code=int(result.error_code.val),
                 point_count=point_count,
                 planning_time_sec=float(result.planning_time),
@@ -1179,12 +1149,147 @@ class CartesianHarvestPlanner(Node):
             "Cartesian TCP pre-rotation at the PICK_READY position: "
             f"local +Y delta={math.degrees(rotation_delta):+.1f}°"
         )
-        return self._plan_cartesian_with_ompl_fallback(
+        trajectory = self._plan_cartesian(
             [rotation_pose],
             pick_ready_end,
             "TCP in-place pre-rotation",
+            terminal_failure=False,
+        )
+        return (trajectory,) if trajectory is not None else None
+
+    def _plan_rotation_and_preapproach(
+        self,
+        preapproach_pose: Pose,
+        pick_ready_end: RobotState,
+    ):
+        """Rotate in place first, or go directly to pre-grasp with OMPL."""
+        pre_rotation = self._plan_cartesian_pre_rotation(
+            preapproach_pose,
+            pick_ready_end,
+        )
+        if pre_rotation is not None:
+            pre_rotation_end = self._trajectory_end_state(pre_rotation)
+            mode = str(self.get_parameter("preapproach_mode").value)
+            if mode != "cartesian":
+                preapproach = self._plan_preapproach(
+                    preapproach_pose,
+                    pre_rotation_end,
+                )
+                if preapproach is None:
+                    return None
+                return pre_rotation, preapproach
+
+            preapproach = self._plan_cartesian(
+                [preapproach_pose],
+                pre_rotation_end,
+                "TCP direct pre-approach",
+                terminal_failure=False,
+            )
+            if preapproach is not None:
+                return pre_rotation, (preapproach,)
+
+            recorded_stages = self.last_plan_report.get("stages", [])
+            cartesian_failure = (
+                dict(recorded_stages[-1]) if recorded_stages else {}
+            )
+            if cartesian_failure.get("stage") != "CARTESIAN_PREAPPROACH":
+                return None
+
+            for stage in reversed(recorded_stages):
+                if stage.get("stage") == "CARTESIAN_PRE_ROTATION":
+                    stage["discarded"] = True
+                    break
+            self.last_plan_report.setdefault(
+                "discarded_trajectory_stages", []
+            ).append("CARTESIAN_PRE_ROTATION")
+            self.get_logger().warning(
+                "Cartesian pre-approach 실패: 앞서 성공한 TCP 제자리 "
+                "회전 trajectory를 폐기하고, 회전 전 PICK_READY에서 "
+                "pre-grasp까지 constrained OMPL로 한 번에 계획합니다."
+            )
+            return self._plan_direct_ompl_preapproach_from_pick_ready(
+                preapproach_pose,
+                pick_ready_end,
+                cartesian_failure,
+                segment="PREAPPROACH_FROM_PICK_READY",
+                stage_name=(
+                    "OMPL_PREAPPROACH_FROM_PICK_READY_AFTER_"
+                    "CARTESIAN_FAILURE"
+                ),
+                label=(
+                    "Direct OMPL pre-approach from PICK_READY after "
+                    "Cartesian pre-approach failure"
+                ),
+            )
+
+        recorded_stages = self.last_plan_report.get("stages", [])
+        cartesian_failure = (
+            dict(recorded_stages[-1]) if recorded_stages else {}
+        )
+        if cartesian_failure.get("stage") != "CARTESIAN_PRE_ROTATION":
+            return None
+
+        self.get_logger().warning(
+            "TCP 제자리 Cartesian 회전 실패: 제자리 OMPL 회전은 "
+            "건너뛰고 PICK_READY에서 pre-grasp까지 constrained OMPL로 "
+            "한 번에 계획합니다."
+        )
+        return self._plan_direct_ompl_preapproach_from_pick_ready(
+            preapproach_pose,
+            pick_ready_end,
+            cartesian_failure,
+            segment="PRE_ROTATION_TO_PREAPPROACH",
+            stage_name="OMPL_PREAPPROACH_AFTER_PRE_ROTATION_FAILURE",
+            label="Direct OMPL pre-approach after Cartesian rotation failure",
+        )
+
+    def _plan_direct_ompl_preapproach_from_pick_ready(
+        self,
+        preapproach_pose: Pose,
+        pick_ready_end: RobotState,
+        cartesian_failure: dict,
+        segment: str,
+        stage_name: str,
+        label: str,
+    ):
+        """Discard any pre-rotation and plan PICK_READY directly to pre-grasp."""
+        direct_preapproach = self._plan_pose_target(
+            preapproach_pose,
+            pick_ready_end,
+            label,
+            pipeline_id="ompl",
+            planner_id=str(self.get_parameter("joint_planner_id").value),
+            stage_name=stage_name,
             pregrasp=True,
         )
+        if direct_preapproach is None:
+            return None
+
+        self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
+            {
+                "segment": segment,
+                "cartesian_stage": cartesian_failure.get("stage", ""),
+                "cartesian_reason": cartesian_failure.get("reason", ""),
+                "cartesian_fraction": cartesian_failure.get(
+                    "cartesian_fraction", ""
+                ),
+                "required_fraction": cartesian_failure.get(
+                    "required_fraction", ""
+                ),
+                "waypoint_count": 1,
+                "planner": (
+                    "ompl/"
+                    f"{self.get_parameter('joint_planner_id').value}"
+                ),
+                "ompl_stages": [stage_name],
+                "success": True,
+            }
+        )
+        self.get_logger().info(
+            "제자리 회전 trajectory 없이 PICK_READY에서 direct OMPL "
+            "pre-grasp 계획에 성공했습니다."
+        )
+        return (), (direct_preapproach,)
 
     def _plan_chomp_pose_target(
         self,
@@ -1217,464 +1322,7 @@ class CartesianHarvestPlanner(Node):
         )
         return result[0] if result is not None else None
 
-    def _ik_seed_states(
-        self,
-        start_state: RobotState,
-        candidate_count: int,
-    ) -> list[RobotState]:
-        joint_names = [
-            str(name)
-            for name in self.get_parameter("pick_ready_joint_names").value
-        ]
-        start_map = dict(
-            zip(
-                start_state.joint_state.name,
-                start_state.joint_state.position,
-            )
-        )
-        if any(name not in start_map for name in joint_names):
-            return []
-
-        seed_span = math.radians(
-            max(
-                0.0,
-                float(self.get_parameter("ompl_ik_seed_span_deg").value),
-            )
-        )
-        random_seed = int(
-            self.get_parameter("ompl_ik_random_seed").value
-        )
-        rng = np.random.default_rng(random_seed)
-        seeds = []
-        for index in range(max(1, int(candidate_count))):
-            seed = deepcopy(start_state)
-            positions = dict(start_map)
-            if index:
-                for name in joint_names:
-                    span = math.pi if name == "wrist3" else seed_span
-                    positions[name] += float(rng.uniform(-span, span))
-            seed.joint_state.position = [
-                float(positions[str(name)])
-                for name in seed.joint_state.name
-            ]
-            seed.is_diff = False
-            seeds.append(seed)
-        return seeds
-
-    def _call_fk_pose_raw(self, robot_state: RobotState, timeout: float):
-        request = GetPositionFK.Request()
-        request.header.frame_id = self.base_frame
-        request.fk_link_names = [self.planning_link]
-        request.robot_state = robot_state
-        future = self.fk_client.call_async(request)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
-        response = future.result() if future.done() else None
-        if (
-            response is None
-            or response.error_code.val != MoveItErrorCodes.SUCCESS
-            or not response.pose_stamped
-        ):
-            return None
-        return response.pose_stamped[0].pose
-
-    def _collect_valid_ik_candidates(
-        self,
-        target_pose: Pose,
-        start_state: RobotState,
-        stage: str,
-    ) -> tuple[list[dict], dict]:
-        started = time.monotonic()
-        requested_count = max(
-            1,
-            int(self.get_parameter("ompl_ik_candidate_count").value),
-        )
-        metrics = {
-            "stage": stage,
-            "requested_candidate_count": requested_count,
-            "seed_count": 0,
-            "ik_solution_count": 0,
-            "valid_candidate_count": 0,
-            "duplicate_count": 0,
-            "constraint_reject_count": 0,
-            "state_validity_reject_count": 0,
-            "pose_error_reject_count": 0,
-            "joint_plan_attempt_count": 0,
-            "joint_goal_used": False,
-            "pose_fallback_used": False,
-            "preparation_sec": 0.0,
-        }
-        service_wait = min(
-            1.0,
-            max(
-                0.05,
-                float(self.get_parameter("service_timeout_sec").value),
-            ),
-        )
-        if not self.ik_client.wait_for_service(timeout_sec=service_wait):
-            metrics["reason"] = "IK_SERVICE_UNAVAILABLE"
-            metrics["preparation_sec"] = time.monotonic() - started
-            return [], metrics
-        if not self.state_validity_client.wait_for_service(
-            timeout_sec=service_wait
-        ):
-            metrics["reason"] = "STATE_VALIDITY_SERVICE_UNAVAILABLE"
-            metrics["preparation_sec"] = time.monotonic() - started
-            return [], metrics
-        if not self.fk_client.wait_for_service(timeout_sec=service_wait):
-            metrics["reason"] = "FK_SERVICE_UNAVAILABLE"
-            metrics["preparation_sec"] = time.monotonic() - started
-            return [], metrics
-
-        joint_names = [
-            str(name)
-            for name in self.get_parameter("pick_ready_joint_names").value
-        ]
-        start_map = dict(
-            zip(
-                start_state.joint_state.name,
-                start_state.joint_state.position,
-            )
-        )
-        if any(name not in start_map for name in joint_names):
-            metrics["reason"] = "IK_START_STATE_MISSING"
-            metrics["preparation_sec"] = time.monotonic() - started
-            return [], metrics
-        start_positions = [float(start_map[name]) for name in joint_names]
-        limited_names = {
-            str(name)
-            for name in self.get_parameter("ompl_limited_joint_names").value
-        }
-        joint_tolerance = math.radians(
-            float(self.get_parameter("ompl_joint_tolerance_deg").value)
-        )
-        path_constraints = make_centered_joint_path_constraints(
-            {
-                name: float(start_map[name])
-                for name in limited_names
-                if name in start_map
-            },
-            joint_tolerance,
-        )
-        target = PoseStamped()
-        target.header.frame_id = self.base_frame
-        target.header.stamp = self.get_clock().now().to_msg()
-        target.pose = target_pose
-
-        ik_timeout = max(
-            0.01,
-            float(self.get_parameter("ompl_ik_timeout_sec").value),
-        )
-        call_timeout = ik_timeout + 0.10
-        position_tolerance = max(
-            0.0001,
-            float(
-                self.get_parameter("preapproach_position_tolerance").value
-            ),
-        )
-        orientation_tolerance = max(
-            0.0001,
-            float(
-                self.get_parameter("preapproach_orientation_tolerance").value
-            ),
-        )
-        position_region = SolidPrimitive()
-        position_region.type = SolidPrimitive.SPHERE
-        position_region.dimensions = [position_tolerance]
-        region_pose = Pose()
-        region_pose.position = target_pose.position
-        region_pose.orientation.w = 1.0
-
-        bounding_volume = BoundingVolume()
-        bounding_volume.primitives.append(position_region)
-        bounding_volume.primitive_poses.append(region_pose)
-
-        position_constraint = PositionConstraint()
-        position_constraint.header.frame_id = self.base_frame
-        position_constraint.link_name = self.planning_link
-        position_constraint.constraint_region = bounding_volume
-        position_constraint.weight = 1.0
-
-        orientation_constraint = OrientationConstraint()
-        orientation_constraint.header.frame_id = self.base_frame
-        orientation_constraint.link_name = self.planning_link
-        orientation_constraint.orientation = target_pose.orientation
-        orientation_constraint.absolute_x_axis_tolerance = orientation_tolerance
-        orientation_constraint.absolute_y_axis_tolerance = orientation_tolerance
-        orientation_constraint.absolute_z_axis_tolerance = orientation_tolerance
-        orientation_constraint.weight = 1.0
-
-        validity_constraints = deepcopy(path_constraints)
-        validity_constraints.position_constraints.append(
-            position_constraint
-        )
-        validity_constraints.orientation_constraints.append(
-            orientation_constraint
-        )
-        weights = [
-            float(value)
-            for value in self.get_parameter("ompl_ik_joint_weights").value
-        ]
-        if len(weights) != len(joint_names):
-            weights = [1.0] * len(joint_names)
-
-        candidates = []
-        seeds = self._ik_seed_states(start_state, requested_count)
-        metrics["seed_count"] = len(seeds)
-        for seed in seeds:
-            request = GetPositionIK.Request()
-            request.ik_request.group_name = self.group_name
-            request.ik_request.robot_state = seed
-            request.ik_request.constraints = path_constraints
-            request.ik_request.avoid_collisions = True
-            request.ik_request.ik_link_name = self.planning_link
-            request.ik_request.pose_stamped = target
-            request.ik_request.timeout = Duration(
-                seconds=ik_timeout
-            ).to_msg()
-            future = self.ik_client.call_async(request)
-            rclpy.spin_until_future_complete(
-                self,
-                future,
-                timeout_sec=call_timeout,
-            )
-            response = future.result() if future.done() else None
-            if (
-                response is None
-                or response.error_code.val != MoveItErrorCodes.SUCCESS
-            ):
-                continue
-            metrics["ik_solution_count"] += 1
-
-            solution = response.solution
-            solution.is_diff = False
-            solution_map = dict(
-                zip(
-                    solution.joint_state.name,
-                    solution.joint_state.position,
-                )
-            )
-            if any(name not in solution_map for name in joint_names):
-                metrics["constraint_reject_count"] += 1
-                continue
-            positions = [float(solution_map[name]) for name in joint_names]
-            if any(
-                name in limited_names
-                and abs(position - start_map[name]) > joint_tolerance + 1e-6
-                for name, position in zip(joint_names, positions)
-            ):
-                metrics["constraint_reject_count"] += 1
-                continue
-
-            validity_request = GetStateValidity.Request()
-            validity_request.robot_state = solution
-            validity_request.group_name = self.group_name
-            validity_request.constraints = validity_constraints
-            validity_future = self.state_validity_client.call_async(
-                validity_request
-            )
-            rclpy.spin_until_future_complete(
-                self,
-                validity_future,
-                timeout_sec=call_timeout,
-            )
-            validity_response = (
-                validity_future.result()
-                if validity_future.done()
-                else None
-            )
-            if validity_response is None or not validity_response.valid:
-                metrics["state_validity_reject_count"] += 1
-                continue
-
-            actual_pose = self._call_fk_pose_raw(solution, call_timeout)
-            if actual_pose is None:
-                metrics["pose_error_reject_count"] += 1
-                continue
-            position_error, orientation_error = pose_error(
-                target_pose,
-                actual_pose,
-            )
-            if (
-                position_error > position_tolerance
-                or orientation_error
-                > math.sqrt(3.0) * orientation_tolerance
-            ):
-                metrics["pose_error_reject_count"] += 1
-                continue
-
-            score = joint_goal_distance(
-                joint_names,
-                start_positions,
-                positions,
-                weights,
-            )
-            if any(
-                joint_goal_distance(
-                    joint_names,
-                    existing["positions"],
-                    positions,
-                )
-                < 1e-4
-                for existing in candidates
-            ):
-                metrics["duplicate_count"] += 1
-                continue
-            candidates.append(
-                {
-                    "state": solution,
-                    "joint_names": joint_names,
-                    "positions": positions,
-                    "score": score,
-                    "position_error": position_error,
-                    "orientation_error": orientation_error,
-                }
-            )
-
-        candidates.sort(key=lambda candidate: candidate["score"])
-        metrics["valid_candidate_count"] = len(candidates)
-        metrics["candidate_scores"] = [
-            round(float(candidate["score"]), 6)
-            for candidate in candidates
-        ]
-        metrics["preparation_sec"] = round(
-            time.monotonic() - started,
-            6,
-        )
-        return candidates, metrics
-
-    def _plan_ompl_pose_target_via_ik(
-        self,
-        target_pose: Pose,
-        start_state: RobotState,
-        label: str,
-        planner_id: str,
-        stage: str,
-        pregrasp: bool,
-    ):
-        candidates, metrics = self._collect_valid_ik_candidates(
-            target_pose,
-            start_state,
-            stage,
-        )
-        self.last_plan_report.setdefault(
-            "ik_goal_acceleration", []
-        ).append(metrics)
-        self.get_logger().info(
-            f"{label} IK goal 준비: seeds={metrics['seed_count']} "
-            f"ik_success={metrics['ik_solution_count']} "
-            f"valid={metrics['valid_candidate_count']} "
-            f"duplicates={metrics['duplicate_count']} "
-            f"time={metrics['preparation_sec']:.3f}s"
-        )
-        plan_candidate_count = min(
-            len(candidates),
-            max(
-                1,
-                int(
-                    self.get_parameter(
-                        "ompl_ik_plan_candidate_count"
-                    ).value
-                ),
-            ),
-        )
-        for rank, candidate in enumerate(
-            candidates[:plan_candidate_count],
-            start=1,
-        ):
-            metrics["joint_plan_attempt_count"] += 1
-            result = self._plan_joint_target(
-                candidate["joint_names"],
-                candidate["positions"],
-                start_state=start_state,
-                label=f"{label} IK joint goal ({rank}/{plan_candidate_count})",
-                pipeline_id="ompl",
-                planner_id=planner_id,
-                stage_name=f"{stage}_IK_JOINT_{rank}",
-                terminal_failure=False,
-                pregrasp=pregrasp,
-            )
-            if result is None:
-                continue
-            metrics["joint_goal_used"] = True
-            metrics["selected_candidate_rank"] = rank
-            metrics["selected_candidate_score"] = round(
-                float(candidate["score"]),
-                6,
-            )
-            metrics["selected_position_error"] = float(
-                candidate["position_error"]
-            )
-            metrics["selected_orientation_error"] = float(
-                candidate["orientation_error"]
-            )
-            self.get_logger().info(
-                f"{label} IK joint goal 선택: rank={rank} "
-                f"score={candidate['score']:.3f} "
-                f"pose_error={candidate['position_error'] * 1000.0:.2f}mm/"
-                f"{math.degrees(candidate['orientation_error']):.2f}°"
-            )
-            return result[0]
-        return None
-
     def _plan_pose_target(
-        self,
-        target_pose: Pose,
-        start_state: RobotState,
-        label: str,
-        pipeline_id: str | None = None,
-        planner_id: str | None = None,
-        stage_name: str | None = None,
-        report_trajectory: bool = True,
-        pregrasp: bool = True,
-    ):
-        pipeline = pipeline_id or str(
-            self.get_parameter("planning_pipeline_id").value
-        )
-        selected_planner_id = planner_id or str(
-            self.get_parameter("planner_id").value
-        )
-        stage = stage_name or f"{pipeline.upper()}_PREAPPROACH"
-        acceleration_enabled = (
-            pipeline.strip().lower() == "ompl"
-            and bool(
-                self.get_parameter(
-                    "ompl_ik_goal_acceleration_enabled"
-                ).value
-            )
-        )
-        if acceleration_enabled:
-            trajectory = self._plan_ompl_pose_target_via_ik(
-                target_pose,
-                start_state,
-                label,
-                selected_planner_id,
-                stage,
-                pregrasp,
-            )
-            if trajectory is not None:
-                return trajectory
-            acceleration_record = self.last_plan_report[
-                "ik_goal_acceleration"
-            ][-1]
-            acceleration_record["pose_fallback_used"] = True
-            self.get_logger().warning(
-                f"{label} 검증된 IK joint goal 계획 실패: "
-                "기존 OMPL Pose goal 방식으로 fallback합니다."
-            )
-            stage = f"{stage}_POSE_FALLBACK"
-
-        return self._plan_pose_target_direct(
-            target_pose,
-            start_state,
-            label,
-            pipeline_id=pipeline,
-            planner_id=selected_planner_id,
-            stage_name=stage,
-            report_trajectory=report_trajectory,
-            pregrasp=pregrasp,
-        )
-
-    def _plan_pose_target_direct(
         self,
         target_pose: Pose,
         start_state: RobotState,
@@ -1752,12 +1400,30 @@ class CartesianHarvestPlanner(Node):
         goal.request.group_name = self.group_name
         goal.request.pipeline_id = pipeline
         goal.request.planner_id = selected_planner_id
-        goal.request.num_planning_attempts = int(
-            self.get_parameter("pick_ready_planning_attempts").value
-        )
-        goal.request.allowed_planning_time = float(
-            self.get_parameter("pick_ready_planning_time").value
-        )
+        if pipeline.strip().lower() == "ompl":
+            goal.request.num_planning_attempts = max(
+                1,
+                int(
+                    self.get_parameter(
+                        "ompl_pose_planning_attempts"
+                    ).value
+                ),
+            )
+            goal.request.allowed_planning_time = max(
+                0.1,
+                float(
+                    self.get_parameter(
+                        "ompl_pose_planning_time"
+                    ).value
+                ),
+            )
+        else:
+            goal.request.num_planning_attempts = int(
+                self.get_parameter("pick_ready_planning_attempts").value
+            )
+            goal.request.allowed_planning_time = float(
+                self.get_parameter("pick_ready_planning_time").value
+            )
         goal.request.max_velocity_scaling_factor = float(
             self.get_parameter("pick_ready_velocity_scale").value
         )
@@ -2230,6 +1896,13 @@ class CartesianHarvestPlanner(Node):
             "outward_axis": [
                 float(value) for value in approach_direction.outward_axis
             ],
+            "approach_axis_tomato_local": [
+                float(value)
+                for value in (
+                    tomato_rotation.T
+                    @ (-approach_direction.outward_axis)
+                )
+            ],
         }
         self.get_logger().info(
             "Adaptive grasp approach: "
@@ -2342,21 +2015,15 @@ class CartesianHarvestPlanner(Node):
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
         pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
-        pre_rotation_trajectory = self._plan_cartesian_pre_rotation(
+        rotation_and_preapproach = self._plan_rotation_and_preapproach(
             preapproach_planning_pose,
             pick_ready_end,
         )
-        if pre_rotation_trajectory is None:
+        if rotation_and_preapproach is None:
             return None
-        pre_rotation_end = self._trajectory_end_state(
-            pre_rotation_trajectory
+        pre_rotation_trajectory, preapproach_trajectory = (
+            rotation_and_preapproach
         )
-        preapproach_trajectory = self._plan_preapproach(
-            preapproach_planning_pose,
-            pre_rotation_end,
-        )
-        if preapproach_trajectory is None:
-            return None
         preapproach_end = self._trajectory_end_state(preapproach_trajectory)
 
         approach_waypoints = (
@@ -2406,7 +2073,7 @@ class CartesianHarvestPlanner(Node):
             self.display_publisher.publish(display)
         self.get_logger().info(
             "Full harvest plan ready: PICK_READY -> Cartesian-first TCP "
-            "pre-rotation -> TCP pre-approach "
+            "pre-rotation (실패 시 direct OMPL pre-grasp) -> TCP pre-approach "
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "

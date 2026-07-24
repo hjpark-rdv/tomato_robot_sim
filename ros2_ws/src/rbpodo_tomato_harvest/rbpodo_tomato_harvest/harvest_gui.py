@@ -67,13 +67,6 @@ SWEEP_CSV_FIELDS = (
     "adaptive_grasp_rotation_deg",
     "adaptive_grasp_current_error_deg",
     "adaptive_grasp_selected_error_deg",
-    "ik_seed_count",
-    "ik_solution_count",
-    "ik_valid_candidate_count",
-    "ik_joint_plan_attempt_count",
-    "ik_preparation_sec",
-    "ik_joint_goal_used",
-    "ik_pose_fallback_used",
     "duration_sec",
 )
 
@@ -124,53 +117,144 @@ def adaptive_rotation_was_applied(report, epsilon_deg: float = 1e-6) -> bool:
     )
 
 
-def ik_goal_acceleration_summary(report) -> dict:
-    """Aggregate per-stage IK acceleration diagnostics for one harvest plan."""
-    records = report.get("ik_goal_acceleration", [])
-    return {
-        "ik_seed_count": sum(
-            int(item.get("seed_count", 0)) for item in records
-        ),
-        "ik_solution_count": sum(
-            int(item.get("ik_solution_count", 0)) for item in records
-        ),
-        "ik_valid_candidate_count": sum(
-            int(item.get("valid_candidate_count", 0)) for item in records
-        ),
-        "ik_joint_plan_attempt_count": sum(
-            int(item.get("joint_plan_attempt_count", 0))
-            for item in records
-        ),
-        "ik_preparation_sec": round(
-            sum(float(item.get("preparation_sec", 0.0)) for item in records),
-            6,
-        ),
-        "ik_joint_goal_used": any(
-            bool(item.get("joint_goal_used", False)) for item in records
-        ),
-        "ik_pose_fallback_used": any(
-            bool(item.get("pose_fallback_used", False)) for item in records
-        ),
-    }
-
-
-def format_ik_goal_acceleration_summary(record) -> str:
-    """Format compact diagnostics for the GUI result-detail panel."""
-    seeds = int(record.get("ik_seed_count", 0))
-    if seeds <= 0:
-        return "IK 가속: 사용 안 함"
-    route = (
-        "joint goal 사용"
-        if record.get("ik_joint_goal_used")
-        else "joint goal 미사용"
+def adaptive_rotation_degrees(report) -> float:
+    """Return the adaptive pre-grasp rotation toward tomato +Y in degrees."""
+    adaptive_grasp = report.get("adaptive_grasp", {})
+    return max(
+        0.0,
+        min(90.0, float(adaptive_grasp.get("applied_rotation_deg", 0.0))),
     )
-    if record.get("ik_pose_fallback_used"):
-        route += " → 기존 Pose goal fallback"
+
+
+def adaptive_approach_axis_local(report):
+    """Return the exact planned approach axis in tomato-local coordinates."""
+    adaptive_grasp = report.get("adaptive_grasp", {})
+    values = adaptive_grasp.get("approach_axis_tomato_local", [])
+    if len(values) < 2:
+        return None
+    x = float(values[0])
+    y = float(values[1])
+    length = math.hypot(x, y)
+    if length <= 1e-9:
+        return None
+    return (x / length, y / length)
+
+
+def concise_plan_report(report) -> str:
+    """Format one compact, readable GUI log block from a planner report."""
+    success = bool(report.get("success"))
+    result = "성공" if success else "실패"
+    target = str(report.get("tomato_frame", "UNKNOWN"))
+    adaptive = report.get("adaptive_grasp", {})
+    lines = [
+        f"Plan {result}: {target} | "
+        f"보정={float(adaptive.get('applied_rotation_deg', 0.0)):.1f}°"
+    ]
+    for item in report.get("stages", []):
+        stage = str(item.get("stage", "UNKNOWN"))
+        planner = str(item.get("planner_type", "unknown"))
+        if item.get("success") and item.get("discarded"):
+            status = "성공·폐기"
+        else:
+            status = "성공" if item.get("success") else "실패"
+        details = []
+        duration = item.get("duration_sec")
+        if duration is not None:
+            details.append(f"소요={float(duration):.2f}s")
+        if "cartesian_fraction" in item:
+            details.append(
+                f"fraction={100.0 * float(item['cartesian_fraction']):.1f}%"
+            )
+        reason = str(item.get("reason", ""))
+        if reason:
+            details.append(reason)
+        suffix = f" | {', '.join(details)}" if details else ""
+        lines.append(f"  [{status}] {stage} ({planner}){suffix}")
+
+    if not success:
+        lines.append(
+            "  최종 실패: "
+            f"{report.get('failure_stage', 'UNKNOWN')} / "
+            f"{report.get('failure_reason', 'UNKNOWN')}"
+        )
+
+    joint_ranges = report.get("joint_ranges", [])
+    if joint_ranges:
+        lines.append("  관절범위°: joint 시작 / 최소 / 최대 / span")
+        for item in joint_ranges:
+            lines.append(
+                f"    {item.get('joint_name', '?')}: "
+                f"{float(item.get('start_deg', 0.0)):.1f} / "
+                f"{float(item.get('min_deg', 0.0)):.1f} / "
+                f"{float(item.get('max_deg', 0.0)):.1f} / "
+                f"{float(item.get('span_deg', 0.0)):.1f}"
+            )
+    return "\n".join(lines)
+
+
+def sweep_stage_summary(record) -> str:
+    """Return a compact one-line summary suitable for a Treeview cell."""
+    failure_stage = str(record.get("failure_stage") or "")
+    recovery_stage = str(record.get("recovery_stage") or "")
+    if failure_stage and record.get("recovery_success"):
+        return f"{failure_stage} → {recovery_stage or '복구 성공'}"
+    if failure_stage:
+        return failure_stage
+    return "전체 단계 성공" if record.get("success") else "실패 단계 정보 없음"
+
+
+def sweep_stage_detail(record) -> str:
+    """Format every planning stage as a readable multiline result."""
+    lines = []
+    for index, item in enumerate(record.get("stages", []), start=1):
+        stage = str(item.get("stage") or "UNKNOWN")
+        planner = str(item.get("planner_type") or "unknown")
+        if item.get("success") and item.get("discarded"):
+            status = "성공·폐기"
+        else:
+            status = "성공" if item.get("success") else "실패"
+        metrics = []
+        if item.get("duration_sec") is not None:
+            metrics.append(f"소요={float(item['duration_sec']):.2f}s")
+        if item.get("cartesian_fraction") is not None:
+            metrics.append(
+                f"fraction={100.0 * float(item['cartesian_fraction']):.1f}%"
+            )
+        if item.get("required_fraction") is not None:
+            metrics.append(
+                f"요구={100.0 * float(item['required_fraction']):.1f}%"
+            )
+        if item.get("reason"):
+            metrics.append(f"사유={item['reason']}")
+        suffix = f" | {' | '.join(metrics)}" if metrics else ""
+        lines.append(f"{index}. [{status}] {stage} ({planner}){suffix}")
+
+    if record.get("recovery_success"):
+        lines.append(
+            "복구 결과: 성공"
+            f" | {record.get('recovery_stage') or '대체 경로'}"
+            f" | {record.get('recovery_reason') or '사유 정보 없음'}"
+        )
+    if record.get("success"):
+        lines.append("최종 결과: 성공")
+    else:
+        lines.append(
+            "최종 결과: 실패"
+            f" | {record.get('failure_stage') or 'UNKNOWN'}"
+            f" | {record.get('failure_reason') or '사유 정보 없음'}"
+        )
+    return "\n".join(lines)
+
+
+def is_critical_process_output(line: str) -> bool:
+    """Keep only unstructured fatal output not represented in plan JSON."""
+    text = str(line).strip()
     return (
-        f"IK 가속: seed {seeds}, 해 {int(record.get('ik_solution_count', 0))}, "
-        f"유효 {int(record.get('ik_valid_candidate_count', 0))}, "
-        f"OMPL 시도 {int(record.get('ik_joint_plan_attempt_count', 0))}, "
-        f"준비 {float(record.get('ik_preparation_sec', 0.0)):.3f}s, {route}"
+        text.startswith("Traceback")
+        or text.startswith("File ")
+        or "Exception:" in text
+        or "Error:" in text
+        or "Segmentation fault" in text
     )
 
 
@@ -381,8 +465,15 @@ def harvest_result_marker(
     success: bool,
     arrow_length: float,
     adaptive_rotation_applied: bool = False,
+    adaptive_rotation_deg: float = 0.0,
+    approach_axis_local=None,
 ) -> Marker:
-    """Create a +X arrow at a detected tomato TF for one planning result."""
+    """Create a result arrow at a detected tomato TF.
+
+    Failure arrows retain the established tomato +X approach reference.
+    Because this arrow is opposite the tomato-to-pre-grasp position vector,
+    a pre-grasp rotation toward +Y appears as a +X-to--Y arrow rotation.
+    """
     if tomato_index < 0:
         raise ValueError("tomato_index must be zero or greater")
     if arrow_length <= 0.0:
@@ -393,7 +484,23 @@ def harvest_result_marker(
     marker.id = tomato_index
     marker.type = Marker.ARROW
     marker.action = Marker.ADD
-    marker.points = [Point(), Point(x=float(arrow_length))]
+    if approach_axis_local is not None:
+        axis_x, axis_y = approach_axis_local
+        endpoint = Point(
+            x=float(arrow_length) * float(axis_x),
+            y=float(arrow_length) * float(axis_y),
+        )
+    elif success:
+        endpoint = Point(x=float(arrow_length))
+    else:
+        angle = math.radians(
+            max(0.0, min(90.0, float(adaptive_rotation_deg)))
+        )
+        endpoint = Point(
+            x=float(arrow_length) * math.cos(angle),
+            y=-float(arrow_length) * math.sin(angle),
+        )
+    marker.points = [Point(), endpoint]
     marker.scale.x = 0.008
     marker.scale.y = 0.016
     marker.scale.z = 0.020
@@ -420,6 +527,8 @@ def sweep_result_marker(
     parent_frame: str,
     transform,
     adaptive_rotation_applied: bool = False,
+    adaptive_rotation_deg: float = 0.0,
+    approach_axis_local=None,
 ) -> Marker:
     """Create a result arrow frozen in the robot-base coordinate frame."""
     marker = harvest_result_marker(
@@ -427,6 +536,8 @@ def sweep_result_marker(
         success,
         arrow_length,
         adaptive_rotation_applied=adaptive_rotation_applied,
+        adaptive_rotation_deg=adaptive_rotation_deg,
+        approach_axis_local=approach_axis_local,
     )
     marker.header.frame_id = parent_frame
     marker.ns = HARVEST_SWEEP_NAMESPACE
@@ -539,6 +650,8 @@ class HarvestGui(Node):
         self.batch_planner = None
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
+        self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
+        self.harvest_result_approach_axis_local: dict[int, tuple] = {}
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
         self.sweep_markers: list[Marker] = []
@@ -963,7 +1076,7 @@ class HarvestGui(Node):
             height=4,
             style="Sweep.Treeview",
         )
-        ttk.Style(self.root).configure("Sweep.Treeview", rowheight=48)
+        ttk.Style(self.root).configure("Sweep.Treeview", rowheight=28)
         headings = {
             "case": "케이스",
             "tomato": "토마토",
@@ -1011,7 +1124,7 @@ class HarvestGui(Node):
         detail_frame.columnconfigure(0, weight=1)
         self.sweep_result_detail = tk.Text(
             detail_frame,
-            height=3,
+            height=7,
             wrap="word",
             state="disabled",
         )
@@ -1065,6 +1178,12 @@ class HarvestGui(Node):
                 adaptive_rotation_applied=(
                     self.harvest_result_adaptive_rotation.get(index, False)
                 ),
+                adaptive_rotation_deg=(
+                    self.harvest_result_adaptive_rotation_deg.get(index, 0.0)
+                ),
+                approach_axis_local=(
+                    self.harvest_result_approach_axis_local.get(index)
+                ),
             )
             for index, success in sorted(self.harvest_results.items())
         ]
@@ -1076,12 +1195,23 @@ class HarvestGui(Node):
         tomato_index: int,
         success: bool,
         adaptive_rotation_applied: bool = False,
+        adaptive_rotation_deg: float = 0.0,
+        approach_axis_local=None,
     ) -> None:
         self._update_result_arrow_length(tomato_index)
         self.harvest_results[tomato_index] = success
         self.harvest_result_adaptive_rotation[tomato_index] = bool(
             success and adaptive_rotation_applied
         )
+        self.harvest_result_adaptive_rotation_deg[tomato_index] = float(
+            adaptive_rotation_deg
+        )
+        if approach_axis_local is None:
+            self.harvest_result_approach_axis_local.pop(tomato_index, None)
+        else:
+            self.harvest_result_approach_axis_local[tomato_index] = tuple(
+                float(value) for value in approach_axis_local[:2]
+            )
         self.clear_markers_button.configure(state="normal")
         self._publish_harvest_result_markers()
 
@@ -1093,6 +1223,8 @@ class HarvestGui(Node):
         self.result_marker_publisher.publish(message)
         self.harvest_results.clear()
         self.harvest_result_adaptive_rotation.clear()
+        self.harvest_result_adaptive_rotation_deg.clear()
+        self.harvest_result_approach_axis_local.clear()
         self.sweep_markers.clear()
         self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
@@ -1284,25 +1416,24 @@ class HarvestGui(Node):
                 record["case"],
                 record["tomato"],
                 "성공" if record["success"] else "실패",
-                record.get("display_stage", ""),
+                record.get("display_stage_summary", ""),
                 f"{record.get('duration_sec', 0.0):.2f}",
             ),
         )
         self.sweep_result_records[item_id] = dict(record)
         self.sweep_result_tree.selection_set(item_id)
         result_text = "성공" if record["success"] else "실패"
-        detail = record.get("display_stage") or "특이사항 없음"
+        detail = record.get("display_stage_detail") or "단계 정보 없음"
         adaptive_detail = (
             f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
             f"(로봇 방향 오차 "
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
         )
-        ik_detail = format_ik_goal_acceleration_summary(record)
         self._set_sweep_result_detail(
             f"최근 결과 상세: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
-            f"{adaptive_detail}\n{ik_detail}\n{detail}"
+            f"{adaptive_detail}\n{detail}"
         )
         children = self.sweep_result_tree.get_children()
         for old_item in children[100:]:
@@ -1321,20 +1452,19 @@ class HarvestGui(Node):
             self.replay_sweep_button.configure(state="disabled")
             return
         result_text = "성공" if record["success"] else "실패"
-        detail = record.get("display_stage") or "특이사항 없음"
+        detail = record.get("display_stage_detail") or "단계 정보 없음"
         adaptive_detail = (
             f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
             f"(로봇 방향 오차 "
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
         )
-        ik_detail = format_ik_goal_acceleration_summary(record)
         self._set_sweep_result_detail(
             f"선택 결과: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
             f"환경 X={record['x']:.4f}, Y={record['y']:.4f}, "
             f"Z={record['z']:.4f}, 회전={record['rotation_deg']:.1f}°\n"
-            f"{adaptive_detail}\n{ik_detail}\n{detail}"
+            f"{adaptive_detail}\n{detail}"
         )
         busy = (
             self.harvest_process is not None
@@ -1479,7 +1609,7 @@ class HarvestGui(Node):
                         )
                         continue
                     self.process_queue.put(("sweep_result", result, process))
-                else:
+                elif is_critical_process_output(line):
                     self.process_queue.put(("log", line))
         return_code = process.wait()
         self.process_queue.put(("sweep_worker_done", return_code, process))
@@ -2061,7 +2191,7 @@ class HarvestGui(Node):
                         )
                         continue
                     self.process_queue.put(("plan_report", report, process))
-                else:
+                elif is_critical_process_output(line):
                     self.process_queue.put(("log", line))
         return_code = process.wait()
         self.process_queue.put(
@@ -2117,6 +2247,7 @@ class HarvestGui(Node):
                 if process is not self.harvest_process:
                     continue
                 self.harvest_plan_report = report
+                self._append_log(concise_plan_report(report))
                 failure_state = report.get("failure_robot_state")
                 if failure_state:
                     self.last_failure_robot_state = failure_state
@@ -2151,6 +2282,12 @@ class HarvestGui(Node):
                     adaptive_rotation_applied=adaptive_rotation_was_applied(
                         self.harvest_plan_report
                     ),
+                    adaptive_rotation_deg=adaptive_rotation_degrees(
+                        self.harvest_plan_report
+                    ),
+                    approach_axis_local=adaptive_approach_axis_local(
+                        self.harvest_plan_report
+                    ),
                 )
                 self.status.set(f"{mode} 완료")
                 self._append_log(f"{mode} 완료 (종료 코드 0)")
@@ -2161,7 +2298,16 @@ class HarvestGui(Node):
                 else:
                     self._invalidate_plan()
             else:
-                self._set_harvest_result(verification[1], False)
+                self._set_harvest_result(
+                    verification[1],
+                    False,
+                    adaptive_rotation_deg=adaptive_rotation_degrees(
+                        self.harvest_plan_report
+                    ),
+                    approach_axis_local=adaptive_approach_axis_local(
+                        self.harvest_plan_report
+                    ),
+                )
                 self.status.set(f"{mode} 실패 — 로그를 확인하세요.")
                 self._append_log(f"{mode} 실패 (종료 코드 {return_code})")
                 if self.last_failure_robot_state:
@@ -2184,7 +2330,6 @@ class HarvestGui(Node):
         tomato_index = verification[1]
         report = report or {}
         adaptive_grasp = report.get("adaptive_grasp", {})
-        ik_summary = ik_goal_acceleration_summary(report)
         success = return_code == 0
         x, y, z, rotation = self.sweep_current_case
         record = {
@@ -2214,9 +2359,6 @@ class HarvestGui(Node):
             "duration_sec": report.get("duration_sec", 0.0),
             "stages": report.get("stages", []),
             "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
-            "ik_goal_acceleration": report.get(
-                "ik_goal_acceleration", []
-            ),
             "adaptive_grasp_rotation_deg": adaptive_grasp.get(
                 "applied_rotation_deg", 0.0
             ),
@@ -2226,26 +2368,12 @@ class HarvestGui(Node):
             "adaptive_grasp_selected_error_deg": adaptive_grasp.get(
                 "selected_robot_error_deg", 0.0
             ),
-            **ik_summary,
         }
         fallback_summary = cartesian_fallback_summary(report)
         if fallback_summary:
             record.update(fallback_summary)
-            record["display_stage"] = (
-                f"{record['failure_stage']}\n"
-                f"{record['failure_reason']}"
-            )
-        elif record["recovery_success"]:
-            record["display_stage"] = (
-                f"{record['failure_stage']}\n"
-                "OMPL 실패 → Cartesian 복귀 성공"
-            )
-        elif record["failure_stage"]:
-            record["display_stage"] = (
-                f"{record['failure_stage']}\n{record['failure_reason']}"
-            )
-        else:
-            record["display_stage"] = ""
+        record["display_stage_summary"] = sweep_stage_summary(record)
+        record["display_stage_detail"] = sweep_stage_detail(record)
         self._save_sweep_result(record)
         self._update_sweep_statistics(record)
         self._update_result_arrow_length(tomato_index)
@@ -2277,6 +2405,10 @@ class HarvestGui(Node):
                     )
                     > 1e-6
                 ),
+                adaptive_rotation_deg=float(
+                    record["adaptive_grasp_rotation_deg"]
+                ),
+                approach_axis_local=adaptive_approach_axis_local(report),
             )
             self.sweep_marker_next_id += 1
             self.sweep_markers.append(marker)
@@ -2298,17 +2430,22 @@ class HarvestGui(Node):
             f"index {tomato_index} Plan {result} "
             f"(전체 완료 {self.sweep_completed})"
         )
-        if record["ik_seed_count"]:
-            self._append_log(
-                f"  └ {format_ik_goal_acceleration_summary(record)}"
-            )
         self.root.after(100, self._start_sweep_plan)
 
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
         index = verification[1]
         mode = "실제 수확" if execute else "Plan-only"
         if return_code != 0:
-            self._set_harvest_result(index, False)
+            self._set_harvest_result(
+                index,
+                False,
+                adaptive_rotation_deg=adaptive_rotation_degrees(
+                    self.harvest_plan_report
+                ),
+                approach_axis_local=adaptive_approach_axis_local(
+                    self.harvest_plan_report
+                ),
+            )
             if not execute:
                 self.batch_skipped += 1
                 if self.batch_jobs and self.batch_jobs[0] == (index, True):
@@ -2334,6 +2471,12 @@ class HarvestGui(Node):
             index,
             True,
             adaptive_rotation_applied=adaptive_rotation_was_applied(
+                self.harvest_plan_report
+            ),
+            adaptive_rotation_deg=adaptive_rotation_degrees(
+                self.harvest_plan_report
+            ),
+            approach_axis_local=adaptive_approach_axis_local(
                 self.harvest_plan_report
             ),
         )

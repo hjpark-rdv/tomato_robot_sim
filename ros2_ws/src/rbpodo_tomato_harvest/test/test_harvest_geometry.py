@@ -1,19 +1,18 @@
 import numpy as np
 from geometry_msgs.msg import Pose
-from moveit_msgs.msg import RobotState, RobotTrajectory
+from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     adaptive_outward_toward_robot,
     format_joint_trajectory_ranges,
-    joint_goal_distance,
+    load_srdf_group_state,
     local_y_alignment_delta,
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
     planning_pose_from_tip_pose,
-    pose_error,
     pose_rotated_about_local_y,
     quaternion_from_rotation,
     stemward_and_outward_from_tomato_rotation,
@@ -35,6 +34,31 @@ def _rotation(pose):
             [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
         ]
     )
+
+
+def test_load_srdf_group_state_uses_requested_joint_order(tmp_path):
+    srdf = tmp_path / "robot.srdf"
+    srdf.write_text(
+        """
+<robot name="test">
+  <group_state name="PICK_READY" group="mainpulation">
+    <joint name="wrist3" value="6.0"/>
+    <joint name="base" value="1.0"/>
+    <joint name="shoulder" value="2.0"/>
+  </group_state>
+</robot>
+""".strip(),
+        encoding="utf-8",
+    )
+
+    positions = load_srdf_group_state(
+        srdf,
+        "PICK_READY",
+        "mainpulation",
+        ["base", "shoulder", "wrist3"],
+    )
+
+    assert positions == [1.0, 2.0, 6.0]
 
 
 def test_tomato_is_between_tip_and_vine_and_tip_is_lower():
@@ -387,117 +411,3 @@ def test_failure_robot_state_uses_last_valid_trajectory_point():
         "joint_positions": [0.3, 0.4],
         "trajectory_point_index": 1,
     }
-
-
-def test_joint_goal_distance_wraps_wrist3_and_applies_weights():
-    distance = joint_goal_distance(
-        ["base", "wrist3"],
-        [0.0, np.deg2rad(179.0)],
-        [1.0, np.deg2rad(-179.0)],
-        [4.0, 1.0],
-    )
-
-    assert np.isclose(
-        distance,
-        np.hypot(2.0, np.deg2rad(2.0)),
-    )
-
-
-def test_pose_error_reports_translation_and_rotation_angle():
-    target = Pose()
-    target.orientation.w = 1.0
-    actual = Pose()
-    actual.position.x = 0.003
-    actual.position.y = 0.004
-    actual.orientation.z = np.sin(np.deg2rad(15.0))
-    actual.orientation.w = np.cos(np.deg2rad(15.0))
-
-    position_error, orientation_error = pose_error(target, actual)
-
-    assert np.isclose(position_error, 0.005)
-    assert np.isclose(orientation_error, np.deg2rad(30.0))
-
-
-def test_ompl_pose_target_uses_prevalidated_joint_goal_without_pose_request():
-    planned = object()
-
-    class Planner:
-        last_plan_report = {"ik_goal_acceleration": []}
-
-        @staticmethod
-        def get_parameter(name):
-            values = {
-                "planning_pipeline_id": "ompl",
-                "planner_id": "RRTConnect",
-                "ompl_ik_goal_acceleration_enabled": True,
-            }
-            return type("Parameter", (), {"value": values[name]})()
-
-        @staticmethod
-        def _plan_ompl_pose_target_via_ik(*_args):
-            return planned
-
-        @staticmethod
-        def _plan_pose_target_direct(*_args, **_kwargs):
-            raise AssertionError("direct Pose goal must not be requested")
-
-    result = CartesianHarvestPlanner._plan_pose_target(
-        Planner(),
-        Pose(),
-        RobotState(),
-        "pre-approach",
-    )
-
-    assert result is planned
-
-
-def test_ompl_pose_target_falls_back_to_original_pose_goal():
-    fallback = object()
-    calls = {}
-
-    class Logger:
-        @staticmethod
-        def warning(_message):
-            pass
-
-    class Planner:
-        last_plan_report = {
-            "ik_goal_acceleration": [{"pose_fallback_used": False}]
-        }
-
-        @staticmethod
-        def get_parameter(name):
-            values = {
-                "planning_pipeline_id": "ompl",
-                "planner_id": "RRTConnect",
-                "ompl_ik_goal_acceleration_enabled": True,
-            }
-            return type("Parameter", (), {"value": values[name]})()
-
-        @staticmethod
-        def get_logger():
-            return Logger()
-
-        @staticmethod
-        def _plan_ompl_pose_target_via_ik(*_args):
-            return None
-
-        @staticmethod
-        def _plan_pose_target_direct(*_args, **kwargs):
-            calls.update(kwargs)
-            return fallback
-
-    planner = Planner()
-    result = CartesianHarvestPlanner._plan_pose_target(
-        planner,
-        Pose(),
-        RobotState(),
-        "pre-approach",
-        stage_name="OMPL_PREAPPROACH",
-    )
-
-    assert result is fallback
-    assert calls["stage_name"] == "OMPL_PREAPPROACH_POSE_FALLBACK"
-    assert planner.last_plan_report["ik_goal_acceleration"][-1][
-        "pose_fallback_used"
-    ]

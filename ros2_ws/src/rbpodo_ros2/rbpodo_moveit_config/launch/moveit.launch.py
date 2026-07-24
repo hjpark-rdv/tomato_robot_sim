@@ -1,11 +1,12 @@
 import os
+from pathlib import Path
+import xml.etree.ElementTree as ET
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import ExecuteProcess
 from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
 
@@ -18,6 +19,46 @@ cb_simulation = LaunchConfiguration("cb_simulation")
 activate_arm_controller = LaunchConfiguration("activate_arm_controller")
 show_tomato_scene = LaunchConfiguration("show_tomato_scene")
 enable_detected_tomato_tf = LaunchConfiguration("enable_detected_tomato_tf")
+
+
+def load_pick_ready_from_srdf():
+    """Load fake-hardware initial joints from the SRDF named state."""
+    joint_names = [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+        "wrist3",
+    ]
+    srdf_path = (
+        Path(get_package_share_directory("rbpodo_moveit_config"))
+        / "config"
+        / "rbpodo.srdf"
+    )
+    root = ET.parse(srdf_path).getroot()
+    group_state = next(
+        (
+            element
+            for element in root.findall("group_state")
+            if element.get("name") == "PICK_READY"
+            and element.get("group") == "mainpulation"
+        ),
+        None,
+    )
+    if group_state is None:
+        raise RuntimeError(f"PICK_READY/mainpulation not found in {srdf_path}")
+    values = {
+        str(joint.get("name")): float(joint.get("value"))
+        for joint in group_state.findall("joint")
+    }
+    missing = [name for name in joint_names if name not in values]
+    if missing:
+        raise RuntimeError(
+            "PICK_READY is missing joints: " + ", ".join(missing)
+        )
+    return [values[name] for name in joint_names]
+
 
 def generate_launch_description():
 
@@ -158,14 +199,7 @@ def launch_setup(context, *args, **kwargs):
         in {"1", "true", "yes", "on"}
     )
     if fake_hardware_enabled and start_at_pick_ready:
-        initial_positions = [
-            1.543469497691539,
-            1.1810132733317547,
-            -2.058567995722523,
-            -0.6538175657861676,
-            -1.5872183101827066,
-            3.269133302406451,
-        ]
+        initial_positions = load_pick_ready_from_srdf()
     else:
         initial_positions = [0.0] * 6
 
