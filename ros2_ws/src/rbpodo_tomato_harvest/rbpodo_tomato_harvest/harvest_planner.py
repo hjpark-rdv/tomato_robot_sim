@@ -601,7 +601,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
-        self.declare_parameter("preapproach_clearance", 0.040)
+        self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.050)
         self.declare_parameter("harvest_first_z_lift", 0.020)
         self.declare_parameter("harvest_first_x_back", 0.015)
