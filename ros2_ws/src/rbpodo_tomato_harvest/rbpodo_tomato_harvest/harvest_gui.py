@@ -20,6 +20,7 @@ import rclpy
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
+from moveit_msgs.msg import RobotState
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -39,6 +40,7 @@ PLANNER_CONFIGS = {
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
 SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
+PLAN_RESULT_PREFIX = "__HARVEST_PLAN_RESULT__"
 SWEEP_CSV_FIELDS = (
     "timestamp",
     "case",
@@ -61,8 +63,47 @@ SWEEP_CSV_FIELDS = (
     "moveit_error_code",
     "cartesian_fraction",
     "required_fraction",
+    "cartesian_fallbacks",
     "duration_sec",
 )
+
+
+def cartesian_fallback_summary(report) -> dict:
+    """Summarize successful constrained-OMPL recovery of Cartesian failures."""
+    fallbacks = [
+        item
+        for item in report.get("cartesian_fallbacks", [])
+        if item.get("success")
+    ]
+    if not fallbacks:
+        return {}
+
+    stages = [
+        str(item.get("cartesian_stage") or item.get("segment") or "CARTESIAN")
+        for item in fallbacks
+    ]
+    reasons = [
+        (
+            f"{stage}: "
+            f"{item.get('cartesian_reason') or 'CARTESIAN_FAILED'}"
+            " → CONSTRAINED_OMPL_SUCCESS"
+        )
+        for stage, item in zip(stages, fallbacks)
+    ]
+    ompl_stages = [
+        str(stage)
+        for item in fallbacks
+        for stage in item.get("ompl_stages", [])
+    ]
+    return {
+        "failure_stage": " / ".join(stages),
+        "failure_planner_type": "cartesian",
+        "failure_reason": "; ".join(reasons),
+        "recovery_used": True,
+        "recovery_success": True,
+        "recovery_stage": " / ".join(ompl_stages),
+        "recovery_reason": "Cartesian 실패 후 constrained OMPL 성공",
+    }
 
 
 def _inclusive_step_values(
@@ -387,6 +428,11 @@ class HarvestGui(Node):
             str(self.get_parameter("result_markers_topic").value),
             result_marker_qos,
         )
+        self.rviz_goal_state_publisher = self.create_publisher(
+            RobotState,
+            "/rviz/moveit/update_custom_goal_state",
+            10,
+        )
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
@@ -397,6 +443,8 @@ class HarvestGui(Node):
         self.detection_generation = 0
         self.verified_plan = None
         self.harvest_process = None
+        self.harvest_plan_report = {}
+        self.last_failure_robot_state = None
         self.process_queue = queue.Queue()
         self.batch_active = False
         self.batch_jobs = deque()
@@ -418,6 +466,8 @@ class HarvestGui(Node):
         self.sweep_success_count = 0
         self.sweep_recovery_count = 0
         self.sweep_failure_counts = Counter()
+        self.sweep_result_records = {}
+        self.preserve_sweep_markers_on_scene_set = False
         self.sweep_active = False
         self.sweep_cancel_requested = False
         self.sweep_cases = deque()
@@ -433,7 +483,16 @@ class HarvestGui(Node):
 
         self.root = tk.Tk()
         self.root.title("Farmily Tomato Harvest")
-        self.root.minsize(1320, 650)
+        self.root.maxsize(1680, 900)
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        initial_width = min(1600, max(1180, screen_width - 40))
+        initial_height = min(840, max(680, screen_height - 60))
+        self.root.geometry(f"{initial_width}x{initial_height}")
+        self.root.minsize(
+            min(1280, initial_width),
+            min(720, initial_height),
+        )
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         signal.signal(signal.SIGINT, self._signal_close)
         signal.signal(signal.SIGTERM, self._signal_close)
@@ -493,16 +552,22 @@ class HarvestGui(Node):
                 pass
 
     def _build_ui(self) -> None:
-        outer = ttk.Frame(self.root, padding=14)
+        outer = ttk.Frame(self.root, padding=8)
         outer.grid(row=0, column=0, sticky="nsew")
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         outer.columnconfigure(0, weight=1)
         outer.columnconfigure(1, weight=0)
         outer.rowconfigure(1, weight=1)
-        outer.rowconfigure(4, weight=1)
+        outer.rowconfigure(3, weight=1)
 
-        camera_frame = ttk.LabelFrame(outer, text="1. 카메라 검출", padding=10)
+        top_controls = ttk.Frame(outer)
+        top_controls.grid(row=0, column=0, sticky="ew")
+        top_controls.columnconfigure(0, weight=1)
+
+        camera_frame = ttk.LabelFrame(
+            top_controls, text="1. 카메라 검출", padding=8
+        )
         camera_frame.grid(row=0, column=0, sticky="ew")
         camera_frame.columnconfigure(1, weight=1)
         ttk.Label(camera_frame, text="서비스").grid(row=0, column=0, sticky="w")
@@ -516,8 +581,8 @@ class HarvestGui(Node):
         )
         self.detect_button.grid(row=0, column=2, padx=(8, 0))
 
-        list_frame = ttk.LabelFrame(outer, text="2. 검출된 토마토 선택", padding=10)
-        list_frame.grid(row=1, column=0, sticky="nsew", pady=(10, 0))
+        list_frame = ttk.LabelFrame(outer, text="2. 검출된 토마토 선택", padding=8)
+        list_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
         columns = ("index", "frame", "source_id", "x", "y", "z")
@@ -525,7 +590,7 @@ class HarvestGui(Node):
             list_frame,
             columns=columns,
             show="headings",
-            height=8,
+            height=6,
             selectmode="browse",
         )
         headings = {
@@ -560,8 +625,8 @@ class HarvestGui(Node):
         scrollbar.grid(row=0, column=1, sticky="ns")
         self.tomato_tree.bind("<<TreeviewSelect>>", self._tree_selection_changed)
 
-        motion_frame = ttk.LabelFrame(outer, text="3. 수확 모션", padding=10)
-        motion_frame.grid(row=2, column=0, sticky="ew", pady=(10, 0))
+        motion_frame = ttk.LabelFrame(outer, text="3. 수확 모션", padding=8)
+        motion_frame.grid(row=2, column=0, sticky="ew", pady=(8, 0))
         motion_frame.columnconfigure(1, weight=1)
         ttk.Label(motion_frame, text="선택 토마토").grid(
             row=0, column=0, sticky="w"
@@ -632,6 +697,19 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
+        self.failure_goal_button = ttk.Button(
+            motion_frame,
+            text="실패 자세 → RViz Goal",
+            command=self.show_failure_goal_state,
+            state="disabled",
+        )
+        self.failure_goal_button.grid(
+            row=2,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            pady=(8, 0),
+        )
         ttk.Label(
             motion_frame,
             text=(
@@ -641,9 +719,9 @@ class HarvestGui(Node):
         ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         scene_frame = ttk.LabelFrame(
-            outer, text="토마토 줄기 위치 / 회전", padding=10
+            top_controls, text="토마토 줄기 위치 / 회전", padding=8
         )
-        scene_frame.grid(row=3, column=0, sticky="ew", pady=(10, 0))
+        scene_frame.grid(row=1, column=0, sticky="ew", pady=(6, 0))
         for column in range(10):
             scene_frame.columnconfigure(column, weight=0)
         for column, (label, variable) in enumerate(
@@ -651,8 +729,8 @@ class HarvestGui(Node):
         ):
             base = column * 2
             ttk.Label(scene_frame, text=label).grid(row=0, column=base, padx=(0, 4))
-            ttk.Entry(scene_frame, textvariable=variable, width=10).grid(
-                row=0, column=base + 1, padx=(0, 10)
+            ttk.Entry(scene_frame, textvariable=variable, width=8).grid(
+                row=0, column=base + 1, padx=(0, 6)
             )
         ttk.Label(scene_frame, text="회전(°)").grid(
             row=0, column=6, padx=(0, 4)
@@ -664,7 +742,7 @@ class HarvestGui(Node):
             increment=5.0,
             textvariable=self.scene_rotation,
             width=8,
-        ).grid(row=0, column=7, padx=(0, 10))
+        ).grid(row=0, column=7, padx=(0, 6))
         self.read_scene_button = ttk.Button(
             scene_frame,
             text="현재값 읽기",
@@ -682,11 +760,11 @@ class HarvestGui(Node):
             text="회전은 메인 줄기 축을 기준으로 가지와 토마토 전체에 적용됩니다.",
         ).grid(row=1, column=0, columnspan=10, sticky="w", pady=(8, 0))
 
-        log_frame = ttk.LabelFrame(outer, text="상태 및 실행 로그", padding=10)
-        log_frame.grid(row=4, column=0, sticky="nsew", pady=(10, 0))
+        log_frame = ttk.LabelFrame(outer, text="상태 및 실행 로그", padding=8)
+        log_frame.grid(row=3, column=0, sticky="nsew", pady=(8, 0))
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)
-        self.log_text = tk.Text(log_frame, height=10, wrap="word", state="disabled")
+        self.log_text = tk.Text(log_frame, height=6, wrap="word", state="disabled")
         log_scrollbar = ttk.Scrollbar(
             log_frame, orient="vertical", command=self.log_text.yview
         )
@@ -694,14 +772,14 @@ class HarvestGui(Node):
         self.log_text.grid(row=0, column=0, sticky="nsew")
         log_scrollbar.grid(row=0, column=1, sticky="ns")
         ttk.Label(outer, textvariable=self.status, anchor="w").grid(
-            row=5, column=0, sticky="ew", pady=(8, 0)
+            row=4, column=0, sticky="ew", pady=(6, 0)
         )
 
         sweep_frame = ttk.LabelFrame(
-            outer, text="4. 줄기 위치/회전 Plan 자동 테스트", padding=10
+            outer, text="4. 줄기 위치/회전 Plan 자동 테스트", padding=8
         )
         sweep_frame.grid(
-            row=0, column=1, rowspan=6, sticky="nsew", padx=(14, 0)
+            row=0, column=1, rowspan=5, sticky="nsew", padx=(8, 0)
         )
         self._build_sweep_ui(sweep_frame)
 
@@ -748,17 +826,15 @@ class HarvestGui(Node):
         ttk.Label(
             frame,
             text=(
-                "각 XYZ 위치에서 회전 시작~종료 각도를 모두 Plan합니다.\n"
-                "모든 회전 테스트가 끝나면 다음 XYZ 위치로 이동합니다.\n"
-                "X/Y/Z 랜덤 축은 위치마다 한 번 추출되어 전체 회전에 유지됩니다.\n"
-                "검출된 토마토가 없는 위치/회전 케이스는 건너뜁니다."
+                "각 XYZ 위치에서 전체 회전 범위를 Plan한 뒤 다음 위치로 이동합니다.\n"
+                "랜덤 축은 위치마다 한 번 추출하며, 검출 결과가 없으면 건너뜁니다."
             ),
-        ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(10, 6))
+        ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(6, 3))
         self.sweep_start_button = ttk.Button(
             frame, text="자동 실행", command=self.start_sweep
         )
         self.sweep_start_button.grid(
-            row=6, column=0, columnspan=3, sticky="ew", pady=(4, 0)
+            row=6, column=0, columnspan=3, sticky="ew", pady=(2, 0)
         )
         self.sweep_stop_button = ttk.Button(
             frame, text="중지", command=self.stop_sweep, state="disabled"
@@ -767,13 +843,13 @@ class HarvestGui(Node):
             row=6, column=3, columnspan=2, sticky="ew", padx=(6, 0), pady=(4, 0)
         )
         ttk.Label(frame, textvariable=self.sweep_summary).grid(
-            row=7, column=0, columnspan=5, sticky="w", pady=(10, 0)
+            row=7, column=0, columnspan=5, sticky="w", pady=(5, 0)
         )
         ttk.Separator(frame, orient="horizontal").grid(
-            row=8, column=0, columnspan=5, sticky="ew", pady=10
+            row=8, column=0, columnspan=5, sticky="ew", pady=5
         )
         self.sweep_statistics = tk.StringVar(
-            value="완료 0 | 성공 0 | 실패 0 | 대체복귀 0 | 성공률 0.0%"
+            value="완료 0 | 성공 0 | 실패 0 | 대체성공 0 | 성공률 0.0%"
         )
         self.sweep_failure_summary = tk.StringVar(value="실패 단계: 없음")
         self.sweep_result_path = tk.StringVar(value="결과 파일: 생성 전")
@@ -799,20 +875,22 @@ class HarvestGui(Node):
             frame,
             columns=result_columns,
             show="headings",
-            height=12,
+            height=4,
+            style="Sweep.Treeview",
         )
+        ttk.Style(self.root).configure("Sweep.Treeview", rowheight=48)
         headings = {
             "case": "케이스",
             "tomato": "토마토",
             "result": "결과",
-            "stage": "실패 단계",
+            "stage": "실패/복구 단계",
             "time": "시간(s)",
         }
         widths = {
             "case": 55,
             "tomato": 55,
             "result": 55,
-            "stage": 175,
+            "stage": 235,
             "time": 70,
         }
         for column in result_columns:
@@ -829,10 +907,53 @@ class HarvestGui(Node):
             command=self.sweep_result_tree.yview,
         )
         self.sweep_result_tree.configure(yscrollcommand=result_scrollbar.set)
+        self.sweep_result_tree.bind(
+            "<<TreeviewSelect>>",
+            self._sweep_result_selected,
+        )
         self.sweep_result_tree.grid(
             row=13, column=0, columnspan=4, sticky="nsew", pady=(0, 4)
         )
         result_scrollbar.grid(row=13, column=4, sticky="ns", pady=(0, 4))
+        detail_frame = ttk.LabelFrame(
+            frame,
+            text="선택/최근 결과 상세",
+            padding=4,
+        )
+        detail_frame.grid(
+            row=14, column=0, columnspan=5, sticky="ew", pady=(3, 0)
+        )
+        detail_frame.columnconfigure(0, weight=1)
+        self.sweep_result_detail = tk.Text(
+            detail_frame,
+            height=3,
+            wrap="word",
+            state="disabled",
+        )
+        detail_scrollbar = ttk.Scrollbar(
+            detail_frame,
+            orient="vertical",
+            command=self.sweep_result_detail.yview,
+        )
+        self.sweep_result_detail.configure(
+            yscrollcommand=detail_scrollbar.set
+        )
+        self.sweep_result_detail.grid(row=0, column=0, sticky="ew")
+        detail_scrollbar.grid(row=0, column=1, sticky="ns")
+        self._set_sweep_result_detail("없음")
+        self.replay_sweep_button = ttk.Button(
+            frame,
+            text="선택 환경 재현",
+            command=self.replay_selected_sweep_scene,
+            state="disabled",
+        )
+        self.replay_sweep_button.grid(
+            row=15,
+            column=0,
+            columnspan=5,
+            sticky="ew",
+            pady=(4, 0),
+        )
         frame.rowconfigure(13, weight=1)
 
     def _append_log(self, message: str) -> None:
@@ -840,6 +961,12 @@ class HarvestGui(Node):
         self.log_text.insert("end", message.rstrip() + "\n")
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
+
+    def _set_sweep_result_detail(self, message: str) -> None:
+        self.sweep_result_detail.configure(state="normal")
+        self.sweep_result_detail.delete("1.0", "end")
+        self.sweep_result_detail.insert("1.0", message.rstrip())
+        self.sweep_result_detail.configure(state="disabled")
 
     def _publish_harvest_result_markers(self) -> None:
         if not self.harvest_results and not self.sweep_markers:
@@ -878,6 +1005,45 @@ class HarvestGui(Node):
         self.result_arrow_lengths.clear()
         self.status.set("수확 결과 마커를 지웠습니다.")
         self._append_log("수확 결과 마커 전체 삭제")
+
+    def show_failure_goal_state(self) -> None:
+        state_data = self.last_failure_robot_state
+        if not state_data:
+            messagebox.showinfo(
+                "실패 자세 없음",
+                "먼저 실패한 Plan-only 결과가 필요합니다.",
+            )
+            return
+        joint_names = [
+            str(name) for name in state_data.get("joint_names", [])
+        ]
+        joint_positions = [
+            float(position)
+            for position in state_data.get("joint_positions", [])
+        ]
+        if not joint_names or len(joint_names) != len(joint_positions):
+            messagebox.showerror(
+                "실패 자세 오류",
+                "저장된 실패 관절 상태가 올바르지 않습니다.",
+            )
+            return
+        message = RobotState()
+        message.is_diff = False
+        message.joint_state.header.stamp = self.get_clock().now().to_msg()
+        message.joint_state.name = joint_names
+        message.joint_state.position = joint_positions
+        self.rviz_goal_state_publisher.publish(message)
+        stage = state_data.get("stage", "UNKNOWN")
+        self.status.set(f"{stage} 실패 직전 자세를 RViz Goal에 표시했습니다.")
+        self._append_log(
+            f"RViz Query Goal State 갱신: stage={stage}, "
+            f"trajectory_point={state_data.get('trajectory_point_index', -1)}"
+        )
+        if self.rviz_goal_state_publisher.get_subscription_count() == 0:
+            self._append_log(
+                "RViz goal-state 구독자가 없습니다. RViz를 재시작하고 "
+                "MoveIt_Allow_External_Program 설정을 확인하세요."
+            )
 
     def _read_sweep_inputs(self):
         keys = ("x", "y", "z", "rotation")
@@ -960,12 +1126,15 @@ class HarvestGui(Node):
         self.sweep_success_count = 0
         self.sweep_recovery_count = 0
         self.sweep_failure_counts.clear()
+        self.sweep_result_records.clear()
         for item in self.sweep_result_tree.get_children():
             self.sweep_result_tree.delete(item)
+        self.replay_sweep_button.configure(state="disabled")
         self.sweep_statistics.set(
-            "완료 0 | 성공 0 | 실패 0 | 대체복귀 0 | 성공률 0.0%"
+            "완료 0 | 성공 0 | 실패 0 | 대체성공 0 | 성공률 0.0%"
         )
         self.sweep_failure_summary.set("실패 단계: 없음")
+        self._set_sweep_result_detail("없음")
         self.sweep_result_path.set(f"결과 파일: {session_directory}")
 
     def _save_sweep_result(self, record) -> None:
@@ -999,7 +1168,7 @@ class HarvestGui(Node):
         average = elapsed / completed
         self.sweep_statistics.set(
             f"완료 {completed} | 성공 {self.sweep_success_count} | "
-            f"실패 {failures} | 대체복귀 {self.sweep_recovery_count} | "
+            f"실패 {failures} | 대체성공 {self.sweep_recovery_count} | "
             f"성공률 {success_rate:.1f}% | 평균 {average:.2f}s"
         )
         if self.sweep_failure_counts:
@@ -1022,10 +1191,82 @@ class HarvestGui(Node):
                 f"{record.get('duration_sec', 0.0):.2f}",
             ),
         )
+        self.sweep_result_records[item_id] = dict(record)
         self.sweep_result_tree.selection_set(item_id)
+        result_text = "성공" if record["success"] else "실패"
+        detail = record.get("display_stage") or "특이사항 없음"
+        self._set_sweep_result_detail(
+            f"최근 결과 상세: 케이스 {record['case']}, "
+            f"토마토 {record['tomato']}, {result_text}\n{detail}"
+        )
         children = self.sweep_result_tree.get_children()
         for old_item in children[100:]:
             self.sweep_result_tree.delete(old_item)
+            self.sweep_result_records.pop(old_item, None)
+
+    def _selected_sweep_record(self):
+        selection = self.sweep_result_tree.selection()
+        if not selection:
+            return None
+        return self.sweep_result_records.get(selection[0])
+
+    def _sweep_result_selected(self, _event=None) -> None:
+        record = self._selected_sweep_record()
+        if record is None:
+            self.replay_sweep_button.configure(state="disabled")
+            return
+        result_text = "성공" if record["success"] else "실패"
+        detail = record.get("display_stage") or "특이사항 없음"
+        self._set_sweep_result_detail(
+            f"선택 결과: 케이스 {record['case']}, "
+            f"토마토 {record['tomato']}, {result_text}\n"
+            f"환경 X={record['x']:.4f}, Y={record['y']:.4f}, "
+            f"Z={record['z']:.4f}, 회전={record['rotation_deg']:.1f}°\n"
+            f"{detail}"
+        )
+        busy = (
+            self.harvest_process is not None
+            or self.batch_active
+            or self.sweep_active
+            or self.sweep_worker_process is not None
+        )
+        self.replay_sweep_button.configure(
+            state="disabled" if busy else "normal"
+        )
+
+    def replay_selected_sweep_scene(self) -> None:
+        record = self._selected_sweep_record()
+        if record is None:
+            messagebox.showinfo(
+                "결과 선택 필요",
+                "재현할 자동 실행 결과 항목을 먼저 선택하세요.",
+            )
+            return
+        if (
+            self.harvest_process is not None
+            or self.batch_active
+            or self.sweep_active
+            or self.sweep_worker_process is not None
+        ):
+            messagebox.showinfo(
+                "실행 중",
+                "현재 작업이 끝난 후 선택 환경을 재현하세요.",
+            )
+            return
+
+        self.scene_x.set(f"{float(record['x']):.4f}")
+        self.scene_y.set(f"{float(record['y']):.4f}")
+        self.scene_z.set(f"{float(record['z']):.4f}")
+        self.scene_rotation.set(f"{float(record['rotation_deg']):.1f}")
+        self.preserve_sweep_markers_on_scene_set = True
+        self._append_log(
+            f"자동 실행 환경 재현 요청: case={record['case']}, "
+            f"tomato={record['tomato']}, "
+            f"X={float(record['x']):.4f}, Y={float(record['y']):.4f}, "
+            f"Z={float(record['z']):.4f}, "
+            f"회전={float(record['rotation_deg']):.1f}°"
+        )
+        self.set_scene_position()
 
     def start_sweep(self) -> None:
         if (
@@ -1655,6 +1896,10 @@ class HarvestGui(Node):
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
         mode = "실제 수확" if execute else "Plan-only"
+        if not execute:
+            self.harvest_plan_report = {}
+            self.last_failure_robot_state = None
+            self.failure_goal_button.configure(state="disabled")
         batch_prefix = (
             f"[전체 {self.batch_completed + self.batch_skipped + 1}/"
             f"{self.batch_total}] "
@@ -1694,7 +1939,18 @@ class HarvestGui(Node):
     def _read_process(self, process, execute: bool, verification) -> None:
         if process.stdout is not None:
             for line in process.stdout:
-                self.process_queue.put(("log", line.rstrip()))
+                line = line.rstrip()
+                if line.startswith(PLAN_RESULT_PREFIX):
+                    try:
+                        report = json.loads(line[len(PLAN_RESULT_PREFIX):])
+                    except json.JSONDecodeError as error:
+                        self.process_queue.put(
+                            ("log", f"Plan 결과 해석 실패: {error}")
+                        )
+                        continue
+                    self.process_queue.put(("plan_report", report, process))
+                else:
+                    self.process_queue.put(("log", line))
         return_code = process.wait()
         self.process_queue.put(
             ("done", return_code, execute, verification, process)
@@ -1744,6 +2000,15 @@ class HarvestGui(Node):
                     report,
                 )
                 continue
+            if item[0] == "plan_report":
+                _, report, process = item
+                if process is not self.harvest_process:
+                    continue
+                self.harvest_plan_report = report
+                failure_state = report.get("failure_robot_state")
+                if failure_state:
+                    self.last_failure_robot_state = failure_state
+                continue
             if item[0] == "sweep_worker_done":
                 _, return_code, process = item
                 if process is not self.sweep_worker_process:
@@ -1781,6 +2046,15 @@ class HarvestGui(Node):
                 self._set_harvest_result(verification[1], False)
                 self.status.set(f"{mode} 실패 — 로그를 확인하세요.")
                 self._append_log(f"{mode} 실패 (종료 코드 {return_code})")
+                if self.last_failure_robot_state:
+                    self.failure_goal_button.configure(state="normal")
+                    stage = self.last_failure_robot_state.get(
+                        "stage", "UNKNOWN"
+                    )
+                    self._append_log(
+                        f"{stage} 실패 직전 자세를 저장했습니다. "
+                        "'실패 자세 → RViz Goal' 버튼으로 확인할 수 있습니다."
+                    )
                 self._invalidate_plan()
         if not self.closing:
             self.root.after(50, self._drain_process_queue)
@@ -1819,14 +2093,23 @@ class HarvestGui(Node):
             "required_fraction": report.get("required_fraction", ""),
             "duration_sec": report.get("duration_sec", 0.0),
             "stages": report.get("stages", []),
+            "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
         }
-        if record["recovery_success"]:
+        fallback_summary = cartesian_fallback_summary(report)
+        if fallback_summary:
+            record.update(fallback_summary)
             record["display_stage"] = (
-                f"{record['failure_stage']}: OMPL 실패 → Cartesian 복귀 성공"
+                f"{record['failure_stage']}\n"
+                f"{record['failure_reason']}"
+            )
+        elif record["recovery_success"]:
+            record["display_stage"] = (
+                f"{record['failure_stage']}\n"
+                "OMPL 실패 → Cartesian 복귀 성공"
             )
         elif record["failure_stage"]:
             record["display_stage"] = (
-                f"{record['failure_stage']}: {record['failure_reason']}"
+                f"{record['failure_stage']}\n{record['failure_reason']}"
             )
         else:
             record["display_stage"] = ""
@@ -1944,9 +2227,23 @@ class HarvestGui(Node):
                 else "normal"
             )
         )
+        self.failure_goal_button.configure(
+            state=(
+                "disabled"
+                if busy or not self.last_failure_robot_state
+                else "normal"
+            )
+        )
         self.sweep_start_button.configure(state=state)
         self.sweep_stop_button.configure(
             state="normal" if self.sweep_active else "disabled"
+        )
+        self.replay_sweep_button.configure(
+            state=(
+                "disabled"
+                if busy or self._selected_sweep_record() is None
+                else "normal"
+            )
         )
         if busy or not self.detected_tomatoes:
             self.plan_button.configure(state="disabled")
@@ -1998,12 +2295,14 @@ class HarvestGui(Node):
             ]
             rotation_deg = float(self.scene_rotation.get())
         except ValueError:
+            self.preserve_sweep_markers_on_scene_set = False
             messagebox.showerror(
                 "입력 오류", "줄기 X, Y, Z와 회전 각도에 숫자를 입력하세요."
             )
             return
         if not self.scene_set_client.service_is_ready():
             if not self.scene_set_client.wait_for_service(timeout_sec=0.05):
+                self.preserve_sweep_markers_on_scene_set = False
                 self.status.set(f"장면 노드 연결 안 됨: {self.scene_node}")
                 return
 
@@ -2014,6 +2313,8 @@ class HarvestGui(Node):
         self.status.set("토마토 줄기 위치와 회전 적용 중...")
 
     def _scene_position_set(self, future) -> None:
+        preserve_sweep_markers = self.preserve_sweep_markers_on_scene_set
+        self.preserve_sweep_markers_on_scene_set = False
         try:
             response = future.result()
             failed_results = [
@@ -2029,7 +2330,14 @@ class HarvestGui(Node):
             self._append_log(f"줄기 위치/회전 변경 거부: {reasons}")
             return
         self.detected_tomatoes = []
-        self._clear_harvest_results()
+        if preserve_sweep_markers:
+            self.harvest_results.clear()
+            self._publish_harvest_result_markers()
+            self.clear_markers_button.configure(
+                state="normal" if self.sweep_markers else "disabled"
+            )
+        else:
+            self._clear_harvest_results()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = ""
         self.detection_signature = None
@@ -2041,12 +2349,18 @@ class HarvestGui(Node):
         self.plan_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")
         self._invalidate_plan()
+        prefix = "선택 환경 재현 완료" if preserve_sweep_markers else "적용 완료"
         self.status.set(
-            "줄기 위치/회전 적용 완료 — 카메라 검출을 다시 실행하세요."
+            f"{prefix} — 카메라 검출을 다시 실행하세요."
         )
         self._append_log(
-            "줄기 위치/회전을 변경했습니다. 기존 검출/계획은 사용하지 말고 "
-            "다시 검출하세요."
+            "줄기 위치/회전을 변경했습니다. "
+            + (
+                "누적 결과 마커는 유지했습니다. "
+                if preserve_sweep_markers
+                else ""
+            )
+            + "기존 검출/계획은 사용하지 말고 다시 검출하세요."
         )
 
     def _spin_ros(self) -> None:

@@ -4,6 +4,7 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
+    CartesianHarvestPlanner,
     format_joint_trajectory_ranges,
     local_y_alignment_delta,
     make_centered_joint_path_constraints,
@@ -294,3 +295,26 @@ def test_joint_trajectory_summary_uses_joint_names_across_segments():
     assert "base" in formatted
     assert "wrist3" in formatted
     assert "Points" in formatted
+
+
+def test_failure_robot_state_uses_last_valid_trajectory_point():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = ["base", "wrist3"]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=[0.1, 0.2]),
+        JointTrajectoryPoint(positions=[0.3, 0.4]),
+    ]
+    planner = type("Planner", (), {"last_plan_report": {}})()
+
+    CartesianHarvestPlanner._record_failure_robot_state(
+        planner,
+        "CARTESIAN_PREAPPROACH",
+        trajectory,
+    )
+
+    assert planner.last_plan_report["failure_robot_state"] == {
+        "stage": "CARTESIAN_PREAPPROACH",
+        "joint_names": ["base", "wrist3"],
+        "joint_positions": [0.3, 0.4],
+        "trajectory_point_index": 1,
+    }

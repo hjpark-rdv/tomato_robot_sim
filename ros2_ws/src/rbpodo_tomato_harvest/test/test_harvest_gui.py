@@ -5,12 +5,14 @@ from types import SimpleNamespace
 import pytest
 
 from geometry_msgs.msg import Point, Pose
-from moveit_msgs.msg import RobotState
+from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
     HarvestGui,
     PLANNER_CONFIGS,
+    cartesian_fallback_summary,
     generate_sweep_cases,
     harvest_all_jobs,
     harvest_command,
@@ -33,7 +35,11 @@ def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
 
     assert cases == [
         (0.0, 0.0, 0.0, 0.0),
+        (0.0, 0.0, 0.0, 5.0),
+        (0.0, 0.0, 0.0, 10.0),
+        (0.01, 0.01, 0.0, 0.0),
         (0.01, 0.01, 0.0, 5.0),
+        (0.01, 0.01, 0.0, 10.0),
     ]
 
 
@@ -45,43 +51,58 @@ def test_generate_sweep_cases_uses_exact_steps_until_earliest_end():
         randomized=(False, False, False, False),
     )
 
-    assert cases == [
-        (0.0, 0.0, 0.0, 0.0),
-        (0.1, 0.3, 0.0, 5.0),
-        (0.2, 0.6, 0.0, 10.0),
-    ]
+    assert len(cases) == 57
+    expected_rotations = [float(value) for value in range(0, 91, 5)]
+    assert [case[:3] for case in cases[0:19]] == [(0.0, 0.0, 0.0)] * 19
+    assert [case[:3] for case in cases[19:38]] == [(0.1, 0.3, 0.0)] * 19
+    assert [case[:3] for case in cases[38:57]] == [(0.2, 0.6, 0.0)] * 19
+    assert [case[3] for case in cases[0:19]] == expected_rotations
+    assert [case[3] for case in cases[19:38]] == expected_rotations
+    assert [case[3] for case in cases[38:57]] == expected_rotations
 
 
 def test_generate_sweep_cases_randomizes_only_checked_axis():
     cases = generate_sweep_cases(
         start=(0.0, 1.0, 2.0, 0.0),
-        end=(0.02, 1.0, 2.0, 10.0),
-        step=(0.01, 0.0, 0.0, 5.0),
+        end=(0.02, 3.0, 2.0, 10.0),
+        step=(0.01, 1.0, 0.0, 5.0),
         randomized=(True, False, False, False),
         rng=random.Random(7),
     )
 
-    assert len(cases) == 3
+    assert len(cases) == 9
     assert all(0.0 <= case[0] <= 0.02 for case in cases)
+    assert cases[0][0] == cases[1][0] == cases[2][0]
+    assert cases[3][0] == cases[4][0] == cases[5][0]
+    assert cases[6][0] == cases[7][0] == cases[8][0]
     assert [case[1:] for case in cases] == [
         (1.0, 2.0, 0.0),
         (1.0, 2.0, 5.0),
         (1.0, 2.0, 10.0),
+        (2.0, 2.0, 0.0),
+        (2.0, 2.0, 5.0),
+        (2.0, 2.0, 10.0),
+        (3.0, 2.0, 0.0),
+        (3.0, 2.0, 5.0),
+        (3.0, 2.0, 10.0),
     ]
 
 
 def test_random_axis_step_does_not_control_termination():
     cases = generate_sweep_cases(
         start=(0.0, 0.0, 0.0, 0.0),
-        end=(10.0, 0.0, 0.0, 10.0),
-        step=(0.0, 0.0, 0.0, 5.0),
+        end=(10.0, 0.02, 0.0, 10.0),
+        step=(0.0, 0.01, 0.0, 5.0),
         randomized=(True, False, False, False),
         rng=random.Random(3),
     )
 
-    assert len(cases) == 3
+    assert len(cases) == 9
     assert all(0.0 <= case[0] <= 10.0 for case in cases)
-    assert [case[3] for case in cases] == [0.0, 5.0, 10.0]
+    assert cases[0][0] == cases[1][0] == cases[2][0]
+    assert cases[3][0] == cases[4][0] == cases[5][0]
+    assert cases[6][0] == cases[7][0] == cases[8][0]
+    assert [case[3] for case in cases] == [0.0, 5.0, 10.0] * 3
 
 
 def test_all_changing_axes_random_requires_nonrandom_termination_axis():
@@ -152,45 +173,70 @@ def test_plan_report_keeps_first_failure_with_cartesian_details():
     assert planner.last_plan_report["cartesian_fraction"] == pytest.approx(0.84)
 
 
-def test_return_to_pick_ready_uses_single_pilz_ptp_joint_target():
-    planning_calls = []
-    return_trajectory = object()
-    parameter_values = {
-        "pick_ready_joint_names": [
-            "base",
-            "shoulder",
-            "elbow",
-            "wrist1",
-            "wrist2",
-            "wrist3",
-        ],
-        "pick_ready_joint_positions": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-        "return_planning_pipeline_id": "pilz_industrial_motion_planner",
-        "return_planner_id": "PTP",
+def test_cartesian_fallback_summary_records_failure_reason_and_recovery():
+    summary = cartesian_fallback_summary(
+        {
+            "cartesian_fallbacks": [
+                {
+                    "segment": "PREAPPROACH",
+                    "cartesian_stage": "CARTESIAN_PREAPPROACH",
+                    "cartesian_reason": "CARTESIAN_FRACTION_LOW",
+                    "ompl_stages": ["OMPL_FALLBACK_PREAPPROACH_1"],
+                    "success": True,
+                }
+            ]
+        }
+    )
+
+    assert summary["failure_stage"] == "CARTESIAN_PREAPPROACH"
+    assert summary["failure_reason"] == (
+        "CARTESIAN_PREAPPROACH: CARTESIAN_FRACTION_LOW"
+        " → CONSTRAINED_OMPL_SUCCESS"
+    )
+    assert summary["recovery_success"] is True
+    assert summary["recovery_stage"] == "OMPL_FALLBACK_PREAPPROACH_1"
+
+
+def test_replay_selected_sweep_scene_restores_recorded_environment():
+    values = {}
+    logs = []
+
+    def variable(name):
+        return SimpleNamespace(set=lambda value: values.__setitem__(name, value))
+
+    gui = SimpleNamespace(
+        _selected_sweep_record=lambda: {
+            "case": 12,
+            "tomato": 3,
+            "x": 0.355,
+            "y": -0.275,
+            "z": 0.34,
+            "rotation_deg": 45.0,
+        },
+        harvest_process=None,
+        batch_active=False,
+        sweep_active=False,
+        sweep_worker_process=None,
+        scene_x=variable("x"),
+        scene_y=variable("y"),
+        scene_z=variable("z"),
+        scene_rotation=variable("rotation"),
+        preserve_sweep_markers_on_scene_set=False,
+        _append_log=logs.append,
+        set_scene_position=lambda: values.__setitem__("applied", True),
+    )
+
+    HarvestGui.replay_selected_sweep_scene(gui)
+
+    assert values == {
+        "x": "0.3550",
+        "y": "-0.2750",
+        "z": "0.3400",
+        "rotation": "45.0",
+        "applied": True,
     }
-    planner = SimpleNamespace(
-        get_parameter=lambda name: SimpleNamespace(
-            value=parameter_values[name]
-        ),
-        _plan_joint_target=lambda names, positions, **kwargs: (
-            planning_calls.append((names, positions, kwargs))
-            or (return_trajectory, "trajectory_start")
-        ),
-    )
-
-    result = CartesianHarvestPlanner._plan_return_to_pick_ready(
-        planner,
-        after_wait_end="after_wait_state",
-    )
-
-    assert result is return_trajectory
-    names, positions, kwargs = planning_calls[0]
-    assert names == parameter_values["pick_ready_joint_names"]
-    assert positions == parameter_values["pick_ready_joint_positions"]
-    assert kwargs["start_state"] == "after_wait_state"
-    assert kwargs["pipeline_id"] == "pilz_industrial_motion_planner"
-    assert kwargs["planner_id"] == "PTP"
-    assert kwargs["stage_name"] == "PILZ_PTP_RETURN_PICK_READY"
+    assert gui.preserve_sweep_markers_on_scene_set is True
+    assert "case=12" in logs[0]
 
 
 def test_harvest_command_builds_plan_only_command():
@@ -261,8 +307,8 @@ def test_planner_options_include_cartesian_and_pipeline_modes():
 @pytest.mark.parametrize(
     ("mode", "expected"),
     [
-        ("cartesian", "cartesian_trajectory"),
-        ("planner", "pipeline_trajectory"),
+        ("cartesian", ("cartesian_trajectory",)),
+        ("planner", ("pipeline_trajectory",)),
     ],
 )
 def test_preapproach_selection_routes_to_requested_planner(mode, expected):
@@ -271,9 +317,9 @@ def test_preapproach_selection_routes_to_requested_planner(mode, expected):
         get_parameter=lambda name: SimpleNamespace(
             value=mode if name == "preapproach_mode" else ""
         ),
-        _plan_cartesian=lambda waypoints, start_state, label: (
+        _plan_cartesian_with_ompl_fallback=lambda waypoints, start_state, label, pregrasp: (
             calls.append(("cartesian", waypoints, start_state, label))
-            or "cartesian_trajectory"
+            or ("cartesian_trajectory",)
         ),
         _plan_pose_target=lambda pose, start_state, label: (
             calls.append(("planner", pose, start_state, label))
@@ -311,7 +357,7 @@ def test_chomp_preapproach_uses_ik_joint_target_route():
         "pick_ready_state",
     )
 
-    assert result == "chomp_trajectory"
+    assert result == ("chomp_trajectory",)
     assert calls == [("planning_target_pose", "pick_ready_state")]
 
 
@@ -329,9 +375,9 @@ def test_pre_rotation_uses_cartesian_path_at_pick_ready_position():
     planner = SimpleNamespace(
         get_logger=lambda: SimpleNamespace(info=lambda message: None),
         _compute_planning_link_pose=lambda state, **kwargs: pick_ready_pose,
-        _plan_cartesian=lambda waypoints, state, label: (
+        _plan_cartesian_with_ompl_fallback=lambda waypoints, state, label, pregrasp: (
             calls.append((waypoints, state, label))
-            or "cartesian_rotation_trajectory"
+            or ("cartesian_rotation_trajectory",)
         ),
     )
 
@@ -341,13 +387,92 @@ def test_pre_rotation_uses_cartesian_path_at_pick_ready_position():
         start_state,
     )
 
-    assert result == "cartesian_rotation_trajectory"
+    assert result == ("cartesian_rotation_trajectory",)
     waypoints, state, label = calls[0]
     assert state is start_state
     assert label == "TCP in-place pre-rotation"
     assert waypoints[0].position.x == pytest.approx(0.4)
     assert waypoints[0].position.y == pytest.approx(-0.2)
     assert waypoints[0].position.z == pytest.approx(0.6)
+
+
+def test_cartesian_failure_falls_back_to_constrained_ompl_per_waypoint():
+    calls = []
+
+    def trajectory(position):
+        result = RobotTrajectory()
+        result.joint_trajectory.joint_names = ["base"]
+        result.joint_trajectory.points = [
+            JointTrajectoryPoint(positions=[position])
+        ]
+        return result
+
+    fallback_trajectories = iter((trajectory(0.1), trajectory(0.2)))
+    planner = SimpleNamespace(
+        last_plan_report={
+            "stages": [
+                {
+                    "stage": "CARTESIAN_APPROACH",
+                    "reason": "CARTESIAN_FRACTION_LOW",
+                    "cartesian_fraction": 0.4,
+                    "required_fraction": 0.98,
+                }
+            ]
+        },
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "ompl_joint_tolerance_deg": 120.0,
+                "joint_planner_id": "RRTConnect",
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            warning=lambda message: None,
+            info=lambda message: None,
+            error=lambda message: None,
+        ),
+        _plan_cartesian=lambda *args, **kwargs: None,
+        _plan_pose_target=lambda pose, start_state, label, **kwargs: (
+            calls.append((pose, start_state, label, kwargs))
+            or next(fallback_trajectories)
+        ),
+        _trajectory_end_state=lambda planned: (
+            CartesianHarvestPlanner._trajectory_end_state(planned)
+        ),
+    )
+    start_state = RobotState()
+
+    result = CartesianHarvestPlanner._plan_cartesian_with_ompl_fallback(
+        planner,
+        ["first_pose", "second_pose"],
+        start_state,
+        "Approach and pre-wait harvest",
+        pregrasp=False,
+    )
+
+    assert len(result) == 2
+    assert calls[0][0] == "first_pose"
+    assert calls[0][1] is start_state
+    assert calls[0][3]["pipeline_id"] == "ompl"
+    assert calls[0][3]["planner_id"] == "RRTConnect"
+    assert calls[0][3]["pregrasp"] is False
+    assert calls[1][0] == "second_pose"
+    assert list(calls[1][1].joint_state.position) == [0.1]
+    assert planner.last_plan_report["cartesian_fallbacks"] == [
+        {
+            "segment": "APPROACH",
+            "cartesian_stage": "CARTESIAN_APPROACH",
+            "cartesian_reason": "CARTESIAN_FRACTION_LOW",
+            "cartesian_fraction": 0.4,
+            "required_fraction": 0.98,
+            "waypoint_count": 2,
+            "planner": "ompl/RRTConnect",
+            "ompl_stages": [
+                "OMPL_FALLBACK_APPROACH_1",
+                "OMPL_FALLBACK_APPROACH_2",
+            ],
+            "success": True,
+        }
+    ]
 
 
 def test_harvest_command_rejects_negative_index():

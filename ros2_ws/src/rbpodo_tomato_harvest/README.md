@@ -95,6 +95,7 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 6. wrist3 선회 후 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
 7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
 8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
+9. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
 
 안전을 위해 새 검출 결과가 들어오거나 줄기 위치/회전을 변경하면 기존
 Plan-only 성공 상태는 취소된다. 회전값은 `tomato_z_spin_deg`에 도 단위로
@@ -112,6 +113,12 @@ pre-grasp에 도달할 때까지의 관절별 최소각, 최대각, 변화폭 �
 Pre-grasp 이전에 실패하면서 MoveIt 응답에 부분 trajectory가 있으면 그 구간까지
 합산한다. trajectory point가 하나도 생성되지 않은 실패는 표시할 궤적이 없다고
 기록한다.
+Plan-only 실패 응답에 부분 trajectory가 있으면 GUI의
+`실패 자세 → RViz Goal` 버튼이 활성화된다. 이 버튼은 마지막 유효 trajectory
+point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
+`Query Goal State`를 이동한다. 실제 IK가 존재하지 않는 실패 보간점 자체는
+관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
+표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
 기본 수확 순서는 `PICK_READY → wrist3 선회 → Cartesian pre-approach`이다.
 PICK_READY의 TCP 자세에서 목표 pre-grasp TCP 자세까지의 회전 중 wrist3의
 로컬 Y축 성분만 투영해 필요한 선회량을 계산한다. 이 사전 회전은 TCP 위치를
@@ -119,11 +126,16 @@ PICK_READY 위치에 고정한 Cartesian 경로로 수행한다. 따라서 OMPL 
 사용하지 않으며, 회전 중 필요한 관절값은 MoveIt의 연속 IK가 계산한다.
 이후 `Cartesian`은 선회가 끝난 상태에서 pre-approach까지 TCP 직선 경로를
 계산한다. GUI의 기본 선택도 `Cartesian`이다.
+사전 회전, pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면
+해당 구간만 OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확
+구간은 동작을 생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 이 fallback에도
+각 단계 시작 자세 중심의 `±120°` 관절 path constraint가 동일하게 적용된다.
+Cartesian 실패 후 OMPL fallback이 성공하면 전체 Plan은 성공으로 처리하고,
+결과 로그의 `cartesian_fallbacks`와 단계별 기록에 전환 구간을 남긴다.
 OMPL, CHOMP, PILZ LIN은 같은 pre-approach TCP pose를 각 planning pipeline의
-목표로 전달한다. 최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다. 마지막
-복귀는 OMPL 탐색 없이 PILZ PTP가 6개 PICK_READY 관절값으로 한 번에 동기
-이동한다. Pre-approach 이후의 40 mm 접근과 수확 동작은 선택과 관계없이 TCP
-Cartesian 경로를 유지한다. PILZ LIN은 TCP 직선 이동 중 연속 IK가
+목표로 전달한다. 최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다.
+Pre-approach 이후의 접근과 수확 동작은 우선 TCP Cartesian 경로를 시도한다.
+PILZ LIN은 TCP 직선 이동 중 연속 IK가
 존재해야 하므로 토마토 위치와 자세에 따라 `NO_IK_SOLUTION`으로 실패할 수 있다.
 CHOMP는 pose goal을 직접 처리하지 못하므로 PILZ LIN으로 collision-free endpoint
 관절 상태를 먼저 구한 뒤, 그 endpoint로 향하는 실제 궤적을 CHOMP가 최적화한다.
@@ -286,13 +298,13 @@ order:
 2. Selected Cartesian/OMPL/CHOMP/PILZ motion to the pre-approach TCP pose
 3. Cartesian motion from pre-approach through the tomato harvest sequence
 4. Cartesian post-wait retreat
-5. OMPL RRTConnect return to `PICK_READY`
 
 The planner selected in the GUI controls the motion from `PICK_READY` to the
 pre-approach pose. `Cartesian` preserves the original direct TCP path, while
 OMPL, CHOMP, and PILZ LIN receive the same TCP pose as a planning-pipeline goal.
-Entering `PICK_READY` uses OMPL RRTConnect. The final return uses a synchronized
-PILZ PTP move directly to all six `PICK_READY` joint targets. The harvest target
+Entering `PICK_READY` uses OMPL RRTConnect. If any Cartesian segment fails, that
+segment is retried with constrained OMPL RRTConnect. Multi-waypoint harvest
+segments retain every waypoint and retry them sequentially. The harvest target
 and local offsets are still defined at `tomato_gripper_tip`, but every target
 pose is converted through the fixed TCP-to-tip transform before MoveIt plans
 with `tcp` as its controlled link.
