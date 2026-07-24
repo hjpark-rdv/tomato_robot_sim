@@ -14,12 +14,12 @@
     </group>
     <!-- Captured from the real RB5 joint state on 2026-07-20. -->
     <group_state name="PICK_READY" group="mainpulation">
-        <joint name="base" value="1.543469497691539"/>
-        <joint name="shoulder" value="1.1810132733317547"/>
-        <joint name="elbow" value="-2.058567995722523"/>
-        <joint name="wrist1" value="-0.6538175657861676"/>
-        <joint name="wrist2" value="-1.5872183101827066"/>
-        <joint name="wrist3" value="3.269133302406451"/>
+        <joint name="base" value="3.178088167843159"/>
+        <joint name="shoulder" value="1.1618733317547"/>
+        <joint name="elbow" value="-2.0636375722523"/>
+        <joint name="wrist1" value="-0.631089061676"/>
+        <joint name="wrist2" value="-1.59037262001827066"/>
+        <joint name="wrist3" value="1.54193097526451"/>
     </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="fixed_joint" type="fixed" parent_frame="world" child_link="link0"/>
