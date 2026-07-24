@@ -5,6 +5,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
+    adaptive_outward_toward_robot,
     format_joint_trajectory_ranges,
     local_y_alignment_delta,
     make_centered_joint_path_constraints,
@@ -115,6 +116,72 @@ def test_detected_tomato_x_axis_defines_opposite_outward_approach():
 
     assert np.allclose(stemward, [0.6, 0.8, 0.0])
     assert np.allclose(outward, [-0.6, -0.8, 0.0])
+
+
+def test_adaptive_grasp_keeps_minus_x_when_it_already_faces_robot():
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[1.0, 0.0, 0.4],
+        robot_position=[0.0, 0.0, 0.0],
+    )
+
+    assert np.allclose(result.outward_axis, [-1.0, 0.0, 0.0])
+    assert np.isclose(result.applied_rotation_deg, 0.0)
+    assert np.isclose(result.current_robot_error_deg, 0.0)
+    assert np.isclose(result.selected_robot_error_deg, 0.0)
+
+
+def test_adaptive_grasp_rotates_minus_x_45_degrees_toward_local_y():
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-1.0, 1.0, 0.0],
+    )
+
+    expected = np.array([-1.0, 1.0, 0.0]) / np.sqrt(2.0)
+    assert np.allclose(result.outward_axis, expected)
+    assert np.isclose(result.applied_rotation_deg, 45.0)
+    assert np.isclose(result.current_robot_error_deg, 45.0)
+    assert np.isclose(result.selected_robot_error_deg, 0.0)
+
+
+def test_adaptive_grasp_clamps_rotation_toward_local_y_to_45_degrees():
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[0.0, 1.0, 0.0],
+    )
+
+    expected = np.array([-1.0, 1.0, 0.0]) / np.sqrt(2.0)
+    assert np.allclose(result.outward_axis, expected)
+    assert np.isclose(result.applied_rotation_deg, 45.0)
+    assert np.isclose(result.current_robot_error_deg, 90.0)
+    assert np.isclose(result.selected_robot_error_deg, 45.0)
+
+
+def test_adaptive_grasp_does_not_rotate_toward_negative_local_y():
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-1.0, -1.0, 0.0],
+    )
+
+    assert np.allclose(result.outward_axis, [-1.0, 0.0, 0.0])
+    assert np.isclose(result.applied_rotation_deg, 0.0)
+
+
+def test_adaptive_grasp_ignores_small_robot_alignment_error():
+    angle = np.deg2rad(5.0)
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-np.cos(angle), np.sin(angle), 0.0],
+        deadband_deg=10.0,
+    )
+
+    assert np.allclose(result.outward_axis, [-1.0, 0.0, 0.0])
+    assert np.isclose(result.applied_rotation_deg, 0.0)
+    assert np.isclose(result.current_robot_error_deg, 5.0)
 
 
 def test_post_harvest_motion_uses_tip_local_x_and_z_axes():

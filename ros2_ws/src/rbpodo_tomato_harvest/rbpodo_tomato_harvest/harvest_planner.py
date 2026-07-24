@@ -47,6 +47,16 @@ class TipLocalHarvestMotion:
 
 
 @dataclass(frozen=True)
+class AdaptiveApproachDirection:
+    """Robot-facing grasp direction selected from tomato-local axes."""
+
+    outward_axis: np.ndarray
+    applied_rotation_deg: float
+    current_robot_error_deg: float
+    selected_robot_error_deg: float
+
+
+@dataclass(frozen=True)
 class HarvestMotionPlan:
     """Trajectories for the complete PICK_READY-to-harvest sequence."""
 
@@ -335,6 +345,84 @@ def stemward_and_outward_from_tomato_rotation(
     return stemward, -stemward
 
 
+def adaptive_outward_toward_robot(
+    tomato_rotation,
+    tomato_position,
+    robot_position,
+    max_rotation_deg: float = 45.0,
+    deadband_deg: float = 10.0,
+) -> AdaptiveApproachDirection:
+    """Rotate tomato -X toward local +Y only when it faces the robot better."""
+    rotation = np.asarray(tomato_rotation, dtype=float)
+    if rotation.shape != (3, 3):
+        raise ValueError("tomato_rotation must be a 3x3 matrix")
+
+    stemward, current_outward = (
+        stemward_and_outward_from_tomato_rotation(rotation)
+    )
+    tomato_y = np.array([rotation[0, 1], rotation[1, 1], 0.0], dtype=float)
+    tomato_y = tomato_y - stemward * float(np.dot(tomato_y, stemward))
+    tomato_y = _unit(tomato_y, "detected tomato +Y direction")
+
+    tomato = np.asarray(tomato_position, dtype=float)
+    robot = np.asarray(robot_position, dtype=float)
+    if tomato.shape != (3,) or robot.shape != (3,):
+        raise ValueError("tomato_position and robot_position must be 3D")
+    robotward_horizontal = np.array(
+        [robot[0] - tomato[0], robot[1] - tomato[1], 0.0],
+        dtype=float,
+    )
+    if float(np.linalg.norm(robotward_horizontal)) < 1e-9:
+        return AdaptiveApproachDirection(
+            current_outward,
+            0.0,
+            0.0,
+            0.0,
+        )
+    robotward = _unit(robotward_horizontal, "tomato-to-robot direction")
+
+    def signed_angle(source: np.ndarray, target: np.ndarray) -> float:
+        cross_z = float(source[0] * target[1] - source[1] * target[0])
+        return math.atan2(cross_z, float(np.dot(source, target)))
+
+    toward_y_angle = signed_angle(current_outward, tomato_y)
+    toward_y_sign = 1.0 if toward_y_angle >= 0.0 else -1.0
+    robot_angle = signed_angle(current_outward, robotward)
+    robot_progress_toward_y = toward_y_sign * robot_angle
+    current_error_deg = abs(math.degrees(robot_angle))
+
+    maximum = max(0.0, min(90.0, float(max_rotation_deg)))
+    deadband = max(0.0, float(deadband_deg))
+    applied_magnitude_deg = 0.0
+    if robot_progress_toward_y > math.radians(deadband):
+        applied_magnitude_deg = min(
+            math.degrees(robot_progress_toward_y),
+            maximum,
+        )
+
+    applied_angle = toward_y_sign * math.radians(applied_magnitude_deg)
+    cosine = math.cos(applied_angle)
+    sine = math.sin(applied_angle)
+    selected_outward = np.array(
+        [
+            cosine * current_outward[0] - sine * current_outward[1],
+            sine * current_outward[0] + cosine * current_outward[1],
+            0.0,
+        ],
+        dtype=float,
+    )
+    selected_outward = _unit(selected_outward, "adaptive approach direction")
+    selected_error_deg = abs(
+        math.degrees(signed_angle(selected_outward, robotward))
+    )
+    return AdaptiveApproachDirection(
+        selected_outward,
+        applied_magnitude_deg,
+        current_error_deg,
+        selected_error_deg,
+    )
+
+
 def make_harvest_geometry(
     tomato_position,
     vine_origin,
@@ -452,6 +540,9 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("ompl_joint_tolerance_deg", 120.0)
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
+        self.declare_parameter("adaptive_grasp_enabled", True)
+        self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
+        self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.040)
@@ -1539,6 +1630,30 @@ class CartesianHarvestPlanner(Node):
             stemward, outward_hint = stemward_and_outward_from_tomato_rotation(
                 tomato_rotation
             )
+            if bool(self.get_parameter("adaptive_grasp_enabled").value):
+                approach_direction = adaptive_outward_toward_robot(
+                    tomato_rotation=tomato_rotation,
+                    tomato_position=tomato_position,
+                    robot_position=[0.0, 0.0, 0.0],
+                    max_rotation_deg=float(
+                        self.get_parameter(
+                            "adaptive_grasp_max_rotation_deg"
+                        ).value
+                    ),
+                    deadband_deg=float(
+                        self.get_parameter(
+                            "adaptive_grasp_deadband_deg"
+                        ).value
+                    ),
+                )
+                outward_hint = approach_direction.outward_axis
+            else:
+                approach_direction = AdaptiveApproachDirection(
+                    outward_hint,
+                    0.0,
+                    0.0,
+                    0.0,
+                )
         except ValueError as error:
             self.get_logger().error(str(error))
             self._record_plan_stage(
@@ -1549,6 +1664,32 @@ class CartesianHarvestPlanner(Node):
                 "INVALID_TOMATO_ORIENTATION",
             )
             return None
+        self.last_plan_report["adaptive_grasp"] = {
+            "enabled": bool(
+                self.get_parameter("adaptive_grasp_enabled").value
+            ),
+            "applied_rotation_deg": float(
+                approach_direction.applied_rotation_deg
+            ),
+            "current_robot_error_deg": float(
+                approach_direction.current_robot_error_deg
+            ),
+            "selected_robot_error_deg": float(
+                approach_direction.selected_robot_error_deg
+            ),
+            "outward_axis": [
+                float(value) for value in approach_direction.outward_axis
+            ],
+        }
+        self.get_logger().info(
+            "Adaptive grasp approach: "
+            f"enabled={self.last_plan_report['adaptive_grasp']['enabled']} "
+            f"toward_tomato_+Y="
+            f"{approach_direction.applied_rotation_deg:.1f}° "
+            f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
+            f"->{approach_direction.selected_robot_error_deg:.1f}° "
+            f"outward={approach_direction.outward_axis.round(4).tolist()}"
+        )
 
         pick_ready_plan = self._plan_pick_ready()
         if pick_ready_plan is None:

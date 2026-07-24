@@ -64,6 +64,9 @@ SWEEP_CSV_FIELDS = (
     "cartesian_fraction",
     "required_fraction",
     "cartesian_fallbacks",
+    "adaptive_grasp_rotation_deg",
+    "adaptive_grasp_current_error_deg",
+    "adaptive_grasp_selected_error_deg",
     "duration_sec",
 )
 
@@ -104,6 +107,14 @@ def cartesian_fallback_summary(report) -> dict:
         "recovery_stage": " / ".join(ompl_stages),
         "recovery_reason": "Cartesian 실패 후 constrained OMPL 성공",
     }
+
+
+def adaptive_rotation_was_applied(report, epsilon_deg: float = 1e-6) -> bool:
+    """Return whether adaptive grasp geometry rotated away from tomato -X."""
+    adaptive_grasp = report.get("adaptive_grasp", {})
+    return abs(float(adaptive_grasp.get("applied_rotation_deg", 0.0))) > abs(
+        float(epsilon_deg)
+    )
 
 
 def _inclusive_step_values(
@@ -312,6 +323,7 @@ def harvest_result_marker(
     tomato_index: int,
     success: bool,
     arrow_length: float,
+    adaptive_rotation_applied: bool = False,
 ) -> Marker:
     """Create a +X arrow at a detected tomato TF for one planning result."""
     if tomato_index < 0:
@@ -328,9 +340,18 @@ def harvest_result_marker(
     marker.scale.x = 0.008
     marker.scale.y = 0.016
     marker.scale.z = 0.020
-    marker.color.r = 0.0 if success else 1.0
-    marker.color.g = 1.0
-    marker.color.b = 0.0
+    if not success:
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 0.0
+    elif adaptive_rotation_applied:
+        marker.color.r = 0.2
+        marker.color.g = 0.8
+        marker.color.b = 1.0
+    else:
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
     marker.color.a = 1.0
     return marker
 
@@ -341,9 +362,15 @@ def sweep_result_marker(
     arrow_length: float,
     parent_frame: str,
     transform,
+    adaptive_rotation_applied: bool = False,
 ) -> Marker:
     """Create a result arrow frozen in the robot-base coordinate frame."""
-    marker = harvest_result_marker(0, success, arrow_length)
+    marker = harvest_result_marker(
+        0,
+        success,
+        arrow_length,
+        adaptive_rotation_applied=adaptive_rotation_applied,
+    )
     marker.header.frame_id = parent_frame
     marker.ns = HARVEST_SWEEP_NAMESPACE
     marker.id = case_id
@@ -454,6 +481,7 @@ class HarvestGui(Node):
         self.batch_skipped = 0
         self.batch_planner = None
         self.harvest_results: dict[int, bool] = {}
+        self.harvest_result_adaptive_rotation: dict[int, bool] = {}
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
         self.sweep_markers: list[Marker] = []
@@ -977,15 +1005,26 @@ class HarvestGui(Node):
                 index,
                 success,
                 self.result_arrow_lengths.get(index, 0.04),
+                adaptive_rotation_applied=(
+                    self.harvest_result_adaptive_rotation.get(index, False)
+                ),
             )
             for index, success in sorted(self.harvest_results.items())
         ]
         message.markers.extend(self.sweep_markers)
         self.result_marker_publisher.publish(message)
 
-    def _set_harvest_result(self, tomato_index: int, success: bool) -> None:
+    def _set_harvest_result(
+        self,
+        tomato_index: int,
+        success: bool,
+        adaptive_rotation_applied: bool = False,
+    ) -> None:
         self._update_result_arrow_length(tomato_index)
         self.harvest_results[tomato_index] = success
+        self.harvest_result_adaptive_rotation[tomato_index] = bool(
+            success and adaptive_rotation_applied
+        )
         self.clear_markers_button.configure(state="normal")
         self._publish_harvest_result_markers()
 
@@ -996,6 +1035,7 @@ class HarvestGui(Node):
         message.markers = [marker]
         self.result_marker_publisher.publish(message)
         self.harvest_results.clear()
+        self.harvest_result_adaptive_rotation.clear()
         self.sweep_markers.clear()
         self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
@@ -1195,9 +1235,16 @@ class HarvestGui(Node):
         self.sweep_result_tree.selection_set(item_id)
         result_text = "성공" if record["success"] else "실패"
         detail = record.get("display_stage") or "특이사항 없음"
+        adaptive_detail = (
+            f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
+            f"(로봇 방향 오차 "
+            f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
+            f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
+        )
         self._set_sweep_result_detail(
             f"최근 결과 상세: 케이스 {record['case']}, "
-            f"토마토 {record['tomato']}, {result_text}\n{detail}"
+            f"토마토 {record['tomato']}, {result_text}\n"
+            f"{adaptive_detail}\n{detail}"
         )
         children = self.sweep_result_tree.get_children()
         for old_item in children[100:]:
@@ -1217,12 +1264,18 @@ class HarvestGui(Node):
             return
         result_text = "성공" if record["success"] else "실패"
         detail = record.get("display_stage") or "특이사항 없음"
+        adaptive_detail = (
+            f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
+            f"(로봇 방향 오차 "
+            f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
+            f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
+        )
         self._set_sweep_result_detail(
             f"선택 결과: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
             f"환경 X={record['x']:.4f}, Y={record['y']:.4f}, "
             f"Z={record['z']:.4f}, 회전={record['rotation_deg']:.1f}°\n"
-            f"{detail}"
+            f"{adaptive_detail}\n{detail}"
         )
         busy = (
             self.harvest_process is not None
@@ -2033,7 +2086,13 @@ class HarvestGui(Node):
             self._set_busy(False)
             mode = "실제 수확" if execute else "Plan-only"
             if return_code == 0:
-                self._set_harvest_result(verification[1], True)
+                self._set_harvest_result(
+                    verification[1],
+                    True,
+                    adaptive_rotation_applied=adaptive_rotation_was_applied(
+                        self.harvest_plan_report
+                    ),
+                )
                 self.status.set(f"{mode} 완료")
                 self._append_log(f"{mode} 완료 (종료 코드 0)")
                 if not execute and verification[0] == self.detection_generation:
@@ -2065,6 +2124,7 @@ class HarvestGui(Node):
             return
         tomato_index = verification[1]
         report = report or {}
+        adaptive_grasp = report.get("adaptive_grasp", {})
         success = return_code == 0
         x, y, z, rotation = self.sweep_current_case
         record = {
@@ -2094,6 +2154,15 @@ class HarvestGui(Node):
             "duration_sec": report.get("duration_sec", 0.0),
             "stages": report.get("stages", []),
             "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
+            "adaptive_grasp_rotation_deg": adaptive_grasp.get(
+                "applied_rotation_deg", 0.0
+            ),
+            "adaptive_grasp_current_error_deg": adaptive_grasp.get(
+                "current_robot_error_deg", 0.0
+            ),
+            "adaptive_grasp_selected_error_deg": adaptive_grasp.get(
+                "selected_robot_error_deg", 0.0
+            ),
         }
         fallback_summary = cartesian_fallback_summary(report)
         if fallback_summary:
@@ -2137,6 +2206,13 @@ class HarvestGui(Node):
                 self.result_arrow_lengths.get(tomato_index, 0.04),
                 parent_frame,
                 transform,
+                adaptive_rotation_applied=(
+                    success
+                    and abs(
+                        float(record["adaptive_grasp_rotation_deg"])
+                    )
+                    > 1e-6
+                ),
             )
             self.sweep_marker_next_id += 1
             self.sweep_markers.append(marker)
@@ -2186,7 +2262,13 @@ class HarvestGui(Node):
             self._finish_batch(False, "검출 결과가 변경되어 전체 수확을 중단했습니다.")
             return
 
-        self._set_harvest_result(index, True)
+        self._set_harvest_result(
+            index,
+            True,
+            adaptive_rotation_applied=adaptive_rotation_was_applied(
+                self.harvest_plan_report
+            ),
+        )
         self._append_log(
             f"[전체 {self.batch_completed + self.batch_skipped + 1}/"
             f"{self.batch_total}] "
@@ -2332,6 +2414,7 @@ class HarvestGui(Node):
         self.detected_tomatoes = []
         if preserve_sweep_markers:
             self.harvest_results.clear()
+            self.harvest_result_adaptive_rotation.clear()
             self._publish_harvest_result_markers()
             self.clear_markers_button.configure(
                 state="normal" if self.sweep_markers else "disabled"

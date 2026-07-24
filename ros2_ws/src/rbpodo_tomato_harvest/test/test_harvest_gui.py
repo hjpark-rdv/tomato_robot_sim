@@ -12,6 +12,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from rbpodo_tomato_harvest.harvest_gui import (
     HarvestGui,
     PLANNER_CONFIGS,
+    adaptive_rotation_was_applied,
     cartesian_fallback_summary,
     generate_sweep_cases,
     harvest_all_jobs,
@@ -526,14 +527,39 @@ def test_success_marker_is_green_and_points_along_tomato_positive_x():
     )
 
 
-def test_failure_marker_is_yellow():
+def test_adaptive_rotation_success_marker_is_sky_blue():
+    marker = harvest_result_marker(
+        0,
+        True,
+        0.04,
+        adaptive_rotation_applied=True,
+    )
+
+    assert (marker.color.r, marker.color.g, marker.color.b, marker.color.a) == (
+        0.2,
+        0.8,
+        1.0,
+        1.0,
+    )
+
+
+def test_failure_marker_is_red():
     marker = harvest_result_marker(0, False, 0.04)
 
     assert (marker.color.r, marker.color.g, marker.color.b, marker.color.a) == (
         1.0,
-        1.0,
+        0.0,
         0.0,
         1.0,
+    )
+
+
+def test_adaptive_rotation_report_requires_nonzero_applied_angle():
+    assert adaptive_rotation_was_applied(
+        {"adaptive_grasp": {"applied_rotation_deg": 15.0}}
+    )
+    assert not adaptive_rotation_was_applied(
+        {"adaptive_grasp": {"applied_rotation_deg": 0.0}}
     )
 
 
@@ -551,6 +577,31 @@ def test_sweep_marker_is_frozen_in_robot_base_frame():
     assert marker.ns == "harvest_sweep_result"
     assert marker.id == 12
     assert marker.pose.position == Point(x=0.4, y=-0.2, z=0.7)
+
+
+def test_sweep_success_marker_is_sky_blue_when_grasp_rotated():
+    transform = SimpleNamespace(
+        transform=SimpleNamespace(
+            translation=SimpleNamespace(x=0.4, y=-0.2, z=0.7),
+            rotation=SimpleNamespace(x=0.0, y=0.0, z=0.0, w=1.0),
+        )
+    )
+
+    marker = sweep_result_marker(
+        12,
+        True,
+        0.03,
+        "link0",
+        transform,
+        adaptive_rotation_applied=True,
+    )
+
+    assert (marker.color.r, marker.color.g, marker.color.b, marker.color.a) == (
+        0.2,
+        0.8,
+        1.0,
+        1.0,
+    )
 
 
 def test_harvest_result_marker_rejects_negative_index():
