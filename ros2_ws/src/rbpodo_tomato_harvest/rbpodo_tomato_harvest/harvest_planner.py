@@ -405,7 +405,7 @@ def adaptive_outward_toward_robot(
     max_rotation_deg: float = 45.0,
     deadband_deg: float = 10.0,
 ) -> AdaptiveApproachDirection:
-    """Rotate tomato -X toward local +Y only when it faces the robot better."""
+    """Rotate tomato -X toward the robot through local ±Y."""
     rotation = np.asarray(tomato_rotation, dtype=float)
     if rotation.shape != (3, 3):
         raise ValueError("tomato_rotation must be a 3x3 matrix")
@@ -441,19 +441,22 @@ def adaptive_outward_toward_robot(
     toward_y_angle = signed_angle(current_outward, tomato_y)
     toward_y_sign = 1.0 if toward_y_angle >= 0.0 else -1.0
     robot_angle = signed_angle(current_outward, robotward)
-    robot_progress_toward_y = toward_y_sign * robot_angle
+    robot_angle_in_local_y = toward_y_sign * robot_angle
     current_error_deg = abs(math.degrees(robot_angle))
 
     maximum = max(0.0, min(90.0, float(max_rotation_deg)))
     deadband = max(0.0, float(deadband_deg))
-    applied_magnitude_deg = 0.0
-    if robot_progress_toward_y > math.radians(deadband):
-        applied_magnitude_deg = min(
-            math.degrees(robot_progress_toward_y),
-            maximum,
+    applied_rotation_deg = 0.0
+    if abs(robot_angle_in_local_y) > math.radians(deadband):
+        applied_rotation_deg = max(
+            -maximum,
+            min(
+                maximum,
+                math.degrees(robot_angle_in_local_y),
+            ),
         )
 
-    applied_angle = toward_y_sign * math.radians(applied_magnitude_deg)
+    applied_angle = toward_y_sign * math.radians(applied_rotation_deg)
     cosine = math.cos(applied_angle)
     sine = math.sin(applied_angle)
     selected_outward = np.array(
@@ -470,7 +473,7 @@ def adaptive_outward_toward_robot(
     )
     return AdaptiveApproachDirection(
         selected_outward,
-        applied_magnitude_deg,
+        applied_rotation_deg,
         current_error_deg,
         selected_error_deg,
     )
@@ -1907,8 +1910,8 @@ class CartesianHarvestPlanner(Node):
         self.get_logger().info(
             "Adaptive grasp approach: "
             f"enabled={self.last_plan_report['adaptive_grasp']['enabled']} "
-            f"toward_tomato_+Y="
-            f"{approach_direction.applied_rotation_deg:.1f}° "
+            f"local_y_signed_rotation="
+            f"{approach_direction.applied_rotation_deg:+.1f}° "
             f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
             f"->{approach_direction.selected_robot_error_deg:.1f}° "
             f"outward={approach_direction.outward_axis.round(4).tolist()}"

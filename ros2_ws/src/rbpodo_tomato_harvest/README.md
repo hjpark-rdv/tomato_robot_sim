@@ -166,10 +166,11 @@ PICK_READY joint goal은 기존 `pick_ready_planning_time=10.0`,
 허용 범위를 제한하는 조건이며 최단 trajectory를 보장하는 품질 기준은 아니다.
 
 Pre-grasp 접근 방향은 토마토 TF의 `-X`를 기본으로 하되 로봇 베이스
-(`link0` 원점)를 향하도록 토마토 로컬 `+Y` 쪽으로 필요한 만큼만 회전한다.
-회전은 최대 `45°`이며, 기존 `-X` 방향과 로봇 방향의 차이가 `10°` 이내이면
-회전하지 않는다. 원본 토마토 TF는 변경하지 않고 tip target과 pre-grasp
-geometry만 회전한 뒤 기존과 동일하게 TCP pose로 환산한다.
+(`link0` 원점)를 향하도록 토마토 로컬 `+Y` 또는 `-Y` 중 가까운 쪽으로
+필요한 만큼 회전한다. signed 회전각은 local `+Y` 방향이 양수, local `-Y`
+방향이 음수이며 `-45°~+45°`로 제한한다. 기존 `-X` 방향과 로봇 방향의
+차이가 `10°` 이내이면 회전하지 않는다. 원본 토마토 TF는 변경하지 않고 tip
+target과 pre-grasp geometry만 회전한 뒤 기존과 동일하게 TCP pose로 환산한다.
 
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
 - `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `45.0`
@@ -186,9 +187,10 @@ Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적�
 
 RViz의 `HarvestPlanResults` 화살표는 성공·실패 여부와 관계없이 planner가
 실제로 사용한 토마토 로컬 pre-grasp 진입 벡터를 표시한다. 보정이 없으면
-토마토 로컬 +X축이고, 보정이 있으면 +X축에서 -Y축 방향으로 회전한다.
-pre-grasp 위치 벡터가 -X에서 +Y로 회전하는 것과 화살표가 나타내는 토마토
-방향 진입 벡터는 서로 반대이기 때문이다. 길이는 검출된 중심→줄기점
+토마토 로컬 +X축이다. local `+Y` 쪽으로 pre-grasp 위치가 보정되면 화살표는
+`+X→-Y`, local `-Y` 쪽으로 보정되면 `+X→+Y` 방향으로 회전한다.
+pre-grasp 위치 벡터와 화살표가 나타내는 토마토 방향 진입 벡터는 서로
+반대이기 때문이다. 길이는 검출된 중심→줄기점
 거리를 지면에 투영한 뒤 8 mm를
 줄인 값을 사용한다. Plan-only 회전 없는 성공은 초록색, 적응 접근각이 적용된
 성공은 하늘색, 실패는 빨간색이다.

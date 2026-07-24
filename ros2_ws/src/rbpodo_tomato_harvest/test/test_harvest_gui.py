@@ -891,6 +891,19 @@ def test_failure_marker_points_from_plus_x_toward_minus_y_after_rotation():
     assert marker.points[1].y == pytest.approx(-component)
 
 
+def test_failure_marker_points_toward_plus_y_after_negative_rotation():
+    marker = harvest_result_marker(
+        0,
+        False,
+        0.04,
+        adaptive_rotation_deg=-45.0,
+    )
+
+    component = 0.04 / (2.0 ** 0.5)
+    assert marker.points[1].x == pytest.approx(component)
+    assert marker.points[1].y == pytest.approx(component)
+
+
 def test_failure_marker_uses_exact_planner_approach_axis():
     marker = harvest_result_marker(
         0,
@@ -914,6 +927,12 @@ def test_adaptive_rotation_report_requires_nonzero_applied_angle():
     assert adaptive_rotation_degrees(
         {"adaptive_grasp": {"applied_rotation_deg": 45.0}}
     ) == pytest.approx(45.0)
+    assert adaptive_rotation_was_applied(
+        {"adaptive_grasp": {"applied_rotation_deg": -30.0}}
+    )
+    assert adaptive_rotation_degrees(
+        {"adaptive_grasp": {"applied_rotation_deg": -45.0}}
+    ) == pytest.approx(-45.0)
     assert adaptive_approach_axis_local(
         {
             "adaptive_grasp": {

@@ -118,10 +118,10 @@ def adaptive_rotation_was_applied(report, epsilon_deg: float = 1e-6) -> bool:
 
 
 def adaptive_rotation_degrees(report) -> float:
-    """Return the adaptive pre-grasp rotation toward tomato +Y in degrees."""
+    """Return signed pre-grasp rotation toward tomato local ±Y."""
     adaptive_grasp = report.get("adaptive_grasp", {})
     return max(
-        0.0,
+        -90.0,
         min(90.0, float(adaptive_grasp.get("applied_rotation_deg", 0.0))),
     )
 
@@ -494,7 +494,7 @@ def harvest_result_marker(
         endpoint = Point(x=float(arrow_length))
     else:
         angle = math.radians(
-            max(0.0, min(90.0, float(adaptive_rotation_deg)))
+            max(-90.0, min(90.0, float(adaptive_rotation_deg)))
         )
         endpoint = Point(
             x=float(arrow_length) * math.cos(angle),
@@ -984,16 +984,18 @@ class HarvestGui(Node):
     def _build_sweep_ui(self, frame) -> None:
         self.sweep_inputs = {}
         defaults = {
-            "start": ("0.355", "-0.375", "0.340", "45.0"),
-            "end": ("0.355", "-0.375", "0.340", "45.0"),
-            "step": ("0.010", "0.010", "0.010", "5.0"),
+            "start": ("0.55", "-0.4", "0.2", "0"),
+            "end": ("0.55", "0.4", "0.8", "180"),
+            "step": ("0.010", "0.1", "0.02", "30"),
         }
         keys = ("x", "y", "z", "rotation")
         for prefix, values in defaults.items():
             for key, value in zip(keys, values):
                 self.sweep_inputs[f"{prefix}_{key}"] = tk.StringVar(value=value)
         for key in keys:
-            self.sweep_inputs[f"random_{key}"] = tk.BooleanVar(value=False)
+            self.sweep_inputs[f"random_{key}"] = tk.BooleanVar(
+                value=key == "z"
+            )
 
         headers = ("항목", "시작", "종료", "변화량", "랜덤")
         for column, header in enumerate(headers):
@@ -1425,7 +1427,8 @@ class HarvestGui(Node):
         result_text = "성공" if record["success"] else "실패"
         detail = record.get("display_stage_detail") or "단계 정보 없음"
         adaptive_detail = (
-            f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
+            f"적응 접근각 "
+            f"{record.get('adaptive_grasp_rotation_deg', 0.0):+.1f}° "
             f"(로봇 방향 오차 "
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
@@ -1454,7 +1457,8 @@ class HarvestGui(Node):
         result_text = "성공" if record["success"] else "실패"
         detail = record.get("display_stage_detail") or "단계 정보 없음"
         adaptive_detail = (
-            f"적응 접근 +Y {record.get('adaptive_grasp_rotation_deg', 0.0):.1f}° "
+            f"적응 접근각 "
+            f"{record.get('adaptive_grasp_rotation_deg', 0.0):+.1f}° "
             f"(로봇 방향 오차 "
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
