@@ -14,16 +14,59 @@ from rbpodo_tomato_harvest.harvest_gui import (
     PLANNER_CONFIGS,
     adaptive_rotation_was_applied,
     cartesian_fallback_summary,
+    format_ik_goal_acceleration_summary,
     generate_sweep_cases,
     harvest_all_jobs,
     harvest_command,
     harvest_result_marker,
+    ik_goal_acceleration_summary,
     scene_parameters,
     sweep_result_marker,
     tomato_stem_arrow_length,
 )
 from rbpodo_tomato_harvest.harvest_planner import CartesianHarvestPlanner
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
+
+
+def test_ik_goal_acceleration_summary_aggregates_plan_stages():
+    summary = ik_goal_acceleration_summary(
+        {
+            "ik_goal_acceleration": [
+                {
+                    "seed_count": 12,
+                    "ik_solution_count": 4,
+                    "valid_candidate_count": 1,
+                    "joint_plan_attempt_count": 1,
+                    "preparation_sec": 0.08,
+                    "joint_goal_used": True,
+                    "pose_fallback_used": False,
+                },
+                {
+                    "seed_count": 12,
+                    "ik_solution_count": 2,
+                    "valid_candidate_count": 0,
+                    "joint_plan_attempt_count": 0,
+                    "preparation_sec": 0.07,
+                    "joint_goal_used": False,
+                    "pose_fallback_used": True,
+                },
+            ]
+        }
+    )
+
+    assert summary == {
+        "ik_seed_count": 24,
+        "ik_solution_count": 6,
+        "ik_valid_candidate_count": 1,
+        "ik_joint_plan_attempt_count": 1,
+        "ik_preparation_sec": 0.15,
+        "ik_joint_goal_used": True,
+        "ik_pose_fallback_used": True,
+    }
+    formatted = format_ik_goal_acceleration_summary(summary)
+    assert "seed 24" in formatted
+    assert "유효 1" in formatted
+    assert "기존 Pose goal fallback" in formatted
 
 
 def test_generate_sweep_cases_stops_when_first_axis_reaches_end():

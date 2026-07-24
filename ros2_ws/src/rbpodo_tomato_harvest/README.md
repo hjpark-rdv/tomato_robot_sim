@@ -146,6 +146,28 @@ Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `
 (약 `2.86°`)이다. 이후 수확 목표까지는 Cartesian 경로가 정확한 pose로
 보정한다.
 
+OMPL Pose 계획은 기본적으로 목표를 바로 goal sampler에 넘기지 않는다.
+서로 다른 seed로 TCP IK 후보를 먼저 만들고, 시작 자세 중심 `±120°` constraint,
+collision 검사와 FK Pose 오차 검증을 통과한 후보 중 현재 관절 자세와 가장
+가까운 joint goal을 선택한다. 이 joint goal로 기존 constrained OMPL 계획을
+수행하므로 goal sampler에서 불가능한 IK를 반복 탐색하며 planning time을 모두
+사용하는 경우를 줄인다. 유효 후보가 없거나 joint-goal OMPL이 실패하면 기존
+Pose goal 방식으로 자동 fallback한다.
+
+- `ompl_ik_goal_acceleration_enabled`: 사전 IK joint-goal 가속 사용, 기본 `true`
+- `ompl_ik_candidate_count`: 생성할 IK seed/후보 수, 기본 `12`
+- `ompl_ik_plan_candidate_count`: OMPL을 시도할 상위 후보 수, 기본 `1`
+- `ompl_ik_seed_span_deg`: wrist3 이외 seed 변화 범위, 기본 `110.0`
+- `ompl_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.08`
+- `ompl_ik_random_seed`: 반복 가능한 후보 생성을 위한 seed, 기본 `17`
+- `ompl_ik_joint_weights`: 가까운 후보 점수의 6개 관절 가중치,
+  기본 `[1.0, 1.2, 1.1, 1.0, 0.8, 0.5]`
+
+자동 테스트의 GUI 상세 정보와 CSV에는 IK seed 수, IK 성공 수, 유효 후보 수,
+준비 시간, joint-goal 사용 여부와 기존 Pose goal fallback 여부가 기록된다.
+단계별 후보 점수와 탈락 사유 개수는 `results.jsonl`의
+`ik_goal_acceleration`에서 확인할 수 있다.
+
 Pre-grasp 접근 방향은 토마토 TF의 `-X`를 기본으로 하되 로봇 베이스
 (`link0` 원점)를 향하도록 토마토 로컬 `+Y` 쪽으로 필요한 만큼만 회전한다.
 회전은 최대 `45°`이며, 기존 `-X` 방향과 로봇 방향의 차이가 `10°` 이내이면

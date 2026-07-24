@@ -67,6 +67,13 @@ SWEEP_CSV_FIELDS = (
     "adaptive_grasp_rotation_deg",
     "adaptive_grasp_current_error_deg",
     "adaptive_grasp_selected_error_deg",
+    "ik_seed_count",
+    "ik_solution_count",
+    "ik_valid_candidate_count",
+    "ik_joint_plan_attempt_count",
+    "ik_preparation_sec",
+    "ik_joint_goal_used",
+    "ik_pose_fallback_used",
     "duration_sec",
 )
 
@@ -114,6 +121,56 @@ def adaptive_rotation_was_applied(report, epsilon_deg: float = 1e-6) -> bool:
     adaptive_grasp = report.get("adaptive_grasp", {})
     return abs(float(adaptive_grasp.get("applied_rotation_deg", 0.0))) > abs(
         float(epsilon_deg)
+    )
+
+
+def ik_goal_acceleration_summary(report) -> dict:
+    """Aggregate per-stage IK acceleration diagnostics for one harvest plan."""
+    records = report.get("ik_goal_acceleration", [])
+    return {
+        "ik_seed_count": sum(
+            int(item.get("seed_count", 0)) for item in records
+        ),
+        "ik_solution_count": sum(
+            int(item.get("ik_solution_count", 0)) for item in records
+        ),
+        "ik_valid_candidate_count": sum(
+            int(item.get("valid_candidate_count", 0)) for item in records
+        ),
+        "ik_joint_plan_attempt_count": sum(
+            int(item.get("joint_plan_attempt_count", 0))
+            for item in records
+        ),
+        "ik_preparation_sec": round(
+            sum(float(item.get("preparation_sec", 0.0)) for item in records),
+            6,
+        ),
+        "ik_joint_goal_used": any(
+            bool(item.get("joint_goal_used", False)) for item in records
+        ),
+        "ik_pose_fallback_used": any(
+            bool(item.get("pose_fallback_used", False)) for item in records
+        ),
+    }
+
+
+def format_ik_goal_acceleration_summary(record) -> str:
+    """Format compact diagnostics for the GUI result-detail panel."""
+    seeds = int(record.get("ik_seed_count", 0))
+    if seeds <= 0:
+        return "IK 가속: 사용 안 함"
+    route = (
+        "joint goal 사용"
+        if record.get("ik_joint_goal_used")
+        else "joint goal 미사용"
+    )
+    if record.get("ik_pose_fallback_used"):
+        route += " → 기존 Pose goal fallback"
+    return (
+        f"IK 가속: seed {seeds}, 해 {int(record.get('ik_solution_count', 0))}, "
+        f"유효 {int(record.get('ik_valid_candidate_count', 0))}, "
+        f"OMPL 시도 {int(record.get('ik_joint_plan_attempt_count', 0))}, "
+        f"준비 {float(record.get('ik_preparation_sec', 0.0)):.3f}s, {route}"
     )
 
 
@@ -1241,10 +1298,11 @@ class HarvestGui(Node):
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
         )
+        ik_detail = format_ik_goal_acceleration_summary(record)
         self._set_sweep_result_detail(
             f"최근 결과 상세: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
-            f"{adaptive_detail}\n{detail}"
+            f"{adaptive_detail}\n{ik_detail}\n{detail}"
         )
         children = self.sweep_result_tree.get_children()
         for old_item in children[100:]:
@@ -1270,12 +1328,13 @@ class HarvestGui(Node):
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
         )
+        ik_detail = format_ik_goal_acceleration_summary(record)
         self._set_sweep_result_detail(
             f"선택 결과: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
             f"환경 X={record['x']:.4f}, Y={record['y']:.4f}, "
             f"Z={record['z']:.4f}, 회전={record['rotation_deg']:.1f}°\n"
-            f"{adaptive_detail}\n{detail}"
+            f"{adaptive_detail}\n{ik_detail}\n{detail}"
         )
         busy = (
             self.harvest_process is not None
@@ -2125,6 +2184,7 @@ class HarvestGui(Node):
         tomato_index = verification[1]
         report = report or {}
         adaptive_grasp = report.get("adaptive_grasp", {})
+        ik_summary = ik_goal_acceleration_summary(report)
         success = return_code == 0
         x, y, z, rotation = self.sweep_current_case
         record = {
@@ -2154,6 +2214,9 @@ class HarvestGui(Node):
             "duration_sec": report.get("duration_sec", 0.0),
             "stages": report.get("stages", []),
             "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
+            "ik_goal_acceleration": report.get(
+                "ik_goal_acceleration", []
+            ),
             "adaptive_grasp_rotation_deg": adaptive_grasp.get(
                 "applied_rotation_deg", 0.0
             ),
@@ -2163,6 +2226,7 @@ class HarvestGui(Node):
             "adaptive_grasp_selected_error_deg": adaptive_grasp.get(
                 "selected_robot_error_deg", 0.0
             ),
+            **ik_summary,
         }
         fallback_summary = cartesian_fallback_summary(report)
         if fallback_summary:
@@ -2234,6 +2298,10 @@ class HarvestGui(Node):
             f"index {tomato_index} Plan {result} "
             f"(전체 완료 {self.sweep_completed})"
         )
+        if record["ik_seed_count"]:
+            self._append_log(
+                f"  └ {format_ik_goal_acceleration_summary(record)}"
+            )
         self.root.after(100, self._start_sweep_plan)
 
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:

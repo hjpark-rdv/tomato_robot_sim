@@ -3,7 +3,7 @@
 ## 검증된 IK 후보를 이용한 constrained OMPL 가속
 
 - 기록일: 2026-07-24
-- 상태: 보류 — 추후 구현
+- 상태: 1차 구현 완료 — 실제 환경 반복 검증 및 파라미터 조정 진행
 - 대상: 수확 모션의 OMPL Pose goal 계획 및 Cartesian 실패 후 OMPL fallback
 
 ### 문제
@@ -114,3 +114,43 @@ More than 80% of the sampled goal states fail to satisfy the constraints
 - 대표 실패 케이스에서 평균 및 95백분위 planning 시간이 감소한다.
 - 과도한 관절 말림이나 불필요한 회전이 증가하지 않는다.
 - 모든 사전 IK 후보 방식이 실패하면 기존 Pose goal 방식이 정상 동작한다.
+
+### 1차 구현 결과 (2026-07-24)
+
+`harvest_planner.py`에 다음 흐름을 기본 활성화 상태로 구현했다.
+
+1. 단계 시작 자세와 서로 다른 seed로 `/compute_ik`를 여러 번 호출한다.
+2. `tcp` 목표, 시작 자세 중심 `±120°` constraint, collision, FK Pose 오차를
+   순서대로 검사한다.
+3. 유효 후보를 관절 거리로 정렬하고 가장 가까운 후보를 constrained OMPL
+   joint goal로 계획한다.
+4. 유효 후보가 없거나 joint-goal 계획이 실패하면 기존 OMPL Pose goal 방식으로
+   자동 fallback한다.
+
+기본값은 IK 후보 12개를 만들고 가장 가까운 joint goal 하나만 OMPL에 전달한다.
+후보마다 전체 OMPL planning time을 새로 소비하지 않도록 기본 joint-goal 계획
+후보 수를 1개로 제한했다. 필요하면
+`ompl_ik_plan_candidate_count`를 2~3으로 늘릴 수 있지만 최악 계획 시간도
+그만큼 늘어날 수 있다.
+
+동일한 `detected_tomato_1_tf` Plan-only 조건에서 각각 5회 측정한 1차 결과:
+
+| 방식 | 평균 전체 시간 | 평균 OMPL planning time | 평균 IK 준비 시간 |
+|---|---:|---:|---:|
+| 기존 Pose goal | 4.4953 s | 4.1239 s | 0 s |
+| 검증된 IK joint goal | 0.6706 s | 0.0894 s | 0.0758 s |
+
+기존 방식은 5회 중 2회가 약 10초 planning time을 사용했고, 신규 방식은 5회
+모두 성공하며 전체 시간이 0.285~1.375초였다. 이 수치는 현재 장면의 단일
+토마토에 대한 소규모 측정이므로 다양한 위치·회전 자동 테스트로 성공률,
+95백분위 시간, 관절 trajectory 범위를 추가 비교해야 한다.
+
+같은 5회 측정에서 pre-grasp까지의 평균 관절 span은 기존/신규가 각각
+base `4.63°/5.90°`, shoulder `1.91°/1.60°`, elbow `17.69°/17.54°`,
+wrist1 `17.61°/17.27°`, wrist2 `1.52°/0.80°`,
+wrist3 `52.16°/52.17°`였다. 현재 표본에서는 계획 시간 단축 때문에 과도한
+관절 회전이 새로 생기지 않았다.
+
+자동 테스트 JSONL에는 단계별 `ik_goal_acceleration` 원본 진단을 저장하고,
+CSV와 GUI에는 seed 수, IK 성공 수, 유효 후보 수, joint-goal 계획 시도 수,
+IK 준비 시간, joint-goal 사용 여부, 기존 Pose fallback 여부를 요약한다.
