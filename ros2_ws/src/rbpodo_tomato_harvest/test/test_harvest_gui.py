@@ -24,6 +24,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_result_marker,
     is_critical_process_output,
     scene_parameters,
+    sweep_execution_duration_text,
     sweep_stage_detail,
     sweep_stage_summary,
     sweep_result_marker,
@@ -52,6 +53,21 @@ def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
         (0.01, 0.01, 0.0, 5.0),
         (0.01, 0.01, 0.0, 10.0),
     ]
+
+
+def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
+    assert sweep_execution_duration_text(
+        {
+            "execution_attempted": True,
+            "execution_duration_sec": 18.376,
+        }
+    ) == "18.38"
+    assert sweep_execution_duration_text(
+        {
+            "execution_attempted": False,
+            "execution_duration_sec": 0.0,
+        }
+    ) == "-"
 
 
 def test_concise_plan_report_shows_only_stage_metrics_and_joint_ranges():
@@ -212,6 +228,7 @@ def test_persistent_worker_updates_target_and_disables_display():
             "preapproach_mode": "planner",
             "velocity_scale": 0.35,
             "acceleration_scale": 0.25,
+            "harvest_wait_sec": 4.25,
         },
     )
 
@@ -223,6 +240,7 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["publish_display_trajectory"] is False
     assert values["pick_ready_velocity_scale"] == pytest.approx(0.35)
     assert values["pick_ready_acceleration_scale"] == pytest.approx(0.25)
+    assert values["harvest_wait_sec"] == pytest.approx(4.25)
 
 
 def test_persistent_worker_enables_execution_only_when_requested():
@@ -248,11 +266,20 @@ def test_persistent_worker_enables_execution_only_when_requested():
     assert values["publish_display_trajectory"] is False
 
 
-def test_execute_returns_to_pick_ready_after_post_wait():
+def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
     events = []
+    waits = []
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.harvest_planner.time.sleep",
+        waits.append,
+    )
+    parameter_values = {
+        "execute": True,
+        "harvest_wait_sec": 2.75,
+    }
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
-            value=True if name == "execute" else 0.0
+            value=parameter_values[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: events.append(("log", message))
@@ -266,7 +293,6 @@ def test_execute_returns_to_pick_ready_after_post_wait():
     )
     plan = HarvestMotionPlan(
         pick_ready_trajectory="initial_ready",
-        pre_rotation_trajectory=("pre_rotation",),
         preapproach_trajectory=("preapproach",),
         approach_trajectory=("approach",),
         after_wait_trajectory=("post_wait",),
@@ -277,6 +303,18 @@ def test_execute_returns_to_pick_ready_after_post_wait():
     success = CartesianHarvestPlanner.execute(planner, plan)
 
     assert success is True
+    assert waits == [pytest.approx(2.75)]
+    assert [event for event in events if event[0] != "log"] == [
+        ("single", "initial_ready", "PICK_READY"),
+        ("sequence", ("preapproach",), "Pre-approach"),
+        (
+            "sequence",
+            ("approach",),
+            "Approach and pre-wait harvest",
+        ),
+        ("sequence", ("post_wait",), "Post-wait harvest"),
+        ("single", "return_ready", "OMPL RETURN_PICK_READY"),
+    ]
     assert events[-2] == (
         "single",
         "return_ready",
@@ -448,6 +486,7 @@ def test_harvest_command_builds_plan_only_command():
         preapproach_mode="planner",
         velocity_scale=0.35,
         acceleration_scale=0.25,
+        harvest_wait_sec=3.5,
         python_executable="/usr/bin/python3",
     )
 
@@ -464,6 +503,7 @@ def test_harvest_command_builds_plan_only_command():
     assert "publish_display_trajectory:=true" in command
     assert "pick_ready_velocity_scale:=0.35" in command
     assert "pick_ready_acceleration_scale:=0.25" in command
+    assert "harvest_wait_sec:=3.5" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -471,6 +511,8 @@ def test_harvest_command_rejects_invalid_motion_scale():
         harvest_command(0, False, velocity_scale=1.01)
     with pytest.raises(ValueError, match="acceleration_scale"):
         harvest_command(0, False, acceleration_scale=0.0)
+    with pytest.raises(ValueError, match="harvest_wait_sec"):
+        harvest_command(0, False, harvest_wait_sec=-0.1)
 
 
 def test_gui_percent_to_scale_validates_operator_input():
@@ -479,6 +521,15 @@ def test_gui_percent_to_scale_validates_operator_input():
         HarvestGui._percent_to_scale("0", "속도")
     with pytest.raises(ValueError, match="숫자"):
         HarvestGui._percent_to_scale("fast", "속도")
+
+
+def test_gui_wait_seconds_validates_operator_input():
+    assert HarvestGui._wait_seconds("2.5") == pytest.approx(2.5)
+    assert HarvestGui._wait_seconds("0") == pytest.approx(0.0)
+    with pytest.raises(ValueError, match="0초 이상"):
+        HarvestGui._wait_seconds("-1")
+    with pytest.raises(ValueError, match="숫자"):
+        HarvestGui._wait_seconds("wait")
 
 
 def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
@@ -587,216 +638,6 @@ def test_chomp_preapproach_uses_ik_joint_target_route():
 
     assert result == ("chomp_trajectory",)
     assert calls == [("planning_target_pose", "pick_ready_state")]
-
-
-def test_pre_rotation_uses_cartesian_path_at_pick_ready_position():
-    calls = []
-    pick_ready_pose = Pose()
-    pick_ready_pose.position.x = 0.4
-    pick_ready_pose.position.y = -0.2
-    pick_ready_pose.position.z = 0.6
-    pick_ready_pose.orientation.w = 1.0
-    target_pose = Pose()
-    target_pose.orientation.y = 0.25881904510252074
-    target_pose.orientation.w = 0.9659258262890683
-    start_state = RobotState()
-    planner = SimpleNamespace(
-        get_logger=lambda: SimpleNamespace(info=lambda message: None),
-        _compute_planning_link_pose=lambda state, **kwargs: pick_ready_pose,
-        _plan_cartesian=lambda waypoints, state, label, **kwargs: (
-            calls.append((waypoints, state, label, kwargs))
-            or "cartesian_rotation_trajectory"
-        ),
-    )
-
-    result = CartesianHarvestPlanner._plan_cartesian_pre_rotation(
-        planner,
-        target_pose,
-        start_state,
-    )
-
-    assert result == ("cartesian_rotation_trajectory",)
-    waypoints, state, label, kwargs = calls[0]
-    assert state is start_state
-    assert label == "TCP in-place pre-rotation"
-    assert kwargs["terminal_failure"] is False
-    assert waypoints[0].position.x == pytest.approx(0.4)
-    assert waypoints[0].position.y == pytest.approx(-0.2)
-    assert waypoints[0].position.z == pytest.approx(0.6)
-
-
-def test_cartesian_rotation_failure_skips_in_place_ompl_and_plans_pregrasp():
-    calls = []
-    planner = SimpleNamespace(
-        last_plan_report={
-            "stages": [
-                {
-                    "stage": "CARTESIAN_PRE_ROTATION",
-                    "reason": "CARTESIAN_FRACTION_LOW",
-                    "cartesian_fraction": 0.2,
-                    "required_fraction": 0.98,
-                }
-            ]
-        },
-        _plan_cartesian_pre_rotation=lambda pose, state: None,
-        _trajectory_end_state=lambda trajectory: "unused",
-        _plan_preapproach=lambda pose, state: pytest.fail(
-            "normal pre-approach route must be skipped"
-        ),
-        get_parameter=lambda name: SimpleNamespace(
-            value="RRTConnect"
-        ),
-        get_logger=lambda: SimpleNamespace(
-            warning=lambda message: None,
-            info=lambda message: None,
-        ),
-        _plan_pose_target=lambda pose, state, label, **kwargs: (
-            calls.append((pose, state, label, kwargs))
-            or "direct_ompl_trajectory"
-        ),
-    )
-    planner._plan_direct_ompl_preapproach_from_pick_ready = (
-        lambda *args, **kwargs: (
-            CartesianHarvestPlanner
-            ._plan_direct_ompl_preapproach_from_pick_ready(
-                planner, *args, **kwargs
-            )
-        )
-    )
-
-    result = CartesianHarvestPlanner._plan_rotation_and_preapproach(
-        planner,
-        "pregrasp_pose",
-        "pick_ready_state",
-    )
-
-    assert result == ((), ("direct_ompl_trajectory",))
-    assert calls == [
-        (
-            "pregrasp_pose",
-            "pick_ready_state",
-            "Direct OMPL pre-approach after Cartesian rotation failure",
-            {
-                "pipeline_id": "ompl",
-                "planner_id": "RRTConnect",
-                "stage_name": (
-                    "OMPL_PREAPPROACH_AFTER_PRE_ROTATION_FAILURE"
-                ),
-                "pregrasp": True,
-            },
-        )
-    ]
-    assert planner.last_plan_report["cartesian_fallbacks"][0][
-        "segment"
-    ] == "PRE_ROTATION_TO_PREAPPROACH"
-
-
-def test_direct_pregrasp_ompl_failure_is_terminal_after_rotation_failure():
-    planner = SimpleNamespace(
-        last_plan_report={
-            "stages": [{"stage": "CARTESIAN_PRE_ROTATION"}]
-        },
-        _plan_cartesian_pre_rotation=lambda pose, state: None,
-        get_parameter=lambda name: SimpleNamespace(
-            value="RRTConnect"
-        ),
-        get_logger=lambda: SimpleNamespace(
-            warning=lambda message: None,
-            info=lambda message: None,
-        ),
-        _plan_pose_target=lambda *args, **kwargs: None,
-    )
-    planner._plan_direct_ompl_preapproach_from_pick_ready = (
-        lambda *args, **kwargs: (
-            CartesianHarvestPlanner
-            ._plan_direct_ompl_preapproach_from_pick_ready(
-                planner, *args, **kwargs
-            )
-        )
-    )
-
-    result = CartesianHarvestPlanner._plan_rotation_and_preapproach(
-        planner,
-        "pregrasp_pose",
-        "pick_ready_state",
-    )
-
-    assert result is None
-
-
-def test_cartesian_preapproach_failure_discards_rotation_and_ompl_starts_ready():
-    cartesian_calls = []
-    ompl_calls = []
-    planner = SimpleNamespace(
-        last_plan_report={
-            "stages": [
-                {
-                    "stage": "CARTESIAN_PRE_ROTATION",
-                    "success": True,
-                }
-            ]
-        },
-        _plan_cartesian_pre_rotation=lambda pose, state: (
-            "pre_rotation_trajectory",
-        ),
-        _trajectory_end_state=lambda trajectory: "rotated_state",
-        get_parameter=lambda name: SimpleNamespace(
-            value=(
-                "cartesian"
-                if name == "preapproach_mode"
-                else "RRTConnect"
-            )
-        ),
-        get_logger=lambda: SimpleNamespace(
-            warning=lambda message: None,
-            info=lambda message: None,
-        ),
-        _plan_cartesian=lambda waypoints, state, label, **kwargs: (
-            cartesian_calls.append((waypoints, state, label, kwargs))
-            or planner.last_plan_report["stages"].append(
-                {
-                    "stage": "CARTESIAN_PREAPPROACH",
-                    "success": False,
-                    "reason": "CARTESIAN_FRACTION_LOW",
-                    "cartesian_fraction": 0.4,
-                    "required_fraction": 0.98,
-                }
-            )
-            or None
-        ),
-        _plan_pose_target=lambda pose, state, label, **kwargs: (
-            ompl_calls.append((pose, state, label, kwargs))
-            or "direct_ompl_trajectory"
-        ),
-    )
-    planner._plan_direct_ompl_preapproach_from_pick_ready = (
-        lambda *args, **kwargs: (
-            CartesianHarvestPlanner
-            ._plan_direct_ompl_preapproach_from_pick_ready(
-                planner, *args, **kwargs
-            )
-        )
-    )
-
-    result = CartesianHarvestPlanner._plan_rotation_and_preapproach(
-        planner,
-        "pregrasp_pose",
-        "pick_ready_state",
-    )
-
-    assert result == ((), ("direct_ompl_trajectory",))
-    assert cartesian_calls[0][1] == "rotated_state"
-    assert ompl_calls[0][1] == "pick_ready_state"
-    assert ompl_calls[0][3]["stage_name"] == (
-        "OMPL_PREAPPROACH_FROM_PICK_READY_AFTER_CARTESIAN_FAILURE"
-    )
-    assert planner.last_plan_report["stages"][0]["discarded"] is True
-    assert planner.last_plan_report["discarded_trajectory_stages"] == [
-        "CARTESIAN_PRE_ROTATION"
-    ]
-    assert planner.last_plan_report["cartesian_fallbacks"][0][
-        "segment"
-    ] == "PREAPPROACH_FROM_PICK_READY"
 
 
 def test_cartesian_failure_falls_back_to_constrained_ompl_per_waypoint():

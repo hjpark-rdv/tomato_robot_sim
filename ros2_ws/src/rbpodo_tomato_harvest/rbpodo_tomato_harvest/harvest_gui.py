@@ -209,6 +209,19 @@ def sweep_stage_summary(record) -> str:
     return "전체 단계 성공" if record.get("success") else "실패 단계 정보 없음"
 
 
+def sweep_execution_duration_text(record) -> str:
+    """Format full robot sequence time, or mark a plan-only result."""
+    if not record.get("execution_attempted"):
+        return "-"
+    try:
+        duration = float(record.get("execution_duration_sec"))
+    except (TypeError, ValueError):
+        return "-"
+    if not math.isfinite(duration) or duration < 0.0:
+        return "-"
+    return f"{duration:.2f}"
+
+
 def sweep_stage_detail(record) -> str:
     """Format every planning stage as a readable multiline result."""
     lines = []
@@ -391,6 +404,7 @@ def harvest_command(
     publish_display_trajectory: bool = True,
     velocity_scale: float = 0.20,
     acceleration_scale: float = 0.20,
+    harvest_wait_sec: float = 2.0,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -412,6 +426,9 @@ def harvest_command(
     ):
         if not 0.0 < float(value) <= 1.0:
             raise ValueError(f"{name} must be greater than 0 and at most 1")
+    harvest_wait_sec = float(harvest_wait_sec)
+    if not math.isfinite(harvest_wait_sec) or harvest_wait_sec < 0.0:
+        raise ValueError("harvest_wait_sec must be a finite value of zero or greater")
     executable = python_executable or sys.executable
     return [
         executable,
@@ -435,6 +452,8 @@ def harvest_command(
         f"pick_ready_velocity_scale:={float(velocity_scale)}",
         "-p",
         f"pick_ready_acceleration_scale:={float(acceleration_scale)}",
+        "-p",
+        f"harvest_wait_sec:={harvest_wait_sec}",
     ]
 
 
@@ -712,6 +731,7 @@ class HarvestGui(Node):
         self.batch_completed = 0
         self.batch_skipped = 0
         self.batch_planner = None
+        self.batch_harvest_wait_sec = 2.0
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
@@ -733,6 +753,7 @@ class HarvestGui(Node):
         self.sweep_active = False
         self.sweep_cancel_requested = False
         self.sweep_execute_motion = False
+        self.sweep_harvest_wait_sec = 2.0
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -785,6 +806,7 @@ class HarvestGui(Node):
         self.speed_bar_percent = tk.StringVar(value="10")
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
+        self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
@@ -978,13 +1000,25 @@ class HarvestGui(Node):
             sticky="ew",
             pady=(8, 0),
         )
+        ttk.Label(motion_frame, text="리니어모터 대기시간").grid(
+            row=3, column=0, sticky="w", pady=(8, 0)
+        )
+        wait_input = ttk.Frame(motion_frame)
+        wait_input.grid(row=3, column=1, sticky="w", padx=8, pady=(8, 0))
+        self.linear_motor_wait_entry = ttk.Entry(
+            wait_input,
+            textvariable=self.linear_motor_wait_sec,
+            width=8,
+        )
+        self.linear_motor_wait_entry.grid(row=0, column=0)
+        ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
         ttk.Label(
             motion_frame,
             text=(
                 "개별 실제 실행은 Plan-only 성공 후 활성화됩니다. "
                 "전체 수확은 토마토마다 Plan-only 후 실제 실행합니다."
             ),
-        ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        ).grid(row=4, column=0, columnspan=4, sticky="w", pady=(8, 0))
 
         scene_frame = ttk.LabelFrame(
             top_controls, text="토마토 줄기 위치 / 회전", padding=8
@@ -1188,7 +1222,14 @@ class HarvestGui(Node):
             wraplength=430,
         ).grid(row=12, column=0, columnspan=5, sticky="w", pady=(4, 8))
 
-        result_columns = ("case", "tomato", "result", "stage", "time")
+        result_columns = (
+            "case",
+            "tomato",
+            "result",
+            "stage",
+            "time",
+            "sequence_time",
+        )
         self.sweep_result_tree = ttk.Treeview(
             frame,
             columns=result_columns,
@@ -1203,6 +1244,7 @@ class HarvestGui(Node):
             "result": "결과",
             "stage": "실패/복구 단계",
             "time": "시간(s)",
+            "sequence_time": "실제 시퀀스(s)",
         }
         widths = {
             "case": 55,
@@ -1210,6 +1252,7 @@ class HarvestGui(Node):
             "result": 55,
             "stage": 235,
             "time": 70,
+            "sequence_time": 100,
         }
         for column in result_columns:
             self.sweep_result_tree.heading(column, text=headings[column])
@@ -1289,6 +1332,18 @@ class HarvestGui(Node):
         if not 1.0 <= percent <= 100.0:
             raise ValueError(f"{label}은 1~100% 범위로 입력하세요.")
         return percent / 100.0
+
+    @staticmethod
+    def _wait_seconds(value: str) -> float:
+        try:
+            seconds = float(value)
+        except ValueError as error:
+            raise ValueError(
+                "리니어모터 대기시간은 초 단위 숫자로 입력하세요."
+            ) from error
+        if not math.isfinite(seconds) or seconds < 0.0:
+            raise ValueError("리니어모터 대기시간은 0초 이상이어야 합니다.")
+        return seconds
 
     def apply_motion_speed(self) -> None:
         """Apply GUI planning scales and request the RB controller speed bar."""
@@ -1541,6 +1596,7 @@ class HarvestGui(Node):
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
             "execute_motion": self.sweep_execute_motion,
+            "linear_motor_wait_sec": self.sweep_harvest_wait_sec,
             "tomato_selection": "all_detected_tomatoes_per_case",
             "case_count": len(cases),
             "plan_count": None,
@@ -1635,6 +1691,7 @@ class HarvestGui(Node):
                 "성공" if record["success"] else "실패",
                 record.get("display_stage_summary", ""),
                 f"{record.get('duration_sec', 0.0):.2f}",
+                sweep_execution_duration_text(record),
             ),
         )
         self.sweep_result_records[item_id] = dict(record)
@@ -1648,9 +1705,14 @@ class HarvestGui(Node):
             f"{record.get('adaptive_grasp_current_error_deg', 0.0):.1f}°"
             f"→{record.get('adaptive_grasp_selected_error_deg', 0.0):.1f}°)"
         )
+        sequence_duration = sweep_execution_duration_text(record)
+        if sequence_duration != "-":
+            sequence_duration += "s"
         self._set_sweep_result_detail(
             f"최근 결과 상세: 케이스 {record['case']}, "
             f"토마토 {record['tomato']}, {result_text}\n"
+            f"계획 {float(record.get('duration_sec', 0.0)):.2f}s | "
+            f"실제 전체 시퀀스 {sequence_duration}\n"
             f"{adaptive_detail}\n{detail}"
         )
         children = self.sweep_result_tree.get_children()
@@ -1750,6 +1812,13 @@ class HarvestGui(Node):
                     "카메라 연결 실패", f"연결되지 않음: {self.camera_service}"
                 )
                 return
+        try:
+            harvest_wait_sec = self._wait_seconds(
+                self.linear_motor_wait_sec.get()
+            )
+        except ValueError as error:
+            messagebox.showerror("대기시간 입력 오류", str(error))
+            return
         execute_motion = bool(self.sweep_execute_motion_var.get())
         if execute_motion and not messagebox.askyesno(
             "자동 실제 로봇 실행",
@@ -1762,8 +1831,10 @@ class HarvestGui(Node):
         ):
             return
         self.sweep_execute_motion = execute_motion
+        self.sweep_harvest_wait_sec = harvest_wait_sec
         try:
             cases, input_config = self._read_sweep_inputs()
+            input_config["linear_motor_wait_sec"] = harvest_wait_sec
             self._start_sweep_session(cases, input_config)
         except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
@@ -1792,7 +1863,8 @@ class HarvestGui(Node):
         self._append_log(
             f"자동 {'Plan+실제 실행' if self.sweep_execute_motion else 'Plan'} "
             f"테스트 시작: {self.sweep_case_total}개 케이스, "
-            "각 케이스에서 검출된 토마토 전체를 처리"
+            "각 케이스에서 검출된 토마토 전체를 처리, "
+            f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -2134,6 +2206,7 @@ class HarvestGui(Node):
             "execute": self.sweep_execute_motion,
             "velocity_scale": self.motion_velocity_scale,
             "acceleration_scale": self.motion_acceleration_scale,
+            "harvest_wait_sec": self.sweep_harvest_wait_sec,
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -2338,6 +2411,13 @@ class HarvestGui(Node):
         if self.harvest_process is not None or self.batch_active or self.sweep_active:
             messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
             return
+        try:
+            harvest_wait_sec = self._wait_seconds(
+                self.linear_motor_wait_sec.get()
+            )
+        except ValueError as error:
+            messagebox.showerror("대기시간 입력 오류", str(error))
+            return
         pipeline, planner_id, preapproach_mode = (
             self._selected_planner_config()
         )
@@ -2362,7 +2442,12 @@ class HarvestGui(Node):
         ):
             return
 
-        self._launch_harvest_process(index, execute, verification)
+        self._launch_harvest_process(
+            index,
+            execute,
+            verification,
+            harvest_wait_sec=harvest_wait_sec,
+        )
 
     def start_harvest_all(self) -> None:
         if self.harvest_process is not None or self.batch_active or self.sweep_active:
@@ -2371,6 +2456,13 @@ class HarvestGui(Node):
         tomato_count = len(self.detected_tomatoes)
         if tomato_count == 0:
             messagebox.showwarning("토마토 검출", "수확할 토마토를 먼저 검출하세요.")
+            return
+        try:
+            harvest_wait_sec = self._wait_seconds(
+                self.linear_motor_wait_sec.get()
+            )
+        except ValueError as error:
+            messagebox.showerror("대기시간 입력 오류", str(error))
             return
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
@@ -2388,12 +2480,14 @@ class HarvestGui(Node):
         self.batch_completed = 0
         self.batch_skipped = 0
         self.batch_planner = self._selected_planner_config()
+        self.batch_harvest_wait_sec = harvest_wait_sec
         self._invalidate_plan()
         self._clear_harvest_results()
         self._append_log(
             f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
-            f"preapproach={self.batch_planner[2]}"
+            f"preapproach={self.batch_planner[2]}, "
+            f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -2433,7 +2527,12 @@ class HarvestGui(Node):
             self.tomato_tree.selection_set(str(index))
             self.tomato_tree.focus(str(index))
             self.tomato_tree.see(str(index))
-        if not self._launch_harvest_process(index, execute, verification):
+        if not self._launch_harvest_process(
+            index,
+            execute,
+            verification,
+            harvest_wait_sec=self.batch_harvest_wait_sec,
+        ):
             self._finish_batch(
                 False,
                 f"토마토 {index} 작업 프로세스를 시작하지 못해 전체 수확을 중단했습니다.",
@@ -2444,6 +2543,7 @@ class HarvestGui(Node):
         index: int,
         execute: bool,
         verification,
+        harvest_wait_sec: float,
     ) -> bool:
         pipeline, planner_id, preapproach_mode = verification[2:5]
         command = harvest_command(
@@ -2455,6 +2555,7 @@ class HarvestGui(Node):
             publish_display_trajectory=not self.sweep_active,
             velocity_scale=self.motion_velocity_scale,
             acceleration_scale=self.motion_acceleration_scale,
+            harvest_wait_sec=harvest_wait_sec,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -2472,7 +2573,8 @@ class HarvestGui(Node):
         self._append_log(
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}, "
-            f"preapproach={preapproach_mode}"
+            f"preapproach={preapproach_mode}, "
+            f"리니어모터 대기={harvest_wait_sec:.2f}s"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
         self._set_busy(True)
@@ -2845,6 +2947,7 @@ class HarvestGui(Node):
         self.read_scene_button.configure(state=state)
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
+        self.linear_motor_wait_entry.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.planner_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(

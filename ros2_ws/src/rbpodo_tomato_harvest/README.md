@@ -92,11 +92,18 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
 4. Plan-only 성공 후 실제 수확 모션 실행
 5. 메인 토마토 줄기의 X/Y/Z 위치와 줄기 축 기준 회전 각도 조회 및 변경
-6. wrist3 선회 후 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
+6. PICK_READY에서 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
 7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
 8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
 9. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
 10. RB Speed Bar와 OMPL/Joint 계획 속도·가속도를 퍼센트 단위로 변경
+11. 수확 동작 중 리니어모터 대기시간을 초 단위로 설정
+
+`리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
+Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
+시작한다. 입력값은 개별 수확, 전체 연속 수확과 실제 실행을 활성화한 자동
+테스트에 동일하게 적용된다. Plan-only에서는 궤적만 계산하므로 실제로 기다리지
+않는다.
 
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
@@ -141,21 +148,19 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 `Query Goal State`를 이동한다. 실제 IK가 존재하지 않는 실패 보간점 자체는
 관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
 표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
-기본 수확 순서는 `PICK_READY → wrist3 선회 → Cartesian pre-approach`이다.
+기본 수확 순서는 `PICK_READY → Cartesian pre-approach`이다.
 `PICK_READY` 관절값은
 `rbpodo_moveit_config/config/rbpodo.srdf`의
 `PICK_READY/mainpulation` named state를 단일 원본으로 사용한다. 수확 planner와
 fake hardware 초기 자세가 모두 이 값을 읽으므로 SRDF를 수정한 뒤 두 패키지를
 다시 빌드하고 MoveIt을 재시작해야 한다.
-PICK_READY의 TCP 자세에서 목표 pre-grasp TCP 자세까지의 회전 중 wrist3의
-로컬 Y축 성분만 투영해 필요한 선회량을 계산한다. 이 사전 회전은 TCP 위치를
-PICK_READY 위치에 고정한 Cartesian 경로로 수행한다. 따라서 OMPL 관절 목표를
-사용하지 않으며, 회전 중 필요한 관절값은 MoveIt의 연속 IK가 계산한다.
-이후 `Cartesian`은 선회가 끝난 상태에서 pre-approach까지 TCP 직선 경로를
-계산한다. GUI의 기본 선택도 `Cartesian`이다.
-사전 제자리 Cartesian 회전이 실패하면 동일한 제자리 회전을 OMPL로 반복하지
-않는다. 대신 원래 PICK_READY 상태에서 최종 pre-grasp pose까지 OMPL
-RRTConnect로 한 번에 계획하며, 이것도 실패할 때 전체 Plan을 실패 처리한다.
+tip 기준으로 계산한 pre-grasp pose는 고정된 TCP-to-tip transform을 사용해
+TCP 목표 pose로 환산한다. `Cartesian`은 PICK_READY의 TCP 자세에서 이 목표까지
+위치와 자세를 한 경로에서 함께 변경한다. 별도의 TCP 제자리 회전 trajectory는
+생성하지 않는다. GUI의 기본 선택도 `Cartesian`이다.
+이 direct Cartesian pre-approach가 실패하면 원래 PICK_READY 상태에서 같은
+TCP 목표까지 constrained OMPL RRTConnect로 한 번에 재계획하며, 이것도 실패할
+때 전체 Plan을 실패 처리한다.
 pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면 해당 구간만
 OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확 구간은 동작을
 생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 모든 OMPL fallback에는 각
@@ -247,7 +252,10 @@ Plan에 성공한 각 토마토 trajectory를 실제로 실행한 뒤 `PICK_READ
 
 자동 테스트 중에는 GUI 오른쪽에서 완료 수, 성공/실패 수, 성공률, 평균 Plan
 시간과 실패 단계별 개수를 실시간으로 확인할 수 있다. 최근 100개 결과는 케이스,
-토마토 번호, 결과, 실패 단계와 소요시간으로 표시된다. 결과는 각 Plan 직후
+토마토 번호, 결과, 실패 단계, 계획 소요시간과 실제 전체 시퀀스 시간으로
+표시된다. Plan-only 결과의 실제 시퀀스 시간은 `-`로 표시하고, 실제 실행 시에는
+PICK_READY 진입부터 수확·대기·후퇴·PICK_READY 복귀 완료까지 측정한다.
+결과는 각 Plan 직후
 `~/farmily_tomato/harvest_results/<실행시각>/` 아래에 즉시 저장된다.
 세션 JSON/CSV에는 실제 실행 요청·시도·성공 여부와 실행 시간도 기록된다.
 
@@ -256,8 +264,7 @@ Plan에 성공한 각 토마토 trajectory를 실제로 실행한 뒤 `PICK_READ
 - `results.csv`: 스프레드시트 분석용 요약 결과
 - `summary.json`: 완료 시 성공률과 실패 단계별 합계
 
-실패 단계는 `OMPL_PICK_READY`, `FK_PRE_ROTATION`,
-`CARTESIAN_PRE_ROTATION`, `CARTESIAN_PREAPPROACH`,
+실패 단계는 `OMPL_PICK_READY`, `CARTESIAN_PREAPPROACH`,
 `OMPL_PREAPPROACH`, `CHOMP_PREAPPROACH`,
 `PILZ_INDUSTRIAL_MOTION_PLANNER_PREAPPROACH`, `CARTESIAN_APPROACH`,
 `CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`, `TF_TARGET` 등으로
@@ -390,13 +397,13 @@ initial Cartesian approach, the complete sequence uses the local axes of
 2. Move +20 mm along tip Z.
 3. Move -15 mm along tip X.
 4. Move +10 mm along tip Z.
-5. Hold for 2 seconds.
+5. Hold for the configured `harvest_wait_sec` duration (GUI default: 2 seconds).
 6. Move -30 mm along tip X.
 7. Return directly to all PICK_READY joint targets with PILZ PTP.
 
 The dwell separates the Cartesian motion into pre-wait and post-wait
-trajectories. Plan-only mode publishes the complete six-trajectory sequence to
-RViz without waiting or moving the robot. Inspect it before explicitly enabling
+trajectories. Plan-only mode publishes the complete trajectory sequence to RViz
+without waiting or moving the robot. Inspect it before explicitly enabling
 execution:
 
 ```bash

@@ -36,6 +36,10 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             "pick_ready_acceleration_scale",
             value=float(request.get("acceleration_scale", 0.20)),
         ),
+        Parameter(
+            "harvest_wait_sec",
+            value=float(request.get("harvest_wait_sec", 2.0)),
+        ),
         Parameter("publish_display_trajectory", value=False),
     ]
     results = node.set_parameters(parameters)

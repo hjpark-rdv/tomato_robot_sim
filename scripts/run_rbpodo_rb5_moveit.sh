@@ -7,7 +7,7 @@ ws_dir="${repo_dir}/../ros2_ws"
 
 # Robot workspace collision dimensions in metres, relative to link0.
 # The vertical walls start at z=-0.05 and meet the bottom of the ceiling.
-wall_enabled=true
+wall_enabled=false
 wall_left_x="-0.45"
 wall_right_x="0.45"
 wall_thickness="0.01"

@@ -27,7 +27,7 @@ echo "  Robot: rb5_farmily"
 echo
 echo "Before continuing, clear the workspace, reduce the robot speed,"
 echo "and keep the emergency stop within reach."
-read -r -p "Robot IP [${default_robot_ip}]: " robot_ip
+#read -r -p "Robot IP [${default_robot_ip}]: " robot_ip
 robot_ip="${robot_ip:-${default_robot_ip}}"
 
 if [[ ! "${robot_ip}" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then

@@ -8,12 +8,10 @@ from rbpodo_tomato_harvest.harvest_planner import (
     adaptive_outward_toward_robot,
     format_joint_trajectory_ranges,
     load_srdf_group_state,
-    local_y_alignment_delta,
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
     planning_pose_from_tip_pose,
-    pose_rotated_about_local_y,
     quaternion_from_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
@@ -324,38 +322,6 @@ def test_ompl_joint_constraints_use_start_centers_and_exclude_wrist3():
         assert np.isclose(item.position, start_positions[item.joint_name])
         assert np.isclose(item.tolerance_above, np.deg2rad(120.0))
         assert np.isclose(item.tolerance_below, np.deg2rad(120.0))
-
-
-def test_wrist3_alignment_projects_target_rotation_onto_local_y_axis():
-    current = Pose()
-    current.orientation.w = 1.0
-    target = Pose()
-    target.orientation.y = np.sin(np.deg2rad(15.0))
-    target.orientation.w = np.cos(np.deg2rad(15.0))
-
-    delta = local_y_alignment_delta(current, target)
-
-    assert np.isclose(delta, np.deg2rad(30.0))
-
-
-def test_cartesian_pre_rotation_keeps_position_fixed():
-    current = Pose()
-    current.position.x = 0.4
-    current.position.y = -0.2
-    current.position.z = 0.6
-    current.orientation.w = 1.0
-
-    target = pose_rotated_about_local_y(current, np.deg2rad(30.0))
-
-    assert np.allclose(_position(target), _position(current))
-    expected = np.array(
-        [
-            [np.cos(np.deg2rad(30.0)), 0.0, np.sin(np.deg2rad(30.0))],
-            [0.0, 1.0, 0.0],
-            [-np.sin(np.deg2rad(30.0)), 0.0, np.cos(np.deg2rad(30.0))],
-        ]
-    )
-    assert np.allclose(_rotation(target), expected)
 
 
 def test_joint_trajectory_summary_uses_joint_names_across_segments():
