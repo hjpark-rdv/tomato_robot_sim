@@ -12,7 +12,37 @@
   <xacro:arg name="d435_mount_pitch" default="0.0" />
   <xacro:arg name="d435_mount_yaw" default="3.141592" />
 
+  <!-- Farmily lift pose relative to the RB5 base frame (link0). -->
+  <xacro:arg name="lift_mount_x" default="0.0" />
+  <xacro:arg name="lift_mount_y" default="0.6" />
+  <xacro:arg name="lift_mount_z" default="-0.35" />
+  <xacro:arg name="lift_mount_roll" default="1.57" />
+  <xacro:arg name="lift_mount_pitch" default="0.0" />
+  <xacro:arg name="lift_mount_yaw" default="-1.57" />
+
   <!-- Farmily-specific links and joints belong below this line. -->
+  <link name="$(arg prefix)farmily_lift">
+    <visual>
+      <geometry>
+        <!-- Assy_Lift.STL is authored in millimetres. -->
+        <mesh
+          filename="package://rbpodo_description/meshes/farmily_lift/assy_lift.stl"
+          scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="farmily_lift_gray">
+        <color rgba="0.32 0.34 0.38 1.0" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="$(arg prefix)farmily_lift_joint" type="fixed">
+    <origin
+      xyz="$(arg lift_mount_x) $(arg lift_mount_y) $(arg lift_mount_z)"
+      rpy="$(arg lift_mount_roll) $(arg lift_mount_pitch) $(arg lift_mount_yaw)" />
+    <parent link="$(arg prefix)link0" />
+    <child link="$(arg prefix)farmily_lift" />
+  </joint>
+
   <link name="$(arg prefix)tomato_gripper">
     <visual>
       <geometry>
