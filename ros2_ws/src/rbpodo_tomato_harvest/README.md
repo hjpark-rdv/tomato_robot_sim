@@ -98,12 +98,23 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 9. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
 10. RB Speed Bar와 OMPL/Joint 계획 속도·가속도를 퍼센트 단위로 변경
 11. 수확 동작 중 리니어모터 대기시간을 초 단위로 설정
+12. 연속 수확에서 현재 자세로부터 다음 pre-grasp로 직접 전환
 
 `리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
 Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
 시작한다. 입력값은 개별 수확, 전체 연속 수확과 실제 실행을 활성화한 자동
 테스트에 동일하게 적용된다. Plan-only에서는 궤적만 계산하므로 실제로 기다리지
 않는다.
+
+`연속 수확: 다음 pre-grasp로 직접 이동`은 기본 해제되어 있다. 체크하면
+전체 연속 수확과 실제 실행 자동 테스트에서 첫 토마토는 `PICK_READY`로
+시작하고, 이후 토마토는 `이전 post-wait 자세 → 다음 pre-grasp`를 단일
+trajectory로 직접 연결한다. 이 직접 전환에는 충돌 검사와 시작 자세 중심
+`±120°` constraint를 적용한 OMPL RRTConnect를 사용한다. 직접 전환 계획이
+실패하면 해당 토마토에 한해서 `현재 자세 → PICK_READY → pre-grasp` 기존
+경로로 fallback한다. 마지막 토마토 수확이 끝난 뒤에는 `PICK_READY`로
+복귀한다. Plan-only 자동 테스트에는 실제 이전 토마토의 종료 자세가 없으므로
+이 모드를 적용하지 않고 각 토마토를 독립 계획한다.
 
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
@@ -267,6 +278,7 @@ PICK_READY 진입부터 수확·대기·후퇴·PICK_READY 복귀 완료까지 �
 실패 단계는 `OMPL_PICK_READY`, `CARTESIAN_PREAPPROACH`,
 `OMPL_PREAPPROACH`, `CHOMP_PREAPPROACH`,
 `PILZ_INDUSTRIAL_MOTION_PLANNER_PREAPPROACH`, `CARTESIAN_APPROACH`,
+`OMPL_CONTINUOUS_PREAPPROACH`,
 `CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`, `TF_TARGET` 등으로
 구분된다.
 Cartesian 실패에는 경로 fraction과 MoveIt 오류 코드가, OMPL/CHOMP/PILZ

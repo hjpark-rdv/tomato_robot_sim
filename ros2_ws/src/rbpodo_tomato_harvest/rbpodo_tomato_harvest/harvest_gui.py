@@ -56,6 +56,8 @@ SWEEP_CSV_FIELDS = (
     "planner_id",
     "preapproach_mode",
     "execute_motion",
+    "continuous_transition",
+    "return_to_pick_ready",
     "execution_attempted",
     "execution_success",
     "execution_duration_sec",
@@ -405,6 +407,8 @@ def harvest_command(
     velocity_scale: float = 0.20,
     acceleration_scale: float = 0.20,
     harvest_wait_sec: float = 2.0,
+    continuous_transition: bool = False,
+    return_to_pick_ready: bool = True,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -454,6 +458,12 @@ def harvest_command(
         f"pick_ready_acceleration_scale:={float(acceleration_scale)}",
         "-p",
         f"harvest_wait_sec:={harvest_wait_sec}",
+        "-p",
+        "continuous_transition:="
+        f"{'true' if continuous_transition else 'false'}",
+        "-p",
+        "return_to_pick_ready:="
+        f"{'true' if return_to_pick_ready else 'false'}",
     ]
 
 
@@ -732,6 +742,7 @@ class HarvestGui(Node):
         self.batch_skipped = 0
         self.batch_planner = None
         self.batch_harvest_wait_sec = 2.0
+        self.batch_continuous_mode = False
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
@@ -754,6 +765,7 @@ class HarvestGui(Node):
         self.sweep_cancel_requested = False
         self.sweep_execute_motion = False
         self.sweep_harvest_wait_sec = 2.0
+        self.sweep_continuous_mode = False
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -807,6 +819,7 @@ class HarvestGui(Node):
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
+        self.continuous_harvest_var = tk.BooleanVar(value=False)
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
@@ -1012,6 +1025,19 @@ class HarvestGui(Node):
         )
         self.linear_motor_wait_entry.grid(row=0, column=0)
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
+        self.continuous_harvest_checkbox = ttk.Checkbutton(
+            motion_frame,
+            text="연속 수확: 다음 pre-grasp로 직접 이동",
+            variable=self.continuous_harvest_var,
+        )
+        self.continuous_harvest_checkbox.grid(
+            row=3,
+            column=2,
+            columnspan=2,
+            sticky="w",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
         ttk.Label(
             motion_frame,
             text=(
@@ -1597,6 +1623,7 @@ class HarvestGui(Node):
             "preapproach_mode": preapproach_mode,
             "execute_motion": self.sweep_execute_motion,
             "linear_motor_wait_sec": self.sweep_harvest_wait_sec,
+            "continuous_harvest": self.sweep_continuous_mode,
             "tomato_selection": "all_detected_tomatoes_per_case",
             "case_count": len(cases),
             "plan_count": None,
@@ -1820,21 +1847,33 @@ class HarvestGui(Node):
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
         execute_motion = bool(self.sweep_execute_motion_var.get())
+        continuous_mode = bool(
+            execute_motion and self.continuous_harvest_var.get()
+        )
+        transition_message = (
+            "연속 수확 모드에서는 현재 post-wait 자세에서 다음 "
+            "pre-grasp로 직접 이동하며, 마지막 토마토 이후에만 "
+            "PICK_READY로 복귀합니다.\n"
+            if continuous_mode
+            else "각 수확 후 PICK_READY로 복귀합니다.\n"
+        )
         if execute_motion and not messagebox.askyesno(
             "자동 실제 로봇 실행",
             "자동 테스트에서 Plan에 성공한 모든 토마토 모션을 실제로 "
             "실행합니다.\n\n"
-            "각 수확 후 PICK_READY로 복귀하며, 실제 실행 실패 시 자동 "
-            "테스트를 즉시 중단합니다.\n"
+            f"{transition_message}"
+            "실제 실행 실패 시 자동 테스트를 즉시 중단합니다.\n"
             "로봇 주변이 안전한지 확인했습니까?",
             icon="warning",
         ):
             return
         self.sweep_execute_motion = execute_motion
         self.sweep_harvest_wait_sec = harvest_wait_sec
+        self.sweep_continuous_mode = continuous_mode
         try:
             cases, input_config = self._read_sweep_inputs()
             input_config["linear_motor_wait_sec"] = harvest_wait_sec
+            input_config["continuous_harvest"] = continuous_mode
             self._start_sweep_session(cases, input_config)
         except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
@@ -1864,7 +1903,8 @@ class HarvestGui(Node):
             f"자동 {'Plan+실제 실행' if self.sweep_execute_motion else 'Plan'} "
             f"테스트 시작: {self.sweep_case_total}개 케이스, "
             "각 케이스에서 검출된 토마토 전체를 처리, "
-            f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s"
+            f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s, "
+            f"연속 직접전환 모드={self.sweep_continuous_mode}"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -2182,6 +2222,13 @@ class HarvestGui(Node):
             preapproach_mode,
         )
         current_number = self.sweep_case_tomato_completed + 1
+        continuous_transition = (
+            self.sweep_continuous_mode and current_number > 1
+        )
+        return_to_pick_ready = (
+            not self.sweep_continuous_mode
+            or current_number == self.sweep_case_tomato_total
+        )
         self.sweep_summary.set(
             f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
             f"토마토 {current_number} / {self.sweep_case_tomato_total} "
@@ -2207,6 +2254,8 @@ class HarvestGui(Node):
             "velocity_scale": self.motion_velocity_scale,
             "acceleration_scale": self.motion_acceleration_scale,
             "harvest_wait_sec": self.sweep_harvest_wait_sec,
+            "continuous_transition": continuous_transition,
+            "return_to_pick_ready": return_to_pick_ready,
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -2464,9 +2513,17 @@ class HarvestGui(Node):
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
+        continuous_mode = bool(self.continuous_harvest_var.get())
+        transition_message = (
+            "토마토 사이에는 현재 post-wait 자세에서 다음 pre-grasp로 "
+            "직접 이동합니다.\n"
+            if continuous_mode
+            else "각 토마토 수확 후 PICK_READY로 복귀합니다.\n"
+        )
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
             f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
+            f"{transition_message}"
             "Plan-only 실패 토마토는 건너뛰며, 실제 실행 실패 시 중단됩니다.\n"
             "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
             icon="warning",
@@ -2481,13 +2538,15 @@ class HarvestGui(Node):
         self.batch_skipped = 0
         self.batch_planner = self._selected_planner_config()
         self.batch_harvest_wait_sec = harvest_wait_sec
+        self.batch_continuous_mode = continuous_mode
         self._invalidate_plan()
         self._clear_harvest_results()
         self._append_log(
             f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
-            f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s"
+            f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
+            f"연속 직접전환 모드={self.batch_continuous_mode}"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -2527,11 +2586,19 @@ class HarvestGui(Node):
             self.tomato_tree.selection_set(str(index))
             self.tomato_tree.focus(str(index))
             self.tomato_tree.see(str(index))
+        continuous_transition = (
+            self.batch_continuous_mode and self.batch_completed > 0
+        )
+        return_to_pick_ready = (
+            not self.batch_continuous_mode or index == self.batch_total - 1
+        )
         if not self._launch_harvest_process(
             index,
             execute,
             verification,
             harvest_wait_sec=self.batch_harvest_wait_sec,
+            continuous_transition=continuous_transition,
+            return_to_pick_ready=return_to_pick_ready,
         ):
             self._finish_batch(
                 False,
@@ -2544,6 +2611,8 @@ class HarvestGui(Node):
         execute: bool,
         verification,
         harvest_wait_sec: float,
+        continuous_transition: bool = False,
+        return_to_pick_ready: bool = True,
     ) -> bool:
         pipeline, planner_id, preapproach_mode = verification[2:5]
         command = harvest_command(
@@ -2556,6 +2625,8 @@ class HarvestGui(Node):
             velocity_scale=self.motion_velocity_scale,
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=harvest_wait_sec,
+            continuous_transition=continuous_transition,
+            return_to_pick_ready=return_to_pick_ready,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -2574,7 +2645,9 @@ class HarvestGui(Node):
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
-            f"리니어모터 대기={harvest_wait_sec:.2f}s"
+            f"리니어모터 대기={harvest_wait_sec:.2f}s, "
+            f"시작={'현재→pre-grasp 직접' if continuous_transition else 'PICK_READY'}, "
+            f"종료={'PICK_READY' if return_to_pick_ready else 'post-wait 유지'}"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
         self._set_busy(True)
@@ -2768,6 +2841,12 @@ class HarvestGui(Node):
             "planner_id": verification[3],
             "preapproach_mode": verification[4],
             "execute_motion": self.sweep_execute_motion,
+            "continuous_transition": bool(
+                report.get("continuous_transition", False)
+            ),
+            "return_to_pick_ready": bool(
+                report.get("return_to_pick_ready", True)
+            ),
             "execution_attempted": bool(
                 report.get("execution_attempted", False)
             ),
@@ -2935,6 +3014,7 @@ class HarvestGui(Node):
         self.batch_jobs.clear()
         self.batch_generation = None
         self.batch_planner = None
+        self.batch_continuous_mode = False
         self._invalidate_plan()
         self._set_busy(False)
         self.status.set(message)
@@ -2948,6 +3028,7 @@ class HarvestGui(Node):
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
+        self.continuous_harvest_checkbox.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.planner_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(

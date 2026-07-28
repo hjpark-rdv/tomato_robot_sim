@@ -40,6 +40,14 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             "harvest_wait_sec",
             value=float(request.get("harvest_wait_sec", 2.0)),
         ),
+        Parameter(
+            "continuous_transition",
+            value=bool(request.get("continuous_transition", False)),
+        ),
+        Parameter(
+            "return_to_pick_ready",
+            value=bool(request.get("return_to_pick_ready", True)),
+        ),
         Parameter("publish_display_trajectory", value=False),
     ]
     results = node.set_parameters(parameters)

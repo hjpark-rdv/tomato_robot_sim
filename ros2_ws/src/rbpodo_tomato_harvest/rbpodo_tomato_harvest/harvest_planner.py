@@ -553,6 +553,8 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("planning_pipeline_id", "ompl")
         self.declare_parameter("planner_id", "RRTConnect")
         self.declare_parameter("preapproach_mode", "cartesian")
+        self.declare_parameter("continuous_transition", False)
+        self.declare_parameter("return_to_pick_ready", True)
         self.declare_parameter("joint_planning_pipeline_id", "ompl")
         self.declare_parameter("joint_planner_id", "RRTConnect")
         self.declare_parameter(
@@ -650,6 +652,12 @@ class CartesianHarvestPlanner(Node):
             "planner_id": str(self.get_parameter("planner_id").value),
             "preapproach_mode": str(
                 self.get_parameter("preapproach_mode").value
+            ),
+            "continuous_transition": bool(
+                self.get_parameter("continuous_transition").value
+            ),
+            "return_to_pick_ready": bool(
+                self.get_parameter("return_to_pick_ready").value
             ),
             "start_joint_positions": dict(
                 self._plan_start_joint_positions
@@ -1543,6 +1551,144 @@ class CartesianHarvestPlanner(Node):
         )
         return None
 
+    def _pick_ready_robot_state(self) -> RobotState:
+        state = RobotState()
+        state.is_diff = False
+        state.joint_state.name = [
+            str(name)
+            for name in self.get_parameter("pick_ready_joint_names").value
+        ]
+        state.joint_state.position = [
+            float(position)
+            for position in self.get_parameter(
+                "pick_ready_joint_positions"
+            ).value
+        ]
+        if len(state.joint_state.name) != 6 or len(
+            state.joint_state.name
+        ) != len(state.joint_state.position):
+            raise ValueError("PICK_READY must contain exactly six joint values")
+        return state
+
+    def _plan_continuous_preapproach(self, preapproach_pose: Pose):
+        """Plan current -> pre-grasp directly, with PICK_READY fallback."""
+        pick_ready_state = self._pick_ready_robot_state()
+        stage_start = len(self.last_plan_report.get("stages", []))
+        fallback_start = len(
+            self.last_plan_report.get("cartesian_fallbacks", [])
+        )
+        range_start = len(self._trajectory_range_records)
+        seed_trajectory = self._plan_preapproach(
+            preapproach_pose,
+            pick_ready_state,
+        )
+        if seed_trajectory is None:
+            return None
+
+        seed_stages = self.last_plan_report.get("stages", [])[stage_start:]
+        range_end = len(self._trajectory_range_records)
+
+        def discard_seed_plan() -> None:
+            for stage in seed_stages:
+                stage["discarded"] = True
+                stage["seed_only"] = True
+            del self._trajectory_range_records[range_start:range_end]
+            fallbacks = self.last_plan_report.get(
+                "cartesian_fallbacks", []
+            )
+            seed_fallbacks = fallbacks[fallback_start:]
+            if seed_fallbacks:
+                self.last_plan_report["continuous_seed_fallbacks"] = list(
+                    seed_fallbacks
+                )
+                del fallbacks[fallback_start:]
+
+        preapproach_end = self._trajectory_end_state(seed_trajectory)
+        preapproach_positions = dict(
+            zip(
+                preapproach_end.joint_state.name,
+                preapproach_end.joint_state.position,
+            )
+        )
+        joint_names = list(pick_ready_state.joint_state.name)
+        direct_plan = self._plan_joint_target(
+            joint_names,
+            [float(preapproach_positions[name]) for name in joint_names],
+            start_state=None,
+            label="CONTINUOUS DIRECT PREGRASP",
+            pipeline_id="ompl",
+            planner_id=str(self.get_parameter("joint_planner_id").value),
+            stage_name="OMPL_CONTINUOUS_PREAPPROACH",
+        )
+        if direct_plan is not None:
+            discard_seed_plan()
+            direct_trajectory, display_start_state = direct_plan
+            self.last_plan_report["continuous_transition_direct"] = True
+            self.get_logger().info(
+                "연속 수확 직접 전환 성공: 현재 post-wait 자세에서 "
+                "다음 pre-grasp까지 단일 constrained OMPL trajectory"
+            )
+            return (), (direct_trajectory,), display_start_state
+
+        direct_failure = dict(
+            self.last_plan_report.get("stages", [])[-1]
+        )
+        self.last_plan_report["stages"][-1].update(
+            {"discarded": True, "recovered": True}
+        )
+        discarded_stages = self.last_plan_report.setdefault(
+            "discarded_trajectory_stages", []
+        )
+        if "OMPL_CONTINUOUS_PREAPPROACH" not in discarded_stages:
+            discarded_stages.append("OMPL_CONTINUOUS_PREAPPROACH")
+        discard_seed_plan()
+        for key in (
+            "failure_stage",
+            "failure_planner_type",
+            "failure_reason",
+            "moveit_error_code",
+            "cartesian_fraction",
+            "required_fraction",
+        ):
+            self.last_plan_report.pop(key, None)
+
+        self.get_logger().warning(
+            "연속 수확 직접 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
+            "뒤 기존 pre-grasp 경로를 사용하는 fallback을 계획합니다."
+        )
+        pick_ready_plan = self._plan_pick_ready()
+        if pick_ready_plan is None:
+            return None
+        pick_ready_trajectory, display_start_state = pick_ready_plan
+        pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
+        fallback_preapproach = self._plan_preapproach(
+            preapproach_pose,
+            pick_ready_end,
+        )
+        if fallback_preapproach is None:
+            return None
+        self.last_plan_report.update(
+            {
+                "continuous_transition_direct": False,
+                "failure_stage": "OMPL_CONTINUOUS_PREAPPROACH",
+                "failure_planner_type": "ompl",
+                "failure_reason": direct_failure.get(
+                    "reason", "MOVEIT_PLANNING_FAILED"
+                ),
+                "recovery_used": True,
+                "recovery_success": True,
+                "recovery_stage": "OMPL_PICK_READY_FALLBACK",
+                "recovery_reason": (
+                    "직접 pre-grasp 전환 실패 후 PICK_READY 경유 성공"
+                ),
+            }
+        )
+        return (
+            pick_ready_trajectory,
+            fallback_preapproach,
+            display_start_state,
+        )
+
     def plan(self):
         self._begin_plan_report()
         try:
@@ -1645,11 +1791,6 @@ class CartesianHarvestPlanner(Node):
             f"outward={approach_direction.outward_axis.round(4).tolist()}"
         )
 
-        pick_ready_plan = self._plan_pick_ready()
-        if pick_ready_plan is None:
-            return None
-        pick_ready_trajectory, display_start_state = pick_ready_plan
-
         tip_tf = self._lookup_transform(self.tip_link)
         gripper_to_tip_tf = self._lookup_transform(
             self.tip_link, parent_frame=self.gripper_link
@@ -1745,13 +1886,34 @@ class CartesianHarvestPlanner(Node):
             )
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
-        pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
-        preapproach_trajectory = self._plan_preapproach(
-            preapproach_planning_pose,
-            pick_ready_end,
+        continuous_transition = bool(
+            self.get_parameter("continuous_transition").value
         )
-        if preapproach_trajectory is None:
-            return None
+        if continuous_transition:
+            continuous_plan = self._plan_continuous_preapproach(
+                preapproach_planning_pose
+            )
+            if continuous_plan is None:
+                return None
+            (
+                pick_ready_trajectory,
+                preapproach_trajectory,
+                display_start_state,
+            ) = continuous_plan
+        else:
+            pick_ready_plan = self._plan_pick_ready()
+            if pick_ready_plan is None:
+                return None
+            pick_ready_trajectory, display_start_state = pick_ready_plan
+            pick_ready_end = self._trajectory_end_state(
+                pick_ready_trajectory
+            )
+            preapproach_trajectory = self._plan_preapproach(
+                preapproach_planning_pose,
+                pick_ready_end,
+            )
+            if preapproach_trajectory is None:
+                return None
         preapproach_end = self._trajectory_end_state(preapproach_trajectory)
 
         approach_waypoints = (
@@ -1777,14 +1939,20 @@ class CartesianHarvestPlanner(Node):
         if after_wait_trajectory is None:
             return None
 
-        after_wait_end = self._trajectory_end_state(after_wait_trajectory)
-        return_pick_ready_plan = self._plan_pick_ready(
-            after_wait_end,
-            label="RETURN_PICK_READY",
+        return_to_pick_ready = bool(
+            self.get_parameter("return_to_pick_ready").value
         )
-        if return_pick_ready_plan is None:
-            return None
-        return_pick_ready_trajectory, _ = return_pick_ready_plan
+        if return_to_pick_ready:
+            after_wait_end = self._trajectory_end_state(after_wait_trajectory)
+            return_pick_ready_plan = self._plan_pick_ready(
+                after_wait_end,
+                label="RETURN_PICK_READY",
+            )
+            if return_pick_ready_plan is None:
+                return None
+            return_pick_ready_trajectory, _ = return_pick_ready_plan
+        else:
+            return_pick_ready_trajectory = ()
 
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
@@ -1794,27 +1962,48 @@ class CartesianHarvestPlanner(Node):
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
         )
-        planned_trajectories = [pick_ready_trajectory]
+        planned_trajectories = []
         for segment in (
+            pick_ready_trajectory,
             preapproach_trajectory,
             approach_trajectory,
             after_wait_trajectory,
-            (return_pick_ready_trajectory,),
+            return_pick_ready_trajectory,
         ):
-            planned_trajectories.extend(segment)
+            if isinstance(segment, (list, tuple)):
+                planned_trajectories.extend(segment)
+            elif segment is not None:
+                planned_trajectories.append(segment)
         if bool(self.get_parameter("publish_display_trajectory").value):
             display = DisplayTrajectory()
             display.model_id = self.robot_model_id
             display.trajectory_start = display_start_state
             display.trajectory.extend(planned_trajectories)
             self.display_publisher.publish(display)
+        finish_label = (
+            "constrained OMPL RETURN_PICK_READY"
+            if return_to_pick_ready
+            else "keep post-wait pose"
+        )
+        if continuous_transition:
+            start_label = (
+                "continuous direct pre-grasp"
+                if self.last_plan_report.get(
+                    "continuous_transition_direct", False
+                )
+                else "PICK_READY fallback pre-grasp"
+            )
+        else:
+            start_label = "PICK_READY"
         self.get_logger().info(
-            "Full harvest plan ready: PICK_READY -> direct TCP pre-approach "
+            "Full harvest plan ready: "
+            f"{start_label} "
+            "-> direct TCP pre-approach "
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> -X30mm "
-            "-> constrained OMPL RETURN_PICK_READY "
+            f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )
         return plan
@@ -1826,7 +2015,9 @@ class CartesianHarvestPlanner(Node):
             )
             return True
 
-        if not self._execute_trajectory(plan.pick_ready_trajectory, "PICK_READY"):
+        if plan.pick_ready_trajectory and not self._execute_trajectory_group(
+            plan.pick_ready_trajectory, "PICK_READY"
+        ):
             return False
         if not self._execute_trajectory_sequence(
             plan.preapproach_trajectory,
@@ -1851,16 +2042,26 @@ class CartesianHarvestPlanner(Node):
         ):
             return False
 
-        if not self._execute_trajectory(
-            plan.return_pick_ready_trajectory,
-            "OMPL RETURN_PICK_READY",
-        ):
-            return False
-
-        self.get_logger().info(
-            "Harvest sequence complete; robot returned to PICK_READY."
-        )
+        if plan.return_pick_ready_trajectory:
+            if not self._execute_trajectory_group(
+                plan.return_pick_ready_trajectory,
+                "OMPL RETURN_PICK_READY",
+            ):
+                return False
+            self.get_logger().info(
+                "Harvest sequence complete; robot returned to PICK_READY."
+            )
+        else:
+            self.get_logger().info(
+                "Harvest sequence complete; post-wait pose is retained for "
+                "the next continuous tomato transition."
+            )
         return True
+
+    def _execute_trajectory_group(self, trajectories, label: str) -> bool:
+        if isinstance(trajectories, (list, tuple)):
+            return self._execute_trajectory_sequence(trajectories, label)
+        return self._execute_trajectory(trajectories, label)
 
     def _execute_trajectory_sequence(self, trajectories, label: str) -> bool:
         sequence = (

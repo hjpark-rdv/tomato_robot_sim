@@ -229,6 +229,8 @@ def test_persistent_worker_updates_target_and_disables_display():
             "velocity_scale": 0.35,
             "acceleration_scale": 0.25,
             "harvest_wait_sec": 4.25,
+            "continuous_transition": True,
+            "return_to_pick_ready": False,
         },
     )
 
@@ -241,6 +243,8 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["pick_ready_velocity_scale"] == pytest.approx(0.35)
     assert values["pick_ready_acceleration_scale"] == pytest.approx(0.25)
     assert values["harvest_wait_sec"] == pytest.approx(4.25)
+    assert values["continuous_transition"] is True
+    assert values["return_to_pick_ready"] is False
 
 
 def test_persistent_worker_enables_execution_only_when_requested():
@@ -291,6 +295,13 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
             events.append(("sequence", trajectories, label)) or True
         ),
     )
+    planner._execute_trajectory_group = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_group(
+            planner,
+            trajectories,
+            label,
+        )
+    )
     plan = HarvestMotionPlan(
         pick_ready_trajectory="initial_ready",
         preapproach_trajectory=("preapproach",),
@@ -321,6 +332,162 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
         "OMPL RETURN_PICK_READY",
     )
     assert "returned to PICK_READY" in events[-1][1]
+
+
+def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
+    events = []
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.harvest_planner.time.sleep",
+        lambda seconds: None,
+    )
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("direct_pregrasp",),
+        approach_trajectory=("approach",),
+        after_wait_trajectory=("post_wait",),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    executed = [event[1] for event in events if event[0] == "execute"]
+    assert executed == ["direct_pregrasp", "approach", "post_wait"]
+    assert "post-wait pose is retained" in events[-1][1]
+
+
+def test_continuous_preapproach_plans_one_direct_joint_trajectory():
+    calls = []
+    preapproach_state = RobotState()
+    preapproach_state.joint_state.name = ["base", "shoulder"]
+    preapproach_state.joint_state.position = [0.4, -0.8]
+    pick_ready_state = RobotState()
+    pick_ready_state.joint_state.name = ["base", "shoulder"]
+    pick_ready_state.joint_state.position = [0.0, 0.0]
+    display_start = RobotState()
+    planner = SimpleNamespace(
+        last_plan_report={"stages": [], "cartesian_fallbacks": []},
+        _trajectory_range_records=[],
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "joint_planner_id": "RRTConnect",
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            warning=lambda message: None,
+        ),
+        _plan_preapproach=lambda pose, state: (
+            planner.last_plan_report["stages"].append(
+                {"stage": "CARTESIAN_PREAPPROACH", "success": True}
+            )
+            or ("seed",)
+        ),
+    )
+    planner._pick_ready_robot_state = lambda: pick_ready_state
+    planner._trajectory_end_state = lambda trajectory: preapproach_state
+
+    def plan_joint_target(names, positions, start_state, label, **kwargs):
+        calls.append((list(names), list(positions), start_state, label, kwargs))
+        return "direct_preapproach_trajectory", display_start
+
+    planner._plan_joint_target = plan_joint_target
+
+    result = CartesianHarvestPlanner._plan_continuous_preapproach(
+        planner,
+        Pose(),
+    )
+
+    assert result == (
+        (),
+        ("direct_preapproach_trajectory",),
+        display_start,
+    )
+    assert calls[0][1] == pytest.approx([0.4, -0.8])
+    assert calls[0][2] is None
+    assert planner.last_plan_report["stages"][0]["discarded"] is True
+    assert planner.last_plan_report["continuous_transition_direct"] is True
+
+
+def test_continuous_direct_failure_falls_back_through_pick_ready():
+    preapproach_state = RobotState()
+    preapproach_state.joint_state.name = ["base", "shoulder"]
+    preapproach_state.joint_state.position = [0.4, -0.8]
+    pick_ready_state = RobotState()
+    pick_ready_state.joint_state.name = ["base", "shoulder"]
+    pick_ready_state.joint_state.position = [0.0, 0.0]
+    display_start = RobotState()
+    planner = SimpleNamespace(
+        last_plan_report={"stages": [], "cartesian_fallbacks": []},
+        _trajectory_range_records=[],
+        get_parameter=lambda name: SimpleNamespace(
+            value={"joint_planner_id": "RRTConnect"}[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            warning=lambda message: None,
+        ),
+        _plan_preapproach=lambda pose, state: (
+            planner.last_plan_report["stages"].append(
+                {"stage": "CARTESIAN_PREAPPROACH", "success": True}
+            )
+            or ("seed_preapproach",)
+        ),
+        _plan_pick_ready=lambda: ("pick_ready", display_start),
+    )
+    planner._pick_ready_robot_state = lambda: pick_ready_state
+    planner._trajectory_end_state = lambda trajectory: preapproach_state
+
+    def fail_direct(*args, **kwargs):
+        planner.last_plan_report["stages"].append(
+            {
+                "stage": "OMPL_CONTINUOUS_PREAPPROACH",
+                "success": False,
+                "reason": "MOVEIT_PLANNING_FAILED",
+            }
+        )
+        planner.last_plan_report.update(
+            {
+                "failure_stage": "OMPL_CONTINUOUS_PREAPPROACH",
+                "failure_planner_type": "ompl",
+                "failure_reason": "MOVEIT_PLANNING_FAILED",
+            }
+        )
+        return None
+
+    planner._plan_joint_target = fail_direct
+
+    result = CartesianHarvestPlanner._plan_continuous_preapproach(
+        planner,
+        Pose(),
+    )
+
+    assert result == ("pick_ready", ("seed_preapproach",), display_start)
+    assert planner.last_plan_report["continuous_transition_direct"] is False
+    assert planner.last_plan_report["recovery_success"] is True
+    direct_stage = next(
+        stage
+        for stage in planner.last_plan_report["stages"]
+        if stage["stage"] == "OMPL_CONTINUOUS_PREAPPROACH"
+    )
+    assert direct_stage["discarded"] is True
 
 
 def test_plan_report_keeps_first_failure_with_cartesian_details():
@@ -487,6 +654,8 @@ def test_harvest_command_builds_plan_only_command():
         velocity_scale=0.35,
         acceleration_scale=0.25,
         harvest_wait_sec=3.5,
+        continuous_transition=True,
+        return_to_pick_ready=False,
         python_executable="/usr/bin/python3",
     )
 
@@ -504,6 +673,8 @@ def test_harvest_command_builds_plan_only_command():
     assert "pick_ready_velocity_scale:=0.35" in command
     assert "pick_ready_acceleration_scale:=0.25" in command
     assert "harvest_wait_sec:=3.5" in command
+    assert "continuous_transition:=true" in command
+    assert "return_to_pick_ready:=false" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -548,6 +719,8 @@ def test_harvest_command_builds_execute_command():
     assert "planning_pipeline_id:=ompl" in command
     assert "planner_id:=RRTConnect" in command
     assert "preapproach_mode:=cartesian" in command
+    assert "continuous_transition:=false" in command
+    assert "return_to_pick_ready:=true" in command
 
 
 def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
