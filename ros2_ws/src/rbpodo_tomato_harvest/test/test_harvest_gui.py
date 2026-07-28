@@ -16,6 +16,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
     cartesian_fallback_summary,
+    cancel_all_goals_request,
     concise_plan_report,
     generate_sweep_cases,
     harvest_all_jobs,
@@ -28,7 +29,10 @@ from rbpodo_tomato_harvest.harvest_gui import (
     sweep_result_marker,
     tomato_stem_arrow_length,
 )
-from rbpodo_tomato_harvest.harvest_planner import CartesianHarvestPlanner
+from rbpodo_tomato_harvest.harvest_planner import (
+    CartesianHarvestPlanner,
+    HarvestMotionPlan,
+)
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
 
@@ -206,6 +210,8 @@ def test_persistent_worker_updates_target_and_disables_display():
             "planning_pipeline_id": "chomp",
             "planner_id": "RRTConnect",
             "preapproach_mode": "planner",
+            "velocity_scale": 0.35,
+            "acceleration_scale": 0.25,
         },
     )
 
@@ -215,6 +221,68 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["preapproach_mode"] == "planner"
     assert values["execute"] is False
     assert values["publish_display_trajectory"] is False
+    assert values["pick_ready_velocity_scale"] == pytest.approx(0.35)
+    assert values["pick_ready_acceleration_scale"] == pytest.approx(0.25)
+
+
+def test_persistent_worker_enables_execution_only_when_requested():
+    received = []
+    node = SimpleNamespace(
+        tomato_frame="old_frame",
+        set_parameters=lambda parameters: (
+            received.extend(parameters)
+            or [SimpleNamespace(successful=True, reason="") for _ in parameters]
+        ),
+    )
+
+    _apply_request(
+        node,
+        {
+            "tomato_frame": "detected_tomato_2_tf",
+            "execute": True,
+        },
+    )
+
+    values = {parameter.name: parameter.value for parameter in received}
+    assert values["execute"] is True
+    assert values["publish_display_trajectory"] is False
+
+
+def test_execute_returns_to_pick_ready_after_post_wait():
+    events = []
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value=True if name == "execute" else 0.0
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("single", trajectory, label)) or True
+        ),
+        _execute_trajectory_sequence=lambda trajectories, label: (
+            events.append(("sequence", trajectories, label)) or True
+        ),
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory="initial_ready",
+        pre_rotation_trajectory=("pre_rotation",),
+        preapproach_trajectory=("preapproach",),
+        approach_trajectory=("approach",),
+        after_wait_trajectory=("post_wait",),
+        return_pick_ready_trajectory="return_ready",
+        display_start_state=RobotState(),
+    )
+
+    success = CartesianHarvestPlanner.execute(planner, plan)
+
+    assert success is True
+    assert events[-2] == (
+        "single",
+        "return_ready",
+        "OMPL RETURN_PICK_READY",
+    )
+    assert "returned to PICK_READY" in events[-1][1]
 
 
 def test_plan_report_keeps_first_failure_with_cartesian_details():
@@ -378,6 +446,8 @@ def test_harvest_command_builds_plan_only_command():
         False,
         planning_pipeline_id="chomp",
         preapproach_mode="planner",
+        velocity_scale=0.35,
+        acceleration_scale=0.25,
         python_executable="/usr/bin/python3",
     )
 
@@ -392,6 +462,31 @@ def test_harvest_command_builds_plan_only_command():
     assert "planner_id:=RRTConnect" in command
     assert "preapproach_mode:=planner" in command
     assert "publish_display_trajectory:=true" in command
+    assert "pick_ready_velocity_scale:=0.35" in command
+    assert "pick_ready_acceleration_scale:=0.25" in command
+
+
+def test_harvest_command_rejects_invalid_motion_scale():
+    with pytest.raises(ValueError, match="velocity_scale"):
+        harvest_command(0, False, velocity_scale=1.01)
+    with pytest.raises(ValueError, match="acceleration_scale"):
+        harvest_command(0, False, acceleration_scale=0.0)
+
+
+def test_gui_percent_to_scale_validates_operator_input():
+    assert HarvestGui._percent_to_scale("30", "속도") == pytest.approx(0.3)
+    with pytest.raises(ValueError, match="1~100%"):
+        HarvestGui._percent_to_scale("0", "속도")
+    with pytest.raises(ValueError, match="숫자"):
+        HarvestGui._percent_to_scale("fast", "속도")
+
+
+def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
+    request = cancel_all_goals_request()
+
+    assert list(request.goal_info.goal_id.uuid) == [0] * 16
+    assert request.goal_info.stamp.sec == 0
+    assert request.goal_info.stamp.nanosec == 0
 
 
 def test_harvest_command_builds_execute_command():

@@ -17,10 +17,12 @@ from tkinter import font as tkfont
 from tkinter import messagebox, ttk
 
 import rclpy
+from action_msgs.srv import CancelGoal
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
+from rbpodo_msgs.srv import SetSpeedBar, TaskStop
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -53,6 +55,10 @@ SWEEP_CSV_FIELDS = (
     "pipeline",
     "planner_id",
     "preapproach_mode",
+    "execute_motion",
+    "execution_attempted",
+    "execution_success",
+    "execution_duration_sec",
     "failure_stage",
     "failure_planner_type",
     "failure_reason",
@@ -383,6 +389,8 @@ def harvest_command(
     planner_id: str = "RRTConnect",
     preapproach_mode: str = "cartesian",
     publish_display_trajectory: bool = True,
+    velocity_scale: float = 0.20,
+    acceleration_scale: float = 0.20,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -398,6 +406,12 @@ def harvest_command(
             f"unsupported planner: pipeline={planning_pipeline_id} "
             f"planner_id={planner_id}"
         )
+    for name, value in (
+        ("velocity_scale", velocity_scale),
+        ("acceleration_scale", acceleration_scale),
+    ):
+        if not 0.0 < float(value) <= 1.0:
+            raise ValueError(f"{name} must be greater than 0 and at most 1")
     executable = python_executable or sys.executable
     return [
         executable,
@@ -417,6 +431,10 @@ def harvest_command(
         "-p",
         "publish_display_trajectory:="
         f"{'true' if publish_display_trajectory else 'false'}",
+        "-p",
+        f"pick_ready_velocity_scale:={float(velocity_scale)}",
+        "-p",
+        f"pick_ready_acceleration_scale:={float(acceleration_scale)}",
     ]
 
 
@@ -573,6 +591,15 @@ def scene_parameters(position, rotation_deg: float) -> list[Parameter]:
     ]
 
 
+def cancel_all_goals_request() -> CancelGoal.Request:
+    """Build the ROS action request whose zero ID/time cancels every goal."""
+    request = CancelGoal.Request()
+    request.goal_info.goal_id.uuid = [0] * 16
+    request.goal_info.stamp.sec = 0
+    request.goal_info.stamp.nanosec = 0
+    return request
+
+
 class HarvestGui(Node):
     """Tkinter operator panel for tomato detection and harvest testing."""
 
@@ -585,6 +612,19 @@ class HarvestGui(Node):
             "detections_topic", "/tomato_detection/detections"
         )
         self.declare_parameter("scene_node", "/tomato_scene_node")
+        self.declare_parameter(
+            "hardware_speed_service", "/rbpodo_hardware/set_speed_bar"
+        )
+        self.declare_parameter(
+            "hardware_stop_service", "/rbpodo_hardware/task_stop"
+        )
+        self.declare_parameter(
+            "moveit_cancel_service", "/execute_trajectory/_action/cancel_goal"
+        )
+        self.declare_parameter(
+            "controller_cancel_service",
+            "/joint_trajectory_controller/follow_joint_trajectory/_action/cancel_goal",
+        )
         self.declare_parameter("default_planner", "cartesian")
         self.declare_parameter(
             "result_markers_topic", "/harvest_result_markers"
@@ -606,6 +646,30 @@ class HarvestGui(Node):
         )
         self.scene_set_client = self.create_client(
             SetParameters, f"{scene_node}/set_parameters"
+        )
+        self.hardware_speed_service = str(
+            self.get_parameter("hardware_speed_service").value
+        )
+        self.hardware_speed_client = self.create_client(
+            SetSpeedBar, self.hardware_speed_service
+        )
+        self.hardware_stop_service = str(
+            self.get_parameter("hardware_stop_service").value
+        )
+        self.hardware_stop_client = self.create_client(
+            TaskStop, self.hardware_stop_service
+        )
+        self.moveit_cancel_service = str(
+            self.get_parameter("moveit_cancel_service").value
+        )
+        self.moveit_cancel_client = self.create_client(
+            CancelGoal, self.moveit_cancel_service
+        )
+        self.controller_cancel_service = str(
+            self.get_parameter("controller_cancel_service").value
+        )
+        self.controller_cancel_client = self.create_client(
+            CancelGoal, self.controller_cancel_service
         )
         self.create_subscription(
             TomatoDetectionArray,
@@ -668,6 +732,7 @@ class HarvestGui(Node):
         self.preserve_sweep_markers_on_scene_set = False
         self.sweep_active = False
         self.sweep_cancel_requested = False
+        self.sweep_execute_motion = False
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -717,6 +782,11 @@ class HarvestGui(Node):
         self.scene_y = tk.StringVar(value="-0.375")
         self.scene_z = tk.StringVar(value="0.340")
         self.scene_rotation = tk.StringVar(value="45.0")
+        self.speed_bar_percent = tk.StringVar(value="10")
+        self.motion_velocity_percent = tk.StringVar(value="20")
+        self.motion_acceleration_percent = tk.StringVar(value="20")
+        self.motion_velocity_scale = 0.20
+        self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
         self.root.after(50, self._spin_ros)
@@ -958,6 +1028,42 @@ class HarvestGui(Node):
             text="회전은 메인 줄기 축을 기준으로 가지와 토마토 전체에 적용됩니다.",
         ).grid(row=1, column=0, columnspan=10, sticky="w", pady=(8, 0))
 
+        speed_frame = ttk.LabelFrame(
+            top_controls, text="로봇 이동 속도", padding=8
+        )
+        speed_frame.grid(row=2, column=0, sticky="ew", pady=(6, 0))
+        speed_items = (
+            ("RB Speed Bar (%)", self.speed_bar_percent),
+            ("OMPL/Joint 속도 (%)", self.motion_velocity_percent),
+            ("OMPL/Joint 가속도 (%)", self.motion_acceleration_percent),
+        )
+        for index, (label, variable) in enumerate(speed_items):
+            base = index * 2
+            ttk.Label(speed_frame, text=label).grid(
+                row=0, column=base, padx=(0 if index == 0 else 10, 4)
+            )
+            ttk.Spinbox(
+                speed_frame,
+                from_=1,
+                to=100,
+                increment=5,
+                textvariable=variable,
+                width=6,
+            ).grid(row=0, column=base + 1)
+        self.apply_speed_button = ttk.Button(
+            speed_frame,
+            text="속도 적용",
+            command=self.apply_motion_speed,
+        )
+        self.apply_speed_button.grid(row=0, column=6, padx=(12, 0))
+        ttk.Label(
+            speed_frame,
+            text=(
+                "실제 로봇: Speed Bar + OMPL/Joint 적용  |  "
+                "시뮬레이션: OMPL/Joint만 적용 (Cartesian 제외)"
+            ),
+        ).grid(row=1, column=0, columnspan=7, sticky="w", pady=(6, 0))
+
         log_frame = ttk.LabelFrame(outer, text="상태 및 실행 로그", padding=8)
         log_frame.grid(row=3, column=0, sticky="nsew", pady=(8, 0))
         log_frame.columnconfigure(0, weight=1)
@@ -1023,6 +1129,7 @@ class HarvestGui(Node):
             random_checkbox.grid(row=row, column=4)
 
         self.sweep_summary = tk.StringVar(value="대기 중")
+        self.sweep_execute_motion_var = tk.BooleanVar(value=False)
         ttk.Label(
             frame,
             text=(
@@ -1030,17 +1137,28 @@ class HarvestGui(Node):
                 "랜덤 축은 위치마다 한 번 추출하며, 검출 결과가 없으면 건너뜁니다."
             ),
         ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(6, 3))
+        self.sweep_execute_checkbox = ttk.Checkbutton(
+            frame,
+            text="실제 로봇 실행",
+            variable=self.sweep_execute_motion_var,
+        )
+        self.sweep_execute_checkbox.grid(
+            row=6, column=0, columnspan=2, sticky="w", pady=(2, 0)
+        )
         self.sweep_start_button = ttk.Button(
             frame, text="자동 실행", command=self.start_sweep
         )
         self.sweep_start_button.grid(
-            row=6, column=0, columnspan=3, sticky="ew", pady=(2, 0)
+            row=6, column=2, columnspan=2, sticky="ew", padx=(6, 0), pady=(2, 0)
         )
         self.sweep_stop_button = ttk.Button(
-            frame, text="중지", command=self.stop_sweep, state="disabled"
+            frame,
+            text="자동 테스트 + 로봇 정지",
+            command=self.stop_sweep,
+            state="disabled",
         )
         self.sweep_stop_button.grid(
-            row=6, column=3, columnspan=2, sticky="ew", padx=(6, 0), pady=(4, 0)
+            row=6, column=4, sticky="ew", padx=(6, 0), pady=(2, 0)
         )
         ttk.Label(frame, textvariable=self.sweep_summary).grid(
             row=7, column=0, columnspan=5, sticky="w", pady=(5, 0)
@@ -1161,6 +1279,102 @@ class HarvestGui(Node):
         self.log_text.insert("end", message.rstrip() + "\n")
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
+
+    @staticmethod
+    def _percent_to_scale(value: str, label: str) -> float:
+        try:
+            percent = float(value)
+        except ValueError as error:
+            raise ValueError(f"{label}은 숫자로 입력하세요.") from error
+        if not 1.0 <= percent <= 100.0:
+            raise ValueError(f"{label}은 1~100% 범위로 입력하세요.")
+        return percent / 100.0
+
+    def apply_motion_speed(self) -> None:
+        """Apply GUI planning scales and request the RB controller speed bar."""
+        try:
+            speed_bar = self._percent_to_scale(
+                self.speed_bar_percent.get(), "RB Speed Bar"
+            )
+            velocity = self._percent_to_scale(
+                self.motion_velocity_percent.get(), "OMPL/Joint 속도"
+            )
+            acceleration = self._percent_to_scale(
+                self.motion_acceleration_percent.get(), "OMPL/Joint 가속도"
+            )
+        except ValueError as error:
+            messagebox.showerror("속도 입력 오류", str(error))
+            return
+
+        self.motion_velocity_scale = velocity
+        self.motion_acceleration_scale = acceleration
+        self._invalidate_plan()
+        self._append_log(
+            "[적용됨] OMPL/Joint 계획 속도: "
+            f"OMPL/Joint 속도={velocity * 100:.0f}%, "
+            f"가속도={acceleration * 100:.0f}% (다음 Plan부터)"
+        )
+
+        if not self.hardware_speed_client.service_is_ready():
+            if not self.hardware_speed_client.wait_for_service(timeout_sec=0.05):
+                self.status.set(
+                    "시뮬레이션 속도 적용 완료 — OMPL/Joint만 적용, "
+                    "RB Speed Bar·Cartesian은 미적용"
+                )
+                self._append_log(
+                    "[시뮬레이션/하드웨어 미연결] RB Speed Bar 서비스가 "
+                    "없어 Speed Bar 변경을 생략했습니다. "
+                    "시뮬레이션 모드에서는 정상입니다. "
+                    f"서비스={self.hardware_speed_service}"
+                )
+                self._append_log(
+                    "[적용 범위] 이번 설정은 OMPL/Joint 궤적에만 적용됩니다. "
+                    "Cartesian 궤적 속도와 RB Speed Bar에는 적용되지 않았습니다."
+                )
+                return
+
+        request = SetSpeedBar.Request()
+        request.speed = speed_bar
+        self.apply_speed_button.configure(state="disabled")
+        future = self.hardware_speed_client.call_async(request)
+        future.add_done_callback(
+            lambda completed: self._speed_bar_applied(completed, speed_bar)
+        )
+
+    def _speed_bar_applied(self, future, requested_scale: float) -> None:
+        self.apply_speed_button.configure(state="normal")
+        try:
+            response = future.result()
+        except Exception as error:
+            self.status.set(
+                "계획 속도만 적용됨 — RB Speed Bar 서비스 호출 실패"
+            )
+            self._append_log(
+                "[부분 적용] OMPL/Joint 계획 속도는 적용됐지만 "
+                f"RB Speed Bar 서비스 호출은 실패했습니다: {error}"
+            )
+            return
+        if not response.success:
+            self.status.set(
+                "계획 속도만 적용됨 — RB 컨트롤러가 Speed Bar 변경을 거부함"
+            )
+            self._append_log(
+                "[부분 적용] OMPL/Joint 계획 속도는 적용됐지만 "
+                "RB 컨트롤러가 Speed Bar 변경을 거부했습니다: "
+                f"요청={requested_scale * 100:.0f}%"
+            )
+            return
+        self.status.set(
+            "실제 로봇 속도 적용 완료 — "
+            f"RB Speed Bar {requested_scale * 100:.0f}%, "
+            f"OMPL/Joint {self.motion_velocity_scale * 100:.0f}%"
+        )
+        self._append_log(
+            "[실제 로봇 적용됨] "
+            f"RB Speed Bar={requested_scale * 100:.0f}%, "
+            f"OMPL/Joint 속도={self.motion_velocity_scale * 100:.0f}%, "
+            f"가속도={self.motion_acceleration_scale * 100:.0f}%"
+        )
 
     def _set_sweep_result_detail(self, message: str) -> None:
         self.sweep_result_detail.configure(state="normal")
@@ -1326,6 +1540,7 @@ class HarvestGui(Node):
             "pipeline": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
+            "execute_motion": self.sweep_execute_motion,
             "tomato_selection": "all_detected_tomatoes_per_case",
             "case_count": len(cases),
             "plan_count": None,
@@ -1535,6 +1750,18 @@ class HarvestGui(Node):
                     "카메라 연결 실패", f"연결되지 않음: {self.camera_service}"
                 )
                 return
+        execute_motion = bool(self.sweep_execute_motion_var.get())
+        if execute_motion and not messagebox.askyesno(
+            "자동 실제 로봇 실행",
+            "자동 테스트에서 Plan에 성공한 모든 토마토 모션을 실제로 "
+            "실행합니다.\n\n"
+            "각 수확 후 PICK_READY로 복귀하며, 실제 실행 실패 시 자동 "
+            "테스트를 즉시 중단합니다.\n"
+            "로봇 주변이 안전한지 확인했습니까?",
+            icon="warning",
+        ):
+            return
+        self.sweep_execute_motion = execute_motion
         try:
             cases, input_config = self._read_sweep_inputs()
             self._start_sweep_session(cases, input_config)
@@ -1563,8 +1790,9 @@ class HarvestGui(Node):
             f"케이스 0 / {self.sweep_case_total} — 테스트 시작"
         )
         self._append_log(
-            f"자동 Plan 테스트 시작: {self.sweep_case_total}개 케이스, "
-            "각 케이스에서 검출된 토마토 전체를 Plan"
+            f"자동 {'Plan+실제 실행' if self.sweep_execute_motion else 'Plan'} "
+            f"테스트 시작: {self.sweep_case_total}개 케이스, "
+            "각 케이스에서 검출된 토마토 전체를 처리"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -1638,12 +1866,94 @@ class HarvestGui(Node):
         self.sweep_cancel_requested = True
         self.sweep_cases.clear()
         self.sweep_tomato_queue.clear()
+        self.status.set("자동 테스트 중지 및 로봇 모션 정지 명령 전송 중...")
+        self._append_log(
+            "[정지 요청] 남은 자동 테스트를 취소하고 현재 로봇 모션 정지를 "
+            "요청합니다."
+        )
+        self._request_robot_motion_stop()
         if self.harvest_process is not None:
             self.harvest_process.terminate()
-            self.status.set("자동 테스트 Plan 프로세스 종료 중...")
-            return
         self._shutdown_sweep_worker(force=True)
-        self._finish_sweep("사용자가 자동 테스트를 중지했습니다.")
+        self._finish_sweep(
+            "자동 테스트 중지 완료 — MoveIt/controller 취소 및 RB 정지를 요청했습니다."
+        )
+
+    def _request_robot_motion_stop(self) -> None:
+        """Cancel active ROS trajectories and request an RB controller stop."""
+        self._request_action_cancel(
+            self.moveit_cancel_client,
+            "MoveIt execute_trajectory",
+            self.moveit_cancel_service,
+        )
+        self._request_action_cancel(
+            self.controller_cancel_client,
+            "joint_trajectory_controller",
+            self.controller_cancel_service,
+        )
+
+        if not self.hardware_stop_client.service_is_ready():
+            if not self.hardware_stop_client.wait_for_service(timeout_sec=0.05):
+                self._append_log(
+                    "[시뮬레이션] RB task_stop 서비스가 없어 하드웨어 정지는 "
+                    "생략했습니다. MoveIt/controller trajectory 취소만 적용됩니다. "
+                    f"서비스={self.hardware_stop_service}"
+                )
+                return
+        request = TaskStop.Request()
+        request.timeout = 2.0
+        future = self.hardware_stop_client.call_async(request)
+        future.add_done_callback(self._hardware_stop_completed)
+        self._append_log("[정지 명령 전송] 실제 RB5 task_stop 요청")
+
+    def _request_action_cancel(self, client, label: str, service_name: str) -> None:
+        if not client.service_is_ready():
+            if not client.wait_for_service(timeout_sec=0.05):
+                self._append_log(
+                    f"[정지 경고] {label} 취소 서비스를 찾지 못했습니다: "
+                    f"{service_name}"
+                )
+                return
+        future = client.call_async(cancel_all_goals_request())
+        future.add_done_callback(
+            lambda completed, action_label=label: self._action_cancel_completed(
+                completed, action_label
+            )
+        )
+        self._append_log(f"[정지 명령 전송] {label} 활성 goal 전체 취소")
+
+    def _action_cancel_completed(self, future, label: str) -> None:
+        try:
+            response = future.result()
+        except Exception as error:
+            self._append_log(f"[정지 실패] {label} 취소 서비스 오류: {error}")
+            return
+        if response.return_code == CancelGoal.Response.ERROR_NONE:
+            self._append_log(
+                f"[정지 확인] {label} 취소 수락: "
+                f"goal {len(response.goals_canceling)}개"
+            )
+            return
+        result_names = {
+            CancelGoal.Response.ERROR_REJECTED: "취소 거부/활성 goal 없음",
+            CancelGoal.Response.ERROR_UNKNOWN_GOAL_ID: "goal을 찾지 못함",
+            CancelGoal.Response.ERROR_GOAL_TERMINATED: "goal이 이미 종료됨",
+        }
+        detail = result_names.get(
+            response.return_code, f"return_code={response.return_code}"
+        )
+        self._append_log(f"[정지 확인] {label}: {detail}")
+
+    def _hardware_stop_completed(self, future) -> None:
+        try:
+            response = future.result()
+        except Exception as error:
+            self._append_log(f"[정지 실패] 실제 RB5 task_stop 오류: {error}")
+            return
+        if response.success:
+            self._append_log("[정지 확인] 실제 RB5 task_stop 성공")
+        else:
+            self._append_log("[정지 실패] 실제 RB5가 task_stop 요청을 거부했습니다.")
 
     def _finish_sweep(self, message: str) -> None:
         completed = self.sweep_completed
@@ -1665,6 +1975,7 @@ class HarvestGui(Node):
                 ),
                 "elapsed_sec": elapsed,
                 "failure_stages": dict(self.sweep_failure_counts),
+                "execute_motion": self.sweep_execute_motion,
             }
             try:
                 (self.sweep_session_dir / "summary.json").write_text(
@@ -1802,7 +2113,8 @@ class HarvestGui(Node):
         self.sweep_summary.set(
             f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
             f"토마토 {current_number} / {self.sweep_case_tomato_total} "
-            f"(index {tomato_index}) Plan 중"
+            f"(index {tomato_index}) "
+            f"{'Plan+실행' if self.sweep_execute_motion else 'Plan'} 중"
         )
         process = self.sweep_worker_process
         if process is None or process.poll() is not None or process.stdin is None:
@@ -1819,6 +2131,9 @@ class HarvestGui(Node):
             "planning_pipeline_id": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
+            "execute": self.sweep_execute_motion,
+            "velocity_scale": self.motion_velocity_scale,
+            "acceleration_scale": self.motion_acceleration_scale,
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -2138,6 +2453,8 @@ class HarvestGui(Node):
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
             publish_display_trajectory=not self.sweep_active,
+            velocity_scale=self.motion_velocity_scale,
+            acceleration_scale=self.motion_acceleration_scale,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -2348,6 +2665,14 @@ class HarvestGui(Node):
             "pipeline": verification[2],
             "planner_id": verification[3],
             "preapproach_mode": verification[4],
+            "execute_motion": self.sweep_execute_motion,
+            "execution_attempted": bool(
+                report.get("execution_attempted", False)
+            ),
+            "execution_success": report.get("execution_success", ""),
+            "execution_duration_sec": report.get(
+                "execution_duration_sec", ""
+            ),
             "failure_stage": report.get("failure_stage", ""),
             "failure_planner_type": report.get(
                 "failure_planner_type", ""
@@ -2421,19 +2746,26 @@ class HarvestGui(Node):
         self.sweep_completed += 1
         self.sweep_case_tomato_completed += 1
         result = "성공" if return_code == 0 else "실패"
+        operation = "Plan+실행" if self.sweep_execute_motion else "Plan"
         self.sweep_summary.set(
             f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
             f"토마토 {self.sweep_case_tomato_completed} / "
-            f"{self.sweep_case_tomato_total} Plan {result} "
+            f"{self.sweep_case_tomato_total} {operation} {result} "
             f"(전체 완료 {self.sweep_completed})"
         )
         self._append_log(
             f"[케이스 {self.sweep_case_number}/{self.sweep_case_total}] "
             f"[토마토 {self.sweep_case_tomato_completed}/"
             f"{self.sweep_case_tomato_total}] "
-            f"index {tomato_index} Plan {result} "
+            f"index {tomato_index} {operation} {result} "
             f"(전체 완료 {self.sweep_completed})"
         )
+        if record["execution_attempted"] and not record["execution_success"]:
+            self._finish_sweep(
+                f"토마토 {tomato_index} 실제 실행 실패로 자동 테스트를 "
+                "중단했습니다."
+            )
+            return
         self.root.after(100, self._start_sweep_plan)
 
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
@@ -2512,6 +2844,7 @@ class HarvestGui(Node):
         self.detect_button.configure(state=state)
         self.read_scene_button.configure(state=state)
         self.set_scene_button.configure(state=state)
+        self.apply_speed_button.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.planner_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(
@@ -2532,6 +2865,7 @@ class HarvestGui(Node):
             )
         )
         self.sweep_start_button.configure(state=state)
+        self.sweep_execute_checkbox.configure(state=state)
         self.sweep_stop_button.configure(
             state="normal" if self.sweep_active else "disabled"
         )

@@ -118,6 +118,7 @@ class HarvestMotionPlan:
     preapproach_trajectory: object
     approach_trajectory: object
     after_wait_trajectory: object
+    return_pick_ready_trajectory: object
     display_start_state: RobotState
 
 
@@ -2052,12 +2053,22 @@ class CartesianHarvestPlanner(Node):
         if after_wait_trajectory is None:
             return None
 
+        after_wait_end = self._trajectory_end_state(after_wait_trajectory)
+        return_pick_ready_plan = self._plan_pick_ready(
+            after_wait_end,
+            label="RETURN_PICK_READY",
+        )
+        if return_pick_ready_plan is None:
+            return None
+        return_pick_ready_trajectory, _ = return_pick_ready_plan
+
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
             pre_rotation_trajectory=pre_rotation_trajectory,
             preapproach_trajectory=preapproach_trajectory,
             approach_trajectory=approach_trajectory,
             after_wait_trajectory=after_wait_trajectory,
+            return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
         )
         planned_trajectories = [pick_ready_trajectory]
@@ -2066,6 +2077,7 @@ class CartesianHarvestPlanner(Node):
             preapproach_trajectory,
             approach_trajectory,
             after_wait_trajectory,
+            (return_pick_ready_trajectory,),
         ):
             planned_trajectories.extend(segment)
         if bool(self.get_parameter("publish_display_trajectory").value):
@@ -2081,6 +2093,7 @@ class CartesianHarvestPlanner(Node):
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> -X30mm "
+            "-> constrained OMPL RETURN_PICK_READY "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )
         return plan
@@ -2122,8 +2135,14 @@ class CartesianHarvestPlanner(Node):
         ):
             return False
 
+        if not self._execute_trajectory(
+            plan.return_pick_ready_trajectory,
+            "OMPL RETURN_PICK_READY",
+        ):
+            return False
+
         self.get_logger().info(
-            "Harvest sequence complete; keeping the final post-wait pose."
+            "Harvest sequence complete; robot returned to PICK_READY."
         )
         return True
 

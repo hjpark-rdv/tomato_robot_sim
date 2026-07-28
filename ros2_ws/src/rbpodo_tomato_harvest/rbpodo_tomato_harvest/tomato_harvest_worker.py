@@ -1,5 +1,6 @@
 import json
 import sys
+import time
 
 import rclpy
 from rclpy.parameter import Parameter
@@ -26,7 +27,15 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             "preapproach_mode",
             value=str(request.get("preapproach_mode", "cartesian")),
         ),
-        Parameter("execute", value=False),
+        Parameter("execute", value=bool(request.get("execute", False))),
+        Parameter(
+            "pick_ready_velocity_scale",
+            value=float(request.get("velocity_scale", 0.20)),
+        ),
+        Parameter(
+            "pick_ready_acceleration_scale",
+            value=float(request.get("acceleration_scale", 0.20)),
+        ),
         Parameter("publish_display_trajectory", value=False),
     ]
     results = node.set_parameters(parameters)
@@ -52,7 +61,36 @@ def main(args=None) -> None:
                 request_id = int(request["request_id"])
                 _apply_request(node, request)
                 plan = node.plan()
+                execute_requested = bool(request.get("execute", False))
+                execution_attempted = plan is not None and execute_requested
+                execution_started = time.monotonic()
                 success = plan is not None and node.execute(plan)
+                execution_duration = (
+                    time.monotonic() - execution_started
+                    if execution_attempted
+                    else 0.0
+                )
+                node.last_plan_report["execution_requested"] = (
+                    execute_requested
+                )
+                node.last_plan_report["execution_attempted"] = (
+                    execution_attempted
+                )
+                node.last_plan_report["execution_success"] = (
+                    bool(success) if execution_attempted else None
+                )
+                node.last_plan_report["execution_duration_sec"] = round(
+                    execution_duration,
+                    6,
+                )
+                if execution_attempted and not success:
+                    node.last_plan_report["failure_stage"] = "EXECUTION"
+                    node.last_plan_report[
+                        "failure_planner_type"
+                    ] = "execution"
+                    node.last_plan_report[
+                        "failure_reason"
+                    ] = "TRAJECTORY_EXECUTION_FAILED"
                 result = {
                     "request_id": request_id,
                     "success": bool(success),

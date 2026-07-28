@@ -96,6 +96,28 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
 8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
 9. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
+10. RB Speed Bar와 OMPL/Joint 계획 속도·가속도를 퍼센트 단위로 변경
+
+`로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
+가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
+Plan부터 개별 수확, 전체 연속 수확 및 자동 테스트에 모두 전달된다. RB Speed
+Bar는 `/rbpodo_hardware/set_speed_bar` 서비스로 즉시 요청되며 실제 로봇의
+모든 실행 구간에 영향을 준다. 하드웨어 노드가 없는 환경에서는 계획 속도만
+적용된다. 이 경우 GUI는 시뮬레이션에서 정상적인 서비스 미연결임을 알리고,
+`OMPL/Joint 적용`, `RB Speed Bar 미적용`, `Cartesian 미적용` 범위를 각각
+상태와 로그에 명시한다. Cartesian 경로는
+MoveIt Humble 서비스에서 별도 scaling 필드를 제공하지 않으므로 계획 배율은
+OMPL/Joint 구간에 적용되고, 실제 Cartesian 실행 속도는 RB Speed Bar로
+조절한다.
+
+자동 테스트의 `자동 테스트 + 로봇 정지` 버튼은 남은 케이스를 지우는 것에
+더해 MoveIt `/execute_trajectory`와 ros2_control joint trajectory controller의
+활성 action goal을 모두 취소한다. 실제 로봇에서는 이어서
+`/rbpodo_hardware/task_stop`도 호출한다. 시뮬레이션에서는 하드웨어 서비스가
+없으므로 두 trajectory action 취소만 수행한다. GUI 로그에는 각 취소 요청의
+전송 및 수락 여부와 실제 RB5 정지 결과가 별도로 기록된다. 이는 네트워크와
+소프트웨어를 통한 운전 정지이며 안전등급 비상정지가 아니므로, 위험 상황에서는
+항상 교시기 또는 설비의 비상정지를 사용해야 한다.
 
 안전을 위해 새 검출 결과가 들어오거나 줄기 위치/회전을 변경하면 기존
 Plan-only 성공 상태는 취소된다. 회전값은 `tomato_z_spin_deg`에 도 단위로
@@ -208,7 +230,12 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 종료 기준이 될 비랜덤 변화 축을 하나 이상 지정해야 한다. 자동 실행 시 각
 케이스마다 줄기 장면
 적용과 촬영/검출을 수행한 뒤,
-토마토 0번부터 7번까지 차례로 Plan-only를 수행한다. 회전 없는 성공은 초록색,
+토마토 0번부터 7번까지 차례로 처리한다. `실제 로봇 실행` 체크박스는 기본
+해제되어 Plan-only로 동작한다. 체크하면 시작 전 안전 확인창을 표시하고,
+Plan에 성공한 각 토마토 trajectory를 실제로 실행한 뒤 `PICK_READY`로
+복귀한다. 계획 실패는 다음 토마토로 넘어가지만 실제 trajectory 실행이
+실패하면 로봇 자세가 불확실할 수 있으므로 자동 테스트를 즉시 중단한다.
+회전 없는 성공은 초록색,
 적응 접근각 성공은 하늘색, 실패는 빨간색
 화살표로 표시하며, 각 화살표는 생성 당시 `link0` 좌표에 고정되어 다음 케이스로
 줄기가 이동해도 기존 위치에 누적된다. 자동 테스트에서는 처리 부하를 줄이기 위해
@@ -222,6 +249,7 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 시간과 실패 단계별 개수를 실시간으로 확인할 수 있다. 최근 100개 결과는 케이스,
 토마토 번호, 결과, 실패 단계와 소요시간으로 표시된다. 결과는 각 Plan 직후
 `~/farmily_tomato/harvest_results/<실행시각>/` 아래에 즉시 저장된다.
+세션 JSON/CSV에는 실제 실행 요청·시도·성공 여부와 실행 시간도 기록된다.
 
 - `session.json`: 입력 범위, 변화량, 랜덤 seed, 실제 생성된 모든 케이스
 - `results.jsonl`: 단계별 세부 진단을 포함한 원본 결과
@@ -232,14 +260,16 @@ planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다
 `CARTESIAN_PRE_ROTATION`, `CARTESIAN_PREAPPROACH`,
 `OMPL_PREAPPROACH`, `CHOMP_PREAPPROACH`,
 `PILZ_INDUSTRIAL_MOTION_PLANNER_PREAPPROACH`, `CARTESIAN_APPROACH`,
-`CARTESIAN_POST_WAIT`, `PILZ_PTP_RETURN_PICK_READY`, `TF_TARGET` 등으로
+`CARTESIAN_POST_WAIT`, `OMPL_RETURN_PICK_READY`, `TF_TARGET` 등으로
 구분된다.
 Cartesian 실패에는 경로 fraction과 MoveIt 오류 코드가, OMPL/CHOMP/PILZ
 실패에는 pipeline, planner ID와 MoveIt 오류 코드가 기록된다.
 
-마지막 복귀에는 OMPL과 Cartesian 대체 복귀를 사용하지 않는다. PILZ PTP가
-실패하면 `failure_stage=PILZ_PTP_RETURN_PICK_READY`로 기록하고 전체 Plan을
-실패 처리한다.
+수확 후 마지막 post-wait 자세에서 `PICK_READY` joint goal까지 OMPL로
+복귀한다. 복귀 시작 자세를 중심으로 wrist3를 제외한 관절에 기존
+`±120°` path constraint와 충돌 검사를 적용한다. 복귀 계획이 실패하면
+`failure_stage=OMPL_RETURN_PICK_READY`로 기록하고 전체 Plan을 실패 처리하며,
+Plan-only/RViz에서 검증된 동일 trajectory를 실제 수확 마지막에 실행한다.
 
 저장된 세션을 한눈에 확인할 수 있는 HTML 분석 보고서는 다음 명령으로 생성한다.
 
