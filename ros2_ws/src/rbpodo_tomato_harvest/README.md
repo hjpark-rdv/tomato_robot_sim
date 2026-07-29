@@ -92,13 +92,13 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
 4. Plan-only 성공 후 실제 수확 모션 실행
 5. 메인 토마토 줄기의 X/Y/Z 위치와 줄기 축 기준 회전 각도 조회 및 변경
-6. PICK_READY에서 pre-approach까지 사용할 Cartesian/OMPL/CHOMP/PILZ LIN 선택
-7. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
-8. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
-9. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
-10. RB Speed Bar와 OMPL/Joint 계획 속도·가속도를 퍼센트 단위로 변경
-11. 수확 동작 중 리니어모터 대기시간을 초 단위로 설정
-12. 연속 수확에서 현재 자세로부터 다음 pre-grasp로 직접 전환
+6. 검출된 모든 토마토를 순서대로 Plan-only 검증 후 실제 연속 수확
+7. 지정한 시작/종료/변화량으로 줄기 위치와 회전을 바꾸며 Plan-only 자동 테스트
+8. 실패한 Plan의 마지막 유효 관절 자세를 RViz Query Goal State로 표시
+9. RB Speed Bar와 OMPL/Joint 계획 속도·가속도를 퍼센트 단위로 변경
+10. 수확 동작 중 리니어모터 대기시간을 초 단위로 설정
+11. 연속 수확에서 현재 자세로부터 다음 pre-grasp로 직접 전환
+12. 개별·전체·자동 수확 도중 현재 trajectory와 실제 RB5 모션 정지
 
 `리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
 Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
@@ -116,6 +116,14 @@ trajectory로 직접 연결한다. 이 직접 전환에는 충돌 검사와 시�
 복귀한다. Plan-only 자동 테스트에는 실제 이전 토마토의 종료 자세가 없으므로
 이 모드를 적용하지 않고 각 토마토를 독립 계획한다.
 
+`검출 토마토 전체 연속 수확`을 실행하면 각 토마토의 최종 결과가 오른쪽
+`실시간 통계` 테이블에 즉시 누적된다. Plan-only가 실패한 토마토는 그 시점에
+실패로 기록하고, Plan-only가 성공한 토마토는 실제 수확 실행까지 끝난 뒤 최종
+성공 또는 실행 실패로 한 번만 기록한다. 계획 단계, Cartesian→OMPL 대체 여부,
+계획 시간과 실제 전체 시퀀스 시간을 자동 테스트 결과와 같은 형식으로 표시한다.
+전체 연속 수확 결과는 현재 화면 표시 전용이며 자동 위치 테스트의 CSV/JSONL
+파일에는 추가하지 않는다.
+
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
 Plan부터 개별 수확, 전체 연속 수확 및 자동 테스트에 모두 전달된다. RB Speed
@@ -128,8 +136,9 @@ MoveIt Humble 서비스에서 별도 scaling 필드를 제공하지 않으므로
 OMPL/Joint 구간에 적용되고, 실제 Cartesian 실행 속도는 RB Speed Bar로
 조절한다.
 
-자동 테스트의 `자동 테스트 + 로봇 정지` 버튼은 남은 케이스를 지우는 것에
-더해 MoveIt `/execute_trajectory`와 ros2_control joint trajectory controller의
+자동 테스트의 `자동 테스트 + 로봇 정지` 버튼과 수확 영역의
+`현재 수확 모션 정지` 버튼은 남은 작업을 지우는 것에 더해 MoveIt
+`/execute_trajectory`와 ros2_control joint trajectory controller의
 활성 action goal을 모두 취소한다. 실제 로봇에서는 이어서
 `/rbpodo_hardware/task_stop`도 호출한다. 시뮬레이션에서는 하드웨어 서비스가
 없으므로 두 trajectory action 취소만 수행한다. GUI 로그에는 각 취소 요청의
@@ -166,9 +175,10 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 fake hardware 초기 자세가 모두 이 값을 읽으므로 SRDF를 수정한 뒤 두 패키지를
 다시 빌드하고 MoveIt을 재시작해야 한다.
 tip 기준으로 계산한 pre-grasp pose는 고정된 TCP-to-tip transform을 사용해
-TCP 목표 pose로 환산한다. `Cartesian`은 PICK_READY의 TCP 자세에서 이 목표까지
+TCP 목표 pose로 환산한다. GUI는 PICK_READY의 TCP 자세에서 이 목표까지
 위치와 자세를 한 경로에서 함께 변경한다. 별도의 TCP 제자리 회전 trajectory는
-생성하지 않는다. GUI의 기본 선택도 `Cartesian`이다.
+생성하지 않으며 `Cartesian 우선 + constrained OMPL fallback` 알고리즘으로
+고정되어 있다.
 이 direct Cartesian pre-approach가 실패하면 원래 PICK_READY 상태에서 같은
 TCP 목표까지 constrained OMPL RRTConnect로 한 번에 재계획하며, 이것도 실패할
 때 전체 Plan을 실패 처리한다.
@@ -178,13 +188,8 @@ OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확 �
 단계 시작 자세 중심의 `±120°` 관절 path constraint가 동일하게 적용된다.
 Cartesian 실패 후 OMPL fallback이 성공하면 전체 Plan은 성공으로 처리하고,
 결과 로그의 `cartesian_fallbacks`와 단계별 기록에 전환 구간을 남긴다.
-OMPL, CHOMP, PILZ LIN은 같은 pre-approach TCP pose를 각 planning pipeline의
-목표로 전달한다. 최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다.
+최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다.
 Pre-approach 이후의 접근과 수확 동작은 우선 TCP Cartesian 경로를 시도한다.
-PILZ LIN은 TCP 직선 이동 중 연속 IK가
-존재해야 하므로 토마토 위치와 자세에 따라 `NO_IK_SOLUTION`으로 실패할 수 있다.
-CHOMP는 pose goal을 직접 처리하지 못하므로 PILZ LIN으로 collision-free endpoint
-관절 상태를 먼저 구한 뒤, 그 endpoint로 향하는 실제 궤적을 CHOMP가 최적화한다.
 각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
 `wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
 `wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
@@ -238,12 +243,14 @@ pre-grasp 위치 벡터와 화살표가 나타내는 토마토 방향 진입 벡
 planner를 바꾸면 기존 계획 결과를 무효화하고 마커를 지운다.
 
 오른쪽 `줄기 위치/회전 Plan 자동 테스트` 패널에는 X/Y/Z/회전의 시작값,
-종료값, 변화량을 입력한다. `랜덤`을 체크한 항목은 각 케이스마다 시작~종료
-범위에서 임의 값을 사용하고, 체크하지 않은 항목은 시작부터 종료까지 일정하게
-변화량만큼 이동한다. 변경 중인 축 가운데 가장 먼저 종료값에 도달한 축을
-기준으로 전체 케이스 생성을 종료한다. 랜덤 축의 변화량은 사용하지 않으며 종료
-조건에서도 제외한다. 따라서 범위가 변하는 모든 축을 랜덤으로 설정한 경우에는
-종료 기준이 될 비랜덤 변화 축을 하나 이상 지정해야 한다. 자동 실행 시 각
+종료값, 변화량을 입력한다. X/Y/Z/회전 모두 `랜덤`을 선택할 수 있다. 랜덤으로
+선택한 항목은 생성되는 각 케이스마다 시작~종료 범위에서 임의 값을 사용하고,
+변화량과 종료 조건에서는 제외한다. 체크하지 않은 X/Y/Z 항목은 시작부터
+종료까지 일정하게 변화량만큼 이동하며, 가장 먼저 종료값에 도달한 축을 기준으로
+XYZ 위치 생성을 종료한다. 비랜덤으로 변경되는 X/Y/Z 축이 없으면 랜덤 XYZ
+위치 하나를 생성한다. 회전이 비랜덤이면 각 XYZ 위치에서 시작~종료 회전 범위를
+모두 검사하고, 회전도 랜덤이면 각 XYZ 위치마다 회전값 하나를 임의로 추출한다.
+따라서 Y와 Z를 동시에 랜덤으로 설정해도 자동 테스트를 시작할 수 있다. 자동 실행 시 각
 케이스마다 줄기 장면
 적용과 촬영/검출을 수행한 뒤,
 토마토 0번부터 7번까지 차례로 처리한다. `실제 로봇 실행` 체크박스는 기본
@@ -384,15 +391,14 @@ robot. In plan-only mode RViz receives the complete trajectory sequence in
 order:
 
 1. Current joint state to `PICK_READY`
-2. Selected Cartesian/OMPL/CHOMP/PILZ motion to the pre-approach TCP pose
+2. Cartesian-first motion to the pre-approach TCP pose
 3. Cartesian motion from pre-approach through the tomato harvest sequence
 4. Cartesian post-wait retreat
 
-The planner selected in the GUI controls the motion from `PICK_READY` to the
-pre-approach pose. `Cartesian` preserves the original direct TCP path, while
-OMPL, CHOMP, and PILZ LIN receive the same TCP pose as a planning-pipeline goal.
-Entering `PICK_READY` uses OMPL RRTConnect. If any Cartesian segment fails, that
-segment is retried with constrained OMPL RRTConnect. Multi-waypoint harvest
+The GUI fixes the motion from `PICK_READY` to the pre-approach pose to a
+Cartesian-first path. Entering `PICK_READY` uses OMPL RRTConnect. If any
+Cartesian segment fails, that segment is retried with constrained OMPL
+RRTConnect. Multi-waypoint harvest
 segments retain every waypoint and retry them sequentially. The harvest target
 and local offsets are still defined at `tomato_gripper_tip`, but every target
 pose is converted through the fixed TCP-to-tip transform before MoveIt plans

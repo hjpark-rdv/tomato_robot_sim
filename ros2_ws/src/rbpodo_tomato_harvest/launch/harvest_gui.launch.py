@@ -19,10 +19,6 @@ def generate_launch_description():
                 "scene_node",
                 default_value="/tomato_scene_node",
             ),
-            DeclareLaunchArgument(
-                "default_planner",
-                default_value="cartesian",
-            ),
             Node(
                 package="rbpodo_tomato_harvest",
                 executable="harvest_gui",
@@ -33,7 +29,6 @@ def generate_launch_description():
                         "camera_service": LaunchConfiguration("camera_service"),
                         "detections_topic": LaunchConfiguration("detections_topic"),
                         "scene_node": LaunchConfiguration("scene_node"),
-                        "default_planner": LaunchConfiguration("default_planner"),
                     }
                 ],
             ),

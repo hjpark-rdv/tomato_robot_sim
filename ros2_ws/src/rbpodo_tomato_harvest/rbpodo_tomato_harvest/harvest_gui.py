@@ -39,6 +39,7 @@ PLANNER_CONFIGS = {
     "CHOMP": ("chomp", "RRTConnect", "planner"),
     "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN", "planner"),
 }
+GUI_PLANNER_CONFIG = PLANNER_CONFIGS["Cartesian"]
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
 SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
@@ -267,6 +268,74 @@ def sweep_stage_detail(record) -> str:
     return "\n".join(lines)
 
 
+def harvest_statistics_record(
+    *,
+    case,
+    tomato_index: int,
+    scene,
+    success: bool,
+    verification,
+    execute_motion: bool,
+    report,
+) -> dict:
+    """Build one live-statistics row from a final tomato result."""
+    x, y, z, rotation = scene
+    adaptive_grasp = report.get("adaptive_grasp", {})
+    record = {
+        "timestamp": datetime.now().astimezone().isoformat(),
+        "case": case,
+        "tomato": tomato_index,
+        "x": x,
+        "y": y,
+        "z": z,
+        "rotation_deg": rotation,
+        "success": bool(success),
+        "pipeline": verification[2],
+        "planner_id": verification[3],
+        "preapproach_mode": verification[4],
+        "execute_motion": bool(execute_motion),
+        "continuous_transition": bool(
+            report.get("continuous_transition", False)
+        ),
+        "return_to_pick_ready": bool(
+            report.get("return_to_pick_ready", True)
+        ),
+        "execution_attempted": bool(
+            report.get("execution_attempted", False)
+        ),
+        "execution_success": report.get("execution_success", ""),
+        "execution_duration_sec": report.get("execution_duration_sec", ""),
+        "failure_stage": report.get("failure_stage", ""),
+        "failure_planner_type": report.get("failure_planner_type", ""),
+        "failure_reason": report.get("failure_reason", ""),
+        "recovery_used": bool(report.get("recovery_used", False)),
+        "recovery_success": bool(report.get("recovery_success", False)),
+        "recovery_stage": report.get("recovery_stage", ""),
+        "recovery_reason": report.get("recovery_reason", ""),
+        "moveit_error_code": report.get("moveit_error_code", ""),
+        "cartesian_fraction": report.get("cartesian_fraction", ""),
+        "required_fraction": report.get("required_fraction", ""),
+        "duration_sec": report.get("duration_sec", 0.0),
+        "stages": report.get("stages", []),
+        "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
+        "adaptive_grasp_rotation_deg": adaptive_grasp.get(
+            "applied_rotation_deg", 0.0
+        ),
+        "adaptive_grasp_current_error_deg": adaptive_grasp.get(
+            "current_robot_error_deg", 0.0
+        ),
+        "adaptive_grasp_selected_error_deg": adaptive_grasp.get(
+            "selected_robot_error_deg", 0.0
+        ),
+    }
+    fallback_summary = cartesian_fallback_summary(report)
+    if fallback_summary:
+        record.update(fallback_summary)
+    record["display_stage_summary"] = sweep_stage_summary(record)
+    record["display_stage_detail"] = sweep_stage_detail(record)
+    return record
+
+
 def is_critical_process_output(line: str) -> bool:
     """Keep only unstructured fatal output not represented in plan JSON."""
     text = str(line).strip()
@@ -314,12 +383,12 @@ def generate_sweep_cases(
     rng=None,
     maximum_cases: int = 500,
 ) -> list[tuple[float, float, float, float]]:
-    """Generate XYZ positions, then test every rotation at each position.
+    """Generate deterministic positions and sample every checked random axis.
 
-    X/Y/Z retain the previous behavior: deterministic axes advance together and
-    random axes are sampled once per XYZ position. Rotation is never randomized;
-    every value from its start to end is tested before moving to the next XYZ
-    position.
+    Deterministic X/Y/Z axes advance together until the earliest axis reaches
+    its end. If none changes, one XYZ position is still generated. A
+    deterministic rotation is exhaustively tested at every XYZ position; a
+    randomized rotation contributes one sampled angle per XYZ position.
     """
     starts = [float(value) for value in start]
     ends = [float(value) for value in end]
@@ -332,7 +401,6 @@ def generate_sweep_cases(
 
     # X/Y/Z determine how many distinct positions are generated.
     position_interval_counts = []
-    has_random_position_range = False
     for begin, finish, increment, use_random in zip(
         starts[:3], ends[:3], steps[:3], random_flags[:3]
     ):
@@ -340,7 +408,6 @@ def generate_sweep_cases(
         if distance < 1e-12:
             continue
         if use_random:
-            has_random_position_range = True
             continue
         if increment <= 0.0:
             raise ValueError(
@@ -348,22 +415,21 @@ def generate_sweep_cases(
             )
         position_interval_counts.append(int(math.ceil(distance / increment)))
 
-    if not position_interval_counts and has_random_position_range:
-        raise ValueError(
-            "XYZ 랜덤 범위를 반복하려면 종료 기준이 될 "
-            "비랜덤 X/Y/Z 변화 축을 하나 이상 설정하세요."
-        )
-
     position_intervals = (
         min(position_interval_counts) if position_interval_counts else 0
     )
     position_count = position_intervals + 1
 
-    rotation_values = _inclusive_step_values(
-        starts[3],
-        ends[3],
-        steps[3],
-        "회전",
+    random_rotation = random_flags[3] and abs(ends[3] - starts[3]) >= 1e-12
+    rotation_values = (
+        [None]
+        if random_rotation
+        else _inclusive_step_values(
+            starts[3],
+            ends[3],
+            steps[3],
+            "회전",
+        )
     )
     total_case_count = position_count * len(rotation_values)
     if total_case_count > maximum_cases:
@@ -376,22 +442,29 @@ def generate_sweep_cases(
     random_source = rng or random.Random()
     cases = []
     for position_index in range(position_count):
-        xyz = []
-        for begin, finish, increment, use_random in zip(
-            starts[:3], ends[:3], steps[:3], random_flags[:3]
-        ):
-            distance = abs(finish - begin)
-            if use_random and distance >= 1e-12:
-                xyz.append(
-                    random_source.uniform(min(begin, finish), max(begin, finish))
+        for rotation_value in rotation_values:
+            xyz = []
+            for begin, finish, increment, use_random in zip(
+                starts[:3], ends[:3], steps[:3], random_flags[:3]
+            ):
+                distance = abs(finish - begin)
+                if use_random and distance >= 1e-12:
+                    xyz.append(
+                        random_source.uniform(
+                            min(begin, finish), max(begin, finish)
+                        )
+                    )
+                else:
+                    direction = 1.0 if finish >= begin else -1.0
+                    moved = min(position_index * increment, distance)
+                    xyz.append(begin + direction * moved)
+            rotation = (
+                random_source.uniform(
+                    min(starts[3], ends[3]), max(starts[3], ends[3])
                 )
-            else:
-                direction = 1.0 if finish >= begin else -1.0
-                moved = min(position_index * increment, distance)
-                xyz.append(begin + direction * moved)
-
-        # Keep this XYZ position fixed while every rotation is tested.
-        for rotation in rotation_values:
+                if random_rotation
+                else rotation_value
+            )
             cases.append((xyz[0], xyz[1], xyz[2], rotation))
 
     return cases
@@ -654,7 +727,6 @@ class HarvestGui(Node):
             "controller_cancel_service",
             "/joint_trajectory_controller/follow_joint_trajectory/_action/cancel_goal",
         )
-        self.declare_parameter("default_planner", "cartesian")
         self.declare_parameter(
             "result_markers_topic", "/harvest_result_markers"
         )
@@ -743,6 +815,7 @@ class HarvestGui(Node):
         self.batch_planner = None
         self.batch_harvest_wait_sec = 2.0
         self.batch_continuous_mode = False
+        self.batch_scene = (0.0, 0.0, 0.0, 0.0)
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
@@ -795,22 +868,6 @@ class HarvestGui(Node):
         self._configure_korean_font()
 
         self.selected_tomato = tk.StringVar(value="")
-        default_planner = str(self.get_parameter("default_planner").value)
-        planner_label = next(
-            (
-                label
-                for label, config in PLANNER_CONFIGS.items()
-                if (
-                    (default_planner == "cartesian" and config[2] == "cartesian")
-                    or (
-                        config[0] == default_planner
-                        and config[2] == "planner"
-                    )
-                )
-            ),
-            "OMPL / RRTConnect",
-        )
-        self.selected_planner = tk.StringVar(value=planner_label)
         self.scene_x = tk.StringVar(value="0.355")
         self.scene_y = tk.StringVar(value="-0.375")
         self.scene_z = tk.StringVar(value="0.340")
@@ -956,22 +1013,6 @@ class HarvestGui(Node):
             state="disabled",
         )
         self.execute_button.grid(row=0, column=3, padx=(4, 0))
-        ttk.Label(motion_frame, text="플래너").grid(
-            row=1, column=0, sticky="w", pady=(8, 0)
-        )
-        self.planner_combo = ttk.Combobox(
-            motion_frame,
-            textvariable=self.selected_planner,
-            values=list(PLANNER_CONFIGS),
-            state="readonly",
-            width=28,
-        )
-        self.planner_combo.grid(
-            row=1, column=1, sticky="w", padx=8, pady=(8, 0)
-        )
-        self.planner_combo.bind(
-            "<<ComboboxSelected>>", self._planner_selection_changed
-        )
         self.harvest_all_button = ttk.Button(
             motion_frame,
             text="검출 토마토 전체 연속 수확",
@@ -979,6 +1020,19 @@ class HarvestGui(Node):
             state="disabled",
         )
         self.harvest_all_button.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            pady=(8, 0),
+        )
+        self.motion_stop_button = ttk.Button(
+            motion_frame,
+            text="현재 수확 모션 정지",
+            command=self.stop_active_motion,
+            state="disabled",
+        )
+        self.motion_stop_button.grid(
             row=1,
             column=2,
             columnspan=2,
@@ -1184,8 +1238,6 @@ class HarvestGui(Node):
                 frame,
                 variable=self.sweep_inputs[f"random_{key}"],
             )
-            if key == "rotation":
-                random_checkbox.configure(state="disabled")
             random_checkbox.grid(row=row, column=4)
 
         self.sweep_summary = tk.StringVar(value="대기 중")
@@ -1194,7 +1246,7 @@ class HarvestGui(Node):
             frame,
             text=(
                 "각 XYZ 위치에서 전체 회전 범위를 Plan한 뒤 다음 위치로 이동합니다.\n"
-                "랜덤 축은 위치마다 한 번 추출하며, 검출 결과가 없으면 건너뜁니다."
+                "랜덤 축은 케이스마다 추출하며, 검출 결과가 없으면 건너뜁니다."
             ),
         ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(6, 3))
         self.sweep_execute_checkbox = ttk.Checkbutton(
@@ -1588,8 +1640,6 @@ class HarvestGui(Node):
         randomized = [
             self.sweep_inputs[f"random_{key}"].get() for key in keys
         ]
-        # Rotation is exhaustive, not random. Only X/Y/Z support random sampling.
-        randomized[3] = False
         random_seed = random.SystemRandom().randrange(0, 2**32)
         cases = generate_sweep_cases(
             start,
@@ -1651,7 +1701,12 @@ class HarvestGui(Node):
         (session_directory / "results.jsonl").touch()
 
         self.sweep_session_dir = session_directory
+        self._reset_live_statistics(f"결과 파일: {session_directory}")
+
+    def _reset_live_statistics(self, result_path_text: str) -> None:
+        """Clear the shared live table for a new sweep or batch run."""
         self.sweep_started_monotonic = time.monotonic()
+        self.sweep_completed = 0
         self.sweep_success_count = 0
         self.sweep_recovery_count = 0
         self.sweep_failure_counts.clear()
@@ -1664,7 +1719,7 @@ class HarvestGui(Node):
         )
         self.sweep_failure_summary.set("실패 단계: 없음")
         self._set_sweep_result_detail("없음")
-        self.sweep_result_path.set(f"결과 파일: {session_directory}")
+        self.sweep_result_path.set(result_path_text)
 
     def _save_sweep_result(self, record) -> None:
         if self.sweep_session_dir is None:
@@ -2435,18 +2490,9 @@ class HarvestGui(Node):
         if index is not None:
             self.status.set(f"토마토 {index} 선택됨 — Plan-only를 먼저 실행하세요.")
 
-    def _planner_selection_changed(self, _event=None) -> None:
-        self._invalidate_plan()
-        self._clear_harvest_results()
-        self.status.set(
-            f"{self.selected_planner.get()} 선택됨 — Plan-only를 다시 실행하세요."
-        )
-
     def _selected_planner_config(self) -> tuple[str, str, str]:
-        return PLANNER_CONFIGS.get(
-            self.selected_planner.get(),
-            PLANNER_CONFIGS["OMPL / RRTConnect"],
-        )
+        """Return the production GUI's fixed Cartesian-first configuration."""
+        return GUI_PLANNER_CONFIG
 
     def _invalidate_plan(self) -> None:
         self.verified_plan = None
@@ -2539,6 +2585,22 @@ class HarvestGui(Node):
         self.batch_planner = self._selected_planner_config()
         self.batch_harvest_wait_sec = harvest_wait_sec
         self.batch_continuous_mode = continuous_mode
+        try:
+            self.batch_scene = (
+                float(self.scene_x.get()),
+                float(self.scene_y.get()),
+                float(self.scene_z.get()),
+                float(self.scene_rotation.get()),
+            )
+        except ValueError:
+            self.batch_scene = ("", "", "", "")
+        self.sweep_session_dir = None
+        self._reset_live_statistics(
+            "결과 파일: 전체 연속 수확은 실시간 화면 표시 전용"
+        )
+        self.sweep_summary.set(
+            f"전체 연속 수확 — 토마토 0 / {self.batch_total}"
+        )
         self._invalidate_plan()
         self._clear_harvest_results()
         self._append_log(
@@ -2825,65 +2887,16 @@ class HarvestGui(Node):
             return
         tomato_index = verification[1]
         report = report or {}
-        adaptive_grasp = report.get("adaptive_grasp", {})
         success = return_code == 0
-        x, y, z, rotation = self.sweep_current_case
-        record = {
-            "timestamp": datetime.now().astimezone().isoformat(),
-            "case": self.sweep_case_number,
-            "tomato": tomato_index,
-            "x": x,
-            "y": y,
-            "z": z,
-            "rotation_deg": rotation,
-            "success": success,
-            "pipeline": verification[2],
-            "planner_id": verification[3],
-            "preapproach_mode": verification[4],
-            "execute_motion": self.sweep_execute_motion,
-            "continuous_transition": bool(
-                report.get("continuous_transition", False)
-            ),
-            "return_to_pick_ready": bool(
-                report.get("return_to_pick_ready", True)
-            ),
-            "execution_attempted": bool(
-                report.get("execution_attempted", False)
-            ),
-            "execution_success": report.get("execution_success", ""),
-            "execution_duration_sec": report.get(
-                "execution_duration_sec", ""
-            ),
-            "failure_stage": report.get("failure_stage", ""),
-            "failure_planner_type": report.get(
-                "failure_planner_type", ""
-            ),
-            "failure_reason": report.get("failure_reason", ""),
-            "recovery_used": bool(report.get("recovery_used", False)),
-            "recovery_success": bool(report.get("recovery_success", False)),
-            "recovery_stage": report.get("recovery_stage", ""),
-            "recovery_reason": report.get("recovery_reason", ""),
-            "moveit_error_code": report.get("moveit_error_code", ""),
-            "cartesian_fraction": report.get("cartesian_fraction", ""),
-            "required_fraction": report.get("required_fraction", ""),
-            "duration_sec": report.get("duration_sec", 0.0),
-            "stages": report.get("stages", []),
-            "cartesian_fallbacks": report.get("cartesian_fallbacks", []),
-            "adaptive_grasp_rotation_deg": adaptive_grasp.get(
-                "applied_rotation_deg", 0.0
-            ),
-            "adaptive_grasp_current_error_deg": adaptive_grasp.get(
-                "current_robot_error_deg", 0.0
-            ),
-            "adaptive_grasp_selected_error_deg": adaptive_grasp.get(
-                "selected_robot_error_deg", 0.0
-            ),
-        }
-        fallback_summary = cartesian_fallback_summary(report)
-        if fallback_summary:
-            record.update(fallback_summary)
-        record["display_stage_summary"] = sweep_stage_summary(record)
-        record["display_stage_detail"] = sweep_stage_detail(record)
+        record = harvest_statistics_record(
+            case=self.sweep_case_number,
+            tomato_index=tomato_index,
+            scene=self.sweep_current_case,
+            success=success,
+            verification=verification,
+            execute_motion=self.sweep_execute_motion,
+            report=report,
+        )
         self._save_sweep_result(record)
         self._update_sweep_statistics(record)
         self._update_result_arrow_length(tomato_index)
@@ -2949,10 +2962,34 @@ class HarvestGui(Node):
             return
         self.root.after(100, self._start_sweep_plan)
 
+    def _record_batch_statistics(
+        self,
+        return_code: int,
+        execute: bool,
+        verification,
+    ) -> None:
+        """Append one final tomato outcome to the shared live table."""
+        record = harvest_statistics_record(
+            case="전체",
+            tomato_index=verification[1],
+            scene=self.batch_scene,
+            success=return_code == 0,
+            verification=verification,
+            execute_motion=execute,
+            report=self.harvest_plan_report or {},
+        )
+        self._update_sweep_statistics(record)
+        self.sweep_completed += 1
+        self.sweep_summary.set(
+            f"전체 연속 수확 — 토마토 {self.sweep_completed} / "
+            f"{self.batch_total} 결과 집계"
+        )
+
     def _handle_batch_job_done(self, return_code, execute: bool, verification) -> None:
         index = verification[1]
         mode = "실제 수확" if execute else "Plan-only"
         if return_code != 0:
+            self._record_batch_statistics(return_code, execute, verification)
             self._set_harvest_result(
                 index,
                 False,
@@ -3003,6 +3040,7 @@ class HarvestGui(Node):
             f"토마토 {index} {mode} 완료"
         )
         if execute:
+            self._record_batch_statistics(return_code, execute, verification)
             self.batch_completed += 1
             self._invalidate_plan()
         else:
@@ -3018,8 +3056,49 @@ class HarvestGui(Node):
         self._invalidate_plan()
         self._set_busy(False)
         self.status.set(message)
+        self.sweep_summary.set(
+            f"전체 연속 수확 완료 {self.sweep_completed}개 — {message}"
+        )
         result = "완료" if success else "중단"
         self._append_log(f"[전체 연속 수확 {result}] {message}")
+
+    def stop_active_motion(self) -> None:
+        """Stop an individual, batch, or automatic harvest operation."""
+        if self.sweep_active:
+            self.stop_sweep()
+            return
+        process = self.harvest_process
+        if process is None and not self.batch_active:
+            return
+
+        was_batch = self.batch_active
+        self.status.set("수확 작업 중지 및 로봇 모션 정지 명령 전송 중...")
+        self._append_log(
+            "[정지 요청] 현재 수확 작업을 취소하고 MoveIt/controller 및 "
+            "실제 RB5 정지를 요청합니다."
+        )
+        self._request_robot_motion_stop()
+
+        # Detach first so the reader thread's eventual exit event cannot be
+        # mistaken for a planning or execution failure after user cancellation.
+        self.harvest_process = None
+        if process is not None and process.poll() is None:
+            process.terminate()
+
+        self._invalidate_plan()
+        message = (
+            "사용자가 전체 연속 수확을 중지했습니다. "
+            "MoveIt/controller 취소 및 RB 정지를 요청했습니다."
+            if was_batch
+            else "수확 모션 중지 완료 — MoveIt/controller 취소 및 RB 정지를 "
+            "요청했습니다."
+        )
+        if was_batch:
+            self._finish_batch(False, message)
+        else:
+            self._set_busy(False)
+            self.status.set(message)
+            self._append_log(message)
 
     def _set_busy(self, busy: bool) -> None:
         state = "disabled" if busy else "normal"
@@ -3030,10 +3109,10 @@ class HarvestGui(Node):
         self.linear_motor_wait_entry.configure(state=state)
         self.continuous_harvest_checkbox.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
-        self.planner_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(
             state="disabled" if busy or not self.detected_tomatoes else "normal"
         )
+        self.motion_stop_button.configure(state="normal" if busy else "disabled")
         self.clear_markers_button.configure(
             state=(
                 "disabled"

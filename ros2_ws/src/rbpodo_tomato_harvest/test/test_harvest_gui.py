@@ -10,6 +10,7 @@ from rcl_interfaces.msg import ParameterType
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
+    GUI_PLANNER_CONFIG,
     HarvestGui,
     PLANNER_CONFIGS,
     adaptive_approach_axis_local,
@@ -22,6 +23,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_all_jobs,
     harvest_command,
     harvest_result_marker,
+    harvest_statistics_record,
     is_critical_process_output,
     scene_parameters,
     sweep_execution_duration_text,
@@ -68,6 +70,33 @@ def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
             "execution_duration_sec": 0.0,
         }
     ) == "-"
+
+
+def test_harvest_statistics_record_formats_final_batch_execution_result():
+    record = harvest_statistics_record(
+        case="전체",
+        tomato_index=2,
+        scene=(0.55, -0.1, 0.4, 30.0),
+        success=True,
+        verification=(7, 2, "ompl", "RRTConnect", "cartesian"),
+        execute_motion=True,
+        report={
+            "execution_attempted": True,
+            "execution_success": True,
+            "execution_duration_sec": 12.5,
+            "duration_sec": 1.25,
+            "stages": [],
+            "adaptive_grasp": {"applied_rotation_deg": 45.0},
+        },
+    )
+
+    assert record["case"] == "전체"
+    assert record["tomato"] == 2
+    assert record["success"] is True
+    assert record["execution_attempted"] is True
+    assert record["execution_duration_sec"] == pytest.approx(12.5)
+    assert record["display_stage_summary"] == "전체 단계 성공"
+    assert "최종 결과: 성공" in record["display_stage_detail"]
 
 
 def test_concise_plan_report_shows_only_stage_metrics_and_joint_ranges():
@@ -156,20 +185,9 @@ def test_generate_sweep_cases_randomizes_only_checked_axis():
 
     assert len(cases) == 9
     assert all(0.0 <= case[0] <= 0.02 for case in cases)
-    assert cases[0][0] == cases[1][0] == cases[2][0]
-    assert cases[3][0] == cases[4][0] == cases[5][0]
-    assert cases[6][0] == cases[7][0] == cases[8][0]
-    assert [case[1:] for case in cases] == [
-        (1.0, 2.0, 0.0),
-        (1.0, 2.0, 5.0),
-        (1.0, 2.0, 10.0),
-        (2.0, 2.0, 0.0),
-        (2.0, 2.0, 5.0),
-        (2.0, 2.0, 10.0),
-        (3.0, 2.0, 0.0),
-        (3.0, 2.0, 5.0),
-        (3.0, 2.0, 10.0),
-    ]
+    assert [case[1] for case in cases] == [1.0] * 3 + [2.0] * 3 + [3.0] * 3
+    assert [case[2] for case in cases] == [2.0] * 9
+    assert [case[3] for case in cases] == [0.0, 5.0, 10.0] * 3
 
 
 def test_random_axis_step_does_not_control_termination():
@@ -183,20 +201,38 @@ def test_random_axis_step_does_not_control_termination():
 
     assert len(cases) == 9
     assert all(0.0 <= case[0] <= 10.0 for case in cases)
-    assert cases[0][0] == cases[1][0] == cases[2][0]
-    assert cases[3][0] == cases[4][0] == cases[5][0]
-    assert cases[6][0] == cases[7][0] == cases[8][0]
+    assert [case[1] for case in cases] == [0.0] * 3 + [0.01] * 3 + [0.02] * 3
     assert [case[3] for case in cases] == [0.0, 5.0, 10.0] * 3
 
 
-def test_all_changing_axes_random_requires_nonrandom_termination_axis():
-    with pytest.raises(ValueError):
-        generate_sweep_cases(
-            start=(0.0, 0.0, 0.0, 0.0),
-            end=(1.0, 1.0, 0.0, 0.0),
-            step=(0.0, 0.0, 0.0, 0.0),
-            randomized=(True, True, False, False),
-        )
+def test_all_changing_xyz_random_generates_one_position_without_termination_axis():
+    cases = generate_sweep_cases(
+        start=(0.0, 0.0, 0.0, 0.0),
+        end=(1.0, 1.0, 0.0, 0.0),
+        step=(0.0, 0.0, 0.0, 0.0),
+        randomized=(True, True, False, False),
+        rng=random.Random(5),
+    )
+
+    assert len(cases) == 1
+    assert 0.0 <= cases[0][0] <= 1.0
+    assert 0.0 <= cases[0][1] <= 1.0
+    assert cases[0][2:] == (0.0, 0.0)
+
+
+def test_random_rotation_samples_once_for_each_deterministic_xyz_position():
+    cases = generate_sweep_cases(
+        start=(0.0, 0.0, 0.0, -90.0),
+        end=(0.0, 0.02, 0.0, 90.0),
+        step=(0.0, 0.01, 0.0, 0.0),
+        randomized=(False, False, False, True),
+        rng=random.Random(11),
+    )
+
+    assert len(cases) == 3
+    assert [case[1] for case in cases] == [0.0, 0.01, 0.02]
+    assert all(-90.0 <= case[3] <= 90.0 for case in cases)
+    assert len({case[3] for case in cases}) == 3
 
 
 def test_generate_sweep_cases_rejects_zero_step_for_changed_axis():
@@ -711,6 +747,84 @@ def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
     assert request.goal_info.stamp.nanosec == 0
 
 
+def test_stop_active_motion_cancels_individual_harvest_without_failure_result():
+    events = []
+
+    class RunningProcess:
+        terminated = False
+
+        def poll(self):
+            return None
+
+        def terminate(self):
+            self.terminated = True
+
+    process = RunningProcess()
+    gui = SimpleNamespace(
+        sweep_active=False,
+        batch_active=False,
+        harvest_process=process,
+        status=SimpleNamespace(
+            set=lambda message: events.append(("status", message))
+        ),
+        _append_log=lambda message: events.append(("log", message)),
+        _request_robot_motion_stop=lambda: events.append(("robot_stop",)),
+        _invalidate_plan=lambda: events.append(("invalidate",)),
+        _set_busy=lambda busy: events.append(("busy", busy)),
+    )
+
+    HarvestGui.stop_active_motion(gui)
+
+    assert gui.harvest_process is None
+    assert process.terminated
+    assert ("robot_stop",) in events
+    assert ("invalidate",) in events
+    assert ("busy", False) in events
+
+
+def test_stop_active_motion_finishes_batch_as_user_cancellation():
+    events = []
+    process = SimpleNamespace(
+        poll=lambda: None,
+        terminate=lambda: events.append(("terminate",)),
+    )
+    gui = SimpleNamespace(
+        sweep_active=False,
+        batch_active=True,
+        harvest_process=process,
+        status=SimpleNamespace(
+            set=lambda message: events.append(("status", message))
+        ),
+        _append_log=lambda message: events.append(("log", message)),
+        _request_robot_motion_stop=lambda: events.append(("robot_stop",)),
+        _invalidate_plan=lambda: events.append(("invalidate",)),
+        _finish_batch=lambda success, message: events.append(
+            ("finish", success, message)
+        ),
+    )
+
+    HarvestGui.stop_active_motion(gui)
+
+    assert gui.harvest_process is None
+    assert ("terminate",) in events
+    assert ("robot_stop",) in events
+    finish = next(event for event in events if event[0] == "finish")
+    assert finish[1] is False
+    assert "사용자" in finish[2]
+
+
+def test_stop_active_motion_delegates_automatic_test_stop():
+    events = []
+    gui = SimpleNamespace(
+        sweep_active=True,
+        stop_sweep=lambda: events.append(("stop_sweep",)),
+    )
+
+    HarvestGui.stop_active_motion(gui)
+
+    assert events == [("stop_sweep",)]
+
+
 def test_harvest_command_builds_execute_command():
     command = harvest_command(7, True, python_executable="python3")
 
@@ -754,6 +868,17 @@ def test_planner_options_include_cartesian_and_pipeline_modes():
         "RRTConnect",
         "planner",
     )
+
+
+def test_gui_planner_is_fixed_to_cartesian_first_mode():
+    gui = SimpleNamespace()
+
+    assert HarvestGui._selected_planner_config(gui) == (
+        "ompl",
+        "RRTConnect",
+        "cartesian",
+    )
+    assert GUI_PLANNER_CONFIG == PLANNER_CONFIGS["Cartesian"]
 
 
 @pytest.mark.parametrize(
@@ -1145,6 +1270,9 @@ def test_batch_plan_failure_marks_yellow_skips_execute_and_continues():
         _set_harvest_result=lambda index, success, **kwargs: events.append(
             ("marker", index, success)
         ),
+        _record_batch_statistics=lambda return_code, execute, verification: (
+            events.append(("statistics", return_code, execute, verification))
+        ),
         _invalidate_plan=lambda: events.append(("invalidate",)),
         _append_log=lambda message: events.append(("log", message)),
         _start_next_batch_job=lambda: events.append(("next",)),
@@ -1163,6 +1291,7 @@ def test_batch_plan_failure_marks_yellow_skips_execute_and_continues():
     assert gui.batch_skipped == 1
     assert list(gui.batch_jobs) == [(1, False), (1, True)]
     assert ("marker", 0, False) in events
+    assert any(event[0] == "statistics" for event in events)
     assert ("next",) in events
     assert not any(event[0] == "finish" for event in events)
 
@@ -1181,6 +1310,9 @@ def test_batch_execution_failure_marks_yellow_and_stops():
         _set_harvest_result=lambda index, success, **kwargs: events.append(
             ("marker", index, success)
         ),
+        _record_batch_statistics=lambda return_code, execute, verification: (
+            events.append(("statistics", return_code, execute, verification))
+        ),
         _finish_batch=lambda success, message: events.append(
             ("finish", success, message)
         ),
@@ -1194,7 +1326,40 @@ def test_batch_execution_failure_marks_yellow_and_stops():
     )
 
     assert ("marker", 0, False) in events
+    assert any(event[0] == "statistics" for event in events)
     assert any(event[0:2] == ("finish", False) for event in events)
+
+
+def test_record_batch_statistics_appends_one_final_tomato_row():
+    records = []
+    summaries = []
+    gui = SimpleNamespace(
+        batch_scene=(0.55, 0.1, 0.4, 60.0),
+        harvest_plan_report={
+            "execution_attempted": True,
+            "execution_success": True,
+            "execution_duration_sec": 9.25,
+            "duration_sec": 0.75,
+        },
+        sweep_completed=0,
+        batch_total=4,
+        sweep_summary=SimpleNamespace(set=summaries.append),
+        _update_sweep_statistics=records.append,
+    )
+
+    HarvestGui._record_batch_statistics(
+        gui,
+        return_code=0,
+        execute=True,
+        verification=(3, 1, "ompl", "RRTConnect", "cartesian"),
+    )
+
+    assert gui.sweep_completed == 1
+    assert len(records) == 1
+    assert records[0]["tomato"] == 1
+    assert records[0]["execute_motion"] is True
+    assert records[0]["execution_duration_sec"] == pytest.approx(9.25)
+    assert summaries == ["전체 연속 수확 — 토마토 1 / 4 결과 집계"]
 
 
 def test_scene_parameters_include_position_and_rotation():
