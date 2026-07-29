@@ -48,7 +48,7 @@
       <geometry>
         <!-- The CAD mesh is authored in millimetres. -->
         <mesh
-          filename="package://rbpodo_description/meshes/tomato_gripper/tomato_gripper.stl"
+          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_4.stl"
           scale="0.001 0.001 0.001" />
       </geometry>
       <material name="tomato_gripper_gray">
@@ -58,7 +58,7 @@
     <collision>
       <geometry>
         <mesh
-          filename="package://rbpodo_description/meshes/tomato_gripper/tomato_gripper.stl"
+          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_4.stl"
           scale="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -71,10 +71,9 @@
   </joint>
 
   <!--
-    Planning TCP at the distal center of the tomato gripper. The STL is in
-    millimetres and extends to x=-211.6 mm; y=10.75 mm is the center of the
-    rounded tip at that section. Keep this fixed joint separate so the TCP can
-    be calibrated without moving the visual/collision mesh.
+    Planning TCP at the distal center of the tomato gripper. Keep this fixed
+    joint separate so the TCP can be calibrated for the Ver.4 mesh without
+    moving the visual/collision mesh.
   -->
   <link name="$(arg prefix)tomato_gripper_tip" />
 

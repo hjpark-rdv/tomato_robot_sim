@@ -57,9 +57,23 @@ fake 카메라는 `tomato_0_tf`부터 `tomato_7_tf`까지 총 8개를 한 번에
 카메라 좌표로 변환해 응답과 배열 토픽으로 내보내고, `tomato_tf_generator`가
 각 토마토의 TF를 자동 생성한다.
 
+검출 배열은 원본 `tomato_N_tf` 번호와 무관하게 로봇 베이스 `link0` 좌표에서
+수확 순서로 다시 정렬된다. 가장 높은 토마토가 `detected_tomato_0_tf`가 되고,
+XY 거리가 기본 5 cm 이내인 토마토를 같은 세로 열로 묶어 Z가 높은 순서부터
+아래로 처리한다. 한 열을 모두 처리하면 마지막 토마토에서 XY 이동이 가장 작은
+다음 열로 이동해 다시 위에서 아래로 처리한다. 열 판정 거리는 launch 인자
+`vertical_column_xy_tolerance`로 조절할 수 있다.
+
 ```bash
 ros2 service call /fake_tomato_camera/detect_tomatoes \
   farmily_tomato_interfaces/srv/DetectTomatoes '{}'
+```
+
+예를 들어 세로 열 허용거리를 7 cm로 변경하려면 다음처럼 실행한다.
+
+```bash
+ros2 launch rbpodo_tomato_harvest fake_camera.launch.py \
+  vertical_column_xy_tolerance:=0.07
 ```
 
 검출 좌표의 입력 기준은 `d435_color_optical_frame`이지만, 새 TF를 생성할
