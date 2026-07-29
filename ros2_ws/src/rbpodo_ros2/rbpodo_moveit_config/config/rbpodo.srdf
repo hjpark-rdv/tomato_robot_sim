@@ -21,8 +21,8 @@
         <joint name="wrist2" value="-1.59037262001827066"/>
         <joint name="wrist3" value="1.54193097526451"/>
     </group_state>
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="fixed_joint" type="fixed" parent_frame="world" child_link="link0"/>
+    <!-- The physical lift is observed from /joint_states, not planned with the arm. -->
+    <passive_joint name="farmily_lift_height_joint"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="link0" link2="link1" reason="Adjacent"/>
     <disable_collisions link1="link0" link2="link2" reason="Never"/>
@@ -38,4 +38,6 @@
     <disable_collisions link1="link5" link2="link6" reason="Adjacent"/>
     <disable_collisions link1="link6" link2="tomato_gripper" reason="Adjacent"/>
     <disable_collisions link1="tomato_gripper" link2="d435_link" reason="Mounted"/>
+    <disable_collisions link1="farmily_lift" link2="farmily_lift_platform" reason="Adjacent"/>
+    <disable_collisions link1="farmily_lift_platform" link2="link0" reason="Mounted"/>
 </robot>

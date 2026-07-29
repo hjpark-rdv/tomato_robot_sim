@@ -108,6 +108,7 @@ def test_lift_height_callback_updates_realtime_display_and_calibration():
     values = {}
     gui = SimpleNamespace(
         lift_last_height_mm=None,
+        lift_simulation_mode=False,
         lift_calibration_active=False,
         lift_calibrated=False,
         lift_current_height=SimpleNamespace(
@@ -133,6 +134,7 @@ def test_lift_height_callback_updates_realtime_display_and_calibration():
 def test_lift_bottom_status_callback_enables_height_after_success():
     values = {}
     gui = SimpleNamespace(
+        lift_simulation_mode=False,
         lift_calibration_active=True,
         lift_calibrated=False,
         lift_calibration_status=SimpleNamespace(
@@ -156,6 +158,7 @@ def test_lift_stop_publishes_immediately_and_cancels_calibration_state():
     values = {}
     gui = SimpleNamespace(
         lift_node_online=True,
+        lift_simulation_mode=False,
         lift_stop_topic="/lift_control/stop",
         count_subscribers=lambda topic: 1,
         lift_calibration_active=True,
@@ -182,6 +185,34 @@ def test_lift_stop_publishes_immediately_and_cancels_calibration_state():
     assert values["calibration"] == "Calibration 중지됨"
     assert values["status"] == "리프트 이동 정지 명령 전송"
     assert values["updated"] is True
+
+
+def test_lift_simulation_height_moves_rviz_without_real_publisher():
+    published = []
+    values = {}
+    gui = SimpleNamespace(
+        lift_target_height=SimpleNamespace(get=lambda: "325.0"),
+        _parse_lift_height=HarvestGui._parse_lift_height,
+        lift_simulation_mode=True,
+        lift_simulated_move_height_topic=(
+            "/lift_simulation/control/move_height"
+        ),
+        count_subscribers=lambda topic: 1,
+        lift_simulated_move_height_publisher=SimpleNamespace(
+            publish=lambda message: published.append(message)
+        ),
+        _append_log=lambda message: values.__setitem__("log", message),
+        status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+    )
+
+    HarvestGui.move_lift_to_height(gui)
+
+    assert len(published) == 1
+    assert published[0].data == pytest.approx(325.0)
+    assert "실제 모터 명령 없음" in values["log"]
+    assert "실제 모터 미동작" in values["status"]
 
 
 def test_harvest_statistics_record_formats_final_batch_execution_result():

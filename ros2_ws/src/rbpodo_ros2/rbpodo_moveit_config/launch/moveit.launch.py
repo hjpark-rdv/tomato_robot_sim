@@ -148,7 +148,10 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "publish_workspace_collisions",
                 default_value="true",
-                description="Add the robot guard walls and base pedestal to the MoveIt planning scene",
+                description=(
+                    "Add the robot guard walls and base pedestal to the "
+                    "MoveIt planning scene"
+                ),
             ),
             DeclareLaunchArgument("workspace_left_wall_x", default_value="-0.55"),
             DeclareLaunchArgument("workspace_right_wall_x", default_value="0.65"),
@@ -322,14 +325,38 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    # Static TF
-    static_tf = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        name="static_transform_publisher",
-        output="log",
-        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "link0"],
+    farmily_lift_enabled = (
+        LaunchConfiguration("model_id").perform(context) == "rb5_farmily"
     )
+    if farmily_lift_enabled:
+        root_transform_nodes = [
+            Node(
+                package="rbpodo_tomato_harvest",
+                executable="lift_joint_state_publisher",
+                name="farmily_lift_joint_state_publisher",
+                output="screen",
+                parameters=[{"simulate_commands": fake_hardware_enabled}],
+            )
+        ]
+    else:
+        root_transform_nodes = [
+            Node(
+                package="tf2_ros",
+                executable="static_transform_publisher",
+                name="static_transform_publisher",
+                output="log",
+                arguments=[
+                    "0.0",
+                    "0.0",
+                    "0.0",
+                    "0.0",
+                    "0.0",
+                    "0.0",
+                    "world",
+                    "link0",
+                ],
+            )
+        ]
 
     # Publish TF
     robot_state_publisher = Node(
@@ -455,7 +482,7 @@ def launch_setup(context, *args, **kwargs):
 
     nodes_to_start = [
         rviz_node,
-        static_tf,
+        *root_transform_nodes,
         robot_state_publisher,
         run_move_group_node,
         ros2_control_node,

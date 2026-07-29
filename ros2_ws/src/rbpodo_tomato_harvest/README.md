@@ -161,6 +161,22 @@ ros2 launch farmily_uv_lift farmily_lift_controller_launch.py
 있다. Calibration 중 정지하면 해당 calibration은 실패 상태로 종료된다. 실제
 모터가 움직이는 명령이므로 CAN 연결과 주변 안전을 먼저 확인해야 한다.
 
+`rb5_farmily` 모델에서는 회색 리프트 프레임이 `world`에 고정되고, 초록색
+`farmily_lift_platform`과 `link0` 이하 로봇 전체가
+`farmily_lift_height_joint`를 따라 함께 승강한다. MoveIt launch가 함께 실행하는
+`lift_joint_state_publisher`는 `/lift_status/current_height`의 mm 값을 m로 변환해
+`/joint_states`에 발행한다. 리프트 노드를 실행하기 전에는 높이 `0 m`를 발행해
+기존 시뮬레이션과 같은 기준 자세를 유지한다. 승강판 기본 치수와 위치, 리프트
+최대 높이는 `rb5_farmily.urdf.xacro`의 `lift_platform_*`, `lift_max_height`
+인자로 조정할 수 있다.
+
+MoveIt을 `use_fake_hardware:=true`로 실행하면 lift joint bridge도 자동으로
+시뮬레이션 모드가 된다. 이때 GUI는 실제 리프트 launch와 Bottom calibration을
+비활성화하고, 목표 높이를 `/lift_simulation/control/move_height`에만 발행한다.
+따라서 `/lift_control/move_height`에는 명령이 전달되지 않으며 실제 모터는
+움직이지 않고 RViz의 초록색 승강판과 로봇 모델만 이동한다. 실제 모드에서는
+시뮬레이션 토픽을 사용하지 않고 기존 리프트 높이와 calibration 상태를 따른다.
+
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
 Plan부터 개별 수확, 전체 연속 수확 및 자동 테스트에 모두 전달된다. RB Speed

@@ -27,6 +27,8 @@ setup(
             "fake_camera_service = rbpodo_tomato_harvest.fake_camera_service:main",
             "harvest_gui = rbpodo_tomato_harvest.harvest_gui:main",
             "harvest_report = rbpodo_tomato_harvest.harvest_report:main",
+            "lift_joint_state_publisher = "
+            "rbpodo_tomato_harvest.lift_joint_state_publisher:main",
         ],
     },
 )

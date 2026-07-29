@@ -749,6 +749,22 @@ class HarvestGui(Node):
         )
         self.declare_parameter("lift_stop_topic", "/lift_control/stop")
         self.declare_parameter(
+            "lift_simulated_move_height_topic",
+            "/lift_simulation/control/move_height",
+        )
+        self.declare_parameter(
+            "lift_simulated_stop_topic",
+            "/lift_simulation/control/stop",
+        )
+        self.declare_parameter(
+            "lift_simulated_current_height_topic",
+            "/lift_simulation/status/current_height",
+        )
+        self.declare_parameter(
+            "lift_simulation_mode_topic",
+            "/lift_simulation/status/enabled",
+        )
+        self.declare_parameter(
             "lift_current_height_topic",
             "/lift_status/current_height",
         )
@@ -829,6 +845,18 @@ class HarvestGui(Node):
         self.lift_stop_topic = str(
             self.get_parameter("lift_stop_topic").value
         )
+        self.lift_simulated_move_height_topic = str(
+            self.get_parameter("lift_simulated_move_height_topic").value
+        )
+        self.lift_simulated_stop_topic = str(
+            self.get_parameter("lift_simulated_stop_topic").value
+        )
+        self.lift_simulated_current_height_topic = str(
+            self.get_parameter("lift_simulated_current_height_topic").value
+        )
+        self.lift_simulation_mode_topic = str(
+            self.get_parameter("lift_simulation_mode_topic").value
+        )
         self.lift_current_height_topic = str(
             self.get_parameter("lift_current_height_topic").value
         )
@@ -856,6 +884,16 @@ class HarvestGui(Node):
             self.lift_stop_topic,
             10,
         )
+        self.lift_simulated_move_height_publisher = self.create_publisher(
+            Float64,
+            self.lift_simulated_move_height_topic,
+            10,
+        )
+        self.lift_simulated_stop_publisher = self.create_publisher(
+            Bool,
+            self.lift_simulated_stop_topic,
+            10,
+        )
         self.lift_current_height_subscription = self.create_subscription(
             Float64,
             self.lift_current_height_topic,
@@ -866,6 +904,18 @@ class HarvestGui(Node):
             Bool,
             self.lift_bottom_status_topic,
             self._lift_bottom_status_callback,
+            10,
+        )
+        self.lift_simulated_height_subscription = self.create_subscription(
+            Float64,
+            self.lift_simulated_current_height_topic,
+            self._lift_simulated_height_callback,
+            10,
+        )
+        self.lift_simulation_mode_subscription = self.create_subscription(
+            Bool,
+            self.lift_simulation_mode_topic,
+            self._lift_simulation_mode_callback,
             10,
         )
         self.tf_buffer = Buffer()
@@ -925,6 +975,7 @@ class HarvestGui(Node):
         self.sweep_current_case = None
         self.lift_launch_process = None
         self.lift_node_online = False
+        self.lift_simulation_mode = False
         self.lift_calibration_active = False
         self.lift_calibrated = False
         self.lift_last_height_mm = None
@@ -1611,6 +1662,7 @@ class HarvestGui(Node):
 
     def _update_lift_controls(self) -> None:
         online = bool(self.lift_node_online)
+        simulation = bool(self.lift_simulation_mode)
         launch_running = (
             self.lift_launch_process is not None
             and self.lift_launch_process.poll() is None
@@ -1618,7 +1670,7 @@ class HarvestGui(Node):
         self.lift_launch_button.configure(
             state=(
                 "disabled"
-                if self.ui_busy or online or launch_running
+                if self.ui_busy or simulation or online or launch_running
                 else "normal"
             )
         )
@@ -1626,21 +1678,33 @@ class HarvestGui(Node):
             state=(
                 "normal"
                 if online
+                and not simulation
                 and not self.ui_busy
                 and not self.lift_calibration_active
                 else "disabled"
             )
         )
-        height_enabled = online and self.lift_calibrated and not self.ui_busy
+        height_enabled = (
+            simulation or (online and self.lift_calibrated)
+        ) and not self.ui_busy
         height_state = "normal" if height_enabled else "disabled"
         self.lift_target_height_entry.configure(state=height_state)
         self.lift_move_button.configure(state=height_state)
         self.lift_stop_button.configure(
-            state="normal" if online else "disabled"
+            state="normal" if simulation or online else "disabled"
         )
 
     def _refresh_lift_node_status(self) -> None:
         if self.closing:
+            return
+        if self.lift_simulation_mode:
+            self.lift_node_online = False
+            self.lift_node_status.set("시뮬레이션 (RViz)")
+            self.lift_calibration_active = False
+            self.lift_calibrated = True
+            self.lift_calibration_status.set("Calibration 불필요")
+            self._update_lift_controls()
+            self.root.after(500, self._refresh_lift_node_status)
             return
         was_online = self.lift_node_online
         self.lift_node_online = self._lift_node_is_running()
@@ -1677,6 +1741,8 @@ class HarvestGui(Node):
         self.root.after(500, self._refresh_lift_node_status)
 
     def _lift_current_height_callback(self, message: Float64) -> None:
+        if self.lift_simulation_mode:
+            return
         height_mm = float(message.data)
         if not math.isfinite(height_mm):
             return
@@ -1687,7 +1753,44 @@ class HarvestGui(Node):
             self.lift_calibration_status.set("Calibration 완료")
         self._update_lift_controls()
 
+    def _lift_simulated_height_callback(self, message: Float64) -> None:
+        if not self.lift_simulation_mode:
+            return
+        height_mm = float(message.data)
+        if not math.isfinite(height_mm):
+            return
+        self.lift_last_height_mm = height_mm
+        self.lift_current_height.set(f"{height_mm:.2f} mm")
+        self._update_lift_controls()
+
+    def _lift_simulation_mode_callback(self, message: Bool) -> None:
+        simulation = bool(message.data)
+        if simulation == self.lift_simulation_mode:
+            return
+        self.lift_simulation_mode = simulation
+        if simulation:
+            self.lift_node_online = False
+            self.lift_calibration_active = False
+            self.lift_calibrated = True
+            self.lift_node_status.set("시뮬레이션 (RViz)")
+            self.lift_calibration_status.set("Calibration 불필요")
+            self._append_log(
+                "[리프트] 시뮬레이션 모드: 실제 리프트 명령 없이 "
+                "RViz 모델 높이만 변경합니다."
+            )
+        else:
+            self.lift_calibrated = False
+            self.lift_current_height.set("-- mm")
+            self.lift_calibration_status.set("Bottom calibration 필요")
+            self._append_log(
+                "[리프트] 실제 모드: lift_controller_node와 Bottom "
+                "calibration이 필요합니다."
+            )
+        self._update_lift_controls()
+
     def _lift_bottom_status_callback(self, message: Bool) -> None:
+        if self.lift_simulation_mode:
+            return
         self.lift_calibration_active = False
         self.lift_calibrated = bool(message.data)
         if message.data:
@@ -1704,6 +1807,12 @@ class HarvestGui(Node):
         self._update_lift_controls()
 
     def launch_lift_node(self) -> None:
+        if self.lift_simulation_mode:
+            self._append_log(
+                "[리프트] 시뮬레이션에서는 실제 리프트 노드를 실행하지 "
+                "않습니다."
+            )
+            return
         if self._lift_node_is_running():
             self.lift_node_online = True
             self.lift_node_status.set("실행 중")
@@ -1758,6 +1867,12 @@ class HarvestGui(Node):
         self.process_queue.put(("lift_done", return_code, process))
 
     def start_lift_bottom_calibration(self) -> None:
+        if self.lift_simulation_mode:
+            self._append_log(
+                "[리프트] 시뮬레이션에서는 Bottom calibration이 필요하지 "
+                "않습니다."
+            )
+            return
         if not self.lift_node_online or self.count_subscribers(
             self.lift_bottom_calibration_topic
         ) < 1:
@@ -1803,6 +1918,26 @@ class HarvestGui(Node):
         except ValueError as error:
             messagebox.showerror("리프트 높이 입력 오류", str(error))
             return
+        if self.lift_simulation_mode:
+            if self.count_subscribers(
+                self.lift_simulated_move_height_topic
+            ) < 1:
+                messagebox.showerror(
+                    "리프트 시뮬레이션 연결 오류",
+                    "RViz lift joint 시뮬레이터가 실행 중이지 않습니다.",
+                )
+                return
+            message = Float64()
+            message.data = height_mm
+            self.lift_simulated_move_height_publisher.publish(message)
+            self._append_log(
+                f"[리프트 시뮬레이션] RViz 목표 높이={height_mm:.2f} mm "
+                "(실제 모터 명령 없음)"
+            )
+            self.status.set(
+                f"RViz 리프트 높이 {height_mm:.2f} mm 적용 — 실제 모터 미동작"
+            )
+            return
         if not self.lift_node_online or not self.lift_calibrated:
             messagebox.showerror(
                 "리프트 이동 불가",
@@ -1832,8 +1967,17 @@ class HarvestGui(Node):
 
     def stop_lift_motion(self) -> None:
         """Stop lift motion without waiting for a confirmation dialog."""
-        if not self.lift_node_online or self.count_subscribers(
-            self.lift_stop_topic
+        simulation = self.lift_simulation_mode
+        topic = (
+            self.lift_simulated_stop_topic if simulation else self.lift_stop_topic
+        )
+        publisher = (
+            self.lift_simulated_stop_publisher
+            if simulation
+            else self.lift_stop_publisher
+        )
+        if (not simulation and not self.lift_node_online) or self.count_subscribers(
+            topic
         ) < 1:
             messagebox.showerror(
                 "리프트 연결 오류",
@@ -1843,16 +1987,24 @@ class HarvestGui(Node):
         calibration_was_active = self.lift_calibration_active
         message = Bool()
         message.data = True
-        self.lift_stop_publisher.publish(message)
+        publisher.publish(message)
         self.lift_calibration_active = False
-        if calibration_was_active:
+        if calibration_was_active and not simulation:
             self.lift_calibrated = False
             self.lift_calibration_status.set("Calibration 중지됨")
         self._update_lift_controls()
         self._append_log(
-            f"[리프트] 이동 정지 명령 발행: {self.lift_stop_topic}"
+            (
+                "[리프트 시뮬레이션] 현재 RViz 높이 유지"
+                if simulation
+                else f"[리프트] 이동 정지 명령 발행: {topic}"
+            )
         )
-        self.status.set("리프트 이동 정지 명령 전송")
+        self.status.set(
+            "RViz 리프트 높이 유지 — 실제 모터 미동작"
+            if simulation
+            else "리프트 이동 정지 명령 전송"
+        )
 
     @staticmethod
     def _percent_to_scale(value: str, label: str) -> float:

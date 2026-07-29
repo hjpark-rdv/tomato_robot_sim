@@ -12,13 +12,25 @@
   <xacro:arg name="d435_mount_pitch" default="0.0" />
   <xacro:arg name="d435_mount_yaw" default="3.141592" />
 
-  <!-- Farmily lift pose relative to the RB5 base frame (link0). -->
+  <!-- Farmily lift pose in the stationary world frame. -->
   <xacro:arg name="lift_mount_x" default="0.0" />
   <xacro:arg name="lift_mount_y" default="0.6" />
   <xacro:arg name="lift_mount_z" default="-0.35" />
   <xacro:arg name="lift_mount_roll" default="1.57" />
   <xacro:arg name="lift_mount_pitch" default="0.0" />
   <xacro:arg name="lift_mount_yaw" default="-1.57" />
+
+  <!-- Moving green platform. Its link frame stays directly below link0. -->
+  <xacro:arg name="lift_platform_size_x" default="0.30" />
+  <xacro:arg name="lift_platform_size_y" default="0.95" />
+  <xacro:arg name="lift_platform_thickness" default="0.025" />
+  <xacro:arg name="lift_platform_visual_x" default="0.0" />
+  <xacro:arg name="lift_platform_visual_y" default="0.30" />
+  <xacro:arg name="lift_min_height" default="0.0" />
+  <xacro:arg name="lift_max_height" default="1.20" />
+
+  <!-- The model is rooted in world so the lift can move the complete RB5. -->
+  <link name="world" />
 
   <!-- Farmily-specific links and joints belong below this line. -->
   <link name="$(arg prefix)farmily_lift">
@@ -35,12 +47,55 @@
     </visual>
   </link>
 
-  <joint name="$(arg prefix)farmily_lift_joint" type="fixed">
+  <joint name="$(arg prefix)farmily_lift_fixed_joint" type="fixed">
     <origin
       xyz="$(arg lift_mount_x) $(arg lift_mount_y) $(arg lift_mount_z)"
       rpy="$(arg lift_mount_roll) $(arg lift_mount_pitch) $(arg lift_mount_yaw)" />
-    <parent link="$(arg prefix)link0" />
+    <parent link="world" />
     <child link="$(arg prefix)farmily_lift" />
+  </joint>
+
+  <link name="$(arg prefix)farmily_lift_platform">
+    <visual>
+      <origin
+        xyz="$(arg lift_platform_visual_x) $(arg lift_platform_visual_y) 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box
+          size="$(arg lift_platform_size_x) $(arg lift_platform_size_y) $(arg lift_platform_thickness)" />
+      </geometry>
+      <material name="farmily_lift_platform_green">
+        <color rgba="0.12 0.68 0.06 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="$(arg lift_platform_visual_x) $(arg lift_platform_visual_y) 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box
+          size="$(arg lift_platform_size_x) $(arg lift_platform_size_y) $(arg lift_platform_thickness)" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- The joint value is the physical Bottom-relative lift height in metres. -->
+  <joint name="$(arg prefix)farmily_lift_height_joint" type="prismatic">
+    <origin xyz="0 0 ${-0.5 * float($(arg lift_platform_thickness))}" rpy="0 0 0" />
+    <parent link="world" />
+    <child link="$(arg prefix)farmily_lift_platform" />
+    <axis xyz="0 0 1" />
+    <limit
+      lower="$(arg lift_min_height)"
+      upper="$(arg lift_max_height)"
+      effort="2000.0"
+      velocity="0.25" />
+  </joint>
+
+  <joint name="$(arg prefix)farmily_lift_robot_mount_joint" type="fixed">
+    <origin xyz="0 0 ${0.5 * float($(arg lift_platform_thickness))}" rpy="0 0 0" />
+    <parent link="$(arg prefix)farmily_lift_platform" />
+    <child link="$(arg prefix)link0" />
   </joint>
 
   <link name="$(arg prefix)tomato_gripper">
