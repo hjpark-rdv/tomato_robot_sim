@@ -178,8 +178,8 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "tomato_parent_frame",
-                default_value="link0",
-                description="Fixed robot-base parent for detected tomato TFs",
+                default_value="world",
+                description="World-fixed parent for detected tomato TFs",
             ),
             DeclareLaunchArgument(
                 "auto_create_detected_tomato_tf",
@@ -417,7 +417,7 @@ def launch_setup(context, *args, **kwargs):
         name="tomato_scene_node",
         parameters=[
             {
-                "base_frame": "link0",
+                "base_frame": "world",
                 "world_frame": "world",
                 "floor_frame": "tomato_floor_tf",
                 "tomato_frame": "tomato_tf",

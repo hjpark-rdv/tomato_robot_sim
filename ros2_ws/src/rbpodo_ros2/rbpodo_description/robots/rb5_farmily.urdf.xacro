@@ -27,7 +27,7 @@
   <xacro:arg name="lift_platform_visual_x" default="0.0" />
   <xacro:arg name="lift_platform_visual_y" default="0.30" />
   <xacro:arg name="lift_min_height" default="0.0" />
-  <xacro:arg name="lift_max_height" default="1.20" />
+  <xacro:arg name="lift_max_height" default="0.75" />
 
   <!-- The model is rooted in world so the lift can move the complete RB5. -->
   <link name="world" />

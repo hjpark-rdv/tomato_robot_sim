@@ -48,6 +48,10 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             "return_to_pick_ready",
             value=bool(request.get("return_to_pick_ready", True)),
         ),
+        Parameter(
+            "retreat_after_harvest",
+            value=bool(request.get("retreat_after_harvest", False)),
+        ),
         Parameter("publish_display_trajectory", value=False),
     ]
     results = node.set_parameters(parameters)

@@ -9,7 +9,7 @@ from std_msgs.msg import Bool, Float64
 def height_mm_to_joint_m(
     height_mm: float,
     minimum_m: float = 0.0,
-    maximum_m: float = 1.20,
+    maximum_m: float = 0.75,
 ) -> float:
     """Convert the physical Bottom-relative height to a bounded URDF joint."""
     height_m = float(height_mm) / 1000.0
@@ -57,7 +57,7 @@ class LiftJointStatePublisher(Node):
         )
         self.declare_parameter("initial_height_m", 0.0)
         self.declare_parameter("minimum_height_m", 0.0)
-        self.declare_parameter("maximum_height_m", 1.20)
+        self.declare_parameter("maximum_height_m", 0.75)
         self.declare_parameter("publish_rate_hz", 20.0)
         self.declare_parameter("simulate_commands", False)
 

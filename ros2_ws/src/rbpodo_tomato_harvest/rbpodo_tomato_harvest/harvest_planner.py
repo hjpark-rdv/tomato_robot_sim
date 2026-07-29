@@ -1,3 +1,4 @@
+import copy
 import math
 import time
 from dataclasses import dataclass
@@ -119,6 +120,7 @@ class HarvestMotionPlan:
     after_wait_trajectory: object
     return_pick_ready_trajectory: object
     display_start_state: RobotState
+    outward_retreat_trajectory: object = ()
 
 
 def make_centered_joint_path_constraints(
@@ -648,6 +650,16 @@ class CartesianHarvestPlanner(Node):
             "pick_ready_joint_positions",
             default_pick_ready_joint_positions(pick_ready_joint_names),
         )
+        self.declare_parameter(
+            "display_passive_joint_names",
+            ["farmily_lift_height_joint"],
+        )
+        self.declare_parameter(
+            "dynamic_base_joint_name",
+            "farmily_lift_height_joint",
+        )
+        self.declare_parameter("dynamic_base_parent_frame", "world")
+        self.declare_parameter("dynamic_base_sync_timeout_sec", 1.0)
         self.declare_parameter("pick_ready_joint_tolerance", 0.005)
         self.declare_parameter("pick_ready_planning_time", 10.0)
         self.declare_parameter("pick_ready_planning_attempts", 5)
@@ -663,6 +675,8 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("continuous_arc_max_clearance", 0.25)
         self.declare_parameter("continuous_arc_waypoint_count", 7)
         self.declare_parameter("return_to_pick_ready", True)
+        self.declare_parameter("retreat_after_harvest", False)
+        self.declare_parameter("lift_retreat_clearance", 0.12)
         self.declare_parameter("joint_planning_pipeline_id", "ompl")
         self.declare_parameter("joint_planner_id", "RRTConnect")
         self.declare_parameter(
@@ -714,6 +728,8 @@ class CartesianHarvestPlanner(Node):
             DisplayTrajectory, "/display_planned_path", 10
         )
         self._latest_joint_positions: dict[str, float] = {}
+        self._joint_state_received_monotonic: dict[str, float] = {}
+        self._joint_state_stamp_nanoseconds: dict[str, int] = {}
         self._plan_start_joint_positions: dict[str, float] = {}
         self.joint_state_subscription = self.create_subscription(
             JointState,
@@ -725,9 +741,103 @@ class CartesianHarvestPlanner(Node):
         self._trajectory_range_records = []
 
     def _joint_state_callback(self, message: JointState) -> None:
+        received_monotonic = time.monotonic()
+        stamp_nanoseconds = (
+            int(message.header.stamp.sec) * 1_000_000_000
+            + int(message.header.stamp.nanosec)
+        )
         for name, position in zip(message.name, message.position):
             if math.isfinite(position):
-                self._latest_joint_positions[str(name)] = float(position)
+                joint_name = str(name)
+                self._latest_joint_positions[joint_name] = float(position)
+                self._joint_state_received_monotonic[joint_name] = (
+                    received_monotonic
+                )
+                self._joint_state_stamp_nanoseconds[joint_name] = (
+                    stamp_nanoseconds
+                )
+
+    def _synchronize_dynamic_base_transform(self) -> bool:
+        """Wait for a fresh lift joint sample and its resulting base TF.
+
+        The persistent automatic-test worker does not spin while waiting for its
+        next stdin request.  Without this barrier its TF buffer can still contain
+        the previous lift height even though the GUI has observed that the lift
+        already reached the next target.
+        """
+        joint_name = str(
+            self.get_parameter("dynamic_base_joint_name").value
+        ).strip()
+        if not joint_name:
+            return True
+        parent_frame = str(
+            self.get_parameter("dynamic_base_parent_frame").value
+        ).strip()
+        timeout_sec = max(
+            0.1,
+            float(
+                self.get_parameter("dynamic_base_sync_timeout_sec").value
+            ),
+        )
+        requested_monotonic = time.monotonic()
+        deadline = requested_monotonic + timeout_sec
+
+        while rclpy.ok() and time.monotonic() < deadline:
+            received = self._joint_state_received_monotonic.get(
+                joint_name, 0.0
+            )
+            if received >= requested_monotonic:
+                break
+            rclpy.spin_once(self, timeout_sec=0.02)
+        else:
+            self.get_logger().error(
+                "동적 베이스 동기화 실패: 새 리프트 관절 상태를 "
+                f"{timeout_sec:.1f}초 안에 받지 못했습니다 ({joint_name})."
+            )
+            return False
+
+        joint_stamp = self._joint_state_stamp_nanoseconds.get(joint_name, 0)
+        while rclpy.ok() and time.monotonic() < deadline:
+            rclpy.spin_once(self, timeout_sec=0.02)
+            try:
+                transform = self.tf_buffer.lookup_transform(
+                    parent_frame,
+                    self.base_frame,
+                    Time(),
+                )
+            except TransformException:
+                continue
+            tf_stamp = (
+                int(transform.header.stamp.sec) * 1_000_000_000
+                + int(transform.header.stamp.nanosec)
+            )
+            if joint_stamp <= 0 or tf_stamp >= joint_stamp:
+                lift_position = self._latest_joint_positions.get(joint_name)
+                self.last_plan_report["dynamic_base_sync"] = {
+                    "joint_name": joint_name,
+                    "joint_position_m": lift_position,
+                    "parent_frame": parent_frame,
+                    "base_frame": self.base_frame,
+                    "base_height_m": float(
+                        transform.transform.translation.z
+                    ),
+                    "joint_stamp_nanoseconds": joint_stamp,
+                    "tf_stamp_nanoseconds": tf_stamp,
+                }
+                self.get_logger().info(
+                    "동적 베이스 동기화 완료: "
+                    f"{joint_name}={lift_position:.4f}m, "
+                    f"{parent_frame}->{self.base_frame} Z="
+                    f"{transform.transform.translation.z:.4f}m"
+                )
+                return True
+
+        self.get_logger().error(
+            "동적 베이스 동기화 실패: 새 리프트 관절 상태 이후의 "
+            f"{parent_frame}->{self.base_frame} TF를 "
+            f"{timeout_sec:.1f}초 안에 받지 못했습니다."
+        )
+        return False
 
     def _wait_for_current_joint_positions(
         self,
@@ -748,6 +858,42 @@ class CartesianHarvestPlanner(Node):
             if name in self._latest_joint_positions
         }
 
+    def _complete_display_start_state(
+        self,
+        start_state: RobotState,
+    ) -> RobotState:
+        """Keep passive joints at their live positions in RViz trajectory playback.
+
+        MoveIt arm trajectories contain only the six planning-group joints.  RViz
+        otherwise initializes an omitted lift joint at zero while playing the
+        trajectory, which makes a correctly planned lifted harvest look as if it
+        were executed below the tomato.
+        """
+        state = copy.deepcopy(start_state)
+        names = [str(name) for name in state.joint_state.name]
+        positions = [float(value) for value in state.joint_state.position]
+        current_positions = dict(self._latest_joint_positions)
+        required_names = [
+            str(name)
+            for name in self.get_parameter("pick_ready_joint_names").value
+        ]
+        passive_names = [
+            str(name)
+            for name in self.get_parameter("display_passive_joint_names").value
+        ]
+
+        for name in (*required_names, *passive_names):
+            if name in names or name not in current_positions:
+                continue
+            names.append(name)
+            positions.append(float(current_positions[name]))
+
+        state.joint_state.name = names
+        state.joint_state.position = positions
+        if all(name in names for name in (*required_names, *passive_names)):
+            state.is_diff = False
+        return state
+
     def _begin_plan_report(self) -> None:
         self._trajectory_range_records = []
         self._plan_start_joint_positions = (
@@ -766,6 +912,9 @@ class CartesianHarvestPlanner(Node):
             ),
             "return_to_pick_ready": bool(
                 self.get_parameter("return_to_pick_ready").value
+            ),
+            "retreat_after_harvest": bool(
+                self.get_parameter("retreat_after_harvest").value
             ),
             "start_joint_positions": dict(
                 self._plan_start_joint_positions
@@ -1834,6 +1983,16 @@ class CartesianHarvestPlanner(Node):
 
     def plan(self):
         self._begin_plan_report()
+        if not self._synchronize_dynamic_base_transform():
+            self._record_plan_stage(
+                "DYNAMIC_BASE_TF_SYNC",
+                "tf",
+                False,
+                0.0,
+                "FRESH_LIFT_TF_NOT_RECEIVED",
+            )
+            self._finish_plan_report(False)
+            return None
         try:
             result = self._plan_impl()
         except Exception as error:
@@ -2083,11 +2242,61 @@ class CartesianHarvestPlanner(Node):
         if after_wait_trajectory is None:
             return None
 
+        after_wait_end = self._trajectory_end_state(after_wait_trajectory)
+        retreat_after_harvest = bool(
+            self.get_parameter("retreat_after_harvest").value
+        )
+        outward_retreat_trajectory = ()
+        if retreat_after_harvest:
+            clearance = max(
+                0.0,
+                float(self.get_parameter("lift_retreat_clearance").value),
+            )
+            retreat_tip_pose = Pose()
+            retreat_tip_pose.position.x = float(
+                tip_motion.after_wait_pose.position.x
+                + geometry.outward_axis[0] * clearance
+            )
+            retreat_tip_pose.position.y = float(
+                tip_motion.after_wait_pose.position.y
+                + geometry.outward_axis[1] * clearance
+            )
+            retreat_tip_pose.position.z = float(
+                tip_motion.after_wait_pose.position.z
+                + geometry.outward_axis[2] * clearance
+            )
+            retreat_tip_pose.orientation = tip_motion.after_wait_pose.orientation
+            outward_retreat_trajectory = self._plan_cartesian_with_ompl_fallback(
+                [as_planning_pose(retreat_tip_pose)],
+                after_wait_end,
+                "Lift-safe outward retreat",
+                pregrasp=False,
+            )
+            if outward_retreat_trajectory is None:
+                return None
+            self.last_plan_report["lift_safe_retreat"] = {
+                "clearance_m": clearance,
+                "outward_axis": [
+                    float(value) for value in geometry.outward_axis
+                ],
+            }
+
         return_to_pick_ready = bool(
             self.get_parameter("return_to_pick_ready").value
         )
+        if retreat_after_harvest and return_to_pick_ready:
+            self.get_logger().error(
+                "retreat_after_harvest and return_to_pick_ready cannot both be true"
+            )
+            self._record_plan_stage(
+                "LIFT_SAFE_RETREAT_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "RETREAT_AND_RETURN_BOTH_ENABLED",
+            )
+            return None
         if return_to_pick_ready:
-            after_wait_end = self._trajectory_end_state(after_wait_trajectory)
             return_pick_ready_plan = self._plan_pick_ready(
                 after_wait_end,
                 label="RETURN_PICK_READY",
@@ -2098,11 +2307,15 @@ class CartesianHarvestPlanner(Node):
         else:
             return_pick_ready_trajectory = ()
 
+        display_start_state = self._complete_display_start_state(
+            display_start_state
+        )
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
             preapproach_trajectory=preapproach_trajectory,
             approach_trajectory=approach_trajectory,
             after_wait_trajectory=after_wait_trajectory,
+            outward_retreat_trajectory=outward_retreat_trajectory,
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
         )
@@ -2112,6 +2325,7 @@ class CartesianHarvestPlanner(Node):
             preapproach_trajectory,
             approach_trajectory,
             after_wait_trajectory,
+            outward_retreat_trajectory,
             return_pick_ready_trajectory,
         ):
             if isinstance(segment, (list, tuple)):
@@ -2124,11 +2338,12 @@ class CartesianHarvestPlanner(Node):
             display.trajectory_start = display_start_state
             display.trajectory.extend(planned_trajectories)
             self.display_publisher.publish(display)
-        finish_label = (
-            "constrained OMPL RETURN_PICK_READY"
-            if return_to_pick_ready
-            else "keep post-wait pose"
-        )
+        if return_to_pick_ready:
+            finish_label = "constrained OMPL RETURN_PICK_READY"
+        elif retreat_after_harvest:
+            finish_label = "lift-safe outward retreat"
+        else:
+            finish_label = "keep post-wait pose"
         if continuous_transition:
             start_label = (
                 "continuous outward arc pre-grasp"
@@ -2186,6 +2401,16 @@ class CartesianHarvestPlanner(Node):
         ):
             return False
 
+        if plan.outward_retreat_trajectory:
+            if not self._execute_trajectory_sequence(
+                plan.outward_retreat_trajectory,
+                "Lift-safe outward retreat",
+            ):
+                return False
+            self.get_logger().info(
+                "Lift-safe outward retreat complete; the lift may now move."
+            )
+
         if plan.return_pick_ready_trajectory:
             if not self._execute_trajectory_group(
                 plan.return_pick_ready_trajectory,
@@ -2194,6 +2419,11 @@ class CartesianHarvestPlanner(Node):
                 return False
             self.get_logger().info(
                 "Harvest sequence complete; robot returned to PICK_READY."
+            )
+        elif plan.outward_retreat_trajectory:
+            self.get_logger().info(
+                "Harvest sequence complete; robot is holding the lift-safe "
+                "outward retreat pose."
             )
         else:
             self.get_logger().info(

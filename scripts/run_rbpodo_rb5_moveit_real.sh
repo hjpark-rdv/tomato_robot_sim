@@ -11,7 +11,7 @@ if [[ -s "${last_ip_file}" ]]; then
   default_robot_ip="$(<"${last_ip_file}")"
 fi
 
-# Robot workspace collision dimensions in metres, relative to link0.
+# Robot workspace collision dimensions in metres, fixed in world.
 # Keep these values aligned with run_rbpodo_rb5_moveit.sh so simulation and
 # real-hardware planning use the same guard geometry.
 wall_enabled=false

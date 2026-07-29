@@ -5,7 +5,7 @@ set -eo pipefail
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ws_dir="${repo_dir}/../ros2_ws"
 
-# Robot workspace collision dimensions in metres, relative to link0.
+# Robot workspace collision dimensions in metres, fixed in world.
 # The vertical walls start at z=-0.05 and meet the bottom of the ceiling.
 wall_enabled=false
 wall_left_x="-0.45"

@@ -483,6 +483,7 @@ def harvest_command(
     harvest_wait_sec: float = 2.0,
     continuous_transition: bool = False,
     return_to_pick_ready: bool = True,
+    retreat_after_harvest: bool = False,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -538,7 +539,61 @@ def harvest_command(
         "-p",
         "return_to_pick_ready:="
         f"{'true' if return_to_pick_ready else 'false'}",
+        "-p",
+        "retreat_after_harvest:="
+        f"{'true' if retreat_after_harvest else 'false'}",
     ]
+
+
+def lift_harvest_target_height_mm(
+    tomato_world_z_m: float,
+    offset_m: float = 0.40,
+    minimum_mm: float = 0.0,
+    maximum_mm: float = 750.0,
+) -> float:
+    """Return the bounded Bottom-relative lift target for one tomato."""
+    values = (
+        float(tomato_world_z_m),
+        float(offset_m),
+        float(minimum_mm),
+        float(maximum_mm),
+    )
+    if not all(math.isfinite(value) for value in values):
+        raise ValueError("lift harvest height inputs must be finite")
+    tomato_z, offset, lower, upper = values
+    if offset < 0.0:
+        raise ValueError("lift harvest offset must be zero or greater")
+    if upper < lower:
+        raise ValueError("lift harvest maximum must not be below minimum")
+    requested_mm = (tomato_z - offset) * 1000.0
+    return max(lower, min(upper, requested_mm))
+
+
+def transformed_point_xyz(point, transform) -> tuple[float, float, float]:
+    """Transform a point with a geometry_msgs TransformStamped value."""
+    x = float(point.x)
+    y = float(point.y)
+    z = float(point.z)
+    translation = transform.transform.translation
+    rotation = transform.transform.rotation
+    qx = float(rotation.x)
+    qy = float(rotation.y)
+    qz = float(rotation.z)
+    qw = float(rotation.w)
+    return (
+        float(translation.x)
+        + (1 - 2 * (qy * qy + qz * qz)) * x
+        + 2 * (qx * qy - qz * qw) * y
+        + 2 * (qx * qz + qy * qw) * z,
+        float(translation.y)
+        + 2 * (qx * qy + qz * qw) * x
+        + (1 - 2 * (qx * qx + qz * qz)) * y
+        + 2 * (qy * qz - qx * qw) * z,
+        float(translation.z)
+        + 2 * (qx * qz - qy * qw) * x
+        + 2 * (qy * qz + qx * qw) * y
+        + (1 - 2 * (qx * qx + qy * qy)) * z,
+    )
 
 
 def harvest_all_jobs(tomato_count: int) -> list[tuple[int, bool]]:
@@ -731,7 +786,7 @@ class HarvestGui(Node):
         self.declare_parameter(
             "result_markers_topic", "/harvest_result_markers"
         )
-        self.declare_parameter("result_marker_parent_frame", "link0")
+        self.declare_parameter("result_marker_parent_frame", "world")
         self.declare_parameter("result_arrow_stem_margin", 0.008)
         self.declare_parameter("result_arrow_minimum_length", 0.015)
         self.declare_parameter(
@@ -777,6 +832,13 @@ class HarvestGui(Node):
             "lift_launch_file",
             "farmily_lift_controller_launch.py",
         )
+        self.declare_parameter("lift_harvest_world_frame", "world")
+        self.declare_parameter("lift_harvest_offset_m", 0.40)
+        self.declare_parameter("lift_minimum_height_mm", 0.0)
+        self.declare_parameter("lift_maximum_height_mm", 750.0)
+        self.declare_parameter("lift_target_tolerance_mm", 1.0)
+        self.declare_parameter("lift_move_timeout_sec", 60.0)
+        self.declare_parameter("detected_tf_sync_tolerance_m", 0.003)
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -869,6 +931,27 @@ class HarvestGui(Node):
         self.lift_launch_file = str(
             self.get_parameter("lift_launch_file").value
         )
+        self.lift_harvest_world_frame = str(
+            self.get_parameter("lift_harvest_world_frame").value
+        )
+        self.lift_harvest_offset_m = float(
+            self.get_parameter("lift_harvest_offset_m").value
+        )
+        self.lift_minimum_height_mm = float(
+            self.get_parameter("lift_minimum_height_mm").value
+        )
+        self.lift_maximum_height_mm = float(
+            self.get_parameter("lift_maximum_height_mm").value
+        )
+        self.lift_target_tolerance_mm = float(
+            self.get_parameter("lift_target_tolerance_mm").value
+        )
+        self.lift_move_timeout_sec = float(
+            self.get_parameter("lift_move_timeout_sec").value
+        )
+        self.detected_tf_sync_tolerance_m = float(
+            self.get_parameter("detected_tf_sync_tolerance_m").value
+        )
         self.lift_bottom_calibration_publisher = self.create_publisher(
             Bool,
             self.lift_bottom_calibration_topic,
@@ -924,6 +1007,7 @@ class HarvestGui(Node):
         self.camera_service = camera_service
         self.scene_node = scene_node
         self.detected_tomatoes = []
+        self.detected_tomato_expected_world_positions = {}
         self.detection_signature = None
         self.detection_generation = 0
         self.verified_plan = None
@@ -940,6 +1024,7 @@ class HarvestGui(Node):
         self.batch_planner = None
         self.batch_harvest_wait_sec = 2.0
         self.batch_continuous_mode = False
+        self.batch_lift_harvest_mode = False
         self.batch_scene = (0.0, 0.0, 0.0, 0.0)
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
@@ -964,6 +1049,7 @@ class HarvestGui(Node):
         self.sweep_execute_motion = False
         self.sweep_harvest_wait_sec = 2.0
         self.sweep_continuous_mode = False
+        self.sweep_lift_harvest_mode = False
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -979,6 +1065,7 @@ class HarvestGui(Node):
         self.lift_calibration_active = False
         self.lift_calibrated = False
         self.lift_last_height_mm = None
+        self.lift_harvest_pending = None
         self.ui_busy = False
         self.closing = False
 
@@ -1009,6 +1096,7 @@ class HarvestGui(Node):
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
+        self.lift_harvest_var = tk.BooleanVar(value=False)
         self.lift_node_status = tk.StringVar(value="노드 확인 중")
         self.lift_current_height = tk.StringVar(value="-- mm")
         self.lift_target_height = tk.StringVar(value="10.0")
@@ -1232,13 +1320,26 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
+        self.lift_harvest_checkbox = ttk.Checkbutton(
+            motion_frame,
+            text="리프트 수확: 토마토보다 40cm 낮게 (0~750mm)",
+            variable=self.lift_harvest_var,
+            command=self._lift_harvest_mode_changed,
+        )
+        self.lift_harvest_checkbox.grid(
+            row=4,
+            column=0,
+            columnspan=4,
+            sticky="w",
+            pady=(8, 0),
+        )
         ttk.Label(
             motion_frame,
             text=(
                 "개별 실제 실행은 Plan-only 성공 후 활성화됩니다. "
                 "전체 수확은 토마토마다 Plan-only 후 실제 실행합니다."
             ),
-        ).grid(row=4, column=0, columnspan=4, sticky="w", pady=(8, 0))
+        ).grid(row=5, column=0, columnspan=4, sticky="w", pady=(8, 0))
 
         scene_frame = ttk.LabelFrame(
             top_controls, text="토마토 줄기 위치 / 회전", padding=8
@@ -1901,19 +2002,259 @@ class HarvestGui(Node):
         )
 
     @staticmethod
-    def _parse_lift_height(value: str) -> float:
+    def _parse_lift_height(value: str, maximum_mm: float = 750.0) -> float:
         try:
             height_mm = float(value)
         except ValueError as error:
             raise ValueError("리프트 목표 높이는 mm 단위 숫자로 입력하세요.") from error
         if not math.isfinite(height_mm) or height_mm < 0.0:
             raise ValueError("리프트 목표 높이는 0 mm 이상이어야 합니다.")
+        if height_mm > float(maximum_mm):
+            raise ValueError(
+                f"리프트 목표 높이는 {float(maximum_mm):.0f} mm 이하여야 합니다."
+            )
         return height_mm
+
+    def _tomato_world_height_m(self, tomato_index: int) -> float:
+        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        transform = self.tf_buffer.lookup_transform(
+            self.lift_harvest_world_frame,
+            tomato_frame,
+            Time(),
+        )
+        return float(transform.transform.translation.z)
+
+    def _cache_detected_tomato_world_positions(
+        self,
+        message: TomatoDetectionArray,
+    ) -> None:
+        """Snapshot detection centers in world before the lift starts moving."""
+        source_frame = str(message.header.frame_id)
+        world_frame = self.lift_harvest_world_frame
+        if source_frame == world_frame:
+            transform = None
+        else:
+            transform = self.tf_buffer.lookup_transform(
+                world_frame,
+                source_frame,
+                Time(),
+            )
+        positions = {}
+        for index, detection in enumerate(message.detections):
+            center = detection.center
+            if transform is None:
+                positions[index] = (
+                    float(center.x),
+                    float(center.y),
+                    float(center.z),
+                )
+            else:
+                positions[index] = transformed_point_xyz(center, transform)
+        self.detected_tomato_expected_world_positions = positions
+
+    def _detected_tomato_tf_sync_error_m(
+        self,
+        tomato_index: int,
+    ) -> float | None:
+        expected = self.detected_tomato_expected_world_positions.get(
+            int(tomato_index)
+        )
+        if expected is None:
+            return None
+        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        transform = self.tf_buffer.lookup_transform(
+            self.lift_harvest_world_frame,
+            tomato_frame,
+            Time(),
+        )
+        translation = transform.transform.translation
+        return math.sqrt(
+            (float(translation.x) - expected[0]) ** 2
+            + (float(translation.y) - expected[1]) ** 2
+            + (float(translation.z) - expected[2]) ** 2
+        )
+
+    def _publish_automatic_lift_target(self, height_mm: float) -> None:
+        message = Float64()
+        message.data = float(height_mm)
+        if self.lift_simulation_mode:
+            topic = self.lift_simulated_move_height_topic
+            if self.count_subscribers(topic) < 1:
+                raise RuntimeError(
+                    "RViz lift joint 시뮬레이터가 실행 중이지 않습니다."
+                )
+            self.lift_simulated_move_height_publisher.publish(message)
+            return
+        if not self.lift_node_online:
+            raise RuntimeError("실제 리프트 노드가 연결되지 않았습니다.")
+        if not self.lift_calibrated:
+            raise RuntimeError("Bottom calibration이 완료되지 않았습니다.")
+        if self.count_subscribers(self.lift_move_height_topic) < 1:
+            raise RuntimeError(
+                "리프트 노드가 높이 이동 명령을 구독하고 있지 않습니다."
+            )
+        self.lift_move_height_publisher.publish(message)
+
+    def _prepare_lift_for_tomato(
+        self,
+        tomato_index: int,
+        enabled: bool,
+        on_ready,
+        on_error,
+        tf_deadline: float | None = None,
+    ) -> None:
+        """Move to the tomato-relative lift target, then continue asynchronously."""
+        if not enabled:
+            self.root.after(0, on_ready)
+            return
+        deadline = (
+            time.monotonic() + 2.0
+            if tf_deadline is None
+            else float(tf_deadline)
+        )
+        try:
+            tf_sync_error_m = self._detected_tomato_tf_sync_error_m(
+                tomato_index
+            )
+            tf_sync_tolerance_m = max(
+                0.0,
+                self.detected_tf_sync_tolerance_m,
+            )
+            if (
+                tf_sync_error_m is not None
+                and tf_sync_error_m > tf_sync_tolerance_m
+            ):
+                if time.monotonic() < deadline:
+                    self.root.after(
+                        50,
+                        lambda: self._prepare_lift_for_tomato(
+                            tomato_index,
+                            enabled,
+                            on_ready,
+                            on_error,
+                            deadline,
+                        ),
+                    )
+                    return
+                on_error(
+                    f"detected_tomato_{tomato_index}_tf가 새 검출 위치로 "
+                    "갱신되지 않았습니다: "
+                    f"위치 오차={tf_sync_error_m * 1000.0:.1f}mm, "
+                    f"허용={tf_sync_tolerance_m * 1000.0:.1f}mm"
+                )
+                return
+            tomato_world_z_m = self._tomato_world_height_m(tomato_index)
+            requested_mm = (
+                tomato_world_z_m - self.lift_harvest_offset_m
+            ) * 1000.0
+            target_mm = lift_harvest_target_height_mm(
+                tomato_world_z_m,
+                self.lift_harvest_offset_m,
+                self.lift_minimum_height_mm,
+                self.lift_maximum_height_mm,
+            )
+        except TransformException as error:
+            if time.monotonic() < deadline:
+                self.root.after(
+                    100,
+                    lambda: self._prepare_lift_for_tomato(
+                        tomato_index,
+                        enabled,
+                        on_ready,
+                        on_error,
+                        deadline,
+                    ),
+                )
+                return
+            on_error(
+                f"detected_tomato_{tomato_index}_tf의 지면 기준 높이를 "
+                f"계산하지 못했습니다: {error}"
+            )
+            return
+        except ValueError as error:
+            on_error(f"리프트 수확 높이 계산 오류: {error}")
+            return
+
+        clamped = not math.isclose(requested_mm, target_mm, abs_tol=1e-6)
+        self.lift_target_height.set(f"{target_mm:.1f}")
+        self._append_log(
+            f"[리프트 수확] 토마토 {tomato_index}: "
+            f"world Z={tomato_world_z_m:.3f}m, "
+            f"요청={requested_mm:.1f}mm, 목표={target_mm:.1f}mm"
+            f"{' (0~750mm 제한 적용)' if clamped else ''}"
+        )
+        tolerance = max(0.0, self.lift_target_tolerance_mm)
+        if (
+            self.lift_last_height_mm is not None
+            and abs(self.lift_last_height_mm - target_mm) <= tolerance
+        ):
+            self._append_log(
+                f"[리프트 수확] 현재 높이 {self.lift_last_height_mm:.1f}mm가 "
+                f"목표 허용오차 ±{tolerance:.1f}mm 안에 있어 이동을 생략합니다."
+            )
+            self.root.after(0, on_ready)
+            return
+
+        try:
+            self._publish_automatic_lift_target(target_mm)
+        except RuntimeError as error:
+            on_error(str(error))
+            return
+
+        pending = {
+            "tomato_index": int(tomato_index),
+            "target_mm": float(target_mm),
+            "deadline": time.monotonic() + max(1.0, self.lift_move_timeout_sec),
+            "on_ready": on_ready,
+            "on_error": on_error,
+        }
+        self.lift_harvest_pending = pending
+        mode = "RViz 시뮬레이션" if self.lift_simulation_mode else "실제 리프트"
+        self.status.set(
+            f"{mode} 이동 중: 토마토 {tomato_index}, 목표 {target_mm:.1f}mm"
+        )
+        self._append_log(
+            f"[리프트 수확] {mode} 이동 명령 전송 — 완료 확인 후 수확 계획 시작"
+        )
+        self.root.after(100, lambda: self._poll_lift_harvest_target(pending))
+
+    def _poll_lift_harvest_target(self, pending) -> None:
+        if self.lift_harvest_pending is not pending:
+            return
+        target_mm = float(pending["target_mm"])
+        tolerance = max(0.0, self.lift_target_tolerance_mm)
+        current_mm = self.lift_last_height_mm
+        if current_mm is not None and abs(current_mm - target_mm) <= tolerance:
+            self.lift_harvest_pending = None
+            self._append_log(
+                f"[리프트 수확] 목표 도달: 현재={current_mm:.1f}mm, "
+                f"목표={target_mm:.1f}mm — 수확 계획을 계속합니다."
+            )
+            pending["on_ready"]()
+            return
+        if time.monotonic() >= float(pending["deadline"]):
+            self.lift_harvest_pending = None
+            stop_message = Bool()
+            stop_message.data = True
+            publisher = (
+                self.lift_simulated_stop_publisher
+                if self.lift_simulation_mode
+                else self.lift_stop_publisher
+            )
+            publisher.publish(stop_message)
+            current_text = "수신 없음" if current_mm is None else f"{current_mm:.1f}mm"
+            pending["on_error"](
+                f"리프트 목표 도달 시간 초과: 목표={target_mm:.1f}mm, "
+                f"현재={current_text}"
+            )
+            return
+        self.root.after(100, lambda: self._poll_lift_harvest_target(pending))
 
     def move_lift_to_height(self) -> None:
         try:
             height_mm = self._parse_lift_height(
-                self.lift_target_height.get()
+                self.lift_target_height.get(),
+                getattr(self, "lift_maximum_height_mm", 750.0),
             )
         except ValueError as error:
             messagebox.showerror("리프트 높이 입력 오류", str(error))
@@ -2510,14 +2851,34 @@ class HarvestGui(Node):
         continuous_mode = bool(
             execute_motion and self.continuous_harvest_var.get()
         )
-        transition_message = (
-            "연속 수확 모드에서는 현재 post-wait 자세에서 다음 "
-            "pre-grasp까지 식물 바깥쪽 arc 경로로 이동하며, "
-            "마지막 토마토 이후에만 "
-            "PICK_READY로 복귀합니다.\n"
-            if continuous_mode
-            else "각 수확 후 PICK_READY로 복귀합니다.\n"
+        lift_harvest_requested = bool(self.lift_harvest_var.get())
+        lift_harvest_mode = bool(
+            lift_harvest_requested
+            and (execute_motion or self.lift_simulation_mode)
         )
+        if lift_harvest_requested and not lift_harvest_mode:
+            self._append_log(
+                "[리프트 수확] 실제 모드의 자동 Plan-only 테스트에서는 "
+                "리프트를 물리적으로 움직이지 않습니다. '실제 로봇 실행'을 "
+                "체크해야 리프트 수확이 적용됩니다."
+            )
+        if continuous_mode and lift_harvest_mode:
+            transition_message = (
+                "연속+리프트 수확에서는 식물 바깥 안전 위치로 후퇴한 뒤 "
+                "리프트를 조정하고 다음 pre-grasp를 새로 계획합니다.\n"
+            )
+        elif continuous_mode:
+            transition_message = (
+                "연속 수확 모드에서는 현재 post-wait 자세에서 다음 "
+                "pre-grasp까지 식물 바깥쪽 arc 경로로 이동하며, 마지막 "
+                "토마토 이후에만 PICK_READY로 복귀합니다.\n"
+            )
+        else:
+            transition_message = "각 수확 후 PICK_READY로 복귀합니다.\n"
+        if lift_harvest_mode:
+            transition_message += (
+                "각 토마토보다 400mm 낮은 높이로 리프트를 자동 이동합니다.\n"
+            )
         if execute_motion and not messagebox.askyesno(
             "자동 실제 로봇 실행",
             "자동 테스트에서 Plan에 성공한 모든 토마토 모션을 실제로 "
@@ -2531,10 +2892,12 @@ class HarvestGui(Node):
         self.sweep_execute_motion = execute_motion
         self.sweep_harvest_wait_sec = harvest_wait_sec
         self.sweep_continuous_mode = continuous_mode
+        self.sweep_lift_harvest_mode = lift_harvest_mode
         try:
             cases, input_config = self._read_sweep_inputs()
             input_config["linear_motor_wait_sec"] = harvest_wait_sec
             input_config["continuous_harvest"] = continuous_mode
+            input_config["lift_harvest"] = lift_harvest_mode
             self._start_sweep_session(cases, input_config)
         except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
@@ -2565,7 +2928,8 @@ class HarvestGui(Node):
             f"테스트 시작: {self.sweep_case_total}개 케이스, "
             "각 케이스에서 검출된 토마토 전체를 처리, "
             f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s, "
-            f"연속 arc 전환 모드={self.sweep_continuous_mode}"
+            f"연속 arc 전환 모드={self.sweep_continuous_mode}, "
+            f"리프트 수확 모드={self.sweep_lift_harvest_mode}"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -2645,6 +3009,17 @@ class HarvestGui(Node):
             "요청합니다."
         )
         self._request_robot_motion_stop()
+        if self.lift_harvest_pending is not None:
+            self.lift_harvest_pending = None
+            stop_message = Bool()
+            stop_message.data = True
+            publisher = (
+                self.lift_simulated_stop_publisher
+                if self.lift_simulation_mode
+                else self.lift_stop_publisher
+            )
+            publisher.publish(stop_message)
+            self._append_log("[정지 요청] 자동 리프트 높이 이동도 정지했습니다.")
         if self.harvest_process is not None:
             self.harvest_process.terminate()
         self._shutdown_sweep_worker(force=True)
@@ -2763,6 +3138,8 @@ class HarvestGui(Node):
         self.sweep_tomato_queue.clear()
         self.sweep_current_case = None
         self.sweep_pending_verification = None
+        self.sweep_lift_harvest_mode = False
+        self.lift_harvest_pending = None
         self._shutdown_sweep_worker()
         self._set_busy(False)
         self.sweep_summary.set(f"전체 완료 {completed}개 — {message}")
@@ -2890,12 +3267,41 @@ class HarvestGui(Node):
             not self.sweep_continuous_mode
             or current_number == self.sweep_case_tomato_total
         )
+        retreat_after_harvest = bool(
+            self.sweep_lift_harvest_mode
+            and self.sweep_continuous_mode
+            and current_number < self.sweep_case_tomato_total
+        )
         self.sweep_summary.set(
             f"케이스 {self.sweep_case_number} / {self.sweep_case_total} — "
             f"토마토 {current_number} / {self.sweep_case_tomato_total} "
             f"(index {tomato_index}) "
             f"{'Plan+실행' if self.sweep_execute_motion else 'Plan'} 중"
         )
+
+        self._prepare_lift_for_tomato(
+            tomato_index,
+            self.sweep_lift_harvest_mode,
+            lambda: self._send_sweep_plan_request(
+                tomato_index,
+                verification,
+                continuous_transition,
+                return_to_pick_ready,
+                retreat_after_harvest,
+            ),
+            self._handle_lift_preparation_error,
+        )
+
+    def _send_sweep_plan_request(
+        self,
+        tomato_index: int,
+        verification,
+        continuous_transition: bool,
+        return_to_pick_ready: bool,
+        retreat_after_harvest: bool,
+    ) -> None:
+        if not self.sweep_active or self.sweep_cancel_requested:
+            return
         process = self.sweep_worker_process
         if process is None or process.poll() is not None or process.stdin is None:
             self._finish_sweep("자동 테스트 지속 Planner가 종료되었습니다.")
@@ -2905,6 +3311,7 @@ class HarvestGui(Node):
             self.sweep_request_id,
             verification,
         )
+        pipeline, planner_id, preapproach_mode = verification[2:5]
         request = {
             "request_id": self.sweep_request_id,
             "tomato_frame": f"detected_tomato_{tomato_index}_tf",
@@ -2917,6 +3324,7 @@ class HarvestGui(Node):
             "harvest_wait_sec": self.sweep_harvest_wait_sec,
             "continuous_transition": continuous_transition,
             "return_to_pick_ready": return_to_pick_ready,
+            "retreat_after_harvest": retreat_after_harvest,
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -2989,6 +3397,14 @@ class HarvestGui(Node):
         self.result_detection_frame = message.header.frame_id
         self.detection_signature = signature
         self.detected_tomatoes = list(message.detections)
+        try:
+            self._cache_detected_tomato_world_positions(message)
+        except TransformException as error:
+            self.detected_tomato_expected_world_positions = {}
+            self._append_log(
+                "[검출 TF 동기화 경고] 검출 중심의 world 좌표를 저장하지 "
+                f"못했습니다: {error}"
+            )
         self.detection_generation += 1
         self._invalidate_plan()
 
@@ -3104,6 +3520,27 @@ class HarvestGui(Node):
         self.verified_plan = None
         self.execute_button.configure(state="disabled")
 
+    def _lift_harvest_mode_changed(self) -> None:
+        self._invalidate_plan()
+        enabled = bool(self.lift_harvest_var.get())
+        self.status.set(
+            "리프트 수확 모드 활성화 — Plan-only를 다시 실행하세요."
+            if enabled
+            else "리프트 수확 모드 해제 — Plan-only를 다시 실행하세요."
+        )
+
+    def _handle_lift_preparation_error(self, message: str) -> None:
+        self.lift_harvest_pending = None
+        self._append_log(f"[리프트 수확 실패] {message}")
+        self.status.set(f"리프트 수확 준비 실패 — {message}")
+        if self.batch_active:
+            self._finish_batch(False, f"리프트 수확 준비 실패: {message}")
+        elif self.sweep_active:
+            self._finish_sweep(f"리프트 수확 준비 실패: {message}")
+        else:
+            self._set_busy(False)
+            messagebox.showerror("리프트 수확 준비 실패", message)
+
     def start_harvest(self, execute: bool) -> None:
         index = self._selected_index()
         if index is None:
@@ -3143,11 +3580,18 @@ class HarvestGui(Node):
         ):
             return
 
-        self._launch_harvest_process(
+        lift_mode = bool(self.lift_harvest_var.get())
+        self._set_busy(True)
+        self._prepare_lift_for_tomato(
             index,
-            execute,
-            verification,
-            harvest_wait_sec=harvest_wait_sec,
+            lift_mode,
+            lambda: self._launch_harvest_process(
+                index,
+                execute,
+                verification,
+                harvest_wait_sec=harvest_wait_sec,
+            ),
+            self._handle_lift_preparation_error,
         )
 
     def start_harvest_all(self) -> None:
@@ -3166,12 +3610,25 @@ class HarvestGui(Node):
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
         continuous_mode = bool(self.continuous_harvest_var.get())
-        transition_message = (
-            "토마토 사이에는 현재 post-wait 자세에서 다음 pre-grasp로 "
-            "식물 바깥쪽 arc 경로를 따라 이동합니다.\n"
-            if continuous_mode
-            else "각 토마토 수확 후 PICK_READY로 복귀합니다.\n"
-        )
+        lift_mode = bool(self.lift_harvest_var.get())
+        if continuous_mode and lift_mode:
+            transition_message = (
+                "토마토 사이에는 식물 바깥 안전 위치로 후퇴한 뒤 리프트를 "
+                "조정하고, 변경된 높이에서 다음 pre-grasp arc를 새로 "
+                "계획합니다.\n"
+            )
+        elif continuous_mode:
+            transition_message = (
+                "토마토 사이에는 현재 post-wait 자세에서 다음 pre-grasp로 "
+                "식물 바깥쪽 arc 경로를 따라 이동합니다.\n"
+            )
+        else:
+            transition_message = "각 토마토 수확 후 PICK_READY로 복귀합니다.\n"
+        if lift_mode:
+            transition_message += (
+                "각 토마토의 world 높이보다 400mm 낮게 리프트를 자동 "
+                "배치합니다.\n"
+            )
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
             f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
@@ -3191,6 +3648,7 @@ class HarvestGui(Node):
         self.batch_planner = self._selected_planner_config()
         self.batch_harvest_wait_sec = harvest_wait_sec
         self.batch_continuous_mode = continuous_mode
+        self.batch_lift_harvest_mode = lift_mode
         try:
             self.batch_scene = (
                 float(self.scene_x.get()),
@@ -3214,7 +3672,8 @@ class HarvestGui(Node):
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
-            f"연속 arc 전환 모드={self.batch_continuous_mode}"
+            f"연속 arc 전환 모드={self.batch_continuous_mode}, "
+            f"리프트 수확 모드={self.batch_lift_harvest_mode}"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -3260,18 +3719,36 @@ class HarvestGui(Node):
         return_to_pick_ready = (
             not self.batch_continuous_mode or index == self.batch_total - 1
         )
-        if not self._launch_harvest_process(
+        retreat_after_harvest = bool(
+            self.batch_lift_harvest_mode
+            and self.batch_continuous_mode
+            and index < self.batch_total - 1
+        )
+
+        def launch_job() -> None:
+            if not self.batch_active:
+                return
+            if not self._launch_harvest_process(
+                index,
+                execute,
+                verification,
+                harvest_wait_sec=self.batch_harvest_wait_sec,
+                continuous_transition=continuous_transition,
+                return_to_pick_ready=return_to_pick_ready,
+                retreat_after_harvest=retreat_after_harvest,
+            ):
+                self._finish_batch(
+                    False,
+                    f"토마토 {index} 작업 프로세스를 시작하지 못해 "
+                    "전체 수확을 중단했습니다.",
+                )
+
+        self._prepare_lift_for_tomato(
             index,
-            execute,
-            verification,
-            harvest_wait_sec=self.batch_harvest_wait_sec,
-            continuous_transition=continuous_transition,
-            return_to_pick_ready=return_to_pick_ready,
-        ):
-            self._finish_batch(
-                False,
-                f"토마토 {index} 작업 프로세스를 시작하지 못해 전체 수확을 중단했습니다.",
-            )
+            self.batch_lift_harvest_mode,
+            launch_job,
+            self._handle_lift_preparation_error,
+        )
 
     def _launch_harvest_process(
         self,
@@ -3281,6 +3758,7 @@ class HarvestGui(Node):
         harvest_wait_sec: float,
         continuous_transition: bool = False,
         return_to_pick_ready: bool = True,
+        retreat_after_harvest: bool = False,
     ) -> bool:
         pipeline, planner_id, preapproach_mode = verification[2:5]
         command = harvest_command(
@@ -3295,6 +3773,7 @@ class HarvestGui(Node):
             harvest_wait_sec=harvest_wait_sec,
             continuous_transition=continuous_transition,
             return_to_pick_ready=return_to_pick_ready,
+            retreat_after_harvest=retreat_after_harvest,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -3309,13 +3788,19 @@ class HarvestGui(Node):
             if self.batch_active
             else ""
         )
+        if return_to_pick_ready:
+            end_label = "PICK_READY"
+        elif retreat_after_harvest:
+            end_label = "리프트 안전 후퇴"
+        else:
+            end_label = "post-wait 유지"
         self._append_log(
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
             f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else 'PICK_READY'}, "
-            f"종료={'PICK_READY' if return_to_pick_ready else 'post-wait 유지'}"
+            f"종료={end_label}"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
         self._set_busy(True)
@@ -3677,6 +4162,8 @@ class HarvestGui(Node):
         self.batch_generation = None
         self.batch_planner = None
         self.batch_continuous_mode = False
+        self.batch_lift_harvest_mode = False
+        self.lift_harvest_pending = None
         self._invalidate_plan()
         self._set_busy(False)
         self.status.set(message)
@@ -3692,7 +4179,8 @@ class HarvestGui(Node):
             self.stop_sweep()
             return
         process = self.harvest_process
-        if process is None and not self.batch_active:
+        lift_pending = getattr(self, "lift_harvest_pending", None)
+        if process is None and not self.batch_active and lift_pending is None:
             return
 
         was_batch = self.batch_active
@@ -3702,6 +4190,20 @@ class HarvestGui(Node):
             "실제 RB5 정지를 요청합니다."
         )
         self._request_robot_motion_stop()
+        if lift_pending is not None:
+            self.lift_harvest_pending = None
+            simulation = self.lift_simulation_mode
+            publisher = (
+                self.lift_simulated_stop_publisher
+                if simulation
+                else self.lift_stop_publisher
+            )
+            stop_message = Bool()
+            stop_message.data = True
+            publisher.publish(stop_message)
+            self._append_log(
+                "[정지 요청] 리프트 수확 높이 이동도 함께 정지했습니다."
+            )
 
         # Detach first so the reader thread's eventual exit event cannot be
         # mistaken for a planning or execution failure after user cancellation.
@@ -3733,6 +4235,7 @@ class HarvestGui(Node):
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
         self.continuous_harvest_checkbox.configure(state=state)
+        self.lift_harvest_checkbox.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(
             state="disabled" if busy or not self.detected_tomatoes else "normal"

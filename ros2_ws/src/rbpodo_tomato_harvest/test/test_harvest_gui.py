@@ -1,4 +1,5 @@
 from collections import deque
+import math
 import random
 from types import SimpleNamespace
 
@@ -26,17 +27,20 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_result_marker,
     harvest_statistics_record,
     is_critical_process_output,
+    lift_harvest_target_height_mm,
     scene_parameters,
     sweep_execution_duration_text,
     sweep_stage_detail,
     sweep_stage_summary,
     sweep_result_marker,
     tomato_stem_arrow_length,
+    transformed_point_xyz,
 )
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
 )
+import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
 
@@ -102,6 +106,113 @@ def test_lift_height_parser_accepts_nonnegative_mm_only():
         HarvestGui._parse_lift_height("-0.1")
     with pytest.raises(ValueError, match="mm 단위 숫자"):
         HarvestGui._parse_lift_height("높이")
+    with pytest.raises(ValueError, match="750 mm 이하"):
+        HarvestGui._parse_lift_height("751")
+
+
+def test_lift_harvest_target_is_40cm_below_tomato_and_bounded():
+    assert lift_harvest_target_height_mm(0.55) == pytest.approx(150.0)
+    assert lift_harvest_target_height_mm(0.10) == pytest.approx(0.0)
+    assert lift_harvest_target_height_mm(1.20) == pytest.approx(750.0)
+
+
+def test_lift_harvest_waits_for_target_before_starting_plan():
+    published = []
+    ready = []
+    scheduled = []
+    gui = SimpleNamespace(
+        root=SimpleNamespace(
+            after=lambda delay, callback: scheduled.append(callback)
+        ),
+        _tomato_world_height_m=lambda index: 0.55,
+        lift_harvest_offset_m=0.40,
+        lift_minimum_height_mm=0.0,
+        lift_maximum_height_mm=750.0,
+        lift_target_tolerance_mm=5.0,
+        lift_move_timeout_sec=60.0,
+        detected_tf_sync_tolerance_m=0.003,
+        _detected_tomato_tf_sync_error_m=lambda index: 0.0,
+        lift_target_height=SimpleNamespace(set=lambda value: None),
+        lift_last_height_mm=100.0,
+        lift_simulation_mode=True,
+        _append_log=lambda message: None,
+        _publish_automatic_lift_target=lambda height: published.append(height),
+        status=SimpleNamespace(set=lambda value: None),
+        lift_harvest_pending=None,
+    )
+    gui._prepare_lift_for_tomato = lambda *args: (
+        HarvestGui._prepare_lift_for_tomato(gui, *args)
+    )
+
+    HarvestGui._prepare_lift_for_tomato(
+        gui,
+        2,
+        True,
+        lambda: ready.append(True),
+        lambda message: pytest.fail(message),
+    )
+
+    assert published == [pytest.approx(150.0)]
+    assert ready == []
+    gui.lift_last_height_mm = 150.0
+    HarvestGui._poll_lift_harvest_target(gui, gui.lift_harvest_pending)
+    assert ready == [True]
+    assert gui.lift_harvest_pending is None
+
+
+def test_lift_harvest_waits_until_detected_tf_matches_new_detection():
+    scheduled = []
+    published = []
+    sync_errors = iter((0.25, 0.0))
+    gui = SimpleNamespace(
+        root=SimpleNamespace(
+            after=lambda delay, callback: scheduled.append(callback)
+        ),
+        _detected_tomato_tf_sync_error_m=lambda index: next(sync_errors),
+        detected_tf_sync_tolerance_m=0.003,
+        _tomato_world_height_m=lambda index: 0.55,
+        lift_harvest_offset_m=0.40,
+        lift_minimum_height_mm=0.0,
+        lift_maximum_height_mm=750.0,
+        lift_target_tolerance_mm=1.0,
+        lift_move_timeout_sec=60.0,
+        lift_target_height=SimpleNamespace(set=lambda value: None),
+        lift_last_height_mm=0.0,
+        lift_simulation_mode=True,
+        _append_log=lambda message: None,
+        _publish_automatic_lift_target=lambda height: published.append(height),
+        status=SimpleNamespace(set=lambda value: None),
+        lift_harvest_pending=None,
+    )
+    gui._prepare_lift_for_tomato = lambda *args: (
+        HarvestGui._prepare_lift_for_tomato(gui, *args)
+    )
+
+    HarvestGui._prepare_lift_for_tomato(
+        gui,
+        0,
+        True,
+        lambda: None,
+        lambda message: pytest.fail(message),
+    )
+
+    assert published == []
+    assert len(scheduled) == 1
+    scheduled.pop(0)()
+    assert published == [pytest.approx(150.0)]
+
+
+def test_transformed_point_xyz_applies_rotation_and_translation():
+    transform = TransformStamped()
+    transform.transform.translation.x = 1.0
+    transform.transform.translation.y = 2.0
+    transform.transform.translation.z = 3.0
+    transform.transform.rotation.z = math.sqrt(0.5)
+    transform.transform.rotation.w = math.sqrt(0.5)
+
+    result = transformed_point_xyz(Point(x=0.5, y=0.0, z=0.25), transform)
+
+    assert result == pytest.approx((1.0, 2.5, 3.25))
 
 
 def test_lift_height_callback_updates_realtime_display_and_calibration():
@@ -410,6 +521,7 @@ def test_persistent_worker_updates_target_and_disables_display():
             "harvest_wait_sec": 4.25,
             "continuous_transition": True,
             "return_to_pick_ready": False,
+            "retreat_after_harvest": True,
         },
     )
 
@@ -424,6 +536,7 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["harvest_wait_sec"] == pytest.approx(4.25)
     assert values["continuous_transition"] is True
     assert values["return_to_pick_ready"] is False
+    assert values["retreat_after_harvest"] is True
 
 
 def test_persistent_worker_enables_execution_only_when_requested():
@@ -552,6 +665,53 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     assert "post-wait pose is retained" in events[-1][1]
 
 
+def test_lift_continuous_execute_reaches_safe_retreat_before_next_tomato(
+    monkeypatch,
+):
+    events = []
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.harvest_planner.time.sleep",
+        lambda seconds: None,
+    )
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("direct_pregrasp",),
+        approach_trajectory=("approach",),
+        after_wait_trajectory=("post_wait",),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+        outward_retreat_trajectory=("safe_retreat",),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    executed = [event[1] for event in events if event[0] == "execute"]
+    assert executed == [
+        "direct_pregrasp",
+        "approach",
+        "post_wait",
+        "safe_retreat",
+    ]
+    assert "lift-safe outward retreat pose" in events[-1][1]
+
+
 def test_continuous_preapproach_plans_outward_arc_trajectory():
     calls = []
     transform = TransformStamped()
@@ -604,6 +764,132 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
     assert waypoints[-1].position.z == pytest.approx(target.position.z)
     assert planner.last_plan_report["continuous_transition_direct"] is True
     assert planner.last_plan_report["continuous_transition_arc"] is True
+
+
+def test_display_start_state_keeps_current_lift_height_for_rviz_playback():
+    joint_names = [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+        "wrist3",
+    ]
+    planner = SimpleNamespace(
+        _latest_joint_positions={
+            **{name: float(index) for index, name in enumerate(joint_names)},
+            "farmily_lift_height_joint": 0.37,
+        },
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "pick_ready_joint_names": joint_names,
+                "display_passive_joint_names": [
+                    "farmily_lift_height_joint"
+                ],
+            }[name]
+        ),
+    )
+    start_state = RobotState()
+    start_state.is_diff = True
+
+    completed = CartesianHarvestPlanner._complete_display_start_state(
+        planner,
+        start_state,
+    )
+
+    values = dict(
+        zip(completed.joint_state.name, completed.joint_state.position)
+    )
+    assert values["farmily_lift_height_joint"] == pytest.approx(0.37)
+    assert all(name in values for name in joint_names)
+    assert completed.is_diff is False
+    assert start_state.joint_state.name == []
+
+
+def test_display_start_state_preserves_moveit_arm_start_and_appends_lift():
+    joint_names = [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+        "wrist3",
+    ]
+    planner = SimpleNamespace(
+        _latest_joint_positions={
+            **{name: 9.0 for name in joint_names},
+            "farmily_lift_height_joint": 0.12,
+        },
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "pick_ready_joint_names": joint_names,
+                "display_passive_joint_names": [
+                    "farmily_lift_height_joint"
+                ],
+            }[name]
+        ),
+    )
+    start_state = RobotState()
+    start_state.joint_state.name = list(joint_names)
+    start_state.joint_state.position = [0.1] * len(joint_names)
+
+    completed = CartesianHarvestPlanner._complete_display_start_state(
+        planner,
+        start_state,
+    )
+
+    values = dict(
+        zip(completed.joint_state.name, completed.joint_state.position)
+    )
+    assert values["base"] == pytest.approx(0.1)
+    assert values["farmily_lift_height_joint"] == pytest.approx(0.12)
+
+
+def test_dynamic_base_sync_uses_fresh_lift_joint_and_matching_tf(monkeypatch):
+    transform = TransformStamped()
+    transform.header.stamp.sec = 12
+    transform.header.stamp.nanosec = 300
+    transform.transform.translation.z = 0.42
+    planner = SimpleNamespace(
+        base_frame="link0",
+        _latest_joint_positions={"farmily_lift_height_joint": 0.42},
+        _joint_state_received_monotonic={
+            "farmily_lift_height_joint": 10.0
+        },
+        _joint_state_stamp_nanoseconds={
+            "farmily_lift_height_joint": 12_000_000_300
+        },
+        last_plan_report={},
+        tf_buffer=SimpleNamespace(
+            lookup_transform=lambda parent, child, stamp: transform
+        ),
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "dynamic_base_joint_name": "farmily_lift_height_joint",
+                "dynamic_base_parent_frame": "world",
+                "dynamic_base_sync_timeout_sec": 1.0,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            error=lambda message: None,
+        ),
+    )
+    monkeypatch.setattr(harvest_planner_module.time, "monotonic", lambda: 10.0)
+    monkeypatch.setattr(harvest_planner_module.rclpy, "ok", lambda: True)
+    monkeypatch.setattr(
+        harvest_planner_module.rclpy,
+        "spin_once",
+        lambda node, timeout_sec: None,
+    )
+
+    assert CartesianHarvestPlanner._synchronize_dynamic_base_transform(
+        planner
+    ) is True
+    sync = planner.last_plan_report["dynamic_base_sync"]
+    assert sync["joint_position_m"] == pytest.approx(0.42)
+    assert sync["base_height_m"] == pytest.approx(0.42)
+    assert sync["tf_stamp_nanoseconds"] >= sync["joint_stamp_nanoseconds"]
 
 
 def test_continuous_arc_failure_falls_back_through_pick_ready():
@@ -848,6 +1134,7 @@ def test_harvest_command_builds_plan_only_command():
         harvest_wait_sec=3.5,
         continuous_transition=True,
         return_to_pick_ready=False,
+        retreat_after_harvest=True,
         python_executable="/usr/bin/python3",
     )
 
@@ -867,6 +1154,7 @@ def test_harvest_command_builds_plan_only_command():
     assert "harvest_wait_sec:=3.5" in command
     assert "continuous_transition:=true" in command
     assert "return_to_pick_ready:=false" in command
+    assert "retreat_after_harvest:=true" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -991,6 +1279,7 @@ def test_harvest_command_builds_execute_command():
     assert "preapproach_mode:=cartesian" in command
     assert "continuous_transition:=false" in command
     assert "return_to_pick_ready:=true" in command
+    assert "retreat_after_harvest:=false" in command
 
 
 def test_harvest_command_can_disable_trajectory_display_for_automatic_test():

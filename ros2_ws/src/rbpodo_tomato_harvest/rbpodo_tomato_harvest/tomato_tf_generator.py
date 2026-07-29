@@ -85,7 +85,7 @@ class TomatoTfGenerator(Node):
     def __init__(self) -> None:
         super().__init__("tomato_tf_generator")
         self.declare_parameter("camera_frame", "d435_color_optical_frame")
-        self.declare_parameter("parent_frame", "link0")
+        self.declare_parameter("parent_frame", "world")
         self.declare_parameter("sky_frame", "link0")
         self.declare_parameter("center_topic", "/tomato_detection/center")
         self.declare_parameter("stem_point_topic", "/tomato_detection/stem_point")
@@ -136,7 +136,7 @@ class TomatoTfGenerator(Node):
         period = 1.0 / max(1.0, float(self.get_parameter("broadcast_rate_hz").value))
         self.create_timer(period, self._broadcast_transforms)
         self.get_logger().info(
-            "Ready to create base-parented tomato TFs: "
+            "Ready to create parent-frame-fixed tomato TFs: "
             f"service=/{self.get_name()}/create_tf input={self.camera_frame} "
             f"parent={self.parent_frame} sky={self.sky_frame} auto_create="
             f"{self.get_parameter('auto_create_on_detection').value}"
