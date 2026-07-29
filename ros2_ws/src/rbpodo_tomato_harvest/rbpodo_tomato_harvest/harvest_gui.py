@@ -29,6 +29,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
+from std_msgs.msg import Bool, Float64
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -737,6 +738,29 @@ class HarvestGui(Node):
             "results_directory",
             str(Path.home() / "farmily_tomato" / "harvest_results"),
         )
+        self.declare_parameter("lift_node_name", "/lift_controller_node")
+        self.declare_parameter(
+            "lift_bottom_calibration_topic",
+            "/lift_control/find_bottom_limit",
+        )
+        self.declare_parameter(
+            "lift_move_height_topic",
+            "/lift_control/move_height",
+        )
+        self.declare_parameter("lift_stop_topic", "/lift_control/stop")
+        self.declare_parameter(
+            "lift_current_height_topic",
+            "/lift_status/current_height",
+        )
+        self.declare_parameter(
+            "lift_bottom_status_topic",
+            "/lift_status/bottom_limit_found",
+        )
+        self.declare_parameter("lift_launch_package", "farmily_uv_lift")
+        self.declare_parameter(
+            "lift_launch_file",
+            "farmily_lift_controller_launch.py",
+        )
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -791,6 +815,57 @@ class HarvestGui(Node):
         self.rviz_goal_state_publisher = self.create_publisher(
             RobotState,
             "/rviz/moveit/update_custom_goal_state",
+            10,
+        )
+        self.lift_node_name = str(
+            self.get_parameter("lift_node_name").value
+        )
+        self.lift_bottom_calibration_topic = str(
+            self.get_parameter("lift_bottom_calibration_topic").value
+        )
+        self.lift_move_height_topic = str(
+            self.get_parameter("lift_move_height_topic").value
+        )
+        self.lift_stop_topic = str(
+            self.get_parameter("lift_stop_topic").value
+        )
+        self.lift_current_height_topic = str(
+            self.get_parameter("lift_current_height_topic").value
+        )
+        self.lift_bottom_status_topic = str(
+            self.get_parameter("lift_bottom_status_topic").value
+        )
+        self.lift_launch_package = str(
+            self.get_parameter("lift_launch_package").value
+        )
+        self.lift_launch_file = str(
+            self.get_parameter("lift_launch_file").value
+        )
+        self.lift_bottom_calibration_publisher = self.create_publisher(
+            Bool,
+            self.lift_bottom_calibration_topic,
+            10,
+        )
+        self.lift_move_height_publisher = self.create_publisher(
+            Float64,
+            self.lift_move_height_topic,
+            10,
+        )
+        self.lift_stop_publisher = self.create_publisher(
+            Bool,
+            self.lift_stop_topic,
+            10,
+        )
+        self.lift_current_height_subscription = self.create_subscription(
+            Float64,
+            self.lift_current_height_topic,
+            self._lift_current_height_callback,
+            10,
+        )
+        self.lift_bottom_status_subscription = self.create_subscription(
+            Bool,
+            self.lift_bottom_status_topic,
+            self._lift_bottom_status_callback,
             10,
         )
         self.tf_buffer = Buffer()
@@ -848,15 +923,21 @@ class HarvestGui(Node):
         self.sweep_case_tomato_completed = 0
         self.sweep_tomato_queue = deque()
         self.sweep_current_case = None
+        self.lift_launch_process = None
+        self.lift_node_online = False
+        self.lift_calibration_active = False
+        self.lift_calibrated = False
+        self.lift_last_height_mm = None
+        self.ui_busy = False
         self.closing = False
 
         self.root = tk.Tk()
         self.root.title("Farmily Tomato Harvest")
-        self.root.maxsize(1680, 900)
+        self.root.maxsize(1920, 1080)
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
-        initial_width = min(1600, max(1180, screen_width - 40))
-        initial_height = min(840, max(680, screen_height - 60))
+        initial_width = min(1840, max(1300, screen_width - 40))
+        initial_height = min(1020, max(760, screen_height - 60))
         self.root.geometry(f"{initial_width}x{initial_height}")
         self.root.minsize(
             min(1280, initial_width),
@@ -877,10 +958,17 @@ class HarvestGui(Node):
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
+        self.lift_node_status = tk.StringVar(value="노드 확인 중")
+        self.lift_current_height = tk.StringVar(value="-- mm")
+        self.lift_target_height = tk.StringVar(value="10.0")
+        self.lift_calibration_status = tk.StringVar(
+            value="Bottom calibration 필요"
+        )
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
+        self._refresh_lift_node_status()
         self.root.after(50, self._spin_ros)
         self.root.after(50, self._drain_process_queue)
         self.root.after(400, self.read_scene_position)
@@ -920,6 +1008,7 @@ class HarvestGui(Node):
         outer.columnconfigure(1, weight=0)
         outer.rowconfigure(1, weight=1)
         outer.rowconfigure(3, weight=1)
+        outer.rowconfigure(5, weight=0)
 
         top_controls = ttk.Frame(outer)
         top_controls.grid(row=0, column=0, sticky="ew")
@@ -1201,6 +1290,111 @@ class HarvestGui(Node):
         )
         self._build_sweep_ui(sweep_frame)
 
+        lift_frame = ttk.LabelFrame(
+            outer,
+            text="5. UV 리프트 제어",
+            padding=8,
+        )
+        lift_frame.grid(
+            row=5,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            pady=(8, 0),
+        )
+        self._build_lift_ui(lift_frame)
+
+    def _build_lift_ui(self, frame) -> None:
+        """Build controls backed by the farmily_uv_lift ROS topics."""
+        frame.columnconfigure(7, weight=1)
+        ttk.Label(frame, text="노드").grid(row=0, column=0, sticky="w")
+        ttk.Label(
+            frame,
+            textvariable=self.lift_node_status,
+            width=16,
+        ).grid(row=0, column=1, sticky="w", padx=(6, 12))
+        self.lift_launch_button = ttk.Button(
+            frame,
+            text="리프트 노드 실행",
+            command=self.launch_lift_node,
+        )
+        self.lift_launch_button.grid(row=0, column=2, padx=(0, 12))
+        self.lift_calibration_button = ttk.Button(
+            frame,
+            text="Bottom calibration 실행",
+            command=self.start_lift_bottom_calibration,
+            state="disabled",
+        )
+        self.lift_calibration_button.grid(row=0, column=3, padx=(0, 12))
+        ttk.Label(
+            frame,
+            textvariable=self.lift_calibration_status,
+            width=24,
+        ).grid(row=0, column=4, sticky="w", padx=(0, 16))
+
+        ttk.Separator(frame, orient="vertical").grid(
+            row=0,
+            column=5,
+            rowspan=2,
+            sticky="ns",
+            padx=(0, 16),
+        )
+        ttk.Label(frame, text="현재 높이").grid(
+            row=0,
+            column=6,
+            sticky="e",
+        )
+        ttk.Label(
+            frame,
+            textvariable=self.lift_current_height,
+            font="TkHeadingFont",
+            width=14,
+        ).grid(row=0, column=7, sticky="w", padx=(6, 16))
+        ttk.Label(frame, text="목표 높이").grid(
+            row=0,
+            column=8,
+            sticky="e",
+        )
+        self.lift_target_height_entry = ttk.Entry(
+            frame,
+            textvariable=self.lift_target_height,
+            width=10,
+            state="disabled",
+        )
+        self.lift_target_height_entry.grid(
+            row=0,
+            column=9,
+            padx=(6, 4),
+        )
+        ttk.Label(frame, text="mm").grid(row=0, column=10, sticky="w")
+        self.lift_move_button = ttk.Button(
+            frame,
+            text="높이 이동",
+            command=self.move_lift_to_height,
+            state="disabled",
+        )
+        self.lift_move_button.grid(row=0, column=11, padx=(12, 0))
+        self.lift_stop_button = ttk.Button(
+            frame,
+            text="리프트 이동 정지",
+            command=self.stop_lift_motion,
+            state="disabled",
+        )
+        self.lift_stop_button.grid(row=0, column=12, padx=(8, 0))
+        ttk.Label(
+            frame,
+            text=(
+                "높이는 Bottom calibration 기준 mm입니다. "
+                "노드가 감지되면 실행 버튼은 자동으로 비활성화됩니다."
+            ),
+        ).grid(
+            row=1,
+            column=0,
+            columnspan=13,
+            sticky="w",
+            pady=(6, 0),
+        )
+
     def _build_sweep_ui(self, frame) -> None:
         self.sweep_inputs = {}
         defaults = {
@@ -1400,6 +1594,265 @@ class HarvestGui(Node):
         self.log_text.insert("end", message.rstrip() + "\n")
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
+
+    @staticmethod
+    def _qualified_node_name(name: str, namespace: str) -> str:
+        namespace = "/" + str(namespace).strip("/")
+        if namespace == "/":
+            return "/" + str(name).strip("/")
+        return f"{namespace}/{str(name).strip('/')}"
+
+    def _lift_node_is_running(self) -> bool:
+        target = "/" + self.lift_node_name.strip("/")
+        return target in {
+            self._qualified_node_name(name, namespace)
+            for name, namespace in self.get_node_names_and_namespaces()
+        }
+
+    def _update_lift_controls(self) -> None:
+        online = bool(self.lift_node_online)
+        launch_running = (
+            self.lift_launch_process is not None
+            and self.lift_launch_process.poll() is None
+        )
+        self.lift_launch_button.configure(
+            state=(
+                "disabled"
+                if self.ui_busy or online or launch_running
+                else "normal"
+            )
+        )
+        self.lift_calibration_button.configure(
+            state=(
+                "normal"
+                if online
+                and not self.ui_busy
+                and not self.lift_calibration_active
+                else "disabled"
+            )
+        )
+        height_enabled = online and self.lift_calibrated and not self.ui_busy
+        height_state = "normal" if height_enabled else "disabled"
+        self.lift_target_height_entry.configure(state=height_state)
+        self.lift_move_button.configure(state=height_state)
+        self.lift_stop_button.configure(
+            state="normal" if online else "disabled"
+        )
+
+    def _refresh_lift_node_status(self) -> None:
+        if self.closing:
+            return
+        was_online = self.lift_node_online
+        self.lift_node_online = self._lift_node_is_running()
+        launch_starting = (
+            self.lift_launch_process is not None
+            and self.lift_launch_process.poll() is None
+        )
+        if self.lift_node_online:
+            self.lift_node_status.set("실행 중")
+            if not was_online:
+                if not self.lift_calibrated:
+                    self.lift_calibration_status.set(
+                        "Bottom calibration 필요"
+                    )
+                self._append_log(
+                    f"[리프트] 노드 연결됨: {self.lift_node_name}"
+                )
+        else:
+            self.lift_node_status.set(
+                "실행 시작 중" if launch_starting else "실행 안 됨"
+            )
+            self.lift_calibration_active = False
+            self.lift_calibrated = False
+            self.lift_last_height_mm = None
+            self.lift_current_height.set("-- mm")
+            self.lift_calibration_status.set(
+                "노드 시작 대기" if launch_starting else "노드 실행 필요"
+            )
+            if was_online:
+                self._append_log(
+                    f"[리프트] 노드 연결 끊김: {self.lift_node_name}"
+                )
+        self._update_lift_controls()
+        self.root.after(500, self._refresh_lift_node_status)
+
+    def _lift_current_height_callback(self, message: Float64) -> None:
+        height_mm = float(message.data)
+        if not math.isfinite(height_mm):
+            return
+        self.lift_last_height_mm = height_mm
+        self.lift_current_height.set(f"{height_mm:.2f} mm")
+        if not self.lift_calibration_active:
+            self.lift_calibrated = True
+            self.lift_calibration_status.set("Calibration 완료")
+        self._update_lift_controls()
+
+    def _lift_bottom_status_callback(self, message: Bool) -> None:
+        self.lift_calibration_active = False
+        self.lift_calibrated = bool(message.data)
+        if message.data:
+            self.lift_calibration_status.set("Calibration 완료")
+            self._append_log(
+                "[리프트] Bottom calibration 완료 및 10 mm 후퇴 완료"
+            )
+        else:
+            self.lift_calibration_status.set("Calibration 실패")
+            self._append_log(
+                "[리프트] Bottom calibration 실패 — 리프트 노드 로그를 "
+                "확인하세요."
+            )
+        self._update_lift_controls()
+
+    def launch_lift_node(self) -> None:
+        if self._lift_node_is_running():
+            self.lift_node_online = True
+            self.lift_node_status.set("실행 중")
+            self._update_lift_controls()
+            return
+        if (
+            self.lift_launch_process is not None
+            and self.lift_launch_process.poll() is None
+        ):
+            return
+        command = [
+            "ros2",
+            "launch",
+            self.lift_launch_package,
+            self.lift_launch_file,
+        ]
+        try:
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                start_new_session=True,
+            )
+        except (OSError, ValueError) as error:
+            messagebox.showerror(
+                "리프트 노드 실행 실패",
+                f"리프트 launch를 시작하지 못했습니다.\n{error}",
+            )
+            self._append_log(f"[리프트] launch 실행 실패: {error}")
+            return
+        self.lift_launch_process = process
+        self.lift_node_status.set("실행 시작 중")
+        self._update_lift_controls()
+        self._append_log(
+            "[리프트] launch 실행: " + " ".join(command)
+        )
+        threading.Thread(
+            target=self._read_lift_launch_output,
+            args=(process,),
+            daemon=True,
+        ).start()
+
+    def _read_lift_launch_output(self, process) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                line = line.rstrip()
+                if line:
+                    self.process_queue.put(("lift_log", line, process))
+        return_code = process.wait()
+        self.process_queue.put(("lift_done", return_code, process))
+
+    def start_lift_bottom_calibration(self) -> None:
+        if not self.lift_node_online or self.count_subscribers(
+            self.lift_bottom_calibration_topic
+        ) < 1:
+            messagebox.showerror(
+                "리프트 연결 오류",
+                "리프트 노드가 calibration 명령을 구독하고 있지 않습니다.",
+            )
+            return
+        if not messagebox.askyesno(
+            "Bottom calibration 실행",
+            "리프트가 Bottom limit 방향으로 실제 이동합니다.\n"
+            "주변이 안전하고 CAN 연결이 정상인지 확인했습니까?",
+            icon="warning",
+        ):
+            return
+        message = Bool()
+        message.data = True
+        self.lift_bottom_calibration_publisher.publish(message)
+        self.lift_calibration_active = True
+        self.lift_calibrated = False
+        self.lift_calibration_status.set("Calibration 진행 중")
+        self._update_lift_controls()
+        self._append_log(
+            f"[리프트] Bottom calibration 명령 발행: "
+            f"{self.lift_bottom_calibration_topic}"
+        )
+
+    @staticmethod
+    def _parse_lift_height(value: str) -> float:
+        try:
+            height_mm = float(value)
+        except ValueError as error:
+            raise ValueError("리프트 목표 높이는 mm 단위 숫자로 입력하세요.") from error
+        if not math.isfinite(height_mm) or height_mm < 0.0:
+            raise ValueError("리프트 목표 높이는 0 mm 이상이어야 합니다.")
+        return height_mm
+
+    def move_lift_to_height(self) -> None:
+        try:
+            height_mm = self._parse_lift_height(
+                self.lift_target_height.get()
+            )
+        except ValueError as error:
+            messagebox.showerror("리프트 높이 입력 오류", str(error))
+            return
+        if not self.lift_node_online or not self.lift_calibrated:
+            messagebox.showerror(
+                "리프트 이동 불가",
+                "리프트 노드 연결과 Bottom calibration을 먼저 완료하세요.",
+            )
+            return
+        if self.count_subscribers(self.lift_move_height_topic) < 1:
+            messagebox.showerror(
+                "리프트 연결 오류",
+                "리프트 노드가 높이 이동 명령을 구독하고 있지 않습니다.",
+            )
+            return
+        if not messagebox.askyesno(
+            "리프트 높이 이동",
+            f"리프트를 Bottom 기준 {height_mm:.2f} mm 높이로 이동할까요?",
+            icon="warning",
+        ):
+            return
+        message = Float64()
+        message.data = height_mm
+        self.lift_move_height_publisher.publish(message)
+        self._append_log(
+            f"[리프트] 높이 이동 명령 발행: 목표={height_mm:.2f} mm, "
+            f"topic={self.lift_move_height_topic}"
+        )
+        self.status.set(f"리프트 목표 높이 {height_mm:.2f} mm 이동 명령 전송")
+
+    def stop_lift_motion(self) -> None:
+        """Stop lift motion without waiting for a confirmation dialog."""
+        if not self.lift_node_online or self.count_subscribers(
+            self.lift_stop_topic
+        ) < 1:
+            messagebox.showerror(
+                "리프트 연결 오류",
+                "리프트 노드가 정지 명령을 구독하고 있지 않습니다.",
+            )
+            return
+        calibration_was_active = self.lift_calibration_active
+        message = Bool()
+        message.data = True
+        self.lift_stop_publisher.publish(message)
+        self.lift_calibration_active = False
+        if calibration_was_active:
+            self.lift_calibrated = False
+            self.lift_calibration_status.set("Calibration 중지됨")
+        self._update_lift_controls()
+        self._append_log(
+            f"[리프트] 이동 정지 명령 발행: {self.lift_stop_topic}"
+        )
+        self.status.set("리프트 이동 정지 명령 전송")
 
     @staticmethod
     def _percent_to_scale(value: str, label: str) -> float:
@@ -2763,6 +3216,24 @@ class HarvestGui(Node):
                 item = self.process_queue.get_nowait()
             except queue.Empty:
                 break
+            if item[0] == "lift_log":
+                _, line, process = item
+                if process is self.lift_launch_process:
+                    self._append_log(f"[리프트] {line}")
+                continue
+            if item[0] == "lift_done":
+                _, return_code, process = item
+                if process is not self.lift_launch_process:
+                    continue
+                self.lift_launch_process = None
+                if return_code != 0:
+                    self._append_log(
+                        f"[리프트] launch 종료 (종료 코드 {return_code})"
+                    )
+                if not self.lift_node_online:
+                    self.lift_node_status.set("실행 안 됨")
+                self._update_lift_controls()
+                continue
             if item[0] == "log":
                 self._append_log(item[1])
                 continue
@@ -3102,6 +3573,7 @@ class HarvestGui(Node):
             self._append_log(message)
 
     def _set_busy(self, busy: bool) -> None:
+        self.ui_busy = bool(busy)
         state = "disabled" if busy else "normal"
         self.detect_button.configure(state=state)
         self.read_scene_button.configure(state=state)
@@ -3152,6 +3624,7 @@ class HarvestGui(Node):
             *self._selected_planner_config(),
         ):
             self.execute_button.configure(state="normal")
+        self._update_lift_controls()
 
     def read_scene_position(self) -> None:
         if not self.scene_get_client.service_is_ready():

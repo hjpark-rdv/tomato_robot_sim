@@ -7,6 +7,7 @@ import pytest
 from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
+from std_msgs.msg import Bool, Float64
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
@@ -70,6 +71,117 @@ def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
             "execution_duration_sec": 0.0,
         }
     ) == "-"
+
+
+def test_lift_node_name_is_qualified_with_namespace():
+    assert HarvestGui._qualified_node_name(
+        "lift_controller_node", "/"
+    ) == "/lift_controller_node"
+    assert HarvestGui._qualified_node_name(
+        "lift_controller_node", "/farmily"
+    ) == "/farmily/lift_controller_node"
+
+
+def test_lift_node_detection_matches_fully_qualified_ros_name():
+    gui = SimpleNamespace(
+        lift_node_name="/lift_controller_node",
+        _qualified_node_name=HarvestGui._qualified_node_name,
+        get_node_names_and_namespaces=lambda: [
+            ("move_group", "/"),
+            ("lift_controller_node", "/"),
+        ],
+    )
+
+    assert HarvestGui._lift_node_is_running(gui) is True
+
+
+def test_lift_height_parser_accepts_nonnegative_mm_only():
+    assert HarvestGui._parse_lift_height("125.5") == pytest.approx(125.5)
+    assert HarvestGui._parse_lift_height("0") == pytest.approx(0.0)
+    with pytest.raises(ValueError, match="0 mm 이상"):
+        HarvestGui._parse_lift_height("-0.1")
+    with pytest.raises(ValueError, match="mm 단위 숫자"):
+        HarvestGui._parse_lift_height("높이")
+
+
+def test_lift_height_callback_updates_realtime_display_and_calibration():
+    values = {}
+    gui = SimpleNamespace(
+        lift_last_height_mm=None,
+        lift_calibration_active=False,
+        lift_calibrated=False,
+        lift_current_height=SimpleNamespace(
+            set=lambda value: values.__setitem__("height", value)
+        ),
+        lift_calibration_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("calibration", value)
+        ),
+        _update_lift_controls=lambda: values.__setitem__("updated", True),
+    )
+
+    HarvestGui._lift_current_height_callback(gui, Float64(data=123.456))
+
+    assert gui.lift_last_height_mm == pytest.approx(123.456)
+    assert gui.lift_calibrated is True
+    assert values == {
+        "height": "123.46 mm",
+        "calibration": "Calibration 완료",
+        "updated": True,
+    }
+
+
+def test_lift_bottom_status_callback_enables_height_after_success():
+    values = {}
+    gui = SimpleNamespace(
+        lift_calibration_active=True,
+        lift_calibrated=False,
+        lift_calibration_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        _append_log=lambda message: values.__setitem__("log", message),
+        _update_lift_controls=lambda: values.__setitem__("updated", True),
+    )
+
+    HarvestGui._lift_bottom_status_callback(gui, Bool(data=True))
+
+    assert gui.lift_calibration_active is False
+    assert gui.lift_calibrated is True
+    assert values["status"] == "Calibration 완료"
+    assert "10 mm 후퇴 완료" in values["log"]
+    assert values["updated"] is True
+
+
+def test_lift_stop_publishes_immediately_and_cancels_calibration_state():
+    published = []
+    values = {}
+    gui = SimpleNamespace(
+        lift_node_online=True,
+        lift_stop_topic="/lift_control/stop",
+        count_subscribers=lambda topic: 1,
+        lift_calibration_active=True,
+        lift_calibrated=True,
+        lift_stop_publisher=SimpleNamespace(
+            publish=lambda message: published.append(message)
+        ),
+        lift_calibration_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("calibration", value)
+        ),
+        _update_lift_controls=lambda: values.__setitem__("updated", True),
+        _append_log=lambda message: values.__setitem__("log", message),
+        status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+    )
+
+    HarvestGui.stop_lift_motion(gui)
+
+    assert len(published) == 1
+    assert published[0].data is True
+    assert gui.lift_calibration_active is False
+    assert gui.lift_calibrated is False
+    assert values["calibration"] == "Calibration 중지됨"
+    assert values["status"] == "리프트 이동 정지 명령 전송"
+    assert values["updated"] is True
 
 
 def test_harvest_statistics_record_formats_final_batch_execution_result():

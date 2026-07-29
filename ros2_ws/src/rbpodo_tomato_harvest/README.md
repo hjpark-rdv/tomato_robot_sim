@@ -113,6 +113,7 @@ GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
 10. 수확 동작 중 리니어모터 대기시간을 초 단위로 설정
 11. 연속 수확에서 식물 바깥쪽 arc를 따라 다음 pre-grasp로 전환
 12. 개별·전체·자동 수확 도중 현재 trajectory와 실제 RB5 모션 정지
+13. UV 리프트 노드 실행, Bottom calibration, 현재 높이 확인과 목표 높이 이동
 
 `리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
 Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
@@ -141,6 +142,24 @@ RRTConnect로 대체한다. arc 전환 전체가 실패하면 해당 토마토�
 계획 시간과 실제 전체 시퀀스 시간을 자동 테스트 결과와 같은 형식으로 표시한다.
 전체 연속 수확 결과는 현재 화면 표시 전용이며 자동 위치 테스트의 CSV/JSONL
 파일에는 추가하지 않는다.
+
+GUI 하단의 `UV 리프트 제어`는 `farmily_uv_lift` 노드의 실행 여부를 ROS graph로
+주기적으로 확인한다. `/lift_controller_node`가 없을 때만 `리프트 노드 실행`
+버튼이 활성화되며, 버튼을 누르면 다음 launch를 실행한다.
+
+```bash
+ros2 launch farmily_uv_lift farmily_lift_controller_launch.py
+```
+
+`Bottom calibration 실행`은 `/lift_control/find_bottom_limit`에 `Bool(True)`를
+발행한다. 완료 상태는 `/lift_status/bottom_limit_found`, 현재 높이는
+`/lift_status/current_height`에서 받아 실시간으로 표시한다. Calibration이
+완료된 뒤 목표 높이를 mm 단위로 입력하고 `높이 이동`을 누르면
+`/lift_control/move_height`에 `Float64`로 발행한다. 목표 높이는 Bottom 기준
+0 mm 이상이어야 한다. `리프트 이동 정지`는 확인창 없이 즉시
+`/lift_control/stop`에 `Bool(True)`를 발행하며, 수확 모션 실행 중에도 사용할 수
+있다. Calibration 중 정지하면 해당 calibration은 실패 상태로 종료된다. 실제
+모터가 움직이는 명령이므로 CAN 연결과 주변 안전을 먼저 확인해야 한다.
 
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음
