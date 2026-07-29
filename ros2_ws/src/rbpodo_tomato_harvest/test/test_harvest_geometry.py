@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from geometry_msgs.msg import Pose
 from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -8,6 +9,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     adaptive_outward_toward_robot,
     format_joint_trajectory_ranges,
     load_srdf_group_state,
+    make_continuous_arc_waypoints,
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
@@ -32,6 +34,54 @@ def _rotation(pose):
             [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
         ]
     )
+
+
+def test_continuous_arc_bows_outward_and_finishes_at_target():
+    start = Pose()
+    start.orientation.w = 1.0
+    target = Pose()
+    target.position.x = 0.30
+    target.orientation.z = np.sin(np.pi / 4.0)
+    target.orientation.w = np.cos(np.pi / 4.0)
+
+    outward_axis = np.array([0.0, 1.0, 0.25])
+    waypoints = make_continuous_arc_waypoints(
+        start,
+        target,
+        outward_axis=outward_axis,
+        minimum_clearance=0.12,
+        maximum_clearance=0.25,
+        waypoint_count=7,
+    )
+
+    assert len(waypoints) == 7
+    assert np.allclose(outward_axis, [0.0, 1.0, 0.25])
+    assert max(pose.position.y for pose in waypoints[:-1]) >= 0.12
+    assert np.allclose(_position(waypoints[-1]), _position(target))
+    assert np.allclose(
+        [
+            waypoints[-1].orientation.x,
+            waypoints[-1].orientation.y,
+            waypoints[-1].orientation.z,
+            waypoints[-1].orientation.w,
+        ],
+        [
+            target.orientation.x,
+            target.orientation.y,
+            target.orientation.z,
+            target.orientation.w,
+        ],
+    )
+    for pose in waypoints:
+        quaternion = np.array(
+            [
+                pose.orientation.x,
+                pose.orientation.y,
+                pose.orientation.z,
+                pose.orientation.w,
+            ]
+        )
+        assert np.linalg.norm(quaternion) == pytest.approx(1.0)
 
 
 def test_load_srdf_group_state_uses_requested_joint_order(tmp_path):

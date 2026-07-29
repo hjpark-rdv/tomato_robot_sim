@@ -309,6 +309,111 @@ def planning_pose_from_tip_pose(
     return pose
 
 
+def _normalized_quaternion(pose: Pose) -> np.ndarray:
+    quaternion = np.array(
+        [
+            pose.orientation.x,
+            pose.orientation.y,
+            pose.orientation.z,
+            pose.orientation.w,
+        ],
+        dtype=float,
+    )
+    norm = float(np.linalg.norm(quaternion))
+    if norm < 1e-9:
+        raise ValueError("pose orientation quaternion is nearly zero")
+    return quaternion / norm
+
+
+def _slerp_quaternion(start: np.ndarray, finish: np.ndarray, ratio: float):
+    start = np.asarray(start, dtype=float)
+    finish = np.asarray(finish, dtype=float)
+    dot = float(np.dot(start, finish))
+    if dot < 0.0:
+        finish = -finish
+        dot = -dot
+    dot = max(-1.0, min(1.0, dot))
+    if dot > 0.9995:
+        result = start + float(ratio) * (finish - start)
+        return result / np.linalg.norm(result)
+    angle = math.acos(dot)
+    sine = math.sin(angle)
+    return (
+        math.sin((1.0 - float(ratio)) * angle) / sine * start
+        + math.sin(float(ratio) * angle) / sine * finish
+    )
+
+
+def make_continuous_arc_waypoints(
+    start_pose: Pose,
+    target_pose: Pose,
+    outward_axis,
+    minimum_clearance: float = 0.12,
+    maximum_clearance: float = 0.25,
+    waypoint_count: int = 7,
+) -> tuple[Pose, ...]:
+    """Create a smooth outward-bowing TCP path between two harvest poses."""
+    count = max(2, int(waypoint_count))
+    start = np.array(
+        [start_pose.position.x, start_pose.position.y, start_pose.position.z],
+        dtype=float,
+    )
+    target = np.array(
+        [target_pose.position.x, target_pose.position.y, target_pose.position.z],
+        dtype=float,
+    )
+    delta = target - start
+    distance = float(np.linalg.norm(delta))
+    if distance < 1e-6:
+        return (target_pose,)
+
+    chord = delta / distance
+    requested_outward = np.array(outward_axis, dtype=float, copy=True)
+    requested_outward[2] = 0.0
+    requested_outward = _unit(requested_outward, "continuous arc outward axis")
+    arc_direction = requested_outward - np.dot(requested_outward, chord) * chord
+    if float(np.linalg.norm(arc_direction)) < 1e-6:
+        world_up = np.array([0.0, 0.0, 1.0], dtype=float)
+        arc_direction = world_up - np.dot(world_up, chord) * chord
+    arc_direction = _unit(arc_direction, "continuous arc direction")
+    if float(np.dot(arc_direction, requested_outward)) < 0.0:
+        arc_direction = -arc_direction
+
+    minimum = max(0.0, float(minimum_clearance))
+    maximum = max(minimum, float(maximum_clearance))
+    clearance = min(maximum, max(minimum, 0.5 * distance))
+    start_quaternion = _normalized_quaternion(start_pose)
+    target_quaternion = _normalized_quaternion(target_pose)
+
+    waypoints = []
+    for index in range(1, count + 1):
+        ratio = index / count
+        position = (
+            start
+            + ratio * delta
+            + arc_direction * clearance * math.sin(math.pi * ratio)
+        )
+        quaternion = _slerp_quaternion(
+            start_quaternion,
+            target_quaternion,
+            ratio,
+        )
+        pose = Pose()
+        pose.position.x, pose.position.y, pose.position.z = (
+            float(position[0]),
+            float(position[1]),
+            float(position[2]),
+        )
+        (
+            pose.orientation.x,
+            pose.orientation.y,
+            pose.orientation.z,
+            pose.orientation.w,
+        ) = (float(value) for value in quaternion)
+        waypoints.append(pose)
+    return tuple(waypoints)
+
+
 def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.050,
@@ -554,6 +659,9 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("planner_id", "RRTConnect")
         self.declare_parameter("preapproach_mode", "cartesian")
         self.declare_parameter("continuous_transition", False)
+        self.declare_parameter("continuous_arc_min_clearance", 0.12)
+        self.declare_parameter("continuous_arc_max_clearance", 0.25)
+        self.declare_parameter("continuous_arc_waypoint_count", 7)
         self.declare_parameter("return_to_pick_ready", True)
         self.declare_parameter("joint_planning_pipeline_id", "ompl")
         self.declare_parameter("joint_planner_id", "RRTConnect")
@@ -1329,6 +1437,7 @@ class CartesianHarvestPlanner(Node):
         stage_started = time.monotonic()
         stage_names = {
             "TCP direct pre-approach": "CARTESIAN_PREAPPROACH",
+            "Continuous arc pre-approach": "CARTESIAN_CONTINUOUS_ARC",
             "Approach and pre-wait harvest": "CARTESIAN_APPROACH",
             "Post-wait harvest": "CARTESIAN_POST_WAIT",
             "Fallback return PICK_READY": "CARTESIAN_RETURN_PICK_READY",
@@ -1385,7 +1494,13 @@ class CartesianHarvestPlanner(Node):
             stage,
             response.solution,
             success,
-            pregrasp=(stage == "CARTESIAN_PREAPPROACH"),
+            pregrasp=(
+                stage
+                in {
+                    "CARTESIAN_PREAPPROACH",
+                    "CARTESIAN_CONTINUOUS_ARC",
+                }
+            ),
         )
         self.get_logger().info(
             f"{label} Cartesian success={success} "
@@ -1443,6 +1558,7 @@ class CartesianHarvestPlanner(Node):
 
         stage_names = {
             "TCP direct pre-approach": "PREAPPROACH",
+            "Continuous arc pre-approach": "CONTINUOUS_ARC",
             "Approach and pre-wait harvest": "APPROACH",
             "Post-wait harvest": "POST_WAIT",
         }
@@ -1570,78 +1686,102 @@ class CartesianHarvestPlanner(Node):
             raise ValueError("PICK_READY must contain exactly six joint values")
         return state
 
-    def _plan_continuous_preapproach(self, preapproach_pose: Pose):
-        """Plan current -> pre-grasp directly, with PICK_READY fallback."""
-        pick_ready_state = self._pick_ready_robot_state()
+    def _plan_continuous_preapproach(
+        self,
+        preapproach_pose: Pose,
+        outward_axis,
+    ):
+        """Plan current -> outward arc -> pre-grasp, with PICK_READY fallback."""
         stage_start = len(self.last_plan_report.get("stages", []))
         fallback_start = len(
             self.last_plan_report.get("cartesian_fallbacks", [])
         )
         range_start = len(self._trajectory_range_records)
-        seed_trajectory = self._plan_preapproach(
-            preapproach_pose,
-            pick_ready_state,
-        )
-        if seed_trajectory is None:
-            return None
-
-        seed_stages = self.last_plan_report.get("stages", [])[stage_start:]
-        range_end = len(self._trajectory_range_records)
-
-        def discard_seed_plan() -> None:
-            for stage in seed_stages:
-                stage["discarded"] = True
-                stage["seed_only"] = True
-            del self._trajectory_range_records[range_start:range_end]
-            fallbacks = self.last_plan_report.get(
-                "cartesian_fallbacks", []
+        current_planning_tf = self._lookup_transform(self.planning_link)
+        arc_plan = None
+        if current_planning_tf is not None:
+            current_pose = Pose()
+            current_pose.position.x = float(
+                current_planning_tf.transform.translation.x
             )
-            seed_fallbacks = fallbacks[fallback_start:]
-            if seed_fallbacks:
-                self.last_plan_report["continuous_seed_fallbacks"] = list(
-                    seed_fallbacks
-                )
-                del fallbacks[fallback_start:]
-
-        preapproach_end = self._trajectory_end_state(seed_trajectory)
-        preapproach_positions = dict(
-            zip(
-                preapproach_end.joint_state.name,
-                preapproach_end.joint_state.position,
+            current_pose.position.y = float(
+                current_planning_tf.transform.translation.y
             )
-        )
-        joint_names = list(pick_ready_state.joint_state.name)
-        direct_plan = self._plan_joint_target(
-            joint_names,
-            [float(preapproach_positions[name]) for name in joint_names],
-            start_state=None,
-            label="CONTINUOUS DIRECT PREGRASP",
-            pipeline_id="ompl",
-            planner_id=str(self.get_parameter("joint_planner_id").value),
-            stage_name="OMPL_CONTINUOUS_PREAPPROACH",
-        )
-        if direct_plan is not None:
-            discard_seed_plan()
-            direct_trajectory, display_start_state = direct_plan
+            current_pose.position.z = float(
+                current_planning_tf.transform.translation.z
+            )
+            current_pose.orientation = current_planning_tf.transform.rotation
+            arc_waypoints = make_continuous_arc_waypoints(
+                current_pose,
+                preapproach_pose,
+                outward_axis,
+                minimum_clearance=float(
+                    self.get_parameter("continuous_arc_min_clearance").value
+                ),
+                maximum_clearance=float(
+                    self.get_parameter("continuous_arc_max_clearance").value
+                ),
+                waypoint_count=int(
+                    self.get_parameter("continuous_arc_waypoint_count").value
+                ),
+            )
+            current_state = RobotState()
+            current_state.is_diff = True
+            arc_plan = self._plan_cartesian_with_ompl_fallback(
+                arc_waypoints,
+                current_state,
+                "Continuous arc pre-approach",
+                pregrasp=True,
+            )
+            self.last_plan_report["continuous_arc"] = {
+                "waypoint_count": len(arc_waypoints),
+                "minimum_clearance_m": float(
+                    self.get_parameter("continuous_arc_min_clearance").value
+                ),
+                "maximum_clearance_m": float(
+                    self.get_parameter("continuous_arc_max_clearance").value
+                ),
+                "outward_axis": [float(value) for value in outward_axis],
+            }
+        else:
+            self._record_plan_stage(
+                "CONTINUOUS_ARC_START_TF",
+                "tf",
+                False,
+                0.0,
+                "PLANNING_LINK_TF_NOT_FOUND",
+            )
+
+        if arc_plan is not None:
+            display_start_state = RobotState()
+            display_start_state.is_diff = True
             self.last_plan_report["continuous_transition_direct"] = True
+            self.last_plan_report["continuous_transition_arc"] = True
             self.get_logger().info(
-                "연속 수확 직접 전환 성공: 현재 post-wait 자세에서 "
-                "다음 pre-grasp까지 단일 constrained OMPL trajectory"
+                "연속 수확 arc 전환 성공: 현재 post-wait 자세에서 식물 "
+                "바깥쪽 반원 경로를 거쳐 다음 pre-grasp로 이동"
             )
-            return (), (direct_trajectory,), display_start_state
+            return (), arc_plan, display_start_state
 
-        direct_failure = dict(
-            self.last_plan_report.get("stages", [])[-1]
-        )
-        self.last_plan_report["stages"][-1].update(
-            {"discarded": True, "recovered": True}
-        )
+        arc_stages = self.last_plan_report.get("stages", [])[stage_start:]
+        for stage in arc_stages:
+            stage.update({"discarded": True, "recovered": True})
+        del self._trajectory_range_records[range_start:]
+        fallbacks = self.last_plan_report.get("cartesian_fallbacks", [])
+        arc_fallbacks = fallbacks[fallback_start:]
+        if arc_fallbacks:
+            self.last_plan_report["continuous_arc_fallbacks"] = list(
+                arc_fallbacks
+            )
+            del fallbacks[fallback_start:]
+        arc_failure = dict(arc_stages[-1]) if arc_stages else {}
         discarded_stages = self.last_plan_report.setdefault(
             "discarded_trajectory_stages", []
         )
-        if "OMPL_CONTINUOUS_PREAPPROACH" not in discarded_stages:
-            discarded_stages.append("OMPL_CONTINUOUS_PREAPPROACH")
-        discard_seed_plan()
+        for stage in arc_stages:
+            stage_name = str(stage.get("stage", ""))
+            if stage_name and stage_name not in discarded_stages:
+                discarded_stages.append(stage_name)
         for key in (
             "failure_stage",
             "failure_planner_type",
@@ -1653,7 +1793,7 @@ class CartesianHarvestPlanner(Node):
             self.last_plan_report.pop(key, None)
 
         self.get_logger().warning(
-            "연속 수확 직접 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
+            "연속 수확 arc 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
             "뒤 기존 pre-grasp 경로를 사용하는 fallback을 계획합니다."
         )
         pick_ready_plan = self._plan_pick_ready()
@@ -1670,16 +1810,19 @@ class CartesianHarvestPlanner(Node):
         self.last_plan_report.update(
             {
                 "continuous_transition_direct": False,
-                "failure_stage": "OMPL_CONTINUOUS_PREAPPROACH",
-                "failure_planner_type": "ompl",
-                "failure_reason": direct_failure.get(
-                    "reason", "MOVEIT_PLANNING_FAILED"
+                "continuous_transition_arc": False,
+                "failure_stage": "CONTINUOUS_ARC_PREAPPROACH",
+                "failure_planner_type": arc_failure.get(
+                    "planner_type", "cartesian/ompl"
+                ),
+                "failure_reason": arc_failure.get(
+                    "reason", "ARC_PLANNING_FAILED"
                 ),
                 "recovery_used": True,
                 "recovery_success": True,
                 "recovery_stage": "OMPL_PICK_READY_FALLBACK",
                 "recovery_reason": (
-                    "직접 pre-grasp 전환 실패 후 PICK_READY 경유 성공"
+                    "arc pre-grasp 전환 실패 후 PICK_READY 경유 성공"
                 ),
             }
         )
@@ -1891,7 +2034,8 @@ class CartesianHarvestPlanner(Node):
         )
         if continuous_transition:
             continuous_plan = self._plan_continuous_preapproach(
-                preapproach_planning_pose
+                preapproach_planning_pose,
+                geometry.outward_axis,
             )
             if continuous_plan is None:
                 return None
@@ -1987,9 +2131,9 @@ class CartesianHarvestPlanner(Node):
         )
         if continuous_transition:
             start_label = (
-                "continuous direct pre-grasp"
+                "continuous outward arc pre-grasp"
                 if self.last_plan_report.get(
-                    "continuous_transition_direct", False
+                    "continuous_transition_arc", False
                 )
                 else "PICK_READY fallback pre-grasp"
             )

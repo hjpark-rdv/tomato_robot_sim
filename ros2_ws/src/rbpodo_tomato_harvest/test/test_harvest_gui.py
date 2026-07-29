@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from geometry_msgs.msg import Point, Pose
+from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -409,72 +409,78 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     assert "post-wait pose is retained" in events[-1][1]
 
 
-def test_continuous_preapproach_plans_one_direct_joint_trajectory():
+def test_continuous_preapproach_plans_outward_arc_trajectory():
     calls = []
-    preapproach_state = RobotState()
-    preapproach_state.joint_state.name = ["base", "shoulder"]
-    preapproach_state.joint_state.position = [0.4, -0.8]
-    pick_ready_state = RobotState()
-    pick_ready_state.joint_state.name = ["base", "shoulder"]
-    pick_ready_state.joint_state.position = [0.0, 0.0]
-    display_start = RobotState()
+    transform = TransformStamped()
+    transform.transform.translation.z = 0.5
+    transform.transform.rotation.w = 1.0
     planner = SimpleNamespace(
         last_plan_report={"stages": [], "cartesian_fallbacks": []},
         _trajectory_range_records=[],
+        planning_link="tcp",
         get_parameter=lambda name: SimpleNamespace(
             value={
-                "joint_planner_id": "RRTConnect",
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: None,
             warning=lambda message: None,
         ),
-        _plan_preapproach=lambda pose, state: (
-            planner.last_plan_report["stages"].append(
-                {"stage": "CARTESIAN_PREAPPROACH", "success": True}
-            )
-            or ("seed",)
-        ),
+        _lookup_transform=lambda frame: transform,
     )
-    planner._pick_ready_robot_state = lambda: pick_ready_state
-    planner._trajectory_end_state = lambda trajectory: preapproach_state
 
-    def plan_joint_target(names, positions, start_state, label, **kwargs):
-        calls.append((list(names), list(positions), start_state, label, kwargs))
-        return "direct_preapproach_trajectory", display_start
+    def plan_arc(waypoints, start_state, label, pregrasp):
+        calls.append((waypoints, start_state, label, pregrasp))
+        return ("arc_preapproach_trajectory",)
 
-    planner._plan_joint_target = plan_joint_target
+    planner._plan_cartesian_with_ompl_fallback = plan_arc
+    target = Pose()
+    target.position.x = 0.30
+    target.position.z = 0.30
+    target.orientation.w = 1.0
 
     result = CartesianHarvestPlanner._plan_continuous_preapproach(
         planner,
-        Pose(),
+        target,
+        outward_axis=[0.0, 1.0, 0.0],
     )
 
-    assert result == (
-        (),
-        ("direct_preapproach_trajectory",),
-        display_start,
-    )
-    assert calls[0][1] == pytest.approx([0.4, -0.8])
-    assert calls[0][2] is None
-    assert planner.last_plan_report["stages"][0]["discarded"] is True
+    assert result[0] == ()
+    assert result[1] == ("arc_preapproach_trajectory",)
+    assert result[2].is_diff is True
+    waypoints, start_state, label, pregrasp = calls[0]
+    assert len(waypoints) == 7
+    assert start_state.is_diff is True
+    assert label == "Continuous arc pre-approach"
+    assert pregrasp is True
+    assert max(pose.position.y for pose in waypoints[:-1]) > 0.10
+    assert waypoints[-1].position.x == pytest.approx(target.position.x)
+    assert waypoints[-1].position.z == pytest.approx(target.position.z)
     assert planner.last_plan_report["continuous_transition_direct"] is True
+    assert planner.last_plan_report["continuous_transition_arc"] is True
 
 
-def test_continuous_direct_failure_falls_back_through_pick_ready():
+def test_continuous_arc_failure_falls_back_through_pick_ready():
     preapproach_state = RobotState()
     preapproach_state.joint_state.name = ["base", "shoulder"]
     preapproach_state.joint_state.position = [0.4, -0.8]
-    pick_ready_state = RobotState()
-    pick_ready_state.joint_state.name = ["base", "shoulder"]
-    pick_ready_state.joint_state.position = [0.0, 0.0]
     display_start = RobotState()
+    transform = TransformStamped()
+    transform.transform.translation.z = 0.5
+    transform.transform.rotation.w = 1.0
     planner = SimpleNamespace(
         last_plan_report={"stages": [], "cartesian_fallbacks": []},
         _trajectory_range_records=[],
+        planning_link="tcp",
         get_parameter=lambda name: SimpleNamespace(
-            value={"joint_planner_id": "RRTConnect"}[name]
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+            }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: None,
@@ -487,43 +493,50 @@ def test_continuous_direct_failure_falls_back_through_pick_ready():
             or ("seed_preapproach",)
         ),
         _plan_pick_ready=lambda: ("pick_ready", display_start),
+        _lookup_transform=lambda frame: transform,
     )
-    planner._pick_ready_robot_state = lambda: pick_ready_state
     planner._trajectory_end_state = lambda trajectory: preapproach_state
 
-    def fail_direct(*args, **kwargs):
+    def fail_arc(*args, **kwargs):
         planner.last_plan_report["stages"].append(
             {
-                "stage": "OMPL_CONTINUOUS_PREAPPROACH",
+                "stage": "CARTESIAN_CONTINUOUS_ARC",
+                "planner_type": "cartesian",
                 "success": False,
-                "reason": "MOVEIT_PLANNING_FAILED",
+                "reason": "CARTESIAN_FRACTION_LOW",
             }
         )
         planner.last_plan_report.update(
             {
-                "failure_stage": "OMPL_CONTINUOUS_PREAPPROACH",
-                "failure_planner_type": "ompl",
-                "failure_reason": "MOVEIT_PLANNING_FAILED",
+                "failure_stage": "CARTESIAN_CONTINUOUS_ARC",
+                "failure_planner_type": "cartesian",
+                "failure_reason": "CARTESIAN_FRACTION_LOW",
             }
         )
         return None
 
-    planner._plan_joint_target = fail_direct
+    planner._plan_cartesian_with_ompl_fallback = fail_arc
+    target = Pose()
+    target.position.x = 0.30
+    target.position.z = 0.30
+    target.orientation.w = 1.0
 
     result = CartesianHarvestPlanner._plan_continuous_preapproach(
         planner,
-        Pose(),
+        target,
+        outward_axis=[0.0, 1.0, 0.0],
     )
 
     assert result == ("pick_ready", ("seed_preapproach",), display_start)
     assert planner.last_plan_report["continuous_transition_direct"] is False
+    assert planner.last_plan_report["continuous_transition_arc"] is False
     assert planner.last_plan_report["recovery_success"] is True
-    direct_stage = next(
+    arc_stage = next(
         stage
         for stage in planner.last_plan_report["stages"]
-        if stage["stage"] == "OMPL_CONTINUOUS_PREAPPROACH"
+        if stage["stage"] == "CARTESIAN_CONTINUOUS_ARC"
     )
-    assert direct_stage["discarded"] is True
+    assert arc_stage["discarded"] is True
 
 
 def test_plan_report_keeps_first_failure_with_cartesian_details():

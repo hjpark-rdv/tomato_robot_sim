@@ -1081,7 +1081,7 @@ class HarvestGui(Node):
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
         self.continuous_harvest_checkbox = ttk.Checkbutton(
             motion_frame,
-            text="연속 수확: 다음 pre-grasp로 직접 이동",
+            text="연속 수확: 식물 바깥 arc로 다음 pre-grasp 이동",
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
@@ -1907,7 +1907,8 @@ class HarvestGui(Node):
         )
         transition_message = (
             "연속 수확 모드에서는 현재 post-wait 자세에서 다음 "
-            "pre-grasp로 직접 이동하며, 마지막 토마토 이후에만 "
+            "pre-grasp까지 식물 바깥쪽 arc 경로로 이동하며, "
+            "마지막 토마토 이후에만 "
             "PICK_READY로 복귀합니다.\n"
             if continuous_mode
             else "각 수확 후 PICK_READY로 복귀합니다.\n"
@@ -1959,7 +1960,7 @@ class HarvestGui(Node):
             f"테스트 시작: {self.sweep_case_total}개 케이스, "
             "각 케이스에서 검출된 토마토 전체를 처리, "
             f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s, "
-            f"연속 직접전환 모드={self.sweep_continuous_mode}"
+            f"연속 arc 전환 모드={self.sweep_continuous_mode}"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -2562,7 +2563,7 @@ class HarvestGui(Node):
         continuous_mode = bool(self.continuous_harvest_var.get())
         transition_message = (
             "토마토 사이에는 현재 post-wait 자세에서 다음 pre-grasp로 "
-            "직접 이동합니다.\n"
+            "식물 바깥쪽 arc 경로를 따라 이동합니다.\n"
             if continuous_mode
             else "각 토마토 수확 후 PICK_READY로 복귀합니다.\n"
         )
@@ -2608,7 +2609,7 @@ class HarvestGui(Node):
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
-            f"연속 직접전환 모드={self.batch_continuous_mode}"
+            f"연속 arc 전환 모드={self.batch_continuous_mode}"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -2708,7 +2709,7 @@ class HarvestGui(Node):
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
-            f"시작={'현재→pre-grasp 직접' if continuous_transition else 'PICK_READY'}, "
+            f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else 'PICK_READY'}, "
             f"종료={'PICK_READY' if return_to_pick_ready else 'post-wait 유지'}"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
