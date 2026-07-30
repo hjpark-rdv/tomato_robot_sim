@@ -418,8 +418,8 @@ def make_continuous_arc_waypoints(
 
 def make_tip_local_harvest_motion(
     start_pose: Pose,
-    x_forward: float = 0.050,
-    first_z_lift: float = 0.020,
+    x_forward: float = 0.070,
+    first_z_lift: float = 0.040,
     first_x_back: float = 0.015,
     second_z_lift: float = 0.010,
     second_x_back: float = 0.030,
@@ -692,8 +692,8 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
-        self.declare_parameter("harvest_x_forward", 0.050)
-        self.declare_parameter("harvest_first_z_lift", 0.020)
+        self.declare_parameter("harvest_x_forward", 0.070)
+        self.declare_parameter("harvest_first_z_lift", 0.040)
         self.declare_parameter("harvest_first_x_back", 0.015)
         self.declare_parameter("harvest_second_z_lift", 0.010)
         self.declare_parameter("harvest_wait_sec", 2.0)
@@ -2361,7 +2361,7 @@ class CartesianHarvestPlanner(Node):
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
-            "+X50mm -> +Z20mm -> -X15mm -> +Z10mm -> wait -> -X30mm "
+            "+X70mm -> +Z40mm -> -X15mm -> +Z10mm -> wait -> -X30mm "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )

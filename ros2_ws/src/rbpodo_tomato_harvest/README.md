@@ -492,8 +492,8 @@ corrects the gripper roll to its -90 degree ground-level orientation. After the
 initial Cartesian approach, the complete sequence uses the local axes of
 `tomato_gripper_tip`:
 
-1. Move +50 mm along tip X.
-2. Move +20 mm along tip Z.
+1. Move +70 mm along tip X.
+2. Move +40 mm along tip Z.
 3. Move -15 mm along tip X.
 4. Move +10 mm along tip Z.
 5. Hold for the configured `harvest_wait_sec` duration (GUI default: 2 seconds).
