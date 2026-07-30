@@ -3520,6 +3520,13 @@ class HarvestGui(Node):
         self.verified_plan = None
         self.execute_button.configure(state="disabled")
 
+    def _verification_matches_current_selection(self, verification) -> bool:
+        return verification == (
+            self.detection_generation,
+            self._selected_index(),
+            *self._selected_planner_config(),
+        )
+
     def _lift_harvest_mode_changed(self) -> None:
         self._invalidate_plan()
         enabled = bool(self.lift_harvest_var.get())
@@ -3566,7 +3573,9 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
         )
-        if execute and self.verified_plan != verification:
+        if execute and not self._verification_matches_current_selection(
+            self.verified_plan
+        ):
             messagebox.showwarning(
                 "Plan-only 필요",
                 "현재 토마토의 Plan-only가 성공한 뒤 실제 수확을 실행할 수 있습니다.",
@@ -3958,10 +3967,14 @@ class HarvestGui(Node):
                 )
                 self.status.set(f"{mode} 완료")
                 self._append_log(f"{mode} 완료 (종료 코드 0)")
-                if not execute and verification[0] == self.detection_generation:
+                if self._verification_matches_current_selection(verification):
                     self.verified_plan = verification
-                    if self._selected_index() == verification[1]:
-                        self.execute_button.configure(state="normal")
+                    self.execute_button.configure(state="normal")
+                    if execute:
+                        self._append_log(
+                            "실제 수확 성공 — 현재 Plan-only 검증을 유지하여 "
+                            "동일 토마토를 다시 실행할 수 있습니다."
+                        )
                 else:
                     self._invalidate_plan()
             else:
@@ -4273,10 +4286,8 @@ class HarvestGui(Node):
             self.plan_button.configure(state="normal")
         if busy:
             self.execute_button.configure(state="disabled")
-        elif self.verified_plan == (
-            self.detection_generation,
-            self._selected_index(),
-            *self._selected_planner_config(),
+        elif self._verification_matches_current_selection(
+            self.verified_plan
         ):
             self.execute_button.configure(state="normal")
         self._update_lift_controls()

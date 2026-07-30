@@ -242,6 +242,28 @@ def test_lift_height_callback_updates_realtime_display_and_calibration():
     }
 
 
+def test_successful_execution_verification_remains_reusable_for_same_target():
+    verification = (7, 2, "ompl", "RRTConnect", "cartesian")
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: (
+            "ompl",
+            "RRTConnect",
+            "cartesian",
+        ),
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        verification,
+    ) is True
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (6, 2, "ompl", "RRTConnect", "cartesian"),
+    ) is False
+
+
 def test_lift_bottom_status_callback_enables_height_after_success():
     values = {}
     gui = SimpleNamespace(
