@@ -1139,37 +1139,82 @@ class HarvestGui(Node):
                 pass
 
     def _build_ui(self) -> None:
-        outer = ttk.Frame(self.root, padding=8)
+        style = ttk.Style(self.root)
+        style.configure("Treeview", rowheight=28)
+        style.configure("Treeview.Heading", padding=(6, 6))
+        style.configure("Action.TButton", padding=(10, 7))
+        style.configure("Compact.TButton", padding=(8, 5))
+        style.configure("Status.TLabel", padding=(8, 5))
+
+        outer = ttk.Frame(self.root, padding=10)
         outer.grid(row=0, column=0, sticky="nsew")
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         outer.columnconfigure(0, weight=1)
-        outer.columnconfigure(1, weight=0)
-        outer.rowconfigure(1, weight=1)
-        outer.rowconfigure(3, weight=1)
-        outer.rowconfigure(5, weight=0)
+        outer.rowconfigure(0, weight=1)
 
-        top_controls = ttk.Frame(outer)
-        top_controls.grid(row=0, column=0, sticky="ew")
-        top_controls.columnconfigure(0, weight=1)
+        self.main_notebook = ttk.Notebook(outer)
+        self.main_notebook.grid(row=0, column=0, sticky="nsew")
+        harvest_tab = ttk.Frame(self.main_notebook, padding=10)
+        sweep_tab = ttk.Frame(self.main_notebook, padding=10)
+        equipment_tab = ttk.Frame(self.main_notebook, padding=10)
+        self.main_notebook.add(harvest_tab, text="  수확 작업  ")
+        self.main_notebook.add(sweep_tab, text="  자동 테스트  ")
+        self.main_notebook.add(equipment_tab, text="  장면 · 속도 · 리프트  ")
 
-        camera_frame = ttk.LabelFrame(
-            top_controls, text="1. 카메라 검출", padding=8
+        self._build_harvest_ui(harvest_tab)
+        self._build_sweep_ui(sweep_tab)
+        self._build_equipment_ui(equipment_tab)
+
+        log_frame = ttk.LabelFrame(outer, text="실행 로그", padding=6)
+        log_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        log_frame.columnconfigure(0, weight=1)
+        log_frame.rowconfigure(0, weight=1)
+        self.log_text = tk.Text(
+            log_frame,
+            height=5,
+            wrap="word",
+            state="disabled",
+            padx=6,
+            pady=4,
         )
-        camera_frame.grid(row=0, column=0, sticky="ew")
+        log_scrollbar = ttk.Scrollbar(
+            log_frame, orient="vertical", command=self.log_text.yview
+        )
+        self.log_text.configure(yscrollcommand=log_scrollbar.set)
+        self.log_text.grid(row=0, column=0, sticky="nsew")
+        log_scrollbar.grid(row=0, column=1, sticky="ns")
+        ttk.Label(
+            outer,
+            textvariable=self.status,
+            anchor="w",
+            style="Status.TLabel",
+            relief="groove",
+        ).grid(row=2, column=0, sticky="ew", pady=(6, 0))
+
+    def _build_harvest_ui(self, frame) -> None:
+        frame.columnconfigure(0, weight=5, minsize=720)
+        frame.columnconfigure(1, weight=3, minsize=430)
+        frame.rowconfigure(1, weight=1)
+
+        camera_frame = ttk.LabelFrame(frame, text="카메라 검출", padding=8)
+        camera_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
         camera_frame.columnconfigure(1, weight=1)
-        ttk.Label(camera_frame, text="서비스").grid(row=0, column=0, sticky="w")
+        ttk.Label(camera_frame, text="서비스", foreground="#666666").grid(
+            row=0, column=0, sticky="w"
+        )
         ttk.Label(camera_frame, text=self.camera_service).grid(
-            row=0, column=1, sticky="w", padx=8
+            row=0, column=1, sticky="w", padx=(8, 16)
         )
         self.detect_button = ttk.Button(
             camera_frame,
             text="토마토 촬영 / 검출",
             command=self.detect_tomatoes,
+            style="Action.TButton",
         )
-        self.detect_button.grid(row=0, column=2, padx=(8, 0))
+        self.detect_button.grid(row=0, column=2)
 
-        list_frame = ttk.LabelFrame(outer, text="2. 검출된 토마토 선택", padding=8)
+        list_frame = ttk.LabelFrame(frame, text="검출된 토마토", padding=8)
         list_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
@@ -1178,7 +1223,7 @@ class HarvestGui(Node):
             list_frame,
             columns=columns,
             show="headings",
-            height=6,
+            height=15,
             selectmode="browse",
         )
         headings = {
@@ -1190,12 +1235,12 @@ class HarvestGui(Node):
             "z": "Camera Z (m)",
         }
         widths = {
-            "index": 52,
-            "frame": 180,
-            "source_id": 110,
-            "x": 100,
-            "y": 100,
-            "z": 100,
+            "index": 58,
+            "frame": 205,
+            "source_id": 125,
+            "x": 105,
+            "y": 105,
+            "z": 105,
         }
         for column in columns:
             self.tomato_tree.heading(column, text=headings[column])
@@ -1213,150 +1258,162 @@ class HarvestGui(Node):
         scrollbar.grid(row=0, column=1, sticky="ns")
         self.tomato_tree.bind("<<TreeviewSelect>>", self._tree_selection_changed)
 
-        motion_frame = ttk.LabelFrame(outer, text="3. 수확 모션", padding=8)
-        motion_frame.grid(row=2, column=0, sticky="ew", pady=(8, 0))
+        motion_frame = ttk.LabelFrame(frame, text="수확 모션", padding=10)
+        motion_frame.grid(
+            row=1, column=1, sticky="nsew", padx=(8, 0), pady=(8, 0)
+        )
+        motion_frame.columnconfigure(0, weight=1)
         motion_frame.columnconfigure(1, weight=1)
         ttk.Label(motion_frame, text="선택 토마토").grid(
-            row=0, column=0, sticky="w"
+            row=0, column=0, columnspan=2, sticky="w"
         )
         self.tomato_combo = ttk.Combobox(
             motion_frame,
             textvariable=self.selected_tomato,
             state="readonly",
-            width=28,
         )
-        self.tomato_combo.grid(row=0, column=1, sticky="w", padx=8)
+        self.tomato_combo.grid(
+            row=1, column=0, columnspan=2, sticky="ew", pady=(4, 10)
+        )
         self.tomato_combo.bind("<<ComboboxSelected>>", self._combo_selection_changed)
         self.plan_button = ttk.Button(
             motion_frame,
             text="Plan-only 확인",
             command=lambda: self.start_harvest(False),
             state="disabled",
+            style="Action.TButton",
         )
-        self.plan_button.grid(row=0, column=2, padx=(8, 4))
+        self.plan_button.grid(row=2, column=0, padx=(0, 4))
         self.execute_button = ttk.Button(
             motion_frame,
             text="실제 수확 실행",
             command=lambda: self.start_harvest(True),
             state="disabled",
+            style="Action.TButton",
         )
-        self.execute_button.grid(row=0, column=3, padx=(4, 0))
+        self.execute_button.grid(row=2, column=1, padx=(4, 0))
         self.harvest_all_button = ttk.Button(
             motion_frame,
-            text="검출 토마토 전체 연속 수확",
+            text="전체 연속 수확",
             command=self.start_harvest_all,
             state="disabled",
+            style="Action.TButton",
         )
         self.harvest_all_button.grid(
-            row=1,
+            row=3,
             column=0,
-            columnspan=2,
-            sticky="ew",
+            padx=(0, 4),
             pady=(8, 0),
         )
         self.motion_stop_button = ttk.Button(
             motion_frame,
-            text="현재 수확 모션 정지",
+            text="모션 정지",
             command=self.stop_active_motion,
             state="disabled",
+            style="Action.TButton",
         )
         self.motion_stop_button.grid(
-            row=1,
-            column=2,
-            columnspan=2,
-            sticky="ew",
-            padx=(8, 0),
+            row=3,
+            column=1,
+            padx=(4, 0),
             pady=(8, 0),
         )
-        self.clear_markers_button = ttk.Button(
-            motion_frame,
-            text="결과 마커 지우기",
-            command=self.clear_harvest_result_markers,
-            state="disabled",
+        ttk.Separator(motion_frame, orient="horizontal").grid(
+            row=4, column=0, columnspan=2, sticky="ew", pady=12
         )
-        self.clear_markers_button.grid(
-            row=2,
-            column=2,
-            columnspan=2,
-            sticky="ew",
-            padx=(8, 0),
-            pady=(8, 0),
+
+        options = ttk.LabelFrame(motion_frame, text="수확 옵션", padding=8)
+        options.grid(row=5, column=0, columnspan=2, sticky="ew")
+        options.columnconfigure(1, weight=1)
+        ttk.Label(options, text="리니어모터 대기").grid(
+            row=0, column=0, sticky="w"
         )
-        self.failure_goal_button = ttk.Button(
-            motion_frame,
-            text="실패 자세 → RViz Goal",
-            command=self.show_failure_goal_state,
-            state="disabled",
-        )
-        self.failure_goal_button.grid(
-            row=2,
-            column=0,
-            columnspan=2,
-            sticky="ew",
-            pady=(8, 0),
-        )
-        ttk.Label(motion_frame, text="리니어모터 대기시간").grid(
-            row=3, column=0, sticky="w", pady=(8, 0)
-        )
-        wait_input = ttk.Frame(motion_frame)
-        wait_input.grid(row=3, column=1, sticky="w", padx=8, pady=(8, 0))
+        wait_input = ttk.Frame(options)
+        wait_input.grid(row=0, column=1, sticky="w", padx=(8, 0))
         self.linear_motor_wait_entry = ttk.Entry(
             wait_input,
             textvariable=self.linear_motor_wait_sec,
-            width=8,
+            width=7,
         )
         self.linear_motor_wait_entry.grid(row=0, column=0)
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
         self.continuous_harvest_checkbox = ttk.Checkbutton(
-            motion_frame,
-            text="연속 수확: 식물 바깥 arc로 다음 pre-grasp 이동",
+            options,
+            text="연속 수확: 식물 바깥 arc 경유",
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=3,
-            column=2,
-            columnspan=2,
-            sticky="w",
-            padx=(8, 0),
-            pady=(8, 0),
+            row=1, column=0, columnspan=2, sticky="w", pady=(8, 0)
         )
         self.lift_harvest_checkbox = ttk.Checkbutton(
-            motion_frame,
-            text="리프트 수확: 토마토보다 40cm 낮게 (0~750mm)",
+            options,
+            text="리프트 수확: 토마토보다 40cm 낮게",
             variable=self.lift_harvest_var,
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=4,
+            row=2, column=0, columnspan=2, sticky="w", pady=(6, 0)
+        )
+
+        utility = ttk.Frame(motion_frame)
+        utility.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        utility.columnconfigure(0, weight=1)
+        utility.columnconfigure(1, weight=1)
+        self.clear_markers_button = ttk.Button(
+            utility,
+            text="마커 지우기",
+            command=self.clear_harvest_result_markers,
+            state="disabled",
+            style="Compact.TButton",
+        )
+        self.clear_markers_button.grid(
+            row=0,
+            column=1,
+            padx=(4, 0),
+        )
+        self.failure_goal_button = ttk.Button(
+            utility,
+            text="실패 자세 → RViz Goal",
+            command=self.show_failure_goal_state,
+            state="disabled",
+            style="Compact.TButton",
+        )
+        self.failure_goal_button.grid(
+            row=0,
             column=0,
-            columnspan=4,
-            sticky="w",
-            pady=(8, 0),
+            padx=(0, 4),
         )
         ttk.Label(
             motion_frame,
-            text=(
-                "개별 실제 실행은 Plan-only 성공 후 활성화됩니다. "
-                "전체 수확은 토마토마다 Plan-only 후 실제 실행합니다."
-            ),
-        ).grid(row=5, column=0, columnspan=4, sticky="w", pady=(8, 0))
+            text="Plan-only 성공 후 실제 실행이 활성화되며, 성공한 실행은 반복할 수 있습니다.",
+            foreground="#666666",
+            wraplength=390,
+            justify="left",
+        ).grid(row=7, column=0, columnspan=2, sticky="w", pady=(12, 0))
+
+    def _build_equipment_ui(self, frame) -> None:
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(2, weight=1)
 
         scene_frame = ttk.LabelFrame(
-            top_controls, text="토마토 줄기 위치 / 회전", padding=8
+            frame, text="토마토 줄기 위치 / 회전", padding=10
         )
-        scene_frame.grid(row=1, column=0, sticky="ew", pady=(6, 0))
-        for column in range(10):
+        scene_frame.grid(row=0, column=0, sticky="ew")
+        for column in range(9):
             scene_frame.columnconfigure(column, weight=0)
+        scene_frame.columnconfigure(8, weight=1)
         for column, (label, variable) in enumerate(
-            (("X", self.scene_x), ("Y", self.scene_y), ("Z", self.scene_z))
+            (("X (m)", self.scene_x), ("Y (m)", self.scene_y), ("Z (m)", self.scene_z))
         ):
             base = column * 2
-            ttk.Label(scene_frame, text=label).grid(row=0, column=base, padx=(0, 4))
-            ttk.Entry(scene_frame, textvariable=variable, width=8).grid(
-                row=0, column=base + 1, padx=(0, 6)
+            ttk.Label(scene_frame, text=label).grid(
+                row=0, column=base, sticky="w", padx=(0 if column == 0 else 12, 4)
             )
-        ttk.Label(scene_frame, text="회전(°)").grid(
-            row=0, column=6, padx=(0, 4)
+            ttk.Entry(scene_frame, textvariable=variable, width=9).grid(
+                row=0, column=base + 1
+            )
+        ttk.Label(scene_frame, text="회전 (°)").grid(
+            row=0, column=6, padx=(12, 4)
         )
         ttk.Spinbox(
             scene_frame,
@@ -1364,38 +1421,41 @@ class HarvestGui(Node):
             to=360.0,
             increment=5.0,
             textvariable=self.scene_rotation,
-            width=8,
-        ).grid(row=0, column=7, padx=(0, 6))
+            width=9,
+        ).grid(row=0, column=7)
+        actions = ttk.Frame(scene_frame)
+        actions.grid(row=0, column=8, sticky="e", padx=(20, 0))
         self.read_scene_button = ttk.Button(
-            scene_frame,
+            actions,
             text="현재값 읽기",
             command=self.read_scene_position,
+            style="Compact.TButton",
         )
-        self.read_scene_button.grid(row=0, column=8, padx=(4, 4))
+        self.read_scene_button.grid(row=0, column=0, padx=(0, 6))
         self.set_scene_button = ttk.Button(
-            scene_frame,
-            text="위치/회전 적용",
+            actions,
+            text="위치 / 회전 적용",
             command=self.set_scene_position,
+            style="Action.TButton",
         )
-        self.set_scene_button.grid(row=0, column=9, padx=(4, 0))
+        self.set_scene_button.grid(row=0, column=1)
         ttk.Label(
             scene_frame,
-            text="회전은 메인 줄기 축을 기준으로 가지와 토마토 전체에 적용됩니다.",
-        ).grid(row=1, column=0, columnspan=10, sticky="w", pady=(8, 0))
+            text="메인 줄기 축을 기준으로 가지와 토마토 전체가 함께 이동·회전합니다.",
+            foreground="#666666",
+        ).grid(row=1, column=0, columnspan=9, sticky="w", pady=(8, 0))
 
-        speed_frame = ttk.LabelFrame(
-            top_controls, text="로봇 이동 속도", padding=8
-        )
-        speed_frame.grid(row=2, column=0, sticky="ew", pady=(6, 0))
+        speed_frame = ttk.LabelFrame(frame, text="로봇 이동 속도", padding=10)
+        speed_frame.grid(row=1, column=0, sticky="ew", pady=(10, 0))
         speed_items = (
-            ("RB Speed Bar (%)", self.speed_bar_percent),
-            ("OMPL/Joint 속도 (%)", self.motion_velocity_percent),
-            ("OMPL/Joint 가속도 (%)", self.motion_acceleration_percent),
+            ("RB Speed Bar", self.speed_bar_percent),
+            ("OMPL / Joint 속도", self.motion_velocity_percent),
+            ("OMPL / Joint 가속도", self.motion_acceleration_percent),
         )
         for index, (label, variable) in enumerate(speed_items):
             base = index * 2
-            ttk.Label(speed_frame, text=label).grid(
-                row=0, column=base, padx=(0 if index == 0 else 10, 4)
+            ttk.Label(speed_frame, text=f"{label} (%)").grid(
+                row=0, column=base, padx=(0 if index == 0 else 18, 5)
             )
             ttk.Spinbox(
                 speed_frame,
@@ -1403,109 +1463,69 @@ class HarvestGui(Node):
                 to=100,
                 increment=5,
                 textvariable=variable,
-                width=6,
+                width=7,
             ).grid(row=0, column=base + 1)
         self.apply_speed_button = ttk.Button(
             speed_frame,
             text="속도 적용",
             command=self.apply_motion_speed,
+            style="Action.TButton",
         )
-        self.apply_speed_button.grid(row=0, column=6, padx=(12, 0))
+        self.apply_speed_button.grid(row=0, column=6, padx=(20, 0))
         ttk.Label(
             speed_frame,
-            text=(
-                "실제 로봇: Speed Bar + OMPL/Joint 적용  |  "
-                "시뮬레이션: OMPL/Joint만 적용 (Cartesian 제외)"
-            ),
-        ).grid(row=1, column=0, columnspan=7, sticky="w", pady=(6, 0))
+            text="실제 로봇은 Speed Bar와 OMPL/Joint, 시뮬레이션은 OMPL/Joint에 적용됩니다.",
+            foreground="#666666",
+        ).grid(row=1, column=0, columnspan=7, sticky="w", pady=(8, 0))
 
-        log_frame = ttk.LabelFrame(outer, text="상태 및 실행 로그", padding=8)
-        log_frame.grid(row=3, column=0, sticky="nsew", pady=(8, 0))
-        log_frame.columnconfigure(0, weight=1)
-        log_frame.rowconfigure(0, weight=1)
-        self.log_text = tk.Text(log_frame, height=6, wrap="word", state="disabled")
-        log_scrollbar = ttk.Scrollbar(
-            log_frame, orient="vertical", command=self.log_text.yview
-        )
-        self.log_text.configure(yscrollcommand=log_scrollbar.set)
-        self.log_text.grid(row=0, column=0, sticky="nsew")
-        log_scrollbar.grid(row=0, column=1, sticky="ns")
-        ttk.Label(outer, textvariable=self.status, anchor="w").grid(
-            row=4, column=0, sticky="ew", pady=(6, 0)
-        )
-
-        sweep_frame = ttk.LabelFrame(
-            outer, text="4. 줄기 위치/회전 Plan 자동 테스트", padding=8
-        )
-        sweep_frame.grid(
-            row=0, column=1, rowspan=5, sticky="nsew", padx=(8, 0)
-        )
-        self._build_sweep_ui(sweep_frame)
-
-        lift_frame = ttk.LabelFrame(
-            outer,
-            text="5. UV 리프트 제어",
-            padding=8,
-        )
-        lift_frame.grid(
-            row=5,
-            column=0,
-            columnspan=2,
-            sticky="ew",
-            pady=(8, 0),
-        )
+        lift_frame = ttk.LabelFrame(frame, text="UV 리프트 제어", padding=10)
+        lift_frame.grid(row=2, column=0, sticky="new", pady=(10, 0))
         self._build_lift_ui(lift_frame)
 
     def _build_lift_ui(self, frame) -> None:
         """Build controls backed by the farmily_uv_lift ROS topics."""
-        frame.columnconfigure(7, weight=1)
-        ttk.Label(frame, text="노드").grid(row=0, column=0, sticky="w")
+        frame.columnconfigure(6, weight=1)
+        ttk.Label(frame, text="노드 상태").grid(row=0, column=0, sticky="w")
         ttk.Label(
             frame,
             textvariable=self.lift_node_status,
-            width=16,
-        ).grid(row=0, column=1, sticky="w", padx=(6, 12))
+            width=18,
+        ).grid(row=0, column=1, sticky="w", padx=(8, 16))
         self.lift_launch_button = ttk.Button(
             frame,
-            text="리프트 노드 실행",
+            text="노드 실행",
             command=self.launch_lift_node,
+            style="Compact.TButton",
         )
-        self.lift_launch_button.grid(row=0, column=2, padx=(0, 12))
+        self.lift_launch_button.grid(row=0, column=2, padx=(0, 6))
         self.lift_calibration_button = ttk.Button(
             frame,
-            text="Bottom calibration 실행",
+            text="Bottom Calibration",
             command=self.start_lift_bottom_calibration,
             state="disabled",
+            style="Compact.TButton",
         )
         self.lift_calibration_button.grid(row=0, column=3, padx=(0, 12))
         ttk.Label(
             frame,
             textvariable=self.lift_calibration_status,
             width=24,
-        ).grid(row=0, column=4, sticky="w", padx=(0, 16))
+        ).grid(row=0, column=4, sticky="w")
 
-        ttk.Separator(frame, orient="vertical").grid(
-            row=0,
-            column=5,
-            rowspan=2,
-            sticky="ns",
-            padx=(0, 16),
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=1, column=0, columnspan=7, sticky="ew", pady=10
         )
-        ttk.Label(frame, text="현재 높이").grid(
-            row=0,
-            column=6,
-            sticky="e",
-        )
+        ttk.Label(frame, text="현재 높이").grid(row=2, column=0, sticky="w")
         ttk.Label(
             frame,
             textvariable=self.lift_current_height,
             font="TkHeadingFont",
-            width=14,
-        ).grid(row=0, column=7, sticky="w", padx=(6, 16))
+            width=16,
+        ).grid(row=2, column=1, sticky="w", padx=(8, 16))
         ttk.Label(frame, text="목표 높이").grid(
-            row=0,
-            column=8,
-            sticky="e",
+            row=2,
+            column=2,
+            sticky="w",
         )
         self.lift_target_height_entry = ttk.Entry(
             frame,
@@ -1514,40 +1534,48 @@ class HarvestGui(Node):
             state="disabled",
         )
         self.lift_target_height_entry.grid(
-            row=0,
-            column=9,
-            padx=(6, 4),
+            row=2,
+            column=3,
+            sticky="w",
+            padx=(8, 4),
         )
-        ttk.Label(frame, text="mm").grid(row=0, column=10, sticky="w")
+        ttk.Label(frame, text="mm").grid(row=2, column=4, sticky="w")
+        lift_actions = ttk.Frame(frame)
+        lift_actions.grid(row=2, column=5, columnspan=2, sticky="e", padx=(20, 0))
         self.lift_move_button = ttk.Button(
-            frame,
+            lift_actions,
             text="높이 이동",
             command=self.move_lift_to_height,
             state="disabled",
+            style="Action.TButton",
         )
-        self.lift_move_button.grid(row=0, column=11, padx=(12, 0))
+        self.lift_move_button.grid(row=0, column=0, padx=(0, 6))
         self.lift_stop_button = ttk.Button(
-            frame,
-            text="리프트 이동 정지",
+            lift_actions,
+            text="이동 정지",
             command=self.stop_lift_motion,
             state="disabled",
+            style="Action.TButton",
         )
-        self.lift_stop_button.grid(row=0, column=12, padx=(8, 0))
+        self.lift_stop_button.grid(row=0, column=1)
         ttk.Label(
             frame,
             text=(
-                "높이는 Bottom calibration 기준 mm입니다. "
-                "노드가 감지되면 실행 버튼은 자동으로 비활성화됩니다."
+                "높이는 Bottom 기준 mm입니다. 노드가 감지되면 노드 실행 버튼은 자동으로 비활성화됩니다."
             ),
+            foreground="#666666",
         ).grid(
-            row=1,
+            row=3,
             column=0,
-            columnspan=13,
+            columnspan=7,
             sticky="w",
-            pady=(6, 0),
+            pady=(10, 0),
         )
 
     def _build_sweep_ui(self, frame) -> None:
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(2, weight=3, minsize=250)
+        frame.rowconfigure(3, weight=2, minsize=140)
         self.sweep_inputs = {}
         defaults = {
             "start": ("0.55", "-0.4", "0.2", "0"),
@@ -1563,9 +1591,22 @@ class HarvestGui(Node):
                 value=key == "z"
             )
 
+        top = ttk.Frame(frame)
+        top.grid(row=0, column=0, sticky="ew")
+        top.columnconfigure(0, weight=0)
+        top.columnconfigure(1, weight=1)
+
+        range_frame = ttk.LabelFrame(
+            top,
+            text="줄기 위치 / 회전 범위",
+            padding=8,
+        )
+        range_frame.grid(row=0, column=0, sticky="nw")
         headers = ("항목", "시작", "종료", "변화량", "랜덤")
         for column, header in enumerate(headers):
-            ttk.Label(frame, text=header).grid(row=0, column=column, padx=4)
+            ttk.Label(range_frame, text=header).grid(
+                row=0, column=column, padx=5, pady=(0, 4)
+            )
         rows = (
             ("X (m)", "x"),
             ("Y (m)", "y"),
@@ -1573,79 +1614,96 @@ class HarvestGui(Node):
             ("회전 (°)", "rotation"),
         )
         for row, (label, key) in enumerate(rows, start=1):
-            ttk.Label(frame, text=label).grid(row=row, column=0, sticky="w")
+            ttk.Label(range_frame, text=label).grid(
+                row=row, column=0, sticky="w", padx=(0, 8), pady=3
+            )
             for column, prefix in enumerate(("start", "end", "step"), start=1):
                 ttk.Entry(
-                    frame,
+                    range_frame,
                     textvariable=self.sweep_inputs[f"{prefix}_{key}"],
-                    width=10,
-                ).grid(row=row, column=column, padx=3, pady=3)
+                    width=11,
+                ).grid(row=row, column=column, padx=4, pady=3)
             random_checkbox = ttk.Checkbutton(
-                frame,
+                range_frame,
                 variable=self.sweep_inputs[f"random_{key}"],
             )
             random_checkbox.grid(row=row, column=4)
 
         self.sweep_summary = tk.StringVar(value="대기 중")
         self.sweep_execute_motion_var = tk.BooleanVar(value=False)
+        run_frame = ttk.LabelFrame(top, text="자동 테스트 실행", padding=10)
+        run_frame.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
+        run_frame.columnconfigure(0, weight=1)
         ttk.Label(
-            frame,
+            run_frame,
             text=(
-                "각 XYZ 위치에서 전체 회전 범위를 Plan한 뒤 다음 위치로 이동합니다.\n"
-                "랜덤 축은 케이스마다 추출하며, 검출 결과가 없으면 건너뜁니다."
+                "각 XYZ 위치에서 회전 범위를 테스트합니다. 랜덤 축은 케이스마다 "
+                "새 값을 사용하며, 검출 토마토가 없으면 다음 케이스로 이동합니다."
             ),
-        ).grid(row=5, column=0, columnspan=5, sticky="w", pady=(6, 3))
+            wraplength=650,
+            justify="left",
+            foreground="#666666",
+        ).grid(row=0, column=0, sticky="ew")
         self.sweep_execute_checkbox = ttk.Checkbutton(
-            frame,
+            run_frame,
             text="실제 로봇 실행",
             variable=self.sweep_execute_motion_var,
         )
-        self.sweep_execute_checkbox.grid(
-            row=6, column=0, columnspan=2, sticky="w", pady=(2, 0)
-        )
+        self.sweep_execute_checkbox.grid(row=1, column=0, sticky="w", pady=(10, 0))
+        run_actions = ttk.Frame(run_frame)
+        run_actions.grid(row=2, column=0, sticky="w", pady=(10, 0))
         self.sweep_start_button = ttk.Button(
-            frame, text="자동 실행", command=self.start_sweep
+            run_actions,
+            text="자동 실행",
+            command=self.start_sweep,
+            style="Action.TButton",
         )
-        self.sweep_start_button.grid(
-            row=6, column=2, columnspan=2, sticky="ew", padx=(6, 0), pady=(2, 0)
-        )
+        self.sweep_start_button.grid(row=0, column=0, padx=(0, 6))
         self.sweep_stop_button = ttk.Button(
-            frame,
-            text="자동 테스트 + 로봇 정지",
+            run_actions,
+            text="테스트 / 로봇 정지",
             command=self.stop_sweep,
             state="disabled",
+            style="Action.TButton",
         )
-        self.sweep_stop_button.grid(
-            row=6, column=4, sticky="ew", padx=(6, 0), pady=(2, 0)
-        )
-        ttk.Label(frame, textvariable=self.sweep_summary).grid(
-            row=7, column=0, columnspan=5, sticky="w", pady=(5, 0)
-        )
-        ttk.Separator(frame, orient="horizontal").grid(
-            row=8, column=0, columnspan=5, sticky="ew", pady=5
-        )
+        self.sweep_stop_button.grid(row=0, column=1)
+        ttk.Label(
+            run_frame,
+            textvariable=self.sweep_summary,
+            wraplength=650,
+            justify="left",
+        ).grid(row=3, column=0, sticky="ew", pady=(12, 0))
+
+        statistics_frame = ttk.Frame(frame)
+        statistics_frame.grid(row=1, column=0, sticky="ew", pady=(10, 6))
+        statistics_frame.columnconfigure(0, weight=1)
+        statistics_frame.columnconfigure(1, weight=1)
+        statistics_frame.columnconfigure(2, weight=2)
         self.sweep_statistics = tk.StringVar(
             value="완료 0 | 성공 0 | 실패 0 | 대체성공 0 | 성공률 0.0%"
         )
         self.sweep_failure_summary = tk.StringVar(value="실패 단계: 없음")
         self.sweep_result_path = tk.StringVar(value="결과 파일: 생성 전")
-        ttk.Label(frame, text="실시간 통계").grid(
-            row=9, column=0, columnspan=5, sticky="w"
-        )
-        ttk.Label(frame, textvariable=self.sweep_statistics).grid(
-            row=10, column=0, columnspan=5, sticky="w", pady=(4, 0)
-        )
         ttk.Label(
-            frame,
+            statistics_frame,
+            textvariable=self.sweep_statistics,
+            font="TkHeadingFont",
+        ).grid(row=0, column=0, sticky="w")
+        ttk.Label(
+            statistics_frame,
             textvariable=self.sweep_failure_summary,
-            wraplength=430,
-        ).grid(row=11, column=0, columnspan=5, sticky="w", pady=(4, 0))
+            wraplength=480,
+        ).grid(row=0, column=1, sticky="w", padx=(20, 0))
         ttk.Label(
-            frame,
+            statistics_frame,
             textvariable=self.sweep_result_path,
-            wraplength=430,
-        ).grid(row=12, column=0, columnspan=5, sticky="w", pady=(4, 8))
+            anchor="e",
+        ).grid(row=0, column=2, sticky="e", padx=(20, 0))
 
+        result_frame = ttk.LabelFrame(frame, text="실시간 결과", padding=6)
+        result_frame.grid(row=2, column=0, sticky="nsew")
+        result_frame.columnconfigure(0, weight=1)
+        result_frame.rowconfigure(0, weight=1)
         result_columns = (
             "case",
             "tomato",
@@ -1655,13 +1713,13 @@ class HarvestGui(Node):
             "sequence_time",
         )
         self.sweep_result_tree = ttk.Treeview(
-            frame,
+            result_frame,
             columns=result_columns,
             show="headings",
-            height=4,
+            height=10,
             style="Sweep.Treeview",
         )
-        ttk.Style(self.root).configure("Sweep.Treeview", rowheight=28)
+        ttk.Style(self.root).configure("Sweep.Treeview", rowheight=30)
         headings = {
             "case": "케이스",
             "tomato": "토마토",
@@ -1671,12 +1729,12 @@ class HarvestGui(Node):
             "sequence_time": "실제 시퀀스(s)",
         }
         widths = {
-            "case": 55,
-            "tomato": 55,
-            "result": 55,
-            "stage": 235,
-            "time": 70,
-            "sequence_time": 100,
+            "case": 75,
+            "tomato": 75,
+            "result": 80,
+            "stage": 520,
+            "time": 100,
+            "sequence_time": 130,
         }
         for column in result_columns:
             self.sweep_result_tree.heading(column, text=headings[column])
@@ -1687,7 +1745,7 @@ class HarvestGui(Node):
                 stretch=column == "stage",
             )
         result_scrollbar = ttk.Scrollbar(
-            frame,
+            result_frame,
             orient="vertical",
             command=self.sweep_result_tree.yview,
         )
@@ -1697,23 +1755,25 @@ class HarvestGui(Node):
             self._sweep_result_selected,
         )
         self.sweep_result_tree.grid(
-            row=13, column=0, columnspan=4, sticky="nsew", pady=(0, 4)
+            row=0, column=0, sticky="nsew"
         )
-        result_scrollbar.grid(row=13, column=4, sticky="ns", pady=(0, 4))
+        result_scrollbar.grid(row=0, column=1, sticky="ns")
+
         detail_frame = ttk.LabelFrame(
             frame,
             text="선택/최근 결과 상세",
-            padding=4,
+            padding=6,
         )
-        detail_frame.grid(
-            row=14, column=0, columnspan=5, sticky="ew", pady=(3, 0)
-        )
+        detail_frame.grid(row=3, column=0, sticky="nsew", pady=(8, 0))
         detail_frame.columnconfigure(0, weight=1)
+        detail_frame.rowconfigure(0, weight=1)
         self.sweep_result_detail = tk.Text(
             detail_frame,
-            height=7,
+            height=6,
             wrap="word",
             state="disabled",
+            padx=6,
+            pady=4,
         )
         detail_scrollbar = ttk.Scrollbar(
             detail_frame,
@@ -1723,23 +1783,17 @@ class HarvestGui(Node):
         self.sweep_result_detail.configure(
             yscrollcommand=detail_scrollbar.set
         )
-        self.sweep_result_detail.grid(row=0, column=0, sticky="ew")
+        self.sweep_result_detail.grid(row=0, column=0, sticky="nsew")
         detail_scrollbar.grid(row=0, column=1, sticky="ns")
         self._set_sweep_result_detail("없음")
         self.replay_sweep_button = ttk.Button(
-            frame,
+            detail_frame,
             text="선택 환경 재현",
             command=self.replay_selected_sweep_scene,
             state="disabled",
+            style="Compact.TButton",
         )
-        self.replay_sweep_button.grid(
-            row=15,
-            column=0,
-            columnspan=5,
-            sticky="ew",
-            pady=(4, 0),
-        )
-        frame.rowconfigure(13, weight=1)
+        self.replay_sweep_button.grid(row=1, column=0, sticky="w", pady=(6, 0))
 
     def _append_log(self, message: str) -> None:
         self.log_text.configure(state="normal")

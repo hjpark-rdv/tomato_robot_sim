@@ -99,7 +99,9 @@ MoveIt과 fake/real 카메라 서비스를 각각 실행한 뒤, 별도 터미�
 ros2 launch rbpodo_tomato_harvest harvest_gui.launch.py
 ```
 
-GUI에서는 다음 작업을 키보드 명령 없이 수행할 수 있다.
+GUI는 `수확 작업`, `자동 테스트`, `장면 · 속도 · 리프트` 탭으로 구분되며,
+실행 로그와 현재 상태는 어느 탭에서도 확인할 수 있도록 창 하단에 고정된다.
+다음 작업을 키보드 명령 없이 수행할 수 있다.
 
 1. 카메라 서비스 호출 및 모든 검출 토마토 목록 확인
 2. 수확할 `detected_tomato_N_tf` 선택
