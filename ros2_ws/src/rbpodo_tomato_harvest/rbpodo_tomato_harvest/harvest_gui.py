@@ -46,6 +46,8 @@ HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
 SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
 PLAN_RESULT_PREFIX = "__HARVEST_PLAN_RESULT__"
+PREPLANNED_BATCH_EVENT_PREFIX = "__HARVEST_PREPLANNED_BATCH_EVENT__"
+PREPLANNED_BATCH_CONFIG_ENV = "HARVEST_PREPLANNED_BATCH_CONFIG"
 SWEEP_CSV_FIELDS = (
     "timestamp",
     "case",
@@ -582,6 +584,54 @@ def harvest_command(
     ]
 
 
+def preplanned_batch_command(
+    tomato_count: int,
+    *,
+    continuous_arc: bool,
+    planning_pipeline_id: str = "ompl",
+    planner_id: str = "RRTConnect",
+    preapproach_mode: str = "cartesian",
+    velocity_scale: float = 0.2,
+    acceleration_scale: float = 0.2,
+    harvest_wait_sec: float = 2.0,
+    pick_ready_state_name: str = "PICK_READY",
+    python_executable: str | None = None,
+) -> tuple[list[str], dict[str, str]]:
+    """Build the complete-batch planner command and private config env."""
+    if tomato_count <= 0:
+        raise ValueError("tomato_count must be greater than zero")
+    command = harvest_command(
+        0,
+        True,
+        planning_pipeline_id=planning_pipeline_id,
+        planner_id=planner_id,
+        preapproach_mode=preapproach_mode,
+        publish_display_trajectory=True,
+        velocity_scale=velocity_scale,
+        acceleration_scale=acceleration_scale,
+        harvest_wait_sec=harvest_wait_sec,
+        continuous_transition=False,
+        return_to_pick_ready=True,
+        retreat_after_harvest=False,
+        pick_ready_state_name=pick_ready_state_name,
+        python_executable=python_executable,
+    )
+    command[2] = (
+        "rbpodo_tomato_harvest.tomato_harvest_preplanned_batch"
+    )
+    environment = {
+        PREPLANNED_BATCH_CONFIG_ENV: json.dumps(
+            {
+                "tomato_count": int(tomato_count),
+                "continuous_arc": bool(continuous_arc),
+                "execute": True,
+                "start_tolerance_deg": 3.0,
+            }
+        )
+    }
+    return command, environment
+
+
 def lift_harvest_target_height_mm(
     tomato_world_z_m: float,
     offset_m: float = 0.40,
@@ -1087,6 +1137,8 @@ class HarvestGui(Node):
         self.batch_harvest_wait_sec = 2.0
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
+        self.batch_preplan_mode = False
+        self.batch_preplan_failure_message = ""
         self.batch_scene = (0.0, 0.0, 0.0, 0.0)
         self.tomato_motion_results: dict[int, str] = {}
         self.harvest_results: dict[int, bool] = {}
@@ -1162,6 +1214,7 @@ class HarvestGui(Node):
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
         self.lift_harvest_var = tk.BooleanVar(value=False)
+        self.preplan_all_var = tk.BooleanVar(value=False)
         self.lift_node_status = tk.StringVar(value="노드 확인 중")
         self.lift_current_height = tk.StringVar(value="-- mm")
         self.lift_target_height = tk.StringVar(value="10.0")
@@ -1447,6 +1500,15 @@ class HarvestGui(Node):
         )
         self.lift_harvest_checkbox.grid(
             row=3, column=0, columnspan=2, sticky="w", pady=(6, 0)
+        )
+        self.preplan_all_checkbox = ttk.Checkbutton(
+            options,
+            text="전체 모션 사전계획 후 저장 trajectory 실행",
+            variable=self.preplan_all_var,
+            command=self._preplan_all_mode_changed,
+        )
+        self.preplan_all_checkbox.grid(
+            row=4, column=0, columnspan=2, sticky="w", pady=(6, 0)
         )
 
         utility = ttk.Frame(motion_frame)
@@ -3828,10 +3890,41 @@ class HarvestGui(Node):
     def _lift_harvest_mode_changed(self) -> None:
         self._invalidate_plan()
         enabled = bool(self.lift_harvest_var.get())
+        if enabled and bool(self.preplan_all_var.get()):
+            self.preplan_all_var.set(False)
+            self._append_log(
+                "리프트 수확에서는 전체 모션 사전계획을 사용할 수 없어 "
+                "사전계획 옵션을 해제했습니다."
+            )
+        self._update_preplan_checkbox_state()
         self.status.set(
             "리프트 수확 모드 활성화 — Plan-only를 다시 실행하세요."
             if enabled
             else "리프트 수확 모드 해제 — Plan-only를 다시 실행하세요."
+        )
+
+    def _preplan_all_mode_changed(self) -> None:
+        enabled = bool(self.preplan_all_var.get())
+        if enabled and bool(self.lift_harvest_var.get()):
+            self.preplan_all_var.set(False)
+            messagebox.showwarning(
+                "사전계획 사용 불가",
+                "리프트 수확에서는 전체 모션 사전계획을 사용할 수 "
+                "없습니다. 리프트 수확을 해제한 뒤 사용하세요.",
+            )
+            return
+        self._invalidate_plan()
+        self.status.set(
+            "전체 모션 사전계획 활성화 — 전체 연속 수확 시작 전에 "
+            "모든 trajectory를 계산합니다."
+            if enabled
+            else "전체 모션 사전계획 해제"
+        )
+
+    def _update_preplan_checkbox_state(self) -> None:
+        disabled = self.ui_busy or bool(self.lift_harvest_var.get())
+        self.preplan_all_checkbox.configure(
+            state="disabled" if disabled else "normal"
         )
 
     def _handle_lift_preparation_error(self, message: str) -> None:
@@ -3960,6 +4053,14 @@ class HarvestGui(Node):
             return
         continuous_mode = bool(self.continuous_harvest_var.get())
         lift_mode = bool(self.lift_harvest_var.get())
+        preplan_mode = bool(self.preplan_all_var.get())
+        if preplan_mode and lift_mode:
+            messagebox.showwarning(
+                "사전계획 사용 불가",
+                "리프트 수확에서는 전체 모션 사전계획을 사용할 수 "
+                "없습니다.",
+            )
+            return
         if continuous_mode and lift_mode:
             transition_message = (
                 "토마토 사이에는 식물 바깥 안전 위치로 후퇴한 뒤 리프트를 "
@@ -3985,18 +4086,36 @@ class HarvestGui(Node):
         transition_message += (
             f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
         )
+        if preplan_mode:
+            transition_message += (
+                "모든 토마토 trajectory를 먼저 계산하고, 전부 성공한 "
+                "경우에만 저장된 trajectory를 실행합니다.\n"
+            )
+            failure_policy = (
+                "사전계획이 하나라도 실패하면 로봇을 움직이지 않고 "
+                "전체 작업을 중단합니다.\n"
+            )
+        else:
+            failure_policy = (
+                "Plan-only 실패 토마토는 건너뛰며, 실제 실행 실패 시 "
+                "중단됩니다.\n"
+            )
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
             f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
             f"{transition_message}"
-            "Plan-only 실패 토마토는 건너뛰며, 실제 실행 실패 시 중단됩니다.\n"
+            f"{failure_policy}"
             "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
             icon="warning",
         ):
             return
 
         self.batch_active = True
-        self.batch_jobs = deque(harvest_all_jobs(tomato_count))
+        self.batch_jobs = (
+            deque()
+            if preplan_mode
+            else deque(harvest_all_jobs(tomato_count))
+        )
         self.batch_generation = self.detection_generation
         self.batch_total = tomato_count
         self.batch_completed = 0
@@ -4006,6 +4125,8 @@ class HarvestGui(Node):
         self.batch_harvest_wait_sec = harvest_wait_sec
         self.batch_continuous_mode = continuous_mode
         self.batch_lift_harvest_mode = lift_mode
+        self.batch_preplan_mode = preplan_mode
+        self.batch_preplan_failure_message = ""
         try:
             self.batch_scene = (
                 float(self.scene_x.get()),
@@ -4032,10 +4153,193 @@ class HarvestGui(Node):
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
             f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
+            f"전체 사전계획 모드={self.batch_preplan_mode}, "
             f"시작/복귀 자세={self.batch_pick_ready_state}"
         )
         self._set_busy(True)
-        self._start_next_batch_job()
+        if self.batch_preplan_mode:
+            self._launch_preplanned_batch_process()
+        else:
+            self._start_next_batch_job()
+
+    def _launch_preplanned_batch_process(self) -> None:
+        pipeline, planner_id, preapproach_mode = self.batch_planner
+        command, extra_environment = preplanned_batch_command(
+            self.batch_total,
+            continuous_arc=self.batch_continuous_mode,
+            planning_pipeline_id=pipeline,
+            planner_id=planner_id,
+            preapproach_mode=preapproach_mode,
+            velocity_scale=self.motion_velocity_scale,
+            acceleration_scale=self.motion_acceleration_scale,
+            harvest_wait_sec=self.batch_harvest_wait_sec,
+            pick_ready_state_name=self.batch_pick_ready_state,
+        )
+        environment = os.environ.copy()
+        environment.update(extra_environment)
+        environment["PYTHONUNBUFFERED"] = "1"
+        self.status.set("전체 trajectory 사전계획 시작...")
+        self._append_log(
+            f"[전체 사전계획] 토마토 {self.batch_total}개 trajectory "
+            f"계산 시작 — Arc={self.batch_continuous_mode}"
+        )
+        try:
+            self.harvest_process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                env=environment,
+            )
+        except OSError as error:
+            self.harvest_process = None
+            self._finish_batch(
+                False,
+                f"전체 사전계획 프로세스 시작 실패: {error}",
+            )
+            return
+        thread = threading.Thread(
+            target=self._read_preplanned_batch_process,
+            args=(self.harvest_process,),
+            daemon=True,
+        )
+        thread.start()
+
+    def _read_preplanned_batch_process(self, process) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                line = line.rstrip()
+                if line.startswith(PREPLANNED_BATCH_EVENT_PREFIX):
+                    try:
+                        event = json.loads(
+                            line[len(PREPLANNED_BATCH_EVENT_PREFIX):]
+                        )
+                    except json.JSONDecodeError as error:
+                        self.process_queue.put(
+                            ("log", f"전체 사전계획 결과 해석 실패: {error}")
+                        )
+                        continue
+                    self.process_queue.put(
+                        ("preplanned_batch_event", event, process)
+                    )
+                elif is_critical_process_output(line):
+                    self.process_queue.put(("log", line))
+        return_code = process.wait()
+        self.process_queue.put(
+            ("preplanned_batch_done", return_code, process)
+        )
+
+    def _handle_preplanned_batch_event(self, event: dict) -> None:
+        phase = str(event.get("phase", ""))
+        index = int(event.get("index", -1))
+        report = event.get("report") or {}
+        if phase == "preplan_started":
+            self.status.set(
+                f"전체 사전계획 중: 0/{self.batch_total}"
+            )
+            return
+        if phase == "planning":
+            number = int(event.get("number", index + 1))
+            self.status.set(
+                f"전체 사전계획 중: {number}/{self.batch_total} "
+                f"(토마토 {index})"
+            )
+            self._set_tomato_motion_result(index, "사전계획 중")
+            return
+        if phase == "planned":
+            success = bool(event.get("success"))
+            self.harvest_plan_report = report
+            self._set_harvest_result(
+                index,
+                success,
+                adaptive_rotation_applied=(
+                    success and adaptive_rotation_was_applied(report)
+                ),
+                adaptive_rotation_deg=adaptive_rotation_degrees(report),
+                approach_axis_local=adaptive_approach_axis_local(report),
+                motion_result_text=(
+                    "사전계획 완료" if success else "사전계획 실패"
+                ),
+            )
+            self._append_log(
+                f"[전체 사전계획 {index + 1}/{self.batch_total}] "
+                f"토마토 {index} {'성공' if success else '실패'}"
+                + (
+                    ""
+                    if success
+                    else f" — {harvest_failure_summary(report)}"
+                )
+            )
+            return
+        if phase == "preplan_complete":
+            self.status.set(
+                "전체 사전계획 완료 — 저장된 trajectory 실행 시작"
+            )
+            self._append_log(
+                "[전체 사전계획 완료] 모든 trajectory 계산 성공. "
+                "재계획 없이 저장된 trajectory 실행을 시작합니다."
+            )
+            return
+        if phase == "executing":
+            number = int(event.get("number", index + 1))
+            self.status.set(
+                f"저장 trajectory 실행 중: {number}/{self.batch_total} "
+                f"(토마토 {index})"
+            )
+            self._set_tomato_motion_result(index, "수확 실행 중")
+            return
+        if phase == "executed":
+            success = bool(event.get("success"))
+            self.harvest_plan_report = report
+            self._set_harvest_result(
+                index,
+                success,
+                adaptive_rotation_applied=(
+                    success and adaptive_rotation_was_applied(report)
+                ),
+                adaptive_rotation_deg=adaptive_rotation_degrees(report),
+                approach_axis_local=adaptive_approach_axis_local(report),
+                motion_result_text=tomato_motion_result_text(
+                    True,
+                    success,
+                    report,
+                ),
+            )
+            verification = (
+                self.batch_generation,
+                index,
+                *self.batch_planner,
+                self.batch_pick_ready_state,
+            )
+            self._record_batch_statistics(
+                0 if success else 1,
+                True,
+                verification,
+            )
+            if success:
+                self.batch_completed += 1
+            self._append_log(
+                f"[저장 trajectory 실행 {index + 1}/{self.batch_total}] "
+                f"토마토 {index} {'성공' if success else '실패'}"
+            )
+            return
+        if phase == "aborted":
+            reason = str(event.get("reason", "UNKNOWN"))
+            detail = harvest_failure_summary(report)
+            self.batch_preplan_failure_message = (
+                f"전체 사전계획 수확 중단: 토마토 {index}, "
+                f"{reason}, {detail}"
+            )
+            self._append_log(
+                f"[전체 사전계획 중단] {self.batch_preplan_failure_message}"
+            )
+            return
+        if phase == "complete":
+            self._append_log(
+                "[전체 사전계획 실행 완료] 저장된 모든 trajectory를 "
+                "성공적으로 실행했습니다."
+            )
 
     def _start_next_batch_job(self) -> None:
         if not self.batch_active:
@@ -4238,6 +4542,34 @@ class HarvestGui(Node):
                 continue
             if item[0] == "log":
                 self._append_log(item[1])
+                continue
+            if item[0] == "preplanned_batch_event":
+                _, event, process = item
+                if process is self.harvest_process and self.batch_active:
+                    self._handle_preplanned_batch_event(event)
+                continue
+            if item[0] == "preplanned_batch_done":
+                _, return_code, process = item
+                if process is not self.harvest_process:
+                    continue
+                self.harvest_process = None
+                if not self.batch_active:
+                    continue
+                if return_code == 0:
+                    self._finish_batch(
+                        True,
+                        "전체 사전계획 수확 완료: 저장된 trajectory로 "
+                        f"토마토 {self.batch_completed}개 수확",
+                    )
+                else:
+                    self._finish_batch(
+                        False,
+                        self.batch_preplan_failure_message
+                        or (
+                            "전체 사전계획 프로세스가 비정상 종료했습니다. "
+                            f"(종료 코드 {return_code})"
+                        ),
+                    )
                 continue
             if item[0] == "sweep_result":
                 _, result, process = item
@@ -4582,6 +4914,8 @@ class HarvestGui(Node):
         self.batch_pick_ready_state = "PICK_READY"
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
+        self.batch_preplan_mode = False
+        self.batch_preplan_failure_message = ""
         self.lift_harvest_pending = None
         self._invalidate_plan()
         self._set_busy(False)
@@ -4658,6 +4992,7 @@ class HarvestGui(Node):
         self.sweep_pick_ready_state_combo.configure(state=ready_state)
         self.continuous_harvest_checkbox.configure(state=state)
         self.lift_harvest_checkbox.configure(state=state)
+        self._update_preplan_checkbox_state()
         self.sweep_continuous_harvest_checkbox.configure(state=state)
         self.sweep_lift_harvest_checkbox.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")

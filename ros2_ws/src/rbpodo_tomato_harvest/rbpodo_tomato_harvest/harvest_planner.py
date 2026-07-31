@@ -124,6 +124,7 @@ class HarvestMotionPlan:
     return_pick_ready_trajectory: object
     display_start_state: RobotState
     outward_retreat_trajectory: object = ()
+    end_planning_pose: Pose | None = None
 
 
 def make_centered_joint_path_constraints(
@@ -910,12 +911,24 @@ class CartesianHarvestPlanner(Node):
             state.is_diff = False
         return state
 
-    def _begin_plan_report(self) -> None:
+    def _begin_plan_report(
+        self,
+        start_state_override: RobotState | None = None,
+    ) -> None:
         started_monotonic = time.monotonic()
         self._trajectory_range_records = []
-        self._plan_start_joint_positions = (
-            self._wait_for_current_joint_positions()
-        )
+        if start_state_override is None:
+            self._plan_start_joint_positions = (
+                self._wait_for_current_joint_positions()
+            )
+        else:
+            self._plan_start_joint_positions = {
+                str(name): float(position)
+                for name, position in zip(
+                    start_state_override.joint_state.name,
+                    start_state_override.joint_state.position,
+                )
+            }
         self.last_plan_report = {
             "success": False,
             "tomato_frame": self.tomato_frame,
@@ -1864,10 +1877,36 @@ class CartesianHarvestPlanner(Node):
             raise ValueError("PICK_READY must contain exactly six joint values")
         return state
 
+    def _state_matches_pick_ready(self, state: RobotState | None) -> bool:
+        if state is None:
+            return False
+        positions = {
+            str(name): float(position)
+            for name, position in zip(
+                state.joint_state.name,
+                state.joint_state.position,
+            )
+        }
+        ready = self._pick_ready_robot_state()
+        tolerance = max(
+            math.radians(2.0),
+            float(self.get_parameter("pick_ready_joint_tolerance").value),
+        )
+        return all(
+            name in positions
+            and abs(positions[name] - float(target)) <= tolerance
+            for name, target in zip(
+                ready.joint_state.name,
+                ready.joint_state.position,
+            )
+        )
+
     def _plan_continuous_preapproach(
         self,
         preapproach_pose: Pose,
         outward_axis,
+        start_state_override: RobotState | None = None,
+        start_pose_override: Pose | None = None,
     ):
         """Plan current -> outward arc -> pre-grasp, with PICK_READY fallback."""
         stage_start = len(self.last_plan_report.get("stages", []))
@@ -1875,9 +1914,15 @@ class CartesianHarvestPlanner(Node):
             self.last_plan_report.get("cartesian_fallbacks", [])
         )
         range_start = len(self._trajectory_range_records)
-        current_planning_tf = self._lookup_transform(self.planning_link)
+        current_planning_tf = (
+            None
+            if start_pose_override is not None
+            else self._lookup_transform(self.planning_link)
+        )
         arc_plan = None
-        if current_planning_tf is not None:
+        if start_pose_override is not None:
+            current_pose = copy.deepcopy(start_pose_override)
+        elif current_planning_tf is not None:
             current_pose = Pose()
             current_pose.position.x = float(
                 current_planning_tf.transform.translation.x
@@ -1889,6 +1934,10 @@ class CartesianHarvestPlanner(Node):
                 current_planning_tf.transform.translation.z
             )
             current_pose.orientation = current_planning_tf.transform.rotation
+        else:
+            current_pose = None
+
+        if current_pose is not None:
             arc_waypoints = make_continuous_arc_waypoints(
                 current_pose,
                 preapproach_pose,
@@ -1903,8 +1952,11 @@ class CartesianHarvestPlanner(Node):
                     self.get_parameter("continuous_arc_waypoint_count").value
                 ),
             )
-            current_state = RobotState()
-            current_state.is_diff = True
+            if start_state_override is None:
+                current_state = RobotState()
+                current_state.is_diff = True
+            else:
+                current_state = copy.deepcopy(start_state_override)
             arc_plan = self._plan_cartesian_with_ompl_fallback(
                 arc_waypoints,
                 current_state,
@@ -1931,8 +1983,11 @@ class CartesianHarvestPlanner(Node):
             )
 
         if arc_plan is not None:
-            display_start_state = RobotState()
-            display_start_state.is_diff = True
+            if start_state_override is None:
+                display_start_state = RobotState()
+                display_start_state.is_diff = True
+            else:
+                display_start_state = copy.deepcopy(start_state_override)
             self.last_plan_report["continuous_transition_direct"] = True
             self.last_plan_report["continuous_transition_arc"] = True
             self.get_logger().info(
@@ -1974,7 +2029,7 @@ class CartesianHarvestPlanner(Node):
             "연속 수확 arc 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
             "뒤 기존 pre-grasp 경로를 사용하는 fallback을 계획합니다."
         )
-        pick_ready_plan = self._plan_pick_ready()
+        pick_ready_plan = self._plan_pick_ready(start_state_override)
         if pick_ready_plan is None:
             return None
         pick_ready_trajectory, display_start_state = pick_ready_plan
@@ -2010,8 +2065,12 @@ class CartesianHarvestPlanner(Node):
             display_start_state,
         )
 
-    def plan(self):
-        self._begin_plan_report()
+    def plan(
+        self,
+        start_state_override: RobotState | None = None,
+        start_pose_override: Pose | None = None,
+    ):
+        self._begin_plan_report(start_state_override)
         if not self._synchronize_dynamic_base_transform():
             self._record_plan_stage(
                 "DYNAMIC_BASE_TF_SYNC",
@@ -2023,7 +2082,10 @@ class CartesianHarvestPlanner(Node):
             self._finish_plan_report(False)
             return None
         try:
-            result = self._plan_impl()
+            result = self._plan_impl(
+                start_state_override=start_state_override,
+                start_pose_override=start_pose_override,
+            )
         except Exception as error:
             self._record_plan_stage(
                 "UNEXPECTED_EXCEPTION",
@@ -2037,7 +2099,11 @@ class CartesianHarvestPlanner(Node):
         self._finish_plan_report(result is not None)
         return result
 
-    def _plan_impl(self):
+    def _plan_impl(
+        self,
+        start_state_override: RobotState | None = None,
+        start_pose_override: Pose | None = None,
+    ):
         tomato_tf = self._lookup_transform(self.tomato_frame)
         if tomato_tf is None:
             self._record_plan_stage(
@@ -2224,6 +2290,8 @@ class CartesianHarvestPlanner(Node):
             continuous_plan = self._plan_continuous_preapproach(
                 preapproach_planning_pose,
                 geometry.outward_axis,
+                start_state_override=start_state_override,
+                start_pose_override=start_pose_override,
             )
             if continuous_plan is None:
                 return None
@@ -2233,13 +2301,27 @@ class CartesianHarvestPlanner(Node):
                 display_start_state,
             ) = continuous_plan
         else:
-            pick_ready_plan = self._plan_pick_ready()
-            if pick_ready_plan is None:
-                return None
-            pick_ready_trajectory, display_start_state = pick_ready_plan
-            pick_ready_end = self._trajectory_end_state(
-                pick_ready_trajectory
-            )
+            if self._state_matches_pick_ready(start_state_override):
+                pick_ready_trajectory = ()
+                display_start_state = copy.deepcopy(start_state_override)
+                pick_ready_end = copy.deepcopy(start_state_override)
+                self._record_plan_stage(
+                    "PREPLANNED_PICK_READY_REUSE",
+                    "cached_state",
+                    True,
+                    0.0,
+                    "ALREADY_AT_SELECTED_READY_STATE",
+                )
+            else:
+                pick_ready_plan = self._plan_pick_ready(
+                    start_state_override
+                )
+                if pick_ready_plan is None:
+                    return None
+                pick_ready_trajectory, display_start_state = pick_ready_plan
+                pick_ready_end = self._trajectory_end_state(
+                    pick_ready_trajectory
+                )
             preapproach_trajectory = self._plan_preapproach(
                 preapproach_planning_pose,
                 pick_ready_end,
@@ -2347,6 +2429,9 @@ class CartesianHarvestPlanner(Node):
             outward_retreat_trajectory=outward_retreat_trajectory,
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
+            end_planning_pose=copy.deepcopy(
+                as_planning_pose(tip_motion.after_wait_pose)
+            ),
         )
         planned_trajectories = []
         for segment in (

@@ -1,4 +1,5 @@
 from collections import deque
+import json
 import math
 import random
 from types import SimpleNamespace
@@ -16,6 +17,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     HarvestGui,
     PICK_READY_STATES,
     PLANNER_CONFIGS,
+    PREPLANNED_BATCH_CONFIG_ENV,
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
@@ -30,6 +32,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_statistics_record,
     is_critical_process_output,
     lift_harvest_target_height_mm,
+    preplanned_batch_command,
     scene_parameters,
     sweep_execution_duration_text,
     sweep_stage_detail,
@@ -961,6 +964,61 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
     assert planner.last_plan_report["continuous_transition_arc"] is True
 
 
+def test_preplanned_continuous_arc_uses_cached_end_state_and_pose():
+    calls = []
+    cached_state = RobotState()
+    cached_state.is_diff = False
+    cached_state.joint_state.name = ["base"]
+    cached_state.joint_state.position = [0.4]
+    cached_pose = Pose()
+    cached_pose.position.x = -0.2
+    cached_pose.position.y = 0.1
+    cached_pose.position.z = 0.45
+    cached_pose.orientation.w = 1.0
+    planner = SimpleNamespace(
+        last_plan_report={"stages": [], "cartesian_fallbacks": []},
+        _trajectory_range_records=[],
+        planning_link="tcp",
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            warning=lambda message: None,
+        ),
+        _lookup_transform=lambda frame: pytest.fail(
+            "live TF must not be used for a cached arc start"
+        ),
+        _plan_cartesian_with_ompl_fallback=lambda waypoints, state, *args, **kwargs: (
+            calls.append((waypoints, state)) or ("cached_arc",)
+        ),
+    )
+    target = Pose()
+    target.position.x = 0.3
+    target.position.z = 0.3
+    target.orientation.w = 1.0
+
+    result = CartesianHarvestPlanner._plan_continuous_preapproach(
+        planner,
+        target,
+        outward_axis=[0.0, 1.0, 0.0],
+        start_state_override=cached_state,
+        start_pose_override=cached_pose,
+    )
+
+    assert result[1] == ("cached_arc",)
+    assert list(result[2].joint_state.position) == [0.4]
+    assert list(calls[0][1].joint_state.position) == [0.4]
+    expected_first_x = cached_pose.position.x + (
+        target.position.x - cached_pose.position.x
+    ) / 7.0
+    assert calls[0][0][0].position.x == pytest.approx(expected_first_x)
+
+
 def test_display_start_state_keeps_current_lift_height_for_rviz_playback():
     joint_names = [
         "base",
@@ -1116,7 +1174,10 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
             )
             or ("seed_preapproach",)
         ),
-        _plan_pick_ready=lambda: ("pick_ready", display_start),
+        _plan_pick_ready=lambda start_state=None: (
+            "pick_ready",
+            display_start,
+        ),
         _lookup_transform=lambda frame: transform,
     )
     planner._trajectory_end_state = lambda trajectory: preapproach_state
@@ -1352,6 +1413,28 @@ def test_harvest_command_builds_plan_only_command():
     assert "return_to_pick_ready:=false" in command
     assert "retreat_after_harvest:=true" in command
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
+
+
+def test_preplanned_batch_command_selects_worker_and_arc_mode():
+    command, environment = preplanned_batch_command(
+        5,
+        continuous_arc=True,
+        pick_ready_state_name="PICK_READY_RIGHT",
+        python_executable="/usr/bin/python3",
+    )
+
+    assert command[:3] == [
+        "/usr/bin/python3",
+        "-m",
+        "rbpodo_tomato_harvest.tomato_harvest_preplanned_batch",
+    ]
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config == {
+        "tomato_count": 5,
+        "continuous_arc": True,
+        "execute": True,
+        "start_tolerance_deg": 3.0,
+    }
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
