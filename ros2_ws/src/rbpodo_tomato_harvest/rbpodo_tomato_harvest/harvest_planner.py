@@ -354,7 +354,13 @@ def make_continuous_arc_waypoints(
     maximum_clearance: float = 0.25,
     waypoint_count: int = 7,
 ) -> tuple[Pose, ...]:
-    """Create a smooth outward-bowing TCP path between two harvest poses."""
+    """Create a smooth, horizontally outward-bowing TCP transition.
+
+    The lift can create a large Z difference between the retained harvest pose
+    and the next pre-grasp.  The clearance bow must therefore stay in the XY
+    plane; projecting it against the 3D chord introduces an artificial Z term
+    that makes the arm dip below both poses after a lift move.
+    """
     count = max(2, int(waypoint_count))
     start = np.array(
         [start_pose.position.x, start_pose.position.y, start_pose.position.z],
@@ -369,17 +375,10 @@ def make_continuous_arc_waypoints(
     if distance < 1e-6:
         return (target_pose,)
 
-    chord = delta / distance
     requested_outward = np.array(outward_axis, dtype=float, copy=True)
     requested_outward[2] = 0.0
     requested_outward = _unit(requested_outward, "continuous arc outward axis")
-    arc_direction = requested_outward - np.dot(requested_outward, chord) * chord
-    if float(np.linalg.norm(arc_direction)) < 1e-6:
-        world_up = np.array([0.0, 0.0, 1.0], dtype=float)
-        arc_direction = world_up - np.dot(world_up, chord) * chord
-    arc_direction = _unit(arc_direction, "continuous arc direction")
-    if float(np.dot(arc_direction, requested_outward)) < 0.0:
-        arc_direction = -arc_direction
+    arc_direction = requested_outward
 
     minimum = max(0.0, float(minimum_clearance))
     maximum = max(minimum, float(maximum_clearance))

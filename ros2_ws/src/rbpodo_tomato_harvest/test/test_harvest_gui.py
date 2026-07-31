@@ -131,6 +131,8 @@ def test_lift_harvest_waits_for_target_before_starting_plan():
         lift_target_tolerance_mm=5.0,
         lift_move_timeout_sec=60.0,
         detected_tf_sync_tolerance_m=0.003,
+        detected_tf_sync_timeout_sec=8.0,
+        _detected_tf_generation_is_ready=lambda: True,
         _detected_tomato_tf_sync_error_m=lambda index: 0.0,
         lift_target_height=SimpleNamespace(set=lambda value: None),
         lift_last_height_mm=100.0,
@@ -170,6 +172,8 @@ def test_lift_harvest_waits_until_detected_tf_matches_new_detection():
         ),
         _detected_tomato_tf_sync_error_m=lambda index: next(sync_errors),
         detected_tf_sync_tolerance_m=0.003,
+        detected_tf_sync_timeout_sec=8.0,
+        _detected_tf_generation_is_ready=lambda: True,
         _tomato_world_height_m=lambda index: 0.55,
         lift_harvest_offset_m=0.40,
         lift_minimum_height_mm=0.0,
@@ -200,6 +204,81 @@ def test_lift_harvest_waits_until_detected_tf_matches_new_detection():
     assert len(scheduled) == 1
     scheduled.pop(0)()
     assert published == [pytest.approx(150.0)]
+
+
+def test_lift_harvest_waits_for_matching_tf_generation_before_position_check():
+    scheduled = []
+    checks = []
+    ready_states = iter((False, True))
+    gui = SimpleNamespace(
+        root=SimpleNamespace(
+            after=lambda delay, callback: scheduled.append(callback)
+        ),
+        _detected_tf_generation_is_ready=lambda: next(ready_states),
+        _detected_tomato_tf_sync_error_m=lambda index: (
+            checks.append(index) or 0.0
+        ),
+        detected_tf_sync_tolerance_m=0.003,
+        detected_tf_sync_timeout_sec=8.0,
+        _tomato_world_height_m=lambda index: 0.55,
+        lift_harvest_offset_m=0.40,
+        lift_minimum_height_mm=0.0,
+        lift_maximum_height_mm=750.0,
+        lift_target_tolerance_mm=1.0,
+        lift_move_timeout_sec=60.0,
+        lift_target_height=SimpleNamespace(set=lambda value: None),
+        lift_last_height_mm=150.0,
+        lift_simulation_mode=True,
+        _append_log=lambda message: None,
+        _publish_automatic_lift_target=lambda height: None,
+        status=SimpleNamespace(set=lambda value: None),
+        lift_harvest_pending=None,
+    )
+    gui._prepare_lift_for_tomato = lambda *args: (
+        HarvestGui._prepare_lift_for_tomato(gui, *args)
+    )
+
+    HarvestGui._prepare_lift_for_tomato(
+        gui,
+        0,
+        True,
+        lambda: None,
+        lambda message: pytest.fail(message),
+    )
+
+    assert checks == []
+    assert len(scheduled) == 1
+    scheduled.pop(0)()
+    assert checks == [0]
+
+
+def test_sweep_tf_sync_failure_is_recorded_without_stopping_sweep():
+    events = []
+    verification = (3, 0, "ompl", "RRTConnect", "cartesian")
+    gui = SimpleNamespace(
+        lift_harvest_pending=object(),
+        _append_log=lambda message: events.append(("log", message)),
+        _handle_sweep_plan_done=lambda code, checked, report: events.append(
+            ("result", code, checked, report)
+        ),
+        _handle_lift_preparation_error=lambda message: events.append(
+            ("abort", message)
+        ),
+    )
+
+    HarvestGui._handle_sweep_lift_preparation_error(
+        gui,
+        0,
+        verification,
+        "detected_tomato_0_tf가 새 검출 위치로 갱신되지 않았습니다",
+    )
+
+    assert not any(event[0] == "abort" for event in events)
+    result = next(event for event in events if event[0] == "result")
+    assert result[1] == 1
+    assert result[2] == verification
+    assert result[3]["failure_stage"] == "LIFT_TF_SYNC"
+    assert result[3]["suppress_result_marker"] is True
 
 
 def test_transformed_point_xyz_applies_rotation_and_translation():

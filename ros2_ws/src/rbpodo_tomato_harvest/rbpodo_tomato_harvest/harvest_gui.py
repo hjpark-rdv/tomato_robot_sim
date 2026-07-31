@@ -29,7 +29,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
-from std_msgs.msg import Bool, Float64
+from std_msgs.msg import Bool, Float64, Header
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -839,6 +839,11 @@ class HarvestGui(Node):
         self.declare_parameter("lift_target_tolerance_mm", 1.0)
         self.declare_parameter("lift_move_timeout_sec", 60.0)
         self.declare_parameter("detected_tf_sync_tolerance_m", 0.003)
+        self.declare_parameter("detected_tf_sync_timeout_sec", 8.0)
+        self.declare_parameter(
+            "detected_tf_ready_topic",
+            "/tomato_tf_generator/status/ready",
+        )
 
         camera_service = str(self.get_parameter("camera_service").value)
         detections_topic = str(self.get_parameter("detections_topic").value)
@@ -879,6 +884,20 @@ class HarvestGui(Node):
             detections_topic,
             self._detections_callback,
             10,
+        )
+        self.detected_tf_ready_topic = str(
+            self.get_parameter("detected_tf_ready_topic").value
+        )
+        detected_tf_ready_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self.create_subscription(
+            Header,
+            self.detected_tf_ready_topic,
+            self._detected_tf_ready_callback,
+            detected_tf_ready_qos,
         )
         result_marker_qos = QoSProfile(
             depth=1,
@@ -952,6 +971,9 @@ class HarvestGui(Node):
         self.detected_tf_sync_tolerance_m = float(
             self.get_parameter("detected_tf_sync_tolerance_m").value
         )
+        self.detected_tf_sync_timeout_sec = float(
+            self.get_parameter("detected_tf_sync_timeout_sec").value
+        )
         self.lift_bottom_calibration_publisher = self.create_publisher(
             Bool,
             self.lift_bottom_calibration_topic,
@@ -1008,6 +1030,8 @@ class HarvestGui(Node):
         self.scene_node = scene_node
         self.detected_tomatoes = []
         self.detected_tomato_expected_world_positions = {}
+        self.current_detection_stamp_ns = 0
+        self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
         self.detection_generation = 0
         self.verified_plan = None
@@ -1644,14 +1668,37 @@ class HarvestGui(Node):
             justify="left",
             foreground="#666666",
         ).grid(row=0, column=0, sticky="ew")
+
+        harvest_modes = ttk.Frame(run_frame)
+        harvest_modes.grid(row=1, column=0, sticky="ew", pady=(10, 0))
+        self.sweep_continuous_harvest_checkbox = ttk.Checkbutton(
+            harvest_modes,
+            text="연속 수확: 식물 바깥 arc 경유",
+            variable=self.continuous_harvest_var,
+        )
+        self.sweep_continuous_harvest_checkbox.grid(
+            row=0, column=0, sticky="w"
+        )
+        self.sweep_lift_harvest_checkbox = ttk.Checkbutton(
+            harvest_modes,
+            text="리프트 수확: 토마토보다 40cm 낮게",
+            variable=self.lift_harvest_var,
+            command=self._lift_harvest_mode_changed,
+        )
+        self.sweep_lift_harvest_checkbox.grid(
+            row=1, column=0, sticky="w", pady=(5, 0)
+        )
+
         self.sweep_execute_checkbox = ttk.Checkbutton(
             run_frame,
             text="실제 로봇 실행",
             variable=self.sweep_execute_motion_var,
         )
-        self.sweep_execute_checkbox.grid(row=1, column=0, sticky="w", pady=(10, 0))
+        self.sweep_execute_checkbox.grid(
+            row=2, column=0, sticky="w", pady=(8, 0)
+        )
         run_actions = ttk.Frame(run_frame)
-        run_actions.grid(row=2, column=0, sticky="w", pady=(10, 0))
+        run_actions.grid(row=3, column=0, sticky="w", pady=(10, 0))
         self.sweep_start_button = ttk.Button(
             run_actions,
             text="자동 실행",
@@ -1672,7 +1719,7 @@ class HarvestGui(Node):
             textvariable=self.sweep_summary,
             wraplength=650,
             justify="left",
-        ).grid(row=3, column=0, sticky="ew", pady=(12, 0))
+        ).grid(row=4, column=0, sticky="ew", pady=(12, 0))
 
         statistics_frame = ttk.Frame(frame)
         statistics_frame.grid(row=1, column=0, sticky="ew", pady=(10, 6))
@@ -2128,6 +2175,29 @@ class HarvestGui(Node):
             + (float(translation.z) - expected[2]) ** 2
         )
 
+    @staticmethod
+    def _stamp_nanoseconds(stamp) -> int:
+        return int(stamp.sec) * 1_000_000_000 + int(stamp.nanosec)
+
+    def _detected_tf_ready_callback(self, message: Header) -> None:
+        self.detected_tf_ready_stamp_ns = self._stamp_nanoseconds(
+            message.stamp
+        )
+
+    def _detected_tf_generation_is_ready(self) -> bool:
+        """Return whether the TF generator finished the current detection."""
+        expected_stamp = int(
+            getattr(self, "current_detection_stamp_ns", 0)
+        )
+        topic = str(getattr(self, "detected_tf_ready_topic", ""))
+        if expected_stamp <= 0 or not topic:
+            return True
+        count_publishers = getattr(self, "count_publishers", None)
+        if count_publishers is None or count_publishers(topic) < 1:
+            # Backward compatibility with an external/older TF generator.
+            return True
+        return int(getattr(self, "detected_tf_ready_stamp_ns", 0)) == expected_stamp
+
     def _publish_automatic_lift_target(self, height_mm: float) -> None:
         message = Float64()
         message.data = float(height_mm)
@@ -2162,11 +2232,31 @@ class HarvestGui(Node):
             self.root.after(0, on_ready)
             return
         deadline = (
-            time.monotonic() + 2.0
+            time.monotonic()
+            + max(0.1, float(self.detected_tf_sync_timeout_sec))
             if tf_deadline is None
             else float(tf_deadline)
         )
         try:
+            if not self._detected_tf_generation_is_ready():
+                if time.monotonic() < deadline:
+                    self.root.after(
+                        50,
+                        lambda: self._prepare_lift_for_tomato(
+                            tomato_index,
+                            enabled,
+                            on_ready,
+                            on_error,
+                            deadline,
+                        ),
+                    )
+                    return
+                on_error(
+                    "새 검출 결과에 대한 토마토 TF 생성 완료 신호를 "
+                    f"{self.detected_tf_sync_timeout_sec:.1f}초 안에 "
+                    "받지 못했습니다."
+                )
+                return
             tf_sync_error_m = self._detected_tomato_tf_sync_error_m(
                 tomato_index
             )
@@ -3343,7 +3433,11 @@ class HarvestGui(Node):
                 return_to_pick_ready,
                 retreat_after_harvest,
             ),
-            self._handle_lift_preparation_error,
+            lambda message: self._handle_sweep_lift_preparation_error(
+                tomato_index,
+                verification,
+                message,
+            ),
         )
 
     def _send_sweep_plan_request(
@@ -3450,6 +3544,9 @@ class HarvestGui(Node):
         self.result_arrow_lengths.clear()
         self.result_detection_frame = message.header.frame_id
         self.detection_signature = signature
+        self.current_detection_stamp_ns = self._stamp_nanoseconds(
+            message.header.stamp
+        )
         self.detected_tomatoes = list(message.detections)
         try:
             self._cache_detected_tomato_world_positions(message)
@@ -3601,6 +3698,45 @@ class HarvestGui(Node):
         else:
             self._set_busy(False)
             messagebox.showerror("리프트 수확 준비 실패", message)
+
+    def _handle_sweep_lift_preparation_error(
+        self,
+        tomato_index: int,
+        verification,
+        message: str,
+    ) -> None:
+        """Record a detection-TF race without aborting the whole sweep."""
+        text = str(message)
+        tf_sync_failure = (
+            text.startswith("detected_tomato_")
+            or text.startswith("새 검출 결과에 대한 토마토 TF")
+            or "지면 기준 높이를 계산하지 못했습니다" in text
+        )
+        if not tf_sync_failure:
+            self._handle_lift_preparation_error(text)
+            return
+
+        self.lift_harvest_pending = None
+        self._append_log(
+            f"[리프트 TF 동기화 실패] 토마토 {tomato_index}: {text} — "
+            "해당 결과를 실패로 기록하고 자동 테스트를 계속합니다."
+        )
+        report = {
+            "failure_stage": "LIFT_TF_SYNC",
+            "failure_planner_type": "tf",
+            "failure_reason": text,
+            "execution_attempted": False,
+            "suppress_result_marker": True,
+            "stages": [
+                {
+                    "stage": "LIFT_TF_SYNC",
+                    "planner_type": "tf",
+                    "success": False,
+                    "reason": text,
+                }
+            ],
+        }
+        self._handle_sweep_plan_done(1, verification, report)
 
     def start_harvest(self, execute: bool) -> None:
         index = self._selected_index()
@@ -4076,19 +4212,20 @@ class HarvestGui(Node):
         self._save_sweep_result(record)
         self._update_sweep_statistics(record)
         self._update_result_arrow_length(tomato_index)
+        transform = None
         parent_frame = str(
             self.get_parameter("result_marker_parent_frame").value
         )
-        tomato_frame = f"detected_tomato_{tomato_index}_tf"
-        try:
-            transform = self.tf_buffer.lookup_transform(
-                parent_frame,
-                tomato_frame,
-                Time(),
-            )
-        except TransformException as error:
-            self._append_log(f"결과 마커용 TF 조회 실패: {error}")
-            transform = None
+        if not report.get("suppress_result_marker"):
+            tomato_frame = f"detected_tomato_{tomato_index}_tf"
+            try:
+                transform = self.tf_buffer.lookup_transform(
+                    parent_frame,
+                    tomato_frame,
+                    Time(),
+                )
+            except TransformException as error:
+                self._append_log(f"결과 마커용 TF 조회 실패: {error}")
 
         if transform is not None:
             marker = sweep_result_marker(
@@ -4303,6 +4440,8 @@ class HarvestGui(Node):
         self.linear_motor_wait_entry.configure(state=state)
         self.continuous_harvest_checkbox.configure(state=state)
         self.lift_harvest_checkbox.configure(state=state)
+        self.sweep_continuous_harvest_checkbox.configure(state=state)
+        self.sweep_lift_harvest_checkbox.configure(state=state)
         self.tomato_combo.configure(state="disabled" if busy else "readonly")
         self.harvest_all_button.configure(
             state="disabled" if busy or not self.detected_tomatoes else "normal"

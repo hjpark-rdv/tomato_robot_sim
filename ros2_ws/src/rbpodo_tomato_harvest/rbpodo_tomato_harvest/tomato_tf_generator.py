@@ -7,7 +7,9 @@ from geometry_msgs.msg import PointStamped, TransformStamped
 from rclpy.duration import Duration
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
+from std_msgs.msg import Header
 from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformBroadcaster, TransformException, TransformListener
 
@@ -98,6 +100,10 @@ class TomatoTfGenerator(Node):
         self.declare_parameter("maximum_detection_age_sec", 2.0)
         self.declare_parameter("transform_timeout_sec", 2.0)
         self.declare_parameter("broadcast_rate_hz", 20.0)
+        self.declare_parameter(
+            "ready_topic",
+            "/tomato_tf_generator/status/ready",
+        )
 
         self.camera_frame = str(self.get_parameter("camera_frame").value)
         self.parent_frame = str(self.get_parameter("parent_frame").value)
@@ -114,6 +120,16 @@ class TomatoTfGenerator(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_broadcaster = TransformBroadcaster(self)
+        ready_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self.ready_publisher = self.create_publisher(
+            Header,
+            str(self.get_parameter("ready_topic").value),
+            ready_qos,
+        )
         self.create_subscription(
             PointStamped,
             str(self.get_parameter("center_topic").value),
@@ -197,6 +213,14 @@ class TomatoTfGenerator(Node):
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
+        if not failures:
+            # TF들을 먼저 송신한 뒤 같은 검출 stamp를 완료 신호로 보낸다.
+            # GUI는 이 신호로 이전 자동 테스트 케이스의 TF와 구분한다.
+            self._broadcast_transforms()
+            ready = Header()
+            ready.stamp = message.header.stamp
+            ready.frame_id = self.parent_frame
+            self.ready_publisher.publish(ready)
 
     def _clear_detected_transforms(self) -> None:
         self.transforms.clear()

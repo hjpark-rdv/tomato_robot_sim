@@ -84,6 +84,40 @@ def test_continuous_arc_bows_outward_and_finishes_at_target():
         assert np.linalg.norm(quaternion) == pytest.approx(1.0)
 
 
+def test_continuous_arc_does_not_add_vertical_dip_after_lift_move():
+    start = Pose()
+    start.position.x = 0.20
+    start.position.y = -0.10
+    start.position.z = 0.48
+    start.orientation.w = 1.0
+    target = Pose()
+    target.position.x = 0.50
+    target.position.y = 0.20
+    target.position.z = 0.12
+    target.orientation.w = 1.0
+
+    waypoints = make_continuous_arc_waypoints(
+        start,
+        target,
+        outward_axis=[1.0, 0.0, 0.0],
+        minimum_clearance=0.12,
+        maximum_clearance=0.25,
+        waypoint_count=7,
+    )
+
+    expected_z = [
+        start.position.z
+        + (index / 7.0) * (target.position.z - start.position.z)
+        for index in range(1, 8)
+    ]
+    assert [pose.position.z for pose in waypoints] == pytest.approx(expected_z)
+    assert all(
+        target.position.z <= pose.position.z <= start.position.z
+        for pose in waypoints
+    )
+    assert max(pose.position.x for pose in waypoints[:-1]) > target.position.x
+
+
 def test_load_srdf_group_state_uses_requested_joint_order(tmp_path):
     srdf = tmp_path / "robot.srdf"
     srdf.write_text(
