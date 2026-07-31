@@ -66,8 +66,11 @@ def load_srdf_group_state(
     return [values[str(name)] for name in joint_names]
 
 
-def default_pick_ready_joint_positions(joint_names) -> list[float]:
-    """Load PICK_READY from the installed rbpodo MoveIt SRDF."""
+def default_pick_ready_joint_positions(
+    joint_names,
+    state_name: str = "PICK_READY",
+) -> list[float]:
+    """Load the selected ready state from the installed MoveIt SRDF."""
     srdf_path = (
         Path(get_package_share_directory("rbpodo_moveit_config"))
         / "config"
@@ -75,7 +78,7 @@ def default_pick_ready_joint_positions(joint_names) -> list[float]:
     )
     return load_srdf_group_state(
         srdf_path,
-        "PICK_READY",
+        str(state_name),
         "mainpulation",
         joint_names,
     )
@@ -645,9 +648,13 @@ class CartesianHarvestPlanner(Node):
             "pick_ready_joint_names",
             pick_ready_joint_names,
         )
+        self.declare_parameter("pick_ready_state_name", "PICK_READY")
         self.declare_parameter(
             "pick_ready_joint_positions",
-            default_pick_ready_joint_positions(pick_ready_joint_names),
+            default_pick_ready_joint_positions(
+                pick_ready_joint_names,
+                str(self.get_parameter("pick_ready_state_name").value),
+            ),
         )
         self.declare_parameter(
             "display_passive_joint_names",
@@ -778,10 +785,15 @@ class CartesianHarvestPlanner(Node):
                 self.get_parameter("dynamic_base_sync_timeout_sec").value
             ),
         )
-        requested_monotonic = time.monotonic()
-        deadline = requested_monotonic + timeout_sec
+        requested_monotonic = float(
+            self.last_plan_report.get(
+                "_started_monotonic",
+                time.monotonic(),
+            )
+        )
+        joint_deadline = time.monotonic() + timeout_sec
 
-        while rclpy.ok() and time.monotonic() < deadline:
+        while rclpy.ok() and time.monotonic() < joint_deadline:
             received = self._joint_state_received_monotonic.get(
                 joint_name, 0.0
             )
@@ -796,7 +808,12 @@ class CartesianHarvestPlanner(Node):
             return False
 
         joint_stamp = self._joint_state_stamp_nanoseconds.get(joint_name, 0)
-        while rclpy.ok() and time.monotonic() < deadline:
+        # Give the matching robot_state_publisher TF its own full timeout.
+        # Previously the joint-state wait and TF wait shared one deadline, so a
+        # valid TF could be rejected immediately when the joint update arrived
+        # near the end of the first phase.
+        tf_deadline = time.monotonic() + timeout_sec
+        while rclpy.ok() and time.monotonic() < tf_deadline:
             rclpy.spin_once(self, timeout_sec=0.02)
             try:
                 transform = self.tf_buffer.lookup_transform(
@@ -894,6 +911,7 @@ class CartesianHarvestPlanner(Node):
         return state
 
     def _begin_plan_report(self) -> None:
+        started_monotonic = time.monotonic()
         self._trajectory_range_records = []
         self._plan_start_joint_positions = (
             self._wait_for_current_joint_positions()
@@ -912,6 +930,9 @@ class CartesianHarvestPlanner(Node):
             "return_to_pick_ready": bool(
                 self.get_parameter("return_to_pick_ready").value
             ),
+            "pick_ready_state_name": str(
+                self.get_parameter("pick_ready_state_name").value
+            ),
             "retreat_after_harvest": bool(
                 self.get_parameter("retreat_after_harvest").value
             ),
@@ -919,7 +940,7 @@ class CartesianHarvestPlanner(Node):
                 self._plan_start_joint_positions
             ),
             "stages": [],
-            "_started_monotonic": time.monotonic(),
+            "_started_monotonic": started_monotonic,
         }
 
     def _record_plan_stage(
@@ -1142,8 +1163,13 @@ class CartesianHarvestPlanner(Node):
             float(position)
             for position in self.get_parameter("pick_ready_joint_positions").value
         ]
+        ready_state_name = str(
+            self.get_parameter("pick_ready_state_name").value
+        )
         if len(joint_names) != 6 or len(joint_names) != len(joint_positions):
-            self.get_logger().error("PICK_READY must contain exactly six joint values")
+            self.get_logger().error(
+                f"{ready_state_name} must contain exactly six joint values"
+            )
             pipeline = str(
                 self.get_parameter("joint_planning_pipeline_id").value
             )
@@ -1160,6 +1186,10 @@ class CartesianHarvestPlanner(Node):
                 "INVALID_PICK_READY_CONFIGURATION",
             )
             return None
+
+        self.get_logger().info(
+            f"{label} planning target uses SRDF state {ready_state_name}"
+        )
 
         return self._plan_joint_target(
             joint_names,

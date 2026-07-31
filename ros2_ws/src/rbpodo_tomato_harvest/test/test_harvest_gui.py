@@ -14,6 +14,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from rbpodo_tomato_harvest.harvest_gui import (
     GUI_PLANNER_CONFIG,
     HarvestGui,
+    PICK_READY_STATES,
     PLANNER_CONFIGS,
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
@@ -24,6 +25,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     generate_sweep_cases,
     harvest_all_jobs,
     harvest_command,
+    harvest_failure_summary,
     harvest_result_marker,
     harvest_statistics_record,
     is_critical_process_output,
@@ -34,6 +36,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     sweep_stage_summary,
     sweep_result_marker,
     tomato_stem_arrow_length,
+    tomato_motion_result_text,
     transformed_point_xyz,
 )
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -75,6 +78,31 @@ def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
             "execution_duration_sec": 0.0,
         }
     ) == "-"
+
+
+def test_tomato_motion_result_text_distinguishes_plan_and_execution_failures():
+    assert tomato_motion_result_text(False, True, {}) == "Plan 성공"
+    assert tomato_motion_result_text(False, False, {}) == "Plan 실패"
+    assert tomato_motion_result_text(True, True, {}) == "수확 성공"
+    assert tomato_motion_result_text(
+        True,
+        False,
+        {"execution_attempted": False},
+    ) == "실행 전 재계획 실패"
+    assert tomato_motion_result_text(
+        True,
+        False,
+        {"execution_attempted": True},
+    ) == "수확 실행 실패"
+
+
+def test_harvest_failure_summary_includes_stage_and_reason():
+    assert harvest_failure_summary(
+        {
+            "failure_stage": "DYNAMIC_BASE_TF_SYNC",
+            "failure_reason": "FRESH_LIFT_TF_NOT_RECEIVED",
+        }
+    ) == "DYNAMIC_BASE_TF_SYNC / FRESH_LIFT_TF_NOT_RECEIVED"
 
 
 def test_lift_node_name_is_qualified_with_namespace():
@@ -322,7 +350,14 @@ def test_lift_height_callback_updates_realtime_display_and_calibration():
 
 
 def test_successful_execution_verification_remains_reusable_for_same_target():
-    verification = (7, 2, "ompl", "RRTConnect", "cartesian")
+    verification = (
+        7,
+        2,
+        "ompl",
+        "RRTConnect",
+        "cartesian",
+        "PICK_READY_RIGHT",
+    )
     gui = SimpleNamespace(
         detection_generation=7,
         _selected_index=lambda: 2,
@@ -331,6 +366,7 @@ def test_successful_execution_verification_remains_reusable_for_same_target():
             "RRTConnect",
             "cartesian",
         ),
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
     )
 
     assert HarvestGui._verification_matches_current_selection(
@@ -339,8 +375,52 @@ def test_successful_execution_verification_remains_reusable_for_same_target():
     ) is True
     assert HarvestGui._verification_matches_current_selection(
         gui,
-        (6, 2, "ompl", "RRTConnect", "cartesian"),
+        (6, 2, "ompl", "RRTConnect", "cartesian", "PICK_READY_RIGHT"),
     ) is False
+
+
+def test_plan_verification_changes_when_ready_state_changes():
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY"),
+    ) is False
+
+
+def test_empty_plan_verification_does_not_interrupt_busy_state_release():
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+    )
+
+    assert HarvestGui._verification_matches_current_selection(gui, None) is False
+
+
+def test_tomato_motion_result_updates_current_detection_row():
+    values = {}
+    gui = SimpleNamespace(
+        tomato_motion_results={},
+        tomato_tree=SimpleNamespace(
+            exists=lambda item: item == "4",
+            set=lambda item, column, value: values.__setitem__(
+                (item, column),
+                value,
+            ),
+        ),
+    )
+
+    HarvestGui._set_tomato_motion_result(gui, 4, "수확 성공")
+
+    assert gui.tomato_motion_results == {4: "수확 성공"}
+    assert values[("4", "motion_result")] == "수확 성공"
 
 
 def test_lift_bottom_status_callback_enables_height_after_success():
@@ -492,7 +572,10 @@ def test_concise_plan_report_shows_only_stage_metrics_and_joint_ranges():
         }
     )
 
-    assert "Plan 실패: detected_tomato_1_tf | 보정=45.0°" in summary
+    assert (
+        "Plan 실패: detected_tomato_1_tf | "
+        "시작/복귀=PICK_READY | 보정=45.0°"
+    ) in summary
     assert "소요=0.35s" in summary
     assert "fraction=12.5%" in summary
     assert "소요=2.15s" in summary
@@ -602,8 +685,12 @@ def test_generate_sweep_cases_rejects_zero_step_for_changed_axis():
 
 def test_persistent_worker_updates_target_and_disables_display():
     received = []
+    joint_names = [
+        "base", "shoulder", "elbow", "wrist1", "wrist2", "wrist3"
+    ]
     node = SimpleNamespace(
         tomato_frame="old_frame",
+        get_parameter=lambda name: SimpleNamespace(value=joint_names),
         set_parameters=lambda parameters: (
             received.extend(parameters)
             or [SimpleNamespace(successful=True, reason="") for _ in parameters]
@@ -623,6 +710,7 @@ def test_persistent_worker_updates_target_and_disables_display():
             "continuous_transition": True,
             "return_to_pick_ready": False,
             "retreat_after_harvest": True,
+            "pick_ready_state_name": "PICK_READY_RIGHT",
         },
     )
 
@@ -638,12 +726,18 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["continuous_transition"] is True
     assert values["return_to_pick_ready"] is False
     assert values["retreat_after_harvest"] is True
+    assert values["pick_ready_state_name"] == "PICK_READY_RIGHT"
+    assert len(values["pick_ready_joint_positions"]) == 6
 
 
 def test_persistent_worker_enables_execution_only_when_requested():
     received = []
+    joint_names = [
+        "base", "shoulder", "elbow", "wrist1", "wrist2", "wrist3"
+    ]
     node = SimpleNamespace(
         tomato_frame="old_frame",
+        get_parameter=lambda name: SimpleNamespace(value=joint_names),
         set_parameters=lambda parameters: (
             received.extend(parameters)
             or [SimpleNamespace(successful=True, reason="") for _ in parameters]
@@ -1236,6 +1330,7 @@ def test_harvest_command_builds_plan_only_command():
         continuous_transition=True,
         return_to_pick_ready=False,
         retreat_after_harvest=True,
+        pick_ready_state_name="PICK_READY_RIGHT",
         python_executable="/usr/bin/python3",
     )
 
@@ -1256,6 +1351,7 @@ def test_harvest_command_builds_plan_only_command():
     assert "continuous_transition:=true" in command
     assert "return_to_pick_ready:=false" in command
     assert "retreat_after_harvest:=true" in command
+    assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -1265,6 +1361,12 @@ def test_harvest_command_rejects_invalid_motion_scale():
         harvest_command(0, False, acceleration_scale=0.0)
     with pytest.raises(ValueError, match="harvest_wait_sec"):
         harvest_command(0, False, harvest_wait_sec=-0.1)
+    with pytest.raises(ValueError, match="ready state"):
+        harvest_command(
+            0,
+            False,
+            pick_ready_state_name="UNKNOWN_READY",
+        )
 
 
 def test_gui_percent_to_scale_validates_operator_input():
@@ -1381,6 +1483,7 @@ def test_harvest_command_builds_execute_command():
     assert "continuous_transition:=false" in command
     assert "return_to_pick_ready:=true" in command
     assert "retreat_after_harvest:=false" in command
+    assert "pick_ready_state_name:=PICK_READY" in command
 
 
 def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
@@ -1404,6 +1507,7 @@ def test_harvest_command_builds_pilz_lin_command():
 
 
 def test_planner_options_include_cartesian_and_pipeline_modes():
+    assert PICK_READY_STATES == ("PICK_READY", "PICK_READY_RIGHT")
     assert PLANNER_CONFIGS["Cartesian"] == (
         "ompl",
         "RRTConnect",
@@ -1851,7 +1955,10 @@ def test_batch_execution_failure_marks_yellow_and_stops():
         batch_total=2,
         detection_generation=4,
         harvest_plan_report={
-            "adaptive_grasp": {"applied_rotation_deg": 30.0}
+            "adaptive_grasp": {"applied_rotation_deg": 30.0},
+            "execution_attempted": False,
+            "failure_stage": "DYNAMIC_BASE_TF_SYNC",
+            "failure_reason": "FRESH_LIFT_TF_NOT_RECEIVED",
         },
         _set_harvest_result=lambda index, success, **kwargs: events.append(
             ("marker", index, success)
@@ -1873,7 +1980,11 @@ def test_batch_execution_failure_marks_yellow_and_stops():
 
     assert ("marker", 0, False) in events
     assert any(event[0] == "statistics" for event in events)
-    assert any(event[0:2] == ("finish", False) for event in events)
+    finish = next(event for event in events if event[0] == "finish")
+    assert finish[1] is False
+    assert "실제 모션 시작 전 재계획 실패" in finish[2]
+    assert "DYNAMIC_BASE_TF_SYNC" in finish[2]
+    assert "실제 trajectory는 실행되지 않았습니다" in finish[2]
 
 
 def test_record_batch_statistics_appends_one_final_tomato_row():

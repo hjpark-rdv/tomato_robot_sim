@@ -5,7 +5,10 @@ import time
 import rclpy
 from rclpy.parameter import Parameter
 
-from rbpodo_tomato_harvest.harvest_planner import CartesianHarvestPlanner
+from rbpodo_tomato_harvest.harvest_planner import (
+    CartesianHarvestPlanner,
+    default_pick_ready_joint_positions,
+)
 
 
 RESULT_PREFIX = "__HARVEST_RESULT__"
@@ -13,8 +16,24 @@ RESULT_PREFIX = "__HARVEST_RESULT__"
 
 def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
     tomato_frame = str(request["tomato_frame"])
+    ready_state_name = str(
+        request.get("pick_ready_state_name", "PICK_READY")
+    )
+    ready_joint_names = [
+        str(name)
+        for name in node.get_parameter("pick_ready_joint_names").value
+    ]
+    ready_joint_positions = default_pick_ready_joint_positions(
+        ready_joint_names,
+        ready_state_name,
+    )
     parameters = [
         Parameter("tomato_frame", value=tomato_frame),
+        Parameter("pick_ready_state_name", value=ready_state_name),
+        Parameter(
+            "pick_ready_joint_positions",
+            value=ready_joint_positions,
+        ),
         Parameter(
             "planning_pipeline_id",
             value=str(request.get("planning_pipeline_id", "ompl")),

@@ -41,6 +41,7 @@ PLANNER_CONFIGS = {
     "PILZ / LIN": ("pilz_industrial_motion_planner", "LIN", "planner"),
 }
 GUI_PLANNER_CONFIG = PLANNER_CONFIGS["Cartesian"]
+PICK_READY_STATES = ("PICK_READY", "PICK_READY_RIGHT")
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
 SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
@@ -57,6 +58,7 @@ SWEEP_CSV_FIELDS = (
     "pipeline",
     "planner_id",
     "preapproach_mode",
+    "pick_ready_state",
     "execute_motion",
     "continuous_transition",
     "return_to_pick_ready",
@@ -158,6 +160,7 @@ def concise_plan_report(report) -> str:
     adaptive = report.get("adaptive_grasp", {})
     lines = [
         f"Plan {result}: {target} | "
+        f"시작/복귀={report.get('pick_ready_state_name', 'PICK_READY')} | "
         f"보정={float(adaptive.get('applied_rotation_deg', 0.0)):.1f}°"
     ]
     for item in report.get("stages", []):
@@ -200,6 +203,29 @@ def concise_plan_report(report) -> str:
                 f"{float(item.get('span_deg', 0.0)):.1f}"
             )
     return "\n".join(lines)
+
+
+def tomato_motion_result_text(
+    execute: bool,
+    success: bool,
+    report,
+) -> str:
+    """Return the compact per-tomato result shown in the harvest table."""
+    if success:
+        return "수확 성공" if execute else "Plan 성공"
+    if not execute:
+        return "Plan 실패"
+    if not bool((report or {}).get("execution_attempted", False)):
+        return "실행 전 재계획 실패"
+    return "수확 실행 실패"
+
+
+def harvest_failure_summary(report) -> str:
+    """Format the stage and reason behind a failed harvest child process."""
+    report = report or {}
+    stage = str(report.get("failure_stage") or "UNKNOWN")
+    reason = str(report.get("failure_reason") or "원인 미보고")
+    return f"{stage} / {reason}"
 
 
 def sweep_stage_summary(record) -> str:
@@ -294,6 +320,9 @@ def harvest_statistics_record(
         "pipeline": verification[2],
         "planner_id": verification[3],
         "preapproach_mode": verification[4],
+        "pick_ready_state": (
+            verification[5] if len(verification) > 5 else "PICK_READY"
+        ),
         "execute_motion": bool(execute_motion),
         "continuous_transition": bool(
             report.get("continuous_transition", False)
@@ -484,6 +513,7 @@ def harvest_command(
     continuous_transition: bool = False,
     return_to_pick_ready: bool = True,
     retreat_after_harvest: bool = False,
+    pick_ready_state_name: str = "PICK_READY",
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -498,6 +528,11 @@ def harvest_command(
         raise ValueError(
             f"unsupported planner: pipeline={planning_pipeline_id} "
             f"planner_id={planner_id}"
+        )
+    pick_ready_state_name = str(pick_ready_state_name)
+    if pick_ready_state_name not in PICK_READY_STATES:
+        raise ValueError(
+            f"unsupported ready state: {pick_ready_state_name}"
         )
     for name, value in (
         ("velocity_scale", velocity_scale),
@@ -524,6 +559,8 @@ def harvest_command(
         f"planner_id:={planner_id}",
         "-p",
         f"preapproach_mode:={preapproach_mode}",
+        "-p",
+        f"pick_ready_state_name:={pick_ready_state_name}",
         "-p",
         "publish_display_trajectory:="
         f"{'true' if publish_display_trajectory else 'false'}",
@@ -1046,10 +1083,12 @@ class HarvestGui(Node):
         self.batch_completed = 0
         self.batch_skipped = 0
         self.batch_planner = None
+        self.batch_pick_ready_state = "PICK_READY"
         self.batch_harvest_wait_sec = 2.0
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
         self.batch_scene = (0.0, 0.0, 0.0, 0.0)
+        self.tomato_motion_results: dict[int, str] = {}
         self.harvest_results: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation: dict[int, bool] = {}
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
@@ -1074,6 +1113,7 @@ class HarvestGui(Node):
         self.sweep_harvest_wait_sec = 2.0
         self.sweep_continuous_mode = False
         self.sweep_lift_harvest_mode = False
+        self.sweep_pick_ready_state = "PICK_READY"
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -1111,6 +1151,7 @@ class HarvestGui(Node):
         self._configure_korean_font()
 
         self.selected_tomato = tk.StringVar(value="")
+        self.pick_ready_state_var = tk.StringVar(value="PICK_READY")
         self.scene_x = tk.StringVar(value="0.355")
         self.scene_y = tk.StringVar(value="-0.375")
         self.scene_z = tk.StringVar(value="0.340")
@@ -1242,7 +1283,15 @@ class HarvestGui(Node):
         list_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
-        columns = ("index", "frame", "source_id", "x", "y", "z")
+        columns = (
+            "index",
+            "frame",
+            "motion_result",
+            "source_id",
+            "x",
+            "y",
+            "z",
+        )
         self.tomato_tree = ttk.Treeview(
             list_frame,
             columns=columns,
@@ -1253,6 +1302,7 @@ class HarvestGui(Node):
         headings = {
             "index": "번호",
             "frame": "수확 TF",
+            "motion_result": "모션 결과",
             "source_id": "카메라 ID",
             "x": "Camera X (m)",
             "y": "Camera Y (m)",
@@ -1261,6 +1311,7 @@ class HarvestGui(Node):
         widths = {
             "index": 58,
             "frame": 205,
+            "motion_result": 140,
             "source_id": 125,
             "x": 105,
             "y": 105,
@@ -1349,11 +1400,30 @@ class HarvestGui(Node):
         options = ttk.LabelFrame(motion_frame, text="수확 옵션", padding=8)
         options.grid(row=5, column=0, columnspan=2, sticky="ew")
         options.columnconfigure(1, weight=1)
-        ttk.Label(options, text="리니어모터 대기").grid(
+        ttk.Label(options, text="시작/복귀 자세").grid(
             row=0, column=0, sticky="w"
         )
+        self.pick_ready_state_combo = ttk.Combobox(
+            options,
+            textvariable=self.pick_ready_state_var,
+            values=PICK_READY_STATES,
+            state="readonly",
+            width=20,
+        )
+        self.pick_ready_state_combo.grid(
+            row=0, column=1, sticky="ew", padx=(8, 0)
+        )
+        self.pick_ready_state_combo.bind(
+            "<<ComboboxSelected>>",
+            self._pick_ready_state_changed,
+        )
+        ttk.Label(options, text="리니어모터 대기").grid(
+            row=1, column=0, sticky="w", pady=(8, 0)
+        )
         wait_input = ttk.Frame(options)
-        wait_input.grid(row=0, column=1, sticky="w", padx=(8, 0))
+        wait_input.grid(
+            row=1, column=1, sticky="w", padx=(8, 0), pady=(8, 0)
+        )
         self.linear_motor_wait_entry = ttk.Entry(
             wait_input,
             textvariable=self.linear_motor_wait_sec,
@@ -1367,7 +1437,7 @@ class HarvestGui(Node):
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=1, column=0, columnspan=2, sticky="w", pady=(8, 0)
+            row=2, column=0, columnspan=2, sticky="w", pady=(8, 0)
         )
         self.lift_harvest_checkbox = ttk.Checkbutton(
             options,
@@ -1376,7 +1446,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=2, column=0, columnspan=2, sticky="w", pady=(6, 0)
+            row=3, column=0, columnspan=2, sticky="w", pady=(6, 0)
         )
 
         utility = ttk.Frame(motion_frame)
@@ -1671,13 +1741,30 @@ class HarvestGui(Node):
 
         harvest_modes = ttk.Frame(run_frame)
         harvest_modes.grid(row=1, column=0, sticky="ew", pady=(10, 0))
+        ttk.Label(harvest_modes, text="시작/복귀 자세").grid(
+            row=0, column=0, sticky="w", padx=(0, 8)
+        )
+        self.sweep_pick_ready_state_combo = ttk.Combobox(
+            harvest_modes,
+            textvariable=self.pick_ready_state_var,
+            values=PICK_READY_STATES,
+            state="readonly",
+            width=20,
+        )
+        self.sweep_pick_ready_state_combo.grid(
+            row=0, column=1, sticky="w"
+        )
+        self.sweep_pick_ready_state_combo.bind(
+            "<<ComboboxSelected>>",
+            self._pick_ready_state_changed,
+        )
         self.sweep_continuous_harvest_checkbox = ttk.Checkbutton(
             harvest_modes,
             text="연속 수확: 식물 바깥 arc 경유",
             variable=self.continuous_harvest_var,
         )
         self.sweep_continuous_harvest_checkbox.grid(
-            row=0, column=0, sticky="w"
+            row=1, column=0, columnspan=2, sticky="w", pady=(8, 0)
         )
         self.sweep_lift_harvest_checkbox = ttk.Checkbutton(
             harvest_modes,
@@ -1686,7 +1773,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.sweep_lift_harvest_checkbox.grid(
-            row=1, column=0, sticky="w", pady=(5, 0)
+            row=2, column=0, columnspan=2, sticky="w", pady=(5, 0)
         )
 
         self.sweep_execute_checkbox = ttk.Checkbutton(
@@ -2636,6 +2723,7 @@ class HarvestGui(Node):
         adaptive_rotation_applied: bool = False,
         adaptive_rotation_deg: float = 0.0,
         approach_axis_local=None,
+        motion_result_text: str | None = None,
     ) -> None:
         self._update_result_arrow_length(tomato_index)
         self.harvest_results[tomato_index] = success
@@ -2651,8 +2739,25 @@ class HarvestGui(Node):
             self.harvest_result_approach_axis_local[tomato_index] = tuple(
                 float(value) for value in approach_axis_local[:2]
             )
+        if motion_result_text is not None:
+            self._set_tomato_motion_result(
+                tomato_index,
+                motion_result_text,
+            )
         self.clear_markers_button.configure(state="normal")
         self._publish_harvest_result_markers()
+
+    def _set_tomato_motion_result(self, tomato_index: int, result: str) -> None:
+        """Update the current detection row without disturbing its selection."""
+        self.tomato_motion_results[int(tomato_index)] = str(result)
+        item = str(tomato_index)
+        if self.tomato_tree.exists(item):
+            self.tomato_tree.set(item, "motion_result", str(result))
+
+    def _reset_tomato_motion_results(self, result: str = "미실행") -> None:
+        self.tomato_motion_results.clear()
+        for index in range(len(self.detected_tomatoes)):
+            self._set_tomato_motion_result(index, result)
 
     def _clear_harvest_results(self) -> None:
         marker = Marker()
@@ -2761,6 +2866,7 @@ class HarvestGui(Node):
             "pipeline": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
+            "pick_ready_state": self.sweep_pick_ready_state,
             "execute_motion": self.sweep_execute_motion,
             "linear_motor_wait_sec": self.sweep_harvest_wait_sec,
             "continuous_harvest": self.sweep_continuous_mode,
@@ -2988,6 +3094,7 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
+            pick_ready_state = self._selected_pick_ready_state()
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
@@ -3015,14 +3122,19 @@ class HarvestGui(Node):
             transition_message = (
                 "연속 수확 모드에서는 현재 post-wait 자세에서 다음 "
                 "pre-grasp까지 식물 바깥쪽 arc 경로로 이동하며, 마지막 "
-                "토마토 이후에만 PICK_READY로 복귀합니다.\n"
+                f"토마토 이후에만 {pick_ready_state} 자세로 복귀합니다.\n"
             )
         else:
-            transition_message = "각 수확 후 PICK_READY로 복귀합니다.\n"
+            transition_message = (
+                f"각 수확 후 {pick_ready_state} 자세로 복귀합니다.\n"
+            )
         if lift_harvest_mode:
             transition_message += (
                 "각 토마토보다 400mm 낮은 높이로 리프트를 자동 이동합니다.\n"
             )
+        transition_message += (
+            f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
+        )
         if execute_motion and not messagebox.askyesno(
             "자동 실제 로봇 실행",
             "자동 테스트에서 Plan에 성공한 모든 토마토 모션을 실제로 "
@@ -3037,11 +3149,13 @@ class HarvestGui(Node):
         self.sweep_harvest_wait_sec = harvest_wait_sec
         self.sweep_continuous_mode = continuous_mode
         self.sweep_lift_harvest_mode = lift_harvest_mode
+        self.sweep_pick_ready_state = pick_ready_state
         try:
             cases, input_config = self._read_sweep_inputs()
             input_config["linear_motor_wait_sec"] = harvest_wait_sec
             input_config["continuous_harvest"] = continuous_mode
             input_config["lift_harvest"] = lift_harvest_mode
+            input_config["pick_ready_state"] = pick_ready_state
             self._start_sweep_session(cases, input_config)
         except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
@@ -3073,7 +3187,8 @@ class HarvestGui(Node):
             "각 케이스에서 검출된 토마토 전체를 처리, "
             f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s, "
             f"연속 arc 전환 모드={self.sweep_continuous_mode}, "
-            f"리프트 수확 모드={self.sweep_lift_harvest_mode}"
+            f"리프트 수확 모드={self.sweep_lift_harvest_mode}, "
+            f"시작/복귀 자세={self.sweep_pick_ready_state}"
         )
         self._set_busy(True)
         self._start_next_sweep_case()
@@ -3268,6 +3383,7 @@ class HarvestGui(Node):
                 "elapsed_sec": elapsed,
                 "failure_stages": dict(self.sweep_failure_counts),
                 "execute_motion": self.sweep_execute_motion,
+                "pick_ready_state": self.sweep_pick_ready_state,
             }
             try:
                 (self.sweep_session_dir / "summary.json").write_text(
@@ -3402,6 +3518,7 @@ class HarvestGui(Node):
             pipeline,
             planner_id,
             preapproach_mode,
+            self.sweep_pick_ready_state,
         )
         current_number = self.sweep_case_tomato_completed + 1
         continuous_transition = (
@@ -3466,6 +3583,7 @@ class HarvestGui(Node):
             "planning_pipeline_id": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
+            "pick_ready_state_name": verification[5],
             "execute": self.sweep_execute_motion,
             "velocity_scale": self.motion_velocity_scale,
             "acceleration_scale": self.motion_acceleration_scale,
@@ -3548,6 +3666,7 @@ class HarvestGui(Node):
             message.header.stamp
         )
         self.detected_tomatoes = list(message.detections)
+        self.tomato_motion_results.clear()
         try:
             self._cache_detected_tomato_world_positions(message)
         except TransformException as error:
@@ -3573,6 +3692,7 @@ class HarvestGui(Node):
                 values=(
                     index,
                     frame,
+                    "미실행",
                     detection.id,
                     f"{center.x:.4f}",
                     f"{center.y:.4f}",
@@ -3667,15 +3787,42 @@ class HarvestGui(Node):
         """Return the production GUI's fixed Cartesian-first configuration."""
         return GUI_PLANNER_CONFIG
 
+    def _selected_pick_ready_state(self) -> str:
+        state_name = str(self.pick_ready_state_var.get())
+        if state_name not in PICK_READY_STATES:
+            raise ValueError(f"지원하지 않는 시작 자세입니다: {state_name}")
+        return state_name
+
+    def _pick_ready_state_changed(self, _event=None) -> None:
+        state_name = self._selected_pick_ready_state()
+        self._invalidate_plan()
+        self.status.set(
+            f"시작/복귀 자세를 {state_name}(으)로 변경했습니다. "
+            "Plan-only를 다시 실행하세요."
+        )
+        self._append_log(
+            f"수확 시작/복귀 자세 선택: {state_name} "
+            "(다음 Plan부터 적용)"
+        )
+
     def _invalidate_plan(self) -> None:
         self.verified_plan = None
         self.execute_button.configure(state="disabled")
 
     def _verification_matches_current_selection(self, verification) -> bool:
-        return verification == (
+        if verification is None:
+            return False
+        expected = (
             self.detection_generation,
             self._selected_index(),
             *self._selected_planner_config(),
+            self._selected_pick_ready_state(),
+        )
+        if len(verification) > 5:
+            return verification == expected
+        return (
+            verification == expected[:5]
+            and expected[5] == "PICK_READY"
         )
 
     def _lift_harvest_mode_changed(self) -> None:
@@ -3750,6 +3897,7 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
+            pick_ready_state = self._selected_pick_ready_state()
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
@@ -3762,6 +3910,7 @@ class HarvestGui(Node):
             pipeline,
             planner_id,
             preapproach_mode,
+            pick_ready_state,
         )
         if execute and not self._verification_matches_current_selection(
             self.verified_plan
@@ -3805,6 +3954,7 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
+            pick_ready_state = self._selected_pick_ready_state()
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
@@ -3819,15 +3969,22 @@ class HarvestGui(Node):
         elif continuous_mode:
             transition_message = (
                 "토마토 사이에는 현재 post-wait 자세에서 다음 pre-grasp로 "
-                "식물 바깥쪽 arc 경로를 따라 이동합니다.\n"
+                "식물 바깥쪽 arc 경로를 따라 이동하고, 마지막에는 "
+                f"{pick_ready_state} 자세로 복귀합니다.\n"
             )
         else:
-            transition_message = "각 토마토 수확 후 PICK_READY로 복귀합니다.\n"
+            transition_message = (
+                f"각 토마토 수확 후 {pick_ready_state} 자세로 "
+                "복귀합니다.\n"
+            )
         if lift_mode:
             transition_message += (
                 "각 토마토의 world 높이보다 400mm 낮게 리프트를 자동 "
                 "배치합니다.\n"
             )
+        transition_message += (
+            f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
+        )
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
             f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
@@ -3845,6 +4002,7 @@ class HarvestGui(Node):
         self.batch_completed = 0
         self.batch_skipped = 0
         self.batch_planner = self._selected_planner_config()
+        self.batch_pick_ready_state = pick_ready_state
         self.batch_harvest_wait_sec = harvest_wait_sec
         self.batch_continuous_mode = continuous_mode
         self.batch_lift_harvest_mode = lift_mode
@@ -3866,13 +4024,15 @@ class HarvestGui(Node):
         )
         self._invalidate_plan()
         self._clear_harvest_results()
+        self._reset_tomato_motion_results("대기")
         self._append_log(
             f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
-            f"리프트 수확 모드={self.batch_lift_harvest_mode}"
+            f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
+            f"시작/복귀 자세={self.batch_pick_ready_state}"
         )
         self._set_busy(True)
         self._start_next_batch_job()
@@ -3899,6 +4059,7 @@ class HarvestGui(Node):
             pipeline,
             planner_id,
             preapproach_mode,
+            self.batch_pick_ready_state,
         )
         if execute and self.verified_plan != verification:
             self._finish_batch(
@@ -3960,6 +4121,9 @@ class HarvestGui(Node):
         retreat_after_harvest: bool = False,
     ) -> bool:
         pipeline, planner_id, preapproach_mode = verification[2:5]
+        pick_ready_state = (
+            verification[5] if len(verification) > 5 else "PICK_READY"
+        )
         command = harvest_command(
             index,
             execute,
@@ -3973,6 +4137,7 @@ class HarvestGui(Node):
             continuous_transition=continuous_transition,
             return_to_pick_ready=return_to_pick_ready,
             retreat_after_harvest=retreat_after_harvest,
+            pick_ready_state_name=pick_ready_state,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -3988,7 +4153,7 @@ class HarvestGui(Node):
             else ""
         )
         if return_to_pick_ready:
-            end_label = "PICK_READY"
+            end_label = pick_ready_state
         elif retreat_after_harvest:
             end_label = "리프트 안전 후퇴"
         else:
@@ -3997,8 +4162,9 @@ class HarvestGui(Node):
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
+            f"시작/복귀 자세={pick_ready_state}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
-            f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else 'PICK_READY'}, "
+            f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else pick_ready_state}, "
             f"종료={end_label}"
         )
         self.status.set(f"{batch_prefix}{mode} 실행 중...")
@@ -4154,6 +4320,11 @@ class HarvestGui(Node):
                     approach_axis_local=adaptive_approach_axis_local(
                         self.harvest_plan_report
                     ),
+                    motion_result_text=tomato_motion_result_text(
+                        execute,
+                        True,
+                        self.harvest_plan_report,
+                    ),
                 )
                 self.status.set(f"{mode} 완료")
                 self._append_log(f"{mode} 완료 (종료 코드 0)")
@@ -4176,6 +4347,11 @@ class HarvestGui(Node):
                     ),
                     approach_axis_local=adaptive_approach_axis_local(
                         self.harvest_plan_report
+                    ),
+                    motion_result_text=tomato_motion_result_text(
+                        execute,
+                        False,
+                        self.harvest_plan_report,
                     ),
                 )
                 self.status.set(f"{mode} 실패 — 로그를 확인하세요.")
@@ -4267,6 +4443,14 @@ class HarvestGui(Node):
             f"index {tomato_index} {operation} {result} "
             f"(전체 완료 {self.sweep_completed})"
         )
+        self._set_tomato_motion_result(
+            tomato_index,
+            tomato_motion_result_text(
+                self.sweep_execute_motion,
+                success,
+                report,
+            ),
+        )
         if record["execution_attempted"] and not record["execution_success"]:
             self._finish_sweep(
                 f"토마토 {tomato_index} 실제 실행 실패로 자동 테스트를 "
@@ -4312,6 +4496,11 @@ class HarvestGui(Node):
                 approach_axis_local=adaptive_approach_axis_local(
                     self.harvest_plan_report
                 ),
+                motion_result_text=tomato_motion_result_text(
+                    execute,
+                    False,
+                    self.harvest_plan_report,
+                ),
             )
             if not execute:
                 self.batch_skipped += 1
@@ -4324,10 +4513,30 @@ class HarvestGui(Node):
                 )
                 self._start_next_batch_job()
                 return
+            failure_detail = harvest_failure_summary(
+                self.harvest_plan_report
+            )
+            if not bool(
+                (self.harvest_plan_report or {}).get(
+                    "execution_attempted",
+                    False,
+                )
+            ):
+                failure_message = (
+                    f"토마토 {index} 실제 모션 시작 전 재계획 실패로 "
+                    "전체 수확을 중단했습니다. 실제 trajectory는 "
+                    f"실행되지 않았습니다. ({failure_detail}, "
+                    f"종료 코드 {return_code})"
+                )
+            else:
+                failure_message = (
+                    f"토마토 {index} 실제 trajectory 실행 실패로 전체 "
+                    f"수확을 중단했습니다. ({failure_detail}, "
+                    f"종료 코드 {return_code})"
+                )
             self._finish_batch(
                 False,
-                f"토마토 {index} {mode} 실패로 전체 수확을 중단했습니다. "
-                f"(종료 코드 {return_code})",
+                failure_message,
             )
             return
         if verification[0] != self.detection_generation:
@@ -4345,6 +4554,11 @@ class HarvestGui(Node):
             ),
             approach_axis_local=adaptive_approach_axis_local(
                 self.harvest_plan_report
+            ),
+            motion_result_text=tomato_motion_result_text(
+                execute,
+                True,
+                self.harvest_plan_report,
             ),
         )
         self._append_log(
@@ -4365,6 +4579,7 @@ class HarvestGui(Node):
         self.batch_jobs.clear()
         self.batch_generation = None
         self.batch_planner = None
+        self.batch_pick_ready_state = "PICK_READY"
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
         self.lift_harvest_pending = None
@@ -4438,6 +4653,9 @@ class HarvestGui(Node):
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
+        ready_state = "disabled" if busy else "readonly"
+        self.pick_ready_state_combo.configure(state=ready_state)
+        self.sweep_pick_ready_state_combo.configure(state=ready_state)
         self.continuous_harvest_checkbox.configure(state=state)
         self.lift_harvest_checkbox.configure(state=state)
         self.sweep_continuous_harvest_checkbox.configure(state=state)
@@ -4557,6 +4775,7 @@ class HarvestGui(Node):
             self._append_log(f"줄기 위치/회전 변경 거부: {reasons}")
             return
         self.detected_tomatoes = []
+        self.tomato_motion_results.clear()
         if preserve_sweep_markers:
             self.harvest_results.clear()
             self.harvest_result_adaptive_rotation.clear()
