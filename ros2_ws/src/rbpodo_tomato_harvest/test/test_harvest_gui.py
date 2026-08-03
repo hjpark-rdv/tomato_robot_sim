@@ -25,6 +25,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     cancel_all_goals_request,
     concise_plan_report,
     generate_sweep_cases,
+    gripper_stroke_script,
     harvest_all_jobs,
     harvest_command,
     harvest_failure_summary,
@@ -1475,6 +1476,26 @@ def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
     assert list(request.goal_info.goal_id.uuid) == [0] * 16
     assert request.goal_info.stamp.sec == 0
     assert request.goal_info.stamp.nanosec == 0
+
+
+@pytest.mark.parametrize(
+    ("command", "expected_script"),
+    [
+        ("extend", "set_dout_bit_combination(10,11,1,0)"),
+        ("retract", "set_dout_bit_combination(10,11,2,0)"),
+        ("stop", "set_dout_bit_combination(10,11,0,0)"),
+    ],
+)
+def test_gripper_stroke_script_maps_dout10_and_11_atomically(
+    command,
+    expected_script,
+):
+    assert gripper_stroke_script(command) == expected_script
+
+
+def test_gripper_stroke_script_rejects_unknown_command():
+    with pytest.raises(ValueError, match="지원하지 않는"):
+        gripper_stroke_script("invalid")
 
 
 def test_stop_active_motion_cancels_individual_harvest_without_failure_result():

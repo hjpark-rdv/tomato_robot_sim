@@ -22,7 +22,7 @@ from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
-from rbpodo_msgs.srv import SetSpeedBar, TaskStop
+from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -845,6 +845,22 @@ def cancel_all_goals_request() -> CancelGoal.Request:
     return request
 
 
+def gripper_stroke_script(command: str) -> str:
+    """Build one atomic RB command for gripper-stroke DOUT10/11."""
+    output_bits = {
+        "extend": 0b01,  # DOUT10=HIGH, DOUT11=LOW
+        "retract": 0b10,  # DOUT10=LOW, DOUT11=HIGH
+        "stop": 0b00,  # DOUT10=LOW, DOUT11=LOW
+    }
+    try:
+        value = output_bits[command]
+    except KeyError as error:
+        message = f"지원하지 않는 그리퍼 스트로크 명령: {command}"
+        raise ValueError(message) from error
+    # Little endian maps bit 0 to first_port (DOUT10) and bit 1 to DOUT11.
+    return f"set_dout_bit_combination(10,11,{value},0)"
+
+
 class HarvestGui(Node):
     """Tkinter operator panel for tomato detection and harvest testing."""
 
@@ -862,6 +878,9 @@ class HarvestGui(Node):
         )
         self.declare_parameter(
             "hardware_stop_service", "/rbpodo_hardware/task_stop"
+        )
+        self.declare_parameter(
+            "hardware_eval_service", "/rbpodo_hardware/eval"
         )
         self.declare_parameter(
             "moveit_cancel_service", "/execute_trajectory/_action/cancel_goal"
@@ -953,6 +972,12 @@ class HarvestGui(Node):
         )
         self.hardware_stop_client = self.create_client(
             TaskStop, self.hardware_stop_service
+        )
+        self.hardware_eval_service = str(
+            self.get_parameter("hardware_eval_service").value
+        )
+        self.hardware_eval_client = self.create_client(
+            Eval, self.hardware_eval_service
         )
         self.moveit_cancel_service = str(
             self.get_parameter("moveit_cancel_service").value
@@ -1182,6 +1207,7 @@ class HarvestGui(Node):
         self.lift_calibrated = False
         self.lift_last_height_mm = None
         self.lift_harvest_pending = None
+        self.gripper_stroke_request_id = 0
         self.ui_busy = False
         self.closing = False
 
@@ -1221,11 +1247,13 @@ class HarvestGui(Node):
         self.lift_calibration_status = tk.StringVar(
             value="Bottom calibration 필요"
         )
+        self.gripper_stroke_status = tk.StringVar(value="서비스 확인 중")
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
         self._refresh_lift_node_status()
+        self._refresh_gripper_stroke_status()
         self.root.after(50, self._spin_ros)
         self.root.after(50, self._drain_process_queue)
         self.root.after(400, self.read_scene_position)
@@ -1549,7 +1577,7 @@ class HarvestGui(Node):
 
     def _build_equipment_ui(self, frame) -> None:
         frame.columnconfigure(0, weight=1)
-        frame.rowconfigure(2, weight=1)
+        frame.rowconfigure(4, weight=1)
 
         scene_frame = ttk.LabelFrame(
             frame, text="토마토 줄기 위치 / 회전", padding=10
@@ -1637,6 +1665,56 @@ class HarvestGui(Node):
         lift_frame = ttk.LabelFrame(frame, text="UV 리프트 제어", padding=10)
         lift_frame.grid(row=2, column=0, sticky="new", pady=(10, 0))
         self._build_lift_ui(lift_frame)
+
+        gripper_frame = ttk.LabelFrame(
+            frame, text="그리퍼 스트로크 제어", padding=10
+        )
+        gripper_frame.grid(row=3, column=0, sticky="ew", pady=(10, 0))
+        self._build_gripper_stroke_ui(gripper_frame)
+
+    def _build_gripper_stroke_ui(self, frame) -> None:
+        """Build manual DOUT10/11 controls for the linear gripper stroke."""
+        frame.columnconfigure(5, weight=1)
+        ttk.Label(frame, text="출력 상태").grid(
+            row=0, column=0, sticky="w"
+        )
+        ttk.Label(
+            frame,
+            textvariable=self.gripper_stroke_status,
+            width=34,
+        ).grid(row=0, column=1, sticky="w", padx=(8, 20))
+        self.gripper_extend_button = ttk.Button(
+            frame,
+            text="늘림",
+            command=lambda: self.control_gripper_stroke("extend"),
+            style="Action.TButton",
+            width=12,
+        )
+        self.gripper_extend_button.grid(row=0, column=2, padx=(0, 6))
+        self.gripper_retract_button = ttk.Button(
+            frame,
+            text="줄임",
+            command=lambda: self.control_gripper_stroke("retract"),
+            style="Action.TButton",
+            width=12,
+        )
+        self.gripper_retract_button.grid(row=0, column=3, padx=(0, 6))
+        self.gripper_stop_button = ttk.Button(
+            frame,
+            text="정지",
+            command=lambda: self.control_gripper_stroke("stop"),
+            style="Action.TButton",
+            width=12,
+        )
+        self.gripper_stop_button.grid(row=0, column=4)
+        ttk.Label(
+            frame,
+            text=(
+                "늘림: DOUT10 HIGH / 11 LOW · 줄임: 10 LOW / 11 HIGH · "
+                "정지: 모두 LOW"
+            ),
+            foreground="#666666",
+        ).grid(row=1, column=0, columnspan=6, sticky="w", pady=(8, 0))
 
     def _build_lift_ui(self, frame) -> None:
         """Build controls backed by the farmily_uv_lift ROS topics."""
@@ -2661,6 +2739,124 @@ class HarvestGui(Node):
         if not math.isfinite(seconds) or seconds < 0.0:
             raise ValueError("리니어모터 대기시간은 0초 이상이어야 합니다.")
         return seconds
+
+    def _refresh_gripper_stroke_status(self) -> None:
+        """Keep the manual gripper control's hardware availability visible."""
+        if self.closing:
+            return
+        current = self.gripper_stroke_status.get()
+        if self.hardware_eval_client.service_is_ready():
+            disconnected_states = (
+                "서비스 확인 중",
+                "하드웨어 서비스 연결 안 됨",
+            )
+            if current in disconnected_states:
+                self.gripper_stroke_status.set("제어 준비 (DOUT10/11)")
+        else:
+            self.gripper_stroke_status.set(
+                "하드웨어 서비스 연결 안 됨"
+            )
+        self.root.after(1000, self._refresh_gripper_stroke_status)
+
+    def control_gripper_stroke(self, command: str) -> None:
+        """Drive the gripper linear actuator through RB control-box DOUTs."""
+        labels = {
+            "extend": ("늘림", "DOUT10=HIGH, DOUT11=LOW"),
+            "retract": ("줄임", "DOUT10=LOW, DOUT11=HIGH"),
+            "stop": ("정지", "DOUT10=LOW, DOUT11=LOW"),
+        }
+        try:
+            label, output_description = labels[command]
+            script = gripper_stroke_script(command)
+        except (KeyError, ValueError) as error:
+            self._append_log(
+                f"[그리퍼 스트로크] 잘못된 명령: {error}"
+            )
+            return
+
+        if not self.hardware_eval_client.service_is_ready():
+            service_ready = self.hardware_eval_client.wait_for_service(
+                timeout_sec=0.05
+            )
+            if not service_ready:
+                self.gripper_stroke_status.set(
+                    "하드웨어 서비스 연결 안 됨"
+                )
+                self.status.set(
+                    "그리퍼 스트로크 미적용 — "
+                    "실제 로봇 하드웨어 연결 안 됨"
+                )
+                self._append_log(
+                    "[그리퍼 스트로크 미적용] rbpodo eval 서비스가 "
+                    "없습니다. 시뮬레이션에서는 DOUT이 출력되지 "
+                    "않습니다. "
+                    f"서비스={self.hardware_eval_service}"
+                )
+                return
+
+        self.gripper_stroke_request_id += 1
+        request_id = self.gripper_stroke_request_id
+        request = Eval.Request()
+        request.script = script
+        self.gripper_stroke_status.set(f"{label} 명령 전송 중")
+        self.status.set(f"그리퍼 스트로크 {label} 명령 전송 중...")
+        self._append_log(
+            f"[그리퍼 스트로크 요청] {label}: {output_description}"
+        )
+        future = self.hardware_eval_client.call_async(request)
+        future.add_done_callback(
+            lambda completed: self._gripper_stroke_command_completed(
+                completed,
+                request_id,
+                label,
+                output_description,
+            )
+        )
+
+    def _gripper_stroke_command_completed(
+        self,
+        future,
+        request_id: int,
+        label: str,
+        output_description: str,
+    ) -> None:
+        """Report whether the RB controller accepted the DOUT command."""
+        try:
+            response = future.result()
+        except Exception as error:
+            if request_id == self.gripper_stroke_request_id:
+                self.gripper_stroke_status.set(f"{label} 명령 실패")
+                self.status.set(
+                    f"그리퍼 스트로크 {label} 명령 실패"
+                )
+            self._append_log(
+                f"[그리퍼 스트로크 실패] {label} 서비스 호출 오류: "
+                f"{error}"
+            )
+            return
+
+        if not response.success:
+            if request_id == self.gripper_stroke_request_id:
+                self.gripper_stroke_status.set(f"{label} 명령 거부됨")
+                self.status.set(
+                    f"RB 컨트롤러가 그리퍼 {label} 명령을 "
+                    "거부했습니다."
+                )
+            self._append_log(
+                "[그리퍼 스트로크 실패] RB 컨트롤러가 "
+                f"{label} 명령을 "
+                f"거부했습니다: {output_description}"
+            )
+            return
+
+        if request_id == self.gripper_stroke_request_id:
+            self.gripper_stroke_status.set(f"{label} 명령 완료")
+            self.status.set(
+                f"그리퍼 스트로크 {label} 출력 적용 완료"
+            )
+        self._append_log(
+            f"[그리퍼 스트로크 적용됨] {label}: {output_description}"
+        )
 
     def apply_motion_speed(self) -> None:
         """Apply GUI planning scales and request the RB controller speed bar."""
