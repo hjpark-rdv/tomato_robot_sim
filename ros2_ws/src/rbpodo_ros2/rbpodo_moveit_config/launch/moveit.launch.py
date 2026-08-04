@@ -177,6 +177,14 @@ def generate_launch_description():
                 description="Input frame used by camera tomato detections",
             ),
             DeclareLaunchArgument(
+                "bridge_realsense_driver_tf",
+                default_value="true",
+                description=(
+                    "Connect the RealSense driver's camera_link TF tree to "
+                    "the robot-mounted d435_link"
+                ),
+            ),
+            DeclareLaunchArgument(
                 "tomato_parent_frame",
                 default_value="world",
                 description="World-fixed parent for detected tomato TFs",
@@ -367,6 +375,36 @@ def launch_setup(context, *args, **kwargs):
         parameters=[moveit_config.robot_description],
     )
 
+    # realsense2_camera publishes a TF tree rooted at `camera_link`, while the
+    # robot model owns the physically mounted `d435_link`. Their D435 frame
+    # layouts are equivalent, so this identity transform attaches live camera
+    # coordinates (for example camera_color_optical_frame) to the robot tree.
+    realsense_driver_tf_bridge = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="realsense_driver_tf_bridge",
+        output="log",
+        arguments=[
+            "--x",
+            "0.0",
+            "--y",
+            "0.0",
+            "--z",
+            "0.0",
+            "--roll",
+            "0.0",
+            "--pitch",
+            "0.0",
+            "--yaw",
+            "0.0",
+            "--frame-id",
+            "d435_link",
+            "--child-frame-id",
+            "camera_link",
+        ],
+        condition=IfCondition(LaunchConfiguration("bridge_realsense_driver_tf")),
+    )
+
     # ros2_control using FakeSystem as hardware
     ros2_controllers_path = os.path.join(
         get_package_share_directory("rbpodo_bringup"),
@@ -484,6 +522,7 @@ def launch_setup(context, *args, **kwargs):
         rviz_node,
         *root_transform_nodes,
         robot_state_publisher,
+        realsense_driver_tf_bridge,
         run_move_group_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,

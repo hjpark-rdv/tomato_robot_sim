@@ -99,11 +99,11 @@ MoveIt과 fake/real 카메라 서비스를 각각 실행한 뒤, 별도 터미�
 ros2 launch rbpodo_tomato_harvest harvest_gui.launch.py
 ```
 
-GUI는 `수확 작업`, `자동 테스트`, `장면 · 속도 · 리프트` 탭으로 구분되며,
+GUI는 `수확 작업`, `스텝 실행`, `자동 테스트`, `장면 · 속도 · 리프트` 탭으로 구분되며,
 실행 로그와 현재 상태는 어느 탭에서도 확인할 수 있도록 창 하단에 고정된다.
 다음 작업을 키보드 명령 없이 수행할 수 있다.
 
-1. 카메라 서비스 호출 및 모든 검출 토마토 목록 확인
+1. Fake tomato 또는 실제 카메라 서비스를 선택해 검출하고 모든 토마토 목록 확인
 2. 수확할 `detected_tomato_N_tf` 선택
 3. RViz에서 전체 궤적을 확인하는 Plan-only 실행
 4. Plan-only 성공 후 실제 수확 모션 실행
@@ -119,6 +119,19 @@ GUI는 `수확 작업`, `자동 테스트`, `장면 · 속도 · 리프트` 탭�
 14. 토마토 높이보다 40 cm 낮게 리프트를 자동 배치하는 리프트 수확
 15. 전체 토마토 trajectory를 먼저 계산한 뒤 저장된 경로만 실행하는 사전계획
 16. DOUT10/11을 이용한 그리퍼 스트로크 늘림·줄임·정지
+17. 검출된 토마토 중심을 RViz에 핑크색 구형 마커로 표시
+18. 전체 수확 궤적을 한 번 계산한 뒤 실제 로봇을 한 단계씩 선택 실행
+
+`스텝 실행` 탭에서는 토마토와 시작 자세를 선택하고 `스텝 Plan 생성`을 누른다.
+이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, pre-approach,
+접근, 전진·상승·후퇴, 리니어모터 대기와 PICK_READY 복귀까지 총 10개 단계의
+trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로봇 스텝 실행 허용`을
+체크하고 최초 안전 확인을 통과하면 `다음 단계 실행` 또는 `선택 단계까지 실행`으로
+완료되지 않은 단계를 순서대로 실행할 수 있다. 중간 단계를 건너뛰거나 완료된
+단계를 다시 실행할 수는 없다. 각 실행 직전에 실제 관절 자세와 캐시된 단계
+시작점의 최대 오차를 확인하며 `3°`를 넘으면 오래된 trajectory 실행을 차단한다.
+`로봇 즉시 정지`는 MoveIt/controller goal 취소와 RB 정지를 요청하고 캐시를
+폐기하므로, 정지 후에는 스텝 Plan을 다시 생성해야 한다.
 
 `리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
 Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
@@ -414,11 +427,59 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 토마토 번호별 성공률, 회전 구간별 성공률, 회전–Y 위치 분포와 Cartesian fraction이
 낮은 실패 사례가 포함된다. 외부 웹 서버나 추가 파이썬 패키지는 필요하지 않다.
 
-실제 카메라 팀의 서비스 이름이 다른 경우 launch 인자로 연결한다.
+`수확 작업` 탭의 `검출 소스`에서 다음 두 서비스를 즉시 선택할 수 있다. 소스를
+바꾸면 서로 다른 카메라의 이전 좌표로 수확하지 않도록 기존 검출 목록과 Plan
+상태를 초기화하며, 이후 개별 검출·전체 연속 수확·자동 테스트는 모두 선택된
+서비스를 사용한다.
+
+- `Fake tomato`: `/fake_tomato_camera/detect_tomatoes`
+- `실제 /detect_tomatoes`: `/detect_tomatoes`
+
+`검출 마커 표시`는 기본 체크되어 있다. 체크된 상태로 검출하면 메시지의
+`header.frame_id`와 각 토마토의 `center`, `stem_point`를 사용해 다음 마커를
+`/detected_tomato_markers`에 발행한다.
+
+- 핑크색 구체: 지름 `0.0175 m`의 토마토 중심
+- 초록색 구체: 지름 `0.012 m`의 줄기 좌표
+- 하늘색 화살표: 줄기 반대편에서 토마토 중심으로 들어오는 `0.06 m` 진입 방향
+- 주황색 화살표: 현재 로봇 베이스 방향과 최대 `45°` 적응형 보정을 적용한
+  preapproach 위치에서 Cartesian 접근 목표까지의 예상 실제 접근 구간
+
+검출 TF 생성 완료 신호를 받으면 주황색 화살표가 검출 마커에 즉시 추가된다.
+Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에도 같은
+색상의 화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
+preapproach 위치이다. 실제 접근 방향을 유지한 상태로 토마토 중심에 가장 가까운
+지점까지 시각적으로 연장하여 핑크색 중심 마커와 떨어져 보이지 않게 한다. 이
+연장은 마커 표시에만 적용되며 실제 trajectory의 목표 위치는 변경하지 않는다.
+Plan이 목표 형상을 계산하기 전에 실패한 경우에는 Plan 결과 화살표를 표시하지
+않는다.
+
+새 검출은 이전 마커를 교체하며, 체크를 해제하거나 카메라 소스·장면 위치를
+변경하면 즉시 삭제한다. MoveIt RViz 설정에는 `DetectedTomatoPreview`
+MarkerArray display가 기본 등록되어 있다.
+
+실제 `/detect_tomatoes` 서비스가 검출 결과를 서비스 응답으로만 반환해도 GUI가
+그 결과를 `/tomato_detection/detections`에 다시 발행한다. 따라서 핑크색 마커와
+`tomato_tf_generator`가 동일한 검출 스냅샷을 사용한다. 또한 MoveIt 런치는
+기본적으로 `d435_link -> camera_link` 고정 TF를 발행하여 RealSense 드라이버의
+`camera_color_optical_frame`을 로봇 TF 트리에 연결한다. 이미 외부에서 두 TF
+트리를 연결한다면 `bridge_realsense_driver_tf:=false`로 비활성화할 수 있다.
+
+기본 선택은 `Fake tomato`이다. GUI 시작 시 실제 카메라를 기본으로 선택하려면
+다음과 같이 실행한다.
 
 ```bash
 ./scripts/run_harvest_gui.sh \
-  camera_service:=/real_camera/detect_tomatoes
+  default_camera_source:=real
+```
+
+Fake 또는 실제 카메라 팀의 서비스 이름이 다른 경우 각각 `camera_service`와
+`real_camera_service` launch 인자로 변경할 수 있다.
+
+```bash
+./scripts/run_harvest_gui.sh \
+  camera_service:=/simulation/detect_tomatoes \
+  real_camera_service:=/real_camera/detect_tomatoes
 ```
 
 ## 시뮬레이션 초기 자세

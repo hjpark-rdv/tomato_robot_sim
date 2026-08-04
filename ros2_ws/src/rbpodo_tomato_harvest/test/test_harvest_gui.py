@@ -6,6 +6,10 @@ from types import SimpleNamespace
 
 import pytest
 
+from farmily_tomato_interfaces.msg import (
+    TomatoDetection,
+    TomatoDetectionArray,
+)
 from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
@@ -13,17 +17,22 @@ from std_msgs.msg import Bool, Float64
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
+    CAMERA_SOURCE_FAKE,
+    CAMERA_SOURCE_REAL,
     GUI_PLANNER_CONFIG,
     HarvestGui,
     PICK_READY_STATES,
     PLANNER_CONFIGS,
     PREPLANNED_BATCH_CONFIG_ENV,
+    actual_approach_marker,
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
     cartesian_fallback_summary,
     cancel_all_goals_request,
+    camera_service_for_source,
     concise_plan_report,
+    detected_tomato_marker_array,
     generate_sweep_cases,
     gripper_stroke_script,
     harvest_all_jobs,
@@ -34,7 +43,9 @@ from rbpodo_tomato_harvest.harvest_gui import (
     is_critical_process_output,
     lift_harvest_target_height_mm,
     preplanned_batch_command,
+    predicted_approach_report,
     scene_parameters,
+    stepper_command,
     sweep_execution_duration_text,
     sweep_stage_detail,
     sweep_stage_summary,
@@ -1496,6 +1507,297 @@ def test_gripper_stroke_script_maps_dout10_and_11_atomically(
 def test_gripper_stroke_script_rejects_unknown_command():
     with pytest.raises(ValueError, match="지원하지 않는"):
         gripper_stroke_script("invalid")
+
+
+def test_stepper_command_enables_detailed_cached_plan():
+    command = stepper_command(
+        3,
+        harvest_wait_sec=1.5,
+        pick_ready_state_name="PICK_READY_RIGHT",
+        python_executable="/usr/bin/python3",
+    )
+
+    assert command[:3] == [
+        "/usr/bin/python3",
+        "-m",
+        "rbpodo_tomato_harvest.tomato_harvest_stepper",
+    ]
+    assert "tomato_frame:=detected_tomato_3_tf" in command
+    assert "execute:=true" in command
+    assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
+    assert "harvest_wait_sec:=1.5" in command
+    assert command[-2:] == ["-p", "stepwise_plan:=true"]
+
+
+def test_camera_service_for_source_maps_fake_and_real_services():
+    assert camera_service_for_source(
+        CAMERA_SOURCE_FAKE,
+        "/fake_tomato_camera/detect_tomatoes",
+        "/detect_tomatoes",
+    ) == "/fake_tomato_camera/detect_tomatoes"
+    assert camera_service_for_source(
+        CAMERA_SOURCE_REAL,
+        "/fake_tomato_camera/detect_tomatoes",
+        "/detect_tomatoes",
+    ) == "/detect_tomatoes"
+
+
+def test_camera_service_for_source_rejects_unknown_source():
+    with pytest.raises(ValueError, match="지원하지 않는 카메라"):
+        camera_service_for_source("unknown", "/fake", "/real")
+
+
+def test_detected_tomato_marker_array_shows_center_stem_and_approach():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "d435_color_optical_frame"
+    detections.detections = [
+        TomatoDetection(
+            id="tomato_a",
+            center=Point(x=0.12, y=-0.03, z=0.48),
+            stem_point=Point(x=0.14, y=-0.03, z=0.48),
+        ),
+        TomatoDetection(
+            id="tomato_b",
+            center=Point(x=-0.08, y=0.06, z=0.72),
+            stem_point=Point(x=-0.08, y=0.09, z=0.72),
+        ),
+    ]
+
+    message = detected_tomato_marker_array(
+        detections,
+        diameter=0.04,
+        stem_diameter=0.01,
+        approach_length=0.06,
+    )
+
+    assert len(message.markers) == 7
+    assert message.markers[0].action == message.markers[0].DELETEALL
+    tomato = message.markers[1]
+    assert tomato.header.frame_id == "d435_color_optical_frame"
+    assert tomato.type == tomato.SPHERE
+    assert tomato.pose.position == Point(x=0.12, y=-0.03, z=0.48)
+    assert tomato.scale.x == pytest.approx(0.04)
+    assert tomato.scale.y == pytest.approx(0.04)
+    assert tomato.scale.z == pytest.approx(0.04)
+    assert tomato.color.r == pytest.approx(1.0)
+    assert tomato.color.g == pytest.approx(0.15)
+    assert tomato.color.b == pytest.approx(0.55)
+    assert tomato.color.a == pytest.approx(0.85)
+
+    stem = message.markers[2]
+    assert stem.type == stem.SPHERE
+    assert stem.pose.position == Point(x=0.14, y=-0.03, z=0.48)
+    assert stem.scale.x == pytest.approx(0.01)
+    assert stem.color.r == pytest.approx(0.2)
+    assert stem.color.g == pytest.approx(1.0)
+    assert stem.color.b == pytest.approx(0.2)
+
+    approach = message.markers[3]
+    assert approach.type == approach.ARROW
+    assert approach.points[0] == Point(x=0.06, y=-0.03, z=0.48)
+    assert approach.points[1] == Point(x=0.12, y=-0.03, z=0.48)
+    assert approach.color.r == pytest.approx(0.1)
+    assert approach.color.g == pytest.approx(0.8)
+    assert approach.color.b == pytest.approx(1.0)
+
+
+def test_detected_tomato_marker_array_validates_frame_and_diameter():
+    detections = TomatoDetectionArray()
+    with pytest.raises(ValueError, match="frame_id"):
+        detected_tomato_marker_array(detections)
+    detections.header.frame_id = "camera"
+    with pytest.raises(ValueError, match="지름"):
+        detected_tomato_marker_array(detections, diameter=0.0)
+    with pytest.raises(ValueError, match="줄기점"):
+        detected_tomato_marker_array(detections, stem_diameter=0.0)
+    with pytest.raises(ValueError, match="진입 방향"):
+        detected_tomato_marker_array(detections, approach_length=0.0)
+
+
+def test_detected_tomato_marker_array_uses_six_mm_stem_marker_by_default():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera"
+    detections.detections = [
+        TomatoDetection(
+            id="tomato_a",
+            center=Point(x=0.0, y=0.0, z=0.5),
+            stem_point=Point(x=0.02, y=0.0, z=0.5),
+        )
+    ]
+
+    markers = detected_tomato_marker_array(detections).markers
+
+    stem = markers[2]
+    assert stem.scale.x == pytest.approx(0.006)
+    assert stem.scale.y == pytest.approx(0.006)
+    assert stem.scale.z == pytest.approx(0.006)
+
+
+def test_actual_approach_marker_uses_exact_planned_segment():
+    report = {
+        "approach_geometry": {
+            "frame_id": "detected_tomato_2_tf",
+            "preapproach_position": [-0.035, 0.014, -0.018],
+            "target_position": [-0.025, 0.010, -0.018],
+        }
+    }
+
+    marker = actual_approach_marker(2, report)
+
+    assert marker is not None
+    assert marker.header.frame_id == "detected_tomato_2_tf"
+    assert marker.id == 2
+    assert marker.type == marker.ARROW
+    assert marker.points[0] == Point(x=-0.035, y=0.014, z=-0.018)
+    assert marker.points[1].x == pytest.approx(0.0, abs=1e-9)
+    assert marker.points[1].y == pytest.approx(0.0, abs=1e-9)
+    assert marker.points[1].z == pytest.approx(-0.018)
+    assert marker.color.r == pytest.approx(1.0)
+    assert marker.color.g == pytest.approx(0.45)
+    assert marker.color.b == pytest.approx(0.0)
+
+
+def test_actual_approach_marker_ignores_missing_geometry():
+    assert actual_approach_marker(0, {}) is None
+
+
+def test_predicted_approach_report_rotates_outward_toward_robot():
+    report = predicted_approach_report(
+        "detected_tomato_0_tf",
+        robot_in_tomato=(-1.0, -1.0, 0.0),
+        max_rotation_deg=45.0,
+        deadband_deg=10.0,
+        tip_standoff=0.025,
+        tip_below_center=0.018,
+        preapproach_clearance=0.010,
+    )
+
+    geometry = report["approach_geometry"]
+    assert geometry["frame_id"] == "detected_tomato_0_tf"
+    root_half = math.sqrt(0.5)
+    assert geometry["preapproach_position"] == pytest.approx(
+        [-0.035 * root_half, -0.035 * root_half, -0.018]
+    )
+    assert geometry["target_position"] == pytest.approx(
+        [-0.025 * root_half, -0.025 * root_half, -0.018]
+    )
+
+
+def test_predicted_approach_report_keeps_nominal_direction_in_deadband():
+    report = predicted_approach_report(
+        "detected_tomato_1_tf",
+        robot_in_tomato=(-1.0, 0.05, 0.0),
+    )
+
+    geometry = report["approach_geometry"]
+    assert geometry["preapproach_position"] == pytest.approx(
+        [-0.035, 0.0, -0.018],
+        abs=1e-9,
+    )
+
+
+@pytest.mark.parametrize(
+    ("camera_source", "expected_publish_count"),
+    [
+        (CAMERA_SOURCE_REAL, 1),
+        (CAMERA_SOURCE_FAKE, 0),
+    ],
+)
+def test_detection_service_response_republishes_only_real_camera_results(
+    camera_source,
+    expected_publish_count,
+):
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera_color_optical_frame"
+    published = []
+    callbacks = []
+    gui = SimpleNamespace(
+        detect_button=SimpleNamespace(configure=lambda **kwargs: None),
+        camera_source_combo=SimpleNamespace(configure=lambda **kwargs: None),
+        ui_busy=False,
+        camera_source_var=SimpleNamespace(get=lambda: camera_source),
+        detections_publisher=SimpleNamespace(publish=published.append),
+        _detections_callback=callbacks.append,
+        status=SimpleNamespace(set=lambda value: None),
+        _append_log=lambda value: None,
+    )
+    response = SimpleNamespace(
+        success=True,
+        message="검출 완료",
+        detections=detections,
+    )
+    future = SimpleNamespace(result=lambda: response)
+
+    HarvestGui._detection_service_done(gui, future)
+
+    assert len(published) == expected_publish_count
+    assert published in ([], [detections])
+    assert callbacks == [detections]
+
+
+def test_camera_source_change_selects_client_and_clears_old_detection():
+    values = {}
+    deleted = []
+    fake_client = object()
+    real_client = object()
+    gui = SimpleNamespace(
+        camera_source_var=SimpleNamespace(get=lambda: CAMERA_SOURCE_REAL),
+        fake_camera_service="/fake_tomato_camera/detect_tomatoes",
+        real_camera_service="/detect_tomatoes",
+        camera_clients={
+            CAMERA_SOURCE_FAKE: fake_client,
+            CAMERA_SOURCE_REAL: real_client,
+        },
+        camera_service_display=SimpleNamespace(
+            set=lambda value: values.__setitem__("service", value)
+        ),
+        detected_tomatoes=[object()],
+        detected_tomato_expected_world_positions={0: (1.0, 2.0, 3.0)},
+        tomato_motion_results={0: "Plan 성공"},
+        result_arrow_lengths={0: 0.1},
+        result_detection_frame="old_camera_frame",
+        detection_signature=(1, 2, 3),
+        current_detection_stamp_ns=123,
+        detection_generation=4,
+        tomato_tree=SimpleNamespace(
+            get_children=lambda: ("0",),
+            delete=deleted.append,
+        ),
+        tomato_combo=SimpleNamespace(
+            configure=lambda **kwargs: values.__setitem__(
+                "tomato_values", kwargs["values"]
+            )
+        ),
+        selected_tomato=SimpleNamespace(
+            set=lambda value: values.__setitem__("selected", value)
+        ),
+        plan_button=SimpleNamespace(configure=lambda **kwargs: None),
+        execute_button=SimpleNamespace(configure=lambda **kwargs: None),
+        harvest_all_button=SimpleNamespace(configure=lambda **kwargs: None),
+        _invalidate_plan=lambda: values.__setitem__("invalidated", True),
+        _clear_detection_markers=lambda: values.__setitem__(
+            "markers_cleared", True
+        ),
+        _update_step_controls=lambda: None,
+        status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+
+    HarvestGui._camera_source_changed(gui)
+
+    assert gui.camera_client is real_client
+    assert gui.camera_service == "/detect_tomatoes"
+    assert gui.detected_tomatoes == []
+    assert gui.detected_tomato_expected_world_positions == {}
+    assert gui.detection_generation == 5
+    assert deleted == ["0"]
+    assert values["service"] == "/detect_tomatoes"
+    assert values["tomato_values"] == []
+    assert values["selected"] == ""
+    assert values["invalidated"] is True
+    assert values["markers_cleared"] is True
 
 
 def test_stop_active_motion_cancels_individual_harvest_without_failure_result():

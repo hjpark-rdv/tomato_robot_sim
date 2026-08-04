@@ -5,7 +5,7 @@ repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ws_dir="${repo_dir}/../ros2_ws"
 state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}/farmily_tomato"
 last_ip_file="${state_dir}/last_robot_ip"
-default_robot_ip="192.168.222.196"
+default_robot_ip="192.168.99.196"
 
 if [[ -s "${last_ip_file}" ]]; then
   default_robot_ip="$(<"${last_ip_file}")"
@@ -84,7 +84,7 @@ echo "  Robot: rb5_farmily"
 echo
 echo "Before continuing, clear the workspace, reduce the robot speed,"
 echo "and keep the emergency stop within reach."
-#read -r -p "Robot IP [${default_robot_ip}]: " robot_ip
+read -r -p "Robot IP [${default_robot_ip}]: " robot_ip
 robot_ip="${robot_ip:-${default_robot_ip}}"
 
 if [[ ! "${robot_ip}" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then

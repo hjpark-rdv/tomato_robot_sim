@@ -125,6 +125,7 @@ class HarvestMotionPlan:
     display_start_state: RobotState
     outward_retreat_trajectory: object = ()
     end_planning_pose: Pose | None = None
+    step_approach_trajectories: tuple = ()
 
 
 def make_centered_joint_path_constraints(
@@ -712,6 +713,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("service_timeout_sec", 30.0)
         self.declare_parameter("execution_timeout_sec", 60.0)
         self.declare_parameter("publish_display_trajectory", True)
+        self.declare_parameter("stepwise_plan", False)
         self.declare_parameter("execute", False)
 
         self.base_frame = str(self.get_parameter("base_frame").value)
@@ -2224,6 +2226,39 @@ class CartesianHarvestPlanner(Node):
             tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
         )
 
+        preapproach_world = np.array(
+            [
+                geometry.preapproach_pose.position.x,
+                geometry.preapproach_pose.position.y,
+                geometry.preapproach_pose.position.z,
+            ],
+            dtype=float,
+        )
+        target_world = np.array(
+            [
+                geometry.target_pose.position.x,
+                geometry.target_pose.position.y,
+                geometry.target_pose.position.z,
+            ],
+            dtype=float,
+        )
+        self.last_plan_report["approach_geometry"] = {
+            "frame_id": self.tomato_frame,
+            "preapproach_position": [
+                float(value)
+                for value in (
+                    tomato_rotation.T
+                    @ (preapproach_world - tomato_position)
+                )
+            ],
+            "target_position": [
+                float(value)
+                for value in (
+                    tomato_rotation.T @ (target_world - tomato_position)
+                )
+            ],
+        }
+
         target = geometry.target_pose.position
         pre = geometry.preapproach_pose.position
         current_tip = current_tip_position
@@ -2334,14 +2369,42 @@ class CartesianHarvestPlanner(Node):
             as_planning_pose(geometry.target_pose),
             *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
-        approach_trajectory = self._plan_cartesian_with_ompl_fallback(
-            approach_waypoints,
-            preapproach_end,
-            "Approach and pre-wait harvest",
-            pregrasp=False,
-        )
-        if approach_trajectory is None:
-            return None
+        step_approach_trajectories = ()
+        if bool(self.get_parameter("stepwise_plan").value):
+            step_labels = (
+                "Step preapproach to target",
+                "Step tip +X forward",
+                "Step tip +Z lift",
+                "Step tip -X back",
+                "Step tip +Z second lift",
+            )
+            step_groups = []
+            flattened_approach = []
+            step_start = preapproach_end
+            for waypoint, label in zip(approach_waypoints, step_labels):
+                group = self._plan_cartesian_with_ompl_fallback(
+                    [waypoint],
+                    step_start,
+                    label,
+                    pregrasp=False,
+                )
+                if group is None:
+                    return None
+                group = tuple(group)
+                step_groups.append(group)
+                flattened_approach.extend(group)
+                step_start = self._trajectory_end_state(group)
+            step_approach_trajectories = tuple(step_groups)
+            approach_trajectory = tuple(flattened_approach)
+        else:
+            approach_trajectory = self._plan_cartesian_with_ompl_fallback(
+                approach_waypoints,
+                preapproach_end,
+                "Approach and pre-wait harvest",
+                pregrasp=False,
+            )
+            if approach_trajectory is None:
+                return None
 
         approach_end = self._trajectory_end_state(approach_trajectory)
         after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
@@ -2432,6 +2495,7 @@ class CartesianHarvestPlanner(Node):
             end_planning_pose=copy.deepcopy(
                 as_planning_pose(tip_motion.after_wait_pose)
             ),
+            step_approach_trajectories=step_approach_trajectories,
         )
         planned_trajectories = []
         for segment in (

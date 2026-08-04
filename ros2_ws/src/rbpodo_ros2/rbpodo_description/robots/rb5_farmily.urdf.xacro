@@ -5,8 +5,8 @@
   <xacro:include filename="$(find rbpodo_description)/robots/rb5_850e.urdf.xacro" />
   <xacro:include filename="$(find rbpodo_description)/robots/realsense_d435.urdf.xacro" />
 
-  <xacro:arg name="d435_mount_x" default="-0.11" />
-  <xacro:arg name="d435_mount_y" default="-0.10" />
+  <xacro:arg name="d435_mount_x" default="-0.076" />
+  <xacro:arg name="d435_mount_y" default="-0.161" />
   <xacro:arg name="d435_mount_z" default="0.0" />
   <xacro:arg name="d435_mount_roll" default="-1.57" />
   <xacro:arg name="d435_mount_pitch" default="0.0" />
@@ -103,7 +103,7 @@
       <geometry>
         <!-- The CAD mesh is authored in millimetres. -->
         <mesh
-          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_4.stl"
+          filename="package://rbpodo_description/meshes/tomato_gripper/assy_4.stl"
           scale="0.001 0.001 0.001" />
       </geometry>
       <material name="tomato_gripper_gray">
@@ -113,7 +113,7 @@
     <collision>
       <geometry>
         <mesh
-          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_4.stl"
+          filename="package://rbpodo_description/meshes/tomato_gripper/assy_4.stl"
           scale="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -133,7 +133,7 @@
   <link name="$(arg prefix)tomato_gripper_tip" />
 
   <joint name="$(arg prefix)tomato_gripper_tip_joint" type="fixed">
-    <origin xyz="-0.2116 0.01075 0" rpy="1.57 3.14 0" />
+    <origin xyz="-0.1816 0.01075 0" rpy="1.57 3.14 0" />
     <parent link="$(arg prefix)tomato_gripper" />
     <child link="$(arg prefix)tomato_gripper_tip" />
   </joint>
