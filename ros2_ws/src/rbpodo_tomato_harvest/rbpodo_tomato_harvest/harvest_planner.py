@@ -476,7 +476,7 @@ def adaptive_outward_toward_robot(
     tomato_rotation,
     tomato_position,
     robot_position,
-    max_rotation_deg: float = 45.0,
+    max_rotation_deg: float = 90.0,
     deadband_deg: float = 10.0,
 ) -> AdaptiveApproachDirection:
     """Rotate tomato -X toward the robot through local ±Y."""
@@ -695,7 +695,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
-        self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
+        self.declare_parameter("adaptive_grasp_max_rotation_deg", 90.0)
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)

@@ -253,18 +253,32 @@ def test_adaptive_grasp_rotates_minus_x_45_degrees_toward_local_y():
     assert np.isclose(result.selected_robot_error_deg, 0.0)
 
 
-def test_adaptive_grasp_clamps_rotation_toward_local_y_to_45_degrees():
+def test_adaptive_grasp_rotates_toward_local_y_up_to_90_degrees():
     result = adaptive_outward_toward_robot(
         tomato_rotation=np.eye(3),
         tomato_position=[0.0, 0.0, 0.4],
         robot_position=[0.0, 1.0, 0.0],
     )
 
-    expected = np.array([-1.0, 1.0, 0.0]) / np.sqrt(2.0)
+    expected = np.array([0.0, 1.0, 0.0])
     assert np.allclose(result.outward_axis, expected)
-    assert np.isclose(result.applied_rotation_deg, 45.0)
+    assert np.isclose(result.applied_rotation_deg, 90.0)
     assert np.isclose(result.current_robot_error_deg, 90.0)
-    assert np.isclose(result.selected_robot_error_deg, 45.0)
+    assert np.isclose(result.selected_robot_error_deg, 0.0)
+
+
+def test_adaptive_grasp_clamps_large_robot_error_to_90_degrees():
+    angle = np.deg2rad(-20.0)
+    result = adaptive_outward_toward_robot(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[np.cos(angle), np.sin(angle), 0.0],
+    )
+
+    assert np.allclose(result.outward_axis, [0.0, -1.0, 0.0])
+    assert np.isclose(abs(result.applied_rotation_deg), 90.0)
+    assert np.isclose(result.current_robot_error_deg, 160.0)
+    assert np.isclose(result.selected_robot_error_deg, 70.0)
 
 
 def test_adaptive_grasp_rotates_toward_negative_local_y():

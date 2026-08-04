@@ -1808,6 +1808,23 @@ def test_predicted_approach_report_rotates_outward_toward_robot():
     )
 
 
+def test_predicted_approach_report_uses_90_degree_default_limit():
+    report = predicted_approach_report(
+        "detected_tomato_6_tf",
+        robot_in_tomato=(1.0, -0.2, 0.0),
+    )
+
+    geometry = report["approach_geometry"]
+    assert geometry["preapproach_position"] == pytest.approx(
+        [0.0, -0.035, -0.018],
+        abs=1e-9,
+    )
+    assert geometry["target_position"] == pytest.approx(
+        [0.0, -0.025, -0.018],
+        abs=1e-9,
+    )
+
+
 def test_predicted_approach_report_keeps_nominal_direction_in_deadband():
     report = predicted_approach_report(
         "detected_tomato_1_tf",

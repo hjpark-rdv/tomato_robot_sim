@@ -1014,7 +1014,7 @@ def actual_approach_marker(
 def predicted_approach_report(
     tomato_frame: str,
     robot_in_tomato,
-    max_rotation_deg: float = 45.0,
+    max_rotation_deg: float = 90.0,
     deadband_deg: float = 10.0,
     tip_standoff: float = 0.025,
     tip_below_center: float = 0.018,
@@ -1198,7 +1198,7 @@ class HarvestGui(Node):
         self.declare_parameter("detection_stem_marker_diameter", 0.006)
         self.declare_parameter("detection_approach_marker_length", 0.06)
         self.declare_parameter("detection_approach_robot_frame", "link0")
-        self.declare_parameter("detection_adaptive_max_rotation_deg", 45.0)
+        self.declare_parameter("detection_adaptive_max_rotation_deg", 90.0)
         self.declare_parameter("detection_adaptive_deadband_deg", 10.0)
         self.declare_parameter("detection_tip_standoff", 0.025)
         self.declare_parameter("detection_tip_below_center", 0.018)
@@ -2062,7 +2062,8 @@ class HarvestGui(Node):
             setup,
             text=(
                 "Plan 생성은 로봇을 움직이지 않습니다. 실행 허용 체크 후에도 "
-                "완료된 다음 단계만 순서대로 실행할 수 있습니다."
+                "다음 단계는 순서대로 실행하며, 바로 이전 단계만 캐시된 "
+                "trajectory를 역순으로 실행할 수 있습니다."
             ),
             foreground="#9a4f00",
             wraplength=1050,
@@ -2106,6 +2107,14 @@ class HarvestGui(Node):
         controls = ttk.Frame(frame)
         controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
         controls.columnconfigure(5, weight=1)
+        self.step_previous_button = ttk.Button(
+            controls,
+            text="이전 단계 역순 실행",
+            command=self.execute_previous_step,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.step_previous_button.grid(row=0, column=0, padx=(0, 6))
         self.step_next_button = ttk.Button(
             controls,
             text="다음 단계 실행",
@@ -2113,7 +2122,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Action.TButton",
         )
-        self.step_next_button.grid(row=0, column=0, padx=(0, 6))
+        self.step_next_button.grid(row=0, column=1, padx=6)
         self.step_execute_to_button = ttk.Button(
             controls,
             text="선택 단계까지 실행",
@@ -2121,7 +2130,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Action.TButton",
         )
-        self.step_execute_to_button.grid(row=0, column=1, padx=6)
+        self.step_execute_to_button.grid(row=0, column=2, padx=6)
         self.step_stop_button = ttk.Button(
             controls,
             text="모션 즉시 정지",
@@ -2129,7 +2138,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Action.TButton",
         )
-        self.step_stop_button.grid(row=0, column=2, padx=6)
+        self.step_stop_button.grid(row=0, column=3, padx=6)
         self.step_close_button = ttk.Button(
             controls,
             text="스텝 세션 종료",
@@ -2137,7 +2146,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Compact.TButton",
         )
-        self.step_close_button.grid(row=0, column=3, padx=6)
+        self.step_close_button.grid(row=0, column=4, padx=6)
         ttk.Label(
             controls,
             textvariable=self.step_status,
@@ -5441,25 +5450,39 @@ class HarvestGui(Node):
             )
         elif event_name == "stage_started":
             index = int(event.get("index", -1))
+            reverse = str(event.get("direction", "forward")) == "reverse"
             self.step_execution_in_progress = True
             if self.step_tree.exists(str(index)):
-                self.step_tree.set(str(index), "status", "실행 중")
+                self.step_tree.set(
+                    str(index),
+                    "status",
+                    "역순 실행 중" if reverse else "실행 중",
+                )
                 self.step_tree.selection_set(str(index))
                 self.step_tree.see(str(index))
             self.step_status.set(
-                f"{index + 1}단계 실행 중: {event.get('label', '')}"
+                f"{index + 1}단계 "
+                f"{'역순 ' if reverse else ''}실행 중: "
+                f"{event.get('label', '')}"
             )
             self.status.set(self.step_status.get())
         elif event_name == "stage_completed":
             index = int(event.get("index", -1))
+            reverse = str(event.get("direction", "forward")) == "reverse"
             self.step_execution_in_progress = False
-            self.step_next_index = int(event.get("next_index", index + 1))
+            self.step_next_index = int(
+                event.get("next_index", index if reverse else index + 1)
+            )
             duration = float(event.get("duration_sec", 0.0))
             if self.step_tree.exists(str(index)):
                 self.step_tree.set(
                     str(index),
                     "status",
-                    f"완료 ({duration:.2f}s)",
+                    (
+                        f"역순 복귀 ({duration:.2f}s)"
+                        if reverse
+                        else f"완료 ({duration:.2f}s)"
+                    ),
                 )
             if self.step_next_index < len(self.step_stages):
                 next_item = str(self.step_next_index)
@@ -5467,7 +5490,8 @@ class HarvestGui(Node):
                 self.step_tree.focus(next_item)
                 self.step_tree.see(next_item)
             self._append_log(
-                f"[스텝 {index + 1}/{len(self.step_stages)} 완료] "
+                f"[스텝 {index + 1}/{len(self.step_stages)} "
+                f"{'역순 복귀' if reverse else '완료'}] "
                 f"{duration:.2f}s"
             )
         elif event_name == "stage_failed":
@@ -5497,15 +5521,26 @@ class HarvestGui(Node):
             self.step_next_index = int(
                 event.get("next_index", self.step_next_index)
             )
-            self.step_status.set(
-                f"{self.step_next_index}단계 완료 — 다음 단계 실행 대기"
-            )
+            if str(event.get("direction", "forward")) == "reverse":
+                self.step_status.set(
+                    f"{self.step_next_index + 1}단계 시작점으로 역순 복귀 — "
+                    "정방향 재실행 또는 추가 역행 가능"
+                )
+            else:
+                self.step_status.set(
+                    f"{self.step_next_index}단계 완료 — 다음 단계 실행 대기"
+                )
         elif event_name == "session_complete":
             self.step_execution_in_progress = False
             self.step_next_index = len(self.step_stages)
-            self.step_status.set("전체 스텝 실행 완료 — PICK_READY 복귀")
+            self.step_status.set(
+                "전체 스텝 실행 완료 — 이전 단계 역순 실행 또는 세션 종료 가능"
+            )
             self.status.set(self.step_status.get())
-            self._append_log("[스텝 실행 완료] 전체 단계가 완료되었습니다.")
+            self._append_log(
+                "[스텝 실행 완료] 전체 단계가 완료되었습니다. "
+                "필요하면 바로 이전 단계를 역순 실행할 수 있습니다."
+            )
         elif event_name in {"command_error", "internal_error"}:
             message = str(event.get("message", "알 수 없는 오류"))
             self.step_status.set(message)
@@ -5725,6 +5760,9 @@ class HarvestGui(Node):
     def execute_next_step(self) -> None:
         self._send_step_command({"command": "execute_next"})
 
+    def execute_previous_step(self) -> None:
+        self._send_step_command({"command": "execute_previous"})
+
     def execute_repeat_forward(self) -> None:
         self._send_step_command({"command": "execute_cycle_forward"})
 
@@ -5797,6 +5835,14 @@ class HarvestGui(Node):
             and not self.step_execution_in_progress
             and self.step_next_index < len(self.step_stages)
         )
+        reverse_executable = (
+            planned
+            and manual_active
+            and not self.step_session_failed
+            and self.step_execution_enabled_var.get()
+            and not self.step_execution_in_progress
+            and self.step_next_index > 0
+        )
         self.step_plan_button.configure(
             state=(
                 "normal"
@@ -5806,6 +5852,9 @@ class HarvestGui(Node):
         )
         self.step_next_button.configure(
             state="normal" if executable else "disabled"
+        )
+        self.step_previous_button.configure(
+            state="normal" if reverse_executable else "disabled"
         )
         self.step_execute_to_button.configure(
             state="normal" if executable else "disabled"

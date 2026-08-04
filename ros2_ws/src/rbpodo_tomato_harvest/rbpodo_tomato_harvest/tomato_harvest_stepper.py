@@ -311,6 +311,29 @@ def main(args=None) -> None:
             if failed:
                 _emit("command_error", message="실패한 스텝 세션입니다.")
                 continue
+            if action == "execute_previous":
+                if next_index <= 0:
+                    _emit(
+                        "command_error",
+                        message="현재 위치보다 이전에 실행된 단계가 없습니다.",
+                    )
+                    continue
+                target_index = next_index - 1
+                if not _execute_cached_stage(
+                    planner,
+                    stages[target_index],
+                    target_index,
+                    reverse=True,
+                ):
+                    failed = True
+                    continue
+                next_index = target_index
+                _emit(
+                    "paused",
+                    next_index=next_index,
+                    direction="reverse",
+                )
+                continue
             cycle_reverse = action == "execute_cycle_reverse"
             if cycle_reverse:
                 if next_index != CYCLE_LAST_STAGE_INDEX + 1:
@@ -335,9 +358,14 @@ def main(args=None) -> None:
                 continue
 
             if next_index >= len(stages):
-                exit_code = 0
-                _emit("session_complete", next_index=next_index)
-                break
+                _emit(
+                    "command_error",
+                    message=(
+                        "전체 단계를 완료했습니다. 이전 단계 역순 실행 또는 "
+                        "세션 종료를 선택하세요."
+                    ),
+                )
+                continue
             if action == "execute_next":
                 target_index = next_index
             elif action == "execute_cycle_forward":
@@ -377,10 +405,9 @@ def main(args=None) -> None:
             if failed:
                 continue
             if next_index >= len(stages):
-                exit_code = 0
                 _emit("session_complete", next_index=next_index)
-                break
-            _emit("paused", next_index=next_index)
+                continue
+            _emit("paused", next_index=next_index, direction="forward")
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     except Exception as error:
