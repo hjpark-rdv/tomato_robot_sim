@@ -81,6 +81,23 @@ def rotation_from_quaternion(quaternion) -> np.ndarray:
     )
 
 
+def descending_height_order(points) -> list[int]:
+    """Return deterministic indices from the highest parent-frame Z down."""
+    coordinates = [tuple(float(value) for value in point) for point in points]
+    for point in coordinates:
+        if len(point) != 3 or not all(math.isfinite(value) for value in point):
+            raise ValueError("tomato center coordinates must be finite XYZ values")
+    return sorted(
+        range(len(coordinates)),
+        key=lambda index: (
+            -coordinates[index][2],
+            coordinates[index][0],
+            coordinates[index][1],
+            index,
+        ),
+    )
+
+
 class TomatoTfGenerator(Node):
     """Snapshot camera detections as persistent, base-parented tomato TFs."""
 
@@ -193,7 +210,7 @@ class TomatoTfGenerator(Node):
             )
             return
 
-        created = 0
+        prepared = []
         failures = []
         for detection in message.detections:
             center = PointStamped()
@@ -202,14 +219,53 @@ class TomatoTfGenerator(Node):
             stem_point = PointStamped()
             stem_point.header = message.header
             stem_point.point = detection.stem_point
-            success, result = self._store_detection(center, stem_point)
+            if not self._message_is_fresh(center) or not self._message_is_fresh(
+                stem_point
+            ):
+                failures.append(
+                    f"{detection.id}: 검출값이 오래되었습니다. "
+                    "카메라 검출을 다시 수행하세요."
+                )
+                continue
+            try:
+                center_in_parent = self._point_in_parent(center)
+                stem_in_parent = self._point_in_parent(stem_point)
+            except RuntimeError as error:
+                failures.append(f"{detection.id}: {error}")
+                continue
+            prepared.append(
+                (detection.id, center_in_parent, stem_in_parent)
+            )
+
+        try:
+            sky_axis = self._sky_axis_in_parent()
+        except RuntimeError as error:
+            sky_axis = None
+            failures.extend(
+                f"{detection_id}: {error}"
+                for detection_id, _center, _stem in prepared
+            )
+            prepared = []
+
+        created = 0
+        order = descending_height_order(
+            [center for _detection_id, center, _stem in prepared]
+        )
+        for prepared_index in order:
+            detection_id, center, stem_point = prepared[prepared_index]
+            success, result = self._store_parent_detection(
+                center,
+                stem_point,
+                sky_axis,
+            )
             if success:
                 created += 1
             else:
-                failures.append(f"{detection.id}: {result}")
+                failures.append(f"{detection_id}: {result}")
 
         self.get_logger().info(
-            f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료"
+            f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
+            "(parent Z 높이 내림차순으로 ID 부여)"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
@@ -305,10 +361,24 @@ class TomatoTfGenerator(Node):
         try:
             center = self._point_in_parent(center_message)
             stem_point = self._point_in_parent(stem_point_message)
+            sky_axis = self._sky_axis_in_parent()
+        except RuntimeError as error:
+            return False, str(error)
+
+        return self._store_parent_detection(center, stem_point, sky_axis)
+
+    def _store_parent_detection(
+        self,
+        center: np.ndarray,
+        stem_point: np.ndarray,
+        sky_axis: np.ndarray,
+    ) -> tuple[bool, str]:
+        try:
             rotation = parent_frame_tomato_rotation(
-                self._sky_axis_in_parent(), stem_point - center
+                sky_axis,
+                stem_point - center,
             )
-        except (RuntimeError, ValueError) as error:
+        except ValueError as error:
             return False, str(error)
 
         child_frame = f"{self.tf_prefix}{self.next_index}_tf"

@@ -23,6 +23,7 @@ from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
+from rbpodo_tomato_harvest.tomato_tf_generator import descending_height_order
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -648,6 +649,7 @@ def stepper_command(
     acceleration_scale: float = 0.20,
     harvest_wait_sec: float = 2.0,
     pick_ready_state_name: str = "PICK_READY",
+    cycle_only: bool = False,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
@@ -669,6 +671,9 @@ def stepper_command(
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
     command.extend(["-p", "stepwise_plan:=true"])
+    command.extend(
+        ["-p", f"step_cycle_only:={'true' if cycle_only else 'false'}"]
+    )
     return command
 
 
@@ -721,6 +726,29 @@ def transformed_point_xyz(point, transform) -> tuple[float, float, float]:
         + 2 * (qy * qz + qx * qw) * y
         + (1 - 2 * (qx * qx + qy * qy)) * z,
     )
+
+
+def detection_message_sorted_by_height(
+    message: TomatoDetectionArray,
+    transform=None,
+) -> TomatoDetectionArray:
+    """Copy a detection snapshot in descending world-height order."""
+    centers = []
+    for detection in message.detections:
+        center = detection.center
+        if transform is None:
+            centers.append(
+                (float(center.x), float(center.y), float(center.z))
+            )
+        else:
+            centers.append(transformed_point_xyz(center, transform))
+    order = descending_height_order(centers)
+    sorted_message = TomatoDetectionArray()
+    sorted_message.header = message.header
+    sorted_message.detections = [
+        message.detections[index] for index in order
+    ]
+    return sorted_message
 
 
 def harvest_all_jobs(tomato_count: int) -> list[tuple[int, bool]]:
@@ -1228,6 +1256,10 @@ class HarvestGui(Node):
         self.declare_parameter("lift_target_tolerance_mm", 1.0)
         self.declare_parameter("lift_move_timeout_sec", 60.0)
         self.declare_parameter("detected_tf_sync_tolerance_m", 0.003)
+        self.declare_parameter(
+            "detected_tf_sync_orientation_tolerance_deg",
+            2.0,
+        )
         self.declare_parameter("detected_tf_sync_timeout_sec", 8.0)
         self.declare_parameter(
             "detected_tf_ready_topic",
@@ -1435,6 +1467,11 @@ class HarvestGui(Node):
         self.detected_tf_sync_tolerance_m = float(
             self.get_parameter("detected_tf_sync_tolerance_m").value
         )
+        self.detected_tf_sync_orientation_tolerance_deg = float(
+            self.get_parameter(
+                "detected_tf_sync_orientation_tolerance_deg"
+            ).value
+        )
         self.detected_tf_sync_timeout_sec = float(
             self.get_parameter("detected_tf_sync_timeout_sec").value
         )
@@ -1494,6 +1531,7 @@ class HarvestGui(Node):
         self.detected_tomatoes = []
         self.latest_detection_message = None
         self.detected_tomato_expected_world_positions = {}
+        self.detected_tomato_expected_world_x_axes = {}
         self.current_detection_stamp_ns = 0
         self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
@@ -1507,6 +1545,7 @@ class HarvestGui(Node):
         self.step_execution_confirmed = False
         self.step_session_failed = False
         self.step_session_verification = None
+        self.step_session_mode = None
         self.harvest_plan_report = {}
         self.last_failure_robot_state = None
         self.process_queue = queue.Queue()
@@ -1608,6 +1647,10 @@ class HarvestGui(Node):
         self.step_status = tk.StringVar(
             value="토마토를 선택하고 스텝 Plan을 생성하세요."
         )
+        self.repeat_execution_enabled_var = tk.BooleanVar(value=False)
+        self.repeat_status = tk.StringVar(
+            value="토마토를 선택하고 반복 테스트 Plan을 생성하세요."
+        )
         self.lift_node_status = tk.StringVar(value="노드 확인 중")
         self.lift_current_height = tk.StringVar(value="-- mm")
         self.lift_target_height = tk.StringVar(value="10.0")
@@ -1672,13 +1715,16 @@ class HarvestGui(Node):
         sweep_tab = ttk.Frame(self.main_notebook, padding=10)
         equipment_tab = ttk.Frame(self.main_notebook, padding=10)
         step_tab = ttk.Frame(self.main_notebook, padding=10)
+        repeat_tab = ttk.Frame(self.main_notebook, padding=10)
         self.main_notebook.add(harvest_tab, text="  수확 작업  ")
         self.main_notebook.add(step_tab, text="  스텝 실행  ")
+        self.main_notebook.add(repeat_tab, text="  접근 반복 테스트  ")
         self.main_notebook.add(sweep_tab, text="  자동 테스트  ")
         self.main_notebook.add(equipment_tab, text="  장면 · 속도 · 리프트  ")
 
         self._build_harvest_ui(harvest_tab)
         self._build_step_ui(step_tab)
+        self._build_repeat_ui(repeat_tab)
         self._build_sweep_ui(sweep_tab)
         self._build_equipment_ui(equipment_tab)
 
@@ -2095,6 +2141,123 @@ class HarvestGui(Node):
         ttk.Label(
             controls,
             textvariable=self.step_status,
+            anchor="w",
+        ).grid(row=0, column=5, sticky="ew", padx=(14, 0))
+
+    def _build_repeat_ui(self, frame) -> None:
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
+
+        setup = ttk.LabelFrame(frame, text="접근 1↔5 반복 Plan", padding=10)
+        setup.grid(row=0, column=0, sticky="ew")
+        setup.columnconfigure(1, weight=1)
+        ttk.Label(setup, text="선택 토마토").grid(row=0, column=0, sticky="w")
+        self.repeat_tomato_combo = ttk.Combobox(
+            setup,
+            textvariable=self.selected_tomato,
+            state="readonly",
+        )
+        self.repeat_tomato_combo.grid(
+            row=0,
+            column=1,
+            sticky="ew",
+            padx=(8, 12),
+        )
+        self.repeat_tomato_combo.bind(
+            "<<ComboboxSelected>>",
+            self._combo_selection_changed,
+        )
+        self.repeat_plan_button = ttk.Button(
+            setup,
+            text="반복 테스트 Plan 생성",
+            command=self.start_repeat_session,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.repeat_plan_button.grid(row=0, column=2, padx=(0, 12))
+        self.repeat_execution_checkbox = ttk.Checkbutton(
+            setup,
+            text="실제 로봇 반복 실행 허용",
+            variable=self.repeat_execution_enabled_var,
+            command=self._update_step_controls,
+        )
+        self.repeat_execution_checkbox.grid(row=0, column=3, sticky="e")
+        ttk.Label(
+            setup,
+            text=(
+                "1→5는 현재 자세부터 위로 1차 이동까지 자동 실행합니다. "
+                "5→1은 저장된 joint trajectory를 재계획 없이 완전히 역재생합니다."
+            ),
+            foreground="#9a4f00",
+            wraplength=1150,
+            justify="left",
+        ).grid(row=1, column=0, columnspan=4, sticky="w", pady=(8, 0))
+
+        stages = ttk.LabelFrame(frame, text="반복 대상 단계", padding=8)
+        stages.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        stages.columnconfigure(0, weight=1)
+        stages.rowconfigure(0, weight=1)
+        columns = ("number", "motion", "detail", "status")
+        self.repeat_tree = ttk.Treeview(
+            stages,
+            columns=columns,
+            show="headings",
+            selectmode="none",
+            height=7,
+        )
+        for column, heading, width, stretch in (
+            ("number", "단계", 65, False),
+            ("motion", "동작", 410, True),
+            ("detail", "이동량 / 방식", 320, True),
+            ("status", "상태", 180, False),
+        ):
+            self.repeat_tree.heading(column, text=heading)
+            self.repeat_tree.column(
+                column,
+                width=width,
+                anchor="center",
+                stretch=stretch,
+            )
+        self.repeat_tree.grid(row=0, column=0, sticky="nsew")
+
+        controls = ttk.Frame(frame)
+        controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
+        controls.columnconfigure(5, weight=1)
+        self.repeat_forward_button = ttk.Button(
+            controls,
+            text="1 → 5 연속 진입",
+            command=self.execute_repeat_forward,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.repeat_forward_button.grid(row=0, column=0, padx=(0, 6))
+        self.repeat_reverse_button = ttk.Button(
+            controls,
+            text="5 → 1 역순 복귀",
+            command=self.execute_repeat_reverse,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.repeat_reverse_button.grid(row=0, column=1, padx=6)
+        self.repeat_stop_button = ttk.Button(
+            controls,
+            text="모션 즉시 정지",
+            command=self.stop_active_motion,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.repeat_stop_button.grid(row=0, column=2, padx=6)
+        self.repeat_close_button = ttk.Button(
+            controls,
+            text="반복 세션 종료",
+            command=self.close_step_session,
+            state="disabled",
+            style="Compact.TButton",
+        )
+        self.repeat_close_button.grid(row=0, column=3, padx=6)
+        ttk.Label(
+            controls,
+            textvariable=self.repeat_status,
             anchor="w",
         ).grid(row=0, column=5, sticky="ew", padx=(14, 0))
 
@@ -2891,17 +3054,51 @@ class HarvestGui(Node):
                 Time(),
             )
         positions = {}
+        x_axes = {}
         for index, detection in enumerate(message.detections):
             center = detection.center
+            stem = detection.stem_point
             if transform is None:
-                positions[index] = (
+                center_world = (
                     float(center.x),
                     float(center.y),
                     float(center.z),
                 )
+                stem_world = (
+                    float(stem.x),
+                    float(stem.y),
+                    float(stem.z),
+                )
             else:
-                positions[index] = transformed_point_xyz(center, transform)
+                center_world = transformed_point_xyz(center, transform)
+                stem_world = transformed_point_xyz(stem, transform)
+            positions[index] = center_world
+            horizontal_x = stem_world[0] - center_world[0]
+            horizontal_y = stem_world[1] - center_world[1]
+            horizontal_norm = math.hypot(horizontal_x, horizontal_y)
+            if horizontal_norm > 1e-9:
+                x_axes[index] = (
+                    horizontal_x / horizontal_norm,
+                    horizontal_y / horizontal_norm,
+                )
         self.detected_tomato_expected_world_positions = positions
+        self.detected_tomato_expected_world_x_axes = x_axes
+
+    def _sort_detection_message_by_height(
+        self,
+        message: TomatoDetectionArray,
+    ) -> TomatoDetectionArray:
+        """Mirror the TF generator's highest-Z-first ID assignment."""
+        source_frame = str(message.header.frame_id)
+        world_frame = self.lift_harvest_world_frame
+        transform = None
+        if source_frame != world_frame:
+            transform = self.tf_buffer.lookup_transform(
+                world_frame,
+                source_frame,
+                Time(),
+            )
+        return detection_message_sorted_by_height(message, transform)
 
     def _detected_tomato_tf_sync_error_m(
         self,
@@ -2925,6 +3122,37 @@ class HarvestGui(Node):
             + (float(translation.z) - expected[2]) ** 2
         )
 
+    def _detected_tomato_tf_orientation_error_deg(
+        self,
+        tomato_index: int,
+    ) -> float | None:
+        expected = self.detected_tomato_expected_world_x_axes.get(
+            int(tomato_index)
+        )
+        if expected is None:
+            return None
+        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        transform = self.tf_buffer.lookup_transform(
+            self.lift_harvest_world_frame,
+            tomato_frame,
+            Time(),
+        )
+        rotation = transform.transform.rotation
+        qx = float(rotation.x)
+        qy = float(rotation.y)
+        qz = float(rotation.z)
+        qw = float(rotation.w)
+        actual_x = 1.0 - 2.0 * (qy * qy + qz * qz)
+        actual_y = 2.0 * (qx * qy + qz * qw)
+        actual_norm = math.hypot(actual_x, actual_y)
+        if actual_norm <= 1e-9:
+            return None
+        dot = (
+            expected[0] * actual_x / actual_norm
+            + expected[1] * actual_y / actual_norm
+        )
+        return math.degrees(math.acos(max(-1.0, min(1.0, dot))))
+
     @staticmethod
     def _stamp_nanoseconds(stamp) -> int:
         return int(stamp.sec) * 1_000_000_000 + int(stamp.nanosec)
@@ -2938,14 +3166,136 @@ class HarvestGui(Node):
             == int(getattr(self, "current_detection_stamp_ns", 0))
             and self.latest_detection_message is not None
         ):
-            self.root.after(0, self._refresh_detection_approach_markers)
+            self._schedule_detection_approach_marker_refresh()
 
-    def _refresh_detection_approach_markers(self) -> None:
+    def _detected_tf_positions_are_synchronized(self) -> tuple[bool, str]:
+        """Verify that every reused detected TF belongs to this snapshot."""
+        tomato_count = len(self.detected_tomatoes)
+        expected_count = len(self.detected_tomato_expected_world_positions)
+        expected_axis_count = len(
+            self.detected_tomato_expected_world_x_axes
+        )
+        if (
+            expected_count != tomato_count
+            or expected_axis_count != tomato_count
+        ):
+            return (
+                False,
+                f"검출 중심/방향 world 좌표 {expected_count}/"
+                f"{expected_axis_count}/{tomato_count}개 준비",
+            )
+
+        tolerance_m = max(0.0, self.detected_tf_sync_tolerance_m)
+        orientation_tolerance_deg = max(
+            0.0,
+            self.detected_tf_sync_orientation_tolerance_deg,
+        )
+        for index in range(tomato_count):
+            try:
+                error_m = self._detected_tomato_tf_sync_error_m(index)
+                orientation_error_deg = (
+                    self._detected_tomato_tf_orientation_error_deg(index)
+                )
+            except TransformException as error:
+                return False, f"detected_tomato_{index}_tf 조회 대기: {error}"
+            if error_m is None:
+                return False, f"토마토 {index}의 검출 중심 좌표 없음"
+            if error_m > tolerance_m:
+                return (
+                    False,
+                    f"detected_tomato_{index}_tf 위치 오차 "
+                    f"{error_m * 1000.0:.1f}mm > "
+                    f"{tolerance_m * 1000.0:.1f}mm",
+                )
+            if orientation_error_deg is None:
+                return False, f"detected_tomato_{index}_tf 방향 비교 불가"
+            if orientation_error_deg > orientation_tolerance_deg:
+                return (
+                    False,
+                    f"detected_tomato_{index}_tf X축 오차 "
+                    f"{orientation_error_deg:.1f}° > "
+                    f"{orientation_tolerance_deg:.1f}°",
+                )
+        return True, ""
+
+    def _schedule_detection_approach_marker_refresh(self) -> None:
+        """Start a cancellable retry for this exact detection generation."""
+        if self.latest_detection_message is None:
+            return
+        generation = int(self.detection_generation)
+        stamp_ns = int(self.current_detection_stamp_ns)
+        deadline = time.monotonic() + max(
+            0.1,
+            float(self.detected_tf_sync_timeout_sec),
+        )
+        self.root.after(
+            0,
+            lambda: self._refresh_detection_approach_markers(
+                generation,
+                stamp_ns,
+                deadline,
+            ),
+        )
+
+    def _refresh_detection_approach_markers(
+        self,
+        generation: int | None = None,
+        stamp_ns: int | None = None,
+        deadline: float | None = None,
+    ) -> None:
         if (
             self.latest_detection_message is None
             or not self.show_detection_markers_var.get()
         ):
             return
+
+        expected_generation = (
+            int(self.detection_generation)
+            if generation is None
+            else int(generation)
+        )
+        expected_stamp_ns = (
+            int(self.current_detection_stamp_ns)
+            if stamp_ns is None
+            else int(stamp_ns)
+        )
+        if (
+            expected_generation != int(self.detection_generation)
+            or expected_stamp_ns != int(self.current_detection_stamp_ns)
+        ):
+            # A newer camera result superseded this queued callback.
+            return
+
+        retry_deadline = (
+            time.monotonic()
+            + max(0.1, float(self.detected_tf_sync_timeout_sec))
+            if deadline is None
+            else float(deadline)
+        )
+        synchronized = False
+        reason = "TF 생성 완료 신호 대기"
+        if self._detected_tf_generation_is_ready():
+            synchronized, reason = (
+                self._detected_tf_positions_are_synchronized()
+            )
+        if not synchronized:
+            if time.monotonic() < retry_deadline:
+                self.root.after(
+                    50,
+                    lambda: self._refresh_detection_approach_markers(
+                        expected_generation,
+                        expected_stamp_ns,
+                        retry_deadline,
+                    ),
+                )
+                return
+            self._append_log(
+                "[검출 마커 경고] 이번 검출 좌표와 TF가 동기화되지 않아 "
+                f"주황색 접근 화살표를 표시하지 않습니다: {reason}. "
+                "TF 생성기와 GUI를 같은 빌드로 재시작한 뒤 다시 검출하세요."
+            )
+            return
+
         self._publish_detection_markers(
             self.latest_detection_message,
             include_actual_approach=True,
@@ -4472,6 +4822,15 @@ class HarvestGui(Node):
         return (stamp.sec, stamp.nanosec, message.header.frame_id, points)
 
     def _detections_callback(self, message: TomatoDetectionArray) -> None:
+        sorter = getattr(self, "_sort_detection_message_by_height", None)
+        if sorter is not None:
+            try:
+                message = sorter(message)
+            except (TransformException, ValueError) as error:
+                self._append_log(
+                    "[검출 높이 정렬 경고] world 기준 좌표를 계산하지 못해 "
+                    f"카메라 배열 순서를 유지합니다: {error}"
+                )
         signature = self._detection_key(message)
         if signature == self.detection_signature:
             return
@@ -4488,6 +4847,7 @@ class HarvestGui(Node):
             self._cache_detected_tomato_world_positions(message)
         except TransformException as error:
             self.detected_tomato_expected_world_positions = {}
+            self.detected_tomato_expected_world_x_axes = {}
             self._append_log(
                 "[검출 TF 동기화 경고] 검출 중심의 world 좌표를 저장하지 "
                 f"못했습니다: {error}"
@@ -4497,10 +4857,9 @@ class HarvestGui(Node):
         if self.show_detection_markers_var.get():
             self._publish_detection_markers(
                 message,
-                include_actual_approach=(
-                    self._detected_tf_generation_is_ready()
-                ),
+                include_actual_approach=False,
             )
+            self._schedule_detection_approach_marker_refresh()
 
         for item in self.tomato_tree.get_children():
             self.tomato_tree.delete(item)
@@ -4525,6 +4884,7 @@ class HarvestGui(Node):
             )
         self.tomato_combo.configure(values=choices)
         self.step_tomato_combo.configure(values=choices)
+        self.repeat_tomato_combo.configure(values=choices)
         busy = (
             self.harvest_process is not None
             or self.batch_active
@@ -4612,6 +4972,7 @@ class HarvestGui(Node):
         self.detected_tomatoes = []
         self.latest_detection_message = None
         self.detected_tomato_expected_world_positions.clear()
+        self.detected_tomato_expected_world_x_axes.clear()
         self.tomato_motion_results.clear()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = ""
@@ -4624,6 +4985,9 @@ class HarvestGui(Node):
         step_combo = getattr(self, "step_tomato_combo", None)
         if step_combo is not None:
             step_combo.configure(values=[])
+        repeat_combo = getattr(self, "repeat_tomato_combo", None)
+        if repeat_combo is not None:
+            repeat_combo.configure(values=[])
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
         self.execute_button.configure(state="disabled")
@@ -4714,10 +5078,9 @@ class HarvestGui(Node):
             return
         self._publish_detection_markers(
             self.latest_detection_message,
-            include_actual_approach=(
-                self._detected_tf_generation_is_ready()
-            ),
+            include_actual_approach=False,
         )
+        self._schedule_detection_approach_marker_refresh()
         self.status.set("현재 검출 토마토 마커를 표시했습니다.")
 
     def _selected_index(self) -> int | None:
@@ -4886,11 +5249,19 @@ class HarvestGui(Node):
         self._handle_sweep_plan_done(1, verification, report)
 
     def start_step_session(self) -> None:
+        self._start_step_session("manual")
+
+    def start_repeat_session(self) -> None:
+        self._start_step_session("repeat")
+
+    def _start_step_session(self, mode: str) -> None:
         index = self._selected_index()
         if index is None:
             messagebox.showwarning(
                 "토마토 선택",
-                "스텝 실행할 토마토를 먼저 선택하세요.",
+                "반복 테스트할 토마토를 먼저 선택하세요."
+                if mode == "repeat"
+                else "스텝 실행할 토마토를 먼저 선택하세요.",
             )
             return
         if (
@@ -4924,6 +5295,7 @@ class HarvestGui(Node):
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=harvest_wait_sec,
             pick_ready_state_name=pick_ready_state,
+            cycle_only=(mode == "repeat"),
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -4950,6 +5322,7 @@ class HarvestGui(Node):
         self.step_execution_in_progress = False
         self.step_execution_confirmed = False
         self.step_session_failed = False
+        self.step_session_mode = mode
         self.step_session_verification = (
             self.detection_generation,
             index,
@@ -4960,10 +5333,21 @@ class HarvestGui(Node):
         )
         for item in self.step_tree.get_children():
             self.step_tree.delete(item)
-        self.step_status.set(f"토마토 {index} 전체 스텝 Plan 계산 중...")
-        self.status.set("스텝 Plan 계산 중 — 로봇은 움직이지 않습니다.")
+        for item in self.repeat_tree.get_children():
+            self.repeat_tree.delete(item)
+        if mode == "repeat":
+            self.repeat_status.set(
+                f"토마토 {index} 접근 반복 Plan 계산 중..."
+            )
+            self.status.set(
+                "접근 반복 Plan 계산 중 — 로봇은 움직이지 않습니다."
+            )
+        else:
+            self.step_status.set(f"토마토 {index} 전체 스텝 Plan 계산 중...")
+            self.status.set("스텝 Plan 계산 중 — 로봇은 움직이지 않습니다.")
         self._append_log(
-            f"[스텝 Plan] 토마토 {index}, 시작={pick_ready_state}, "
+            f"[{'접근 반복' if mode == 'repeat' else '스텝'} Plan] "
+            f"토마토 {index}, 시작={pick_ready_state}, "
             f"planner={pipeline}/{planner_id}, preapproach={preapproach_mode}"
         )
         self._set_busy(True)
@@ -4997,6 +5381,10 @@ class HarvestGui(Node):
 
     def _handle_stepper_event(self, event: dict, process) -> None:
         if process is not self.step_process:
+            return
+        if self.step_session_mode == "repeat":
+            self._handle_repeat_event(event)
+            self._update_step_controls()
             return
         event_name = str(event.get("event", ""))
         if event_name == "planned":
@@ -5126,18 +5514,170 @@ class HarvestGui(Node):
             self.step_status.set("스텝 세션 종료됨")
         self._update_step_controls()
 
+    def _handle_repeat_event(self, event: dict) -> None:
+        event_name = str(event.get("event", ""))
+        if event_name == "planned":
+            self.step_stages = list(event.get("stages", []))
+            self.step_next_index = 0
+            report = event.get("report") or {}
+            self.harvest_plan_report = report
+            for stage in self.step_stages[:5]:
+                index = int(stage["index"])
+                self.repeat_tree.insert(
+                    "",
+                    "end",
+                    iid=str(index),
+                    values=(
+                        index + 1,
+                        stage.get("label", ""),
+                        stage.get("detail", ""),
+                        "정방향 대기",
+                    ),
+                )
+            tomato_index = self.step_session_verification[1]
+            self._set_harvest_result(
+                tomato_index,
+                True,
+                adaptive_rotation_applied=adaptive_rotation_was_applied(
+                    report
+                ),
+                adaptive_rotation_deg=adaptive_rotation_degrees(report),
+                approach_axis_local=adaptive_approach_axis_local(report),
+                plan_report=report,
+                motion_result_text="접근 반복 Plan 완료",
+            )
+            self.repeat_status.set(
+                "반복 Plan 완료 — 1→5 연속 진입을 실행할 수 있습니다."
+            )
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                "[접근 반복 Plan 완료] 1~5단계 정방향과 역재생 경로가 "
+                "캐시되었습니다. 로봇은 아직 움직이지 않았습니다."
+            )
+        elif event_name == "plan_failed":
+            report = event.get("report") or {}
+            self.repeat_status.set(
+                "반복 Plan 실패 — " + harvest_failure_summary(report)
+            )
+            self.status.set("접근 반복 Plan 실패")
+            self._append_log(
+                "[접근 반복 Plan 실패] " + harvest_failure_summary(report)
+            )
+        elif event_name == "stage_started":
+            index = int(event.get("index", -1))
+            reverse = event.get("direction") == "reverse"
+            self.step_execution_in_progress = True
+            if self.repeat_tree.exists(str(index)):
+                self.repeat_tree.set(
+                    str(index),
+                    "status",
+                    "역방향 실행 중" if reverse else "정방향 실행 중",
+                )
+                self.repeat_tree.see(str(index))
+            arrow = "5→1" if reverse else "1→5"
+            self.repeat_status.set(
+                f"{arrow} 실행 중 — {index + 1}단계: "
+                f"{event.get('label', '')}"
+            )
+            self.status.set(self.repeat_status.get())
+        elif event_name == "stage_completed":
+            index = int(event.get("index", -1))
+            reverse = event.get("direction") == "reverse"
+            self.step_execution_in_progress = False
+            self.step_next_index = index if reverse else index + 1
+            duration = float(event.get("duration_sec", 0.0))
+            if self.repeat_tree.exists(str(index)):
+                self.repeat_tree.set(
+                    str(index),
+                    "status",
+                    (
+                        f"역복귀 완료 ({duration:.2f}s)"
+                        if reverse
+                        else f"진입 완료 ({duration:.2f}s)"
+                    ),
+                )
+        elif event_name == "paused":
+            self.step_execution_in_progress = False
+            self.step_next_index = int(event.get("next_index", 5))
+            self.repeat_status.set(
+                "1→5 진입 완료 — 5→1 역순 복귀를 실행하세요."
+            )
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                "[접근 반복 정방향 완료] 1→5단계가 연속 실행되었습니다."
+            )
+        elif event_name == "cycle_reset":
+            self.step_execution_in_progress = False
+            self.step_next_index = 0
+            for index in range(min(5, len(self.step_stages))):
+                if self.repeat_tree.exists(str(index)):
+                    self.repeat_tree.set(
+                        str(index),
+                        "status",
+                        "반복 대기",
+                    )
+            self.repeat_status.set(
+                "5→1 역순 복귀 완료 — 1→5를 다시 실행할 수 있습니다."
+            )
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                "[접근 반복 역방향 완료] 캐시된 동일 경로로 "
+                "5→1단계 복귀했습니다."
+            )
+        elif event_name == "stage_failed":
+            index = int(event.get("index", -1))
+            self.step_execution_in_progress = False
+            self.step_session_failed = True
+            direction = (
+                "역방향" if event.get("direction") == "reverse" else "정방향"
+            )
+            reason = str(event.get("reason", "UNKNOWN"))
+            start_error = event.get("start_error_deg")
+            if start_error is not None:
+                reason += f" (시작 오차 {float(start_error):.2f}°)"
+            if self.repeat_tree.exists(str(index)):
+                self.repeat_tree.set(
+                    str(index),
+                    "status",
+                    f"{direction} 실패: {reason}",
+                )
+            self.repeat_status.set(
+                f"{direction} {index + 1}단계 실패: {reason}"
+            )
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                f"[접근 반복 실패] {direction} {index + 1}단계: {reason}. "
+                "새 Plan을 생성해야 합니다."
+            )
+        elif event_name in {"command_error", "internal_error"}:
+            message = str(event.get("message", "알 수 없는 오류"))
+            self.repeat_status.set(message)
+            self._append_log(f"[접근 반복 프로세스 오류] {message}")
+        elif event_name == "closed":
+            self.repeat_status.set("접근 반복 세션 종료됨")
+
     def _send_step_command(self, command: dict) -> bool:
         process = self.step_process
+        repeat_mode = self.step_session_mode == "repeat"
         if process is None or process.poll() is not None or process.stdin is None:
             messagebox.showwarning(
                 "스텝 세션 없음",
-                "스텝 Plan을 다시 생성하세요.",
+                "반복 테스트 Plan을 다시 생성하세요."
+                if repeat_mode
+                else "스텝 Plan을 다시 생성하세요.",
             )
             return False
-        if not self.step_execution_enabled_var.get():
+        execution_enabled = (
+            self.repeat_execution_enabled_var.get()
+            if repeat_mode
+            else self.step_execution_enabled_var.get()
+        )
+        if not execution_enabled:
             messagebox.showwarning(
                 "실제 실행 잠금",
-                "'실제 로봇 스텝 실행 허용'을 먼저 체크하세요.",
+                "'실제 로봇 반복 실행 허용'을 먼저 체크하세요."
+                if repeat_mode
+                else "'실제 로봇 스텝 실행 허용'을 먼저 체크하세요.",
             )
             return False
         if self.step_session_verification != (
@@ -5153,10 +5693,21 @@ class HarvestGui(Node):
             )
             return False
         if not self.step_execution_confirmed:
+            execution_message = (
+                "캐시된 1~5단계 trajectory를 정방향 또는 역방향으로 "
+                "실제 로봇에서 실행합니다.\n\n"
+                if repeat_mode
+                else "캐시된 trajectory를 실제 로봇에서 단계별로 "
+                "실행합니다.\n\n"
+            )
+            execution_message += (
+                "주변이 안전하고 교시 모드가 해제되었는지 확인했습니까?"
+            )
             if not messagebox.askyesno(
-                "실제 로봇 스텝 실행",
-                "캐시된 trajectory를 실제 로봇에서 단계별로 실행합니다.\n\n"
-                "주변이 안전하고 교시 모드가 해제되었는지 확인했습니까?",
+                "실제 로봇 접근 반복 실행"
+                if repeat_mode
+                else "실제 로봇 스텝 실행",
+                execution_message,
                 icon="warning",
             ):
                 return False
@@ -5173,6 +5724,12 @@ class HarvestGui(Node):
 
     def execute_next_step(self) -> None:
         self._send_step_command({"command": "execute_next"})
+
+    def execute_repeat_forward(self) -> None:
+        self._send_step_command({"command": "execute_cycle_forward"})
+
+    def execute_repeat_reverse(self) -> None:
+        self._send_step_command({"command": "execute_cycle_reverse"})
 
     def execute_steps_through_selection(self) -> None:
         selection = self.step_tree.selection()
@@ -5206,7 +5763,11 @@ class HarvestGui(Node):
             process.terminate()
             self.step_process = None
             self._set_busy(False)
-            self.step_status.set("스텝 Plan 계산 취소")
+            if self.step_session_mode == "repeat":
+                self.repeat_status.set("접근 반복 Plan 계산 취소")
+            else:
+                self.step_status.set("스텝 Plan 계산 취소")
+            self.step_session_mode = None
             return
         try:
             if process.stdin is not None:
@@ -5214,7 +5775,10 @@ class HarvestGui(Node):
                 process.stdin.flush()
         except (BrokenPipeError, OSError):
             process.terminate()
-        self.step_status.set("스텝 세션 종료 중...")
+        if self.step_session_mode == "repeat":
+            self.repeat_status.set("접근 반복 세션 종료 중...")
+        else:
+            self.step_status.set("스텝 세션 종료 중...")
         self._update_step_controls()
 
     def _update_step_controls(self) -> None:
@@ -5223,8 +5787,11 @@ class HarvestGui(Node):
         process = self.step_process
         active = process is not None and process.poll() is None
         planned = active and bool(self.step_stages)
+        manual_active = active and self.step_session_mode == "manual"
+        repeat_active = active and self.step_session_mode == "repeat"
         executable = (
             planned
+            and manual_active
             and not self.step_session_failed
             and self.step_execution_enabled_var.get()
             and not self.step_execution_in_progress
@@ -5244,12 +5811,49 @@ class HarvestGui(Node):
             state="normal" if executable else "disabled"
         )
         self.step_stop_button.configure(
-            state="normal" if active else "disabled"
+            state="normal" if manual_active else "disabled"
         )
         self.step_close_button.configure(
-            state="normal" if active else "disabled"
+            state="normal" if manual_active else "disabled"
         )
         self.step_tomato_combo.configure(
+            state="disabled" if active or self.ui_busy else "readonly"
+        )
+        repeat_executable = (
+            planned
+            and repeat_active
+            and not self.step_session_failed
+            and self.repeat_execution_enabled_var.get()
+            and not self.step_execution_in_progress
+        )
+        self.repeat_plan_button.configure(
+            state=(
+                "normal"
+                if not active and not self.ui_busy and self.detected_tomatoes
+                else "disabled"
+            )
+        )
+        self.repeat_forward_button.configure(
+            state=(
+                "normal"
+                if repeat_executable and self.step_next_index == 0
+                else "disabled"
+            )
+        )
+        self.repeat_reverse_button.configure(
+            state=(
+                "normal"
+                if repeat_executable and self.step_next_index == 5
+                else "disabled"
+            )
+        )
+        self.repeat_stop_button.configure(
+            state="normal" if repeat_active else "disabled"
+        )
+        self.repeat_close_button.configure(
+            state="normal" if repeat_active else "disabled"
+        )
+        self.repeat_tomato_combo.configure(
             state="disabled" if active or self.ui_busy else "readonly"
         )
 
@@ -5866,15 +6470,23 @@ class HarvestGui(Node):
                 _, return_code, process = item
                 if process is not self.step_process:
                     continue
+                session_mode = self.step_session_mode
                 self.step_process = None
                 self.step_execution_in_progress = False
                 self._set_busy(False)
                 if return_code != 0:
                     self._append_log(
-                        f"[스텝 세션 종료] 프로세스 종료 코드 {return_code}"
+                        f"[{'접근 반복' if session_mode == 'repeat' else '스텝'} "
+                        f"세션 종료] 프로세스 종료 코드 {return_code}"
                     )
-                    if self.step_status.get().endswith("계산 중..."):
+                    if (
+                        session_mode == "repeat"
+                        and self.repeat_status.get().endswith("계산 중...")
+                    ):
+                        self.repeat_status.set("접근 반복 Plan 실패")
+                    elif self.step_status.get().endswith("계산 중..."):
                         self.step_status.set("스텝 Plan 실패")
+                self.step_session_mode = None
                 self._update_step_controls()
                 continue
             if item[0] == "sweep_result":
@@ -6259,6 +6871,7 @@ class HarvestGui(Node):
 
         was_batch = self.batch_active
         was_step = step_process is not None
+        step_mode = getattr(self, "step_session_mode", None)
         self.status.set("수확 작업 중지 및 로봇 모션 정지 명령 전송 중...")
         self._append_log(
             "[정지 요청] 현재 수확 작업을 취소하고 MoveIt/controller 및 "
@@ -6287,6 +6900,7 @@ class HarvestGui(Node):
             self.step_execution_in_progress = False
             self.step_session_failed = False
             self.step_session_verification = None
+            self.step_session_mode = None
         else:
             self.harvest_process = None
         if process is not None and process.poll() is None:
@@ -6299,11 +6913,18 @@ class HarvestGui(Node):
                 "MoveIt/controller 취소 및 RB 정지를 요청했습니다."
             )
         elif was_step:
-            message = (
-                "스텝 모션 즉시 정지 완료 — MoveIt/controller 취소 및 "
-                "RB 정지를 요청했습니다. 새 스텝 Plan이 필요합니다."
-            )
-            self.step_status.set(message)
+            if step_mode == "repeat":
+                message = (
+                    "접근 반복 모션 즉시 정지 완료 — MoveIt/controller "
+                    "취소 및 RB 정지를 요청했습니다. 새 반복 Plan이 필요합니다."
+                )
+                self.repeat_status.set(message)
+            else:
+                message = (
+                    "스텝 모션 즉시 정지 완료 — MoveIt/controller 취소 및 "
+                    "RB 정지를 요청했습니다. 새 스텝 Plan이 필요합니다."
+                )
+                self.step_status.set(message)
         else:
             message = (
                 "수확 모션 중지 완료 — MoveIt/controller 취소 및 RB 정지를 "
@@ -6473,6 +7094,7 @@ class HarvestGui(Node):
             self.tomato_tree.delete(item)
         self.tomato_combo.configure(values=[])
         self.step_tomato_combo.configure(values=[])
+        self.repeat_tomato_combo.configure(values=[])
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")

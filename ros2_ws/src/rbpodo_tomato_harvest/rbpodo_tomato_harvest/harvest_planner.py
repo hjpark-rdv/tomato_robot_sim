@@ -424,7 +424,7 @@ def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.070,
     first_z_lift: float = 0.040,
-    first_x_back: float = 0.015,
+    first_x_back: float = 0.030,
     second_z_lift: float = 0.010,
     second_x_back: float = 0.030,
 ) -> TipLocalHarvestMotion:
@@ -702,7 +702,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.070)
         self.declare_parameter("harvest_first_z_lift", 0.040)
-        self.declare_parameter("harvest_first_x_back", 0.015)
+        self.declare_parameter("harvest_first_x_back", 0.030)
         self.declare_parameter("harvest_second_z_lift", 0.010)
         self.declare_parameter("harvest_wait_sec", 2.0)
         self.declare_parameter("harvest_second_x_back", 0.030)
@@ -714,6 +714,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("execution_timeout_sec", 60.0)
         self.declare_parameter("publish_display_trajectory", True)
         self.declare_parameter("stepwise_plan", False)
+        self.declare_parameter("step_cycle_only", False)
         self.declare_parameter("execute", False)
 
         self.base_frame = str(self.get_parameter("base_frame").value)
@@ -2370,7 +2371,9 @@ class CartesianHarvestPlanner(Node):
             *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
         step_approach_trajectories = ()
-        if bool(self.get_parameter("stepwise_plan").value):
+        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
+        step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
+        if stepwise_plan:
             step_labels = (
                 "Step preapproach to target",
                 "Step tip +X forward",
@@ -2381,7 +2384,11 @@ class CartesianHarvestPlanner(Node):
             step_groups = []
             flattened_approach = []
             step_start = preapproach_end
-            for waypoint, label in zip(approach_waypoints, step_labels):
+            cycle_waypoint_count = 3 if step_cycle_only else 5
+            for waypoint, label in zip(
+                approach_waypoints[:cycle_waypoint_count],
+                step_labels[:cycle_waypoint_count],
+            ):
                 group = self._plan_cartesian_with_ompl_fallback(
                     [waypoint],
                     step_start,
@@ -2394,6 +2401,8 @@ class CartesianHarvestPlanner(Node):
                 step_groups.append(group)
                 flattened_approach.extend(group)
                 step_start = self._trajectory_end_state(group)
+            if step_cycle_only:
+                step_groups.extend([()] * (5 - len(step_groups)))
             step_approach_trajectories = tuple(step_groups)
             approach_trajectory = tuple(flattened_approach)
         else:
@@ -2407,79 +2416,90 @@ class CartesianHarvestPlanner(Node):
                 return None
 
         approach_end = self._trajectory_end_state(approach_trajectory)
-        after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
-            [as_planning_pose(tip_motion.after_wait_pose)],
-            approach_end,
-            "Post-wait harvest",
-            pregrasp=False,
-        )
-        if after_wait_trajectory is None:
-            return None
-
-        after_wait_end = self._trajectory_end_state(after_wait_trajectory)
-        retreat_after_harvest = bool(
-            self.get_parameter("retreat_after_harvest").value
-        )
+        after_wait_trajectory = ()
+        after_wait_end = approach_end
         outward_retreat_trajectory = ()
-        if retreat_after_harvest:
-            clearance = max(
-                0.0,
-                float(self.get_parameter("lift_retreat_clearance").value),
-            )
-            retreat_tip_pose = Pose()
-            retreat_tip_pose.position.x = float(
-                tip_motion.after_wait_pose.position.x
-                + geometry.outward_axis[0] * clearance
-            )
-            retreat_tip_pose.position.y = float(
-                tip_motion.after_wait_pose.position.y
-                + geometry.outward_axis[1] * clearance
-            )
-            retreat_tip_pose.position.z = float(
-                tip_motion.after_wait_pose.position.z
-                + geometry.outward_axis[2] * clearance
-            )
-            retreat_tip_pose.orientation = tip_motion.after_wait_pose.orientation
-            outward_retreat_trajectory = self._plan_cartesian_with_ompl_fallback(
-                [as_planning_pose(retreat_tip_pose)],
-                after_wait_end,
-                "Lift-safe outward retreat",
+        return_pick_ready_trajectory = ()
+        if step_cycle_only:
+            retreat_after_harvest = False
+            return_to_pick_ready = False
+            final_planning_pose = copy.deepcopy(approach_waypoints[2])
+        else:
+            after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
+                [as_planning_pose(tip_motion.after_wait_pose)],
+                approach_end,
+                "Post-wait harvest",
                 pregrasp=False,
             )
-            if outward_retreat_trajectory is None:
+            if after_wait_trajectory is None:
                 return None
-            self.last_plan_report["lift_safe_retreat"] = {
-                "clearance_m": clearance,
-                "outward_axis": [
-                    float(value) for value in geometry.outward_axis
-                ],
-            }
 
-        return_to_pick_ready = bool(
-            self.get_parameter("return_to_pick_ready").value
-        )
-        if retreat_after_harvest and return_to_pick_ready:
-            self.get_logger().error(
-                "retreat_after_harvest and return_to_pick_ready cannot both be true"
+            after_wait_end = self._trajectory_end_state(after_wait_trajectory)
+            retreat_after_harvest = bool(
+                self.get_parameter("retreat_after_harvest").value
             )
-            self._record_plan_stage(
-                "LIFT_SAFE_RETREAT_CONFIGURATION",
-                "configuration",
-                False,
-                0.0,
-                "RETREAT_AND_RETURN_BOTH_ENABLED",
+            if retreat_after_harvest:
+                clearance = max(
+                    0.0,
+                    float(self.get_parameter("lift_retreat_clearance").value),
+                )
+                retreat_tip_pose = Pose()
+                retreat_tip_pose.position.x = float(
+                    tip_motion.after_wait_pose.position.x
+                    + geometry.outward_axis[0] * clearance
+                )
+                retreat_tip_pose.position.y = float(
+                    tip_motion.after_wait_pose.position.y
+                    + geometry.outward_axis[1] * clearance
+                )
+                retreat_tip_pose.position.z = float(
+                    tip_motion.after_wait_pose.position.z
+                    + geometry.outward_axis[2] * clearance
+                )
+                retreat_tip_pose.orientation = tip_motion.after_wait_pose.orientation
+                outward_retreat_trajectory = (
+                    self._plan_cartesian_with_ompl_fallback(
+                        [as_planning_pose(retreat_tip_pose)],
+                        after_wait_end,
+                        "Lift-safe outward retreat",
+                        pregrasp=False,
+                    )
+                )
+                if outward_retreat_trajectory is None:
+                    return None
+                self.last_plan_report["lift_safe_retreat"] = {
+                    "clearance_m": clearance,
+                    "outward_axis": [
+                        float(value) for value in geometry.outward_axis
+                    ],
+                }
+
+            return_to_pick_ready = bool(
+                self.get_parameter("return_to_pick_ready").value
             )
-            return None
-        if return_to_pick_ready:
-            return_pick_ready_plan = self._plan_pick_ready(
-                after_wait_end,
-                label="RETURN_PICK_READY",
-            )
-            if return_pick_ready_plan is None:
+            if retreat_after_harvest and return_to_pick_ready:
+                self.get_logger().error(
+                    "retreat_after_harvest and return_to_pick_ready cannot both be true"
+                )
+                self._record_plan_stage(
+                    "LIFT_SAFE_RETREAT_CONFIGURATION",
+                    "configuration",
+                    False,
+                    0.0,
+                    "RETREAT_AND_RETURN_BOTH_ENABLED",
+                )
                 return None
-            return_pick_ready_trajectory, _ = return_pick_ready_plan
-        else:
-            return_pick_ready_trajectory = ()
+            if return_to_pick_ready:
+                return_pick_ready_plan = self._plan_pick_ready(
+                    after_wait_end,
+                    label="RETURN_PICK_READY",
+                )
+                if return_pick_ready_plan is None:
+                    return None
+                return_pick_ready_trajectory, _ = return_pick_ready_plan
+            final_planning_pose = copy.deepcopy(
+                as_planning_pose(tip_motion.after_wait_pose)
+            )
 
         display_start_state = self._complete_display_start_state(
             display_start_state
@@ -2492,9 +2512,7 @@ class CartesianHarvestPlanner(Node):
             outward_retreat_trajectory=outward_retreat_trajectory,
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
-            end_planning_pose=copy.deepcopy(
-                as_planning_pose(tip_motion.after_wait_pose)
-            ),
+            end_planning_pose=final_planning_pose,
             step_approach_trajectories=step_approach_trajectories,
         )
         planned_trajectories = []
@@ -2516,6 +2534,14 @@ class CartesianHarvestPlanner(Node):
             display.trajectory_start = display_start_state
             display.trajectory.extend(planned_trajectories)
             self.display_publisher.publish(display)
+        if step_cycle_only:
+            self.last_plan_report["step_cycle_only"] = True
+            self.get_logger().info(
+                "Approach repeat plan ready: current -> PICK_READY -> "
+                "pre-approach -> target -> +X70mm -> +Z40mm. "
+                "Stages after the first lift were intentionally not planned."
+            )
+            return plan
         if return_to_pick_ready:
             finish_label = "constrained OMPL RETURN_PICK_READY"
         elif retreat_after_harvest:
@@ -2539,7 +2565,7 @@ class CartesianHarvestPlanner(Node):
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
-            "+X70mm -> +Z40mm -> -X15mm -> +Z10mm -> wait -> -X30mm "
+            "+X70mm -> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )

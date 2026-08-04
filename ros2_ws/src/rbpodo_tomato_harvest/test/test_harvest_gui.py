@@ -32,6 +32,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     cancel_all_goals_request,
     camera_service_for_source,
     concise_plan_report,
+    detection_message_sorted_by_height,
     detected_tomato_marker_array,
     generate_sweep_cases,
     gripper_stroke_script,
@@ -293,6 +294,94 @@ def test_lift_harvest_waits_for_matching_tf_generation_before_position_check():
     assert len(scheduled) == 1
     scheduled.pop(0)()
     assert checks == [0]
+
+
+def test_detection_marker_sync_rejects_one_stale_tomato_tf():
+    gui = SimpleNamespace(
+        detected_tomatoes=[object(), object(), object()],
+        detected_tomato_expected_world_positions={
+            0: (0.5, 0.1, 0.7),
+            1: (0.5, 0.0, 0.6),
+            2: (0.5, -0.1, 0.5),
+        },
+        detected_tomato_expected_world_x_axes={
+            0: (1.0, 0.0),
+            1: (1.0, 0.0),
+            2: (1.0, 0.0),
+        },
+        detected_tf_sync_tolerance_m=0.003,
+        detected_tf_sync_orientation_tolerance_deg=2.0,
+        _detected_tomato_tf_sync_error_m=lambda index: (
+            0.075 if index == 2 else 0.0001
+        ),
+        _detected_tomato_tf_orientation_error_deg=lambda index: 0.0,
+    )
+
+    synchronized, reason = (
+        HarvestGui._detected_tf_positions_are_synchronized(gui)
+    )
+
+    assert synchronized is False
+    assert "detected_tomato_2_tf" in reason
+    assert "75.0mm" in reason
+
+
+def test_detection_marker_sync_rejects_stale_tomato_tf_direction():
+    gui = SimpleNamespace(
+        detected_tomatoes=[object()],
+        detected_tomato_expected_world_positions={0: (0.5, 0.1, 0.7)},
+        detected_tomato_expected_world_x_axes={0: (1.0, 0.0)},
+        detected_tf_sync_tolerance_m=0.003,
+        detected_tf_sync_orientation_tolerance_deg=2.0,
+        _detected_tomato_tf_sync_error_m=lambda index: 0.0001,
+        _detected_tomato_tf_orientation_error_deg=lambda index: 90.0,
+    )
+
+    synchronized, reason = (
+        HarvestGui._detected_tf_positions_are_synchronized(gui)
+    )
+
+    assert synchronized is False
+    assert "X축 오차 90.0°" in reason
+
+
+def test_detection_approach_marker_waits_for_matching_tf_positions():
+    scheduled = []
+    published = []
+    sync_states = iter(((False, "이전 TF"), (True, "")))
+    gui = SimpleNamespace(
+        latest_detection_message=object(),
+        show_detection_markers_var=SimpleNamespace(get=lambda: True),
+        detection_generation=4,
+        current_detection_stamp_ns=123,
+        detected_tf_sync_timeout_sec=8.0,
+        root=SimpleNamespace(
+            after=lambda delay, callback: scheduled.append((delay, callback))
+        ),
+        _detected_tf_generation_is_ready=lambda: True,
+        _detected_tf_positions_are_synchronized=lambda: next(sync_states),
+        _publish_detection_markers=lambda message, **kwargs: published.append(
+            (message, kwargs)
+        ),
+        _append_log=lambda message: None,
+    )
+    gui._refresh_detection_approach_markers = lambda *args: (
+        HarvestGui._refresh_detection_approach_markers(gui, *args)
+    )
+
+    HarvestGui._refresh_detection_approach_markers(
+        gui,
+        generation=4,
+        stamp_ns=123,
+        deadline=float("inf"),
+    )
+
+    assert published == []
+    assert scheduled[0][0] == 50
+    scheduled.pop(0)[1]()
+    assert published == [
+        (gui.latest_detection_message, {"include_actual_approach": True})
+    ]
 
 
 def test_sweep_tf_sync_failure_is_recorded_without_stopping_sweep():
@@ -1526,7 +1615,15 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "execute:=true" in command
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
     assert "harvest_wait_sec:=1.5" in command
-    assert command[-2:] == ["-p", "stepwise_plan:=true"]
+    assert "stepwise_plan:=true" in command
+    assert command[-2:] == ["-p", "step_cycle_only:=false"]
+
+
+def test_stepper_command_can_plan_only_repeat_stages_one_through_five():
+    command = stepper_command(1, cycle_only=True)
+
+    assert "stepwise_plan:=true" in command
+    assert command[-2:] == ["-p", "step_cycle_only:=true"]
 
 
 def test_camera_service_for_source_maps_fake_and_real_services():
@@ -1599,6 +1696,34 @@ def test_detected_tomato_marker_array_shows_center_stem_and_approach():
     assert approach.color.r == pytest.approx(0.1)
     assert approach.color.g == pytest.approx(0.8)
     assert approach.color.b == pytest.approx(1.0)
+
+
+def test_detection_message_is_sorted_by_transformed_world_height():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera"
+    detections.detections = [
+        TomatoDetection(
+            id="low",
+            center=Point(x=0.0, y=0.40, z=0.0),
+            stem_point=Point(x=0.01, y=0.40, z=0.0),
+        ),
+        TomatoDetection(
+            id="high",
+            center=Point(x=0.0, y=0.90, z=0.0),
+            stem_point=Point(x=0.01, y=0.90, z=0.0),
+        ),
+    ]
+    transform = TransformStamped()
+    # Camera +Y becomes world +Z (90 degrees around +X).
+    transform.transform.rotation.x = math.sqrt(0.5)
+    transform.transform.rotation.w = math.sqrt(0.5)
+
+    sorted_message = detection_message_sorted_by_height(
+        detections,
+        transform,
+    )
+
+    assert [item.id for item in sorted_message.detections] == ["high", "low"]
 
 
 def test_detected_tomato_marker_array_validates_frame_and_diameter():
@@ -1753,6 +1878,7 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         ),
         detected_tomatoes=[object()],
         detected_tomato_expected_world_positions={0: (1.0, 2.0, 3.0)},
+        detected_tomato_expected_world_x_axes={0: (1.0, 0.0)},
         tomato_motion_results={0: "Plan 성공"},
         result_arrow_lengths={0: 0.1},
         result_detection_frame="old_camera_frame",

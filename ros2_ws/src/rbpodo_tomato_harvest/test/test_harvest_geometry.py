@@ -311,9 +311,9 @@ def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
 
     assert np.allclose(positions[0], [1.0, 2.070, 3.0])
     assert np.allclose(positions[1], [1.0, 2.070, 3.040])
-    assert np.allclose(positions[2], [1.0, 2.055, 3.040])
-    assert np.allclose(positions[3], [1.0, 2.055, 3.050])
-    assert np.allclose(positions[4], [1.0, 2.025, 3.050])
+    assert np.allclose(positions[2], [1.0, 2.040, 3.040])
+    assert np.allclose(positions[3], [1.0, 2.040, 3.050])
+    assert np.allclose(positions[4], [1.0, 2.010, 3.050])
 
 
 def test_tip_goal_is_converted_to_equivalent_planning_link_goal():

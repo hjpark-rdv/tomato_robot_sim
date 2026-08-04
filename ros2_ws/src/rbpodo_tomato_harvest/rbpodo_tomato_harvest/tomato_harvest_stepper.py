@@ -6,8 +6,10 @@ import json
 import math
 import sys
 import time
+from copy import deepcopy
 
 import rclpy
+from builtin_interfaces.msg import Duration as DurationMessage
 from rclpy.executors import ExternalShutdownException
 
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -17,6 +19,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
+CYCLE_LAST_STAGE_INDEX = 4
 
 
 def _emit(event: str, **values) -> None:
@@ -32,6 +35,49 @@ def _trajectory_group(value) -> tuple:
     if isinstance(value, (list, tuple)):
         return tuple(value)
     return (value,)
+
+
+def _duration_nanoseconds(duration) -> int:
+    return int(duration.sec) * 1_000_000_000 + int(duration.nanosec)
+
+
+def _duration_message(nanoseconds: int) -> DurationMessage:
+    seconds, remainder = divmod(max(0, int(nanoseconds)), 1_000_000_000)
+    return DurationMessage(sec=seconds, nanosec=remainder)
+
+
+def reverse_robot_trajectory(trajectory):
+    """Reverse one cached joint trajectory without replanning its path."""
+    reversed_trajectory = deepcopy(trajectory)
+    joint_trajectory = reversed_trajectory.joint_trajectory
+    points = list(joint_trajectory.points)
+    if not points:
+        return reversed_trajectory
+    if reversed_trajectory.multi_dof_joint_trajectory.points:
+        raise ValueError("multi-DOF trajectories are not supported")
+    first_time = _duration_nanoseconds(points[0].time_from_start)
+    total_time = _duration_nanoseconds(points[-1].time_from_start)
+    reversed_points = []
+    for source in reversed(points):
+        point = deepcopy(source)
+        point.time_from_start = _duration_message(
+            first_time
+            + total_time
+            - _duration_nanoseconds(source.time_from_start)
+        )
+        if point.velocities:
+            point.velocities = [-float(value) for value in point.velocities]
+        reversed_points.append(point)
+    joint_trajectory.points = reversed_points
+    return reversed_trajectory
+
+
+def reverse_trajectory_group(trajectories) -> tuple:
+    """Reverse segment order and every trajectory inside the group."""
+    return tuple(
+        reverse_robot_trajectory(trajectory)
+        for trajectory in reversed(_trajectory_group(trajectories))
+    )
 
 
 def step_stage_specs(
@@ -81,9 +127,9 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[2]),
         },
         {
-            "key": "BACK_X15",
+            "key": "BACK_X30_FIRST",
             "label": "뒤로 1차 이동",
-            "detail": "tip 로컬 -X 15 mm",
+            "detail": "tip 로컬 -X 30 mm",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[3]),
         },
@@ -103,7 +149,7 @@ def step_stage_specs(
             "trajectories": (),
         },
         {
-            "key": "BACK_X30",
+            "key": "BACK_X30_SECOND",
             "label": "뒤로 2차 이동",
             "detail": "tip 로컬 -X 30 mm",
             "kind": "trajectory",
@@ -163,6 +209,65 @@ def _stage_metadata(stages: list[dict]) -> list[dict]:
     ]
 
 
+def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bool:
+    direction = "reverse" if reverse else "forward"
+    expected = (
+        stage["expected_end"] if reverse else stage["expected_start"]
+    )
+    error_deg = _start_error_deg(planner, expected)
+    if not math.isfinite(error_deg) or error_deg > 3.0:
+        _emit(
+            "stage_failed",
+            index=index,
+            key=stage["key"],
+            direction=direction,
+            reason="ROBOT_STATE_CHANGED",
+            start_error_deg=error_deg,
+        )
+        return False
+
+    label = stage["label"]
+    execution_label = f"{label} 역재생" if reverse else label
+    _emit(
+        "stage_started",
+        index=index,
+        key=stage["key"],
+        label=label,
+        direction=direction,
+    )
+    started = time.monotonic()
+    if stage["kind"] == "wait":
+        time.sleep(float(stage["wait_seconds"]))
+        success = True
+    else:
+        trajectories = stage["trajectories"]
+        if reverse:
+            trajectories = reverse_trajectory_group(trajectories)
+        success = planner._execute_trajectory_group(
+            trajectories,
+            execution_label,
+        )
+    duration = time.monotonic() - started
+    if not success:
+        _emit(
+            "stage_failed",
+            index=index,
+            key=stage["key"],
+            direction=direction,
+            reason="TRAJECTORY_EXECUTION_FAILED",
+            duration_sec=round(duration, 6),
+        )
+        return False
+    _emit(
+        "stage_completed",
+        index=index,
+        key=stage["key"],
+        direction=direction,
+        duration_sec=round(duration, 6),
+    )
+    return True
+
+
 def main(args=None) -> None:
     rclpy.init(args=args)
     planner = CartesianHarvestPlanner()
@@ -183,6 +288,7 @@ def main(args=None) -> None:
         for stage in stages:
             stage["expected_start"] = dict(expected)
             expected = _end_positions(stage.get("trajectories", ()), expected)
+            stage["expected_end"] = dict(expected)
         _emit(
             "planned",
             stages=_stage_metadata(stages),
@@ -205,12 +311,43 @@ def main(args=None) -> None:
             if failed:
                 _emit("command_error", message="실패한 스텝 세션입니다.")
                 continue
+            cycle_reverse = action == "execute_cycle_reverse"
+            if cycle_reverse:
+                if next_index != CYCLE_LAST_STAGE_INDEX + 1:
+                    _emit(
+                        "command_error",
+                        message="먼저 1→5 연속 동작을 완료하세요.",
+                    )
+                    continue
+                for index in range(CYCLE_LAST_STAGE_INDEX, -1, -1):
+                    if not _execute_cached_stage(
+                        planner,
+                        stages[index],
+                        index,
+                        reverse=True,
+                    ):
+                        failed = True
+                        break
+                    next_index = index
+                if not failed:
+                    next_index = 0
+                    _emit("cycle_reset", next_index=next_index)
+                continue
+
             if next_index >= len(stages):
                 exit_code = 0
                 _emit("session_complete", next_index=next_index)
                 break
             if action == "execute_next":
                 target_index = next_index
+            elif action == "execute_cycle_forward":
+                if next_index != 0:
+                    _emit(
+                        "command_error",
+                        message="5→1 역순 복귀를 먼저 완료하세요.",
+                    )
+                    continue
+                target_index = CYCLE_LAST_STAGE_INDEX
             elif action == "execute_through":
                 target_index = int(command.get("stage_index", -1))
                 if target_index < next_index or target_index >= len(stages):
@@ -228,55 +365,15 @@ def main(args=None) -> None:
 
             while next_index <= target_index:
                 stage = stages[next_index]
-                error_deg = _start_error_deg(
+                if not _execute_cached_stage(
                     planner,
-                    stage["expected_start"],
-                )
-                if not math.isfinite(error_deg) or error_deg > 3.0:
+                    stage,
+                    next_index,
+                    reverse=False,
+                ):
                     failed = True
-                    _emit(
-                        "stage_failed",
-                        index=next_index,
-                        key=stage["key"],
-                        reason="ROBOT_STATE_CHANGED",
-                        start_error_deg=error_deg,
-                    )
-                    break
-
-                _emit(
-                    "stage_started",
-                    index=next_index,
-                    key=stage["key"],
-                    label=stage["label"],
-                )
-                started = time.monotonic()
-                if stage["kind"] == "wait":
-                    time.sleep(float(stage["wait_seconds"]))
-                    success = True
-                else:
-                    success = planner._execute_trajectory_group(
-                        stage["trajectories"],
-                        stage["label"],
-                    )
-                duration = time.monotonic() - started
-                if not success:
-                    failed = True
-                    _emit(
-                        "stage_failed",
-                        index=next_index,
-                        key=stage["key"],
-                        reason="TRAJECTORY_EXECUTION_FAILED",
-                        duration_sec=round(duration, 6),
-                    )
                     break
                 next_index += 1
-                _emit(
-                    "stage_completed",
-                    index=next_index - 1,
-                    key=stage["key"],
-                    duration_sec=round(duration, 6),
-                    next_index=next_index,
-                )
             if failed:
                 continue
             if next_index >= len(stages):

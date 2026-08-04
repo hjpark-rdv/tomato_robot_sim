@@ -1,10 +1,31 @@
 import numpy as np
 
 from rbpodo_tomato_harvest.tomato_tf_generator import (
+    descending_height_order,
     parent_frame_tomato_rotation,
     quaternion_from_rotation,
     rotation_from_quaternion,
 )
+
+
+def test_detection_ids_are_assigned_from_highest_z_down():
+    points = [
+        (0.30, 0.10, 0.45),
+        (-0.20, 0.05, 0.92),
+        (0.10, -0.10, 0.70),
+    ]
+
+    assert descending_height_order(points) == [1, 2, 0]
+
+
+def test_equal_height_detection_order_uses_xy_as_stable_tie_breaker():
+    points = [
+        (0.20, 0.10, 0.80),
+        (-0.10, 0.20, 0.80),
+        (-0.10, -0.20, 0.80),
+    ]
+
+    assert descending_height_order(points) == [2, 1, 0]
 
 
 def test_z_points_to_sky_and_x_points_to_horizontal_stem():
