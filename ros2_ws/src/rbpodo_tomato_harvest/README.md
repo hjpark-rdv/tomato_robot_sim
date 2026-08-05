@@ -369,6 +369,14 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
 기존과 동일하게 TCP pose로 환산한다. `/compute_ik`를 사용할 수 없거나 유효한
 후보가 하나도 없을 때만 기존 로봇 방향 기반 보정값으로 fallback한다.
 
+추천 0° pre-grasp가 토마토 중심을 지나면서 토마토→로봇 베이스 방향에
+수직인 deadline의 반대편에 놓이면 deadline guard가 활성화된다. 이 경우
+deadline과 만나는 `ideal` 각도에 안전 여유각을 더한 값을 최소 보정각으로
+사용하고, 로봇 쪽으로 향하는 동일 부호의 최소각~최대각 범위만 검사한다.
+반대 방향과 ideal보다 추천 방향에 가까운 후보는 IK 가능 여부와 관계없이
+제외한다. 설정된 최대각으로도 deadline을 지킬 수 없으면
+`DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM`으로 즉시 실패한다.
+
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
 - `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `90.0`
 - `adaptive_grasp_deadband_deg`: geometric fallback의 기존 방향 유지 범위, 기본 `10.0`
@@ -376,6 +384,8 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
 - `adaptive_grasp_ik_service_wait_sec`: `/compute_ik` 연결 대기, 기본 `0.5`
 - `adaptive_grasp_search_step_deg`: 최초 가능 구간 탐색 간격, 기본 `10.0`
 - `adaptive_grasp_search_resolution_deg`: 최소각 경계 정밀도, 기본 `1.0`
+- `adaptive_grasp_deadline_margin_deg`: ideal에서 로봇 쪽으로 더하는 안전 여유각,
+  기본 `1.0`
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
 회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.
@@ -481,22 +491,12 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 - 핑크색 구체: 지름 `0.0175 m`의 토마토 중심
 - 초록색 구체: 지름 `0.006 m`의 줄기 좌표
 - 하늘색 화살표: 줄기 반대편에서 토마토 중심으로 들어오는 `0.06 m` 진입 방향
-- 주황색 화살표: 현재 로봇 베이스 방향과 최대 `90°` 적응형 보정을 적용한
-  preapproach 위치에서 Cartesian 접근 목표까지의 예상 실제 접근 구간
 
-주황색 예측 화살표는 수확 Planner와 동일한 적응형 방향 계산 함수를 사용한다.
-선택한 토마토의 Plan 결과가 나오면 해당 예측 화살표를 제거하고 Planner가
-보고한 실제 `approach_geometry` 화살표 하나로 교체하므로 서로 다른 방향의
-주황색 화살표가 중복되어 남지 않는다.
-
-검출 TF 생성 완료 신호를 받은 뒤 모든 `detected_tomato_*_tf` 중심이 이번 검출
-중심과 `3 mm` 이내이고 X축 방향도 `2°` 이내로 일치하는지 확인한 후 주황색
-화살표를 추가한다. 이전 검출의 TF가 남아 있거나 TF 생성기와 GUI의 정렬 버전이
-다르면 최대 8초간 갱신을
-기다리며, 끝내 일치하지 않으면 잘못된 접근 방향을 표시하지 않고 실행 로그에
-동기화 경고를 남긴다.
-Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에 같은
-색상의 화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
+카메라 검출 단계에서는 아직 Planner가 확정하지 않은 접근 자세를 예측하지
+않으므로 주황색 접근 화살표를 발행하지 않는다. 하늘색 화살표는 검출된
+`center→stem_point` 축을 반대로 연장한 비전 기준 진입 방향이다.
+Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에 주황색
+화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
 preapproach 위치이다. 실제 접근 방향을 유지한 상태로 토마토 중심에 가장 가까운
 지점까지 시각적으로 연장하여 핑크색 중심 마커와 떨어져 보이지 않게 한다. 이
 연장은 마커 표시에만 적용되며 실제 trajectory의 목표 위치는 변경하지 않는다.
@@ -629,10 +629,10 @@ initial Cartesian approach, the complete sequence uses the local axes of
 
 1. Move +70 mm along tip X.
 2. Move +40 mm along tip Z.
-3. Move -30 mm along tip X.
+3. Move -50 mm along tip X.
 4. Move +10 mm along tip Z.
 5. Hold for the configured `harvest_wait_sec` duration (GUI default: 2 seconds).
-6. Move -30 mm along tip X.
+6. Move -10 mm along tip X.
 7. Return directly to all PICK_READY joint targets with PILZ PTP.
 
 The dwell separates the Cartesian motion into pre-wait and post-wait

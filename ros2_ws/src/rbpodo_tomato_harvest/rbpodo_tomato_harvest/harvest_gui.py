@@ -25,9 +25,6 @@ from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
-from rbpodo_tomato_harvest.harvest_planner import (
-    adaptive_outward_toward_robot,
-)
 from rbpodo_tomato_harvest.tomato_tf_generator import descending_height_order
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
@@ -1018,53 +1015,6 @@ def actual_approach_marker(
     return marker
 
 
-def predicted_approach_report(
-    tomato_frame: str,
-    robot_in_tomato,
-    max_rotation_deg: float = 90.0,
-    deadband_deg: float = 10.0,
-    tip_standoff: float = 0.025,
-    tip_below_center: float = 0.018,
-    preapproach_clearance: float = 0.010,
-):
-    """Predict geometry with the planner's shared adaptive-direction function."""
-    robot_x = float(robot_in_tomato[0])
-    robot_y = float(robot_in_tomato[1])
-    direction = adaptive_outward_toward_robot(
-        tomato_rotation=(
-            (1.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0),
-            (0.0, 0.0, 1.0),
-        ),
-        tomato_position=(0.0, 0.0, 0.0),
-        robot_position=(robot_x, robot_y, 0.0),
-        max_rotation_deg=max_rotation_deg,
-        deadband_deg=deadband_deg,
-    )
-    outward_x = float(direction.outward_axis[0])
-    outward_y = float(direction.outward_axis[1])
-    target_distance = max(0.0, float(tip_standoff))
-    preapproach_distance = target_distance + max(
-        0.0, float(preapproach_clearance)
-    )
-    below = max(0.0, float(tip_below_center))
-    return {
-        "approach_geometry": {
-            "frame_id": str(tomato_frame),
-            "preapproach_position": [
-                outward_x * preapproach_distance,
-                outward_y * preapproach_distance,
-                -below,
-            ],
-            "target_position": [
-                outward_x * target_distance,
-                outward_y * target_distance,
-                -below,
-            ],
-        }
-    }
-
-
 def sweep_result_marker(
     case_id: int,
     success: bool,
@@ -1216,12 +1166,6 @@ class HarvestGui(Node):
         self.declare_parameter("detection_marker_diameter", 0.0175)
         self.declare_parameter("detection_stem_marker_diameter", 0.006)
         self.declare_parameter("detection_approach_marker_length", 0.06)
-        self.declare_parameter("detection_approach_robot_frame", "link0")
-        self.declare_parameter("detection_adaptive_max_rotation_deg", 90.0)
-        self.declare_parameter("detection_adaptive_deadband_deg", 10.0)
-        self.declare_parameter("detection_tip_standoff", 0.025)
-        self.declare_parameter("detection_tip_below_center", 0.018)
-        self.declare_parameter("detection_preapproach_clearance", 0.010)
         self.declare_parameter("result_marker_parent_frame", "world")
         self.declare_parameter("result_arrow_stem_margin", 0.008)
         self.declare_parameter("result_arrow_minimum_length", 0.015)
@@ -1422,24 +1366,6 @@ class HarvestGui(Node):
         self.detection_approach_marker_length = float(
             self.get_parameter("detection_approach_marker_length").value
         )
-        self.detection_approach_robot_frame = str(
-            self.get_parameter("detection_approach_robot_frame").value
-        )
-        self.detection_adaptive_max_rotation_deg = float(
-            self.get_parameter("detection_adaptive_max_rotation_deg").value
-        )
-        self.detection_adaptive_deadband_deg = float(
-            self.get_parameter("detection_adaptive_deadband_deg").value
-        )
-        self.detection_tip_standoff = float(
-            self.get_parameter("detection_tip_standoff").value
-        )
-        self.detection_tip_below_center = float(
-            self.get_parameter("detection_tip_below_center").value
-        )
-        self.detection_preapproach_clearance = float(
-            self.get_parameter("detection_preapproach_clearance").value
-        )
         self.detection_marker_publisher = self.create_publisher(
             MarkerArray,
             str(self.get_parameter("detection_markers_topic").value),
@@ -1609,7 +1535,6 @@ class HarvestGui(Node):
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
         self.harvest_result_approach_axis_local: dict[int, tuple] = {}
         self.harvest_result_approach_reports: dict[int, dict] = {}
-        self.detection_actual_approach_indices: set[int] = set()
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
         self.sweep_markers: list[Marker] = []
@@ -3280,12 +3205,6 @@ class HarvestGui(Node):
         self.detected_tf_ready_stamp_ns = self._stamp_nanoseconds(
             message.stamp
         )
-        if (
-            self.detected_tf_ready_stamp_ns
-            == int(getattr(self, "current_detection_stamp_ns", 0))
-            and self.latest_detection_message is not None
-        ):
-            self._schedule_detection_approach_marker_refresh()
 
     def _detected_tf_positions_are_synchronized(self) -> tuple[bool, str]:
         """Verify that every reused detected TF belongs to this snapshot."""
@@ -3336,89 +3255,6 @@ class HarvestGui(Node):
                     f"{orientation_tolerance_deg:.1f}°",
                 )
         return True, ""
-
-    def _schedule_detection_approach_marker_refresh(self) -> None:
-        """Start a cancellable retry for this exact detection generation."""
-        if self.latest_detection_message is None:
-            return
-        generation = int(self.detection_generation)
-        stamp_ns = int(self.current_detection_stamp_ns)
-        deadline = time.monotonic() + max(
-            0.1,
-            float(self.detected_tf_sync_timeout_sec),
-        )
-        self.root.after(
-            0,
-            lambda: self._refresh_detection_approach_markers(
-                generation,
-                stamp_ns,
-                deadline,
-            ),
-        )
-
-    def _refresh_detection_approach_markers(
-        self,
-        generation: int | None = None,
-        stamp_ns: int | None = None,
-        deadline: float | None = None,
-    ) -> None:
-        if (
-            self.latest_detection_message is None
-            or not self.show_detection_markers_var.get()
-        ):
-            return
-
-        expected_generation = (
-            int(self.detection_generation)
-            if generation is None
-            else int(generation)
-        )
-        expected_stamp_ns = (
-            int(self.current_detection_stamp_ns)
-            if stamp_ns is None
-            else int(stamp_ns)
-        )
-        if (
-            expected_generation != int(self.detection_generation)
-            or expected_stamp_ns != int(self.current_detection_stamp_ns)
-        ):
-            # A newer camera result superseded this queued callback.
-            return
-
-        retry_deadline = (
-            time.monotonic()
-            + max(0.1, float(self.detected_tf_sync_timeout_sec))
-            if deadline is None
-            else float(deadline)
-        )
-        synchronized = False
-        reason = "TF 생성 완료 신호 대기"
-        if self._detected_tf_generation_is_ready():
-            synchronized, reason = (
-                self._detected_tf_positions_are_synchronized()
-            )
-        if not synchronized:
-            if time.monotonic() < retry_deadline:
-                self.root.after(
-                    50,
-                    lambda: self._refresh_detection_approach_markers(
-                        expected_generation,
-                        expected_stamp_ns,
-                        retry_deadline,
-                    ),
-                )
-                return
-            self._append_log(
-                "[검출 마커 경고] 이번 검출 좌표와 TF가 동기화되지 않아 "
-                f"주황색 접근 화살표를 표시하지 않습니다: {reason}. "
-                "TF 생성기와 GUI를 같은 빌드로 재시작한 뒤 다시 검출하세요."
-            )
-            return
-
-        self._publish_detection_markers(
-            self.latest_detection_message,
-            include_actual_approach=True,
-        )
 
     def _detected_tf_generation_is_ready(self) -> bool:
         """Return whether the TF generator finished the current detection."""
@@ -4018,28 +3854,16 @@ class HarvestGui(Node):
             )
         if actual_approach_marker(tomato_index, plan_report or {}) is None:
             self.harvest_result_approach_reports.pop(tomato_index, None)
-            self.detection_actual_approach_indices.discard(tomato_index)
         else:
             self.harvest_result_approach_reports[tomato_index] = dict(
                 plan_report
             )
-            self.detection_actual_approach_indices.add(tomato_index)
         if motion_result_text is not None:
             self._set_tomato_motion_result(
                 tomato_index,
                 motion_result_text,
             )
         self.clear_markers_button.configure(state="normal")
-        if (
-            self.latest_detection_message is not None
-            and self.show_detection_markers_var.get()
-        ):
-            # Replace this tomato's preview arrow with the authoritative
-            # approach_geometry marker published below from the planner report.
-            self._publish_detection_markers(
-                self.latest_detection_message,
-                include_actual_approach=True,
-            )
         self._publish_harvest_result_markers()
 
     def _set_tomato_motion_result(self, tomato_index: int, result: str) -> None:
@@ -4065,18 +3889,9 @@ class HarvestGui(Node):
         self.harvest_result_adaptive_rotation_deg.clear()
         self.harvest_result_approach_axis_local.clear()
         self.harvest_result_approach_reports.clear()
-        self.detection_actual_approach_indices.clear()
         self.sweep_markers.clear()
         self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
-        if (
-            self.latest_detection_message is not None
-            and self.show_detection_markers_var.get()
-        ):
-            self._publish_detection_markers(
-                self.latest_detection_message,
-                include_actual_approach=True,
-            )
 
     def clear_harvest_result_markers(self) -> None:
         self._clear_harvest_results()
@@ -4983,7 +4798,6 @@ class HarvestGui(Node):
         )
         self.detected_tomatoes = list(message.detections)
         self.tomato_motion_results.clear()
-        self.detection_actual_approach_indices.clear()
         try:
             self._cache_detected_tomato_world_positions(message)
         except TransformException as error:
@@ -4998,9 +4812,7 @@ class HarvestGui(Node):
         if self.show_detection_markers_var.get():
             self._publish_detection_markers(
                 message,
-                include_actual_approach=False,
             )
-            self._schedule_detection_approach_marker_refresh()
 
         for item in self.tomato_tree.get_children():
             self.tomato_tree.delete(item)
@@ -5238,7 +5050,6 @@ class HarvestGui(Node):
     def _publish_detection_markers(
         self,
         message: TomatoDetectionArray,
-        include_actual_approach: bool = False,
     ) -> None:
         try:
             markers = detected_tomato_marker_array(
@@ -5250,49 +5061,11 @@ class HarvestGui(Node):
         except ValueError as error:
             self._append_log(f"검출 토마토 마커 생성 실패: {error}")
             return
-        actual_approach_count = 0
-        if include_actual_approach:
-            marker_id_offset = len(message.detections) * 3
-            for index in range(len(message.detections)):
-                if index in self.detection_actual_approach_indices:
-                    continue
-                tomato_frame = f"detected_tomato_{index}_tf"
-                try:
-                    transform = self.tf_buffer.lookup_transform(
-                        tomato_frame,
-                        self.detection_approach_robot_frame,
-                        Time(),
-                    )
-                except TransformException:
-                    continue
-                translation = transform.transform.translation
-                report = predicted_approach_report(
-                    tomato_frame,
-                    (translation.x, translation.y, translation.z),
-                    max_rotation_deg=(
-                        self.detection_adaptive_max_rotation_deg
-                    ),
-                    deadband_deg=self.detection_adaptive_deadband_deg,
-                    tip_standoff=self.detection_tip_standoff,
-                    tip_below_center=self.detection_tip_below_center,
-                    preapproach_clearance=(
-                        self.detection_preapproach_clearance
-                    ),
-                )
-                marker = actual_approach_marker(
-                    marker_id_offset + index,
-                    report,
-                    namespace=DETECTION_MARKER_NAMESPACE,
-                )
-                if marker is not None:
-                    markers.markers.append(marker)
-                    actual_approach_count += 1
         self.detection_marker_publisher.publish(markers)
         self._append_log(
             f"[검출 마커] 토마토·줄기점·진입 방향 "
             f"{len(message.detections)}세트 표시: "
             f"핑크=중심, 초록=줄기점, 하늘색=진입 방향, "
-            f"주황=실제 접근 위치 {actual_approach_count}개, "
             f"frame={message.header.frame_id}"
         )
 
@@ -5314,9 +5087,7 @@ class HarvestGui(Node):
             return
         self._publish_detection_markers(
             self.latest_detection_message,
-            include_actual_approach=False,
         )
-        self._schedule_detection_approach_marker_refresh()
         self.status.set("현재 검출 토마토 마커를 표시했습니다.")
 
     def _selected_index(self) -> int | None:

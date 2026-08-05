@@ -35,14 +35,15 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "PREAPPROACH_TO_TARGET",
         "FORWARD_X70",
         "LIFT_Z40",
-        "BACK_X30_FIRST",
+        "BACK_X50_FIRST",
         "LIFT_Z10",
+        "BACK_X10_SECOND",
         "HARVEST_WAIT",
-        "BACK_X30_SECOND",
         "RETURN_READY",
     ]
-    assert stages[7]["kind"] == "wait"
-    assert stages[7]["wait_seconds"] == pytest.approx(2.25)
+    assert stages[7]["trajectories"][0].name == "after_wait"
+    assert stages[8]["kind"] == "wait"
+    assert stages[8]["wait_seconds"] == pytest.approx(2.25)
     assert stages[9]["trajectories"][0].name == "return_ready"
 
 

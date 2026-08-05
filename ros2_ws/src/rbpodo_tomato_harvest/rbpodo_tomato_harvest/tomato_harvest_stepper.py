@@ -127,9 +127,9 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[2]),
         },
         {
-            "key": "BACK_X30_FIRST",
+            "key": "BACK_X50_FIRST",
             "label": "뒤로 1차 이동",
-            "detail": "tip 로컬 -X 30 mm",
+            "detail": "tip 로컬 -X 50 mm",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[3]),
         },
@@ -141,19 +141,19 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[4]),
         },
         {
+            "key": "BACK_X10_SECOND",
+            "label": "뒤로 2차 이동",
+            "detail": "tip 로컬 -X 10 mm",
+            "kind": "trajectory",
+            "trajectories": _trajectory_group(plan.after_wait_trajectory),
+        },
+        {
             "key": "HARVEST_WAIT",
             "label": "리니어모터 대기",
             "detail": f"{max(0.0, float(wait_seconds)):.2f}초 대기",
             "kind": "wait",
             "wait_seconds": max(0.0, float(wait_seconds)),
             "trajectories": (),
-        },
-        {
-            "key": "BACK_X30_SECOND",
-            "label": "뒤로 2차 이동",
-            "detail": "tip 로컬 -X 30 mm",
-            "kind": "trajectory",
-            "trajectories": _trajectory_group(plan.after_wait_trajectory),
         },
         {
             "key": "RETURN_READY",

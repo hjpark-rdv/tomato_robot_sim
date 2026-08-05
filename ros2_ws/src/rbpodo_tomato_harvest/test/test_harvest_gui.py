@@ -49,7 +49,6 @@ from rbpodo_tomato_harvest.harvest_gui import (
     is_critical_process_output,
     lift_harvest_target_height_mm,
     preplanned_batch_command,
-    predicted_approach_report,
     scene_parameters,
     stepper_command,
     sweep_execution_duration_text,
@@ -64,7 +63,6 @@ from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
 )
-import rbpodo_tomato_harvest.harvest_gui as harvest_gui_module
 import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
@@ -349,45 +347,6 @@ def test_detection_marker_sync_rejects_stale_tomato_tf_direction():
 
     assert synchronized is False
     assert "X축 오차 90.0°" in reason
-
-
-def test_detection_approach_marker_waits_for_matching_tf_positions():
-    scheduled = []
-    published = []
-    sync_states = iter(((False, "이전 TF"), (True, "")))
-    gui = SimpleNamespace(
-        latest_detection_message=object(),
-        show_detection_markers_var=SimpleNamespace(get=lambda: True),
-        detection_generation=4,
-        current_detection_stamp_ns=123,
-        detected_tf_sync_timeout_sec=8.0,
-        root=SimpleNamespace(
-            after=lambda delay, callback: scheduled.append((delay, callback))
-        ),
-        _detected_tf_generation_is_ready=lambda: True,
-        _detected_tf_positions_are_synchronized=lambda: next(sync_states),
-        _publish_detection_markers=lambda message, **kwargs: published.append(
-            (message, kwargs)
-        ),
-        _append_log=lambda message: None,
-    )
-    gui._refresh_detection_approach_markers = lambda *args: (
-        HarvestGui._refresh_detection_approach_markers(gui, *args)
-    )
-
-    HarvestGui._refresh_detection_approach_markers(
-        gui,
-        generation=4,
-        stamp_ns=123,
-        deadline=float("inf"),
-    )
-
-    assert published == []
-    assert scheduled[0][0] == 50
-    scheduled.pop(0)[1]()
-    assert published == [
-        (gui.latest_detection_message, {"include_actual_approach": True})
-    ]
 
 
 def test_sweep_tf_sync_failure_is_recorded_without_stopping_sweep():
@@ -1792,86 +1751,7 @@ def test_actual_approach_marker_ignores_missing_geometry():
     assert actual_approach_marker(0, {}) is None
 
 
-def test_predicted_approach_report_rotates_outward_toward_robot():
-    report = predicted_approach_report(
-        "detected_tomato_0_tf",
-        robot_in_tomato=(-1.0, -1.0, 0.0),
-        max_rotation_deg=45.0,
-        deadband_deg=10.0,
-        tip_standoff=0.025,
-        tip_below_center=0.018,
-        preapproach_clearance=0.010,
-    )
-
-    geometry = report["approach_geometry"]
-    assert geometry["frame_id"] == "detected_tomato_0_tf"
-    root_half = math.sqrt(0.5)
-    assert geometry["preapproach_position"] == pytest.approx(
-        [-0.035 * root_half, -0.035 * root_half, -0.018]
-    )
-    assert geometry["target_position"] == pytest.approx(
-        [-0.025 * root_half, -0.025 * root_half, -0.018]
-    )
-
-
-def test_predicted_approach_report_uses_90_degree_default_limit():
-    report = predicted_approach_report(
-        "detected_tomato_6_tf",
-        robot_in_tomato=(1.0, -0.2, 0.0),
-    )
-
-    geometry = report["approach_geometry"]
-    assert geometry["preapproach_position"] == pytest.approx(
-        [0.0, -0.035, -0.018],
-        abs=1e-9,
-    )
-    assert geometry["target_position"] == pytest.approx(
-        [0.0, -0.025, -0.018],
-        abs=1e-9,
-    )
-
-
-def test_predicted_approach_report_keeps_nominal_direction_in_deadband():
-    report = predicted_approach_report(
-        "detected_tomato_1_tf",
-        robot_in_tomato=(-1.0, 0.05, 0.0),
-    )
-
-    geometry = report["approach_geometry"]
-    assert geometry["preapproach_position"] == pytest.approx(
-        [-0.035, 0.0, -0.018],
-        abs=1e-9,
-    )
-
-
-def test_predicted_approach_report_uses_planner_shared_direction(monkeypatch):
-    calls = []
-
-    def shared_direction(**kwargs):
-        calls.append(kwargs)
-        return SimpleNamespace(outward_axis=(-0.6, 0.8, 0.0))
-
-    monkeypatch.setattr(
-        harvest_gui_module,
-        "adaptive_outward_toward_robot",
-        shared_direction,
-    )
-
-    report = predicted_approach_report(
-        "detected_tomato_0_tf",
-        robot_in_tomato=(0.4, -0.1, 0.0),
-        max_rotation_deg=90.0,
-        deadband_deg=10.0,
-    )
-
-    assert len(calls) == 1
-    assert calls[0]["robot_position"] == (0.4, -0.1, 0.0)
-    assert report["approach_geometry"]["preapproach_position"] == pytest.approx(
-        [-0.021, 0.028, -0.018]
-    )
-
-
-def test_detection_preview_skips_tomato_replaced_by_planner_marker():
+def test_detection_markers_do_not_publish_orange_approach_preview():
     detections = TomatoDetectionArray()
     detections.header.frame_id = "camera"
     detections.detections = [
@@ -1886,7 +1766,6 @@ def test_detection_preview_skips_tomato_replaced_by_planner_marker():
         detection_marker_diameter=0.0175,
         detection_stem_marker_diameter=0.006,
         detection_approach_marker_length=0.06,
-        detection_actual_approach_indices={0},
         detection_marker_publisher=SimpleNamespace(
             publish=lambda message: published.append(message)
         ),
@@ -1896,12 +1775,18 @@ def test_detection_preview_skips_tomato_replaced_by_planner_marker():
     HarvestGui._publish_detection_markers(
         gui,
         detections,
-        include_actual_approach=True,
     )
 
     assert len(published) == 1
     assert len(published[0].markers) == 4
-    assert all(marker.id != 3 for marker in published[0].markers[1:])
+    assert all(
+        not (
+            marker.type == marker.ARROW
+            and marker.color.r == pytest.approx(1.0)
+            and marker.color.g == pytest.approx(0.45)
+        )
+        for marker in published[0].markers[1:]
+    )
 
 
 @pytest.mark.parametrize(

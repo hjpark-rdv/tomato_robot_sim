@@ -8,6 +8,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     ApproachRotationEvaluation,
     CartesianHarvestPlanner,
     adaptive_outward_toward_robot,
+    deadline_safe_rotation_guard,
     format_joint_trajectory_ranges,
     load_srdf_group_state,
     make_continuous_arc_waypoints,
@@ -317,6 +318,37 @@ def test_outward_rotation_uses_signed_tomato_local_y_direction():
         outward_from_tomato_rotation(np.eye(3), 45.0),
         [-np.sqrt(0.5), np.sqrt(0.5), 0.0],
     )
+
+
+def test_deadline_guard_is_inactive_when_nominal_pregrasp_is_robot_side():
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-1.0, 1.0, 0.0],
+        margin_deg=1.0,
+    )
+
+    assert not guard.active
+    assert np.isclose(guard.minimum_rotation_deg, 0.0)
+    assert guard.nominal_robot_side_dot > 0.0
+
+
+def test_deadline_guard_starts_at_ideal_boundary_toward_robot():
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[1.0, 1.0, 0.0],
+        margin_deg=1.0,
+    )
+
+    assert guard.active
+    assert guard.minimum_rotation_deg == pytest.approx(46.0)
+    selected = outward_from_tomato_rotation(
+        np.eye(3),
+        guard.minimum_rotation_deg,
+    )
+    robotward = np.array([1.0, 1.0, 0.0]) / np.sqrt(2.0)
+    assert np.dot(selected, robotward) > 0.0
     assert np.allclose(
         outward_from_tomato_rotation(np.eye(3), -90.0),
         [0.0, -1.0, 0.0],
@@ -362,6 +394,31 @@ def test_minimum_ik_rotation_selects_closest_feasible_side_and_refines_it():
     assert selected.rotation_deg < 0.0
     assert 17.0 <= abs(selected.rotation_deg) < 17.5
     assert all(abs(item.rotation_deg) <= 20.0 for item in evaluations)
+
+
+def test_minimum_ik_rotation_respects_deadline_bound_and_single_direction():
+    def evaluate(angle):
+        feasible = angle >= 35.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=90.0,
+        coarse_step_deg=10.0,
+        resolution_deg=1.0,
+        preferred_sign=1.0,
+        minimum_abs_rotation_deg=30.0,
+        allow_opposite_sign=False,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg == pytest.approx(35.0)
+    assert all(item.rotation_deg >= 30.0 for item in evaluations)
 
 
 def test_minimum_ik_rotation_uses_joint_distance_to_break_angle_tie():
@@ -424,8 +481,8 @@ def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
 
     assert np.allclose(positions[0], [1.0, 2.070, 3.0])
     assert np.allclose(positions[1], [1.0, 2.070, 3.040])
-    assert np.allclose(positions[2], [1.0, 2.040, 3.040])
-    assert np.allclose(positions[3], [1.0, 2.040, 3.050])
+    assert np.allclose(positions[2], [1.0, 2.020, 3.040])
+    assert np.allclose(positions[3], [1.0, 2.020, 3.050])
     assert np.allclose(positions[4], [1.0, 2.010, 3.050])
 
 

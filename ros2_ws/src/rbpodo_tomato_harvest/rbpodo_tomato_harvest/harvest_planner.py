@@ -124,6 +124,15 @@ class ApproachRotationEvaluation:
 
 
 @dataclass(frozen=True)
+class DeadlineRotationGuard:
+    """Minimum signed correction that keeps pre-grasp on the robot side."""
+
+    active: bool
+    minimum_rotation_deg: float
+    nominal_robot_side_dot: float
+
+
+@dataclass(frozen=True)
 class HarvestMotionPlan:
     """Trajectories for the complete PICK_READY-to-harvest sequence."""
 
@@ -434,9 +443,9 @@ def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.070,
     first_z_lift: float = 0.040,
-    first_x_back: float = 0.030,
+    first_x_back: float = 0.050,
     second_z_lift: float = 0.010,
-    second_x_back: float = 0.030,
+    second_x_back: float = 0.010,
 ) -> TipLocalHarvestMotion:
     """Build the post-contact sequence along tomato_gripper_tip X/Z axes."""
     rotation = rotation_from_pose(start_pose)
@@ -500,12 +509,65 @@ def outward_from_tomato_rotation(
     return _unit(world_outward, "rotated tomato approach direction")
 
 
+def deadline_safe_rotation_guard(
+    tomato_rotation,
+    tomato_position,
+    robot_position,
+    margin_deg: float = 0.0,
+) -> DeadlineRotationGuard:
+    """Return the ideal boundary angle when nominal pre-grasp is too deep."""
+    rotation = np.asarray(tomato_rotation, dtype=float)
+    tomato = np.asarray(tomato_position, dtype=float)
+    robot = np.asarray(robot_position, dtype=float)
+    if rotation.shape != (3, 3):
+        raise ValueError("tomato_rotation must be a 3x3 matrix")
+    if tomato.shape != (3,) or robot.shape != (3,):
+        raise ValueError("tomato_position and robot_position must be 3D")
+
+    nominal_outward = outward_from_tomato_rotation(rotation, 0.0)
+    robotward_horizontal = np.array(
+        [robot[0] - tomato[0], robot[1] - tomato[1], 0.0],
+        dtype=float,
+    )
+    if float(np.linalg.norm(robotward_horizontal)) < 1e-9:
+        return DeadlineRotationGuard(False, 0.0, 1.0)
+    robotward = _unit(robotward_horizontal, "tomato-to-robot direction")
+    robot_side_dot = float(np.dot(nominal_outward, robotward))
+    if robot_side_dot >= -1e-9:
+        return DeadlineRotationGuard(False, 0.0, robot_side_dot)
+
+    current_error_deg = math.degrees(
+        math.acos(max(-1.0, min(1.0, robot_side_dot)))
+    )
+    preferred = adaptive_outward_toward_robot(
+        tomato_rotation=rotation,
+        tomato_position=tomato,
+        robot_position=robot,
+        max_rotation_deg=90.0,
+        deadband_deg=0.0,
+    )
+    direction_sign = (
+        1.0 if preferred.applied_rotation_deg >= 0.0 else -1.0
+    )
+    boundary_magnitude = max(
+        0.0,
+        current_error_deg - 90.0 + max(0.0, float(margin_deg)),
+    )
+    return DeadlineRotationGuard(
+        True,
+        direction_sign * min(90.0, boundary_magnitude),
+        robot_side_dot,
+    )
+
+
 def select_minimum_feasible_rotation(
     evaluator,
     max_rotation_deg: float = 90.0,
     coarse_step_deg: float = 10.0,
     resolution_deg: float = 1.0,
     preferred_sign: float = 1.0,
+    minimum_abs_rotation_deg: float = 0.0,
+    allow_opposite_sign: bool = True,
 ) -> tuple[ApproachRotationEvaluation | None, tuple[ApproachRotationEvaluation, ...]]:
     """
     Find the smallest feasible |angle| using fast endpoint IK checks.
@@ -519,6 +581,7 @@ def select_minimum_feasible_rotation(
     coarse_step = max(0.1, float(coarse_step_deg))
     resolution = max(0.1, float(resolution_deg))
     first_sign = 1.0 if float(preferred_sign) >= 0.0 else -1.0
+    minimum = max(0.0, min(maximum, float(minimum_abs_rotation_deg)))
     evaluations: list[ApproachRotationEvaluation] = []
     cache: dict[float, ApproachRotationEvaluation] = {}
 
@@ -534,17 +597,19 @@ def select_minimum_feasible_rotation(
             evaluations.append(result)
         return cache[normalized]
 
-    zero = evaluate(0.0)
-    if zero.feasible or maximum <= 0.0:
-        return (zero if zero.feasible else None), tuple(evaluations)
+    if minimum <= 1e-9:
+        zero = evaluate(0.0)
+        if zero.feasible or maximum <= 0.0:
+            return (zero if zero.feasible else None), tuple(evaluations)
+    elif maximum <= 0.0:
+        return None, tuple(evaluations)
 
-    previous_magnitude = 0.0
-    magnitude = min(coarse_step, maximum)
+    previous_magnitude = minimum
+    magnitude = minimum
     while magnitude <= maximum + 1e-9:
-        endpoints = [
-            evaluate(first_sign * magnitude),
-            evaluate(-first_sign * magnitude),
-        ]
+        endpoints = [evaluate(first_sign * magnitude)]
+        if allow_opposite_sign:
+            endpoints.append(evaluate(-first_sign * magnitude))
         feasible_endpoints = [item for item in endpoints if item.feasible]
         if feasible_endpoints:
             refined: list[ApproachRotationEvaluation] = []
@@ -575,7 +640,10 @@ def select_minimum_feasible_rotation(
         if math.isclose(magnitude, maximum, abs_tol=1e-9):
             break
         previous_magnitude = magnitude
-        magnitude = min(maximum, magnitude + coarse_step)
+        magnitude = min(
+            maximum,
+            magnitude + coarse_step,
+        )
 
     return None, tuple(evaluations)
 
@@ -801,15 +869,16 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
         self.declare_parameter("adaptive_grasp_search_step_deg", 10.0)
         self.declare_parameter("adaptive_grasp_search_resolution_deg", 1.0)
+        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 1.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.070)
         self.declare_parameter("harvest_first_z_lift", 0.040)
-        self.declare_parameter("harvest_first_x_back", 0.030)
+        self.declare_parameter("harvest_first_x_back", 0.050)
         self.declare_parameter("harvest_second_z_lift", 0.010)
         self.declare_parameter("harvest_wait_sec", 2.0)
-        self.declare_parameter("harvest_second_x_back", 0.030)
+        self.declare_parameter("harvest_second_x_back", 0.010)
         self.declare_parameter("max_step", 0.005)
         self.declare_parameter("jump_threshold", 0.0)
         self.declare_parameter("minimum_fraction", 0.98)
@@ -2080,7 +2149,7 @@ class CartesianHarvestPlanner(Node):
         gripper_to_tip_rotation: np.ndarray,
         planning_to_tip_translation: np.ndarray,
         planning_to_tip_rotation: np.ndarray,
-    ) -> tuple[AdaptiveApproachDirection, dict]:
+    ) -> tuple[AdaptiveApproachDirection | None, dict]:
         maximum = float(
             self.get_parameter("adaptive_grasp_max_rotation_deg").value
         )
@@ -2094,13 +2163,89 @@ class CartesianHarvestPlanner(Node):
             max_rotation_deg=maximum,
             deadband_deg=deadband,
         )
+        deadline_guard = deadline_safe_rotation_guard(
+            tomato_rotation=tomato_rotation,
+            tomato_position=tomato_position,
+            robot_position=[0.0, 0.0, 0.0],
+            margin_deg=float(
+                self.get_parameter(
+                    "adaptive_grasp_deadline_margin_deg"
+                ).value
+            ),
+        )
         report = {
             "selection_mode": "minimum_ik_angle",
             "geometric_preferred_rotation_deg": float(
                 geometric_preference.applied_rotation_deg
             ),
             "fallback_used": False,
+            "deadline_guard_active": bool(deadline_guard.active),
+            "deadline_minimum_rotation_deg": float(
+                deadline_guard.minimum_rotation_deg
+            ),
+            "deadline_nominal_robot_side_dot": float(
+                deadline_guard.nominal_robot_side_dot
+            ),
         }
+        if (
+            deadline_guard.active
+            and abs(deadline_guard.minimum_rotation_deg) > maximum + 1e-9
+        ):
+            report.update(
+                {
+                    "selection_mode": "deadline_rejected",
+                    "fallback_used": False,
+                    "fallback_reason": "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return None, report
+
+        def direction_for_rotation(
+            rotation_deg: float,
+        ) -> AdaptiveApproachDirection:
+            outward = outward_from_tomato_rotation(
+                tomato_rotation,
+                rotation_deg,
+            )
+            robotward = np.array(
+                [-tomato_position[0], -tomato_position[1], 0.0],
+                dtype=float,
+            )
+            if float(np.linalg.norm(robotward)) < 1e-9:
+                selected_error = 0.0
+            else:
+                robotward = _unit(robotward, "tomato-to-robot direction")
+                selected_error = math.degrees(
+                    math.acos(
+                        max(
+                            -1.0,
+                            min(1.0, float(np.dot(outward, robotward))),
+                        )
+                    )
+                )
+            return AdaptiveApproachDirection(
+                outward_axis=outward,
+                applied_rotation_deg=float(rotation_deg),
+                current_robot_error_deg=float(
+                    geometric_preference.current_robot_error_deg
+                ),
+                selected_robot_error_deg=float(selected_error),
+            )
+
+        fallback_rotation = float(
+            geometric_preference.applied_rotation_deg
+        )
+        if deadline_guard.active and (
+            fallback_rotation * deadline_guard.minimum_rotation_deg <= 0.0
+            or abs(fallback_rotation)
+            < abs(deadline_guard.minimum_rotation_deg)
+        ):
+            fallback_rotation = float(
+                deadline_guard.minimum_rotation_deg
+            )
+        safe_geometric_fallback = direction_for_rotation(fallback_rotation)
+
         wait_sec = max(
             0.0,
             float(
@@ -2116,7 +2261,7 @@ class CartesianHarvestPlanner(Node):
                     "ik_evaluation_count": 0,
                 }
             )
-            return geometric_preference, report
+            return safe_geometric_fallback, report
 
         ready_state = self._pick_ready_robot_state()
         ready_positions = dict(
@@ -2198,7 +2343,17 @@ class CartesianHarvestPlanner(Node):
                     "adaptive_grasp_search_resolution_deg"
                 ).value
             ),
-            preferred_sign=preferred_rotation,
+            preferred_sign=(
+                deadline_guard.minimum_rotation_deg
+                if deadline_guard.active
+                else preferred_rotation
+            ),
+            minimum_abs_rotation_deg=(
+                abs(deadline_guard.minimum_rotation_deg)
+                if deadline_guard.active
+                else 0.0
+            ),
+            allow_opposite_sign=not deadline_guard.active,
         )
         report["ik_evaluation_count"] = len(evaluations)
         report["ik_evaluations"] = [
@@ -2222,25 +2377,8 @@ class CartesianHarvestPlanner(Node):
                     "fallback_reason": "NO_CONSTRAINT_VALID_IK_CANDIDATE",
                 }
             )
-            return geometric_preference, report
+            return safe_geometric_fallback, report
 
-        selected_outward = outward_from_tomato_rotation(
-            tomato_rotation,
-            selected.rotation_deg,
-        )
-        robotward = np.array(
-            [-tomato_position[0], -tomato_position[1], 0.0],
-            dtype=float,
-        )
-        if float(np.linalg.norm(robotward)) < 1e-9:
-            selected_error = 0.0
-        else:
-            robotward = _unit(robotward, "tomato-to-robot direction")
-            selected_error = math.degrees(
-                math.acos(
-                    max(-1.0, min(1.0, float(np.dot(selected_outward, robotward))))
-                )
-            )
         report.update(
             {
                 "selected_rotation_deg": float(selected.rotation_deg),
@@ -2249,17 +2387,7 @@ class CartesianHarvestPlanner(Node):
                 ),
             }
         )
-        return (
-            AdaptiveApproachDirection(
-                outward_axis=selected_outward,
-                applied_rotation_deg=float(selected.rotation_deg),
-                current_robot_error_deg=float(
-                    geometric_preference.current_robot_error_deg
-                ),
-                selected_robot_error_deg=float(selected_error),
-            ),
-            report,
-        )
+        return direction_for_rotation(selected.rotation_deg), report
 
     def _state_matches_pick_ready(self, state: RobotState | None) -> bool:
         if state is None:
@@ -2561,6 +2689,23 @@ class CartesianHarvestPlanner(Node):
                     ),
                 )
             )
+            if approach_direction is None:
+                self.last_plan_report["adaptive_grasp"] = {
+                    "enabled": True,
+                    **selection_report,
+                }
+                self.get_logger().error(
+                    "접근각 선택 실패: deadline을 지키기 위한 최소 보정각이 "
+                    "설정된 최대 보정각을 초과합니다."
+                )
+                self._record_plan_stage(
+                    "TARGET_GEOMETRY",
+                    "geometry",
+                    False,
+                    0.0,
+                    "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+                )
+                return None
             outward_hint = approach_direction.outward_axis
         else:
             approach_direction = AdaptiveApproachDirection(
