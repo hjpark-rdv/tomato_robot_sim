@@ -1,10 +1,12 @@
 from collections import deque
+import io
 import json
 import math
 import random
 from types import SimpleNamespace
 
 import pytest
+from PIL import Image as PilImage
 
 from farmily_tomato_interfaces.msg import (
     TomatoDetection,
@@ -13,7 +15,9 @@ from farmily_tomato_interfaces.msg import (
 from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Bool, Float64
+from std_srvs.srv import Trigger
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
@@ -32,6 +36,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     cancel_all_goals_request,
     camera_service_for_source,
     concise_plan_report,
+    decode_compressed_result_image,
     detection_message_sorted_by_height,
     detected_tomato_marker_array,
     generate_sweep_cases,
@@ -59,6 +64,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
 )
+import rbpodo_tomato_harvest.harvest_gui as harvest_gui_module
 import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
@@ -1838,6 +1844,66 @@ def test_predicted_approach_report_keeps_nominal_direction_in_deadband():
     )
 
 
+def test_predicted_approach_report_uses_planner_shared_direction(monkeypatch):
+    calls = []
+
+    def shared_direction(**kwargs):
+        calls.append(kwargs)
+        return SimpleNamespace(outward_axis=(-0.6, 0.8, 0.0))
+
+    monkeypatch.setattr(
+        harvest_gui_module,
+        "adaptive_outward_toward_robot",
+        shared_direction,
+    )
+
+    report = predicted_approach_report(
+        "detected_tomato_0_tf",
+        robot_in_tomato=(0.4, -0.1, 0.0),
+        max_rotation_deg=90.0,
+        deadband_deg=10.0,
+    )
+
+    assert len(calls) == 1
+    assert calls[0]["robot_position"] == (0.4, -0.1, 0.0)
+    assert report["approach_geometry"]["preapproach_position"] == pytest.approx(
+        [-0.021, 0.028, -0.018]
+    )
+
+
+def test_detection_preview_skips_tomato_replaced_by_planner_marker():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera"
+    detections.detections = [
+        TomatoDetection(
+            id="tomato_a",
+            center=Point(x=0.0, y=0.0, z=0.5),
+            stem_point=Point(x=0.02, y=0.0, z=0.5),
+        )
+    ]
+    published = []
+    gui = SimpleNamespace(
+        detection_marker_diameter=0.0175,
+        detection_stem_marker_diameter=0.006,
+        detection_approach_marker_length=0.06,
+        detection_actual_approach_indices={0},
+        detection_marker_publisher=SimpleNamespace(
+            publish=lambda message: published.append(message)
+        ),
+        _append_log=lambda _message: None,
+    )
+
+    HarvestGui._publish_detection_markers(
+        gui,
+        detections,
+        include_actual_approach=True,
+    )
+
+    assert len(published) == 1
+    assert len(published[0].markers) == 4
+    assert all(marker.id != 3 for marker in published[0].markers[1:])
+
+
 @pytest.mark.parametrize(
     ("camera_source", "expected_publish_count"),
     [
@@ -1875,6 +1941,149 @@ def test_detection_service_response_republishes_only_real_camera_results(
     assert len(published) == expected_publish_count
     assert published in ([], [detections])
     assert callbacks == [detections]
+
+
+def test_capture_camera_calls_trigger_service_and_locks_camera_controls():
+    states = {}
+    requests = []
+    callbacks = []
+    future = SimpleNamespace(add_done_callback=callbacks.append)
+    client = SimpleNamespace(
+        service_is_ready=lambda: True,
+        call_async=lambda request: requests.append(request) or future,
+    )
+    gui = SimpleNamespace(
+        capture_camera_client=client,
+        capture_camera_service="/capture_camera",
+        capture_camera_in_progress=False,
+        capture_camera_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("capture", kwargs)
+        ),
+        detect_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("detect", kwargs)
+        ),
+        camera_source_combo=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("source", kwargs)
+        ),
+        status=SimpleNamespace(
+            set=lambda value: states.__setitem__("status", value)
+        ),
+        _append_log=lambda value: states.__setitem__("log", value),
+        _capture_camera_done=lambda result: None,
+    )
+
+    HarvestGui.capture_camera(gui)
+
+    assert gui.capture_camera_in_progress is True
+    assert len(requests) == 1
+    assert isinstance(requests[0], Trigger.Request)
+    assert callbacks == [gui._capture_camera_done]
+    assert states["capture"] == {"state": "disabled"}
+    assert states["detect"] == {"state": "disabled"}
+    assert states["source"] == {"state": "disabled"}
+    assert states["status"] == "카메라 캡처 요청 중..."
+
+
+@pytest.mark.parametrize(
+    ("success", "response_message", "expected_log"),
+    [
+        (True, "이미지 저장 완료", "[카메라 캡처 성공] 이미지 저장 완료"),
+        (False, "카메라 오류", "[카메라 캡처 실패] 카메라 오류"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("ui_busy", "expected_detection_state", "expected_source_state"),
+    [
+        (False, "normal", "readonly"),
+        (True, "disabled", "disabled"),
+    ],
+)
+def test_capture_camera_response_updates_status_and_unlocks_capture_button(
+    success,
+    response_message,
+    expected_log,
+    ui_busy,
+    expected_detection_state,
+    expected_source_state,
+):
+    states = {}
+    gui = SimpleNamespace(
+        capture_camera_in_progress=True,
+        ui_busy=ui_busy,
+        capture_camera_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("capture", kwargs)
+        ),
+        detect_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("detect", kwargs)
+        ),
+        camera_source_combo=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("source", kwargs)
+        ),
+        status=SimpleNamespace(
+            set=lambda value: states.__setitem__("status", value)
+        ),
+        _append_log=lambda value: states.__setitem__("log", value),
+    )
+    response = SimpleNamespace(success=success, message=response_message)
+
+    HarvestGui._capture_camera_done(
+        gui,
+        SimpleNamespace(result=lambda: response),
+    )
+
+    assert gui.capture_camera_in_progress is False
+    assert states["capture"] == {"state": "normal"}
+    assert states["detect"] == {"state": expected_detection_state}
+    assert states["source"] == {"state": expected_source_state}
+    assert states["status"] == response_message
+    assert states["log"] == expected_log
+
+
+def _compressed_test_image(width=8, height=4):
+    output = io.BytesIO()
+    PilImage.new("RGB", (width, height), color=(220, 30, 20)).save(
+        output,
+        format="JPEG",
+    )
+    return output.getvalue()
+
+
+def test_decode_compressed_result_image_returns_independent_rgb_image():
+    image = decode_compressed_result_image(_compressed_test_image())
+
+    assert image.mode == "RGB"
+    assert image.size == (8, 4)
+
+
+def test_decode_compressed_result_image_rejects_empty_or_invalid_payload():
+    with pytest.raises(ValueError, match="비어"):
+        decode_compressed_result_image(b"")
+    with pytest.raises(ValueError, match="해석"):
+        decode_compressed_result_image(b"not an image")
+
+
+def test_result_image_callback_decodes_and_schedules_gui_render():
+    values = {}
+    scheduled = []
+    gui = SimpleNamespace(
+        result_image_topic="/tomato_vision/result_image",
+        result_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        latest_result_image=None,
+        _schedule_result_image_render=lambda: scheduled.append(True),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+    message = CompressedImage()
+    message.format = "jpeg"
+    message.data = _compressed_test_image(width=12, height=6)
+
+    HarvestGui._result_image_callback(gui, message)
+
+    assert gui.latest_result_image.size == (12, 6)
+    assert scheduled == [True]
+    assert values["status"].endswith("12×6 · jpeg")
+    assert "log" not in values
 
 
 def test_camera_source_change_selects_client_and_clears_old_detection():

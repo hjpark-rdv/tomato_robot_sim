@@ -1,4 +1,5 @@
 import csv
+import io
 import json
 import math
 import os
@@ -17,12 +18,16 @@ from tkinter import font as tkfont
 from tkinter import messagebox, ttk
 
 import rclpy
+from PIL import Image, ImageTk, UnidentifiedImageError
 from action_msgs.srv import CancelGoal
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
+from rbpodo_tomato_harvest.harvest_planner import (
+    adaptive_outward_toward_robot,
+)
 from rbpodo_tomato_harvest.tomato_tf_generator import descending_height_order
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
@@ -30,7 +35,9 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Bool, Float64, Header
+from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -1020,28 +1027,22 @@ def predicted_approach_report(
     tip_below_center: float = 0.018,
     preapproach_clearance: float = 0.010,
 ):
-    """Predict the planner's adaptive approach geometry in tomato-local axes."""
+    """Predict geometry with the planner's shared adaptive-direction function."""
     robot_x = float(robot_in_tomato[0])
     robot_y = float(robot_in_tomato[1])
-    robot_distance = math.hypot(robot_x, robot_y)
-    current_outward_angle = math.pi
-    applied_angle = 0.0
-    if robot_distance > 1e-9:
-        robotward_angle = math.atan2(robot_y, robot_x)
-        difference = math.atan2(
-            math.sin(robotward_angle - current_outward_angle),
-            math.cos(robotward_angle - current_outward_angle),
-        )
-        difference_deg = math.degrees(difference)
-        if abs(difference_deg) > max(0.0, float(deadband_deg)):
-            maximum = max(0.0, min(90.0, float(max_rotation_deg)))
-            applied_angle = math.radians(
-                max(-maximum, min(maximum, difference_deg))
-            )
-
-    outward_angle = current_outward_angle + applied_angle
-    outward_x = math.cos(outward_angle)
-    outward_y = math.sin(outward_angle)
+    direction = adaptive_outward_toward_robot(
+        tomato_rotation=(
+            (1.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+            (0.0, 0.0, 1.0),
+        ),
+        tomato_position=(0.0, 0.0, 0.0),
+        robot_position=(robot_x, robot_y, 0.0),
+        max_rotation_deg=max_rotation_deg,
+        deadband_deg=deadband_deg,
+    )
+    outward_x = float(direction.outward_axis[0])
+    outward_y = float(direction.outward_axis[1])
     target_distance = max(0.0, float(tip_standoff))
     preapproach_distance = target_distance + max(
         0.0, float(preapproach_clearance)
@@ -1158,6 +1159,19 @@ def camera_service_for_source(
         raise ValueError(f"지원하지 않는 카메라 검출 소스: {source}") from error
 
 
+def decode_compressed_result_image(data) -> Image.Image:
+    """Decode a ROS CompressedImage payload into an independent RGB image."""
+    payload = bytes(data)
+    if not payload:
+        raise ValueError("압축 이미지 데이터가 비어 있습니다.")
+    try:
+        with Image.open(io.BytesIO(payload)) as source:
+            source.load()
+            return source.convert("RGB")
+    except (UnidentifiedImageError, OSError) as error:
+        raise ValueError("JPEG/PNG 압축 이미지를 해석할 수 없습니다.") from error
+
+
 class HarvestGui(Node):
     """Tkinter operator panel for tomato detection and harvest testing."""
 
@@ -1167,6 +1181,11 @@ class HarvestGui(Node):
             "camera_service", "/fake_tomato_camera/detect_tomatoes"
         )
         self.declare_parameter("real_camera_service", "/detect_tomatoes")
+        self.declare_parameter("capture_camera_service", "/capture_camera")
+        self.declare_parameter(
+            "result_image_topic",
+            "/tomato_vision/result_image",
+        )
         self.declare_parameter("default_camera_source", "fake")
         self.declare_parameter(
             "detections_topic", "/tomato_detection/detections"
@@ -1297,6 +1316,27 @@ class HarvestGui(Node):
             initial_camera_source,
             self.fake_camera_service,
             self.real_camera_service,
+        )
+        self.capture_camera_service = str(
+            self.get_parameter("capture_camera_service").value
+        )
+        self.capture_camera_client = self.create_client(
+            Trigger,
+            self.capture_camera_service,
+        )
+        self.result_image_topic = str(
+            self.get_parameter("result_image_topic").value
+        )
+        result_image_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.VOLATILE,
+        )
+        self.result_image_subscription = self.create_subscription(
+            CompressedImage,
+            self.result_image_topic,
+            self._result_image_callback,
+            result_image_qos,
         )
         self.scene_get_client = self.create_client(
             GetParameters, f"{scene_node}/get_parameters"
@@ -1569,6 +1609,7 @@ class HarvestGui(Node):
         self.harvest_result_adaptive_rotation_deg: dict[int, float] = {}
         self.harvest_result_approach_axis_local: dict[int, tuple] = {}
         self.harvest_result_approach_reports: dict[int, dict] = {}
+        self.detection_actual_approach_indices: set[int] = set()
         self.result_arrow_lengths: dict[int, float] = {}
         self.result_detection_frame = ""
         self.sweep_markers: list[Marker] = []
@@ -1607,6 +1648,10 @@ class HarvestGui(Node):
         self.lift_last_height_mm = None
         self.lift_harvest_pending = None
         self.gripper_stroke_request_id = 0
+        self.capture_camera_in_progress = False
+        self.latest_result_image = None
+        self.result_image_photo = None
+        self.result_image_render_job = None
         self.ui_busy = False
         self.closing = False
 
@@ -1630,6 +1675,9 @@ class HarvestGui(Node):
         self.selected_tomato = tk.StringVar(value="")
         self.camera_source_var = tk.StringVar(value=initial_camera_source)
         self.camera_service_display = tk.StringVar(value=self.camera_service)
+        self.result_image_status = tk.StringVar(
+            value=f"결과 이미지 대기: {self.result_image_topic}"
+        )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
         self.pick_ready_state_var = tk.StringVar(value="PICK_READY")
         self.scene_x = tk.StringVar(value="0.355")
@@ -1755,12 +1803,13 @@ class HarvestGui(Node):
         ).grid(row=2, column=0, sticky="ew", pady=(6, 0))
 
     def _build_harvest_ui(self, frame) -> None:
-        frame.columnconfigure(0, weight=5, minsize=720)
-        frame.columnconfigure(1, weight=3, minsize=430)
+        frame.columnconfigure(0, weight=0, minsize=480)
+        frame.columnconfigure(1, weight=0, minsize=350)
+        frame.columnconfigure(2, weight=1, minsize=430)
         frame.rowconfigure(1, weight=1)
 
         camera_frame = ttk.LabelFrame(frame, text="카메라 검출", padding=8)
-        camera_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
+        camera_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
         camera_frame.columnconfigure(3, weight=1)
         ttk.Label(camera_frame, text="검출 소스", foreground="#666666").grid(
             row=0, column=0, sticky="w"
@@ -1803,7 +1852,14 @@ class HarvestGui(Node):
             command=self.detect_tomatoes,
             style="Action.TButton",
         )
-        self.detect_button.grid(row=0, column=5)
+        self.detect_button.grid(row=0, column=5, padx=(0, 8))
+        self.capture_camera_button = ttk.Button(
+            camera_frame,
+            text="카메라 캡처",
+            command=self.capture_camera,
+            style="Compact.TButton",
+        )
+        self.capture_camera_button.grid(row=0, column=6)
 
         list_frame = ttk.LabelFrame(frame, text="검출된 토마토", padding=8)
         list_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
@@ -1835,13 +1891,13 @@ class HarvestGui(Node):
             "z": "Camera Z (m)",
         }
         widths = {
-            "index": 58,
-            "frame": 205,
-            "motion_result": 140,
-            "source_id": 125,
-            "x": 105,
-            "y": 105,
-            "z": 105,
+            "index": 40,
+            "frame": 120,
+            "motion_result": 85,
+            "source_id": 65,
+            "x": 52,
+            "y": 52,
+            "z": 52,
         }
         for column in columns:
             self.tomato_tree.heading(column, text=headings[column])
@@ -1866,7 +1922,7 @@ class HarvestGui(Node):
         motion_frame.columnconfigure(0, weight=1)
         motion_frame.columnconfigure(1, weight=1)
         ttk.Label(motion_frame, text="선택 토마토").grid(
-            row=0, column=0, columnspan=2, sticky="w"
+            row=0, column=0, sticky="w"
         )
         self.tomato_combo = ttk.Combobox(
             motion_frame,
@@ -1874,57 +1930,72 @@ class HarvestGui(Node):
             state="readonly",
         )
         self.tomato_combo.grid(
-            row=1, column=0, columnspan=2, sticky="ew", pady=(4, 10)
+            row=0,
+            column=1,
+            sticky="ew",
+            padx=(10, 0),
+            pady=(0, 8),
         )
         self.tomato_combo.bind("<<ComboboxSelected>>", self._combo_selection_changed)
+        action_frame = ttk.Frame(motion_frame)
+        action_frame.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+        )
+        for column in range(2):
+            action_frame.columnconfigure(column, weight=1)
         self.plan_button = ttk.Button(
-            motion_frame,
+            action_frame,
             text="Plan-only 확인",
             command=lambda: self.start_harvest(False),
             state="disabled",
             style="Action.TButton",
         )
-        self.plan_button.grid(row=2, column=0, padx=(0, 4))
+        self.plan_button.grid(row=0, column=0, sticky="ew", padx=(0, 4))
         self.execute_button = ttk.Button(
-            motion_frame,
+            action_frame,
             text="실제 수확 실행",
             command=lambda: self.start_harvest(True),
             state="disabled",
             style="Action.TButton",
         )
-        self.execute_button.grid(row=2, column=1, padx=(4, 0))
+        self.execute_button.grid(row=0, column=1, sticky="ew", padx=4)
         self.harvest_all_button = ttk.Button(
-            motion_frame,
+            action_frame,
             text="전체 연속 수확",
             command=self.start_harvest_all,
             state="disabled",
             style="Action.TButton",
         )
         self.harvest_all_button.grid(
-            row=3,
+            row=1,
             column=0,
+            sticky="ew",
             padx=(0, 4),
-            pady=(8, 0),
+            pady=(6, 0),
         )
         self.motion_stop_button = ttk.Button(
-            motion_frame,
+            action_frame,
             text="모션 정지",
             command=self.stop_active_motion,
             state="disabled",
             style="Action.TButton",
         )
         self.motion_stop_button.grid(
-            row=3,
+            row=1,
             column=1,
+            sticky="ew",
             padx=(4, 0),
-            pady=(8, 0),
+            pady=(6, 0),
         )
         ttk.Separator(motion_frame, orient="horizontal").grid(
-            row=4, column=0, columnspan=2, sticky="ew", pady=12
+            row=2, column=0, columnspan=2, sticky="ew", pady=10
         )
 
         options = ttk.LabelFrame(motion_frame, text="수확 옵션", padding=8)
-        options.grid(row=5, column=0, columnspan=2, sticky="ew")
+        options.grid(row=3, column=0, columnspan=2, sticky="ew")
         options.columnconfigure(1, weight=1)
         ttk.Label(options, text="시작/복귀 자세").grid(
             row=0, column=0, sticky="w"
@@ -1972,7 +2043,11 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=3, column=0, columnspan=2, sticky="w", pady=(6, 0)
+            row=3,
+            column=0,
+            columnspan=2,
+            sticky="w",
+            pady=(6, 0),
         )
         self.preplan_all_checkbox = ttk.Checkbutton(
             options,
@@ -1985,7 +2060,7 @@ class HarvestGui(Node):
         )
 
         utility = ttk.Frame(motion_frame)
-        utility.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        utility.grid(row=4, column=0, columnspan=2, sticky="ew", pady=(8, 0))
         utility.columnconfigure(0, weight=1)
         utility.columnconfigure(1, weight=1)
         self.clear_markers_button = ttk.Button(
@@ -2016,9 +2091,44 @@ class HarvestGui(Node):
             motion_frame,
             text="Plan-only 성공 후 실제 실행이 활성화되며, 성공한 실행은 반복할 수 있습니다.",
             foreground="#666666",
-            wraplength=390,
+            wraplength=315,
             justify="left",
-        ).grid(row=7, column=0, columnspan=2, sticky="w", pady=(12, 0))
+        ).grid(row=5, column=0, columnspan=2, sticky="w", pady=(8, 0))
+
+        result_image_frame = ttk.LabelFrame(
+            frame,
+            text="토마토 검출 결과 이미지",
+            padding=6,
+        )
+        result_image_frame.grid(
+            row=1,
+            column=2,
+            sticky="nsew",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        result_image_frame.columnconfigure(0, weight=1)
+        result_image_frame.rowconfigure(1, weight=1)
+        ttk.Label(
+            result_image_frame,
+            textvariable=self.result_image_status,
+            foreground="#666666",
+            anchor="w",
+        ).grid(row=0, column=0, sticky="ew", pady=(0, 4))
+        self.result_image_label = tk.Label(
+            result_image_frame,
+            text="토마토 촬영/검출 후 결과 이미지가 표시됩니다.",
+            background="#202020",
+            foreground="#dddddd",
+            anchor="center",
+            relief="sunken",
+            borderwidth=1,
+        )
+        self.result_image_label.grid(row=1, column=0, sticky="nsew")
+        self.result_image_label.bind(
+            "<Configure>",
+            self._schedule_result_image_render,
+        )
 
     def _build_step_ui(self, frame) -> None:
         frame.columnconfigure(0, weight=1)
@@ -3908,16 +4018,28 @@ class HarvestGui(Node):
             )
         if actual_approach_marker(tomato_index, plan_report or {}) is None:
             self.harvest_result_approach_reports.pop(tomato_index, None)
+            self.detection_actual_approach_indices.discard(tomato_index)
         else:
             self.harvest_result_approach_reports[tomato_index] = dict(
                 plan_report
             )
+            self.detection_actual_approach_indices.add(tomato_index)
         if motion_result_text is not None:
             self._set_tomato_motion_result(
                 tomato_index,
                 motion_result_text,
             )
         self.clear_markers_button.configure(state="normal")
+        if (
+            self.latest_detection_message is not None
+            and self.show_detection_markers_var.get()
+        ):
+            # Replace this tomato's preview arrow with the authoritative
+            # approach_geometry marker published below from the planner report.
+            self._publish_detection_markers(
+                self.latest_detection_message,
+                include_actual_approach=True,
+            )
         self._publish_harvest_result_markers()
 
     def _set_tomato_motion_result(self, tomato_index: int, result: str) -> None:
@@ -3943,9 +4065,18 @@ class HarvestGui(Node):
         self.harvest_result_adaptive_rotation_deg.clear()
         self.harvest_result_approach_axis_local.clear()
         self.harvest_result_approach_reports.clear()
+        self.detection_actual_approach_indices.clear()
         self.sweep_markers.clear()
         self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
+        if (
+            self.latest_detection_message is not None
+            and self.show_detection_markers_var.get()
+        ):
+            self._publish_detection_markers(
+                self.latest_detection_message,
+                include_actual_approach=True,
+            )
 
     def clear_harvest_result_markers(self) -> None:
         self._clear_harvest_results()
@@ -4852,6 +4983,7 @@ class HarvestGui(Node):
         )
         self.detected_tomatoes = list(message.detections)
         self.tomato_motion_results.clear()
+        self.detection_actual_approach_indices.clear()
         try:
             self._cache_detected_tomato_world_positions(message)
         except TransformException as error:
@@ -4934,6 +5066,99 @@ class HarvestGui(Node):
         )
         future = self.camera_client.call_async(DetectTomatoes.Request())
         future.add_done_callback(self._detection_service_done)
+
+    def capture_camera(self) -> None:
+        if not self.capture_camera_client.service_is_ready():
+            if not self.capture_camera_client.wait_for_service(
+                timeout_sec=0.05
+            ):
+                self.status.set(
+                    f"카메라 캡처 서비스 연결 안 됨: "
+                    f"{self.capture_camera_service}"
+                )
+                self._append_log(
+                    "[카메라 캡처 실패] 서비스를 먼저 실행하세요: "
+                    f"{self.capture_camera_service}"
+                )
+                return
+        self.capture_camera_in_progress = True
+        self.capture_camera_button.configure(state="disabled")
+        self.detect_button.configure(state="disabled")
+        self.camera_source_combo.configure(state="disabled")
+        self.status.set("카메라 캡처 요청 중...")
+        self._append_log(
+            f"[카메라 캡처] 서비스 호출: {self.capture_camera_service}"
+        )
+        future = self.capture_camera_client.call_async(Trigger.Request())
+        future.add_done_callback(self._capture_camera_done)
+
+    def _capture_camera_done(self, future) -> None:
+        self.capture_camera_in_progress = False
+        self.capture_camera_button.configure(state="normal")
+        detection_state = "disabled" if self.ui_busy else "normal"
+        self.detect_button.configure(state=detection_state)
+        self.camera_source_combo.configure(
+            state="disabled" if self.ui_busy else "readonly"
+        )
+        try:
+            response = future.result()
+        except Exception as error:
+            self.status.set("카메라 캡처 서비스 호출 실패")
+            self._append_log(f"[카메라 캡처 오류] {error}")
+            return
+        if response.success:
+            message = response.message or "카메라 캡처 완료"
+            self.status.set(message)
+            self._append_log(f"[카메라 캡처 성공] {message}")
+            return
+        message = response.message or "카메라 캡처 실패"
+        self.status.set(message)
+        self._append_log(f"[카메라 캡처 실패] {message}")
+
+    def _result_image_callback(self, message: CompressedImage) -> None:
+        try:
+            image = decode_compressed_result_image(message.data)
+        except ValueError as error:
+            self.result_image_status.set("결과 이미지 디코딩 실패")
+            self._append_log(f"[검출 결과 이미지 오류] {error}")
+            return
+        self.latest_result_image = image
+        image_format = str(message.format or "compressed")
+        self.result_image_status.set(
+            f"{self.result_image_topic} · {image.width}×{image.height} · "
+            f"{image_format}"
+        )
+        self._schedule_result_image_render()
+
+    def _schedule_result_image_render(self, _event=None) -> None:
+        if self.latest_result_image is None or self.closing:
+            return
+        if self.result_image_render_job is not None:
+            try:
+                self.root.after_cancel(self.result_image_render_job)
+            except tk.TclError:
+                pass
+        self.result_image_render_job = self.root.after(
+            60,
+            self._render_result_image,
+        )
+
+    def _render_result_image(self) -> None:
+        self.result_image_render_job = None
+        if self.latest_result_image is None or self.closing:
+            return
+        maximum_width = max(120, self.result_image_label.winfo_width() - 8)
+        maximum_height = max(100, self.result_image_label.winfo_height() - 8)
+        display_image = self.latest_result_image.copy()
+        display_image.thumbnail(
+            (maximum_width, maximum_height),
+            Image.Resampling.LANCZOS,
+        )
+        self.result_image_photo = ImageTk.PhotoImage(display_image)
+        self.result_image_label.configure(
+            image=self.result_image_photo,
+            text="",
+        )
 
     def _detection_service_done(self, future) -> None:
         self.detect_button.configure(state="normal")
@@ -5029,6 +5254,8 @@ class HarvestGui(Node):
         if include_actual_approach:
             marker_id_offset = len(message.detections) * 3
             for index in range(len(message.detections)):
+                if index in self.detection_actual_approach_indices:
+                    continue
                 tomato_frame = f"detected_tomato_{index}_tf"
                 try:
                     transform = self.tf_buffer.lookup_transform(
@@ -6989,9 +7216,21 @@ class HarvestGui(Node):
     def _set_busy(self, busy: bool) -> None:
         self.ui_busy = bool(busy)
         state = "disabled" if busy else "normal"
-        self.detect_button.configure(state=state)
+        detection_state = (
+            "disabled"
+            if busy or self.capture_camera_in_progress
+            else "normal"
+        )
+        self.detect_button.configure(state=detection_state)
+        self.capture_camera_button.configure(
+            state="disabled" if self.capture_camera_in_progress else "normal"
+        )
         self.camera_source_combo.configure(
-            state="disabled" if busy else "readonly"
+            state=(
+                "disabled"
+                if busy or self.capture_camera_in_progress
+                else "readonly"
+            )
         )
         self.read_scene_button.configure(state=state)
         self.set_scene_button.configure(state=state)
