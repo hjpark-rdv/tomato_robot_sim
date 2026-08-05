@@ -5,6 +5,7 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
+    ApproachRotationEvaluation,
     CartesianHarvestPlanner,
     adaptive_outward_toward_robot,
     format_joint_trajectory_ranges,
@@ -13,8 +14,10 @@ from rbpodo_tomato_harvest.harvest_planner import (
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
+    outward_from_tomato_rotation,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
+    select_minimum_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
 )
@@ -307,6 +310,102 @@ def test_adaptive_grasp_ignores_small_robot_alignment_error():
     assert np.allclose(result.outward_axis, [-1.0, 0.0, 0.0])
     assert np.isclose(result.applied_rotation_deg, 0.0)
     assert np.isclose(result.current_robot_error_deg, 5.0)
+
+
+def test_outward_rotation_uses_signed_tomato_local_y_direction():
+    assert np.allclose(
+        outward_from_tomato_rotation(np.eye(3), 45.0),
+        [-np.sqrt(0.5), np.sqrt(0.5), 0.0],
+    )
+    assert np.allclose(
+        outward_from_tomato_rotation(np.eye(3), -90.0),
+        [0.0, -1.0, 0.0],
+        atol=1e-9,
+    )
+
+
+def test_minimum_ik_rotation_keeps_zero_when_nominal_pose_is_feasible():
+    requested = []
+
+    def evaluate(angle):
+        requested.append(angle)
+        return ApproachRotationEvaluation(angle, True, 0.25, 1)
+
+    selected, evaluations = select_minimum_feasible_rotation(evaluate)
+
+    assert selected is not None
+    assert np.isclose(selected.rotation_deg, 0.0)
+    assert requested == [0.0]
+    assert len(evaluations) == 1
+
+
+def test_minimum_ik_rotation_selects_closest_feasible_side_and_refines_it():
+    def evaluate(angle):
+        threshold = 28.0 if angle > 0.0 else 17.0
+        feasible = abs(angle) >= threshold
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle) / 100.0,
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=90.0,
+        coarse_step_deg=10.0,
+        resolution_deg=0.5,
+        preferred_sign=1.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg < 0.0
+    assert 17.0 <= abs(selected.rotation_deg) < 17.5
+    assert all(abs(item.rotation_deg) <= 20.0 for item in evaluations)
+
+
+def test_minimum_ik_rotation_uses_joint_distance_to_break_angle_tie():
+    def evaluate(angle):
+        feasible = abs(angle) >= 20.0
+        distance = 0.2 if angle < 0.0 else 1.5
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            distance,
+            1 if feasible else -31,
+        )
+
+    selected, _ = select_minimum_feasible_rotation(
+        evaluate,
+        coarse_step_deg=10.0,
+        resolution_deg=1.0,
+        preferred_sign=1.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg < 0.0
+
+
+def test_minimum_ik_rotation_returns_none_when_every_angle_is_invalid():
+    def evaluate(angle):
+        return ApproachRotationEvaluation(angle, False, moveit_error_code=-31)
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=30.0,
+        coarse_step_deg=10.0,
+    )
+
+    assert selected is None
+    assert {item.rotation_deg for item in evaluations} == {
+        0.0,
+        -10.0,
+        10.0,
+        -20.0,
+        20.0,
+        -30.0,
+        30.0,
+    }
 
 
 def test_post_harvest_motion_uses_tip_local_x_and_z_axes():

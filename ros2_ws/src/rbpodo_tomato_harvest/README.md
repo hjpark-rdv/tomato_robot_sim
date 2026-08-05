@@ -357,19 +357,28 @@ PICK_READY joint goal은 기존 `pick_ready_planning_time=10.0`,
 `pick_ready_planning_attempts=5`를 유지한다. `±120°` constraint는 관절의
 허용 범위를 제한하는 조건이며 최단 trajectory를 보장하는 품질 기준은 아니다.
 
-Pre-grasp 접근 방향은 토마토 TF의 `-X`를 기본으로 하되 로봇 베이스
-(`link0` 원점)를 향하도록 토마토 로컬 `+Y` 또는 `-Y` 중 가까운 쪽으로
-필요한 만큼 회전한다. signed 회전각은 local `+Y` 방향이 양수, local `-Y`
-방향이 음수이며 `-90°~+90°`로 제한한다. 기존 `-X` 방향과 로봇 방향의
-차이가 `10°` 이내이면 회전하지 않는다. 원본 토마토 TF는 변경하지 않고 tip
-target과 pre-grasp geometry만 회전한 뒤 기존과 동일하게 TCP pose로 환산한다.
+Pre-grasp 접근 방향은 토마토 TF의 `-X`를 최우선으로 사용한다. 먼저 0°
+pre-grasp의 IK를 충돌 검사와 PICK_READY 기준 `±120°` 관절 constraint를
+포함해 검사하고, 불가능할 때만 토마토 로컬 `+Y`/`-Y` 방향의 보정각을
+늘린다. 양쪽을 같은 절댓값 순서로 검사해 가능한 구간을 찾고 그 구간을 다시
+좁혀, 가능한 자세 중 보정각이 가장 작은 방향을 선택한다. 같은 보정각이면
+PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검사에서는 OMPL을
+호출하지 않으며, 선택된 최종 자세에 대해서만 기존 Cartesian/OMPL 계획을
+수행한다. signed 회전각은 local `+Y` 방향이 양수, local `-Y` 방향이 음수다.
+원본 토마토 TF는 변경하지 않고 tip target과 pre-grasp geometry만 회전한 뒤
+기존과 동일하게 TCP pose로 환산한다. `/compute_ik`를 사용할 수 없거나 유효한
+후보가 하나도 없을 때만 기존 로봇 방향 기반 보정값으로 fallback한다.
 
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
 - `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `90.0`
-- `adaptive_grasp_deadband_deg`: 기존 방향 유지 범위, 기본 `10.0`
+- `adaptive_grasp_deadband_deg`: geometric fallback의 기존 방향 유지 범위, 기본 `10.0`
+- `adaptive_grasp_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.05`
+- `adaptive_grasp_ik_service_wait_sec`: `/compute_ik` 연결 대기, 기본 `0.5`
+- `adaptive_grasp_search_step_deg`: 최초 가능 구간 탐색 간격, 기본 `10.0`
+- `adaptive_grasp_search_resolution_deg`: 최소각 경계 정밀도, 기본 `1.0`
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
-회전 전후 로봇 방향 오차가 기록된다.
+회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.
 
 `검출 토마토 전체 연속 수확`은 현재 검출 목록을 0번부터 순서대로 처리한다.
 각 토마토마다 Plan-only를 먼저 수행하고 성공한 경우에만 실제 수확하며, 로봇은

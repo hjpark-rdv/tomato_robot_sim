@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import rclpy
 from ament_index_python.packages import get_package_share_directory
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, PoseStamped
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
     BoundingVolume,
@@ -21,7 +21,7 @@ from moveit_msgs.msg import (
     PositionConstraint,
     RobotState,
 )
-from moveit_msgs.srv import GetCartesianPath
+from moveit_msgs.srv import GetCartesianPath, GetPositionIK
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -111,6 +111,16 @@ class AdaptiveApproachDirection:
     applied_rotation_deg: float
     current_robot_error_deg: float
     selected_robot_error_deg: float
+
+
+@dataclass(frozen=True)
+class ApproachRotationEvaluation:
+    """Fast IK feasibility result for one tomato-local approach angle."""
+
+    rotation_deg: float
+    feasible: bool
+    joint_distance: float = math.inf
+    moveit_error_code: int = MoveItErrorCodes.FAILURE
 
 
 @dataclass(frozen=True)
@@ -472,6 +482,104 @@ def stemward_and_outward_from_tomato_rotation(
     return stemward, -stemward
 
 
+def outward_from_tomato_rotation(
+    tomato_rotation,
+    rotation_deg: float,
+) -> np.ndarray:
+    """Rotate tomato-local -X toward local +Y by a signed angle."""
+    rotation = np.asarray(tomato_rotation, dtype=float)
+    if rotation.shape != (3, 3):
+        raise ValueError("tomato_rotation must be a 3x3 matrix")
+    angle = math.radians(float(rotation_deg))
+    local_outward = np.array(
+        [-math.cos(angle), math.sin(angle), 0.0],
+        dtype=float,
+    )
+    world_outward = rotation @ local_outward
+    world_outward[2] = 0.0
+    return _unit(world_outward, "rotated tomato approach direction")
+
+
+def select_minimum_feasible_rotation(
+    evaluator,
+    max_rotation_deg: float = 90.0,
+    coarse_step_deg: float = 10.0,
+    resolution_deg: float = 1.0,
+    preferred_sign: float = 1.0,
+) -> tuple[ApproachRotationEvaluation | None, tuple[ApproachRotationEvaluation, ...]]:
+    """
+    Find the smallest feasible |angle| using fast endpoint IK checks.
+
+    OMPL is deliberately not involved.  Angles are checked in increasing
+    absolute order on both sides, then the first feasible interval is refined
+    by binary search.  Joint distance only breaks ties between equally small
+    rotations.
+    """
+    maximum = max(0.0, min(90.0, float(max_rotation_deg)))
+    coarse_step = max(0.1, float(coarse_step_deg))
+    resolution = max(0.1, float(resolution_deg))
+    first_sign = 1.0 if float(preferred_sign) >= 0.0 else -1.0
+    evaluations: list[ApproachRotationEvaluation] = []
+    cache: dict[float, ApproachRotationEvaluation] = {}
+
+    def evaluate(angle: float) -> ApproachRotationEvaluation:
+        normalized = round(float(angle), 6)
+        if normalized not in cache:
+            result = evaluator(normalized)
+            if not isinstance(result, ApproachRotationEvaluation):
+                raise TypeError(
+                    "rotation evaluator must return ApproachRotationEvaluation"
+                )
+            cache[normalized] = result
+            evaluations.append(result)
+        return cache[normalized]
+
+    zero = evaluate(0.0)
+    if zero.feasible or maximum <= 0.0:
+        return (zero if zero.feasible else None), tuple(evaluations)
+
+    previous_magnitude = 0.0
+    magnitude = min(coarse_step, maximum)
+    while magnitude <= maximum + 1e-9:
+        endpoints = [
+            evaluate(first_sign * magnitude),
+            evaluate(-first_sign * magnitude),
+        ]
+        feasible_endpoints = [item for item in endpoints if item.feasible]
+        if feasible_endpoints:
+            refined: list[ApproachRotationEvaluation] = []
+            for endpoint in feasible_endpoints:
+                sign = 1.0 if endpoint.rotation_deg >= 0.0 else -1.0
+                lower = previous_magnitude
+                upper = magnitude
+                best = endpoint
+                while upper - lower > resolution:
+                    middle = 0.5 * (lower + upper)
+                    candidate = evaluate(sign * middle)
+                    if candidate.feasible:
+                        upper = middle
+                        best = candidate
+                    else:
+                        lower = middle
+                refined.append(best)
+            selected = min(
+                refined,
+                key=lambda item: (
+                    abs(item.rotation_deg),
+                    item.joint_distance,
+                    0 if item.rotation_deg * first_sign >= 0.0 else 1,
+                ),
+            )
+            return selected, tuple(evaluations)
+
+        if math.isclose(magnitude, maximum, abs_tol=1e-9):
+            break
+        previous_magnitude = magnitude
+        magnitude = min(maximum, magnitude + coarse_step)
+
+    return None, tuple(evaluations)
+
+
 def adaptive_outward_toward_robot(
     tomato_rotation,
     tomato_position,
@@ -530,18 +638,10 @@ def adaptive_outward_toward_robot(
             ),
         )
 
-    applied_angle = toward_y_sign * math.radians(applied_rotation_deg)
-    cosine = math.cos(applied_angle)
-    sine = math.sin(applied_angle)
-    selected_outward = np.array(
-        [
-            cosine * current_outward[0] - sine * current_outward[1],
-            sine * current_outward[0] + cosine * current_outward[1],
-            0.0,
-        ],
-        dtype=float,
+    selected_outward = outward_from_tomato_rotation(
+        rotation,
+        applied_rotation_deg,
     )
-    selected_outward = _unit(selected_outward, "adaptive approach direction")
     selected_error_deg = abs(
         math.degrees(signed_angle(selected_outward, robotward))
     )
@@ -697,6 +797,10 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("adaptive_grasp_enabled", True)
         self.declare_parameter("adaptive_grasp_max_rotation_deg", 90.0)
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
+        self.declare_parameter("adaptive_grasp_ik_timeout_sec", 0.05)
+        self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
+        self.declare_parameter("adaptive_grasp_search_step_deg", 10.0)
+        self.declare_parameter("adaptive_grasp_search_resolution_deg", 1.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
@@ -730,6 +834,7 @@ class CartesianHarvestPlanner(Node):
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
         )
+        self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
         self.execute_client = ActionClient(
             self, ExecuteTrajectory, "/execute_trajectory"
@@ -1880,6 +1985,282 @@ class CartesianHarvestPlanner(Node):
             raise ValueError("PICK_READY must contain exactly six joint values")
         return state
 
+    def _evaluate_preapproach_ik(
+        self,
+        pose: Pose,
+        seed_state: RobotState,
+        constraints: Constraints,
+        rotation_deg: float,
+    ) -> ApproachRotationEvaluation:
+        timeout_sec = max(
+            0.01,
+            float(self.get_parameter("adaptive_grasp_ik_timeout_sec").value),
+        )
+        request = GetPositionIK.Request()
+        request.ik_request.group_name = self.group_name
+        request.ik_request.robot_state = copy.deepcopy(seed_state)
+        request.ik_request.constraints = copy.deepcopy(constraints)
+        request.ik_request.avoid_collisions = bool(
+            self.get_parameter("avoid_collisions").value
+        )
+        request.ik_request.ik_link_name = self.planning_link
+        stamped_pose = PoseStamped()
+        stamped_pose.header.frame_id = self.base_frame
+        stamped_pose.header.stamp = self.get_clock().now().to_msg()
+        stamped_pose.pose = copy.deepcopy(pose)
+        request.ik_request.pose_stamped = stamped_pose
+        request.ik_request.timeout = Duration(seconds=timeout_sec).to_msg()
+
+        future = self.ik_client.call_async(request)
+        rclpy.spin_until_future_complete(
+            self,
+            future,
+            timeout_sec=timeout_sec + 0.10,
+        )
+        response = future.result() if future.done() else None
+        if response is None:
+            if not future.done():
+                future.cancel()
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=MoveItErrorCodes.TIMED_OUT,
+            )
+
+        error_code = int(response.error_code.val)
+        if error_code != MoveItErrorCodes.SUCCESS:
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=error_code,
+            )
+
+        seed_positions = {
+            str(name): float(position)
+            for name, position in zip(
+                seed_state.joint_state.name,
+                seed_state.joint_state.position,
+            )
+        }
+        solution_positions = {
+            str(name): float(position)
+            for name, position in zip(
+                response.solution.joint_state.name,
+                response.solution.joint_state.position,
+            )
+        }
+        shared_names = [
+            name for name in seed_positions if name in solution_positions
+        ]
+        if not shared_names:
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=MoveItErrorCodes.INVALID_ROBOT_STATE,
+            )
+        squared_distance = 0.0
+        for name in shared_names:
+            difference = math.atan2(
+                math.sin(solution_positions[name] - seed_positions[name]),
+                math.cos(solution_positions[name] - seed_positions[name]),
+            )
+            squared_distance += difference * difference
+        return ApproachRotationEvaluation(
+            rotation_deg=float(rotation_deg),
+            feasible=True,
+            joint_distance=math.sqrt(squared_distance),
+            moveit_error_code=error_code,
+        )
+
+    def _select_minimum_ik_approach(
+        self,
+        tomato_position: np.ndarray,
+        tomato_rotation: np.ndarray,
+        stemward: np.ndarray,
+        gripper_to_tip_rotation: np.ndarray,
+        planning_to_tip_translation: np.ndarray,
+        planning_to_tip_rotation: np.ndarray,
+    ) -> tuple[AdaptiveApproachDirection, dict]:
+        maximum = float(
+            self.get_parameter("adaptive_grasp_max_rotation_deg").value
+        )
+        deadband = float(
+            self.get_parameter("adaptive_grasp_deadband_deg").value
+        )
+        geometric_preference = adaptive_outward_toward_robot(
+            tomato_rotation=tomato_rotation,
+            tomato_position=tomato_position,
+            robot_position=[0.0, 0.0, 0.0],
+            max_rotation_deg=maximum,
+            deadband_deg=deadband,
+        )
+        report = {
+            "selection_mode": "minimum_ik_angle",
+            "geometric_preferred_rotation_deg": float(
+                geometric_preference.applied_rotation_deg
+            ),
+            "fallback_used": False,
+        }
+        wait_sec = max(
+            0.0,
+            float(
+                self.get_parameter("adaptive_grasp_ik_service_wait_sec").value
+            ),
+        )
+        if not self.ik_client.wait_for_service(timeout_sec=wait_sec):
+            report.update(
+                {
+                    "selection_mode": "geometric_fallback",
+                    "fallback_used": True,
+                    "fallback_reason": "COMPUTE_IK_SERVICE_UNAVAILABLE",
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return geometric_preference, report
+
+        ready_state = self._pick_ready_robot_state()
+        ready_positions = dict(
+            zip(
+                ready_state.joint_state.name,
+                ready_state.joint_state.position,
+            )
+        )
+        limited_names = [
+            str(name)
+            for name in self.get_parameter("ompl_limited_joint_names").value
+        ]
+        tolerance = math.radians(
+            float(self.get_parameter("ompl_joint_tolerance_deg").value)
+        )
+        constraints = make_centered_joint_path_constraints(
+            {
+                name: float(ready_positions[name])
+                for name in limited_names
+                if name in ready_positions
+            },
+            tolerance,
+        )
+        virtual_vine_origin = tomato_position + stemward
+
+        def evaluate(rotation_deg: float) -> ApproachRotationEvaluation:
+            outward = outward_from_tomato_rotation(
+                tomato_rotation,
+                rotation_deg,
+            )
+            geometry = make_harvest_geometry(
+                tomato_position=tomato_position,
+                vine_origin=virtual_vine_origin,
+                vine_axis=[0.0, 0.0, 1.0],
+                tip_standoff=float(self.get_parameter("tip_standoff").value),
+                tip_below_center=float(
+                    self.get_parameter("tip_below_center").value
+                ),
+                preapproach_clearance=float(
+                    self.get_parameter("preapproach_clearance").value
+                ),
+                outward_hint=outward,
+                tip_rotation_from_gripper=gripper_to_tip_rotation,
+            )
+            planning_pose = planning_pose_from_tip_pose(
+                geometry.preapproach_pose,
+                planning_to_tip_translation,
+                planning_to_tip_rotation,
+            )
+            return self._evaluate_preapproach_ik(
+                planning_pose,
+                ready_state,
+                constraints,
+                rotation_deg,
+            )
+
+        preferred_rotation = float(
+            geometric_preference.applied_rotation_deg
+        )
+        if math.isclose(preferred_rotation, 0.0, abs_tol=1e-9):
+            no_deadband_preference = adaptive_outward_toward_robot(
+                tomato_rotation=tomato_rotation,
+                tomato_position=tomato_position,
+                robot_position=[0.0, 0.0, 0.0],
+                max_rotation_deg=maximum,
+                deadband_deg=0.0,
+            )
+            preferred_rotation = float(
+                no_deadband_preference.applied_rotation_deg
+            )
+        selected, evaluations = select_minimum_feasible_rotation(
+            evaluate,
+            max_rotation_deg=maximum,
+            coarse_step_deg=float(
+                self.get_parameter("adaptive_grasp_search_step_deg").value
+            ),
+            resolution_deg=float(
+                self.get_parameter(
+                    "adaptive_grasp_search_resolution_deg"
+                ).value
+            ),
+            preferred_sign=preferred_rotation,
+        )
+        report["ik_evaluation_count"] = len(evaluations)
+        report["ik_evaluations"] = [
+            {
+                "rotation_deg": float(item.rotation_deg),
+                "feasible": bool(item.feasible),
+                "joint_distance_rad": (
+                    float(item.joint_distance)
+                    if math.isfinite(item.joint_distance)
+                    else None
+                ),
+                "moveit_error_code": int(item.moveit_error_code),
+            }
+            for item in evaluations
+        ]
+        if selected is None:
+            report.update(
+                {
+                    "selection_mode": "geometric_fallback",
+                    "fallback_used": True,
+                    "fallback_reason": "NO_CONSTRAINT_VALID_IK_CANDIDATE",
+                }
+            )
+            return geometric_preference, report
+
+        selected_outward = outward_from_tomato_rotation(
+            tomato_rotation,
+            selected.rotation_deg,
+        )
+        robotward = np.array(
+            [-tomato_position[0], -tomato_position[1], 0.0],
+            dtype=float,
+        )
+        if float(np.linalg.norm(robotward)) < 1e-9:
+            selected_error = 0.0
+        else:
+            robotward = _unit(robotward, "tomato-to-robot direction")
+            selected_error = math.degrees(
+                math.acos(
+                    max(-1.0, min(1.0, float(np.dot(selected_outward, robotward))))
+                )
+            )
+        report.update(
+            {
+                "selected_rotation_deg": float(selected.rotation_deg),
+                "selected_joint_distance_rad": float(
+                    selected.joint_distance
+                ),
+            }
+        )
+        return (
+            AdaptiveApproachDirection(
+                outward_axis=selected_outward,
+                applied_rotation_deg=float(selected.rotation_deg),
+                current_robot_error_deg=float(
+                    geometric_preference.current_robot_error_deg
+                ),
+                selected_robot_error_deg=float(selected_error),
+            ),
+            report,
+        )
+
     def _state_matches_pick_ready(self, state: RobotState | None) -> bool:
         if state is None:
             return False
@@ -2123,30 +2504,6 @@ class CartesianHarvestPlanner(Node):
             stemward, outward_hint = stemward_and_outward_from_tomato_rotation(
                 tomato_rotation
             )
-            if bool(self.get_parameter("adaptive_grasp_enabled").value):
-                approach_direction = adaptive_outward_toward_robot(
-                    tomato_rotation=tomato_rotation,
-                    tomato_position=tomato_position,
-                    robot_position=[0.0, 0.0, 0.0],
-                    max_rotation_deg=float(
-                        self.get_parameter(
-                            "adaptive_grasp_max_rotation_deg"
-                        ).value
-                    ),
-                    deadband_deg=float(
-                        self.get_parameter(
-                            "adaptive_grasp_deadband_deg"
-                        ).value
-                    ),
-                )
-                outward_hint = approach_direction.outward_axis
-            else:
-                approach_direction = AdaptiveApproachDirection(
-                    outward_hint,
-                    0.0,
-                    0.0,
-                    0.0,
-                )
         except ValueError as error:
             self.get_logger().error(str(error))
             self._record_plan_stage(
@@ -2157,39 +2514,6 @@ class CartesianHarvestPlanner(Node):
                 "INVALID_TOMATO_ORIENTATION",
             )
             return None
-        self.last_plan_report["adaptive_grasp"] = {
-            "enabled": bool(
-                self.get_parameter("adaptive_grasp_enabled").value
-            ),
-            "applied_rotation_deg": float(
-                approach_direction.applied_rotation_deg
-            ),
-            "current_robot_error_deg": float(
-                approach_direction.current_robot_error_deg
-            ),
-            "selected_robot_error_deg": float(
-                approach_direction.selected_robot_error_deg
-            ),
-            "outward_axis": [
-                float(value) for value in approach_direction.outward_axis
-            ],
-            "approach_axis_tomato_local": [
-                float(value)
-                for value in (
-                    tomato_rotation.T
-                    @ (-approach_direction.outward_axis)
-                )
-            ],
-        }
-        self.get_logger().info(
-            "Adaptive grasp approach: "
-            f"enabled={self.last_plan_report['adaptive_grasp']['enabled']} "
-            f"local_y_signed_rotation="
-            f"{approach_direction.applied_rotation_deg:+.1f}° "
-            f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
-            f"->{approach_direction.selected_robot_error_deg:.1f}° "
-            f"outward={approach_direction.outward_axis.round(4).tolist()}"
-        )
 
         tip_tf = self._lookup_transform(self.tip_link)
         gripper_to_tip_tf = self._lookup_transform(
@@ -2211,6 +2535,78 @@ class CartesianHarvestPlanner(Node):
                 "TOOL_TF_NOT_FOUND",
             )
             return None
+
+        adaptive_enabled = bool(
+            self.get_parameter("adaptive_grasp_enabled").value
+        )
+        selection_report = {
+            "selection_mode": "disabled",
+            "fallback_used": False,
+            "ik_evaluation_count": 0,
+        }
+        if adaptive_enabled:
+            approach_direction, selection_report = (
+                self._select_minimum_ik_approach(
+                    tomato_position=tomato_position,
+                    tomato_rotation=tomato_rotation,
+                    stemward=stemward,
+                    gripper_to_tip_rotation=self._rotation_matrix(
+                        gripper_to_tip_tf
+                    ),
+                    planning_to_tip_translation=self._translation(
+                        planning_to_tip_tf
+                    ),
+                    planning_to_tip_rotation=self._rotation_matrix(
+                        planning_to_tip_tf
+                    ),
+                )
+            )
+            outward_hint = approach_direction.outward_axis
+        else:
+            approach_direction = AdaptiveApproachDirection(
+                outward_hint,
+                0.0,
+                0.0,
+                0.0,
+            )
+
+        self.last_plan_report["adaptive_grasp"] = {
+            "enabled": adaptive_enabled,
+            "applied_rotation_deg": float(
+                approach_direction.applied_rotation_deg
+            ),
+            "current_robot_error_deg": float(
+                approach_direction.current_robot_error_deg
+            ),
+            "selected_robot_error_deg": float(
+                approach_direction.selected_robot_error_deg
+            ),
+            "outward_axis": [
+                float(value) for value in approach_direction.outward_axis
+            ],
+            "approach_axis_tomato_local": [
+                float(value)
+                for value in (
+                    tomato_rotation.T
+                    @ (-approach_direction.outward_axis)
+                )
+            ],
+            **selection_report,
+        }
+        fallback_text = (
+            f", fallback={selection_report.get('fallback_reason')}"
+            if selection_report.get("fallback_used")
+            else ""
+        )
+        self.get_logger().info(
+            "접근각 선택: "
+            f"mode={selection_report.get('selection_mode')} "
+            f"rotation={approach_direction.applied_rotation_deg:+.1f}° "
+            f"IK검사={selection_report.get('ik_evaluation_count', 0)}회 "
+            f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
+            f"->{approach_direction.selected_robot_error_deg:.1f}°"
+            f"{fallback_text}"
+        )
 
         virtual_vine_origin = tomato_position + stemward
         current_tip_position = self._translation(tip_tf)
