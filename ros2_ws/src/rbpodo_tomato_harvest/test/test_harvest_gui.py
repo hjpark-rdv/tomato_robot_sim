@@ -51,6 +51,9 @@ from rbpodo_tomato_harvest.harvest_gui import (
     lift_harvest_target_height_mm,
     named_pose_command,
     preplanned_batch_command,
+    repeat_cycle_command,
+    repeat_forward_distance_m,
+    repeat_stage_command,
     scene_parameters,
     stepper_command,
     sweep_execution_duration_text,
@@ -1583,14 +1586,174 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
     assert "harvest_wait_sec:=1.5" in command
     assert "stepwise_plan:=true" in command
+    assert "step_cycle_last_stage:=5" in command
+    assert "harvest_x_forward:=0.07" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
 
 
-def test_stepper_command_can_plan_only_repeat_stages_one_through_five():
-    command = stepper_command(1, cycle_only=True)
+def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
+    command = stepper_command(
+        1,
+        cycle_only=True,
+        cycle_last_stage=4,
+        cycle_forward_distance_m=0.035,
+    )
 
     assert "stepwise_plan:=true" in command
+    assert "step_cycle_last_stage:=4" in command
+    assert "harvest_x_forward:=0.035" in command
     assert command[-2:] == ["-p", "step_cycle_only:=true"]
+
+
+def test_stepper_command_rejects_invalid_repeat_last_stage():
+    with pytest.raises(ValueError, match="between 1 and 5"):
+        stepper_command(1, cycle_only=True, cycle_last_stage=6)
+    with pytest.raises(ValueError, match="between 0.010 and 0.070"):
+        stepper_command(1, cycle_forward_distance_m=0.071)
+
+
+@pytest.mark.parametrize(
+    ("millimeters", "meters"),
+    [("10", 0.010), ("35.5", 0.0355), ("70", 0.070)],
+)
+def test_repeat_forward_distance_converts_operator_mm_to_m(
+    millimeters,
+    meters,
+):
+    assert repeat_forward_distance_m(millimeters) == pytest.approx(meters)
+
+
+@pytest.mark.parametrize("value", ["9.9", "70.1", "invalid", "nan"])
+def test_repeat_forward_distance_rejects_values_outside_gui_range(value):
+    with pytest.raises(ValueError, match="10~70 mm|숫자"):
+        repeat_forward_distance_m(value)
+
+
+@pytest.mark.parametrize(
+    ("direction", "stage_number", "action", "last_index"),
+    [
+        ("forward", 1, "execute_cycle_forward", 0),
+        ("forward", 4, "execute_cycle_forward", 3),
+        ("reverse", 5, "execute_cycle_reverse", 4),
+    ],
+)
+def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
+    direction,
+    stage_number,
+    action,
+    last_index,
+):
+    assert repeat_cycle_command(direction, stage_number) == {
+        "command": action,
+        "last_stage_index": last_index,
+    }
+
+
+def test_repeat_cycle_command_rejects_invalid_stage_or_direction():
+    with pytest.raises(ValueError, match="between 1 and 5"):
+        repeat_cycle_command("forward", 6)
+    with pytest.raises(ValueError, match="direction"):
+        repeat_cycle_command("sideways", 3)
+
+
+@pytest.mark.parametrize(
+    ("direction", "next_index", "stage_number", "expected"),
+    [
+        ("forward", 0, 5, {"command": "execute_next"}),
+        ("forward", 4, 5, {"command": "execute_next"}),
+        ("forward", 5, 5, None),
+        ("reverse", 5, 5, {"command": "execute_previous"}),
+        ("reverse", 1, 5, {"command": "execute_previous"}),
+        ("reverse", 0, 5, None),
+    ],
+)
+def test_repeat_stage_command_advances_one_pause_safe_stage(
+    direction,
+    next_index,
+    stage_number,
+    expected,
+):
+    assert repeat_stage_command(direction, next_index, stage_number) == expected
+
+
+def test_repeat_stage_command_rejects_invalid_progress_state():
+    with pytest.raises(ValueError, match="outside the cycle"):
+        repeat_stage_command("forward", 6, 5)
+    with pytest.raises(ValueError, match="unsupported repeat direction"):
+        repeat_stage_command("sideways", 0, 5)
+
+
+def test_repeat_automation_sends_only_one_stage_before_next_event():
+    commands = []
+    gui = SimpleNamespace(
+        repeat_run_direction="forward",
+        step_execution_in_progress=False,
+        repeat_pause_requested=False,
+        repeat_cycle_last_index=4,
+        step_next_index=2,
+        repeat_paused=True,
+        _send_step_command=lambda command: commands.append(command) or True,
+        _complete_repeat_forward_cycle=lambda: pytest.fail(
+            "forward cycle completed too early"
+        ),
+        _complete_repeat_reverse_cycle=lambda: pytest.fail(
+            "reverse cycle completed unexpectedly"
+        ),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert commands == [{"command": "execute_next"}]
+    assert not gui.repeat_paused
+
+
+def test_repeat_automation_holds_at_stage_boundary_when_pause_requested():
+    messages = []
+    gui = SimpleNamespace(
+        repeat_run_direction="reverse",
+        step_execution_in_progress=False,
+        repeat_pause_requested=True,
+        repeat_cycle_last_index=4,
+        step_next_index=3,
+        repeat_paused=False,
+        repeat_status=SimpleNamespace(
+            set=messages.append,
+            get=lambda: messages[-1],
+        ),
+        status=SimpleNamespace(set=messages.append),
+        _update_step_controls=lambda: None,
+        _send_step_command=lambda _command: pytest.fail(
+            "paused automation must not send a trajectory"
+        ),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert gui.repeat_paused
+    assert any("일시 정지" in message for message in messages)
+
+
+def test_repeat_automation_finishes_reverse_only_after_reaching_stage_zero():
+    completed = []
+    gui = SimpleNamespace(
+        repeat_run_direction="reverse",
+        step_execution_in_progress=False,
+        repeat_pause_requested=False,
+        repeat_cycle_last_index=4,
+        step_next_index=0,
+        repeat_paused=False,
+        _send_step_command=lambda _command: pytest.fail(
+            "completed reverse cycle must not send another trajectory"
+        ),
+        _complete_repeat_forward_cycle=lambda: pytest.fail(
+            "wrong completion direction"
+        ),
+        _complete_repeat_reverse_cycle=lambda: completed.append(True),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert completed == [True]
 
 
 def test_camera_service_for_source_maps_fake_and_real_services():

@@ -121,6 +121,7 @@ class ApproachRotationEvaluation:
     feasible: bool
     joint_distance: float = math.inf
     moveit_error_code: int = MoveItErrorCodes.FAILURE
+    rejection_reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -525,20 +526,19 @@ def deadline_safe_rotation_guard(
         raise ValueError("tomato_position and robot_position must be 3D")
 
     nominal_outward = outward_from_tomato_rotation(rotation, 0.0)
-    robotward_horizontal = np.array(
-        [robot[0] - tomato[0], robot[1] - tomato[1], 0.0],
-        dtype=float,
-    )
-    if float(np.linalg.norm(robotward_horizontal)) < 1e-9:
+    robotward_vector = robot - tomato
+    if float(np.linalg.norm(robotward_vector)) < 1e-9:
         return DeadlineRotationGuard(False, 0.0, 1.0)
-    robotward = _unit(robotward_horizontal, "tomato-to-robot direction")
+    robotward = _unit(robotward_vector, "tomato-to-robot direction")
     robot_side_dot = float(np.dot(nominal_outward, robotward))
-    if robot_side_dot >= -1e-9:
-        return DeadlineRotationGuard(False, 0.0, robot_side_dot)
-
     current_error_deg = math.degrees(
         math.acos(max(-1.0, min(1.0, robot_side_dot)))
     )
+    safety_margin_deg = min(90.0, max(0.0, float(margin_deg)))
+    maximum_safe_error_deg = 90.0 - safety_margin_deg
+    if current_error_deg <= maximum_safe_error_deg + 1e-9:
+        return DeadlineRotationGuard(False, 0.0, robot_side_dot)
+
     preferred = adaptive_outward_toward_robot(
         tomato_rotation=rotation,
         tomato_position=tomato,
@@ -549,14 +549,91 @@ def deadline_safe_rotation_guard(
     direction_sign = (
         1.0 if preferred.applied_rotation_deg >= 0.0 else -1.0
     )
-    boundary_magnitude = max(
-        0.0,
-        current_error_deg - 90.0 + max(0.0, float(margin_deg)),
+    # The candidate approach remains level, but the base can be substantially
+    # below the tomato. Convert the 3D cone limit into the corresponding,
+    # narrower XY angular limit before calculating the required correction.
+    horizontal_robotward = np.array(
+        [robotward[0], robotward[1], 0.0],
+        dtype=float,
     )
+    horizontal_scale = float(np.linalg.norm(horizontal_robotward))
+    required_dot = math.cos(math.radians(maximum_safe_error_deg))
+    if horizontal_scale <= 1e-9 or horizontal_scale < required_dot - 1e-9:
+        boundary_magnitude = 90.0
+    else:
+        horizontal_robotward = _unit(
+            horizontal_robotward,
+            "horizontal tomato-to-robot direction",
+        )
+        horizontal_error_deg = math.degrees(
+            math.acos(
+                max(
+                    -1.0,
+                    min(
+                        1.0,
+                        float(np.dot(nominal_outward, horizontal_robotward)),
+                    ),
+                )
+            )
+        )
+        maximum_horizontal_error_deg = math.degrees(
+            math.acos(
+                max(-1.0, min(1.0, required_dot / horizontal_scale))
+            )
+        )
+        boundary_magnitude = max(
+            0.0,
+            horizontal_error_deg - maximum_horizontal_error_deg,
+        )
     return DeadlineRotationGuard(
         True,
         direction_sign * min(90.0, boundary_magnitude),
         robot_side_dot,
+    )
+
+
+def robot_side_approach_error_deg(
+    outward_axis,
+    tomato_position,
+    robot_position,
+) -> float:
+    """Return the 3D angle between an approach and tomato-to-robot."""
+    outward = np.asarray(outward_axis, dtype=float)
+    tomato = np.asarray(tomato_position, dtype=float)
+    robot = np.asarray(robot_position, dtype=float)
+    if outward.shape != (3,):
+        raise ValueError("outward_axis must be 3D")
+    if tomato.shape != (3,) or robot.shape != (3,):
+        raise ValueError("tomato_position and robot_position must be 3D")
+
+    robotward_vector = robot - tomato
+    if float(np.linalg.norm(robotward_vector)) < 1e-9:
+        return 0.0
+    outward_direction = _unit(outward, "approach direction")
+    robotward = _unit(robotward_vector, "tomato-to-robot direction")
+    return math.degrees(
+        math.acos(
+            max(-1.0, min(1.0, float(np.dot(outward_direction, robotward))))
+        )
+    )
+
+
+def is_within_robot_side_approach_sector(
+    outward_axis,
+    tomato_position,
+    robot_position,
+    margin_deg: float = 22.5,
+) -> bool:
+    """Whether an approach is inside the robot-facing 180-2*margin sector."""
+    safety_margin_deg = min(90.0, max(0.0, float(margin_deg)))
+    maximum_error_deg = 90.0 - safety_margin_deg
+    return (
+        robot_side_approach_error_deg(
+            outward_axis,
+            tomato_position,
+            robot_position,
+        )
+        <= maximum_error_deg + 1e-9
     )
 
 
@@ -863,13 +940,13 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
-        self.declare_parameter("adaptive_grasp_max_rotation_deg", 70.0)
+        self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("adaptive_grasp_ik_timeout_sec", 0.05)
         self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
         self.declare_parameter("adaptive_grasp_search_step_deg", 10.0)
         self.declare_parameter("adaptive_grasp_search_resolution_deg", 1.0)
-        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 1.0)
+        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 22.5)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
@@ -888,6 +965,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("publish_display_trajectory", True)
         self.declare_parameter("stepwise_plan", False)
         self.declare_parameter("step_cycle_only", False)
+        self.declare_parameter("step_cycle_last_stage", 5)
         self.declare_parameter("execute", False)
 
         self.base_frame = str(self.get_parameter("base_frame").value)
@@ -2216,6 +2294,16 @@ class CartesianHarvestPlanner(Node):
                 ).value
             ),
         )
+        deadline_margin_deg = float(
+            self.get_parameter("adaptive_grasp_deadline_margin_deg").value
+        )
+        allowed_sector_deg = 180.0 - 2.0 * min(
+            90.0,
+            max(0.0, deadline_margin_deg),
+        )
+        sector_rejection_reason = (
+            f"PREGRASP_OUTSIDE_{allowed_sector_deg:g}_DEG_SECTOR"
+        )
         report = {
             "selection_mode": "minimum_ik_angle",
             "geometric_preferred_rotation_deg": float(
@@ -2229,6 +2317,7 @@ class CartesianHarvestPlanner(Node):
             "deadline_nominal_robot_side_dot": float(
                 deadline_guard.nominal_robot_side_dot
             ),
+            "allowed_robot_side_sector_deg": float(allowed_sector_deg),
         }
         if (
             deadline_guard.active
@@ -2251,28 +2340,20 @@ class CartesianHarvestPlanner(Node):
                 tomato_rotation,
                 rotation_deg,
             )
-            robotward = np.array(
-                [-tomato_position[0], -tomato_position[1], 0.0],
-                dtype=float,
+            selected_error = robot_side_approach_error_deg(
+                outward,
+                tomato_position,
+                [0.0, 0.0, 0.0],
             )
-            if float(np.linalg.norm(robotward)) < 1e-9:
-                selected_error = 0.0
-            else:
-                robotward = _unit(robotward, "tomato-to-robot direction")
-                selected_error = math.degrees(
-                    math.acos(
-                        max(
-                            -1.0,
-                            min(1.0, float(np.dot(outward, robotward))),
-                        )
-                    )
-                )
+            nominal_error = robot_side_approach_error_deg(
+                outward_from_tomato_rotation(tomato_rotation, 0.0),
+                tomato_position,
+                [0.0, 0.0, 0.0],
+            )
             return AdaptiveApproachDirection(
                 outward_axis=outward,
                 applied_rotation_deg=float(rotation_deg),
-                current_robot_error_deg=float(
-                    geometric_preference.current_robot_error_deg
-                ),
+                current_robot_error_deg=float(nominal_error),
                 selected_robot_error_deg=float(selected_error),
             )
 
@@ -2288,6 +2369,21 @@ class CartesianHarvestPlanner(Node):
                 deadline_guard.minimum_rotation_deg
             )
         safe_geometric_fallback = direction_for_rotation(fallback_rotation)
+        if not is_within_robot_side_approach_sector(
+            safe_geometric_fallback.outward_axis,
+            tomato_position,
+            [0.0, 0.0, 0.0],
+            margin_deg=deadline_margin_deg,
+        ):
+            report.update(
+                {
+                    "selection_mode": "deadline_rejected",
+                    "fallback_used": False,
+                    "fallback_reason": sector_rejection_reason,
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return None, report
 
         wait_sec = max(
             0.0,
@@ -2335,6 +2431,22 @@ class CartesianHarvestPlanner(Node):
                 tomato_rotation,
                 rotation_deg,
             )
+            # This is a hard candidate-domain restriction, not a post-plan
+            # warning.  Out-of-sector poses never reach IK or OMPL.
+            if not is_within_robot_side_approach_sector(
+                outward,
+                tomato_position,
+                [0.0, 0.0, 0.0],
+                margin_deg=deadline_margin_deg,
+            ):
+                return ApproachRotationEvaluation(
+                    rotation_deg=float(rotation_deg),
+                    feasible=False,
+                    moveit_error_code=(
+                        MoveItErrorCodes.GOAL_VIOLATES_PATH_CONSTRAINTS
+                    ),
+                    rejection_reason=sector_rejection_reason,
+                )
             geometry = make_harvest_geometry(
                 tomato_position=tomato_position,
                 vine_origin=virtual_vine_origin,
@@ -2409,6 +2521,7 @@ class CartesianHarvestPlanner(Node):
                     else None
                 ),
                 "moveit_error_code": int(item.moveit_error_code),
+                "rejection_reason": str(item.rejection_reason),
             }
             for item in evaluations
         ]
@@ -2903,9 +3016,25 @@ class CartesianHarvestPlanner(Node):
             )
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
+        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
+        step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
+        cycle_last_stage = int(
+            self.get_parameter("step_cycle_last_stage").value
+        )
+        if step_cycle_only and not 1 <= cycle_last_stage <= 5:
+            self._record_plan_stage(
+                "STEP_CYCLE_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "INVALID_STEP_CYCLE_LAST_STAGE",
+                requested_stage=cycle_last_stage,
+            )
+            return None
         continuous_transition = bool(
             self.get_parameter("continuous_transition").value
         )
+        pick_ready_end = None
         if continuous_transition:
             continuous_plan = self._plan_continuous_preapproach(
                 preapproach_planning_pose,
@@ -2942,21 +3071,36 @@ class CartesianHarvestPlanner(Node):
                 pick_ready_end = self._trajectory_end_state(
                     pick_ready_trajectory
                 )
-            preapproach_trajectory = self._plan_preapproach(
-                preapproach_planning_pose,
-                pick_ready_end,
+            if step_cycle_only and cycle_last_stage == 1:
+                preapproach_trajectory = ()
+            else:
+                preapproach_trajectory = self._plan_preapproach(
+                    preapproach_planning_pose,
+                    pick_ready_end,
+                )
+                if preapproach_trajectory is None:
+                    return None
+        if preapproach_trajectory:
+            preapproach_end = self._trajectory_end_state(
+                preapproach_trajectory
             )
-            if preapproach_trajectory is None:
-                return None
-        preapproach_end = self._trajectory_end_state(preapproach_trajectory)
+        elif pick_ready_end is not None:
+            preapproach_end = copy.deepcopy(pick_ready_end)
+        else:
+            self._record_plan_stage(
+                "STEP_CYCLE_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "STEP_CYCLE_END_STATE_MISSING",
+            )
+            return None
 
         approach_waypoints = (
             as_planning_pose(geometry.target_pose),
             *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
         step_approach_trajectories = ()
-        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
-        step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
         if stepwise_plan:
             step_labels = (
                 "Step preapproach to target",
@@ -2968,7 +3112,9 @@ class CartesianHarvestPlanner(Node):
             step_groups = []
             flattened_approach = []
             step_start = preapproach_end
-            cycle_waypoint_count = 3 if step_cycle_only else 5
+            cycle_waypoint_count = (
+                max(0, cycle_last_stage - 2) if step_cycle_only else 5
+            )
             for waypoint, label in zip(
                 approach_waypoints[:cycle_waypoint_count],
                 step_labels[:cycle_waypoint_count],
@@ -2999,7 +3145,11 @@ class CartesianHarvestPlanner(Node):
             if approach_trajectory is None:
                 return None
 
-        approach_end = self._trajectory_end_state(approach_trajectory)
+        approach_end = (
+            self._trajectory_end_state(approach_trajectory)
+            if approach_trajectory
+            else copy.deepcopy(preapproach_end)
+        )
         after_wait_trajectory = ()
         after_wait_end = approach_end
         outward_retreat_trajectory = ()
@@ -3007,7 +3157,14 @@ class CartesianHarvestPlanner(Node):
         if step_cycle_only:
             retreat_after_harvest = False
             return_to_pick_ready = False
-            final_planning_pose = copy.deepcopy(approach_waypoints[2])
+            if cycle_last_stage <= 2:
+                final_planning_pose = copy.deepcopy(
+                    preapproach_planning_pose
+                )
+            else:
+                final_planning_pose = copy.deepcopy(
+                    approach_waypoints[cycle_last_stage - 3]
+                )
         else:
             after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
                 [as_planning_pose(tip_motion.after_wait_pose)],
@@ -3120,10 +3277,13 @@ class CartesianHarvestPlanner(Node):
             self.display_publisher.publish(display)
         if step_cycle_only:
             self.last_plan_report["step_cycle_only"] = True
+            self.last_plan_report["step_cycle_last_stage"] = (
+                cycle_last_stage
+            )
             self.get_logger().info(
-                "Approach repeat plan ready: current -> PICK_READY -> "
-                "pre-approach -> target -> +X70mm -> +Z40mm. "
-                "Stages after the first lift were intentionally not planned."
+                f"Approach repeat plan ready through stage "
+                f"{cycle_last_stage}. Later stages were intentionally "
+                "not planned."
             )
             return plan
         if return_to_pick_ready:
@@ -3149,7 +3309,8 @@ class CartesianHarvestPlanner(Node):
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
-            "+X70mm -> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
+            f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
+            "-> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )

@@ -18,6 +18,8 @@ from rbpodo_tomato_harvest.harvest_planner import (
     outward_from_tomato_rotation,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
+    is_within_robot_side_approach_sector,
+    robot_side_approach_error_deg,
     select_minimum_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
@@ -324,7 +326,7 @@ def test_deadline_guard_is_inactive_when_nominal_pregrasp_is_robot_side():
     guard = deadline_safe_rotation_guard(
         tomato_rotation=np.eye(3),
         tomato_position=[0.0, 0.0, 0.4],
-        robot_position=[-1.0, 1.0, 0.0],
+        robot_position=[-1.0, 1.0, 0.4],
         margin_deg=1.0,
     )
 
@@ -337,12 +339,12 @@ def test_deadline_guard_starts_at_ideal_boundary_toward_robot():
     guard = deadline_safe_rotation_guard(
         tomato_rotation=np.eye(3),
         tomato_position=[0.0, 0.0, 0.4],
-        robot_position=[1.0, 1.0, 0.0],
-        margin_deg=1.0,
+        robot_position=[1.0, 1.0, 0.4],
+        margin_deg=15.0,
     )
 
     assert guard.active
-    assert guard.minimum_rotation_deg == pytest.approx(46.0)
+    assert guard.minimum_rotation_deg == pytest.approx(60.0)
     selected = outward_from_tomato_rotation(
         np.eye(3),
         guard.minimum_rotation_deg,
@@ -354,6 +356,105 @@ def test_deadline_guard_starts_at_ideal_boundary_toward_robot():
         [0.0, -1.0, 0.0],
         atol=1e-9,
     )
+
+
+def test_deadline_guard_enforces_margin_even_just_inside_robot_side():
+    angle = np.deg2rad(80.0)
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-np.cos(angle), np.sin(angle), 0.4],
+        margin_deg=15.0,
+    )
+
+    assert guard.active
+    assert abs(guard.minimum_rotation_deg) == pytest.approx(5.0)
+    selected = outward_from_tomato_rotation(
+        np.eye(3),
+        guard.minimum_rotation_deg,
+    )
+    robotward = np.array([-np.cos(angle), np.sin(angle), 0.0])
+    selected_error = np.rad2deg(
+        np.arccos(np.clip(np.dot(selected, robotward), -1.0, 1.0))
+    )
+    assert selected_error == pytest.approx(75.0)
+
+
+def test_robot_side_sector_accepts_150_degrees_when_margin_is_15():
+    tomato = [0.0, 0.0, 0.4]
+    robot = [-1.0, 0.0, 0.4]
+    boundary = np.deg2rad(75.0)
+    just_outside = np.deg2rad(75.01)
+
+    assert robot_side_approach_error_deg([-1.0, 0.0, 0.0], tomato, robot) == 0.0
+    assert is_within_robot_side_approach_sector(
+        [-np.cos(boundary), np.sin(boundary), 0.0],
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+    assert not is_within_robot_side_approach_sector(
+        [-np.cos(just_outside), np.sin(just_outside), 0.0],
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+
+
+def test_robot_side_sector_defaults_to_robot_facing_135_degrees():
+    tomato = [0.0, 0.0, 0.4]
+    robot = [-1.0, 0.0, 0.4]
+    boundary = np.deg2rad(67.5)
+    just_outside = np.deg2rad(67.51)
+
+    assert is_within_robot_side_approach_sector(
+        [-np.cos(boundary), np.sin(boundary), 0.0], tomato, robot
+    )
+    assert not is_within_robot_side_approach_sector(
+        [-np.cos(just_outside), np.sin(just_outside), 0.0], tomato, robot
+    )
+
+
+def test_robot_side_sector_includes_robot_height_in_deadline_check():
+    tomato = [0.0, 0.0, 1.0]
+    robot = [-1.0, 0.0, 0.0]
+    horizontal_boundary = np.deg2rad(75.0)
+    outward = [
+        -np.cos(horizontal_boundary),
+        np.sin(horizontal_boundary),
+        0.0,
+    ]
+
+    assert robot_side_approach_error_deg(outward, tomato, robot) > 75.0
+    assert not is_within_robot_side_approach_sector(
+        outward,
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+
+
+def test_deadline_guard_rejects_captured_pose_when_45_degrees_is_insufficient():
+    tomato = np.array([0.430, -0.219, 0.692])
+    yaw = np.deg2rad(-143.620)
+    rotation = np.array(
+        [
+            [np.cos(yaw), -np.sin(yaw), 0.0],
+            [np.sin(yaw), np.cos(yaw), 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=rotation,
+        tomato_position=tomato,
+        robot_position=[0.0, 0.0, 0.0],
+        margin_deg=15.0,
+    )
+
+    assert guard.active
+    assert abs(guard.minimum_rotation_deg) == pytest.approx(53.53, abs=0.02)
+    assert abs(guard.minimum_rotation_deg) > 45.0
 
 
 def test_minimum_ik_rotation_keeps_zero_when_nominal_pose_is_feasible():

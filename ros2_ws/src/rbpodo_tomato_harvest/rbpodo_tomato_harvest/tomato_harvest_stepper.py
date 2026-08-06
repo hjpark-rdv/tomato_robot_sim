@@ -83,6 +83,7 @@ def reverse_trajectory_group(trajectories) -> tuple:
 def step_stage_specs(
     plan: HarvestMotionPlan,
     wait_seconds: float,
+    forward_distance_m: float = 0.070,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -113,9 +114,11 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[0]),
         },
         {
-            "key": "FORWARD_X70",
+            "key": "FORWARD_X",
             "label": "접근 목표 → 앞으로 이동",
-            "detail": "tip 로컬 +X 70 mm",
+            "detail": (
+                f"tip 로컬 +X {float(forward_distance_m) * 1000.0:.1f} mm"
+            ),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[1]),
         },
@@ -209,6 +212,19 @@ def _stage_metadata(stages: list[dict]) -> list[dict]:
     ]
 
 
+def cycle_last_stage_index(command: dict, stage_count: int) -> int:
+    """Validate the GUI-selected final stage for a 1↔X cycle."""
+    last_index = int(
+        command.get("last_stage_index", CYCLE_LAST_STAGE_INDEX)
+    )
+    maximum = min(CYCLE_LAST_STAGE_INDEX, int(stage_count) - 1)
+    if last_index < 0 or last_index > maximum:
+        raise ValueError(
+            f"반복 마지막 단계는 1~{maximum + 1} 범위여야 합니다."
+        )
+    return last_index
+
+
 def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bool:
     direction = "reverse" if reverse else "forward"
     expected = (
@@ -280,7 +296,14 @@ def main(args=None) -> None:
             raise SystemExit(1)
 
         wait_seconds = float(planner.get_parameter("harvest_wait_sec").value)
-        stages = step_stage_specs(plan, wait_seconds)
+        forward_distance_m = float(
+            planner.get_parameter("harvest_x_forward").value
+        )
+        stages = step_stage_specs(
+            plan,
+            wait_seconds,
+            forward_distance_m,
+        )
         expected = {
             str(name): float(value)
             for name, value in report.get("start_joint_positions", {}).items()
@@ -336,13 +359,24 @@ def main(args=None) -> None:
                 continue
             cycle_reverse = action == "execute_cycle_reverse"
             if cycle_reverse:
-                if next_index != CYCLE_LAST_STAGE_INDEX + 1:
+                try:
+                    cycle_last_index = cycle_last_stage_index(
+                        command,
+                        len(stages),
+                    )
+                except (TypeError, ValueError) as error:
+                    _emit("command_error", message=str(error))
+                    continue
+                if next_index != cycle_last_index + 1:
                     _emit(
                         "command_error",
-                        message="먼저 1→5 연속 동작을 완료하세요.",
+                        message=(
+                            f"먼저 1→{cycle_last_index + 1} 연속 동작을 "
+                            "완료하세요."
+                        ),
                     )
                     continue
-                for index in range(CYCLE_LAST_STAGE_INDEX, -1, -1):
+                for index in range(cycle_last_index, -1, -1):
                     if not _execute_cached_stage(
                         planner,
                         stages[index],
@@ -375,7 +409,14 @@ def main(args=None) -> None:
                         message="5→1 역순 복귀를 먼저 완료하세요.",
                     )
                     continue
-                target_index = CYCLE_LAST_STAGE_INDEX
+                try:
+                    target_index = cycle_last_stage_index(
+                        command,
+                        len(stages),
+                    )
+                except (TypeError, ValueError) as error:
+                    _emit("command_error", message=str(error))
+                    continue
             elif action == "execute_through":
                 target_index = int(command.get("stage_index", -1))
                 if target_index < next_index or target_index >= len(stages):

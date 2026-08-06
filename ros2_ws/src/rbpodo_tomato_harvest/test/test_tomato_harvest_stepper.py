@@ -6,10 +6,29 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
+    cycle_last_stage_index,
     reverse_robot_trajectory,
     reverse_trajectory_group,
     step_stage_specs,
 )
+
+
+@pytest.mark.parametrize(
+    ("requested", "expected"),
+    [(None, 4), (0, 0), (2, 2), (4, 4)],
+)
+def test_cycle_last_stage_index_accepts_gui_range(requested, expected):
+    command = {}
+    if requested is not None:
+        command["last_stage_index"] = requested
+
+    assert cycle_last_stage_index(command, 10) == expected
+
+
+@pytest.mark.parametrize("requested", [-1, 5, "invalid"])
+def test_cycle_last_stage_index_rejects_out_of_range_value(requested):
+    with pytest.raises((TypeError, ValueError)):
+        cycle_last_stage_index({"last_stage_index": requested}, 10)
 
 
 def _trajectory(name):
@@ -33,7 +52,7 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "MOVE_TO_READY",
         "READY_TO_PREAPPROACH",
         "PREAPPROACH_TO_TARGET",
-        "FORWARD_X70",
+        "FORWARD_X",
         "LIFT_Z40",
         "BACK_X50_FIRST",
         "LIFT_Z10",
@@ -45,6 +64,22 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
     assert stages[8]["kind"] == "wait"
     assert stages[8]["wait_seconds"] == pytest.approx(2.25)
     assert stages[9]["trajectories"][0].name == "return_ready"
+
+
+def test_step_stage_specs_displays_configured_forward_distance():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(5)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(plan, 2.0, forward_distance_m=0.035)
+
+    assert stages[3]["detail"] == "tip 로컬 +X 35.0 mm"
 
 
 def test_step_stage_specs_requires_five_detailed_approach_groups():
