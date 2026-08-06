@@ -128,11 +128,52 @@ GUI는 `수확 작업`, `스텝 실행`, `접근 반복 테스트`, `자동 테�
 19. 접근 1~X단계를 선택해 연속 진입·역순 복귀하고 전체 토마토까지 순회하는 테스트
 20. `/capture_camera` Trigger 서비스를 GUI에서 독립적으로 호출해 카메라 캡처
 21. SRDF 저장 자세를 선택해 constrained OMPL로 Plan & Execute
+22. 현재 Plan/스텝 대상의 원본 카메라 ID와 X/Y/Z 좌표를 TXT로 저장
 
 `수확 작업` 탭의 `카메라 캡처` 버튼은 `/capture_camera`
 (`std_srvs/srv/Trigger`)를 호출한다. 이 버튼은 토마토 좌표를 갱신하는
 `토마토 촬영 / 검출`과 별개이며, 서비스 응답의 성공 여부와 메시지를 하단 상태창과
 실행 로그에 표시한다.
+
+카메라 검출 영역의 `비전 피드백 JSON 저장` 버튼은 실제로 계획 중인
+`detected_tomato_N_tf`에 대응하는 카메라 검출 원본을 저장한다. 스텝 실행과
+접근 반복 테스트의 Plan 대기·실행·일시정지 상태에서도 버튼을 사용할 수 있으며,
+GUI에서 다른 행을 선택하더라도 실행 프로세스가 잡은 토마토를 기록한다. 파일에는
+카메라 ID, 카메라 프레임 기준 토마토/줄기 X/Y/Z, 두 점 거리, 실제
+Planner가 계산한 Recommend/최종 pre-grasp와 접근각 보정 결과가 JSON으로
+포함되고 기본 저장 경로는 `~/farmily_tomato/camera_target_records/`이다.
+`문제 유형`은 목록에서 고르거나 직접 입력할 수 있고 `비고`에는 영상 검토 요청을
+자유롭게 적을 수 있다. 현재 `TomatoDetection` 인터페이스가 제공하지 않는 UV와
+confidence는 임의 값을 만들지 않고 JSON에서 제외한다. Plan 결과가 아직 없는
+시점의 로봇 계산값은 `null`로 저장된다. 서비스 전달에 불필요한 GUI 상태,
+Planner 내부 설정, detection generation과 중복 진단 정보는 저장하지 않는다.
+
+Plan 완료 후 저장한 JSON은 별도의 좌표 그래프 프로그램으로 확인할 수 있다.
+
+```bash
+source ~/farmily_tomato/ros2_ws/install/setup.bash
+ros2 run rbpodo_tomato_harvest vision_feedback_viewer
+```
+
+인자 없이 실행하면 가장 최근 피드백 파일을 열고, 파일 선택 버튼으로 다른 결과를
+불러올 수 있다. 특정 파일을 바로 열 수도 있다.
+
+```bash
+ros2 run rbpodo_tomato_harvest vision_feedback_viewer \
+  ~/farmily_tomato/camera_target_records/파일명_feedback.txt
+```
+
+그래프는 외부 plotting 패키지 없이 Tkinter로 동작하며, 로봇 좌우축 `-Y`와 높이
+Z를 사용하는 `link0` 기준 측면도 하나만 표시한다. `link0 +Y`는 그래프 왼쪽,
+`link0 -Y`는 오른쪽에 표시되므로 좌우 정보가 사라지지 않는다. 로봇 base, 토마토,
+실제 검출 거리로 보정된 줄기점, Recommend 진입선과 최종 진입선을 색상으로
+구분하고 base→tomato 및 tomato→vine 실제 3D 거리도 함께 표시한다. 진입선은
+실제 pre-grasp 지점을 점으로 유지하면서 화살표 꼬리를 3배로 연장해 구별하기 쉽게
+표시하고, 화살표 촉은 확대된 토마토 원의 바깥에서 멈춘다. 줄기점은 실제 거리값을
+유지하되 Recommend 진입선이 토마토를 통과한 연장 방향의 콜아웃으로 분리하여
+라벨이 겹치지 않게 표시한다. 기존
+JSON에는 `link0` 기준 토마토/줄기 좌표가 없으므로 새 코드로 Plan한 뒤 JSON을
+다시 저장해야 한다.
 
 카메라 검출 영역의 `저장 자세` 콤보박스에서는 MoveIt SRDF에 등록된
 `PICK_READY`, `PICK_READY_RIGHT`, `CAPTURE_LEFT`를 선택할 수 있다.

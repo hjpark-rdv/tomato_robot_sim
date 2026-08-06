@@ -2923,6 +2923,29 @@ class CartesianHarvestPlanner(Node):
             outward_hint=outward_hint,
             tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
         )
+        recommend_rotation_deg = float(
+            selection_report.get("geometric_preferred_rotation_deg", 0.0)
+        )
+        recommend_outward = outward_from_tomato_rotation(
+            tomato_rotation,
+            recommend_rotation_deg,
+        )
+        recommend_geometry = make_harvest_geometry(
+            tomato_position=tomato_position,
+            vine_origin=virtual_vine_origin,
+            vine_axis=[0.0, 0.0, 1.0],
+            tip_standoff=float(self.get_parameter("tip_standoff").value),
+            tip_below_center=float(
+                self.get_parameter("tip_below_center").value
+            ),
+            preapproach_clearance=float(
+                self.get_parameter("preapproach_clearance").value
+            ),
+            outward_hint=recommend_outward,
+            tip_rotation_from_gripper=self._rotation_matrix(
+                gripper_to_tip_tf
+            ),
+        )
 
         preapproach_world = np.array(
             [
@@ -2942,6 +2965,24 @@ class CartesianHarvestPlanner(Node):
         )
         self.last_plan_report["approach_geometry"] = {
             "frame_id": self.tomato_frame,
+            "planning_frame_id": self.base_frame,
+            "pregrasp_reference_link": self.tip_link,
+            "tomato_xyz": [
+                float(value) for value in geometry.tomato_position
+            ],
+            "vine_xyz": [
+                float(value) for value in geometry.vine_point
+            ],
+            "recommend_pregrasp_xyz": [
+                float(recommend_geometry.preapproach_pose.position.x),
+                float(recommend_geometry.preapproach_pose.position.y),
+                float(recommend_geometry.preapproach_pose.position.z),
+            ],
+            "final_pregrasp_xyz": [
+                float(geometry.preapproach_pose.position.x),
+                float(geometry.preapproach_pose.position.y),
+                float(geometry.preapproach_pose.position.z),
+            ],
             "preapproach_position": [
                 float(value)
                 for value in (

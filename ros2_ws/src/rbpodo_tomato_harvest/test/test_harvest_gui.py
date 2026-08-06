@@ -36,6 +36,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     cartesian_fallback_summary,
     cancel_all_goals_request,
     camera_service_for_source,
+    camera_target_record_text,
     concise_plan_report,
     decode_compressed_result_image,
     detection_message_sorted_by_height,
@@ -88,6 +89,106 @@ def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
         (0.01, 0.01, 0.0, 5.0),
         (0.01, 0.01, 0.0, 10.0),
     ]
+
+
+def test_camera_target_record_text_preserves_camera_id_and_xyz():
+    record = camera_target_record_text(
+        target_frame="detected_tomato_3_tf",
+        camera_frame="d435_color_optical_frame",
+        camera_id="camera-tomato-17",
+        tomato_xyz=(0.1234567894, -0.2, 0.7654321),
+        vine_xyz=(0.1534567894, -0.2, 0.7654321),
+        detection_timestamp=1786002012.325,
+        plan_report={
+            "success": True,
+            "tomato_frame": "detected_tomato_3_tf",
+            "pipeline": "ompl",
+            "planner_id": "RRTConnect",
+            "adaptive_grasp": {
+                "geometric_preferred_rotation_deg": 14.2,
+                "applied_rotation_deg": 36.8,
+                "selected_rotation_deg": 36.8,
+            },
+            "approach_geometry": {
+                "planning_frame_id": "link0",
+                "pregrasp_reference_link": "tomato_gripper_tip",
+                "tomato_xyz": [0.55, -0.20, 0.74],
+                "vine_xyz": [0.60, -0.18, 0.74],
+                "recommend_pregrasp_xyz": [0.518, -0.205, 1.203],
+                "final_pregrasp_xyz": [0.541, -0.253, 1.198],
+            },
+        },
+        review_issue="줄기 좌표 불일치",
+        review_note="영상보다 오른쪽으로 검출됨",
+    )
+    payload = json.loads(record)
+
+    assert set(payload) == {
+        "target_id",
+        "timestamp",
+        "camera_id",
+        "vision",
+        "robot",
+        "review",
+    }
+    assert payload["target_id"] == "detected_tomato_3"
+    assert payload["timestamp"] == pytest.approx(1786002012.325)
+    assert payload["camera_id"] == "camera-tomato-17"
+    assert payload["vision"]["frame_id"] == "d435_color_optical_frame"
+    assert payload["vision"]["tomato_xyz"] == pytest.approx(
+        [0.123456789, -0.2, 0.7654321]
+    )
+    assert payload["vision"]["vine_xyz"] == pytest.approx(
+        [0.153456789, -0.2, 0.7654321]
+    )
+    assert math.dist(
+        payload["robot"]["tomato_xyz"],
+        payload["robot"]["vine_xyz"],
+    ) == pytest.approx(payload["vision"]["tomato_vine_distance_m"])
+    assert payload["robot"]["recommend_angle_deg"] == pytest.approx(14.2)
+    assert payload["robot"]["final_angle_deg"] == pytest.approx(36.8)
+    assert payload["robot"]["correction_angle_deg"] == pytest.approx(22.6)
+    assert set(payload["robot"]) == {
+        "plan_success",
+        "frame_id",
+        "reference_link",
+        "tomato_xyz",
+        "vine_xyz",
+        "recommend_pregrasp_xyz",
+        "recommend_angle_deg",
+        "final_pregrasp_xyz",
+        "final_angle_deg",
+        "correction_angle_deg",
+    }
+    assert payload["review"]["status"] == "REVIEW_REQUIRED"
+    assert payload["review"]["issue"]["code"] == (
+        "VINE_XYZ_MISMATCH"
+    )
+    assert record.endswith("\n")
+
+
+def test_camera_target_record_text_rejects_nonfinite_coordinates():
+    with pytest.raises(ValueError, match="유한한 X, Y, Z"):
+        camera_target_record_text(
+            target_frame="detected_tomato_0_tf",
+            camera_frame="camera",
+            camera_id="0",
+            tomato_xyz=(0.1, math.nan, 0.3),
+            vine_xyz=(0.2, 0.3, 0.4),
+            detection_timestamp=1.0,
+        )
+
+
+def test_camera_target_record_prefers_running_target_then_selection():
+    gui = SimpleNamespace(
+        active_camera_target_index=2,
+        detected_tomatoes=[object(), object(), object()],
+        _selected_index=lambda: 1,
+    )
+
+    assert HarvestGui._camera_target_index_for_record(gui) == 2
+    gui.active_camera_target_index = None
+    assert HarvestGui._camera_target_index_for_record(gui) == 1
 
 
 def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
