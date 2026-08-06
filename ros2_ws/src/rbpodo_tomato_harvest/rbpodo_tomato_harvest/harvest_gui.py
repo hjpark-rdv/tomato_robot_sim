@@ -25,7 +25,7 @@ from farmily_tomato_interfaces.srv import DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
-from rbpodo_tomato_harvest.tomato_tf_generator import descending_height_order
+from rbpodo_tomato_harvest.tomato_tf_generator import clustered_height_order
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -862,7 +862,10 @@ def detection_message_sorted_by_height(
             )
         else:
             centers.append(transformed_point_xyz(center, transform))
-    order = descending_height_order(centers)
+    order = clustered_height_order(
+        centers,
+        [detection.id for detection in message.detections],
+    )
     sorted_message = TomatoDetectionArray()
     sorted_message.header = message.header
     sorted_message.detections = [
@@ -880,6 +883,34 @@ def harvest_all_jobs(tomato_count: int) -> list[tuple[int, bool]]:
         for index in range(tomato_count)
         for execute in (False, True)
     ]
+
+
+def harvest_last_tomato_options(tomato_count: int) -> tuple[str, ...]:
+    """Return inclusive end-index choices for sequential harvesting."""
+    if tomato_count < 0:
+        raise ValueError("tomato_count must be zero or greater")
+    return ("전체",) + tuple(
+        f"{index}번까지" for index in range(tomato_count)
+    )
+
+
+def harvest_target_count(tomato_count: int, selection: str) -> int:
+    """Convert an inclusive last-tomato selection to a target count."""
+    if tomato_count <= 0:
+        raise ValueError("수확할 검출 토마토가 없습니다.")
+    value = str(selection).strip()
+    if value == "전체":
+        return tomato_count
+    token = value.split("번", maxsplit=1)[0].strip()
+    try:
+        last_index = int(token)
+    except ValueError as error:
+        raise ValueError(f"지원하지 않는 마지막 토마토 값입니다: {value}") from error
+    if not 0 <= last_index < tomato_count:
+        raise ValueError(
+            f"마지막 토마토는 0~{tomato_count - 1}번이어야 합니다."
+        )
+    return last_index + 1
 
 
 def tomato_stem_arrow_length(
@@ -1884,6 +1915,7 @@ class HarvestGui(Node):
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
+        self.harvest_last_tomato_var = tk.StringVar(value="전체")
         self.lift_harvest_var = tk.BooleanVar(value=False)
         self.preplan_all_var = tk.BooleanVar(value=False)
         self.step_execution_enabled_var = tk.BooleanVar(value=False)
@@ -2321,13 +2353,33 @@ class HarvestGui(Node):
         )
         self.linear_motor_wait_entry.grid(row=0, column=0)
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
+        ttk.Label(options, text="연속 수확 종료").grid(
+            row=2,
+            column=0,
+            sticky="w",
+            pady=(8, 0),
+        )
+        self.harvest_last_tomato_combo = ttk.Combobox(
+            options,
+            textvariable=self.harvest_last_tomato_var,
+            values=("전체",),
+            state="disabled",
+            width=20,
+        )
+        self.harvest_last_tomato_combo.grid(
+            row=2,
+            column=1,
+            sticky="ew",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
         self.continuous_harvest_checkbox = ttk.Checkbutton(
             options,
             text="연속 수확: 식물 바깥 arc 경유",
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=2, column=0, columnspan=2, sticky="w", pady=(8, 0)
+            row=3, column=0, columnspan=2, sticky="w", pady=(8, 0)
         )
         self.lift_harvest_checkbox = ttk.Checkbutton(
             options,
@@ -2336,7 +2388,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=3,
+            row=4,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2349,7 +2401,7 @@ class HarvestGui(Node):
             command=self._preplan_all_mode_changed,
         )
         self.preplan_all_checkbox.grid(
-            row=4, column=0, columnspan=2, sticky="w", pady=(6, 0)
+            row=5, column=0, columnspan=2, sticky="w", pady=(6, 0)
         )
 
         utility = ttk.Frame(motion_frame)
@@ -3552,7 +3604,7 @@ class HarvestGui(Node):
         self,
         message: TomatoDetectionArray,
     ) -> TomatoDetectionArray:
-        """Mirror the TF generator's highest-Z-first ID assignment."""
+        """Mirror the TF generator's cluster-priority ID assignment."""
         source_frame = str(message.header.frame_id)
         world_frame = self.lift_harvest_world_frame
         transform = None
@@ -5261,10 +5313,17 @@ class HarvestGui(Node):
         self.tomato_combo.configure(values=choices)
         self.step_tomato_combo.configure(values=choices)
         self.repeat_tomato_combo.configure(values=choices)
+        self.harvest_last_tomato_combo.configure(
+            values=harvest_last_tomato_options(len(choices))
+        )
+        self.harvest_last_tomato_var.set("전체")
         busy = (
             self.harvest_process is not None
             or self.batch_active
             or self.sweep_active
+        )
+        self.harvest_last_tomato_combo.configure(
+            state="disabled" if busy or not choices else "readonly"
         )
         if choices:
             self.tomato_combo.current(0)
@@ -5467,6 +5526,14 @@ class HarvestGui(Node):
         repeat_combo = getattr(self, "repeat_tomato_combo", None)
         if repeat_combo is not None:
             repeat_combo.configure(values=[])
+        last_tomato_combo = getattr(
+            self, "harvest_last_tomato_combo", None
+        )
+        if last_tomato_combo is not None:
+            last_tomato_combo.configure(values=("전체",), state="disabled")
+        last_tomato_var = getattr(self, "harvest_last_tomato_var", None)
+        if last_tomato_var is not None:
+            last_tomato_var.set("전체")
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
         self.execute_button.configure(state="disabled")
@@ -6951,9 +7018,14 @@ class HarvestGui(Node):
                 self.linear_motor_wait_sec.get()
             )
             pick_ready_state = self._selected_pick_ready_state()
+            target_count = harvest_target_count(
+                tomato_count,
+                self.harvest_last_tomato_var.get(),
+            )
         except ValueError as error:
-            messagebox.showerror("대기시간 입력 오류", str(error))
+            messagebox.showerror("전체 연속 수확 설정 오류", str(error))
             return
+        last_target_index = target_count - 1
         pipeline, planner_id, preapproach_mode = (
             self._selected_planner_config()
         )
@@ -7153,7 +7225,8 @@ class HarvestGui(Node):
             )
         if not messagebox.askyesno(
             "검출 토마토 전체 연속 수확",
-            f"검출된 토마토 {tomato_count}개를 순서대로 실제 수확할까요?\n\n"
+            f"검출 {tomato_count}개 중 0~{last_target_index}번, "
+            f"총 {target_count}개를 순서대로 실제 수확할까요?\n\n"
             f"{transition_message}"
             f"{failure_policy}"
             "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
@@ -7165,10 +7238,10 @@ class HarvestGui(Node):
         self.batch_jobs = (
             deque()
             if preplan_mode
-            else deque(harvest_all_jobs(tomato_count))
+            else deque(harvest_all_jobs(target_count))
         )
         self.batch_generation = self.detection_generation
-        self.batch_total = tomato_count
+        self.batch_total = target_count
         self.batch_completed = 0
         self.batch_skipped = 0
         self.batch_planner = self._selected_planner_config()
@@ -7197,8 +7270,11 @@ class HarvestGui(Node):
         self._invalidate_plan()
         self._clear_harvest_results()
         self._reset_tomato_motion_results("대기")
+        for excluded_index in range(target_count, tomato_count):
+            self._set_tomato_motion_result(excluded_index, "범위 제외")
         self._append_log(
-            f"전체 연속 수확 시작: 토마토 {tomato_count}개, "
+            f"전체 연속 수확 시작: 검출 {tomato_count}개 중 "
+            f"0~{last_target_index}번 ({target_count}개), "
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
@@ -8249,6 +8325,13 @@ class HarvestGui(Node):
         self.pick_ready_state_combo.configure(state=ready_state)
         self.sweep_pick_ready_state_combo.configure(state=ready_state)
         self.continuous_harvest_checkbox.configure(state=state)
+        self.harvest_last_tomato_combo.configure(
+            state=(
+                "disabled"
+                if busy or not self.detected_tomatoes
+                else "readonly"
+            )
+        )
         self.lift_harvest_checkbox.configure(state=state)
         self._update_preplan_checkbox_state()
         self.sweep_continuous_harvest_checkbox.configure(state=state)
@@ -8396,6 +8479,14 @@ class HarvestGui(Node):
         self.tomato_combo.configure(values=[])
         self.step_tomato_combo.configure(values=[])
         self.repeat_tomato_combo.configure(values=[])
+        last_tomato_combo = getattr(
+            self, "harvest_last_tomato_combo", None
+        )
+        if last_tomato_combo is not None:
+            last_tomato_combo.configure(values=("전체",), state="disabled")
+        last_tomato_var = getattr(self, "harvest_last_tomato_var", None)
+        if last_tomato_var is not None:
+            last_tomato_var.set("전체")
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")

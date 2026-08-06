@@ -46,8 +46,10 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_all_jobs,
     harvest_command,
     harvest_failure_summary,
+    harvest_last_tomato_options,
     harvest_result_marker,
     harvest_statistics_record,
+    harvest_target_count,
     is_critical_process_output,
     lift_harvest_target_height_mm,
     named_pose_command,
@@ -1957,6 +1959,34 @@ def test_detection_message_is_sorted_by_transformed_world_height():
     assert [item.id for item in sorted_message.detections] == ["high", "low"]
 
 
+def test_detection_message_prioritizes_cluster_summed_height():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "world"
+    specifications = (
+        ("capture/cluster_1/tomato_0", 0.90),
+        ("capture/cluster_1/tomato_1", 0.10),
+        ("capture/cluster_2/tomato_0", 0.70),
+        ("capture/cluster_2/tomato_1", 0.60),
+    )
+    detections.detections = [
+        TomatoDetection(
+            id=identifier,
+            center=Point(x=0.0, y=0.0, z=z),
+            stem_point=Point(x=0.01, y=0.0, z=z),
+        )
+        for identifier, z in specifications
+    ]
+
+    sorted_message = detection_message_sorted_by_height(detections)
+
+    assert [item.id for item in sorted_message.detections] == [
+        "capture/cluster_2/tomato_0",
+        "capture/cluster_2/tomato_1",
+        "capture/cluster_1/tomato_0",
+        "capture/cluster_1/tomato_1",
+    ]
+
+
 def test_detected_tomato_marker_array_validates_frame_and_diameter():
     detections = TomatoDetectionArray()
     with pytest.raises(ValueError, match="frame_id"):
@@ -2639,6 +2669,44 @@ def test_harvest_all_jobs_accepts_empty_detection_list():
 def test_harvest_all_jobs_rejects_negative_count():
     with pytest.raises(ValueError):
         harvest_all_jobs(-1)
+
+
+def test_harvest_last_tomato_options_are_inclusive():
+    assert harvest_last_tomato_options(5) == (
+        "전체",
+        "0번까지",
+        "1번까지",
+        "2번까지",
+        "3번까지",
+        "4번까지",
+    )
+
+
+def test_harvest_target_count_converts_inclusive_last_index():
+    assert harvest_target_count(8, "전체") == 8
+    assert harvest_target_count(8, "3번까지") == 4
+    assert harvest_target_count(8, "4번까지") == 5
+    assert harvest_all_jobs(harvest_target_count(8, "3번까지"))[-1] == (
+        3,
+        True,
+    )
+
+
+@pytest.mark.parametrize(
+    ("tomato_count", "selection"),
+    [
+        (0, "전체"),
+        (3, "3번까지"),
+        (3, "마지막"),
+        (3, "-1번까지"),
+    ],
+)
+def test_harvest_target_count_rejects_invalid_selection(
+    tomato_count,
+    selection,
+):
+    with pytest.raises(ValueError):
+        harvest_target_count(tomato_count, selection)
 
 
 def test_success_marker_is_green_and_points_along_tomato_positive_x():

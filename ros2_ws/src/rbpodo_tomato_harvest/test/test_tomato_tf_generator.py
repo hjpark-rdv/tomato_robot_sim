@@ -1,7 +1,9 @@
 import numpy as np
 
 from rbpodo_tomato_harvest.tomato_tf_generator import (
+    clustered_height_order,
     descending_height_order,
+    detection_cluster_id,
     parent_frame_tomato_rotation,
     quaternion_from_rotation,
     rotation_from_quaternion,
@@ -26,6 +28,43 @@ def test_equal_height_detection_order_uses_xy_as_stable_tie_breaker():
     ]
 
     assert descending_height_order(points) == [2, 1, 0]
+
+
+def test_detection_cluster_id_reads_vision_path_component():
+    identifier = "20260806_180654_902_0001/cluster_17/tomato_3"
+
+    assert detection_cluster_id(identifier) == "cluster_17"
+    assert detection_cluster_id("tomato_3") == "tomato_3"
+
+
+def test_clusters_use_summed_height_before_internal_height_order():
+    points = [
+        (0.0, 0.0, 0.90),  # cluster 1 total = 1.00
+        (0.0, 0.0, 0.10),
+        (0.2, 0.0, 0.70),  # cluster 2 total = 1.30
+        (0.2, 0.0, 0.60),
+    ]
+    detection_ids = [
+        "capture/cluster_1/tomato_0",
+        "capture/cluster_1/tomato_1",
+        "capture/cluster_2/tomato_0",
+        "capture/cluster_2/tomato_1",
+    ]
+
+    assert clustered_height_order(points, detection_ids) == [2, 3, 0, 1]
+
+
+def test_unclustered_detections_keep_global_height_order():
+    points = [
+        (0.0, 0.0, 0.50),
+        (0.0, 0.0, 0.90),
+        (0.0, 0.0, 0.70),
+    ]
+
+    assert clustered_height_order(
+        points,
+        ["tomato_0", "tomato_1", "tomato_2"],
+    ) == [1, 2, 0]
 
 
 def test_z_points_to_sky_and_x_points_to_horizontal_stem():

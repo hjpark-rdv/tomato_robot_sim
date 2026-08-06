@@ -1,4 +1,5 @@
 import math
+import re
 
 import numpy as np
 import rclpy
@@ -86,7 +87,9 @@ def descending_height_order(points) -> list[int]:
     coordinates = [tuple(float(value) for value in point) for point in points]
     for point in coordinates:
         if len(point) != 3 or not all(math.isfinite(value) for value in point):
-            raise ValueError("tomato center coordinates must be finite XYZ values")
+            raise ValueError(
+                "tomato center coordinates must be finite XYZ values"
+            )
     return sorted(
         range(len(coordinates)),
         key=lambda index: (
@@ -96,6 +99,67 @@ def descending_height_order(points) -> list[int]:
             index,
         ),
     )
+
+
+def detection_cluster_id(detection_id: str) -> str:
+    """Extract a vision cluster token such as ``cluster_1`` from an ID."""
+    identifier = str(detection_id).strip()
+    match = re.search(
+        r"(?:^|/)(cluster(?:[_-]?[A-Za-z0-9]+)?)(?:/|$)",
+        identifier,
+        flags=re.IGNORECASE,
+    )
+    return match.group(1).lower() if match else identifier
+
+
+def clustered_height_order(points, detection_ids) -> list[int]:
+    """Order clusters by summed Z, then tomatoes by descending Z.
+
+    Vision IDs containing the same ``cluster_*`` path component belong to one
+    cluster. IDs without a cluster component are treated as separate clusters,
+    which preserves ordinary global height ordering for legacy/fake inputs.
+    """
+    coordinates = [tuple(float(value) for value in point) for point in points]
+    identifiers = [str(value) for value in detection_ids]
+    if len(coordinates) != len(identifiers):
+        raise ValueError("points and detection_ids must have the same length")
+    for point in coordinates:
+        if len(point) != 3 or not all(math.isfinite(value) for value in point):
+            raise ValueError("tomato center coordinates must be finite XYZ values")
+
+    clusters: dict[str, list[int]] = {}
+    first_indices: dict[str, int] = {}
+    for index, identifier in enumerate(identifiers):
+        cluster_id = detection_cluster_id(identifier)
+        if not cluster_id:
+            cluster_id = f"__unclustered_{index}"
+        clusters.setdefault(cluster_id, []).append(index)
+        first_indices.setdefault(cluster_id, index)
+
+    for indices in clusters.values():
+        indices.sort(
+            key=lambda index: (
+                -coordinates[index][2],
+                coordinates[index][0],
+                coordinates[index][1],
+                index,
+            )
+        )
+
+    ordered_cluster_ids = sorted(
+        clusters,
+        key=lambda cluster_id: (
+            -sum(coordinates[index][2] for index in clusters[cluster_id]),
+            -max(coordinates[index][2] for index in clusters[cluster_id]),
+            cluster_id,
+            first_indices[cluster_id],
+        ),
+    )
+    return [
+        index
+        for cluster_id in ordered_cluster_ids
+        for index in clusters[cluster_id]
+    ]
 
 
 class TomatoTfGenerator(Node):
@@ -248,8 +312,9 @@ class TomatoTfGenerator(Node):
             prepared = []
 
         created = 0
-        order = descending_height_order(
-            [center for _detection_id, center, _stem in prepared]
+        order = clustered_height_order(
+            [center for _detection_id, center, _stem in prepared],
+            [detection_id for detection_id, _center, _stem in prepared],
         )
         for prepared_index in order:
             detection_id, center, stem_point = prepared[prepared_index]
@@ -265,7 +330,7 @@ class TomatoTfGenerator(Node):
 
         self.get_logger().info(
             f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
-            "(parent Z 높이 내림차순으로 ID 부여)"
+            "(클러스터 합산 Z 내림차순, 클러스터 내부 Z 내림차순으로 ID 부여)"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
