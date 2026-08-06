@@ -127,17 +127,27 @@ GUI는 `수확 작업`, `스텝 실행`, `접근 반복 테스트`, `자동 테�
 18. 전체 수확 궤적을 한 번 계산한 뒤 실제 로봇을 한 단계씩 선택 실행
 19. 접근 1~5단계를 연속 진입하고 같은 trajectory로 역순 복귀하는 반복 테스트
 20. `/capture_camera` Trigger 서비스를 GUI에서 독립적으로 호출해 카메라 캡처
+21. SRDF 저장 자세를 선택해 constrained OMPL로 Plan & Execute
 
 `수확 작업` 탭의 `카메라 캡처` 버튼은 `/capture_camera`
 (`std_srvs/srv/Trigger`)를 호출한다. 이 버튼은 토마토 좌표를 갱신하는
 `토마토 촬영 / 검출`과 별개이며, 서비스 응답의 성공 여부와 메시지를 하단 상태창과
 실행 로그에 표시한다.
 
+카메라 검출 영역의 `저장 자세` 콤보박스에서는 MoveIt SRDF에 등록된
+`PICK_READY`, `PICK_READY_RIGHT`, `CAPTURE_LEFT`를 선택할 수 있다.
+`Plan & Execute`를 누르면 현재 관절 자세에서 선택 자세까지 충돌 검사와 현재
+자세 중심 ±120° joint constraint를 적용한 OMPL/RRTConnect 경로를 계획하고,
+계획 성공 시에만 실제 trajectory를 실행한다. 실행 중에는 다른 수확 명령이
+비활성화되며 기존 `모션 정지` 버튼으로 계획·실행 취소와 RB5 정지를 요청할 수
+있다.
+
 같은 탭의 `수확 옵션` 아래에는 `/tomato_vision/result_image`
 (`sensor_msgs/msg/CompressedImage`)의 마지막 검출 결과를 표시한다. JPEG/PNG를
 직접 디코딩하고 표시 영역에 맞춰 종횡비를 유지해 축소하며, 새 결과를 받기
 전까지 마지막 이미지를 유지한다. 토픽은 서비스 호출 시점에만 발행되는
-`VOLATILE` 데이터이므로 GUI 실행 전에 발행된 과거 이미지는 표시하지 않는다.
+`RELIABLE`/`VOLATILE` 데이터이므로 GUI는 동일한 reliable QoS로 구독하지만,
+GUI 실행 전에 발행된 과거 이미지는 표시하지 않는다.
 
 `스텝 실행` 탭에서는 토마토와 시작 자세를 선택하고 `스텝 Plan 생성`을 누른다.
 이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, pre-approach,
@@ -378,7 +388,7 @@ deadline과 만나는 `ideal` 각도에 안전 여유각을 더한 값을 최소
 `DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM`으로 즉시 실패한다.
 
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
-- `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `90.0`
+- `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `70.0`
 - `adaptive_grasp_deadband_deg`: geometric fallback의 기존 방향 유지 범위, 기본 `10.0`
 - `adaptive_grasp_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.05`
 - `adaptive_grasp_ik_service_wait_sec`: `/compute_ik` 연결 대기, 기본 `0.5`

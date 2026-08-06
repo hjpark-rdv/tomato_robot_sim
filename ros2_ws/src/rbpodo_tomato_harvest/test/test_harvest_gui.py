@@ -25,6 +25,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     CAMERA_SOURCE_REAL,
     GUI_PLANNER_CONFIG,
     HarvestGui,
+    NAMED_POSE_STATES,
     PICK_READY_STATES,
     PLANNER_CONFIGS,
     PREPLANNED_BATCH_CONFIG_ENV,
@@ -48,6 +49,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_statistics_record,
     is_critical_process_output,
     lift_harvest_target_height_mm,
+    named_pose_command,
     preplanned_batch_command,
     scene_parameters,
     stepper_command,
@@ -2135,6 +2137,32 @@ def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
     assert "publish_display_trajectory:=false" in command
 
 
+def test_named_pose_command_builds_constrained_ompl_execute_command():
+    command = named_pose_command(
+        "CAPTURE_LEFT",
+        velocity_scale=0.35,
+        acceleration_scale=0.25,
+        python_executable="/usr/bin/python3",
+    )
+
+    assert command[:3] == [
+        "/usr/bin/python3",
+        "-m",
+        "rbpodo_tomato_harvest.named_pose_move",
+    ]
+    assert "pick_ready_state_name:=CAPTURE_LEFT" in command
+    assert "joint_planning_pipeline_id:=ompl" in command
+    assert "joint_planner_id:=RRTConnect" in command
+    assert "pick_ready_velocity_scale:=0.35" in command
+    assert "pick_ready_acceleration_scale:=0.25" in command
+    assert "publish_display_trajectory:=true" in command
+
+
+def test_named_pose_command_rejects_unknown_state():
+    with pytest.raises(ValueError, match="named pose"):
+        named_pose_command("UNKNOWN_POSE")
+
+
 def test_harvest_command_builds_pilz_lin_command():
     command = harvest_command(
         3,
@@ -2151,6 +2179,11 @@ def test_harvest_command_builds_pilz_lin_command():
 
 def test_planner_options_include_cartesian_and_pipeline_modes():
     assert PICK_READY_STATES == ("PICK_READY", "PICK_READY_RIGHT")
+    assert NAMED_POSE_STATES == (
+        "PICK_READY",
+        "PICK_READY_RIGHT",
+        "CAPTURE_LEFT",
+    )
     assert PLANNER_CONFIGS["Cartesian"] == (
         "ompl",
         "RRTConnect",

@@ -863,7 +863,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
-        self.declare_parameter("adaptive_grasp_max_rotation_deg", 90.0)
+        self.declare_parameter("adaptive_grasp_max_rotation_deg", 70.0)
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("adaptive_grasp_ik_timeout_sec", 0.05)
         self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
@@ -1387,6 +1387,49 @@ class CartesianHarvestPlanner(Node):
             start_state=start_state,
             label=label,
         )
+
+    def plan_and_execute_named_state(self) -> bool:
+        """Move from the live robot state to the selected SRDF group state."""
+        self._begin_plan_report()
+        state_name = str(self.get_parameter("pick_ready_state_name").value)
+        planned = self._plan_pick_ready(label="PICK_READY")
+        if planned is None:
+            self._finish_plan_report(False)
+            return False
+
+        trajectory, display_start_state = planned
+        if bool(self.get_parameter("publish_display_trajectory").value):
+            display = DisplayTrajectory()
+            display.model_id = self.robot_model_id
+            display.trajectory_start = self._complete_display_start_state(
+                display_start_state
+            )
+            display.trajectory.append(trajectory)
+            self.display_publisher.publish(display)
+
+        execution_started = time.monotonic()
+        success = self._execute_trajectory_group(
+            trajectory,
+            f"SRDF named pose {state_name}",
+        )
+        execution_duration = time.monotonic() - execution_started
+        self.last_plan_report["execution_requested"] = True
+        self.last_plan_report["execution_attempted"] = True
+        self.last_plan_report["execution_success"] = bool(success)
+        self.last_plan_report["execution_duration_sec"] = round(
+            execution_duration,
+            6,
+        )
+        if not success:
+            self._record_plan_stage(
+                "EXECUTION_NAMED_POSE",
+                "execution",
+                False,
+                execution_duration,
+                "TRAJECTORY_EXECUTION_FAILED",
+            )
+        self._finish_plan_report(success)
+        return success
 
     def _plan_joint_target(
         self,

@@ -47,6 +47,7 @@ PLANNER_CONFIGS = {
 }
 GUI_PLANNER_CONFIG = PLANNER_CONFIGS["Cartesian"]
 PICK_READY_STATES = ("PICK_READY", "PICK_READY_RIGHT")
+NAMED_POSE_STATES = (*PICK_READY_STATES, "CAPTURE_LEFT")
 CAMERA_SOURCE_FAKE = "Fake tomato"
 CAMERA_SOURCE_REAL = "실제 /detect_tomatoes"
 CAMERA_SOURCE_OPTIONS = (CAMERA_SOURCE_FAKE, CAMERA_SOURCE_REAL)
@@ -57,6 +58,7 @@ HARVEST_APPROACH_NAMESPACE = "harvest_actual_approach"
 HARVEST_SWEEP_APPROACH_NAMESPACE = "harvest_sweep_actual_approach"
 SWEEP_RESULT_PREFIX = "__HARVEST_RESULT__"
 PLAN_RESULT_PREFIX = "__HARVEST_PLAN_RESULT__"
+NAMED_POSE_RESULT_PREFIX = "__NAMED_POSE_RESULT__"
 PREPLANNED_BATCH_EVENT_PREFIX = "__HARVEST_PREPLANNED_BATCH_EVENT__"
 STEPPER_EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
 PREPLANNED_BATCH_CONFIG_ENV = "HARVEST_PREPLANNED_BATCH_CONFIG"
@@ -593,6 +595,46 @@ def harvest_command(
         "-p",
         "retreat_after_harvest:="
         f"{'true' if retreat_after_harvest else 'false'}",
+    ]
+
+
+def named_pose_command(
+    state_name: str,
+    *,
+    velocity_scale: float = 0.20,
+    acceleration_scale: float = 0.20,
+    python_executable: str | None = None,
+) -> list[str]:
+    """Build a constrained-OMPL Plan & Execute command for an SRDF pose."""
+    state_name = str(state_name)
+    if state_name not in NAMED_POSE_STATES:
+        raise ValueError(f"unsupported named pose: {state_name}")
+    for name, value in (
+        ("velocity_scale", velocity_scale),
+        ("acceleration_scale", acceleration_scale),
+    ):
+        if not 0.0 < float(value) <= 1.0:
+            raise ValueError(f"{name} must be greater than 0 and at most 1")
+    executable = python_executable or sys.executable
+    return [
+        executable,
+        "-m",
+        "rbpodo_tomato_harvest.named_pose_move",
+        "--ros-args",
+        "-r",
+        "__node:=named_pose_move",
+        "-p",
+        f"pick_ready_state_name:={state_name}",
+        "-p",
+        "joint_planning_pipeline_id:=ompl",
+        "-p",
+        "joint_planner_id:=RRTConnect",
+        "-p",
+        f"pick_ready_velocity_scale:={float(velocity_scale)}",
+        "-p",
+        f"pick_ready_acceleration_scale:={float(acceleration_scale)}",
+        "-p",
+        "publish_display_trajectory:=true",
     ]
 
 
@@ -1272,8 +1314,8 @@ class HarvestGui(Node):
             self.get_parameter("result_image_topic").value
         )
         result_image_qos = QoSProfile(
-            depth=1,
-            reliability=ReliabilityPolicy.BEST_EFFORT,
+            depth=10,
+            reliability=ReliabilityPolicy.RELIABLE,
             durability=DurabilityPolicy.VOLATILE,
         )
         self.result_image_subscription = self.create_subscription(
@@ -1513,6 +1555,8 @@ class HarvestGui(Node):
         self.step_session_verification = None
         self.step_session_mode = None
         self.harvest_plan_report = {}
+        self.named_pose_report = {}
+        self.named_pose_active_state = None
         self.last_failure_robot_state = None
         self.process_queue = queue.Queue()
         self.batch_active = False
@@ -1604,6 +1648,7 @@ class HarvestGui(Node):
             value=f"결과 이미지 대기: {self.result_image_topic}"
         )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
+        self.named_pose_var = tk.StringVar(value="PICK_READY")
         self.pick_ready_state_var = tk.StringVar(value="PICK_READY")
         self.scene_x = tk.StringVar(value="0.355")
         self.scene_y = tk.StringVar(value="-0.375")
@@ -1785,6 +1830,39 @@ class HarvestGui(Node):
             style="Compact.TButton",
         )
         self.capture_camera_button.grid(row=0, column=6)
+
+        ttk.Label(
+            camera_frame,
+            text="저장 자세",
+            foreground="#666666",
+        ).grid(row=1, column=0, sticky="w", pady=(8, 0))
+        self.named_pose_combo = ttk.Combobox(
+            camera_frame,
+            textvariable=self.named_pose_var,
+            values=NAMED_POSE_STATES,
+            state="readonly",
+            width=24,
+        )
+        self.named_pose_combo.grid(
+            row=1,
+            column=1,
+            sticky="w",
+            padx=(8, 16),
+            pady=(8, 0),
+        )
+        self.named_pose_button = ttk.Button(
+            camera_frame,
+            text="Plan & Execute",
+            command=self.move_to_named_pose,
+            style="Action.TButton",
+        )
+        self.named_pose_button.grid(
+            row=1,
+            column=2,
+            columnspan=2,
+            sticky="w",
+            pady=(8, 0),
+        )
 
         list_frame = ttk.LabelFrame(frame, text="검출된 토마토", padding=8)
         list_frame.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
@@ -5966,6 +6044,92 @@ class HarvestGui(Node):
             self._handle_lift_preparation_error,
         )
 
+    def move_to_named_pose(self) -> None:
+        """Plan and execute a selected SRDF group state."""
+        if (
+            self.harvest_process is not None
+            or self.step_process is not None
+            or self.batch_active
+            or self.sweep_active
+        ):
+            messagebox.showinfo("실행 중", "현재 모션 작업이 끝날 때까지 기다려 주세요.")
+            return
+        state_name = str(self.named_pose_var.get()).strip()
+        if state_name not in NAMED_POSE_STATES:
+            messagebox.showerror(
+                "저장 자세 오류",
+                f"지원하지 않는 저장 자세입니다: {state_name}",
+            )
+            return
+        if not messagebox.askyesno(
+            "저장 자세 Plan & Execute",
+            f"현재 자세에서 {state_name}(으)로 계획하고 실제 이동할까요?\n\n"
+            "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
+            icon="warning",
+        ):
+            return
+
+        command = named_pose_command(
+            state_name,
+            velocity_scale=self.motion_velocity_scale,
+            acceleration_scale=self.motion_acceleration_scale,
+        )
+        environment = os.environ.copy()
+        environment["PYTHONUNBUFFERED"] = "1"
+        self.named_pose_report = {}
+        self.status.set(f"저장 자세 {state_name} Plan & Execute 중...")
+        self._append_log(
+            f"[저장 자세 이동] {state_name} 계획 및 실행 시작 — "
+            "constrained OMPL/RRTConnect"
+        )
+        self._set_busy(True)
+        try:
+            self.harvest_process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                env=environment,
+            )
+            self.named_pose_active_state = state_name
+        except OSError as error:
+            self.harvest_process = None
+            self._set_busy(False)
+            self.status.set(f"저장 자세 {state_name} 실행 시작 실패")
+            self._append_log(f"[저장 자세 이동] 프로세스 시작 오류: {error}")
+            return
+        thread = threading.Thread(
+            target=self._read_named_pose_process,
+            args=(self.harvest_process, state_name),
+            daemon=True,
+        )
+        thread.start()
+
+    def _read_named_pose_process(self, process, state_name: str) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                line = line.rstrip()
+                if line.startswith(NAMED_POSE_RESULT_PREFIX):
+                    try:
+                        report = json.loads(
+                            line[len(NAMED_POSE_RESULT_PREFIX):]
+                        )
+                    except json.JSONDecodeError as error:
+                        self.process_queue.put(
+                            ("log", f"저장 자세 결과 해석 실패: {error}")
+                        )
+                        continue
+                    self.process_queue.put(
+                        ("named_pose_report", report, process)
+                    )
+                elif is_critical_process_output(line):
+                    self.process_queue.put(("log", line))
+        return_code = process.wait()
+        self.process_queue.put(
+            ("named_pose_done", return_code, state_name, process)
+        )
+
     def start_harvest_all(self) -> None:
         if (
             self.harvest_process is not None
@@ -6481,6 +6645,40 @@ class HarvestGui(Node):
             if item[0] == "log":
                 self._append_log(item[1])
                 continue
+            if item[0] == "named_pose_report":
+                _, report, process = item
+                if process is self.harvest_process:
+                    self.named_pose_report = report
+                continue
+            if item[0] == "named_pose_done":
+                _, return_code, state_name, process = item
+                if process is not self.harvest_process:
+                    continue
+                self.harvest_process = None
+                self.named_pose_active_state = None
+                self._set_busy(False)
+                duration = float(
+                    self.named_pose_report.get("duration_sec", 0.0)
+                )
+                if return_code == 0:
+                    message = (
+                        f"저장 자세 {state_name} 이동 완료 "
+                        f"({duration:.2f}s)"
+                    )
+                else:
+                    failure_stage = self.named_pose_report.get(
+                        "failure_stage", "UNKNOWN"
+                    )
+                    failure_reason = self.named_pose_report.get(
+                        "failure_reason", "UNKNOWN"
+                    )
+                    message = (
+                        f"저장 자세 {state_name} 이동 실패 — "
+                        f"{failure_stage}: {failure_reason}"
+                    )
+                self.status.set(message)
+                self._append_log(f"[저장 자세 이동] {message}")
+                continue
             if item[0] == "preplanned_batch_event":
                 _, event, process = item
                 if process is self.harvest_process and self.batch_active:
@@ -6918,6 +7116,7 @@ class HarvestGui(Node):
 
         was_batch = self.batch_active
         was_step = step_process is not None
+        named_pose_state = getattr(self, "named_pose_active_state", None)
         step_mode = getattr(self, "step_session_mode", None)
         self.status.set("수확 작업 중지 및 로봇 모션 정지 명령 전송 중...")
         self._append_log(
@@ -6950,6 +7149,7 @@ class HarvestGui(Node):
             self.step_session_mode = None
         else:
             self.harvest_process = None
+            self.named_pose_active_state = None
         if process is not None and process.poll() is None:
             process.terminate()
 
@@ -6972,6 +7172,11 @@ class HarvestGui(Node):
                     "RB 정지를 요청했습니다. 새 스텝 Plan이 필요합니다."
                 )
                 self.step_status.set(message)
+        elif named_pose_state:
+            message = (
+                f"저장 자세 {named_pose_state} 이동 중지 완료 — "
+                "MoveIt/controller 취소 및 RB 정지를 요청했습니다."
+            )
         else:
             message = (
                 "수확 모션 중지 완료 — MoveIt/controller 취소 및 RB 정지를 "
@@ -7003,6 +7208,10 @@ class HarvestGui(Node):
                 else "readonly"
             )
         )
+        self.named_pose_combo.configure(
+            state="disabled" if busy else "readonly"
+        )
+        self.named_pose_button.configure(state=state)
         self.read_scene_button.configure(state=state)
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
