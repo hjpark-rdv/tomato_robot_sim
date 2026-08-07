@@ -30,6 +30,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     PLANNER_CONFIGS,
     PREPLANNED_BATCH_CONFIG_ENV,
     actual_approach_marker,
+    actual_approach_marker_length,
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
@@ -57,6 +58,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     repeat_cycle_command,
     repeat_forward_distance_m,
     repeat_stage_command,
+    result_arrow_length_for_report,
     scene_parameters,
     stepper_command,
     sweep_execution_duration_text,
@@ -1888,6 +1890,18 @@ def test_preplanned_batch_command_limits_each_tomato_stage_not_count():
     assert "step_cycle_last_stage:=4" in command
 
 
+def test_preplanned_batch_command_can_plan_complete_sequence_without_execution():
+    command, environment = preplanned_batch_command(
+        5,
+        continuous_arc=True,
+        execute=False,
+    )
+
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["execute"] is False
+    assert "execute:=false" in command
+
+
 def test_harvest_command_rejects_invalid_motion_scale():
     with pytest.raises(ValueError, match="velocity_scale"):
         harvest_command(0, False, velocity_scale=1.01)
@@ -2342,6 +2356,33 @@ def test_actual_approach_marker_ignores_missing_geometry():
     assert actual_approach_marker(0, {}) is None
 
 
+def test_actual_approach_marker_length_matches_displayed_orange_arrow():
+    report = {
+        "approach_geometry": {
+            "frame_id": "detected_tomato_2_tf",
+            "preapproach_position": [-0.035, 0.014, -0.018],
+            "target_position": [-0.025, 0.010, -0.018],
+        }
+    }
+
+    marker = actual_approach_marker(2, report)
+    expected = math.dist(
+        (marker.points[0].x, marker.points[0].y, marker.points[0].z),
+        (marker.points[1].x, marker.points[1].y, marker.points[1].z),
+    )
+
+    assert actual_approach_marker_length(report) == pytest.approx(expected)
+    assert result_arrow_length_for_report(False, 0.015, report) == (
+        pytest.approx(expected)
+    )
+    assert result_arrow_length_for_report(True, 0.015, report) == (
+        pytest.approx(0.015)
+    )
+    assert result_arrow_length_for_report(False, 0.06, {}) == pytest.approx(
+        0.06
+    )
+
+
 def test_detection_markers_do_not_publish_orange_approach_preview():
     detections = TomatoDetectionArray()
     detections.header.frame_id = "camera"
@@ -2602,6 +2643,9 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         plan_button=SimpleNamespace(configure=lambda **kwargs: None),
         execute_button=SimpleNamespace(configure=lambda **kwargs: None),
         harvest_all_button=SimpleNamespace(configure=lambda **kwargs: None),
+        harvest_all_plan_button=SimpleNamespace(
+            configure=lambda **kwargs: None
+        ),
         _invalidate_plan=lambda: values.__setitem__("invalidated", True),
         _clear_detection_markers=lambda: values.__setitem__(
             "markers_cleared", True
@@ -3028,8 +3072,9 @@ def test_nonrotated_success_marker_uses_exact_planner_axis():
 def test_failure_marker_is_red():
     marker = harvest_result_marker(0, False, 0.04)
 
-    assert marker.points[1].x == pytest.approx(0.04)
-    assert marker.points[1].y == pytest.approx(0.0)
+    assert marker.points[0].x == pytest.approx(-0.04)
+    assert marker.points[0].y == pytest.approx(0.0)
+    assert marker.points[1] == Point()
     assert (marker.color.r, marker.color.g, marker.color.b, marker.color.a) == (
         1.0,
         0.0,
@@ -3047,8 +3092,9 @@ def test_failure_marker_points_from_plus_x_toward_minus_y_after_rotation():
     )
 
     component = 0.04 / (2.0 ** 0.5)
-    assert marker.points[1].x == pytest.approx(component)
-    assert marker.points[1].y == pytest.approx(-component)
+    assert marker.points[0].x == pytest.approx(-component)
+    assert marker.points[0].y == pytest.approx(component)
+    assert marker.points[1] == Point()
 
 
 def test_failure_marker_points_toward_plus_y_after_negative_rotation():
@@ -3060,8 +3106,9 @@ def test_failure_marker_points_toward_plus_y_after_negative_rotation():
     )
 
     component = 0.04 / (2.0 ** 0.5)
-    assert marker.points[1].x == pytest.approx(component)
-    assert marker.points[1].y == pytest.approx(component)
+    assert marker.points[0].x == pytest.approx(-component)
+    assert marker.points[0].y == pytest.approx(-component)
+    assert marker.points[1] == Point()
 
 
 def test_failure_marker_uses_exact_planner_approach_axis():
@@ -3073,8 +3120,9 @@ def test_failure_marker_uses_exact_planner_approach_axis():
         approach_axis_local=(0.6, -0.8),
     )
 
-    assert marker.points[1].x == pytest.approx(0.024)
-    assert marker.points[1].y == pytest.approx(-0.032)
+    assert marker.points[0].x == pytest.approx(-0.024)
+    assert marker.points[0].y == pytest.approx(0.032)
+    assert marker.points[1] == Point()
 
 
 def test_adaptive_rotation_report_requires_nonzero_applied_angle():
@@ -3100,6 +3148,23 @@ def test_adaptive_rotation_report_requires_nonzero_applied_angle():
             }
         }
     ) == pytest.approx((0.6, -0.8))
+
+
+def test_final_approach_geometry_overrides_stale_recommend_axis_on_failure():
+    report = {
+        "success": False,
+        "adaptive_grasp": {
+            "approach_axis_tomato_local": [1.0, 0.0, 0.0],
+        },
+        "approach_geometry": {
+            "preapproach_position": [-0.03, 0.03, -0.018],
+            "target_position": [-0.02, 0.02, -0.018],
+        },
+    }
+
+    assert adaptive_approach_axis_local(report) == pytest.approx(
+        (2.0 ** -0.5, -(2.0 ** -0.5))
+    )
 
 
 def test_sweep_marker_is_frozen_in_robot_base_frame():

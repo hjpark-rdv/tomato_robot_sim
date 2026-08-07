@@ -167,7 +167,23 @@ def adaptive_rotation_degrees(report) -> float:
 
 
 def adaptive_approach_axis_local(report):
-    """Return the exact planned approach axis in tomato-local coordinates."""
+    """Return the final planned approach axis in tomato-local coordinates.
+
+    Prefer the concrete final preapproach-to-target segment.  This geometry is
+    generated after adaptive correction and therefore remains authoritative
+    for failed plans as well.  The adaptive field is retained as a fallback
+    for reports produced before approach geometry was available.
+    """
+    geometry = report.get("approach_geometry", {})
+    preapproach = geometry.get("preapproach_position", [])
+    target = geometry.get("target_position", [])
+    if len(preapproach) >= 2 and len(target) >= 2:
+        x = float(target[0]) - float(preapproach[0])
+        y = float(target[1]) - float(preapproach[1])
+        length = math.hypot(x, y)
+        if length > 1e-9:
+            return (x / length, y / length)
+
     adaptive_grasp = report.get("adaptive_grasp", {})
     values = adaptive_grasp.get("approach_axis_tomato_local", [])
     if len(values) < 2:
@@ -676,6 +692,7 @@ def preplanned_batch_command(
     tomato_count: int,
     *,
     continuous_arc: bool,
+    execute: bool = True,
     planning_pipeline_id: str = "ompl",
     planner_id: str = "RRTConnect",
     preapproach_mode: str = "cartesian",
@@ -691,7 +708,7 @@ def preplanned_batch_command(
         raise ValueError("tomato_count must be greater than zero")
     command = harvest_command(
         0,
-        True,
+        execute,
         planning_pipeline_id=planning_pipeline_id,
         planner_id=planner_id,
         preapproach_mode=preapproach_mode,
@@ -714,7 +731,7 @@ def preplanned_batch_command(
             {
                 "tomato_count": int(tomato_count),
                 "continuous_arc": bool(continuous_arc),
-                "execute": True,
+                "execute": bool(execute),
                 "start_tolerance_deg": 3.0,
                 "harvest_stage_limit": harvest_stage_limit,
                 "candidate_attempts": 3,
@@ -1093,7 +1110,15 @@ def harvest_result_marker(
             x=float(arrow_length) * math.cos(angle),
             y=-float(arrow_length) * math.sin(angle),
         )
-    marker.points = [Point(), endpoint]
+    if success:
+        marker.points = [Point(), endpoint]
+    else:
+        # A failed result must still read as an approach direction: place the
+        # tail behind the tomato and point the arrow head at the tomato center.
+        marker.points = [
+            Point(x=-endpoint.x, y=-endpoint.y, z=-endpoint.z),
+            Point(),
+        ]
     marker.scale.x = 0.008
     marker.scale.y = 0.016
     marker.scale.z = 0.020
@@ -1170,6 +1195,33 @@ def actual_approach_marker(
     marker.color.b = 0.0
     marker.color.a = 1.0
     return marker
+
+
+def actual_approach_marker_length(report) -> float | None:
+    """Return the displayed orange approach-arrow length for this report."""
+    marker = actual_approach_marker(0, report)
+    if marker is None or len(marker.points) < 2:
+        return None
+    start, end = marker.points[:2]
+    length = math.sqrt(
+        (float(end.x) - float(start.x)) ** 2
+        + (float(end.y) - float(start.y)) ** 2
+        + (float(end.z) - float(start.z)) ** 2
+    )
+    return length if length > 1e-9 else None
+
+
+def result_arrow_length_for_report(
+    success: bool | None,
+    default_length: float,
+    report,
+) -> float:
+    """Use the orange approach length for a failed result arrow."""
+    if success is False:
+        failed_length = actual_approach_marker_length(report or {})
+        if failed_length is not None:
+            return failed_length
+    return float(default_length)
 
 
 def sweep_result_marker(
@@ -1855,6 +1907,7 @@ class HarvestGui(Node):
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
         self.batch_preplan_mode = False
+        self.batch_execute_motion = True
         self.batch_preplan_failure_message = ""
         self.batch_scene = (0.0, 0.0, 0.0, 0.0)
         self.tomato_motion_results: dict[int, str] = {}
@@ -2384,6 +2437,20 @@ class HarvestGui(Node):
         )
         self.harvest_all_button.grid(
             row=1,
+            column=1,
+            sticky="ew",
+            padx=(4, 0),
+            pady=(6, 0),
+        )
+        self.harvest_all_plan_button = ttk.Button(
+            action_frame,
+            text="전체 연속 Plan",
+            command=self.start_harvest_all_plan,
+            state="disabled",
+            style="Action.TButton",
+        )
+        self.harvest_all_plan_button.grid(
+            row=1,
             column=0,
             sticky="ew",
             padx=(0, 4),
@@ -2397,10 +2464,11 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.motion_stop_button.grid(
-            row=1,
-            column=1,
+            row=2,
+            column=0,
+            columnspan=2,
             sticky="ew",
-            padx=(4, 0),
+            padx=0,
             pady=(6, 0),
         )
         ttk.Separator(motion_frame, orient="horizontal").grid(
@@ -4433,7 +4501,11 @@ class HarvestGui(Node):
         plan_report=None,
         motion_result_text: str | None = None,
     ) -> None:
-        self._update_result_arrow_length(tomato_index)
+        self._update_result_arrow_length(
+            tomato_index,
+            success=success,
+            plan_report=plan_report,
+        )
         self.harvest_results[tomato_index] = success
         self.harvest_result_adaptive_rotation[tomato_index] = bool(
             success and adaptive_rotation_applied
@@ -5364,7 +5436,12 @@ class HarvestGui(Node):
         rotation = transform.transform.rotation
         return (rotation.x, rotation.y, rotation.z, rotation.w)
 
-    def _update_result_arrow_length(self, tomato_index: int) -> None:
+    def _update_result_arrow_length(
+        self,
+        tomato_index: int,
+        success: bool | None = None,
+        plan_report=None,
+    ) -> None:
         if not 0 <= tomato_index < len(self.detected_tomatoes):
             return
         source_to_parent_quaternion = self._source_to_result_parent_quaternion(
@@ -5375,14 +5452,28 @@ class HarvestGui(Node):
         )
         if source_to_parent_quaternion is None:
             self.result_arrow_lengths[tomato_index] = minimum_length
-            return
-        detection = self.detected_tomatoes[tomato_index]
-        self.result_arrow_lengths[tomato_index] = tomato_stem_arrow_length(
-            detection.center,
-            detection.stem_point,
-            source_to_parent_quaternion,
-            float(self.get_parameter("result_arrow_stem_margin").value),
-            minimum_length,
+        else:
+            detection = self.detected_tomatoes[tomato_index]
+            self.result_arrow_lengths[tomato_index] = tomato_stem_arrow_length(
+                detection.center,
+                detection.stem_point,
+                source_to_parent_quaternion,
+                float(self.get_parameter("result_arrow_stem_margin").value),
+                minimum_length,
+            )
+        self.result_arrow_lengths[tomato_index] = (
+            result_arrow_length_for_report(
+                success,
+                (
+                    max(
+                        self.result_arrow_lengths[tomato_index],
+                        self.detection_approach_marker_length,
+                    )
+                    if success is False
+                    else self.result_arrow_lengths[tomato_index]
+                ),
+                plan_report,
+            )
         )
 
     def _detection_key(self, message: TomatoDetectionArray):
@@ -5478,10 +5569,14 @@ class HarvestGui(Node):
             self.harvest_all_button.configure(
                 state="disabled" if busy else "normal"
             )
+            self.harvest_all_plan_button.configure(
+                state="disabled" if busy else "normal"
+            )
         else:
             self.selected_tomato.set("")
             self.plan_button.configure(state="disabled")
             self.harvest_all_button.configure(state="disabled")
+            self.harvest_all_plan_button.configure(state="disabled")
         self.status.set(f"토마토 {len(choices)}개 검출됨")
         self._append_log(
             f"[{message.header.frame_id}] 새 검출 결과: 토마토 {len(choices)}개"
@@ -5675,6 +5770,7 @@ class HarvestGui(Node):
         self.plan_button.configure(state="disabled")
         self.execute_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")
+        self.harvest_all_plan_button.configure(state="disabled")
         self._invalidate_plan()
         self._clear_detection_markers()
         self.status.set(f"{source} 선택됨 — 토마토 검출을 실행하세요.")
@@ -7347,7 +7443,11 @@ class HarvestGui(Node):
             ("named_pose_done", return_code, state_name, process)
         )
 
-    def start_harvest_all(self) -> None:
+    def start_harvest_all_plan(self) -> None:
+        """Plan the complete detected-tomato sequence without execution."""
+        self.start_harvest_all(execute_motion=False)
+
+    def start_harvest_all(self, execute_motion: bool = True) -> None:
         if (
             self.harvest_process is not None
             or self.step_process is not None
@@ -7373,7 +7473,9 @@ class HarvestGui(Node):
             return
         continuous_mode = bool(self.continuous_harvest_var.get())
         lift_mode = bool(self.lift_harvest_var.get())
-        preplan_mode = bool(self.preplan_all_var.get())
+        preplan_mode = (
+            bool(self.preplan_all_var.get()) if execute_motion else True
+        )
         if continuous_mode and not lift_mode and not preplan_mode:
             preplan_mode = True
             self.preplan_all_var.set(True)
@@ -7431,11 +7533,22 @@ class HarvestGui(Node):
                 "대기·후퇴 단계는 실행하지 않습니다.\n"
             )
         if preplan_mode:
-            transition_message += (
-                "각 토마토 trajectory를 PICK_READY 기준으로 먼저 독립 "
-                "계획하고, 성공한 토마토의 저장 trajectory만 실행합니다.\n"
-            )
-            if continuous_mode:
+            if execute_motion:
+                transition_message += (
+                    "각 토마토 trajectory를 PICK_READY 기준으로 먼저 독립 "
+                    "계획하고, 성공한 토마토의 저장 trajectory만 실행합니다.\n"
+                )
+            else:
+                transition_message += (
+                    "각 토마토 trajectory를 PICK_READY 기준으로 독립 계획하고 "
+                    "실제 로봇에는 실행하지 않습니다.\n"
+                )
+            if not execute_motion:
+                failure_policy = (
+                    "계획 실패 토마토는 건너뛰며 모든 성공·실패 결과만 "
+                    "화면에 표시합니다.\n"
+                )
+            elif continuous_mode:
                 failure_policy = (
                     "토마토 자체 계획 실패는 건너뜁니다. 토마토 사이 Arc가 "
                     "실패하면 검증된 경로를 역재생해 PICK_READY로 복귀한 뒤 "
@@ -7451,14 +7564,29 @@ class HarvestGui(Node):
                 "Plan-only 실패 토마토는 건너뛰며, 실제 실행 실패 시 "
                 "중단됩니다.\n"
             )
+        operation_title = (
+            "검출 토마토 전체 연속 수확"
+            if execute_motion
+            else "검출 토마토 전체 연속 Plan"
+        )
+        operation_prompt = (
+            "실행할까요?"
+            if execute_motion
+            else "실제 로봇을 움직이지 않고 전체 경로를 계산할까요?"
+        )
+        safety_notice = (
+            "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요."
+            if execute_motion
+            else "계획 결과와 실패 단계는 토마토 목록 및 실행 로그에 표시됩니다."
+        )
         if not messagebox.askyesno(
-            "검출 토마토 전체 연속 수확",
+            operation_title,
             f"검출된 토마토 {tomato_count}개 전체를 순서대로 "
-            f"실행할까요?\n\n"
+            f"{operation_prompt}\n\n"
             f"{transition_message}"
             f"{failure_policy}"
-            "로봇 주변이 안전하고 교시 모드가 해제되었는지 확인하세요.",
-            icon="warning",
+            f"{safety_notice}",
+            icon="warning" if execute_motion else "question",
         ):
             return
 
@@ -7479,6 +7607,7 @@ class HarvestGui(Node):
         self.batch_continuous_mode = continuous_mode
         self.batch_lift_harvest_mode = lift_mode
         self.batch_preplan_mode = preplan_mode
+        self.batch_execute_motion = bool(execute_motion)
         self.batch_preplan_failure_message = ""
         try:
             self.batch_scene = (
@@ -7490,17 +7619,20 @@ class HarvestGui(Node):
         except ValueError:
             self.batch_scene = ("", "", "", "")
         self.sweep_session_dir = None
+        operation_name = (
+            "전체 연속 수확" if execute_motion else "전체 연속 Plan"
+        )
         self._reset_live_statistics(
-            "결과 파일: 전체 연속 수확은 실시간 화면 표시 전용"
+            f"결과 파일: {operation_name}은 실시간 화면 표시 전용"
         )
         self.sweep_summary.set(
-            f"전체 연속 수확 — 토마토 0 / {self.batch_total}"
+            f"{operation_name} — 토마토 0 / {self.batch_total}"
         )
         self._invalidate_plan()
         self._clear_harvest_results()
         self._reset_tomato_motion_results("대기")
         self._append_log(
-            f"전체 연속 수확 시작: 검출 토마토 {tomato_count}개 전체, "
+            f"{operation_name} 시작: 검출 토마토 {tomato_count}개 전체, "
             f"토마토별 종료 단계="
             f"{harvest_stage_limit or '전체 수확'}, "
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
@@ -7509,6 +7641,7 @@ class HarvestGui(Node):
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
             f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
             f"전체 사전계획 모드={self.batch_preplan_mode}, "
+            f"실제 실행={self.batch_execute_motion}, "
             f"시작/복귀 자세={self.batch_pick_ready_state}"
         )
         self._set_busy(True)
@@ -7522,6 +7655,7 @@ class HarvestGui(Node):
         command, extra_environment = preplanned_batch_command(
             self.batch_total,
             continuous_arc=self.batch_continuous_mode,
+            execute=self.batch_execute_motion,
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
@@ -7534,10 +7668,11 @@ class HarvestGui(Node):
         environment = os.environ.copy()
         environment.update(extra_environment)
         environment["PYTHONUNBUFFERED"] = "1"
-        self.status.set("전체 trajectory 사전계획 시작...")
+        self.status.set("전체 trajectory Plan 시작...")
         self._append_log(
-            f"[전체 사전계획] 토마토 {self.batch_total}개 trajectory "
-            f"계산 시작 — Arc={self.batch_continuous_mode}"
+            f"[전체 연속 Plan] 토마토 {self.batch_total}개 trajectory "
+            f"계산 시작 — Arc={self.batch_continuous_mode}, "
+            f"실제 실행={self.batch_execute_motion}"
         )
         try:
             self.harvest_process = subprocess.Popen(
@@ -7667,17 +7802,28 @@ class HarvestGui(Node):
                 event.get("skipped_count", self.batch_skipped)
             )
             self._clear_active_camera_target()
-            self.status.set(
-                "전체 사전계획 완료 — "
-                f"성공 {planned_count}, 건너뜀 {skipped_count}; "
-                "저장 trajectory 실행 시작"
-            )
-            self._append_log(
-                "[전체 사전계획 완료] "
-                f"성공 {planned_count}개, 계획 실패 건너뜀 "
-                f"{skipped_count}개. 성공한 저장 trajectory만 "
-                "재계획 없이 실행합니다."
-            )
+            if self.batch_execute_motion:
+                self.status.set(
+                    "전체 사전계획 완료 — "
+                    f"성공 {planned_count}, 건너뜀 {skipped_count}; "
+                    "저장 trajectory 실행 시작"
+                )
+                self._append_log(
+                    "[전체 사전계획 완료] "
+                    f"성공 {planned_count}개, 계획 실패 건너뜀 "
+                    f"{skipped_count}개. 성공한 저장 trajectory만 "
+                    "재계획 없이 실행합니다."
+                )
+            else:
+                self.status.set(
+                    "전체 연속 Plan 완료 — "
+                    f"성공 {planned_count}, 실패 {skipped_count}"
+                )
+                self._append_log(
+                    "[전체 연속 Plan 완료] "
+                    f"성공 {planned_count}개, 실패 {skipped_count}개. "
+                    "실제 로봇 모션은 실행하지 않았습니다."
+                )
             return
         if phase == "executing":
             self._set_active_camera_target(index, "전체 사전계획 실행")
@@ -7748,11 +7894,12 @@ class HarvestGui(Node):
                 event.get("skipped_count", self.batch_skipped)
             )
             self._clear_active_camera_target()
-            self._append_log(
-                "[전체 사전계획 실행 완료] 성공 trajectory "
-                f"{executed_count}개 실행, 계획 실패 "
-                f"{skipped_count}개 건너뜀."
-            )
+            if self.batch_execute_motion:
+                self._append_log(
+                    "[전체 사전계획 실행 완료] 성공 trajectory "
+                    f"{executed_count}개 실행, 계획 실패 "
+                    f"{skipped_count}개 건너뜀."
+                )
 
     def _start_next_batch_job(self) -> None:
         if not self.batch_active:
@@ -8019,12 +8166,20 @@ class HarvestGui(Node):
                 if not self.batch_active:
                     continue
                 if return_code == 0:
-                    self._finish_batch(
-                        True,
-                        "전체 사전계획 수확 완료: 저장된 trajectory로 "
-                        f"토마토 {self.batch_completed}개 수확, "
-                        f"계획 실패 {self.batch_skipped}개 건너뜀",
-                    )
+                    if self.batch_execute_motion:
+                        message = (
+                            "전체 사전계획 수확 완료: 저장된 trajectory로 "
+                            f"토마토 {self.batch_completed}개 수확, "
+                            f"계획 실패 {self.batch_skipped}개 건너뜀"
+                        )
+                    else:
+                        planned_count = self.batch_total - self.batch_skipped
+                        message = (
+                            "전체 연속 Plan 완료: "
+                            f"성공 {planned_count}개, 실패 "
+                            f"{self.batch_skipped}개, 실제 실행 없음"
+                        )
+                    self._finish_batch(True, message)
                 else:
                     self._finish_batch(
                         False,
@@ -8250,7 +8405,11 @@ class HarvestGui(Node):
         )
         self._save_sweep_result(record)
         self._update_sweep_statistics(record)
-        self._update_result_arrow_length(tomato_index)
+        self._update_result_arrow_length(
+            tomato_index,
+            success=success,
+            plan_report=report,
+        )
         transform = None
         parent_frame = str(
             self.get_parameter("result_marker_parent_frame").value
@@ -8450,6 +8609,11 @@ class HarvestGui(Node):
         self._start_next_batch_job()
 
     def _finish_batch(self, success: bool, message: str) -> None:
+        operation_name = (
+            "전체 연속 수확"
+            if getattr(self, "batch_execute_motion", True)
+            else "전체 연속 Plan"
+        )
         self.batch_active = False
         self.batch_jobs.clear()
         self.batch_generation = None
@@ -8459,6 +8623,7 @@ class HarvestGui(Node):
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
         self.batch_preplan_mode = False
+        self.batch_execute_motion = True
         self.batch_preplan_failure_message = ""
         self.lift_harvest_pending = None
         self._clear_active_camera_target()
@@ -8466,10 +8631,10 @@ class HarvestGui(Node):
         self._set_busy(False)
         self.status.set(message)
         self.sweep_summary.set(
-            f"전체 연속 수확 완료 {self.sweep_completed}개 — {message}"
+            f"{operation_name} 완료 — {message}"
         )
         result = "완료" if success else "중단"
-        self._append_log(f"[전체 연속 수확 {result}] {message}")
+        self._append_log(f"[{operation_name} {result}] {message}")
 
     def stop_active_motion(self) -> None:
         """Stop an individual, batch, or automatic harvest operation."""
@@ -8625,6 +8790,9 @@ class HarvestGui(Node):
         self.harvest_all_button.configure(
             state="disabled" if busy or not self.detected_tomatoes else "normal"
         )
+        self.harvest_all_plan_button.configure(
+            state="disabled" if busy or not self.detected_tomatoes else "normal"
+        )
         self.motion_stop_button.configure(state="normal" if busy else "disabled")
         self.clear_markers_button.configure(
             state=(
@@ -8765,6 +8933,7 @@ class HarvestGui(Node):
         self.selected_tomato.set("")
         self.plan_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")
+        self.harvest_all_plan_button.configure(state="disabled")
         self._invalidate_plan()
         self._clear_detection_markers()
         prefix = "선택 환경 재현 완료" if preserve_sweep_markers else "적용 완료"
