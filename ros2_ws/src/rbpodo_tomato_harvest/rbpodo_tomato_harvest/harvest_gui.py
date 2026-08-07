@@ -25,7 +25,10 @@ from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
-from rbpodo_tomato_harvest.tomato_tf_generator import clustered_height_order
+from rbpodo_tomato_harvest.tomato_tf_generator import (
+    clustered_height_order,
+    harvest_tf_frame_id,
+)
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.executors import ExternalShutdownException
@@ -566,6 +569,7 @@ def harvest_command(
     pick_ready_state_name: str = "PICK_READY",
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
+    tomato_frame: str | None = None,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -610,13 +614,18 @@ def harvest_command(
             "adaptive_grasp_max_rotation_deg must be between 0 and 90"
         )
     executable = python_executable or sys.executable
+    tomato_frame = str(
+        tomato_frame or f"detected_tomato_{tomato_index}_tf"
+    ).strip()
+    if not tomato_frame:
+        raise ValueError("tomato_frame must not be empty")
     command = [
         executable,
         "-m",
         "rbpodo_tomato_harvest.tomato_harvest_test",
         "--ros-args",
         "-p",
-        f"tomato_frame:=detected_tomato_{tomato_index}_tf",
+        f"tomato_frame:={tomato_frame}",
         "-p",
         f"execute:={'true' if execute else 'false'}",
         "-p",
@@ -710,6 +719,7 @@ def preplanned_batch_command(
     tomato_count: int,
     *,
     continuous_arc: bool,
+    tomato_frames: list[str] | tuple[str, ...] | None = None,
     execute: bool = True,
     planning_pipeline_id: str = "ompl",
     planner_id: str = "RRTConnect",
@@ -726,9 +736,20 @@ def preplanned_batch_command(
     """Build the complete-batch planner command and private config env."""
     if tomato_count <= 0:
         raise ValueError("tomato_count must be greater than zero")
+    if tomato_frames is None:
+        tomato_frames = tuple(
+            f"detected_tomato_{index}_tf" for index in range(tomato_count)
+        )
+    else:
+        tomato_frames = tuple(str(frame).strip() for frame in tomato_frames)
+        if len(tomato_frames) != tomato_count or not all(tomato_frames):
+            raise ValueError(
+                "tomato_frames must contain one non-empty frame per tomato"
+            )
     command = harvest_command(
         0,
         execute,
+        tomato_frame=tomato_frames[0],
         planning_pipeline_id=planning_pipeline_id,
         planner_id=planner_id,
         preapproach_mode=preapproach_mode,
@@ -754,6 +775,7 @@ def preplanned_batch_command(
         PREPLANNED_BATCH_CONFIG_ENV: json.dumps(
             {
                 "tomato_count": int(tomato_count),
+                "tomato_frames": list(tomato_frames),
                 "continuous_arc": bool(continuous_arc),
                 "execute": bool(execute),
                 "start_tolerance_deg": 3.0,
@@ -779,12 +801,14 @@ def stepper_command(
     cycle_forward_distance_m: float = 0.070,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
+    tomato_frame: str | None = None,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
     command = harvest_command(
         tomato_index,
         True,
+        tomato_frame=tomato_frame,
         planning_pipeline_id=planning_pipeline_id,
         planner_id=planner_id,
         preapproach_mode=preapproach_mode,
@@ -1117,6 +1141,7 @@ def harvest_result_marker(
     adaptive_rotation_applied: bool = False,
     adaptive_rotation_deg: float = 0.0,
     approach_axis_local=None,
+    tomato_frame: str | None = None,
 ) -> Marker:
     """Create a result arrow at a detected tomato TF.
 
@@ -1129,7 +1154,9 @@ def harvest_result_marker(
     if arrow_length <= 0.0:
         raise ValueError("arrow_length must be greater than zero")
     marker = Marker()
-    marker.header.frame_id = f"detected_tomato_{tomato_index}_tf"
+    marker.header.frame_id = str(
+        tomato_frame or f"detected_tomato_{tomato_index}_tf"
+    )
     marker.ns = HARVEST_RESULT_NAMESPACE
     marker.id = tomato_index
     marker.type = Marker.ARROW
@@ -3826,7 +3853,7 @@ class HarvestGui(Node):
         return height_mm
 
     def _tomato_world_height_m(self, tomato_index: int) -> float:
-        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        tomato_frame = self._tomato_frame(tomato_index)
         transform = self.tf_buffer.lookup_transform(
             self.lift_harvest_world_frame,
             tomato_frame,
@@ -3905,7 +3932,7 @@ class HarvestGui(Node):
         )
         if expected is None:
             return None
-        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        tomato_frame = self._tomato_frame(tomato_index)
         transform = self.tf_buffer.lookup_transform(
             self.lift_harvest_world_frame,
             tomato_frame,
@@ -3927,7 +3954,7 @@ class HarvestGui(Node):
         )
         if expected is None:
             return None
-        tomato_frame = f"detected_tomato_{tomato_index}_tf"
+        tomato_frame = self._tomato_frame(tomato_index)
         transform = self.tf_buffer.lookup_transform(
             self.lift_harvest_world_frame,
             tomato_frame,
@@ -3981,28 +4008,34 @@ class HarvestGui(Node):
             self.detected_tf_sync_orientation_tolerance_deg,
         )
         for index in range(tomato_count):
+            frame_reader = getattr(self, "_tomato_frame", None)
+            tomato_frame = (
+                frame_reader(index)
+                if frame_reader is not None
+                else f"detected_tomato_{index}_tf"
+            )
             try:
                 error_m = self._detected_tomato_tf_sync_error_m(index)
                 orientation_error_deg = (
                     self._detected_tomato_tf_orientation_error_deg(index)
                 )
             except TransformException as error:
-                return False, f"detected_tomato_{index}_tf 조회 대기: {error}"
+                return False, f"{tomato_frame} 조회 대기: {error}"
             if error_m is None:
                 return False, f"토마토 {index}의 검출 중심 좌표 없음"
             if error_m > tolerance_m:
                 return (
                     False,
-                    f"detected_tomato_{index}_tf 위치 오차 "
+                    f"{tomato_frame} 위치 오차 "
                     f"{error_m * 1000.0:.1f}mm > "
                     f"{tolerance_m * 1000.0:.1f}mm",
                 )
             if orientation_error_deg is None:
-                return False, f"detected_tomato_{index}_tf 방향 비교 불가"
+                return False, f"{tomato_frame} 방향 비교 불가"
             if orientation_error_deg > orientation_tolerance_deg:
                 return (
                     False,
-                    f"detected_tomato_{index}_tf X축 오차 "
+                    f"{tomato_frame} X축 오차 "
                     f"{orientation_error_deg:.1f}° > "
                     f"{orientation_tolerance_deg:.1f}°",
                 )
@@ -4105,7 +4138,7 @@ class HarvestGui(Node):
                     )
                     return
                 on_error(
-                    f"detected_tomato_{tomato_index}_tf가 새 검출 위치로 "
+                    f"{self._tomato_frame(tomato_index)}가 새 검출 위치로 "
                     "갱신되지 않았습니다: "
                     f"위치 오차={tf_sync_error_m * 1000.0:.1f}mm, "
                     f"허용={tf_sync_tolerance_m * 1000.0:.1f}mm"
@@ -4135,7 +4168,7 @@ class HarvestGui(Node):
                 )
                 return
             on_error(
-                f"detected_tomato_{tomato_index}_tf의 지면 기준 높이를 "
+                f"{self._tomato_frame(tomato_index)}의 지면 기준 높이를 "
                 f"계산하지 못했습니다: {error}"
             )
             return
@@ -4556,6 +4589,7 @@ class HarvestGui(Node):
                 index,
                 success,
                 self.result_arrow_lengths.get(index, 0.04),
+                tomato_frame=self._tomato_frame(index),
                 adaptive_rotation_applied=(
                     self.harvest_result_adaptive_rotation.get(index, False)
                 ),
@@ -5503,7 +5537,7 @@ class HarvestGui(Node):
         pipeline, planner_id, preapproach_mode = verification[2:5]
         request = {
             "request_id": self.sweep_request_id,
-            "tomato_frame": f"detected_tomato_{tomato_index}_tf",
+            "tomato_frame": self._tomato_frame(tomato_index),
             "planning_pipeline_id": pipeline,
             "planner_id": planner_id,
             "preapproach_mode": preapproach_mode,
@@ -5647,7 +5681,7 @@ class HarvestGui(Node):
             self.tomato_tree.delete(item)
         choices = []
         for index, detection in enumerate(self.detected_tomatoes):
-            frame = f"detected_tomato_{index}_tf"
+            frame = harvest_tf_frame_id(detection.id, index)
             choices.append(f"{index}: {frame}")
             center = detection.center
             self.tomato_tree.insert(
@@ -5966,7 +6000,7 @@ class HarvestGui(Node):
         if index is None or not report:
             return
         report_target = str(report.get("tomato_frame") or "")
-        expected = f"detected_tomato_{index}_tf"
+        expected = self._tomato_frame(index)
         if report_target and report_target != expected:
             return
         self.active_camera_target_plan_report = dict(report)
@@ -6033,6 +6067,7 @@ class HarvestGui(Node):
             return
 
         detection = self.detected_tomatoes[index]
+        tomato_frame = self._tomato_frame(index)
         center = detection.center
         timestamp = datetime.now().astimezone()
         camera_frame = self.result_detection_frame
@@ -6052,11 +6087,11 @@ class HarvestGui(Node):
             report = self.active_camera_target_plan_report
             if not report:
                 candidate_report = self.harvest_plan_report or {}
-                expected_frame = f"detected_tomato_{index}_tf"
+                expected_frame = tomato_frame
                 if candidate_report.get("tomato_frame") == expected_frame:
                     report = candidate_report
             contents = camera_target_record_text(
-                target_frame=f"detected_tomato_{index}_tf",
+                target_frame=tomato_frame,
                 camera_frame=camera_frame,
                 camera_id=str(detection.id),
                 tomato_xyz=(center.x, center.y, center.z),
@@ -6091,7 +6126,7 @@ class HarvestGui(Node):
 
         self.status.set(f"카메라 좌표 저장 완료: {path.name}")
         self._append_log(
-            f"[카메라 좌표 저장] 대상=detected_tomato_{index}_tf, "
+            f"[카메라 좌표 저장] 대상={tomato_frame}, "
             f"camera_id={detection.id}, "
             f"XYZ=({center.x:.6f}, {center.y:.6f}, {center.z:.6f}) m, "
             f"상태={self._active_camera_target_state()}, "
@@ -6121,7 +6156,7 @@ class HarvestGui(Node):
         self.status.set("비전 피드백 JSON 저장 완료 / 서비스 응답 대기 중...")
         self._append_log(
             f"[비전 피드백 전송 요청] service={self.debug_frame_service}, "
-            f"대상=detected_tomato_{index}_tf, bytes="
+            f"대상={self._tomato_frame(index)}, bytes="
             f"{len(contents.encode('utf-8'))}"
         )
         future = self.debug_frame_client.call_async(request)
@@ -6140,7 +6175,7 @@ class HarvestGui(Node):
         except Exception as error:
             self.status.set("비전 피드백 JSON 서비스 호출 실패")
             self._append_log(
-                f"[비전 피드백 전송 오류] 대상=detected_tomato_{index}_tf, "
+                f"[비전 피드백 전송 오류] 대상={self._tomato_frame(index)}, "
                 f"오류={error}, 로컬파일={path}"
             )
             return
@@ -6150,13 +6185,13 @@ class HarvestGui(Node):
                 message or f"비전 피드백 JSON 전송 완료: tomato {index}"
             )
             self._append_log(
-                f"[비전 피드백 전송 성공] 대상=detected_tomato_{index}_tf, "
+                f"[비전 피드백 전송 성공] 대상={self._tomato_frame(index)}, "
                 f"응답={message or '(메시지 없음)'}, 로컬파일={path}"
             )
             return
         self.status.set(message or "비전 피드백 JSON 전송 거부")
         self._append_log(
-            f"[비전 피드백 전송 실패] 대상=detected_tomato_{index}_tf, "
+            f"[비전 피드백 전송 실패] 대상={self._tomato_frame(index)}, "
             f"응답={message or '(메시지 없음)'}, 로컬파일={path}"
         )
 
@@ -6168,6 +6203,16 @@ class HarvestGui(Node):
             return int(value.split(":", maxsplit=1)[0])
         except (ValueError, IndexError):
             return None
+
+    def _tomato_frame(self, index: int) -> str:
+        """Return the harvest TF assigned to one sorted camera detection."""
+        tomato_index = int(index)
+        if 0 <= tomato_index < len(self.detected_tomatoes):
+            return harvest_tf_frame_id(
+                self.detected_tomatoes[tomato_index].id,
+                tomato_index,
+            )
+        return f"detected_tomato_{tomato_index}_tf"
 
     def _tree_selection_changed(self, _event=None) -> None:
         selection = self.tomato_tree.selection()
@@ -6575,6 +6620,7 @@ class HarvestGui(Node):
         )
         command = stepper_command(
             index,
+            tomato_frame=self._tomato_frame(index),
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
@@ -7205,16 +7251,13 @@ class HarvestGui(Node):
                 else "'실제 로봇 스텝 실행 허용'을 먼저 체크하세요.",
             )
             return False
-        if self.step_session_verification != (
-            self.detection_generation,
-            self._selected_index(),
-            *self._selected_planner_config(),
-            self._selected_pick_ready_state(),
+        if not self._verification_matches_current_selection(
+            self.step_session_verification
         ):
             messagebox.showerror(
                 "스텝 Plan 무효",
-                "검출 결과, 토마토 선택 또는 시작 자세가 변경되었습니다. "
-                "스텝 Plan을 다시 생성하세요.",
+                "검출 결과, 토마토 선택, 시작 자세 또는 진입각 설정이 "
+                "변경되었습니다. 스텝 Plan을 다시 생성하세요.",
             )
             return False
         if not self.step_execution_confirmed:
@@ -7833,6 +7876,10 @@ class HarvestGui(Node):
         command, extra_environment = preplanned_batch_command(
             self.batch_total,
             continuous_arc=self.batch_continuous_mode,
+            tomato_frames=[
+                self._tomato_frame(index)
+                for index in range(self.batch_total)
+            ],
             execute=self.batch_execute_motion,
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
@@ -8197,6 +8244,7 @@ class HarvestGui(Node):
         command = harvest_command(
             index,
             execute,
+            tomato_frame=self._tomato_frame(index),
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
@@ -8238,7 +8286,7 @@ class HarvestGui(Node):
         else:
             end_label = "post-wait 유지"
         self._append_log(
-            f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
+            f"{batch_prefix}{mode} 시작: {self._tomato_frame(index)} "
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
             "angle_mode="
@@ -8626,7 +8674,7 @@ class HarvestGui(Node):
             self.get_parameter("result_marker_parent_frame").value
         )
         if not report.get("suppress_result_marker"):
-            tomato_frame = f"detected_tomato_{tomato_index}_tf"
+            tomato_frame = self._tomato_frame(tomato_index)
             try:
                 transform = self.tf_buffer.lookup_transform(
                     parent_frame,

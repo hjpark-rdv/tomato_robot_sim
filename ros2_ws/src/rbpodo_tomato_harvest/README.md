@@ -29,17 +29,21 @@ MoveIt 실행 시 `tomato_tf_generator`가 함께 시작된다. 카메라 팀의
 farmily_tomato_interfaces/msg/TomatoDetectionArray
 ```
 
-배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 새 배열이
-들어오면 이전 `detected_tomato_*` 목록을 교체하고
-`detected_tomato_0_tf`부터 다시 생성한다. 따라서 여러 번 촬영해도 TF가
-누적되지 않는다. TF를 등록하기 전에 모든 중심점을 `world`로 변환하고 Z가 높은
-순서로 다시 정렬한다. 비전 원본 ID의 `cluster_*` 경로 성분으로 토마토를 묶고,
-각 클러스터에 속한 토마토의 `world Z` 합계가 큰 클러스터부터 처리한다. 한
-클러스터 안에서는 Z가 높은 토마토부터 아래쪽으로 번호를 부여한다. 클러스터
-합계가 같으면 클러스터 최고 Z와 클러스터 ID를 안정적인 tie-breaker로 사용한다.
-`cluster_*`가 없는 원본 ID는 각각 독립 클러스터로 취급하므로 기존 입력은 전체
-높이 내림차순을 유지한다. GUI 검출 목록과 TF generator가 동일한 정렬 함수를
-사용한다. 운영 시 사용자는 카메라 팀이 제공하는 촬영 서비스만 호출한다.
+배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 카메라 ID가
+`...C0:T7`처럼 끝나면 마지막 `C0:T7`만 추출해 실제 수확 TF 이름으로 사용한다.
+GUI 목록, 개별·스텝·자동 수확 및 전체 사전계획도 모두 같은 TF 이름을 전달한다.
+이 형식이 없는 Fake·구형 입력만 `detected_tomato_N_tf` 이름을 사용한다. 새 배열이
+들어오면 이전 수확 TF 목록을 교체하므로 여러 번 촬영해도 TF가 누적되지 않는다.
+
+TF를 등록하기 전에 모든 중심점을 `world`로 변환한다. `C0:T7`에서는 `C0`을
+클러스터 ID로 인식하며, 같은 `C#`의 토마토가 중간에 다른 클러스터와 섞이지
+않도록 먼저 묶는다. 기존 `cluster_*` 경로 형식도 지원한다. 각 클러스터에 속한
+토마토의 `world Z` 합계가 큰 클러스터부터 처리하고, 한 클러스터 안에서는 Z가
+높은 토마토부터 정렬한다. 클러스터 합계가 같으면 클러스터 최고 Z와 클러스터
+ID를 안정적인 tie-breaker로 사용한다. 클러스터 정보가 없는 원본 ID는 각각
+독립 클러스터로 취급하므로 기존 입력은 전체 높이 내림차순을 유지한다. GUI 검출
+목록과 TF generator가 동일한 정렬 함수를 사용한다. 운영 시 사용자는 카메라
+팀이 제공하는 촬영 서비스만 호출한다.
 
 카메라 서비스의 응답값은 그 서비스를 호출한 클라이언트만 받을 수 있으므로,
 카메라 노드는 서비스 응답과 별개로 위 배열 토픽도 발행해야 한다. 각 토마토의
@@ -450,6 +454,13 @@ Pre-approach 이후의 접근과 수확 동작은 우선 TCP Cartesian 경로를
 각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
 `wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
 `wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
+같은 시작 자세 중심 constraint는 `GetCartesianPath.path_constraints`에도
+적용된다. Cartesian은 상대 jump threshold `2.0`, revolute 절대 jump threshold
+`20°`를 사용한다. MoveIt이 성공을 반환하더라도 실행 전에 모든 trajectory를
+다시 검사하여 base~wrist2의 관절 span이 `120°`, wrist3 span이 `180°`, 인접
+point의 관절 변화가 `45°`를 넘으면 경로를 폐기한다. Cartesian 경로가 이 검사에
+걸리면 기존 constrained OMPL fallback으로 전환하며, 캐시된 정방향·역방향
+trajectory도 실제 실행 직전에 동일한 검사를 다시 수행한다.
 Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `0.05 rad`
 (약 `2.86°`)이다. 이후 수확 목표까지는 Cartesian 경로가 정확한 pose로
 보정한다.

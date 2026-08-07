@@ -8,6 +8,8 @@ from types import SimpleNamespace
 import pytest
 from PIL import Image as PilImage
 
+import rbpodo_tomato_harvest.harvest_gui as harvest_gui_module
+
 from farmily_tomato_interfaces.msg import (
     TomatoDetection,
     TomatoDetectionArray,
@@ -73,12 +75,40 @@ from rbpodo_tomato_harvest.harvest_gui import (
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
+    revolute_position_error,
 )
 import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
 from rbpodo_tomato_harvest.tomato_harvest_preplanned_batch import (
     _candidate_failure_is_retryable,
+    _plan_independent_candidate,
 )
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
+
+
+def test_revolute_position_error_treats_full_turn_as_same_joint_pose():
+    assert revolute_position_error(
+        math.radians(350.0), math.radians(-10.0)
+    ) == pytest.approx(0.0, abs=1e-12)
+    assert math.degrees(
+        revolute_position_error(math.radians(179.0), math.radians(-179.0))
+    ) == pytest.approx(2.0)
+
+
+def test_preplanned_candidate_always_uses_canonical_ready_state():
+    calls = []
+    planner = SimpleNamespace(
+        plan=lambda **kwargs: calls.append(kwargs) or "planned"
+    )
+    ready_state = object()
+
+    assert _plan_independent_candidate(planner, ready_state) == "planned"
+    assert calls == [
+        {
+            "start_state_override": ready_state,
+            "start_pose_override": None,
+            "arc_failure_reverse_trajectory": (),
+        }
+    ]
 
 
 def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
@@ -1051,6 +1081,44 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
     assert "returned to PICK_READY" in events[-1][1]
 
 
+def test_execution_safety_gate_blocks_unsafe_cached_trajectory():
+    logged = []
+    recorded = []
+    violation = {
+        "joint_name": "base",
+        "reason": "SPAN_LIMIT_EXCEEDED",
+        "span_deg": 385.0,
+        "maximum_span_deg": 120.0,
+        "max_step_deg": 5.0,
+        "maximum_step_deg": 45.0,
+    }
+    planner = SimpleNamespace(
+        _wait_for_current_joint_positions=lambda timeout_sec: {"base": 0.0},
+        _trajectory_safety_violations=lambda trajectory, start_positions: [
+            violation
+        ],
+        _log_trajectory_safety_failure=lambda label, violations: (
+            logged.append((label, violations))
+        ),
+        _record_plan_stage=lambda *args, **kwargs: recorded.append(
+            (args, kwargs)
+        ),
+    )
+
+    success = CartesianHarvestPlanner._execute_trajectory(
+        planner,
+        "unsafe_cached_path",
+        "접근 반복 역재생",
+    )
+
+    assert success is False
+    assert logged == [
+        ("접근 반복 역재생 실행 전 검사", [violation])
+    ]
+    assert recorded[0][0][0] == "EXECUTION_TRAJECTORY_SAFETY"
+    assert recorded[0][0][4] == "UNSAFE_CACHED_TRAJECTORY"
+
+
 def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     events = []
     monkeypatch.setattr(
@@ -1901,12 +1969,36 @@ def test_preplanned_batch_command_selects_worker_and_arc_mode():
     config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
     assert config == {
         "tomato_count": 5,
+        "tomato_frames": [
+            "detected_tomato_0_tf",
+            "detected_tomato_1_tf",
+            "detected_tomato_2_tf",
+            "detected_tomato_3_tf",
+            "detected_tomato_4_tf",
+        ],
         "continuous_arc": True,
         "execute": True,
         "start_tolerance_deg": 3.0,
         "harvest_stage_limit": None,
         "candidate_attempts": 3,
     }
+
+
+def test_commands_forward_camera_target_tf_names():
+    command = harvest_command(0, False, tomato_frame="C0:T7")
+    assert "tomato_frame:=C0:T7" in command
+
+    step_command = stepper_command(0, tomato_frame="C0:T7")
+    assert "tomato_frame:=C0:T7" in step_command
+
+    batch_command, environment = preplanned_batch_command(
+        2,
+        continuous_arc=True,
+        tomato_frames=("C0:T7", "C0:T8"),
+    )
+    assert "tomato_frame:=C0:T7" in batch_command
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["tomato_frames"] == ["C0:T7", "C0:T8"]
 
 
 def test_preplanned_batch_command_limits_each_tomato_stage_not_count():
@@ -2164,6 +2256,52 @@ def test_repeat_automation_sends_only_one_stage_before_next_event():
     assert not gui.repeat_paused
 
 
+def test_repeat_execution_accepts_verification_with_adaptive_grasp_options(
+    monkeypatch,
+):
+    writes = []
+    verification = (
+        7,
+        2,
+        *GUI_PLANNER_CONFIG,
+        "PICK_READY_RIGHT",
+        True,
+        35.0,
+    )
+    gui = SimpleNamespace(
+        step_process=SimpleNamespace(
+            poll=lambda: None,
+            stdin=SimpleNamespace(
+                write=writes.append,
+                flush=lambda: None,
+            ),
+        ),
+        step_session_mode="repeat",
+        repeat_execution_enabled_var=SimpleNamespace(get=lambda: True),
+        step_execution_enabled_var=SimpleNamespace(get=lambda: True),
+        step_session_verification=verification,
+        step_execution_confirmed=True,
+        _verification_matches_current_selection=(
+            lambda current: current == verification
+        ),
+        _append_log=lambda _message: None,
+        _update_step_controls=lambda: None,
+    )
+    monkeypatch.setattr(
+        harvest_gui_module.messagebox,
+        "showerror",
+        lambda *_args, **_kwargs: pytest.fail(
+            "unchanged adaptive grasp verification must remain valid"
+        ),
+    )
+
+    assert HarvestGui._send_step_command(
+        gui,
+        {"command": "execute_next"},
+    ) is True
+    assert writes == [json.dumps({"command": "execute_next"}) + "\n"]
+
+
 def test_repeat_automation_holds_at_stage_boundary_when_pause_requested():
     messages = []
     gui = SimpleNamespace(
@@ -2338,6 +2476,34 @@ def test_detection_message_prioritizes_cluster_summed_height():
         "capture/cluster_2/tomato_1",
         "capture/cluster_1/tomato_0",
         "capture/cluster_1/tomato_1",
+    ]
+
+
+def test_detection_message_groups_camera_cluster_before_internal_height():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "world"
+    specifications = (
+        ("capture-C0:T7", 0.95),
+        ("capture-C1:T2", 0.40),
+        ("capture-C1:T3", 0.90),
+        ("capture-C0:T8", 0.30),
+    )
+    detections.detections = [
+        TomatoDetection(
+            id=identifier,
+            center=Point(x=0.0, y=0.0, z=z),
+            stem_point=Point(x=0.01, y=0.0, z=z),
+        )
+        for identifier, z in specifications
+    ]
+
+    sorted_message = detection_message_sorted_by_height(detections)
+
+    assert [item.id for item in sorted_message.detections] == [
+        "capture-C1:T3",
+        "capture-C1:T2",
+        "capture-C0:T7",
+        "capture-C0:T8",
     ]
 
 

@@ -25,6 +25,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     select_robotward_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
+    trajectory_joint_safety_violations,
 )
 
 
@@ -794,6 +795,78 @@ def test_joint_span_safety_gate_includes_wrist3():
 
     assert [item["joint_name"] for item in violations] == ["wrist3"]
     assert violations[0]["span_deg"] == pytest.approx(121.0)
+
+
+def test_trajectory_safety_rejects_c0_t6_style_long_joint_branch():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+        "wrist3",
+    ]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(
+            positions=np.deg2rad(
+                [-203.35, 346.05, -54.06, 170.58, 89.96, 192.74]
+            )
+        )
+    ]
+    start = dict(
+        zip(
+            trajectory.joint_trajectory.joint_names,
+            np.deg2rad(
+                [181.98, 66.51, -118.33, -36.23, -91.34, 88.14]
+            ),
+        )
+    )
+
+    violations = trajectory_joint_safety_violations(
+        trajectory,
+        start,
+        ["base", "shoulder", "elbow", "wrist1", "wrist2"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=45.0,
+    )
+
+    names = {item["joint_name"] for item in violations}
+    assert {"base", "shoulder", "wrist1", "wrist2"} <= names
+    base = next(item for item in violations if item["joint_name"] == "base")
+    assert base["span_deg"] == pytest.approx(385.33)
+    assert "SPAN_LIMIT_EXCEEDED" in base["reason"]
+
+
+def test_trajectory_safety_allows_small_motion_and_limits_wrist3_separately():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = ["base", "wrist3"]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=np.deg2rad([20.0, 150.0]))
+    ]
+
+    assert trajectory_joint_safety_violations(
+        trajectory,
+        {"base": 0.0, "wrist3": 0.0},
+        ["base"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=180.0,
+    ) == []
+
+    trajectory.joint_trajectory.points[0].positions = list(
+        np.deg2rad([20.0, 181.0])
+    )
+    violations = trajectory_joint_safety_violations(
+        trajectory,
+        {"base": 0.0, "wrist3": 0.0},
+        ["base"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=180.0,
+    )
+    assert [item["joint_name"] for item in violations] == ["wrist3"]
 
 
 def test_failure_robot_state_uses_last_valid_trajectory_point():

@@ -101,9 +101,27 @@ def descending_height_order(points) -> list[int]:
     )
 
 
-def detection_cluster_id(detection_id: str) -> str:
-    """Extract a vision cluster token such as ``cluster_1`` from an ID."""
+def camera_target_id(detection_id: str) -> str | None:
+    """Extract a trailing vision target token such as ``C0:T7``."""
     identifier = str(detection_id).strip()
+    match = re.search(r"(C\d+:T\d+)$", identifier, flags=re.IGNORECASE)
+    return match.group(1).upper() if match else None
+
+
+def harvest_tf_frame_id(detection_id: str, fallback_index: int) -> str:
+    """Return the camera target token used as the harvest TF frame name."""
+    target_id = camera_target_id(detection_id)
+    if target_id:
+        return target_id
+    return f"detected_tomato_{int(fallback_index)}_tf"
+
+
+def detection_cluster_id(detection_id: str) -> str:
+    """Extract ``C0`` or a legacy ``cluster_1`` token from a vision ID."""
+    identifier = str(detection_id).strip()
+    target_id = camera_target_id(identifier)
+    if target_id:
+        return target_id.split(":", maxsplit=1)[0].lower()
     match = re.search(
         r"(?:^|/)(cluster(?:[_-]?[A-Za-z0-9]+)?)(?:/|$)",
         identifier,
@@ -115,9 +133,10 @@ def detection_cluster_id(detection_id: str) -> str:
 def clustered_height_order(points, detection_ids) -> list[int]:
     """Order clusters by summed Z, then tomatoes by descending Z.
 
-    Vision IDs containing the same ``cluster_*`` path component belong to one
-    cluster. IDs without a cluster component are treated as separate clusters,
-    which preserves ordinary global height ordering for legacy/fake inputs.
+    Vision IDs ending in the same ``C#`` component of ``C#:T#``, or containing
+    the same legacy ``cluster_*`` path component, belong to one cluster. IDs
+    without either form are treated as separate clusters, preserving ordinary
+    global height ordering for legacy/fake inputs.
     """
     coordinates = [tuple(float(value) for value in point) for point in points]
     identifiers = [str(value) for value in detection_ids]
@@ -322,6 +341,7 @@ class TomatoTfGenerator(Node):
                 center,
                 stem_point,
                 sky_axis,
+                child_frame=camera_target_id(detection_id),
             )
             if success:
                 created += 1
@@ -330,7 +350,8 @@ class TomatoTfGenerator(Node):
 
         self.get_logger().info(
             f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
-            "(클러스터 합산 Z 내림차순, 클러스터 내부 Z 내림차순으로 ID 부여)"
+            "(카메라 C#:T# TF 이름, 클러스터 합산 Z 내림차순, "
+            "클러스터 내부 Z 내림차순)"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
@@ -437,6 +458,7 @@ class TomatoTfGenerator(Node):
         center: np.ndarray,
         stem_point: np.ndarray,
         sky_axis: np.ndarray,
+        child_frame: str | None = None,
     ) -> tuple[bool, str]:
         try:
             rotation = parent_frame_tomato_rotation(
@@ -446,7 +468,11 @@ class TomatoTfGenerator(Node):
         except ValueError as error:
             return False, str(error)
 
-        child_frame = f"{self.tf_prefix}{self.next_index}_tf"
+        child_frame = str(child_frame or "").strip()
+        if not child_frame:
+            child_frame = f"{self.tf_prefix}{self.next_index}_tf"
+        if child_frame in self.transforms:
+            return False, f"중복 수확 TF 이름입니다: {child_frame}"
         transform = TransformStamped()
         transform.header.frame_id = self.parent_frame
         transform.child_frame_id = child_frame

@@ -16,6 +16,7 @@ from rclpy.parameter import Parameter
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
+    revolute_position_error,
 )
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
     reverse_trajectory_group,
@@ -95,10 +96,19 @@ def _candidate_failure_is_retryable(report: dict) -> bool:
     }
 
 
+def _plan_independent_candidate(planner, ready_state):
+    """Plan one tomato only from the canonical selected READY state."""
+    return planner.plan(
+        start_state_override=ready_state,
+        start_pose_override=None,
+        arc_failure_reverse_trajectory=(),
+    )
+
+
 def _start_state_error_deg(planner, expected_positions: dict) -> float:
     current = planner._wait_for_current_joint_positions(timeout_sec=2.0)
     errors = [
-        abs(float(current[name]) - float(expected))
+        revolute_position_error(current[name], expected)
         for name, expected in expected_positions.items()
         if name in current
     ]
@@ -110,6 +120,9 @@ def _start_state_error_deg(planner, expected_positions: dict) -> float:
 def main(args=None) -> None:
     config = json.loads(os.environ.get(CONFIG_ENV, "{}"))
     tomato_count = int(config.get("tomato_count", 0))
+    tomato_frames = tuple(
+        str(frame).strip() for frame in config.get("tomato_frames", [])
+    )
     continuous_arc = bool(config.get("continuous_arc", False))
     execute = bool(config.get("execute", True))
     candidate_attempts = int(config.get("candidate_attempts", 3))
@@ -122,6 +135,14 @@ def main(args=None) -> None:
             raise SystemExit("harvest_stage_limit must be 3, 4, or null")
     if tomato_count <= 0:
         raise SystemExit("tomato_count must be greater than zero")
+    if not tomato_frames:
+        tomato_frames = tuple(
+            f"detected_tomato_{index}_tf" for index in range(tomato_count)
+        )
+    if len(tomato_frames) != tomato_count or not all(tomato_frames):
+        raise SystemExit(
+            "tomato_frames must contain one non-empty frame per tomato"
+        )
 
     rclpy.init(args=args)
     planner = CartesianHarvestPlanner()
@@ -137,25 +158,27 @@ def main(args=None) -> None:
             tomato_count=tomato_count,
             continuous_arc=continuous_arc,
         )
-        ready_state = (
-            planner._pick_ready_robot_state() if continuous_arc else None
-        )
+        # Validate every tomato from one canonical named READY state.  Chaining
+        # the previous candidate's final RobotState here is unsafe even for the
+        # non-Arc sequence: continuous joints can finish on an equivalent
+        # +/-2*pi branch, making the next Cartesian pre-approach fail although
+        # the same tomato succeeds when planned by itself.
+        ready_state = planner._pick_ready_robot_state()
         for index in range(tomato_count):
+            tomato_frame = tomato_frames[index]
             use_arc = continuous_arc and bool(cached)
-            # Arc mode first validates this tomato independently from READY.
-            # The already validated motion is retained even when its incoming
-            # Arc cannot be planned.
-            candidate_is_independent = continuous_arc
+            # Every candidate is first validated independently from READY.
+            # Arc mode may replace only the incoming segment afterwards.
             return_to_ready = not continuous_arc
             planner.set_parameters(
                 [
                     Parameter(
                         "tomato_frame",
-                        value=f"detected_tomato_{index}_tf",
+                        value=tomato_frame,
                     ),
                     Parameter(
                         "continuous_transition",
-                        value=False if candidate_is_independent else use_arc,
+                        value=False,
                     ),
                     Parameter(
                         "return_to_pick_ready",
@@ -178,7 +201,7 @@ def main(args=None) -> None:
             )
             # CartesianHarvestPlanner caches this frequently used target name
             # at construction time; keep the cache aligned with the parameter.
-            planner.tomato_frame = f"detected_tomato_{index}_tf"
+            planner.tomato_frame = tomato_frame
             _emit(
                 "planning",
                 index=index,
@@ -188,35 +211,14 @@ def main(args=None) -> None:
             )
             plan = None
             report = {}
-            attempts = candidate_attempts if continuous_arc else 1
+            attempts = candidate_attempts
             for attempt in range(1, attempts + 1):
-                plan = planner.plan(
-                    start_state_override=(
-                        ready_state
-                        if candidate_is_independent
-                        else next_start_state
-                    ),
-                    start_pose_override=(
-                        None
-                        if candidate_is_independent
-                        else (next_start_pose if use_arc else None)
-                    ),
-                    arc_failure_reverse_trajectory=(
-                        reverse_trajectory_group(
-                            trajectory_history_from_ready
-                        )
-                        if (
-                            not candidate_is_independent
-                            and use_arc
-                            and trajectory_history_from_ready
-                        )
-                        else ()
-                    ),
+                plan = _plan_independent_candidate(
+                    planner,
+                    ready_state,
                 )
                 report = copy.deepcopy(planner.last_plan_report)
-                report["independent_candidate_plan"] = bool(
-                    candidate_is_independent
-                )
+                report["independent_candidate_plan"] = True
                 report["candidate_attempt"] = attempt
                 report["candidate_attempt_limit"] = attempts
                 if plan is not None or not _candidate_failure_is_retryable(
@@ -254,11 +256,13 @@ def main(args=None) -> None:
                 )
                 continue
 
-            if continuous_arc:
-                if not cached:
-                    # Candidate trajectories begin exactly at READY. Add one
-                    # live-current -> READY prefix only to the first accepted
-                    # tomato so execution starts from the actual robot state.
+            if not cached:
+                # Candidate trajectories begin exactly at READY. Add one
+                # live-current -> READY prefix only to the first accepted
+                # tomato so a cached execution starts from the actual robot
+                # state. Keep this prefix in Arc plan-only mode for backward
+                # compatible full-path visualization.
+                if execute or continuous_arc:
                     live_start_positions = (
                         planner._wait_for_current_joint_positions(
                             timeout_sec=2.0
@@ -301,89 +305,88 @@ def main(args=None) -> None:
                             "initial_pick_ready_prefix": True,
                         }
                     )
+                if continuous_arc:
                     trajectory_history_from_ready = (
                         _history_after_pick_ready(plan)
                     )
+            elif continuous_arc:
+                transition = planner.plan_continuous_transition_only(
+                    next_start_state,
+                    next_start_pose,
+                    plan.preapproach_planning_pose,
+                    plan.outward_axis,
+                )
+                transition_report = copy.deepcopy(
+                    planner.last_plan_report
+                )
+                transition_stages = list(
+                    transition_report.get("stages", [])
+                )
+                report["continuous_transition"] = True
+                report["arc_transition_report"] = transition_report
+                if transition is not None:
+                    plan = replace(
+                        plan,
+                        arc_reverse_recovery_trajectory=(),
+                        pick_ready_trajectory=(),
+                        preapproach_trajectory=transition,
+                    )
+                    report.update(
+                        {
+                            "continuous_transition_direct": True,
+                            "continuous_transition_arc": True,
+                            "continuous_reverse_recovery": False,
+                            "continuous_arc": transition_report.get(
+                                "continuous_arc", {}
+                            ),
+                        }
+                    )
+                    report["stages"] = transition_stages + list(
+                        report.get("stages", [])
+                    )
+                    trajectory_history_from_ready.extend(
+                        _history_after_pick_ready(plan)
+                    )
                 else:
-                    transition = planner.plan_continuous_transition_only(
-                        next_start_state,
-                        next_start_pose,
-                        plan.preapproach_planning_pose,
-                        plan.outward_axis,
+                    reverse_to_ready = reverse_trajectory_group(
+                        trajectory_history_from_ready
                     )
-                    transition_report = copy.deepcopy(
-                        planner.last_plan_report
+                    plan = replace(
+                        plan,
+                        arc_reverse_recovery_trajectory=reverse_to_ready,
+                        pick_ready_trajectory=(),
                     )
-                    transition_stages = list(
-                        transition_report.get("stages", [])
+                    for stage in transition_stages:
+                        stage.update(
+                            {"discarded": True, "recovered": True}
+                        )
+                    report.update(
+                        {
+                            "continuous_transition_direct": False,
+                            "continuous_transition_arc": False,
+                            "continuous_reverse_recovery": True,
+                            "recovery_used": True,
+                            "recovery_success": True,
+                            "recovery_stage": (
+                                "CACHED_REVERSE_THEN_REUSE_"
+                                "INDEPENDENT_PLAN"
+                            ),
+                            "recovery_reason": (
+                                "Arc 실패 후 기존 성공 경로를 역재생해 "
+                                "PICK_READY로 복귀하고, 다음 토마토의 "
+                                "독립 검증 trajectory를 재사용"
+                            ),
+                            "reverse_recovery_trajectory_count": len(
+                                reverse_to_ready
+                            ),
+                        }
                     )
-                    report["continuous_transition"] = True
-                    report["arc_transition_report"] = transition_report
-                    if transition is not None:
-                        plan = replace(
-                            plan,
-                            arc_reverse_recovery_trajectory=(),
-                            pick_ready_trajectory=(),
-                            preapproach_trajectory=transition,
-                        )
-                        report.update(
-                            {
-                                "continuous_transition_direct": True,
-                                "continuous_transition_arc": True,
-                                "continuous_reverse_recovery": False,
-                                "continuous_arc": transition_report.get(
-                                    "continuous_arc", {}
-                                ),
-                            }
-                        )
-                        report["stages"] = (
-                            transition_stages
-                            + list(report.get("stages", []))
-                        )
-                        trajectory_history_from_ready.extend(
-                            _history_after_pick_ready(plan)
-                        )
-                    else:
-                        reverse_to_ready = reverse_trajectory_group(
-                            trajectory_history_from_ready
-                        )
-                        plan = replace(
-                            plan,
-                            arc_reverse_recovery_trajectory=reverse_to_ready,
-                            pick_ready_trajectory=(),
-                        )
-                        for stage in transition_stages:
-                            stage.update(
-                                {"discarded": True, "recovered": True}
-                            )
-                        report.update(
-                            {
-                                "continuous_transition_direct": False,
-                                "continuous_transition_arc": False,
-                                "continuous_reverse_recovery": True,
-                                "recovery_used": True,
-                                "recovery_success": True,
-                                "recovery_stage": (
-                                    "CACHED_REVERSE_THEN_REUSE_"
-                                    "INDEPENDENT_PLAN"
-                                ),
-                                "recovery_reason": (
-                                    "Arc 실패 후 기존 성공 경로를 역재생해 "
-                                    "PICK_READY로 복귀하고, 다음 토마토의 "
-                                    "독립 검증 trajectory를 재사용"
-                                ),
-                                "reverse_recovery_trajectory_count": len(
-                                    reverse_to_ready
-                                ),
-                            }
-                        )
-                        report["stages"] = (
-                            transition_stages
-                            + list(report.get("stages", []))
-                        )
-                        trajectory_history_from_ready = (
-                            _history_after_pick_ready(plan)
-                        )
+                    report["stages"] = transition_stages + list(
+                        report.get("stages", [])
+                    )
+                    trajectory_history_from_ready = (
+                        _history_after_pick_ready(plan)
+                    )
 
             _emit(
                 "planned",

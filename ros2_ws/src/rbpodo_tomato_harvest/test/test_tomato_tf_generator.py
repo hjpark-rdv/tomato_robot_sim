@@ -1,9 +1,11 @@
 import numpy as np
 
 from rbpodo_tomato_harvest.tomato_tf_generator import (
+    camera_target_id,
     clustered_height_order,
     descending_height_order,
     detection_cluster_id,
+    harvest_tf_frame_id,
     parent_frame_tomato_rotation,
     quaternion_from_rotation,
     rotation_from_quaternion,
@@ -37,6 +39,17 @@ def test_detection_cluster_id_reads_vision_path_component():
     assert detection_cluster_id("tomato_3") == "tomato_3"
 
 
+def test_camera_target_suffix_defines_harvest_tf_and_cluster():
+    identifier = "20260807/session/cluster-result-C0:T7"
+
+    assert camera_target_id(identifier) == "C0:T7"
+    assert harvest_tf_frame_id(identifier, 3) == "C0:T7"
+    assert detection_cluster_id(identifier) == "c0"
+    assert harvest_tf_frame_id("legacy_tomato", 3) == (
+        "detected_tomato_3_tf"
+    )
+
+
 def test_clusters_use_summed_height_before_internal_height_order():
     points = [
         (0.0, 0.0, 0.90),  # cluster 1 total = 1.00
@@ -52,6 +65,23 @@ def test_clusters_use_summed_height_before_internal_height_order():
     ]
 
     assert clustered_height_order(points, detection_ids) == [2, 3, 0, 1]
+
+
+def test_camera_cluster_targets_stay_together_then_sort_by_height():
+    points = [
+        (0.0, 0.0, 0.95),  # C0
+        (0.0, 0.0, 0.40),  # C1
+        (0.0, 0.0, 0.90),  # C1
+        (0.0, 0.0, 0.30),  # C0
+    ]
+    detection_ids = [
+        "capture-C0:T7",
+        "capture-C1:T2",
+        "capture-C1:T3",
+        "capture-C0:T8",
+    ]
+
+    assert clustered_height_order(points, detection_ids) == [2, 1, 0, 3]
 
 
 def test_unclustered_detections_keep_global_height_order():

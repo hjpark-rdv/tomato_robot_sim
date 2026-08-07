@@ -84,6 +84,12 @@ def default_pick_ready_joint_positions(
     )
 
 
+def revolute_position_error(position: float, target: float) -> float:
+    """Return shortest absolute angular error for equivalent joint turns."""
+    difference = float(position) - float(target)
+    return abs(math.atan2(math.sin(difference), math.cos(difference)))
+
+
 @dataclass(frozen=True)
 class HarvestGeometry:
     """Poses and axes used for one tomato Cartesian approach."""
@@ -248,6 +254,86 @@ def joint_span_violations(trajectories, maximum_span_deg: float) -> list[dict]:
         for item in ranges
         if float(item["span_deg"]) > limit + 1e-9
     ]
+
+
+def trajectory_joint_safety_violations(
+    trajectories,
+    start_positions: dict[str, float],
+    limited_joint_names,
+    maximum_span_deg: float,
+    wrist3_maximum_span_deg: float,
+    maximum_step_deg: float,
+) -> list[dict]:
+    """Reject long-turn joint branches and discontinuities before execution."""
+    sequence = (
+        tuple(trajectories)
+        if isinstance(trajectories, (list, tuple))
+        else (() if not trajectories else (trajectories,))
+    )
+    limited_names = [str(name) for name in limited_joint_names]
+    safety_names = list(dict.fromkeys([*limited_names, "wrist3"]))
+    samples = {
+        name: [float(start_positions[name])]
+        for name in safety_names
+        if name in start_positions
+    }
+    maximum_steps = {name: 0.0 for name in safety_names}
+    previous = {
+        str(name): float(position)
+        for name, position in start_positions.items()
+    }
+
+    for robot_trajectory in sequence:
+        joint_trajectory = robot_trajectory.joint_trajectory
+        names = [str(name) for name in joint_trajectory.joint_names]
+        for point in joint_trajectory.points:
+            for name, position in zip(names, point.positions):
+                if name not in safety_names:
+                    continue
+                value = float(position)
+                if name in previous:
+                    maximum_steps[name] = max(
+                        maximum_steps[name],
+                        abs(value - previous[name]),
+                    )
+                samples.setdefault(name, []).append(value)
+                previous[name] = value
+
+    violations = []
+    for name in safety_names:
+        values = samples.get(name, [])
+        if not values:
+            violations.append(
+                {
+                    "joint_name": name,
+                    "reason": "START_POSITION_MISSING",
+                }
+            )
+            continue
+        span_deg = math.degrees(max(values) - min(values))
+        max_step_deg = math.degrees(maximum_steps.get(name, 0.0))
+        span_limit = (
+            float(wrist3_maximum_span_deg)
+            if name == "wrist3"
+            else float(maximum_span_deg)
+        )
+        reasons = []
+        if span_deg > span_limit + 1e-9:
+            reasons.append("SPAN_LIMIT_EXCEEDED")
+        if max_step_deg > float(maximum_step_deg) + 1e-9:
+            reasons.append("POINT_JUMP_LIMIT_EXCEEDED")
+        if reasons:
+            violations.append(
+                {
+                    "joint_name": name,
+                    "reason": "+".join(reasons),
+                    "span_deg": float(span_deg),
+                    "maximum_span_deg": float(span_limit),
+                    "max_step_deg": float(max_step_deg),
+                    "maximum_step_deg": float(maximum_step_deg),
+                }
+            )
+    return violations
 
 
 def _unit(vector: np.ndarray, label: str) -> np.ndarray:
@@ -1044,7 +1130,18 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("harvest_wait_sec", 2.0)
         self.declare_parameter("harvest_second_x_back", 0.010)
         self.declare_parameter("max_step", 0.005)
-        self.declare_parameter("jump_threshold", 0.0)
+        self.declare_parameter("jump_threshold", 2.0)
+        self.declare_parameter(
+            "cartesian_revolute_jump_threshold_deg", 20.0
+        )
+        self.declare_parameter(
+            "cartesian_prismatic_jump_threshold_m", 0.02
+        )
+        self.declare_parameter("trajectory_safety_max_span_deg", 120.0)
+        self.declare_parameter(
+            "trajectory_safety_wrist3_max_span_deg", 180.0
+        )
+        self.declare_parameter("trajectory_safety_max_step_deg", 45.0)
         self.declare_parameter("minimum_fraction", 0.98)
         self.declare_parameter("avoid_collisions", True)
         self.declare_parameter("service_timeout_sec", 30.0)
@@ -1461,6 +1558,19 @@ class CartesianHarvestPlanner(Node):
     ) -> bool:
         if pipeline.strip().lower() != "ompl":
             return True
+        return self._apply_centered_joint_path_constraints(
+            request,
+            start_state,
+            "OMPL",
+        )
+
+    def _apply_centered_joint_path_constraints(
+        self,
+        request,
+        start_state: RobotState | None,
+        context: str,
+    ) -> bool:
+        """Apply the configured start-centered limits to any planner request."""
         joint_names = [
             str(name)
             for name in self.get_parameter("ompl_limited_joint_names").value
@@ -1481,7 +1591,7 @@ class CartesianHarvestPlanner(Node):
         ]
         if missing_names:
             self.get_logger().error(
-                "OMPL 시작 자세 중심 constraint를 만들 수 없습니다. "
+                f"{context} 시작 자세 중심 constraint를 만들 수 없습니다. "
                 f"관절 상태 누락: {', '.join(missing_names)}"
             )
             return False
@@ -1501,10 +1611,69 @@ class CartesianHarvestPlanner(Node):
             for name, position in constrained_positions.items()
         )
         self.get_logger().info(
-            f"OMPL 시작 자세 중심 constraint ±{tolerance_deg:.1f}°: "
+            f"{context} 시작 자세 중심 constraint ±{tolerance_deg:.1f}°: "
             f"{centers}; wrist3=제외"
         )
         return True
+
+    @staticmethod
+    def _state_positions(state: RobotState | None) -> dict[str, float]:
+        if state is None:
+            return {}
+        return {
+            str(name): float(position)
+            for name, position in zip(
+                state.joint_state.name,
+                state.joint_state.position,
+            )
+        }
+
+    def _trajectory_safety_violations(
+        self,
+        trajectories,
+        start_state: RobotState | None = None,
+        start_positions: dict[str, float] | None = None,
+    ) -> list[dict]:
+        positions = dict(start_positions or {})
+        if not positions:
+            positions = self._state_positions(start_state)
+        if not positions:
+            positions = dict(self._plan_start_joint_positions)
+        return trajectory_joint_safety_violations(
+            trajectories,
+            positions,
+            self.get_parameter("ompl_limited_joint_names").value,
+            float(
+                self.get_parameter("trajectory_safety_max_span_deg").value
+            ),
+            float(
+                self.get_parameter(
+                    "trajectory_safety_wrist3_max_span_deg"
+                ).value
+            ),
+            float(
+                self.get_parameter("trajectory_safety_max_step_deg").value
+            ),
+        )
+
+    def _log_trajectory_safety_failure(
+        self,
+        label: str,
+        violations: list[dict],
+    ) -> None:
+        details = ", ".join(
+            (
+                f"{item['joint_name']} span="
+                f"{item.get('span_deg', float('nan')):.1f}°/"
+                f"{item.get('maximum_span_deg', float('nan')):.1f}°, "
+                f"step={item.get('max_step_deg', float('nan')):.1f}°/"
+                f"{item.get('maximum_step_deg', float('nan')):.1f}°"
+            )
+            for item in violations
+        )
+        self.get_logger().error(
+            f"{label} 궤적 폐기: 관절 안전 한도 위반 ({details})"
+        )
 
     def _plan_pick_ready(
         self,
@@ -1730,9 +1899,18 @@ class CartesianHarvestPlanner(Node):
         result = wrapped_result.result
         trajectory = result.planned_trajectory
         point_count = len(trajectory.joint_trajectory.points)
-        success = (
+        moveit_success = (
             result.error_code.val == MoveItErrorCodes.SUCCESS and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                trajectory,
+                start_state=result.trajectory_start,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         self._record_trajectory_range_input(
             stage,
             trajectory,
@@ -1742,21 +1920,29 @@ class CartesianHarvestPlanner(Node):
                 or stage.endswith("_PREAPPROACH")
             ),
         )
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
         self.get_logger().info(
             f"{label} plan success={success} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
         if not success:
             self._record_failure_robot_state(stage, trajectory)
+            reason = (
+                "JOINT_SAFETY_LIMIT_EXCEEDED"
+                if safety_violations
+                else "MOVEIT_PLANNING_FAILED"
+            )
             self._record_plan_stage(
                 stage,
                 pipeline,
                 False,
                 time.monotonic() - stage_started,
-                "MOVEIT_PLANNING_FAILED",
+                reason,
                 moveit_error_code=int(result.error_code.val),
                 point_count=point_count,
                 planning_time_sec=float(result.planning_time),
+                trajectory_safety_violations=safety_violations,
             )
             return None
         self._record_plan_stage(
@@ -1958,10 +2144,19 @@ class CartesianHarvestPlanner(Node):
         result = wrapped_result.result
         trajectory = result.planned_trajectory
         point_count = len(trajectory.joint_trajectory.points)
-        success = (
+        moveit_success = (
             result.error_code.val == MoveItErrorCodes.SUCCESS
             and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                trajectory,
+                start_state=start_state,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         if report_trajectory:
             self._record_trajectory_range_input(
                 stage,
@@ -1974,7 +2169,17 @@ class CartesianHarvestPlanner(Node):
             f"planner={selected_planner_id} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
-        reason = "" if success else "MOVEIT_PLANNING_FAILED"
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
+        reason = (
+            ""
+            if success
+            else (
+                "JOINT_SAFETY_LIMIT_EXCEEDED"
+                if safety_violations
+                else "MOVEIT_PLANNING_FAILED"
+            )
+        )
         if not success:
             self._record_failure_robot_state(stage, trajectory)
         self._record_plan_stage(
@@ -1987,6 +2192,7 @@ class CartesianHarvestPlanner(Node):
             point_count=point_count,
             planning_time_sec=float(result.planning_time),
             planner_id=selected_planner_id,
+            trajectory_safety_violations=safety_violations,
         )
         return trajectory if success else None
 
@@ -2042,7 +2248,39 @@ class CartesianHarvestPlanner(Node):
         request.jump_threshold = max(
             0.0, float(self.get_parameter("jump_threshold").value)
         )
+        request.revolute_jump_threshold = math.radians(
+            max(
+                0.0,
+                float(
+                    self.get_parameter(
+                        "cartesian_revolute_jump_threshold_deg"
+                    ).value
+                ),
+            )
+        )
+        request.prismatic_jump_threshold = max(
+            0.0,
+            float(
+                self.get_parameter(
+                    "cartesian_prismatic_jump_threshold_m"
+                ).value
+            ),
+        )
         request.avoid_collisions = bool(self.get_parameter("avoid_collisions").value)
+        if not self._apply_centered_joint_path_constraints(
+            request,
+            start_state,
+            "Cartesian",
+        ):
+            self._record_plan_stage(
+                stage,
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "CARTESIAN_CONSTRAINT_START_STATE_MISSING",
+                terminal_failure=terminal_failure,
+            )
+            return None
 
         future = self.cartesian_client.call_async(request)
         rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
@@ -2061,11 +2299,20 @@ class CartesianHarvestPlanner(Node):
 
         point_count = len(response.solution.joint_trajectory.points)
         minimum_fraction = float(self.get_parameter("minimum_fraction").value)
-        success = (
+        moveit_success = (
             response.error_code.val == MoveItErrorCodes.SUCCESS
             and response.fraction >= minimum_fraction
             and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                response.solution,
+                start_state=start_state,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         self._record_trajectory_range_input(
             stage,
             response.solution,
@@ -2083,9 +2330,13 @@ class CartesianHarvestPlanner(Node):
             f"fraction={response.fraction:.3f}/{minimum_fraction:.3f} "
             f"points={point_count} error_code={response.error_code.val}"
         )
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
         reason = ""
         if not success:
-            if response.fraction < minimum_fraction:
+            if safety_violations:
+                reason = "JOINT_SAFETY_LIMIT_EXCEEDED"
+            elif response.fraction < minimum_fraction:
                 reason = "CARTESIAN_FRACTION_LOW"
             elif response.error_code.val != MoveItErrorCodes.SUCCESS:
                 reason = "MOVEIT_CARTESIAN_FAILED"
@@ -2104,6 +2355,7 @@ class CartesianHarvestPlanner(Node):
             cartesian_fraction=float(response.fraction),
             required_fraction=minimum_fraction,
             point_count=point_count,
+            trajectory_safety_violations=safety_violations,
             fallback_planner=(
                 "ompl" if not success and not terminal_failure else ""
             ),
@@ -2760,7 +3012,7 @@ class CartesianHarvestPlanner(Node):
         )
         return all(
             name in positions
-            and abs(positions[name] - float(target)) <= tolerance
+            and revolute_position_error(positions[name], target) <= tolerance
             for name, target in zip(
                 ready.joint_state.name,
                 ready.joint_state.position,
@@ -3846,6 +4098,28 @@ class CartesianHarvestPlanner(Node):
         return True
 
     def _execute_trajectory(self, trajectory, label: str) -> bool:
+        current_positions = self._wait_for_current_joint_positions(
+            timeout_sec=2.0
+        )
+        safety_violations = self._trajectory_safety_violations(
+            trajectory,
+            start_positions=current_positions,
+        )
+        if safety_violations:
+            self._log_trajectory_safety_failure(
+                f"{label} 실행 전 검사",
+                safety_violations,
+            )
+            self._record_plan_stage(
+                "EXECUTION_TRAJECTORY_SAFETY",
+                "trajectory_validation",
+                False,
+                0.0,
+                "UNSAFE_CACHED_TRAJECTORY",
+                trajectory_safety_violations=safety_violations,
+                execution_label=label,
+            )
+            return False
 
         timeout = max(1.0, float(self.get_parameter("execution_timeout_sec").value))
         if not self.execute_client.wait_for_server(timeout_sec=10.0):
