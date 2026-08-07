@@ -29,6 +29,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     PICK_READY_STATES,
     PLANNER_CONFIGS,
     PREPLANNED_BATCH_CONFIG_ENV,
+    adaptive_grasp_max_rotation_degrees,
     actual_approach_marker,
     actual_approach_marker_length,
     adaptive_approach_axis_local,
@@ -594,6 +595,29 @@ def test_plan_verification_changes_when_ready_state_changes():
     ) is False
 
 
+def test_plan_verification_changes_when_adaptive_grasp_options_change():
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+        _adaptive_grasp_options=lambda: (True, 35.0),
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 35.0),
+    ) is True
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", False, 35.0),
+    ) is False
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 45.0),
+    ) is False
+
+
 def test_empty_plan_verification_does_not_interrupt_busy_state_release():
     gui = SimpleNamespace(
         detection_generation=7,
@@ -912,6 +936,8 @@ def test_persistent_worker_updates_target_and_disables_display():
             "return_to_pick_ready": False,
             "retreat_after_harvest": True,
             "pick_ready_state_name": "PICK_READY_RIGHT",
+            "prefer_robot_direction": True,
+            "adaptive_grasp_max_rotation_deg": 37.5,
         },
     )
 
@@ -928,6 +954,8 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["return_to_pick_ready"] is False
     assert values["retreat_after_harvest"] is True
     assert values["pick_ready_state_name"] == "PICK_READY_RIGHT"
+    assert values["adaptive_grasp_prefer_robot_direction"] is True
+    assert values["adaptive_grasp_max_rotation_deg"] == pytest.approx(37.5)
     assert len(values["pick_ready_joint_positions"]) == 6
 
 
@@ -1830,6 +1858,8 @@ def test_harvest_command_builds_plan_only_command():
         return_to_pick_ready=False,
         retreat_after_harvest=True,
         pick_ready_state_name="PICK_READY_RIGHT",
+        prefer_robot_direction=True,
+        adaptive_grasp_max_rotation_deg=35.0,
         python_executable="/usr/bin/python3",
     )
 
@@ -1851,6 +1881,8 @@ def test_harvest_command_builds_plan_only_command():
     assert "return_to_pick_ready:=false" in command
     assert "retreat_after_harvest:=true" in command
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
+    assert "adaptive_grasp_prefer_robot_direction:=true" in command
+    assert "adaptive_grasp_max_rotation_deg:=35.0" in command
 
 
 def test_preplanned_batch_command_selects_worker_and_arc_mode():
@@ -2033,6 +2065,19 @@ def test_repeat_forward_distance_converts_operator_mm_to_m(
     meters,
 ):
     assert repeat_forward_distance_m(millimeters) == pytest.approx(meters)
+
+
+@pytest.mark.parametrize("value", ["0", "45", "90"])
+def test_adaptive_grasp_max_rotation_accepts_gui_range(value):
+    assert adaptive_grasp_max_rotation_degrees(value) == pytest.approx(
+        float(value)
+    )
+
+
+@pytest.mark.parametrize("value", ["-0.1", "90.1", "invalid"])
+def test_adaptive_grasp_max_rotation_rejects_invalid_input(value):
+    with pytest.raises(ValueError, match="최대 보정각"):
+        adaptive_grasp_max_rotation_degrees(value)
 
 
 @pytest.mark.parametrize("value", ["9.9", "70.1", "invalid", "nan"])

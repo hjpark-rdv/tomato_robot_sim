@@ -477,6 +477,14 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
 기존과 동일하게 TCP pose로 환산한다. `/compute_ik`를 사용할 수 없거나 유효한
 후보가 하나도 없을 때만 기존 로봇 방향 기반 보정값으로 fallback한다.
 
+수확 옵션의 `진입각: Recommend보다 로봇 방향 우선`을 체크하면 후보 탐색 순서를
+반대로 적용한다. `최대 보정각` 입력값 안에서 먼저 로봇 방향에 가장 가까운 각도를
+검사하고, 해당 IK가 불가능하면 Recommend 쪽으로 각도를 줄여가며 가장 로봇 쪽에
+가까운 유효 경계를 선택한다. 로봇 방향이 최대각보다 가까우면 필요한 각도까지만
+회전하며, 입력 범위는 `0~90°`, 기본값은 `45°`이다. 체크를 해제하면 기존처럼
+유효한 최소 보정각을 선택한다. 이 두 값은 개별 수확, 전체 연속 Plan·수확,
+스텝·접근 반복과 자동 테스트에 동일하게 적용된다.
+
 추천 0° pre-grasp가 토마토 중심을 지나면서 토마토→로봇 베이스 방향에
 수직인 deadline의 반대편에 있거나, 로봇 쪽이더라도 기본 15° 안전 영역을
 확보하지 못하면 deadline guard가 활성화된다. 이 경우 deadline과 만나는
@@ -488,15 +496,17 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
 
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
 - `adaptive_grasp_max_rotation_deg`: 추천 진입각 기준 최대 보정각, 기본 `45.0`
+- `adaptive_grasp_prefer_robot_direction`: `true`이면 최소 보정각 대신 허용 범위의
+  유효 후보 중 로봇 방향에 가장 가까운 각도를 선택, 기본 `false`
 - `adaptive_grasp_deadband_deg`: geometric fallback의 기존 방향 유지 범위, 기본 `10.0`
 - `adaptive_grasp_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.05`
 - `adaptive_grasp_ik_service_wait_sec`: `/compute_ik` 연결 대기, 기본 `0.5`
 - `adaptive_grasp_search_step_deg`: 최초 가능 구간 탐색 간격, 기본 `10.0`
 - `adaptive_grasp_search_resolution_deg`: 최소각 경계 정밀도, 기본 `1.0`
 - `adaptive_grasp_deadline_margin_deg`: ideal에서 로봇 쪽으로 더하는 안전 여유각,
-  기본 `22.5`. 이에 따라 실제 3차원 `토마토→로봇 베이스` 방향을 중심으로
-  `±67.5°`, 전체 135° 진입 영역만 허용한다. nominal 방향이 deadline의 로봇
-  쪽에 있어도 여유각이 22.5° 미만이면 guard를 활성화한다.
+  기본 `0.0`. 이에 따라 실제 3차원 `토마토→로봇 베이스` 방향을 중심으로
+  `±90°`, 전체 180° 진입 영역을 허용한다. deadline 평면 뒤쪽의 진입은 계속
+  금지하지만 deadline 안쪽의 추가 안전 여유각은 적용하지 않는다.
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
 회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.

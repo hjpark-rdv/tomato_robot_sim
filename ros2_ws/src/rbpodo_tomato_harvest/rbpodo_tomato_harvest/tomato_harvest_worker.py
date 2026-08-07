@@ -71,6 +71,16 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             "retreat_after_harvest",
             value=bool(request.get("retreat_after_harvest", False)),
         ),
+        Parameter(
+            "adaptive_grasp_prefer_robot_direction",
+            value=bool(request.get("prefer_robot_direction", False)),
+        ),
+        Parameter(
+            "adaptive_grasp_max_rotation_deg",
+            value=float(
+                request.get("adaptive_grasp_max_rotation_deg", 45.0)
+            ),
+        ),
         Parameter("publish_display_trajectory", value=False),
     ]
     results = node.set_parameters(parameters)

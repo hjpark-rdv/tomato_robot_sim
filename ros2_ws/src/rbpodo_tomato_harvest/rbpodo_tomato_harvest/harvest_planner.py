@@ -637,7 +637,7 @@ def is_within_robot_side_approach_sector(
     outward_axis,
     tomato_position,
     robot_position,
-    margin_deg: float = 22.5,
+    margin_deg: float = 0.0,
 ) -> bool:
     """Whether an approach is inside the robot-facing 180-2*margin sector."""
     safety_margin_deg = min(90.0, max(0.0, float(margin_deg)))
@@ -736,6 +736,74 @@ def select_minimum_feasible_rotation(
             maximum,
             magnitude + coarse_step,
         )
+
+    return None, tuple(evaluations)
+
+
+def select_robotward_feasible_rotation(
+    evaluator,
+    desired_rotation_deg: float,
+    max_rotation_deg: float = 90.0,
+    coarse_step_deg: float = 10.0,
+    resolution_deg: float = 1.0,
+    minimum_abs_rotation_deg: float = 0.0,
+) -> tuple[ApproachRotationEvaluation | None, tuple[ApproachRotationEvaluation, ...]]:
+    """Find the feasible angle closest to the requested robotward angle.
+
+    Candidates move from the robotward target back toward the recommend angle.
+    Once a feasible coarse endpoint is found, the boundary toward the robot is
+    refined so the returned angle remains as robot-facing as possible.
+    """
+    maximum = max(0.0, min(90.0, float(max_rotation_deg)))
+    coarse_step = max(0.1, float(coarse_step_deg))
+    resolution = max(0.1, float(resolution_deg))
+    desired = max(
+        -maximum,
+        min(maximum, float(desired_rotation_deg)),
+    )
+    sign = 1.0 if desired >= 0.0 else -1.0
+    minimum = max(
+        0.0,
+        min(maximum, float(minimum_abs_rotation_deg)),
+    )
+    target = max(minimum, abs(desired))
+    evaluations: list[ApproachRotationEvaluation] = []
+    cache: dict[float, ApproachRotationEvaluation] = {}
+
+    def evaluate(angle: float) -> ApproachRotationEvaluation:
+        normalized = round(float(angle), 6)
+        if normalized not in cache:
+            result = evaluator(normalized)
+            if not isinstance(result, ApproachRotationEvaluation):
+                raise TypeError(
+                    "rotation evaluator must return ApproachRotationEvaluation"
+                )
+            cache[normalized] = result
+            evaluations.append(result)
+        return cache[normalized]
+
+    magnitude = target
+    previous_infeasible = None
+    while magnitude >= minimum - 1e-9:
+        candidate = evaluate(sign * magnitude)
+        if candidate.feasible:
+            best = candidate
+            if previous_infeasible is not None:
+                lower = magnitude
+                upper = previous_infeasible
+                while upper - lower > resolution:
+                    middle = 0.5 * (lower + upper)
+                    refined = evaluate(sign * middle)
+                    if refined.feasible:
+                        lower = middle
+                        best = refined
+                    else:
+                        upper = middle
+            return best, tuple(evaluations)
+        if math.isclose(magnitude, minimum, abs_tol=1e-9):
+            break
+        previous_infeasible = magnitude
+        magnitude = max(minimum, magnitude - coarse_step)
 
     return None, tuple(evaluations)
 
@@ -957,12 +1025,15 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
         self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
+        self.declare_parameter(
+            "adaptive_grasp_prefer_robot_direction", False
+        )
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
         self.declare_parameter("adaptive_grasp_ik_timeout_sec", 0.05)
         self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
         self.declare_parameter("adaptive_grasp_search_step_deg", 10.0)
         self.declare_parameter("adaptive_grasp_search_resolution_deg", 1.0)
-        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 22.5)
+        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 0.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
@@ -2367,6 +2438,11 @@ class CartesianHarvestPlanner(Node):
         maximum = float(
             self.get_parameter("adaptive_grasp_max_rotation_deg").value
         )
+        prefer_robot_direction = bool(
+            self.get_parameter(
+                "adaptive_grasp_prefer_robot_direction"
+            ).value
+        )
         deadband = float(
             self.get_parameter("adaptive_grasp_deadband_deg").value
         )
@@ -2398,7 +2474,12 @@ class CartesianHarvestPlanner(Node):
             f"PREGRASP_OUTSIDE_{allowed_sector_deg:g}_DEG_SECTOR"
         )
         report = {
-            "selection_mode": "minimum_ik_angle",
+            "selection_mode": (
+                "robot_direction_priority"
+                if prefer_robot_direction
+                else "minimum_ik_angle"
+            ),
+            "prefer_robot_direction": prefer_robot_direction,
             "geometric_preferred_rotation_deg": float(
                 geometric_preference.applied_rotation_deg
             ),
@@ -2580,29 +2661,53 @@ class CartesianHarvestPlanner(Node):
             preferred_rotation = float(
                 no_deadband_preference.applied_rotation_deg
             )
-        selected, evaluations = select_minimum_feasible_rotation(
-            evaluate,
-            max_rotation_deg=maximum,
-            coarse_step_deg=float(
-                self.get_parameter("adaptive_grasp_search_step_deg").value
-            ),
-            resolution_deg=float(
-                self.get_parameter(
-                    "adaptive_grasp_search_resolution_deg"
-                ).value
-            ),
-            preferred_sign=(
-                deadline_guard.minimum_rotation_deg
-                if deadline_guard.active
-                else preferred_rotation
-            ),
-            minimum_abs_rotation_deg=(
-                abs(deadline_guard.minimum_rotation_deg)
-                if deadline_guard.active
-                else 0.0
-            ),
-            allow_opposite_sign=not deadline_guard.active,
+        search_step = float(
+            self.get_parameter("adaptive_grasp_search_step_deg").value
         )
+        search_resolution = float(
+            self.get_parameter(
+                "adaptive_grasp_search_resolution_deg"
+            ).value
+        )
+        minimum_rotation = (
+            abs(deadline_guard.minimum_rotation_deg)
+            if deadline_guard.active
+            else 0.0
+        )
+        if prefer_robot_direction:
+            desired_rotation = preferred_rotation
+            if deadline_guard.active:
+                deadline_sign = (
+                    1.0
+                    if deadline_guard.minimum_rotation_deg >= 0.0
+                    else -1.0
+                )
+                if desired_rotation * deadline_sign <= 0.0:
+                    desired_rotation = deadline_sign * maximum
+                elif abs(desired_rotation) < minimum_rotation:
+                    desired_rotation = deadline_sign * minimum_rotation
+            selected, evaluations = select_robotward_feasible_rotation(
+                evaluate,
+                desired_rotation_deg=desired_rotation,
+                max_rotation_deg=maximum,
+                coarse_step_deg=search_step,
+                resolution_deg=search_resolution,
+                minimum_abs_rotation_deg=minimum_rotation,
+            )
+        else:
+            selected, evaluations = select_minimum_feasible_rotation(
+                evaluate,
+                max_rotation_deg=maximum,
+                coarse_step_deg=search_step,
+                resolution_deg=search_resolution,
+                preferred_sign=(
+                    deadline_guard.minimum_rotation_deg
+                    if deadline_guard.active
+                    else preferred_rotation
+                ),
+                minimum_abs_rotation_deg=minimum_rotation,
+                allow_opposite_sign=not deadline_guard.active,
+            )
         report["ik_evaluation_count"] = len(evaluations)
         report["ik_evaluations"] = [
             {

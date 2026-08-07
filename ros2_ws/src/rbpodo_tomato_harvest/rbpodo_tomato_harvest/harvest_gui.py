@@ -564,6 +564,8 @@ def harvest_command(
     retreat_after_harvest: bool = False,
     harvest_stage_limit: int | None = None,
     pick_ready_state_name: str = "PICK_READY",
+    prefer_robot_direction: bool = False,
+    adaptive_grasp_max_rotation_deg: float = 45.0,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -597,6 +599,16 @@ def harvest_command(
         harvest_stage_limit = int(harvest_stage_limit)
         if harvest_stage_limit not in (3, 4):
             raise ValueError("harvest_stage_limit must be 3, 4, or None")
+    adaptive_grasp_max_rotation_deg = float(
+        adaptive_grasp_max_rotation_deg
+    )
+    if (
+        not math.isfinite(adaptive_grasp_max_rotation_deg)
+        or not 0.0 <= adaptive_grasp_max_rotation_deg <= 90.0
+    ):
+        raise ValueError(
+            "adaptive_grasp_max_rotation_deg must be between 0 and 90"
+        )
     executable = python_executable or sys.executable
     command = [
         executable,
@@ -633,6 +645,12 @@ def harvest_command(
         "-p",
         "retreat_after_harvest:="
         f"{'true' if retreat_after_harvest else 'false'}",
+        "-p",
+        "adaptive_grasp_prefer_robot_direction:="
+        f"{'true' if prefer_robot_direction else 'false'}",
+        "-p",
+        "adaptive_grasp_max_rotation_deg:="
+        f"{adaptive_grasp_max_rotation_deg}",
     ]
     if harvest_stage_limit is not None:
         command.extend(
@@ -701,6 +719,8 @@ def preplanned_batch_command(
     harvest_wait_sec: float = 2.0,
     harvest_stage_limit: int | None = None,
     pick_ready_state_name: str = "PICK_READY",
+    prefer_robot_direction: bool = False,
+    adaptive_grasp_max_rotation_deg: float = 45.0,
     python_executable: str | None = None,
 ) -> tuple[list[str], dict[str, str]]:
     """Build the complete-batch planner command and private config env."""
@@ -721,6 +741,10 @@ def preplanned_batch_command(
         retreat_after_harvest=False,
         harvest_stage_limit=harvest_stage_limit,
         pick_ready_state_name=pick_ready_state_name,
+        prefer_robot_direction=prefer_robot_direction,
+        adaptive_grasp_max_rotation_deg=(
+            adaptive_grasp_max_rotation_deg
+        ),
         python_executable=python_executable,
     )
     command[2] = (
@@ -753,6 +777,8 @@ def stepper_command(
     cycle_only: bool = False,
     cycle_last_stage: int = 5,
     cycle_forward_distance_m: float = 0.070,
+    prefer_robot_direction: bool = False,
+    adaptive_grasp_max_rotation_deg: float = 45.0,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
@@ -770,6 +796,10 @@ def stepper_command(
         return_to_pick_ready=not cycle_only,
         retreat_after_harvest=False,
         pick_ready_state_name=pick_ready_state_name,
+        prefer_robot_direction=prefer_robot_direction,
+        adaptive_grasp_max_rotation_deg=(
+            adaptive_grasp_max_rotation_deg
+        ),
         python_executable=python_executable,
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
@@ -839,6 +869,17 @@ def repeat_forward_distance_m(value) -> float:
     if not math.isfinite(millimeters) or not 10.0 <= millimeters <= 70.0:
         raise ValueError("4단계 진입 길이는 10~70 mm 범위여야 합니다.")
     return millimeters / 1000.0
+
+
+def adaptive_grasp_max_rotation_degrees(value) -> float:
+    """Validate the operator-configured adaptive grasp rotation limit."""
+    try:
+        degrees = float(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError("최대 보정각은 도 단위 숫자로 입력하세요.") from error
+    if not math.isfinite(degrees) or not 0.0 <= degrees <= 90.0:
+        raise ValueError("최대 보정각은 0~90° 범위로 입력하세요.")
+    return degrees
 
 
 def lift_harvest_target_height_mm(
@@ -1908,6 +1949,8 @@ class HarvestGui(Node):
         self.batch_lift_harvest_mode = False
         self.batch_preplan_mode = False
         self.batch_execute_motion = True
+        self.batch_prefer_robot_direction = False
+        self.batch_adaptive_grasp_max_rotation_deg = 45.0
         self.batch_preplan_failure_message = ""
         self.batch_scene = (0.0, 0.0, 0.0, 0.0)
         self.tomato_motion_results: dict[int, str] = {}
@@ -1937,6 +1980,8 @@ class HarvestGui(Node):
         self.sweep_continuous_mode = False
         self.sweep_lift_harvest_mode = False
         self.sweep_pick_ready_state = "PICK_READY"
+        self.sweep_prefer_robot_direction = False
+        self.sweep_adaptive_grasp_max_rotation_deg = 45.0
         self.sweep_cases = deque()
         self.sweep_case_total = 0
         self.sweep_case_number = 0
@@ -2000,6 +2045,8 @@ class HarvestGui(Node):
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
+        self.prefer_robot_direction_var = tk.BooleanVar(value=False)
+        self.adaptive_grasp_max_rotation_var = tk.StringVar(value="45.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
         self.batch_harvest_stage_var = tk.StringVar(value="전체 수확")
         self.lift_harvest_var = tk.BooleanVar(value=False)
@@ -2529,13 +2576,55 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
+        self.prefer_robot_direction_checkbox = ttk.Checkbutton(
+            options,
+            text="진입각: Recommend보다 로봇 방향 우선",
+            variable=self.prefer_robot_direction_var,
+            command=self._adaptive_grasp_mode_changed,
+        )
+        self.prefer_robot_direction_checkbox.grid(
+            row=3,
+            column=0,
+            columnspan=2,
+            sticky="w",
+            pady=(8, 0),
+        )
+        ttk.Label(options, text="최대 보정각").grid(
+            row=4,
+            column=0,
+            sticky="w",
+            pady=(8, 0),
+        )
+        rotation_input = ttk.Frame(options)
+        rotation_input.grid(
+            row=4,
+            column=1,
+            sticky="w",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        self.adaptive_grasp_max_rotation_entry = ttk.Entry(
+            rotation_input,
+            textvariable=self.adaptive_grasp_max_rotation_var,
+            width=7,
+        )
+        self.adaptive_grasp_max_rotation_entry.grid(row=0, column=0)
+        self.adaptive_grasp_max_rotation_entry.bind(
+            "<FocusOut>", self._adaptive_grasp_mode_changed
+        )
+        self.adaptive_grasp_max_rotation_entry.bind(
+            "<Return>", self._adaptive_grasp_mode_changed
+        )
+        ttk.Label(rotation_input, text="° (0~90)").grid(
+            row=0, column=1, padx=(4, 0)
+        )
         self.continuous_harvest_checkbox = ttk.Checkbutton(
             options,
             text="연속 수확: 식물 바깥 arc 경유",
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=3,
+            row=5,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2548,7 +2637,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=4,
+            row=6,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2561,7 +2650,7 @@ class HarvestGui(Node):
             command=self._preplan_all_mode_changed,
         )
         self.preplan_all_checkbox.grid(
-            row=5,
+            row=7,
             column=0,
             columnspan=2,
             sticky="w",
@@ -4911,6 +5000,9 @@ class HarvestGui(Node):
                 self.linear_motor_wait_sec.get()
             )
             pick_ready_state = self._selected_pick_ready_state()
+            prefer_robot_direction, adaptive_max_rotation = (
+                self._adaptive_grasp_options()
+            )
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
@@ -4966,12 +5058,20 @@ class HarvestGui(Node):
         self.sweep_continuous_mode = continuous_mode
         self.sweep_lift_harvest_mode = lift_harvest_mode
         self.sweep_pick_ready_state = pick_ready_state
+        self.sweep_prefer_robot_direction = prefer_robot_direction
+        self.sweep_adaptive_grasp_max_rotation_deg = adaptive_max_rotation
         try:
             cases, input_config = self._read_sweep_inputs()
             input_config["linear_motor_wait_sec"] = harvest_wait_sec
             input_config["continuous_harvest"] = continuous_mode
             input_config["lift_harvest"] = lift_harvest_mode
             input_config["pick_ready_state"] = pick_ready_state
+            input_config["prefer_robot_direction"] = (
+                prefer_robot_direction
+            )
+            input_config["adaptive_grasp_max_rotation_deg"] = (
+                adaptive_max_rotation
+            )
             self._start_sweep_session(cases, input_config)
         except (OSError, ValueError) as error:
             messagebox.showerror("자동 테스트 입력 오류", str(error))
@@ -5004,6 +5104,10 @@ class HarvestGui(Node):
             f"리니어모터 대기={self.sweep_harvest_wait_sec:.2f}s, "
             f"연속 arc 전환 모드={self.sweep_continuous_mode}, "
             f"리프트 수확 모드={self.sweep_lift_harvest_mode}, "
+            "진입각 로봇방향 우선="
+            f"{self.sweep_prefer_robot_direction}, "
+            "최대 보정각="
+            f"{self.sweep_adaptive_grasp_max_rotation_deg:g}°, "
             f"시작/복귀 자세={self.sweep_pick_ready_state}"
         )
         self._set_busy(True)
@@ -5336,6 +5440,8 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
             self.sweep_pick_ready_state,
+            self.sweep_prefer_robot_direction,
+            self.sweep_adaptive_grasp_max_rotation_deg,
         )
         self._set_active_camera_target(tomato_index, "자동 테스트")
         current_number = self.sweep_case_tomato_completed + 1
@@ -5409,6 +5515,12 @@ class HarvestGui(Node):
             "continuous_transition": continuous_transition,
             "return_to_pick_ready": return_to_pick_ready,
             "retreat_after_harvest": retreat_after_harvest,
+            "prefer_robot_direction": (
+                self.sweep_prefer_robot_direction
+            ),
+            "adaptive_grasp_max_rotation_deg": (
+                self.sweep_adaptive_grasp_max_rotation_deg
+            ),
         }
         try:
             process.stdin.write(json.dumps(request) + "\n")
@@ -6103,6 +6215,32 @@ class HarvestGui(Node):
             "(다음 Plan부터 적용)"
         )
 
+    def _adaptive_grasp_options(self) -> tuple[bool, float]:
+        return (
+            bool(self.prefer_robot_direction_var.get()),
+            adaptive_grasp_max_rotation_degrees(
+                self.adaptive_grasp_max_rotation_var.get()
+            ),
+        )
+
+    def _adaptive_grasp_mode_changed(self, _event=None) -> None:
+        try:
+            prefer_robot, maximum = self._adaptive_grasp_options()
+        except ValueError as error:
+            self._invalidate_plan()
+            self.status.set(str(error))
+            return
+        self._invalidate_plan()
+        mode = "로봇 방향 우선" if prefer_robot else "Recommend 우선"
+        self.status.set(
+            f"진입각 선택: {mode}, 최대 보정각 {maximum:g}° — "
+            "Plan-only를 다시 실행하세요."
+        )
+        self._append_log(
+            f"수확 진입각 옵션 변경: mode={mode}, "
+            f"max_rotation={maximum:g}°"
+        )
+
     def _invalidate_plan(self) -> None:
         self.verified_plan = None
         self.execute_button.configure(state="disabled")
@@ -6110,14 +6248,23 @@ class HarvestGui(Node):
     def _verification_matches_current_selection(self, verification) -> bool:
         if verification is None:
             return False
+        option_reader = getattr(self, "_adaptive_grasp_options", None)
+        if option_reader is None:
+            prefer_robot_direction, adaptive_max_rotation = False, 45.0
+        else:
+            prefer_robot_direction, adaptive_max_rotation = option_reader()
         expected = (
             self.detection_generation,
             self._selected_index(),
             *self._selected_planner_config(),
             self._selected_pick_ready_state(),
+            prefer_robot_direction,
+            adaptive_max_rotation,
         )
-        if len(verification) > 5:
+        if len(verification) > 6:
             return verification == expected
+        if len(verification) > 5:
+            return verification == expected[:6]
         return (
             verification == expected[:5]
             and expected[5] == "PICK_READY"
@@ -6408,6 +6555,9 @@ class HarvestGui(Node):
                 self.linear_motor_wait_sec.get()
             )
             pick_ready_state = self._selected_pick_ready_state()
+            prefer_robot_direction, adaptive_max_rotation = (
+                self._adaptive_grasp_options()
+            )
             if mode == "repeat":
                 self.repeat_cycle_last_index = (
                     self._repeat_last_stage_number() - 1
@@ -6439,6 +6589,8 @@ class HarvestGui(Node):
                 if mode == "repeat"
                 else 0.070
             ),
+            prefer_robot_direction=prefer_robot_direction,
+            adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -6473,6 +6625,8 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
             pick_ready_state,
+            prefer_robot_direction,
+            adaptive_max_rotation,
         )
         self._set_active_camera_target(
             index,
@@ -7313,8 +7467,11 @@ class HarvestGui(Node):
                 self.linear_motor_wait_sec.get()
             )
             pick_ready_state = self._selected_pick_ready_state()
+            prefer_robot_direction, adaptive_max_rotation = (
+                self._adaptive_grasp_options()
+            )
         except ValueError as error:
-            messagebox.showerror("대기시간 입력 오류", str(error))
+            messagebox.showerror("수확 모션 설정 오류", str(error))
             return
         pipeline, planner_id, preapproach_mode = (
             self._selected_planner_config()
@@ -7326,6 +7483,8 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
             pick_ready_state,
+            prefer_robot_direction,
+            adaptive_max_rotation,
         )
         if execute and not self._verification_matches_current_selection(
             self.verified_plan
@@ -7353,6 +7512,8 @@ class HarvestGui(Node):
                 execute,
                 verification,
                 harvest_wait_sec=harvest_wait_sec,
+                prefer_robot_direction=prefer_robot_direction,
+                adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
             ),
             self._handle_lift_preparation_error,
         )
@@ -7465,6 +7626,9 @@ class HarvestGui(Node):
                 self.linear_motor_wait_sec.get()
             )
             pick_ready_state = self._selected_pick_ready_state()
+            prefer_robot_direction, adaptive_max_rotation = (
+                self._adaptive_grasp_options()
+            )
             harvest_stage_limit = batch_harvest_stage_limit(
                 self.batch_harvest_stage_var.get()
             )
@@ -7526,6 +7690,15 @@ class HarvestGui(Node):
             )
         transition_message += (
             f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
+        )
+        transition_message += (
+            "진입각은 "
+            + (
+                "로봇 방향 우선"
+                if prefer_robot_direction
+                else "Recommend 우선"
+            )
+            + f", 최대 보정각은 {adaptive_max_rotation:g}°입니다.\n"
         )
         if harvest_stage_limit is not None:
             transition_message += (
@@ -7608,6 +7781,8 @@ class HarvestGui(Node):
         self.batch_lift_harvest_mode = lift_mode
         self.batch_preplan_mode = preplan_mode
         self.batch_execute_motion = bool(execute_motion)
+        self.batch_prefer_robot_direction = prefer_robot_direction
+        self.batch_adaptive_grasp_max_rotation_deg = adaptive_max_rotation
         self.batch_preplan_failure_message = ""
         try:
             self.batch_scene = (
@@ -7642,6 +7817,9 @@ class HarvestGui(Node):
             f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
             f"전체 사전계획 모드={self.batch_preplan_mode}, "
             f"실제 실행={self.batch_execute_motion}, "
+            f"진입각 로봇방향 우선={self.batch_prefer_robot_direction}, "
+            "최대 보정각="
+            f"{self.batch_adaptive_grasp_max_rotation_deg:g}°, "
             f"시작/복귀 자세={self.batch_pick_ready_state}"
         )
         self._set_busy(True)
@@ -7664,6 +7842,10 @@ class HarvestGui(Node):
             harvest_wait_sec=self.batch_harvest_wait_sec,
             harvest_stage_limit=self.batch_harvest_stage_limit,
             pick_ready_state_name=self.batch_pick_ready_state,
+            prefer_robot_direction=self.batch_prefer_robot_direction,
+            adaptive_grasp_max_rotation_deg=(
+                self.batch_adaptive_grasp_max_rotation_deg
+            ),
         )
         environment = os.environ.copy()
         environment.update(extra_environment)
@@ -7860,6 +8042,8 @@ class HarvestGui(Node):
                 index,
                 *self.batch_planner,
                 self.batch_pick_ready_state,
+                self.batch_prefer_robot_direction,
+                self.batch_adaptive_grasp_max_rotation_deg,
             )
             self._record_batch_statistics(
                 0 if success else 1,
@@ -7924,6 +8108,8 @@ class HarvestGui(Node):
             planner_id,
             preapproach_mode,
             self.batch_pick_ready_state,
+            self.batch_prefer_robot_direction,
+            self.batch_adaptive_grasp_max_rotation_deg,
         )
         if execute and self.verified_plan != verification:
             self._finish_batch(
@@ -7961,6 +8147,12 @@ class HarvestGui(Node):
                 return_to_pick_ready=return_to_pick_ready,
                 retreat_after_harvest=retreat_after_harvest,
                 harvest_stage_limit=self.batch_harvest_stage_limit,
+                prefer_robot_direction=(
+                    self.batch_prefer_robot_direction
+                ),
+                adaptive_grasp_max_rotation_deg=(
+                    self.batch_adaptive_grasp_max_rotation_deg
+                ),
             ):
                 self._finish_batch(
                     False,
@@ -7985,11 +8177,23 @@ class HarvestGui(Node):
         return_to_pick_ready: bool = True,
         retreat_after_harvest: bool = False,
         harvest_stage_limit: int | None = None,
+        prefer_robot_direction: bool | None = None,
+        adaptive_grasp_max_rotation_deg: float | None = None,
     ) -> bool:
         pipeline, planner_id, preapproach_mode = verification[2:5]
         pick_ready_state = (
             verification[5] if len(verification) > 5 else "PICK_READY"
         )
+        if prefer_robot_direction is None:
+            prefer_robot_direction = bool(
+                self.prefer_robot_direction_var.get()
+            )
+        if adaptive_grasp_max_rotation_deg is None:
+            adaptive_grasp_max_rotation_deg = (
+                adaptive_grasp_max_rotation_degrees(
+                    self.adaptive_grasp_max_rotation_var.get()
+                )
+            )
         command = harvest_command(
             index,
             execute,
@@ -8005,6 +8209,10 @@ class HarvestGui(Node):
             retreat_after_harvest=retreat_after_harvest,
             harvest_stage_limit=harvest_stage_limit,
             pick_ready_state_name=pick_ready_state,
+            prefer_robot_direction=prefer_robot_direction,
+            adaptive_grasp_max_rotation_deg=(
+                adaptive_grasp_max_rotation_deg
+            ),
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -8033,6 +8241,9 @@ class HarvestGui(Node):
             f"{batch_prefix}{mode} 시작: detected_tomato_{index}_tf "
             f"planner={pipeline}/{planner_id}, "
             f"preapproach={preapproach_mode}, "
+            "angle_mode="
+            f"{'robot_priority' if prefer_robot_direction else 'recommend_priority'}, "
+            f"max_rotation={adaptive_grasp_max_rotation_deg:g}°, "
             f"시작/복귀 자세={pick_ready_state}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
             f"종료단계={harvest_stage_limit or '전체'}, "
@@ -8624,6 +8835,8 @@ class HarvestGui(Node):
         self.batch_lift_harvest_mode = False
         self.batch_preplan_mode = False
         self.batch_execute_motion = True
+        self.batch_prefer_robot_direction = False
+        self.batch_adaptive_grasp_max_rotation_deg = 45.0
         self.batch_preplan_failure_message = ""
         self.lift_harvest_pending = None
         self._clear_active_camera_target()
@@ -8773,6 +8986,8 @@ class HarvestGui(Node):
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
+        self.prefer_robot_direction_checkbox.configure(state=state)
+        self.adaptive_grasp_max_rotation_entry.configure(state=state)
         ready_state = "disabled" if busy else "readonly"
         self.pick_ready_state_combo.configure(state=ready_state)
         self.sweep_pick_ready_state_combo.configure(state=ready_state)

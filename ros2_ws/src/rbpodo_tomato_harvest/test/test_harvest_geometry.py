@@ -22,6 +22,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     joint_span_violations,
     robot_side_approach_error_deg,
     select_minimum_feasible_rotation,
+    select_robotward_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
 )
@@ -402,11 +403,11 @@ def test_robot_side_sector_accepts_150_degrees_when_margin_is_15():
     )
 
 
-def test_robot_side_sector_defaults_to_robot_facing_135_degrees():
+def test_robot_side_sector_defaults_to_robot_facing_180_degrees():
     tomato = [0.0, 0.0, 0.4]
     robot = [-1.0, 0.0, 0.4]
-    boundary = np.deg2rad(67.5)
-    just_outside = np.deg2rad(67.51)
+    boundary = np.deg2rad(90.0)
+    just_outside = np.deg2rad(90.01)
 
     assert is_within_robot_side_approach_sector(
         [-np.cos(boundary), np.sin(boundary), 0.0], tomato, robot
@@ -565,6 +566,70 @@ def test_minimum_ik_rotation_returns_none_when_every_angle_is_invalid():
         -30.0,
         30.0,
     }
+
+
+def test_robotward_rotation_uses_requested_maximum_when_it_is_feasible():
+    requested = []
+
+    def evaluate(angle):
+        requested.append(angle)
+        return ApproachRotationEvaluation(angle, True, abs(angle), 1)
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=-45.0,
+        max_rotation_deg=45.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg == pytest.approx(-45.0)
+    assert requested == [-45.0]
+    assert len(evaluations) == 1
+
+
+def test_robotward_rotation_refines_to_most_robot_facing_feasible_angle():
+    def evaluate(angle):
+        feasible = 10.0 <= angle <= 32.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=45.0,
+        max_rotation_deg=45.0,
+        coarse_step_deg=10.0,
+        resolution_deg=0.25,
+    )
+
+    assert selected is not None
+    assert 31.75 <= selected.rotation_deg <= 32.0
+    assert all(item.rotation_deg >= 25.0 for item in evaluations)
+
+
+def test_robotward_rotation_does_not_cross_deadline_minimum():
+    def evaluate(angle):
+        feasible = angle <= 25.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=45.0,
+        max_rotation_deg=45.0,
+        coarse_step_deg=10.0,
+        minimum_abs_rotation_deg=30.0,
+    )
+
+    assert selected is None
+    assert all(item.rotation_deg >= 30.0 for item in evaluations)
 
 
 def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
