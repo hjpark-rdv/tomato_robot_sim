@@ -143,9 +143,13 @@ class HarvestMotionPlan:
     after_wait_trajectory: object
     return_pick_ready_trajectory: object
     display_start_state: RobotState
+    arc_reverse_recovery_trajectory: object = ()
     outward_retreat_trajectory: object = ()
     end_planning_pose: Pose | None = None
     step_approach_trajectories: tuple = ()
+    return_pick_ready_is_cached_reverse: bool = False
+    preapproach_planning_pose: Pose | None = None
+    outward_axis: tuple = ()
 
 
 def make_centered_joint_path_constraints(
@@ -233,6 +237,17 @@ def format_joint_trajectory_ranges(
             f"{item['sample_count']:>6}"
         )
     return "\n".join(lines)
+
+
+def joint_span_violations(trajectories, maximum_span_deg: float) -> list[dict]:
+    """Return joints whose cached path exceeds the allowed angular span."""
+    limit = max(0.0, float(maximum_span_deg))
+    ranges = summarize_joint_trajectory_ranges(trajectories)
+    return [
+        item
+        for item in ranges
+        if float(item["span_deg"]) > limit + 1e-9
+    ]
 
 
 def _unit(vector: np.ndarray, label: str) -> np.ndarray:
@@ -927,6 +942,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("continuous_arc_min_clearance", 0.12)
         self.declare_parameter("continuous_arc_max_clearance", 0.25)
         self.declare_parameter("continuous_arc_waypoint_count", 7)
+        self.declare_parameter("continuous_arc_max_joint_span_deg", 120.0)
         self.declare_parameter("return_to_pick_ready", True)
         self.declare_parameter("retreat_after_harvest", False)
         self.declare_parameter("lift_retreat_clearance", 0.12)
@@ -2029,6 +2045,7 @@ class CartesianHarvestPlanner(Node):
         start_state: RobotState,
         label: str,
         pregrasp: bool,
+        maximum_joint_span_deg: float | None = None,
     ):
         """Use Cartesian first, then constrained OMPL for each failed waypoint."""
         waypoint_list = list(waypoints)
@@ -2039,7 +2056,42 @@ class CartesianHarvestPlanner(Node):
             terminal_failure=False,
         )
         if cartesian is not None:
-            return (cartesian,)
+            violations = (
+                joint_span_violations(
+                    [cartesian],
+                    maximum_joint_span_deg,
+                )
+                if maximum_joint_span_deg is not None
+                else []
+            )
+            if not violations:
+                return (cartesian,)
+            if self._trajectory_range_records:
+                self._trajectory_range_records[-1]["accepted"] = False
+            violation_text = ", ".join(
+                f"{item['joint_name']}={item['span_deg']:.1f}°"
+                for item in violations
+            )
+            self._record_plan_stage(
+                "CONTINUOUS_ARC_JOINT_SPAN",
+                "trajectory_validation",
+                False,
+                0.0,
+                "JOINT_SPAN_LIMIT_EXCEEDED",
+                maximum_joint_span_deg=float(maximum_joint_span_deg),
+                violations=[
+                    {
+                        "joint_name": item["joint_name"],
+                        "span_deg": float(item["span_deg"]),
+                    }
+                    for item in violations
+                ],
+            )
+            self.get_logger().error(
+                f"{label} 결과 폐기: 관절 span 안전 한도 "
+                f"{float(maximum_joint_span_deg):.1f}° 초과 "
+                f"({violation_text})"
+            )
         recorded_stages = self.last_plan_report.get("stages", [])
         cartesian_failure = (
             dict(recorded_stages[-1]) if recorded_stages else {}
@@ -2092,8 +2144,7 @@ class CartesianHarvestPlanner(Node):
             trajectories.append(trajectory)
             waypoint_start = self._trajectory_end_state(trajectory)
 
-        self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
-            {
+        fallback_record = {
                 "segment": fallback_stage,
                 "cartesian_stage": cartesian_failure.get("stage", ""),
                 "cartesian_reason": cartesian_failure.get("reason", ""),
@@ -2111,11 +2162,53 @@ class CartesianHarvestPlanner(Node):
                 ],
                 "success": True,
             }
+        self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
+            fallback_record
         )
         self.get_logger().info(
             f"{label} OMPL fallback 성공: "
             f"{len(trajectories)}개 waypoint"
         )
+        violations = (
+            joint_span_violations(
+                trajectories,
+                maximum_joint_span_deg,
+            )
+            if maximum_joint_span_deg is not None
+            else []
+        )
+        if violations:
+            fallback_record.update(
+                {
+                    "success": False,
+                    "reason": "JOINT_SPAN_LIMIT_EXCEEDED",
+                }
+            )
+            violation_text = ", ".join(
+                f"{item['joint_name']}={item['span_deg']:.1f}°"
+                for item in violations
+            )
+            self._record_plan_stage(
+                "CONTINUOUS_ARC_OMPL_JOINT_SPAN",
+                "trajectory_validation",
+                False,
+                0.0,
+                "JOINT_SPAN_LIMIT_EXCEEDED",
+                maximum_joint_span_deg=float(maximum_joint_span_deg),
+                violations=[
+                    {
+                        "joint_name": item["joint_name"],
+                        "span_deg": float(item["span_deg"]),
+                    }
+                    for item in violations
+                ],
+            )
+            self.get_logger().error(
+                f"{label} OMPL fallback 결과 폐기: 관절 span 안전 한도 "
+                f"{float(maximum_joint_span_deg):.1f}° 초과 "
+                f"({violation_text})"
+            )
+            return None
         return tuple(trajectories)
 
     def _plan_preapproach(
@@ -2575,8 +2668,9 @@ class CartesianHarvestPlanner(Node):
         outward_axis,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
-        """Plan current -> outward arc -> pre-grasp, with PICK_READY fallback."""
+        """Plan an outward arc, unwinding the cached path if it fails."""
         stage_start = len(self.last_plan_report.get("stages", []))
         fallback_start = len(
             self.last_plan_report.get("cartesian_fallbacks", [])
@@ -2630,9 +2724,19 @@ class CartesianHarvestPlanner(Node):
                 current_state,
                 "Continuous arc pre-approach",
                 pregrasp=True,
+                maximum_joint_span_deg=float(
+                    self.get_parameter(
+                        "continuous_arc_max_joint_span_deg"
+                    ).value
+                ),
             )
             self.last_plan_report["continuous_arc"] = {
                 "waypoint_count": len(arc_waypoints),
+                "maximum_joint_span_deg": float(
+                    self.get_parameter(
+                        "continuous_arc_max_joint_span_deg"
+                    ).value
+                ),
                 "minimum_clearance_m": float(
                     self.get_parameter("continuous_arc_min_clearance").value
                 ),
@@ -2662,7 +2766,7 @@ class CartesianHarvestPlanner(Node):
                 "연속 수확 arc 전환 성공: 현재 post-wait 자세에서 식물 "
                 "바깥쪽 반원 경로를 거쳐 다음 pre-grasp로 이동"
             )
-            return (), arc_plan, display_start_state
+            return (), (), arc_plan, display_start_state
 
         arc_stages = self.last_plan_report.get("stages", [])[stage_start:]
         for stage in arc_stages:
@@ -2693,15 +2797,40 @@ class CartesianHarvestPlanner(Node):
         ):
             self.last_plan_report.pop(key, None)
 
-        self.get_logger().warning(
-            "연속 수확 arc 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
-            "뒤 기존 pre-grasp 경로를 사용하는 fallback을 계획합니다."
-        )
-        pick_ready_plan = self._plan_pick_ready(start_state_override)
-        if pick_ready_plan is None:
+        reverse_trajectories = tuple(arc_failure_reverse_trajectory or ())
+        if not reverse_trajectories:
+            self.get_logger().error(
+                "연속 수확 arc 전환 실패: 안전하게 역재생할 이전 궤적이 "
+                "없으므로 신규 OMPL PICK_READY 우회 경로를 만들지 않습니다."
+            )
+            self.last_plan_report.update(
+                {
+                    "continuous_transition_direct": False,
+                    "continuous_transition_arc": False,
+                    "failure_stage": "CONTINUOUS_ARC_PREAPPROACH",
+                    "failure_planner_type": arc_failure.get(
+                        "planner_type", "cartesian/ompl"
+                    ),
+                    "failure_reason": "ARC_FAILED_WITHOUT_REVERSE_HISTORY",
+                    "recovery_used": False,
+                    "recovery_success": False,
+                }
+            )
             return None
-        pick_ready_trajectory, display_start_state = pick_ready_plan
-        pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
+
+        self.get_logger().warning(
+            "연속 수확 arc 전환 실패: 지금까지 실행한 연속 수확 궤적을 "
+            "역순으로 따라 PICK_READY까지 안전 복귀한 뒤 다음 "
+            "pre-grasp를 계획합니다."
+        )
+        for index, trajectory in enumerate(reverse_trajectories, start=1):
+            self._record_trajectory_range_input(
+                f"ARC_REVERSE_RECOVERY_{index}",
+                trajectory,
+                True,
+                True,
+            )
+        pick_ready_end = self._trajectory_end_state(reverse_trajectories)
         fallback_preapproach = self._plan_preapproach(
             preapproach_pose,
             pick_ready_end,
@@ -2721,22 +2850,112 @@ class CartesianHarvestPlanner(Node):
                 ),
                 "recovery_used": True,
                 "recovery_success": True,
-                "recovery_stage": "OMPL_PICK_READY_FALLBACK",
+                "recovery_stage": "CACHED_TRAJECTORY_REVERSE_TO_PICK_READY",
                 "recovery_reason": (
-                    "arc pre-grasp 전환 실패 후 PICK_READY 경유 성공"
+                    "arc 실패 후 기존 성공 궤적을 역재생하여 "
+                    "PICK_READY 복귀 성공"
+                ),
+                "continuous_reverse_recovery": True,
+                "reverse_recovery_trajectory_count": len(
+                    reverse_trajectories
                 ),
             }
         )
+        if start_state_override is None:
+            display_start_state = RobotState()
+            display_start_state.is_diff = True
+        else:
+            display_start_state = copy.deepcopy(start_state_override)
         return (
-            pick_ready_trajectory,
+            reverse_trajectories,
+            (),
             fallback_preapproach,
             display_start_state,
         )
+
+    def plan_continuous_transition_only(
+        self,
+        start_state: RobotState,
+        start_pose: Pose,
+        target_preapproach_pose: Pose,
+        outward_axis,
+    ):
+        """Plan only the inter-tomato arc to a cached pre-grasp pose.
+
+        The next tomato's READY-to-harvest motion is planned independently by
+        the batch worker.  A failure here therefore rejects only the arc; the
+        worker can still reverse its cached path to READY and reuse the
+        already validated next-tomato trajectory.
+        """
+        self._begin_plan_report(start_state)
+        if not self._synchronize_dynamic_base_transform():
+            self._record_plan_stage(
+                "DYNAMIC_BASE_TF_SYNC",
+                "tf",
+                False,
+                0.0,
+                "FRESH_LIFT_TF_NOT_RECEIVED",
+            )
+            self._finish_plan_report(False)
+            return None
+
+        waypoints = make_continuous_arc_waypoints(
+            start_pose,
+            target_preapproach_pose,
+            outward_axis,
+            minimum_clearance=float(
+                self.get_parameter("continuous_arc_min_clearance").value
+            ),
+            maximum_clearance=float(
+                self.get_parameter("continuous_arc_max_clearance").value
+            ),
+            waypoint_count=int(
+                self.get_parameter("continuous_arc_waypoint_count").value
+            ),
+        )
+        transition = self._plan_cartesian_with_ompl_fallback(
+            waypoints,
+            copy.deepcopy(start_state),
+            "Continuous arc pre-approach",
+            pregrasp=True,
+            maximum_joint_span_deg=float(
+                self.get_parameter(
+                    "continuous_arc_max_joint_span_deg"
+                ).value
+            ),
+        )
+        self.last_plan_report["continuous_arc"] = {
+            "waypoint_count": len(waypoints),
+            "maximum_joint_span_deg": float(
+                self.get_parameter(
+                    "continuous_arc_max_joint_span_deg"
+                ).value
+            ),
+            "minimum_clearance_m": float(
+                self.get_parameter("continuous_arc_min_clearance").value
+            ),
+            "maximum_clearance_m": float(
+                self.get_parameter("continuous_arc_max_clearance").value
+            ),
+            "outward_axis": [float(value) for value in outward_axis],
+        }
+        success = transition is not None
+        self.last_plan_report["continuous_transition_direct"] = success
+        self.last_plan_report["continuous_transition_arc"] = success
+        self._finish_plan_report(success)
+        if not success:
+            self.get_logger().warning(
+                "토마토 간 Arc 전환 계획 실패: 다음 토마토의 독립 계획은 "
+                "유지하고 cached reverse 복구를 사용합니다."
+            )
+            return None
+        return tuple(transition)
 
     def plan(
         self,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
         self._begin_plan_report(start_state_override)
         if not self._synchronize_dynamic_base_transform():
@@ -2753,6 +2972,9 @@ class CartesianHarvestPlanner(Node):
             result = self._plan_impl(
                 start_state_override=start_state_override,
                 start_pose_override=start_pose_override,
+                arc_failure_reverse_trajectory=(
+                    arc_failure_reverse_trajectory
+                ),
             )
         except Exception as error:
             self._record_plan_stage(
@@ -2771,6 +2993,7 @@ class CartesianHarvestPlanner(Node):
         self,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
         tomato_tf = self._lookup_transform(self.tomato_frame)
         if tomato_tf is None:
@@ -3076,16 +3299,21 @@ class CartesianHarvestPlanner(Node):
             self.get_parameter("continuous_transition").value
         )
         pick_ready_end = None
+        arc_reverse_recovery_trajectory = ()
         if continuous_transition:
             continuous_plan = self._plan_continuous_preapproach(
                 preapproach_planning_pose,
                 geometry.outward_axis,
                 start_state_override=start_state_override,
                 start_pose_override=start_pose_override,
+                arc_failure_reverse_trajectory=(
+                    arc_failure_reverse_trajectory
+                ),
             )
             if continuous_plan is None:
                 return None
             (
+                arc_reverse_recovery_trajectory,
                 pick_ready_trajectory,
                 preapproach_trajectory,
                 display_start_state,
@@ -3197,7 +3425,9 @@ class CartesianHarvestPlanner(Node):
         return_pick_ready_trajectory = ()
         if step_cycle_only:
             retreat_after_harvest = False
-            return_to_pick_ready = False
+            return_to_pick_ready = bool(
+                self.get_parameter("return_to_pick_ready").value
+            )
             if cycle_last_stage <= 2:
                 final_planning_pose = copy.deepcopy(
                     preapproach_planning_pose
@@ -3206,6 +3436,14 @@ class CartesianHarvestPlanner(Node):
                 final_planning_pose = copy.deepcopy(
                     approach_waypoints[cycle_last_stage - 3]
                 )
+            if return_to_pick_ready:
+                return_pick_ready_plan = self._plan_pick_ready(
+                    approach_end,
+                    label="RETURN_PICK_READY",
+                )
+                if return_pick_ready_plan is None:
+                    return None
+                return_pick_ready_trajectory, _ = return_pick_ready_plan
         else:
             after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
                 [as_planning_pose(tip_motion.after_wait_pose)],
@@ -3294,11 +3532,21 @@ class CartesianHarvestPlanner(Node):
             outward_retreat_trajectory=outward_retreat_trajectory,
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
+            arc_reverse_recovery_trajectory=(
+                arc_reverse_recovery_trajectory
+            ),
             end_planning_pose=final_planning_pose,
             step_approach_trajectories=step_approach_trajectories,
+            preapproach_planning_pose=copy.deepcopy(
+                preapproach_planning_pose
+            ),
+            outward_axis=tuple(
+                float(value) for value in geometry.outward_axis
+            ),
         )
         planned_trajectories = []
         for segment in (
+            arc_reverse_recovery_trajectory,
             pick_ready_trajectory,
             preapproach_trajectory,
             approach_trajectory,
@@ -3339,7 +3587,7 @@ class CartesianHarvestPlanner(Node):
                 if self.last_plan_report.get(
                     "continuous_transition_arc", False
                 )
-                else "PICK_READY fallback pre-grasp"
+                else "cached reverse-to-PICK_READY fallback pre-grasp"
             )
         else:
             start_label = "PICK_READY"
@@ -3364,6 +3612,17 @@ class CartesianHarvestPlanner(Node):
             )
             return True
 
+        if plan.arc_reverse_recovery_trajectory:
+            if not self._execute_trajectory_sequence(
+                plan.arc_reverse_recovery_trajectory,
+                "Arc failure cached reverse recovery to PICK_READY",
+            ):
+                return False
+            self.get_logger().info(
+                "Arc 실패 복구 완료: 기존 성공 궤적을 역순으로 따라 "
+                "PICK_READY에 도착했습니다."
+            )
+
         if plan.pick_ready_trajectory and not self._execute_trajectory_group(
             plan.pick_ready_trajectory, "PICK_READY"
         ):
@@ -3378,6 +3637,34 @@ class CartesianHarvestPlanner(Node):
             "Approach and pre-wait harvest",
         ):
             return False
+
+        if bool(self.get_parameter("step_cycle_only").value):
+            if plan.return_pick_ready_trajectory:
+                return_label = (
+                    "CACHED REVERSE RETURN_PICK_READY"
+                    if plan.return_pick_ready_is_cached_reverse
+                    else "OMPL RETURN_PICK_READY"
+                )
+                if not self._execute_trajectory_group(
+                    plan.return_pick_ready_trajectory,
+                    return_label,
+                ):
+                    return False
+                self.get_logger().info(
+                    "Limited-stage batch segment complete; robot returned "
+                    "to PICK_READY"
+                    + (
+                        " by reversing the cached successful path."
+                        if plan.return_pick_ready_is_cached_reverse
+                        else "."
+                    )
+                )
+            else:
+                self.get_logger().info(
+                    "Limited-stage batch segment complete; current stage "
+                    "pose is retained for the next continuous arc."
+                )
+            return True
 
         wait_seconds = max(
             0.0, float(self.get_parameter("harvest_wait_sec").value)
@@ -3402,13 +3689,23 @@ class CartesianHarvestPlanner(Node):
             )
 
         if plan.return_pick_ready_trajectory:
+            return_label = (
+                "CACHED REVERSE RETURN_PICK_READY"
+                if plan.return_pick_ready_is_cached_reverse
+                else "OMPL RETURN_PICK_READY"
+            )
             if not self._execute_trajectory_group(
                 plan.return_pick_ready_trajectory,
-                "OMPL RETURN_PICK_READY",
+                return_label,
             ):
                 return False
             self.get_logger().info(
-                "Harvest sequence complete; robot returned to PICK_READY."
+                "Harvest sequence complete; robot returned to PICK_READY"
+                + (
+                    " by reversing the cached successful path."
+                    if plan.return_pick_ready_is_cached_reverse
+                    else "."
+                )
             )
         elif plan.outward_retreat_trajectory:
             self.get_logger().info(

@@ -33,6 +33,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
+    batch_harvest_stage_limit,
     cartesian_fallback_summary,
     cancel_all_goals_request,
     camera_service_for_source,
@@ -41,15 +42,14 @@ from rbpodo_tomato_harvest.harvest_gui import (
     decode_compressed_result_image,
     detection_message_sorted_by_height,
     detected_tomato_marker_array,
+    debug_frame_request,
     generate_sweep_cases,
     gripper_stroke_script,
     harvest_all_jobs,
     harvest_command,
     harvest_failure_summary,
-    harvest_last_tomato_options,
     harvest_result_marker,
     harvest_statistics_record,
-    harvest_target_count,
     is_critical_process_output,
     lift_harvest_target_height_mm,
     named_pose_command,
@@ -72,6 +72,9 @@ from rbpodo_tomato_harvest.harvest_planner import (
     HarvestMotionPlan,
 )
 import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
+from rbpodo_tomato_harvest.tomato_harvest_preplanned_batch import (
+    _candidate_failure_is_retryable,
+)
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
 
 
@@ -181,6 +184,20 @@ def test_camera_target_record_text_rejects_nonfinite_coordinates():
         )
 
 
+def test_debug_frame_request_preserves_feedback_json_text():
+    contents = '{"target_id":"detected_tomato_2","review":{"note":"확인"}}\n'
+
+    request = debug_frame_request(contents)
+
+    assert request.request_text == contents
+
+
+@pytest.mark.parametrize("contents", ["not-json", "[]", "null"])
+def test_debug_frame_request_rejects_invalid_payload(contents):
+    with pytest.raises(ValueError):
+        debug_frame_request(contents)
+
+
 def test_camera_target_record_prefers_running_target_then_selection():
     gui = SimpleNamespace(
         active_camera_target_index=2,
@@ -222,6 +239,11 @@ def test_tomato_motion_result_text_distinguishes_plan_and_execution_failures():
         False,
         {"execution_attempted": True},
     ) == "수확 실행 실패"
+    assert tomato_motion_result_text(
+        True,
+        True,
+        {"step_cycle_only": True, "step_cycle_last_stage": 4},
+    ) == "4단계 실행 성공"
 
 
 def test_harvest_failure_summary_includes_stage_and_reason():
@@ -944,6 +966,7 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
     parameter_values = {
         "execute": True,
         "harvest_wait_sec": 2.75,
+        "step_cycle_only": False,
     }
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
@@ -1006,7 +1029,11 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     )
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
-            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+            value={
+                "execute": True,
+                "harvest_wait_sec": 0.0,
+                "step_cycle_only": False,
+            }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: events.append(("log", message))
@@ -1037,6 +1064,106 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     assert "post-wait pose is retained" in events[-1][1]
 
 
+def test_limited_stage_execute_skips_wait_and_post_wait(monkeypatch):
+    events = []
+    waits = []
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.harvest_planner.time.sleep",
+        waits.append,
+    )
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "execute": True,
+                "harvest_wait_sec": 2.0,
+                "step_cycle_only": True,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    planner._execute_trajectory_group = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_group(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("arc_to_preapproach",),
+        approach_trajectory=("through_stage_four",),
+        after_wait_trajectory=("must_not_execute",),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    assert waits == []
+    assert [event[1] for event in events if event[0] == "execute"] == [
+        "arc_to_preapproach",
+        "through_stage_four",
+    ]
+    assert "retained for the next continuous arc" in events[-1][1]
+
+
+def test_arc_reverse_recovery_executes_before_next_preapproach():
+    events = []
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={"execute": True, "step_cycle_only": True}[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    planner._execute_trajectory_group = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_group(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("next_preapproach",),
+        approach_trajectory=("next_target",),
+        after_wait_trajectory=(),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+        arc_reverse_recovery_trajectory=("reverse_2", "reverse_1"),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    assert [event[1] for event in events if event[0] == "execute"] == [
+        "reverse_2",
+        "reverse_1",
+        "next_preapproach",
+        "next_target",
+    ]
+
+
 def test_lift_continuous_execute_reaches_safe_retreat_before_next_tomato(
     monkeypatch,
 ):
@@ -1047,7 +1174,11 @@ def test_lift_continuous_execute_reaches_safe_retreat_before_next_tomato(
     )
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
-            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+            value={
+                "execute": True,
+                "harvest_wait_sec": 0.0,
+                "step_cycle_only": False,
+            }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: events.append(("log", message))
@@ -1098,6 +1229,7 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1107,7 +1239,7 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
         _lookup_transform=lambda frame: transform,
     )
 
-    def plan_arc(waypoints, start_state, label, pregrasp):
+    def plan_arc(waypoints, start_state, label, pregrasp, **kwargs):
         calls.append((waypoints, start_state, label, pregrasp))
         return ("arc_preapproach_trajectory",)
 
@@ -1124,8 +1256,9 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
     )
 
     assert result[0] == ()
-    assert result[1] == ("arc_preapproach_trajectory",)
-    assert result[2].is_diff is True
+    assert result[1] == ()
+    assert result[2] == ("arc_preapproach_trajectory",)
+    assert result[3].is_diff is True
     waypoints, start_state, label, pregrasp = calls[0]
     assert len(waypoints) == 7
     assert start_state.is_diff is True
@@ -1158,6 +1291,7 @@ def test_preplanned_continuous_arc_uses_cached_end_state_and_pose():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1184,13 +1318,80 @@ def test_preplanned_continuous_arc_uses_cached_end_state_and_pose():
         start_pose_override=cached_pose,
     )
 
-    assert result[1] == ("cached_arc",)
-    assert list(result[2].joint_state.position) == [0.4]
+    assert result[2] == ("cached_arc",)
+    assert list(result[3].joint_state.position) == [0.4]
     assert list(calls[0][1].joint_state.position) == [0.4]
     expected_first_x = cached_pose.position.x + (
         target.position.x - cached_pose.position.x
     ) / 7.0
     assert calls[0][0][0].position.x == pytest.approx(expected_first_x)
+
+
+def test_transition_only_arc_preserves_independently_planned_target():
+    calls = []
+    finished = []
+    start_state = RobotState()
+    start_state.joint_state.name = ["base"]
+    start_state.joint_state.position = [0.2]
+    start_pose = Pose()
+    start_pose.position.x = -0.2
+    start_pose.orientation.w = 1.0
+    target_pose = Pose()
+    target_pose.position.x = 0.3
+    target_pose.orientation.w = 1.0
+    planner = SimpleNamespace(
+        last_plan_report={},
+        _begin_plan_report=lambda state: planner.last_plan_report.update(
+            {"stages": []}
+        ),
+        _synchronize_dynamic_base_transform=lambda: True,
+        _finish_plan_report=finished.append,
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
+            }[name]
+        ),
+        _plan_cartesian_with_ompl_fallback=(
+            lambda waypoints, state, *args, **kwargs: (
+                calls.append((waypoints, state, args, kwargs))
+                or ("arc_only",)
+            )
+        ),
+        get_logger=lambda: SimpleNamespace(warning=lambda message: None),
+    )
+
+    transition = CartesianHarvestPlanner.plan_continuous_transition_only(
+        planner,
+        start_state,
+        start_pose,
+        target_pose,
+        [0.0, 1.0, 0.0],
+    )
+
+    assert transition == ("arc_only",)
+    assert finished == [True]
+    assert len(calls[0][0]) == 7
+    assert list(calls[0][1].joint_state.position) == [0.2]
+    assert calls[0][3]["maximum_joint_span_deg"] == 120.0
+    assert planner.last_plan_report["continuous_transition_arc"] is True
+
+
+def test_arc_candidate_retries_only_stochastic_planning_failures():
+    assert _candidate_failure_is_retryable(
+        {
+            "failure_stage": "OMPL_FALLBACK_PREAPPROACH_1",
+            "failure_reason": "MOVEIT_PLANNING_FAILED",
+        }
+    ) is True
+    assert _candidate_failure_is_retryable(
+        {
+            "failure_stage": "TARGET_GEOMETRY",
+            "failure_reason": "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+        }
+    ) is False
 
 
 def test_display_start_state_keeps_current_lift_height_for_rviz_playback():
@@ -1319,11 +1520,13 @@ def test_dynamic_base_sync_uses_fresh_lift_joint_and_matching_tf(monkeypatch):
     assert sync["tf_stamp_nanoseconds"] >= sync["joint_stamp_nanoseconds"]
 
 
-def test_continuous_arc_failure_falls_back_through_pick_ready():
+def test_continuous_arc_failure_reverses_cached_path_to_pick_ready():
     preapproach_state = RobotState()
     preapproach_state.joint_state.name = ["base", "shoulder"]
     preapproach_state.joint_state.position = [0.4, -0.8]
     display_start = RobotState()
+    display_start.joint_state.name = ["base", "shoulder"]
+    display_start.joint_state.position = [0.8, -1.0]
     transform = TransformStamped()
     transform.transform.translation.z = 0.5
     transform.transform.rotation.w = 1.0
@@ -1336,6 +1539,7 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1348,10 +1552,7 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
             )
             or ("seed_preapproach",)
         ),
-        _plan_pick_ready=lambda start_state=None: (
-            "pick_ready",
-            display_start,
-        ),
+        _record_trajectory_range_input=lambda *args, **kwargs: None,
         _lookup_transform=lambda frame: transform,
     )
     planner._trajectory_end_state = lambda trajectory: preapproach_state
@@ -1384,18 +1585,79 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
         planner,
         target,
         outward_axis=[0.0, 1.0, 0.0],
+        start_state_override=display_start,
+        arc_failure_reverse_trajectory=("reverse_previous_path",),
     )
 
-    assert result == ("pick_ready", ("seed_preapproach",), display_start)
+    assert result == (
+        ("reverse_previous_path",),
+        (),
+        ("seed_preapproach",),
+        display_start,
+    )
     assert planner.last_plan_report["continuous_transition_direct"] is False
     assert planner.last_plan_report["continuous_transition_arc"] is False
     assert planner.last_plan_report["recovery_success"] is True
+    assert planner.last_plan_report["recovery_stage"] == (
+        "CACHED_TRAJECTORY_REVERSE_TO_PICK_READY"
+    )
     arc_stage = next(
         stage
         for stage in planner.last_plan_report["stages"]
         if stage["stage"] == "CARTESIAN_CONTINUOUS_ARC"
     )
     assert arc_stage["discarded"] is True
+
+
+def test_continuous_arc_failure_without_history_does_not_plan_new_ready_path():
+    transform = TransformStamped()
+    transform.transform.rotation.w = 1.0
+    planner = SimpleNamespace(
+        last_plan_report={"stages": [], "cartesian_fallbacks": []},
+        _trajectory_range_records=[],
+        planning_link="tcp",
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            warning=lambda message: None,
+            error=lambda message: None,
+        ),
+        _lookup_transform=lambda frame: transform,
+    )
+
+    def fail_arc(*args, **kwargs):
+        planner.last_plan_report["stages"].append(
+            {
+                "stage": "CARTESIAN_CONTINUOUS_ARC",
+                "planner_type": "cartesian",
+                "success": False,
+                "reason": "CARTESIAN_FRACTION_LOW",
+            }
+        )
+        return None
+
+    planner._plan_cartesian_with_ompl_fallback = fail_arc
+    target = Pose()
+    target.orientation.w = 1.0
+
+    result = CartesianHarvestPlanner._plan_continuous_preapproach(
+        planner,
+        target,
+        outward_axis=[0.0, 1.0, 0.0],
+    )
+
+    assert result is None
+    assert planner.last_plan_report["failure_reason"] == (
+        "ARC_FAILED_WITHOUT_REVERSE_HISTORY"
+    )
+    assert planner.last_plan_report["recovery_used"] is False
 
 
 def test_plan_report_keeps_first_failure_with_cartesian_details():
@@ -1608,7 +1870,22 @@ def test_preplanned_batch_command_selects_worker_and_arc_mode():
         "continuous_arc": True,
         "execute": True,
         "start_tolerance_deg": 3.0,
+        "harvest_stage_limit": None,
+        "candidate_attempts": 3,
     }
+
+
+def test_preplanned_batch_command_limits_each_tomato_stage_not_count():
+    command, environment = preplanned_batch_command(
+        5,
+        continuous_arc=True,
+        harvest_stage_limit=4,
+    )
+
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["tomato_count"] == 5
+    assert config["harvest_stage_limit"] == 4
+    assert "step_cycle_last_stage:=4" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -1624,6 +1901,23 @@ def test_harvest_command_rejects_invalid_motion_scale():
             False,
             pick_ready_state_name="UNKNOWN_READY",
         )
+    with pytest.raises(ValueError, match="harvest_stage_limit"):
+        harvest_command(0, False, harvest_stage_limit=5)
+
+
+def test_harvest_command_can_stop_each_tomato_at_stage_four():
+    command = harvest_command(
+        7,
+        True,
+        harvest_stage_limit=4,
+        continuous_transition=True,
+        return_to_pick_ready=False,
+    )
+
+    assert "tomato_frame:=detected_tomato_7_tf" in command
+    assert "stepwise_plan:=true" in command
+    assert "step_cycle_only:=true" in command
+    assert "step_cycle_last_stage:=4" in command
 
 
 def test_gui_percent_to_scale_validates_operator_input():
@@ -1705,6 +1999,7 @@ def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
     assert "stepwise_plan:=true" in command
     assert "step_cycle_last_stage:=4" in command
     assert "harvest_x_forward:=0.035" in command
+    assert "return_to_pick_ready:=false" in command
     assert command[-2:] == ["-p", "step_cycle_only:=true"]
 
 
@@ -2671,42 +2966,15 @@ def test_harvest_all_jobs_rejects_negative_count():
         harvest_all_jobs(-1)
 
 
-def test_harvest_last_tomato_options_are_inclusive():
-    assert harvest_last_tomato_options(5) == (
-        "전체",
-        "0번까지",
-        "1번까지",
-        "2번까지",
-        "3번까지",
-        "4번까지",
-    )
+def test_batch_harvest_stage_limit_uses_per_tomato_stage_number():
+    assert batch_harvest_stage_limit("전체 수확") is None
+    assert batch_harvest_stage_limit("3단계까지") == 3
+    assert batch_harvest_stage_limit("4단계까지") == 4
 
 
-def test_harvest_target_count_converts_inclusive_last_index():
-    assert harvest_target_count(8, "전체") == 8
-    assert harvest_target_count(8, "3번까지") == 4
-    assert harvest_target_count(8, "4번까지") == 5
-    assert harvest_all_jobs(harvest_target_count(8, "3번까지"))[-1] == (
-        3,
-        True,
-    )
-
-
-@pytest.mark.parametrize(
-    ("tomato_count", "selection"),
-    [
-        (0, "전체"),
-        (3, "3번까지"),
-        (3, "마지막"),
-        (3, "-1번까지"),
-    ],
-)
-def test_harvest_target_count_rejects_invalid_selection(
-    tomato_count,
-    selection,
-):
+def test_batch_harvest_stage_limit_rejects_tomato_number_selection():
     with pytest.raises(ValueError):
-        harvest_target_count(tomato_count, selection)
+        batch_harvest_stage_limit("3번 토마토까지")
 
 
 def test_success_marker_is_green_and_points_along_tomato_positive_x():

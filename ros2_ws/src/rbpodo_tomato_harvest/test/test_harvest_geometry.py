@@ -19,6 +19,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
     is_within_robot_side_approach_sector,
+    joint_span_violations,
     robot_side_approach_error_deg,
     select_minimum_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
@@ -712,6 +713,22 @@ def test_joint_trajectory_summary_uses_joint_names_across_segments():
     assert "base" in formatted
     assert "wrist3" in formatted
     assert "Points" in formatted
+
+
+def test_joint_span_safety_gate_includes_wrist3():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = ["base", "wrist3"]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=[0.0, 0.0]),
+        JointTrajectoryPoint(
+            positions=[np.deg2rad(90.0), np.deg2rad(121.0)]
+        ),
+    ]
+
+    violations = joint_span_violations([trajectory], 120.0)
+
+    assert [item["joint_name"] for item in violations] == ["wrist3"]
+    assert violations[0]["span_deg"] == pytest.approx(121.0)
 
 
 def test_failure_robot_state_uses_last_valid_trajectory_point():
