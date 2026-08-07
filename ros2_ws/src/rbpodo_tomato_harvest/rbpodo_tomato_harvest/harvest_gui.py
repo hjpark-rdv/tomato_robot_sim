@@ -2630,9 +2630,14 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
-        self.adaptive_grasp_max_rotation_entry = ttk.Entry(
+        self.adaptive_grasp_max_rotation_entry = ttk.Spinbox(
             rotation_input,
             textvariable=self.adaptive_grasp_max_rotation_var,
+            from_=0.0,
+            to=90.0,
+            increment=1.0,
+            wrap=False,
+            command=self._adaptive_grasp_mode_changed,
             width=7,
         )
         self.adaptive_grasp_max_rotation_entry.grid(row=0, column=0)
