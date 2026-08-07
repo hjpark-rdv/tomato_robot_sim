@@ -798,7 +798,7 @@ def stepper_command(
     pick_ready_state_name: str = "PICK_READY",
     cycle_only: bool = False,
     cycle_last_stage: int = 5,
-    cycle_forward_distance_m: float = 0.070,
+    cycle_forward_distance_m: float = 0.040,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     tomato_frame: str | None = None,
@@ -829,8 +829,8 @@ def stepper_command(
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
     command.extend(["-p", "stepwise_plan:=true"])
     cycle_last_stage = int(cycle_last_stage)
-    if not 1 <= cycle_last_stage <= 5:
-        raise ValueError("cycle_last_stage must be between 1 and 5")
+    if not 1 <= cycle_last_stage <= 6:
+        raise ValueError("cycle_last_stage must be between 1 and 6")
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
     cycle_forward_distance_m = float(cycle_forward_distance_m)
     if not 0.010 <= cycle_forward_distance_m <= 0.070:
@@ -849,8 +849,8 @@ def stepper_command(
 def repeat_cycle_command(direction: str, last_stage_number: int) -> dict:
     """Build the persistent stepper command for a selected 1↔X range."""
     stage_number = int(last_stage_number)
-    if not 1 <= stage_number <= 5:
-        raise ValueError("repeat last stage must be between 1 and 5")
+    if not 1 <= stage_number <= 6:
+        raise ValueError("repeat last stage must be between 1 and 6")
     actions = {
         "forward": "execute_cycle_forward",
         "reverse": "execute_cycle_reverse",
@@ -871,8 +871,8 @@ def repeat_stage_command(
     """Return one cached-stage command, or None when the cycle is complete."""
     stage_number = int(last_stage_number)
     index = int(next_index)
-    if not 1 <= stage_number <= 5:
-        raise ValueError("repeat last stage must be between 1 and 5")
+    if not 1 <= stage_number <= 6:
+        raise ValueError("repeat last stage must be between 1 and 6")
     if direction == "forward":
         if index < 0 or index > stage_number:
             raise ValueError("forward repeat index is outside the cycle")
@@ -1946,7 +1946,7 @@ class HarvestGui(Node):
         self.step_session_verification = None
         self.step_session_mode = None
         self.repeat_cycle_last_index = 4
-        self.repeat_cycle_forward_distance_m = 0.070
+        self.repeat_cycle_forward_distance_m = 0.040
         self.repeat_batch_active = False
         self.repeat_batch_queue = deque()
         self.repeat_batch_total = 0
@@ -2084,7 +2084,7 @@ class HarvestGui(Node):
         )
         self.repeat_execution_enabled_var = tk.BooleanVar(value=False)
         self.repeat_last_stage_var = tk.StringVar(value="5")
-        self.repeat_forward_distance_mm_var = tk.StringVar(value="70")
+        self.repeat_forward_distance_mm_var = tk.StringVar(value="40")
         self.repeat_status = tk.StringVar(
             value="토마토를 선택하고 반복 테스트 Plan을 생성하세요."
         )
@@ -2949,7 +2949,7 @@ class HarvestGui(Node):
         self.repeat_last_stage_combo = ttk.Combobox(
             setup,
             textvariable=self.repeat_last_stage_var,
-            values=("1", "2", "3", "4", "5"),
+            values=("1", "2", "3", "4", "5", "6"),
             state="readonly",
             width=5,
         )
@@ -6425,9 +6425,9 @@ class HarvestGui(Node):
         try:
             stage_number = int(self.repeat_last_stage_var.get())
         except (TypeError, ValueError) as error:
-            raise ValueError("반복 마지막 단계는 1~5 중에서 선택하세요.") from error
-        if not 1 <= stage_number <= 5:
-            raise ValueError("반복 마지막 단계는 1~5 중에서 선택하세요.")
+            raise ValueError("반복 마지막 단계는 1~6 중에서 선택하세요.") from error
+        if not 1 <= stage_number <= 6:
+            raise ValueError("반복 마지막 단계는 1~6 중에서 선택하세요.")
         return stage_number
 
     def _repeat_last_stage_changed(self, _event=None) -> None:
@@ -6638,7 +6638,7 @@ class HarvestGui(Node):
             cycle_forward_distance_m=(
                 self.repeat_cycle_forward_distance_m
                 if mode == "repeat"
-                else 0.070
+                else 0.040
             ),
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
@@ -7267,7 +7267,7 @@ class HarvestGui(Node):
             return False
         if not self.step_execution_confirmed:
             execution_message = (
-                "캐시된 1~5단계 trajectory를 정방향 또는 역방향으로 "
+                "캐시된 1~6단계 trajectory를 정방향 또는 역방향으로 "
                 "실제 로봇에서 실행합니다.\n\n"
                 if repeat_mode
                 else "캐시된 trajectory를 실제 로봇에서 단계별로 "

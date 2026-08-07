@@ -19,7 +19,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
-CYCLE_LAST_STAGE_INDEX = 4
+CYCLE_LAST_STAGE_INDEX = 5
 
 
 def _emit(event: str, **values) -> None:
@@ -83,7 +83,7 @@ def reverse_trajectory_group(trajectories) -> tuple:
 def step_stage_specs(
     plan: HarvestMotionPlan,
     wait_seconds: float,
-    forward_distance_m: float = 0.070,
+    forward_distance_m: float = 0.040,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -123,23 +123,23 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[1]),
         },
         {
-            "key": "LIFT_Z40",
+            "key": "LIFT_Z20_FORWARD_X20",
             "label": "위로 1차 이동",
-            "detail": "tip 로컬 +Z 40 mm",
+            "detail": "tip 로컬 +Z 20 mm / +X 20 mm",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[2]),
+        },
+        {
+            "key": "LIFT_Z20_BACK_X20",
+            "label": "위로 2차 이동",
+            "detail": "tip 로컬 +Z 20 mm / -X 20 mm",
+            "kind": "trajectory",
+            "trajectories": _trajectory_group(approach[3]),
         },
         {
             "key": "BACK_X50_FIRST",
             "label": "뒤로 1차 이동",
             "detail": "tip 로컬 -X 50 mm",
-            "kind": "trajectory",
-            "trajectories": _trajectory_group(approach[3]),
-        },
-        {
-            "key": "LIFT_Z10",
-            "label": "위로 2차 이동",
-            "detail": "tip 로컬 +Z 10 mm",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[4]),
         },

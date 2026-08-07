@@ -15,7 +15,7 @@ from rbpodo_tomato_harvest.tomato_harvest_stepper import (
 
 @pytest.mark.parametrize(
     ("requested", "expected"),
-    [(None, 4), (0, 0), (2, 2), (4, 4)],
+    [(None, 5), (0, 0), (2, 2), (5, 5)],
 )
 def test_cycle_last_stage_index_accepts_gui_range(requested, expected):
     command = {}
@@ -25,7 +25,7 @@ def test_cycle_last_stage_index_accepts_gui_range(requested, expected):
     assert cycle_last_stage_index(command, 10) == expected
 
 
-@pytest.mark.parametrize("requested", [-1, 5, "invalid"])
+@pytest.mark.parametrize("requested", [-1, 6, "invalid"])
 def test_cycle_last_stage_index_rejects_out_of_range_value(requested):
     with pytest.raises((TypeError, ValueError)):
         cycle_last_stage_index({"last_stage_index": requested}, 10)
@@ -53,9 +53,9 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "READY_TO_PREAPPROACH",
         "PREAPPROACH_TO_TARGET",
         "FORWARD_X",
-        "LIFT_Z40",
+        "LIFT_Z20_FORWARD_X20",
+        "LIFT_Z20_BACK_X20",
         "BACK_X50_FIRST",
-        "LIFT_Z10",
         "BACK_X10_SECOND",
         "HARVEST_WAIT",
         "RETURN_READY",

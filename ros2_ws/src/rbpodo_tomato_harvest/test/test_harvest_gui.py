@@ -2122,7 +2122,7 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "harvest_wait_sec:=1.5" in command
     assert "stepwise_plan:=true" in command
     assert "step_cycle_last_stage:=5" in command
-    assert "harvest_x_forward:=0.07" in command
+    assert "harvest_x_forward:=0.04" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
 
 
@@ -2142,8 +2142,8 @@ def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
 
 
 def test_stepper_command_rejects_invalid_repeat_last_stage():
-    with pytest.raises(ValueError, match="between 1 and 5"):
-        stepper_command(1, cycle_only=True, cycle_last_stage=6)
+    with pytest.raises(ValueError, match="between 1 and 6"):
+        stepper_command(1, cycle_only=True, cycle_last_stage=7)
     with pytest.raises(ValueError, match="between 0.010 and 0.070"):
         stepper_command(1, cycle_forward_distance_m=0.071)
 
@@ -2183,7 +2183,7 @@ def test_repeat_forward_distance_rejects_values_outside_gui_range(value):
     [
         ("forward", 1, "execute_cycle_forward", 0),
         ("forward", 4, "execute_cycle_forward", 3),
-        ("reverse", 5, "execute_cycle_reverse", 4),
+        ("reverse", 6, "execute_cycle_reverse", 5),
     ],
 )
 def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
@@ -2199,8 +2199,8 @@ def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
 
 
 def test_repeat_cycle_command_rejects_invalid_stage_or_direction():
-    with pytest.raises(ValueError, match="between 1 and 5"):
-        repeat_cycle_command("forward", 6)
+    with pytest.raises(ValueError, match="between 1 and 6"):
+        repeat_cycle_command("forward", 7)
     with pytest.raises(ValueError, match="direction"):
         repeat_cycle_command("sideways", 3)
 

@@ -543,10 +543,12 @@ def make_continuous_arc_waypoints(
 
 def make_tip_local_harvest_motion(
     start_pose: Pose,
-    x_forward: float = 0.070,
-    first_z_lift: float = 0.040,
+    x_forward: float = 0.040,
+    first_z_lift: float = 0.020,
+    first_x_forward: float = 0.020,
+    second_z_lift: float = 0.020,
+    second_lift_x_back: float = 0.020,
     first_x_back: float = 0.050,
-    second_z_lift: float = 0.010,
     second_x_back: float = 0.010,
 ) -> TipLocalHarvestMotion:
     """Build the post-contact sequence along tomato_gripper_tip X/Z axes."""
@@ -572,9 +574,15 @@ def make_tip_local_harvest_motion(
 
     before_wait = (
         moved(tip_x * float(x_forward)),
-        moved(tip_z * float(first_z_lift)),
+        moved(
+            tip_z * float(first_z_lift)
+            + tip_x * float(first_x_forward)
+        ),
+        moved(
+            tip_z * float(second_z_lift)
+            - tip_x * float(second_lift_x_back)
+        ),
         moved(-tip_x * float(first_x_back)),
-        moved(tip_z * float(second_z_lift)),
     )
     after_wait = moved(-tip_x * float(second_x_back))
     return TipLocalHarvestMotion(before_wait, after_wait)
@@ -1123,10 +1131,12 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
-        self.declare_parameter("harvest_x_forward", 0.070)
-        self.declare_parameter("harvest_first_z_lift", 0.040)
+        self.declare_parameter("harvest_x_forward", 0.040)
+        self.declare_parameter("harvest_first_z_lift", 0.020)
+        self.declare_parameter("harvest_first_x_forward", 0.020)
+        self.declare_parameter("harvest_second_z_lift", 0.020)
+        self.declare_parameter("harvest_second_lift_x_back", 0.020)
         self.declare_parameter("harvest_first_x_back", 0.050)
-        self.declare_parameter("harvest_second_z_lift", 0.010)
         self.declare_parameter("harvest_wait_sec", 2.0)
         self.declare_parameter("harvest_second_x_back", 0.010)
         self.declare_parameter("max_step", 0.005)
@@ -3616,11 +3626,17 @@ class CartesianHarvestPlanner(Node):
             first_z_lift=float(
                 self.get_parameter("harvest_first_z_lift").value
             ),
-            first_x_back=float(
-                self.get_parameter("harvest_first_x_back").value
+            first_x_forward=float(
+                self.get_parameter("harvest_first_x_forward").value
             ),
             second_z_lift=float(
                 self.get_parameter("harvest_second_z_lift").value
+            ),
+            second_lift_x_back=float(
+                self.get_parameter("harvest_second_lift_x_back").value
+            ),
+            first_x_back=float(
+                self.get_parameter("harvest_first_x_back").value
             ),
             second_x_back=float(
                 self.get_parameter("harvest_second_x_back").value
@@ -3642,7 +3658,7 @@ class CartesianHarvestPlanner(Node):
         cycle_last_stage = int(
             self.get_parameter("step_cycle_last_stage").value
         )
-        if step_cycle_only and not 1 <= cycle_last_stage <= 5:
+        if step_cycle_only and not 1 <= cycle_last_stage <= 6:
             self._record_plan_stage(
                 "STEP_CYCLE_CONFIGURATION",
                 "configuration",
@@ -3731,9 +3747,9 @@ class CartesianHarvestPlanner(Node):
             step_labels = (
                 "Step preapproach to target",
                 "Step tip +X forward",
-                "Step tip +Z lift",
+                "Step tip +Z/+X first lift",
+                "Step tip +Z/-X second lift",
                 "Step tip -X back",
-                "Step tip +Z second lift",
             )
             step_groups = []
             flattened_approach = []
@@ -3956,7 +3972,8 @@ class CartesianHarvestPlanner(Node):
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
-            "-> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
+            "-> (+Z20mm,+X20mm) -> (+Z20mm,-X20mm) "
+            "-> -X50mm -> -X10mm -> wait "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )

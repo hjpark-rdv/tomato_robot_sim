@@ -218,15 +218,16 @@ trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로
 `로봇 즉시 정지`는 MoveIt/controller goal 취소와 RB 정지를 요청하고 캐시를
 폐기하므로, 정지 후에는 스텝 Plan을 다시 생성해야 한다.
 
-`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대 5단계
-tip 로컬 `+Z 40 mm` 1차 상승까지만 계획한다. `마지막 단계 X`에서 1~5 중 하나를
+`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대 6단계
+tip 로컬 `+Z 20 mm / -X 20 mm` 2차 상승까지 계획한다. `마지막 단계 X`에서
+1~6 중 하나를
 선택하면 `1 → X 연속 진입`은 해당 단계까지 중단 없이 순서대로 실행한다. 이후
 `X → 1 역순 복귀`를 누르면 별도 복귀 경로를
 재계획하지 않고, 캐시된 각 joint trajectory의 구간 순서·point 순서·시간과
 속도 방향을 뒤집어 정확히 같은 관절 경로로 원래 시작 자세까지 복귀한다. 복귀가
 끝나면 같은 두 버튼을 반복해서 사용할 수 있다. 매 구간 직전 실제 관절 시작
 오차가 `3°`를 넘거나 trajectory 실행이 실패하면 캐시를 폐기하고 새 Plan 생성을
-요구한다. `4단계 진입 길이 (mm)`는 기본 `70`이며 `10~70 mm` 범위에서 직접
+요구한다. `4단계 진입 길이 (mm)`는 기본 `40`이며 `10~70 mm` 범위에서 직접
 설정할 수 있다. 이 값은 4단계 tip 로컬 `+X` trajectory 계획과 화면의 단계
 설명에 동일하게 적용되며, X가 4보다 작으면 해당 반복에서는 실행되지 않는다.
 `전체 토마토 1 → X → 1`은 검출 순서대로 각 토마토의 Plan을 새로
@@ -430,6 +431,9 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
 표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
 기본 수확 순서는 `PICK_READY → Cartesian pre-approach`이다.
+접근 목표 이후 tip 로컬 수확 동작은 `+X 40 mm → (+Z 20 mm, +X 20 mm)
+→ (+Z 20 mm, -X 20 mm) → -X 50 mm → -X 10 mm → 리니어모터 대기` 순서다.
+괄호로 묶인 X/Z 변화량은 각각 하나의 Cartesian 대각선 이동으로 동시에 적용한다.
 `PICK_READY` 관절값은
 `rbpodo_moveit_config/config/rbpodo.srdf`의
 `PICK_READY/mainpulation` named state를 단일 원본으로 사용한다. 수확 planner와
