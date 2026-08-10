@@ -36,7 +36,7 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from sensor_msgs.msg import CompressedImage
-from std_msgs.msg import Bool, Float64, Header
+from std_msgs.msg import Bool, Float64, Header, String
 from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
@@ -1354,20 +1354,39 @@ def cancel_all_goals_request() -> CancelGoal.Request:
     return request
 
 
-def gripper_stroke_script(command: str) -> str:
-    """Build one atomic RB command for gripper-stroke DOUT10/11."""
-    output_bits = {
-        "extend": 0b01,  # DOUT10=HIGH, DOUT11=LOW
-        "retract": 0b10,  # DOUT10=LOW, DOUT11=HIGH
-        "stop": 0b00,  # DOUT10=LOW, DOUT11=LOW
+def gripper_relay_power_script() -> str:
+    """Keep only RB DOUT8 HIGH and force every other DOUT LOW."""
+    return "set_dout_bit_combination(0,15,256,0)"
+
+
+def linear_motor_pin_values(command: str) -> tuple[bool, bool]:
+    """Return Arduino PIN8/PIN9 levels for one motor command."""
+    output_levels = {
+        "extend": (True, False),
+        "retract": (False, True),
+        "stop": (False, False),
     }
     try:
-        value = output_bits[command]
+        return output_levels[command]
     except KeyError as error:
         message = f"지원하지 않는 그리퍼 스트로크 명령: {command}"
         raise ValueError(message) from error
-    # Little endian maps bit 0 to first_port (DOUT10) and bit 1 to DOUT11.
-    return f"set_dout_bit_combination(10,11,{value},0)"
+
+
+def gripper_output_startup_scripts() -> tuple[str, ...]:
+    """Return the RB relay-power initialization command."""
+    return (gripper_relay_power_script(),)
+
+
+def linear_motor_pin_sequence(
+    command: str,
+) -> tuple[tuple[bool, bool], ...]:
+    """Return the break-before-make Arduino pin sequence."""
+    target = linear_motor_pin_values(command)
+    neutral = linear_motor_pin_values("stop")
+    if command == "stop":
+        return (neutral,)
+    return (neutral, target)
 
 
 def camera_service_for_source(
@@ -1566,6 +1585,26 @@ class HarvestGui(Node):
             "hardware_eval_service", "/rbpodo_hardware/eval"
         )
         self.declare_parameter(
+            "linear_motor_node_name", "/pin89_serial_node"
+        )
+        self.declare_parameter(
+            "linear_motor_launch_package", "arduino_linear_motor"
+        )
+        self.declare_parameter(
+            "linear_motor_launch_file", "pin89_serial.launch.py"
+        )
+        self.declare_parameter("linear_motor_serial_port", "/dev/ttyUSB0")
+        self.declare_parameter(
+            "linear_motor_pin8_topic", "/linear_motor/pin8"
+        )
+        self.declare_parameter(
+            "linear_motor_pin9_topic", "/linear_motor/pin9"
+        )
+        self.declare_parameter(
+            "linear_motor_serial_status_topic",
+            "/linear_motor/serial_status",
+        )
+        self.declare_parameter(
             "moveit_cancel_service", "/execute_trajectory/_action/cancel_goal"
         )
         self.declare_parameter(
@@ -1735,6 +1774,50 @@ class HarvestGui(Node):
         )
         self.hardware_eval_client = self.create_client(
             Eval, self.hardware_eval_service
+        )
+        self.linear_motor_node_name = str(
+            self.get_parameter("linear_motor_node_name").value
+        )
+        self.linear_motor_launch_package = str(
+            self.get_parameter("linear_motor_launch_package").value
+        )
+        self.linear_motor_launch_file = str(
+            self.get_parameter("linear_motor_launch_file").value
+        )
+        self.linear_motor_serial_port = str(
+            self.get_parameter("linear_motor_serial_port").value
+        )
+        self.linear_motor_pin8_topic = str(
+            self.get_parameter("linear_motor_pin8_topic").value
+        )
+        self.linear_motor_pin9_topic = str(
+            self.get_parameter("linear_motor_pin9_topic").value
+        )
+        self.linear_motor_serial_status_topic = str(
+            self.get_parameter("linear_motor_serial_status_topic").value
+        )
+        self.linear_motor_pin8_publisher = self.create_publisher(
+            Bool,
+            self.linear_motor_pin8_topic,
+            10,
+        )
+        self.linear_motor_pin9_publisher = self.create_publisher(
+            Bool,
+            self.linear_motor_pin9_topic,
+            10,
+        )
+        linear_motor_status_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self.linear_motor_serial_status_subscription = (
+            self.create_subscription(
+                String,
+                self.linear_motor_serial_status_topic,
+                self._linear_motor_serial_status_callback,
+                linear_motor_status_qos,
+            )
         )
         self.moveit_cancel_service = str(
             self.get_parameter("moveit_cancel_service").value
@@ -2025,7 +2108,15 @@ class HarvestGui(Node):
         self.lift_calibrated = False
         self.lift_last_height_mm = None
         self.lift_harvest_pending = None
+        self.linear_motor_launch_process = None
+        self.linear_motor_node_online = False
+        self.linear_motor_serial_connected = False
+        self.linear_motor_serial_status_received = False
+        self.linear_motor_pin_state_initialized = False
         self.gripper_stroke_request_id = 0
+        self.gripper_outputs_initialized = False
+        self.gripper_command_in_progress = False
+        self.gripper_service_connected = False
         self.capture_camera_in_progress = False
         self.latest_result_image = None
         self.result_image_photo = None
@@ -2095,11 +2186,16 @@ class HarvestGui(Node):
             value="Bottom calibration 필요"
         )
         self.gripper_stroke_status = tk.StringVar(value="서비스 확인 중")
+        self.linear_motor_node_status = tk.StringVar(value="실행 안 됨")
+        self.linear_motor_serial_status = tk.StringVar(
+            value=f"TTY 연결 대기: {self.linear_motor_serial_port}"
+        )
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
         self._refresh_lift_node_status()
+        self._refresh_linear_motor_node_status()
         self._refresh_gripper_stroke_status()
         self.root.after(50, self._spin_ros)
         self.root.after(50, self._drain_process_queue)
@@ -2576,12 +2672,23 @@ class HarvestGui(Node):
         wait_input.grid(
             row=1, column=1, sticky="w", padx=(8, 0), pady=(8, 0)
         )
-        self.linear_motor_wait_entry = ttk.Entry(
+        self.linear_motor_wait_entry = ttk.Spinbox(
             wait_input,
             textvariable=self.linear_motor_wait_sec,
+            from_=0.0,
+            to=86400.0,
+            increment=1.0,
+            wrap=False,
+            command=self._linear_motor_wait_changed,
             width=7,
         )
         self.linear_motor_wait_entry.grid(row=0, column=0)
+        self.linear_motor_wait_entry.bind(
+            "<FocusOut>", self._linear_motor_wait_changed
+        )
+        self.linear_motor_wait_entry.bind(
+            "<Return>", self._linear_motor_wait_changed
+        )
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
         ttk.Label(options, text="토마토별 종료 단계").grid(
             row=2,
@@ -3187,48 +3294,90 @@ class HarvestGui(Node):
         self._build_gripper_stroke_ui(gripper_frame)
 
     def _build_gripper_stroke_ui(self, frame) -> None:
-        """Build manual DOUT10/11 controls for the linear gripper stroke."""
-        frame.columnconfigure(5, weight=1)
-        ttk.Label(frame, text="출력 상태").grid(
+        """Build Arduino serial and linear-motor direction controls."""
+        frame.columnconfigure(6, weight=1)
+        ttk.Label(frame, text="Arduino 노드").grid(
             row=0, column=0, sticky="w"
         )
         ttk.Label(
             frame,
+            textvariable=self.linear_motor_node_status,
+            width=16,
+        ).grid(row=0, column=1, sticky="w", padx=(8, 8))
+        self.linear_motor_launch_button = ttk.Button(
+            frame,
+            text="Arduino 노드 실행",
+            command=self.launch_linear_motor_node,
+            style="Compact.TButton",
+        )
+        self.linear_motor_launch_button.grid(
+            row=0, column=2, sticky="w", padx=(0, 20)
+        )
+        ttk.Label(frame, text="TTY 상태").grid(
+            row=0, column=3, sticky="w"
+        )
+        ttk.Label(
+            frame,
+            textvariable=self.linear_motor_serial_status,
+            width=54,
+        ).grid(
+            row=0,
+            column=4,
+            columnspan=3,
+            sticky="w",
+            padx=(8, 0),
+        )
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=1,
+            column=0,
+            columnspan=7,
+            sticky="ew",
+            pady=10,
+        )
+        ttk.Label(frame, text="출력 상태").grid(
+            row=2, column=0, sticky="w"
+        )
+        ttk.Label(
+            frame,
             textvariable=self.gripper_stroke_status,
-            width=34,
-        ).grid(row=0, column=1, sticky="w", padx=(8, 20))
+            width=38,
+        ).grid(row=2, column=1, sticky="w", padx=(8, 20))
         self.gripper_extend_button = ttk.Button(
             frame,
             text="늘림",
             command=lambda: self.control_gripper_stroke("extend"),
             style="Action.TButton",
             width=12,
+            state="disabled",
         )
-        self.gripper_extend_button.grid(row=0, column=2, padx=(0, 6))
+        self.gripper_extend_button.grid(row=2, column=2, padx=(0, 6))
         self.gripper_retract_button = ttk.Button(
             frame,
             text="줄임",
             command=lambda: self.control_gripper_stroke("retract"),
             style="Action.TButton",
             width=12,
+            state="disabled",
         )
-        self.gripper_retract_button.grid(row=0, column=3, padx=(0, 6))
+        self.gripper_retract_button.grid(row=2, column=3, padx=(0, 6))
         self.gripper_stop_button = ttk.Button(
             frame,
             text="정지",
             command=lambda: self.control_gripper_stroke("stop"),
             style="Action.TButton",
             width=12,
+            state="disabled",
         )
-        self.gripper_stop_button.grid(row=0, column=4)
+        self.gripper_stop_button.grid(row=2, column=4)
         ttk.Label(
             frame,
             text=(
-                "늘림: DOUT10 HIGH / 11 LOW · 줄임: 10 LOW / 11 HIGH · "
-                "정지: 모두 LOW"
+                "RB: DOUT8만 HIGH, 나머지 DOUT LOW · "
+                "Arduino: 늘림 PIN8 HIGH/PIN9 LOW, "
+                "줄임 PIN8 LOW/PIN9 HIGH, 정지 모두 LOW"
             ),
             foreground="#666666",
-        ).grid(row=1, column=0, columnspan=6, sticky="w", pady=(8, 0))
+        ).grid(row=3, column=0, columnspan=7, sticky="w", pady=(8, 0))
 
     def _build_lift_ui(self, frame) -> None:
         """Build controls backed by the farmily_uv_lift ROS topics."""
@@ -3602,6 +3751,212 @@ class HarvestGui(Node):
             self._qualified_node_name(name, namespace)
             for name, namespace in self.get_node_names_and_namespaces()
         }
+
+    def _linear_motor_node_is_running(self) -> bool:
+        target = "/" + self.linear_motor_node_name.strip("/")
+        return target in {
+            self._qualified_node_name(name, namespace)
+            for name, namespace in self.get_node_names_and_namespaces()
+        }
+
+    def _update_linear_motor_launch_control(self) -> None:
+        launch_running = (
+            self.linear_motor_launch_process is not None
+            and self.linear_motor_launch_process.poll() is None
+        )
+        self.linear_motor_launch_button.configure(
+            state=(
+                "disabled"
+                if self.ui_busy
+                or self.linear_motor_node_online
+                or launch_running
+                else "normal"
+            )
+        )
+
+    def _refresh_linear_motor_node_status(self) -> None:
+        if self.closing:
+            return
+        was_online = self.linear_motor_node_online
+        self.linear_motor_node_online = self._linear_motor_node_is_running()
+        launch_starting = (
+            self.linear_motor_launch_process is not None
+            and self.linear_motor_launch_process.poll() is None
+        )
+        if self.linear_motor_node_online:
+            self.linear_motor_node_status.set("실행 중")
+            if not was_online:
+                self.linear_motor_serial_status.set(
+                    f"TTY 연결 확인 중: {self.linear_motor_serial_port}"
+                )
+                self._append_log(
+                    f"[Arduino 리니어모터] 노드 연결됨: "
+                    f"{self.linear_motor_node_name}"
+                )
+            if (
+                self.linear_motor_serial_connected
+                and not self.linear_motor_pin_state_initialized
+            ):
+                self._initialize_linear_motor_pin_state()
+                self._initialize_gripper_outputs()
+        else:
+            self.linear_motor_node_status.set(
+                "실행 시작 중" if launch_starting else "실행 안 됨"
+            )
+            self.linear_motor_serial_connected = False
+            self.linear_motor_serial_status_received = False
+            self.linear_motor_pin_state_initialized = False
+            if not launch_starting:
+                self.linear_motor_serial_status.set(
+                    f"TTY 연결 대기: {self.linear_motor_serial_port}"
+                )
+            if was_online:
+                self._append_log(
+                    f"[Arduino 리니어모터] 노드 연결 끊김: "
+                    f"{self.linear_motor_node_name}"
+                )
+        self._update_linear_motor_launch_control()
+        self._update_gripper_stroke_controls()
+        self.root.after(500, self._refresh_linear_motor_node_status)
+
+    def _linear_motor_serial_status_callback(self, message: String) -> None:
+        status = str(message.data).strip()
+        self.linear_motor_serial_status_received = True
+        if status == "connected":
+            was_connected = self.linear_motor_serial_connected
+            self.linear_motor_serial_connected = True
+            self.linear_motor_serial_status.set(
+                f"연결됨: {self.linear_motor_serial_port}"
+            )
+            if not was_connected:
+                self._append_log(
+                    f"[Arduino 리니어모터] TTY 연결 성공: "
+                    f"{self.linear_motor_serial_port}"
+                )
+            self._initialize_linear_motor_pin_state()
+            self._initialize_gripper_outputs()
+        else:
+            self.linear_motor_serial_connected = False
+            self.linear_motor_pin_state_initialized = False
+            self.linear_motor_serial_status.set(f"TTY 오류: {status}")
+            self.gripper_stroke_status.set("Arduino TTY 연결 필요")
+            self._append_log(
+                f"[Arduino 리니어모터] TTY 연결 실패: {status}"
+            )
+        self._update_gripper_stroke_controls()
+
+    def _publish_linear_motor_pin_levels(
+        self,
+        pin8_high: bool,
+        pin9_high: bool,
+    ) -> None:
+        pin8_message = Bool()
+        pin8_message.data = bool(pin8_high)
+        pin9_message = Bool()
+        pin9_message.data = bool(pin9_high)
+        self.linear_motor_pin8_publisher.publish(pin8_message)
+        self.linear_motor_pin9_publisher.publish(pin9_message)
+
+    def _initialize_linear_motor_pin_state(self) -> bool:
+        if not self.linear_motor_serial_connected:
+            return False
+        if (
+            self.count_subscribers(self.linear_motor_pin8_topic) < 1
+            or self.count_subscribers(self.linear_motor_pin9_topic) < 1
+        ):
+            self.linear_motor_pin_state_initialized = False
+            self.linear_motor_serial_status.set(
+                "TTY 연결됨 / PIN 토픽 구독 대기"
+            )
+            return False
+        pin8_high, pin9_high = linear_motor_pin_values("stop")
+        self._publish_linear_motor_pin_levels(pin8_high, pin9_high)
+        self.linear_motor_pin_state_initialized = True
+        self._append_log(
+            "[Arduino 리니어모터] 안전 초기화: PIN8=LOW, PIN9=LOW"
+        )
+        return True
+
+    def launch_linear_motor_node(self) -> None:
+        if self._linear_motor_node_is_running():
+            self.linear_motor_node_online = True
+            self.linear_motor_node_status.set("실행 중")
+            self._update_linear_motor_launch_control()
+            return
+        if (
+            self.linear_motor_launch_process is not None
+            and self.linear_motor_launch_process.poll() is None
+        ):
+            return
+        port = Path(self.linear_motor_serial_port)
+        if not port.exists():
+            message = f"TTY 장치가 없습니다: {port}"
+            self.linear_motor_node_status.set("실행 실패")
+            self.linear_motor_serial_status.set(message)
+            self._append_log(f"[Arduino 리니어모터] {message}")
+            messagebox.showerror("Arduino 노드 실행 실패", message)
+            return
+        if not os.access(port, os.R_OK | os.W_OK):
+            message = f"TTY 읽기/쓰기 권한이 없습니다: {port}"
+            self.linear_motor_node_status.set("실행 실패")
+            self.linear_motor_serial_status.set(message)
+            self._append_log(f"[Arduino 리니어모터] {message}")
+            messagebox.showerror("Arduino 노드 실행 실패", message)
+            return
+        command = [
+            "ros2",
+            "launch",
+            self.linear_motor_launch_package,
+            self.linear_motor_launch_file,
+            f"port:={self.linear_motor_serial_port}",
+        ]
+        try:
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                start_new_session=True,
+            )
+        except (OSError, ValueError) as error:
+            self.linear_motor_node_status.set("실행 실패")
+            self.linear_motor_serial_status.set(str(error))
+            messagebox.showerror(
+                "Arduino 노드 실행 실패",
+                f"Arduino launch를 시작하지 못했습니다.\n{error}",
+            )
+            self._append_log(
+                f"[Arduino 리니어모터] launch 실행 실패: {error}"
+            )
+            return
+        self.linear_motor_launch_process = process
+        self.linear_motor_node_status.set("실행 시작 중")
+        self.linear_motor_serial_status.set(
+            f"TTY 연결 확인 중: {self.linear_motor_serial_port}"
+        )
+        self._update_linear_motor_launch_control()
+        self._append_log(
+            "[Arduino 리니어모터] launch 실행: " + " ".join(command)
+        )
+        threading.Thread(
+            target=self._read_linear_motor_launch_output,
+            args=(process,),
+            daemon=True,
+        ).start()
+
+    def _read_linear_motor_launch_output(self, process) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                line = line.rstrip()
+                if line:
+                    self.process_queue.put(
+                        ("linear_motor_log", line, process)
+                    )
+        return_code = process.wait()
+        self.process_queue.put(
+            ("linear_motor_done", return_code, process)
+        )
 
     def _update_lift_controls(self) -> None:
         online = bool(self.lift_node_online)
@@ -4379,30 +4734,95 @@ class HarvestGui(Node):
         """Keep the manual gripper control's hardware availability visible."""
         if self.closing:
             return
-        current = self.gripper_stroke_status.get()
-        if self.hardware_eval_client.service_is_ready():
-            disconnected_states = (
-                "서비스 확인 중",
-                "하드웨어 서비스 연결 안 됨",
-            )
-            if current in disconnected_states:
-                self.gripper_stroke_status.set("제어 준비 (DOUT10/11)")
+        service_ready = self.hardware_eval_client.service_is_ready()
+        if service_ready:
+            if not self.gripper_service_connected:
+                self.gripper_service_connected = True
+                self.gripper_outputs_initialized = False
+                self.gripper_stroke_status.set("DOUT 안전 초기화 대기")
+            if not self.linear_motor_node_online:
+                self.gripper_stroke_status.set("Arduino 노드 실행 필요")
+            elif not self.linear_motor_serial_connected:
+                self.gripper_stroke_status.set("Arduino TTY 연결 필요")
+            elif not self.linear_motor_pin_state_initialized:
+                self.gripper_stroke_status.set("PIN8/9 안전 초기화 대기")
+            elif (
+                not self.gripper_outputs_initialized
+                and not self.gripper_command_in_progress
+            ):
+                self._initialize_gripper_outputs()
         else:
+            if (
+                self.gripper_service_connected
+                or self.gripper_outputs_initialized
+                or self.gripper_command_in_progress
+            ):
+                self.gripper_stroke_request_id += 1
+            self.gripper_service_connected = False
+            self.gripper_outputs_initialized = False
+            self.gripper_command_in_progress = False
             self.gripper_stroke_status.set(
                 "하드웨어 서비스 연결 안 됨"
             )
+        self._update_gripper_stroke_controls()
         self.root.after(1000, self._refresh_gripper_stroke_status)
+
+    def _update_gripper_stroke_controls(self) -> None:
+        enabled = (
+            self.hardware_eval_client.service_is_ready()
+            and self.gripper_outputs_initialized
+            and self.linear_motor_node_online
+            and self.linear_motor_serial_connected
+            and self.linear_motor_pin_state_initialized
+            and not self.gripper_command_in_progress
+        )
+        state = "normal" if enabled else "disabled"
+        for button in (
+            self.gripper_extend_button,
+            self.gripper_retract_button,
+            self.gripper_stop_button,
+        ):
+            button.configure(state=state)
+
+    def _initialize_gripper_outputs(self) -> None:
+        """Set direction LOW before applying power to the relay outputs."""
+        if (
+            self.gripper_outputs_initialized
+            or self.gripper_command_in_progress
+            or not self.hardware_eval_client.service_is_ready()
+            or not self.linear_motor_serial_connected
+            or not self.linear_motor_pin_state_initialized
+        ):
+            return
+        self.gripper_stroke_request_id += 1
+        request_id = self.gripper_stroke_request_id
+        self.gripper_command_in_progress = True
+        self.gripper_stroke_status.set("안전 초기화: DOUT8만 HIGH")
+        self._update_gripper_stroke_controls()
+        self._append_log(
+            "[그리퍼 DOUT 초기화] DOUT8=HIGH, "
+            "나머지 DOUT=LOW로 적용합니다."
+        )
+        self._send_gripper_script_sequence(
+            gripper_output_startup_scripts(),
+            request_id=request_id,
+            label="안전 초기화",
+            output_description=(
+                "DOUT8=HIGH, 나머지 DOUT=LOW"
+            ),
+            initialization=True,
+        )
 
     def control_gripper_stroke(self, command: str) -> None:
         """Drive the gripper linear actuator through RB control-box DOUTs."""
         labels = {
-            "extend": ("늘림", "DOUT10=HIGH, DOUT11=LOW"),
-            "retract": ("줄임", "DOUT10=LOW, DOUT11=HIGH"),
-            "stop": ("정지", "DOUT10=LOW, DOUT11=LOW"),
+            "extend": ("늘림", "PIN8=HIGH, PIN9=LOW"),
+            "retract": ("줄임", "PIN8=LOW, PIN9=HIGH"),
+            "stop": ("정지", "PIN8=LOW, PIN9=LOW"),
         }
         try:
             label, output_description = labels[command]
-            script = gripper_stroke_script(command)
+            pin_sequence = linear_motor_pin_sequence(command)
         except (KeyError, ValueError) as error:
             self._append_log(
                 f"[그리퍼 스트로크] 잘못된 명령: {error}"
@@ -4429,69 +4849,275 @@ class HarvestGui(Node):
                 )
                 return
 
+        if not self.gripper_outputs_initialized:
+            self.gripper_stroke_status.set("DOUT 안전 초기화 필요")
+            self.status.set(
+                "그리퍼 명령 보류 — DOUT 안전 초기화가 완료되지 않았습니다."
+            )
+            self._append_log(
+                f"[그리퍼 스트로크 보류] {label}: 안전 초기화 후 "
+                "다시 실행하세요."
+            )
+            self._initialize_gripper_outputs()
+            return
+        if (
+            not self.linear_motor_serial_connected
+            or not self.linear_motor_pin_state_initialized
+        ):
+            self.gripper_stroke_status.set("Arduino PIN 제어 준비 안 됨")
+            self.status.set(
+                "그리퍼 명령 보류 — Arduino TTY/PIN 연결을 확인하세요."
+            )
+            return
+        if self.gripper_command_in_progress:
+            self.status.set("이전 그리퍼 DOUT 명령 처리 중입니다.")
+            return
+
         self.gripper_stroke_request_id += 1
         request_id = self.gripper_stroke_request_id
-        request = Eval.Request()
-        request.script = script
+        self.gripper_command_in_progress = True
         self.gripper_stroke_status.set(f"{label} 명령 전송 중")
+        self._update_gripper_stroke_controls()
         self.status.set(f"그리퍼 스트로크 {label} 명령 전송 중...")
         self._append_log(
-            f"[그리퍼 스트로크 요청] {label}: {output_description}"
+            f"[그리퍼 스트로크 요청] {label}: 먼저 PIN8/9 LOW, "
+            f"이후 {output_description}"
         )
-        future = self.hardware_eval_client.call_async(request)
-        future.add_done_callback(
-            lambda completed: self._gripper_stroke_command_completed(
-                completed,
-                request_id,
-                label,
-                output_description,
-            )
+        self._start_linear_motor_pin_sequence(
+            pin_sequence,
+            request_id=request_id,
+            label=label,
+            output_description=output_description,
         )
 
-    def _gripper_stroke_command_completed(
+    def _start_linear_motor_pin_sequence(
         self,
-        future,
+        pin_sequence: tuple[tuple[bool, bool], ...],
+        *,
         request_id: int,
         label: str,
         output_description: str,
     ) -> None:
-        """Report whether the RB controller accepted the DOUT command."""
+        if request_id != self.gripper_stroke_request_id:
+            return
+        neutral_pin8, neutral_pin9 = pin_sequence[0]
+        self._publish_linear_motor_pin_levels(
+            neutral_pin8,
+            neutral_pin9,
+        )
+        self._append_log(
+            f"[Arduino PIN 단계] {label} 1/{len(pin_sequence)}: "
+            f"PIN8={'HIGH' if neutral_pin8 else 'LOW'}, "
+            f"PIN9={'HIGH' if neutral_pin9 else 'LOW'}"
+        )
+        if len(pin_sequence) == 1:
+            self.root.after(
+                50,
+                lambda: self._finish_linear_motor_pin_command(
+                    request_id,
+                    label,
+                    output_description,
+                ),
+            )
+            return
+        self.root.after(
+            100,
+            lambda: self._apply_linear_motor_pin_target(
+                pin_sequence,
+                request_id=request_id,
+                label=label,
+                output_description=output_description,
+            ),
+        )
+
+    def _apply_linear_motor_pin_target(
+        self,
+        pin_sequence: tuple[tuple[bool, bool], ...],
+        *,
+        request_id: int,
+        label: str,
+        output_description: str,
+    ) -> None:
+        if request_id != self.gripper_stroke_request_id:
+            return
+        if (
+            not self.linear_motor_serial_connected
+            or not self.linear_motor_pin_state_initialized
+        ):
+            self.gripper_command_in_progress = False
+            self.gripper_stroke_status.set("Arduino TTY 연결 끊김")
+            self.status.set(f"그리퍼 {label} 실패 — Arduino 연결 끊김")
+            self._update_gripper_stroke_controls()
+            return
+        target_pin8, target_pin9 = pin_sequence[-1]
+        self._publish_linear_motor_pin_levels(target_pin8, target_pin9)
+        self._append_log(
+            f"[Arduino PIN 단계] {label} 2/{len(pin_sequence)}: "
+            f"PIN8={'HIGH' if target_pin8 else 'LOW'}, "
+            f"PIN9={'HIGH' if target_pin9 else 'LOW'}"
+        )
+        self._finish_linear_motor_pin_command(
+            request_id,
+            label,
+            output_description,
+        )
+
+    def _finish_linear_motor_pin_command(
+        self,
+        request_id: int,
+        label: str,
+        output_description: str,
+    ) -> None:
+        if request_id != self.gripper_stroke_request_id:
+            return
+        self.gripper_command_in_progress = False
+        self.gripper_stroke_status.set(f"{label} 명령 완료")
+        self.status.set(f"그리퍼 스트로크 {label} 출력 적용 완료")
+        self._append_log(
+            f"[그리퍼 스트로크 적용됨] {label}: {output_description}"
+        )
+        self._update_gripper_stroke_controls()
+
+    def _send_gripper_script_sequence(
+        self,
+        scripts: tuple[str, ...],
+        *,
+        request_id: int,
+        label: str,
+        output_description: str,
+        initialization: bool,
+        index: int = 0,
+    ) -> None:
+        if request_id != self.gripper_stroke_request_id:
+            return
+        request = Eval.Request()
+        request.script = scripts[index]
+        self._append_log(
+            f"[그리퍼 DOUT 단계] {label} {index + 1}/{len(scripts)}: "
+            f"{request.script}"
+        )
+        future = self.hardware_eval_client.call_async(request)
+        future.add_done_callback(
+            lambda completed: self._gripper_script_step_completed(
+                completed,
+                scripts=scripts,
+                request_id=request_id,
+                label=label,
+                output_description=output_description,
+                initialization=initialization,
+                index=index,
+            )
+        )
+
+    def _gripper_script_step_completed(
+        self,
+        future,
+        *,
+        scripts: tuple[str, ...],
+        request_id: int,
+        label: str,
+        output_description: str,
+        initialization: bool,
+        index: int,
+    ) -> None:
+        """Advance only after the RB controller accepted the prior step."""
+        if request_id != self.gripper_stroke_request_id:
+            return
         try:
             response = future.result()
         except Exception as error:
-            if request_id == self.gripper_stroke_request_id:
-                self.gripper_stroke_status.set(f"{label} 명령 실패")
-                self.status.set(
-                    f"그리퍼 스트로크 {label} 명령 실패"
-                )
             self._append_log(
-                f"[그리퍼 스트로크 실패] {label} 서비스 호출 오류: "
+                f"[그리퍼 DOUT 실패] {label} {index + 1}/{len(scripts)} "
+                "서비스 호출 오류: "
                 f"{error}"
+            )
+            self._finish_gripper_script_sequence(
+                request_id,
+                label,
+                output_description,
+                initialization,
+                success=False,
             )
             return
 
         if not response.success:
-            if request_id == self.gripper_stroke_request_id:
-                self.gripper_stroke_status.set(f"{label} 명령 거부됨")
-                self.status.set(
-                    f"RB 컨트롤러가 그리퍼 {label} 명령을 "
-                    "거부했습니다."
-                )
             self._append_log(
-                "[그리퍼 스트로크 실패] RB 컨트롤러가 "
-                f"{label} 명령을 "
-                f"거부했습니다: {output_description}"
+                f"[그리퍼 DOUT 실패] RB 컨트롤러가 {label} "
+                f"{index + 1}/{len(scripts)} 단계를 거부했습니다: "
+                f"{scripts[index]}"
+            )
+            self._finish_gripper_script_sequence(
+                request_id,
+                label,
+                output_description,
+                initialization,
+                success=False,
             )
             return
 
-        if request_id == self.gripper_stroke_request_id:
+        next_index = index + 1
+        if next_index < len(scripts):
+            if initialization:
+                self.gripper_stroke_status.set(
+                    "안전 초기화: 다음 DOUT 단계"
+                )
+            self._send_gripper_script_sequence(
+                scripts,
+                request_id=request_id,
+                label=label,
+                output_description=output_description,
+                initialization=initialization,
+                index=next_index,
+            )
+            return
+        self._finish_gripper_script_sequence(
+            request_id,
+            label,
+            output_description,
+            initialization,
+            success=True,
+        )
+
+    def _finish_gripper_script_sequence(
+        self,
+        request_id: int,
+        label: str,
+        output_description: str,
+        initialization: bool,
+        *,
+        success: bool,
+    ) -> None:
+        if request_id != self.gripper_stroke_request_id:
+            return
+        self.gripper_command_in_progress = False
+        if not success:
+            self.gripper_outputs_initialized = False
+            self.gripper_stroke_status.set(f"{label} 명령 실패")
+            self.status.set(
+                f"그리퍼 {label} 실패 — DOUT 안전 초기화가 필요합니다."
+            )
+            self._update_gripper_stroke_controls()
+            return
+        if initialization:
+            self.gripper_outputs_initialized = True
+            self.gripper_stroke_status.set(
+                "제어 준비 (DOUT8 HIGH / Arduino PIN)"
+            )
+            self.status.set("그리퍼 DOUT 안전 초기화 완료")
+            self._append_log(
+                "[그리퍼 DOUT 초기화 완료] "
+                f"{output_description}"
+            )
+        else:
             self.gripper_stroke_status.set(f"{label} 명령 완료")
             self.status.set(
                 f"그리퍼 스트로크 {label} 출력 적용 완료"
             )
-        self._append_log(
-            f"[그리퍼 스트로크 적용됨] {label}: {output_description}"
-        )
+            self._append_log(
+                f"[그리퍼 스트로크 적용됨] {label}: "
+                f"{output_description}"
+            )
+        self._update_gripper_stroke_controls()
 
     def apply_motion_speed(self) -> None:
         """Apply GUI planning scales and request the RB controller speed bar."""
@@ -6271,6 +6897,24 @@ class HarvestGui(Node):
             adaptive_grasp_max_rotation_degrees(
                 self.adaptive_grasp_max_rotation_var.get()
             ),
+        )
+
+    def _linear_motor_wait_changed(self, _event=None) -> None:
+        try:
+            wait_seconds = self._wait_seconds(
+                self.linear_motor_wait_sec.get()
+            )
+        except ValueError as error:
+            self._invalidate_plan()
+            self.status.set(str(error))
+            return
+        self._invalidate_plan()
+        self.status.set(
+            f"리니어모터 대기시간 {wait_seconds:g}초 — "
+            "Plan-only를 다시 실행하세요."
+        )
+        self._append_log(
+            f"리니어모터 대기시간 변경: {wait_seconds:g}초"
         )
 
     def _adaptive_grasp_mode_changed(self, _event=None) -> None:
@@ -8361,6 +9005,30 @@ class HarvestGui(Node):
                 item = self.process_queue.get_nowait()
             except queue.Empty:
                 break
+            if item[0] == "linear_motor_log":
+                _, line, process = item
+                if process is self.linear_motor_launch_process:
+                    self._append_log(f"[Arduino 리니어모터] {line}")
+                continue
+            if item[0] == "linear_motor_done":
+                _, return_code, process = item
+                if process is not self.linear_motor_launch_process:
+                    continue
+                self.linear_motor_launch_process = None
+                self.linear_motor_node_online = False
+                self.linear_motor_serial_connected = False
+                self.linear_motor_pin_state_initialized = False
+                self.linear_motor_node_status.set("실행 안 됨")
+                self.linear_motor_serial_status.set(
+                    f"launch 종료 코드 {return_code}"
+                )
+                self._append_log(
+                    f"[Arduino 리니어모터] launch 종료 "
+                    f"(종료 코드 {return_code})"
+                )
+                self._update_linear_motor_launch_control()
+                self._update_gripper_stroke_controls()
+                continue
             if item[0] == "lift_log":
                 _, line, process = item
                 if process is self.lift_launch_process:
@@ -9100,6 +9768,8 @@ class HarvestGui(Node):
             self.execute_button.configure(state="normal")
         self._update_step_controls()
         self._update_lift_controls()
+        self._update_linear_motor_launch_control()
+        self._update_gripper_stroke_controls()
         self._update_camera_target_record_controls()
 
     def read_scene_position(self) -> None:

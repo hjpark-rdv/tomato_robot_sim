@@ -130,7 +130,7 @@ GUI는 `수확 작업`, `스텝 실행`, `접근 반복 테스트`, `자동 테�
 13. UV 리프트 노드 실행, Bottom calibration, 현재 높이 확인과 목표 높이 이동
 14. 토마토 높이보다 40 cm 낮게 리프트를 자동 배치하는 리프트 수확
 15. 전체 토마토 trajectory를 먼저 계산한 뒤 저장된 경로만 실행하는 사전계획
-16. DOUT10/11을 이용한 그리퍼 스트로크 늘림·줄임·정지
+16. RB DOUT8 릴레이 전원과 Arduino PIN8/9를 이용한 그리퍼 스트로크 제어
 17. 검출된 토마토 중심을 RViz에 핑크색 구형 마커로 표시
 18. 전체 수확 궤적을 한 번 계산한 뒤 실제 로봇을 한 단계씩 선택 실행
 19. 접근 1~X단계를 선택해 연속 진입·역순 복귀하고 전체 토마토까지 순회하는 테스트
@@ -375,16 +375,27 @@ MoveIt을 `use_fake_hardware:=true`로 실행하면 lift joint bridge도 자동�
 시뮬레이션 토픽을 사용하지 않고 기존 리프트 높이와 calibration 상태를 따른다.
 
 `장면 · 속도 · 리프트` 탭의 `그리퍼 스트로크 제어`는 실제 RB 제어기의
-`/rbpodo_hardware/eval` 서비스를 사용한다. 두 출력은 한 명령으로 동시에
-전환되며 출력 조합은 다음과 같다.
+`/rbpodo_hardware/eval` 서비스와 `arduino_linear_motor` 노드를 함께 사용한다.
+GUI의 `Arduino 노드 실행`은
+`ros2 launch arduino_linear_motor pin89_serial.launch.py port:=/dev/ttyUSB0`
+를 별도 프로세스로 시작한다. `/pin89_serial_node`가 이미 있으면 실행 버튼은
+자동 비활성화되며, `/linear_motor/serial_status`의 `connected` 또는 TTY 오류를
+상태 영역에 표시한다.
 
-- `늘림`: DOUT10 HIGH, DOUT11 LOW
-- `줄임`: DOUT10 LOW, DOUT11 HIGH
-- `정지`: DOUT10 LOW, DOUT11 LOW
+RB 제어기는 `set_dout_bit_combination(0,15,256,0)`을 사용해 DOUT8만 HIGH로
+유지하고 나머지 DOUT을 모두 LOW로 만든다. 실제 모터 방향은 RB DOUT이 아니라
+Arduino 토픽으로만 제어한다.
 
-하드웨어 노드가 없는 시뮬레이션에서는 DOUT 명령을 보내지 않고 GUI 상태와
-로그에 미적용 사유를 표시한다. 늘림 또는 줄임 출력은 자동으로 꺼지지 않으므로
-원하는 위치에 도달하면 반드시 `정지`를 눌러 두 출력을 LOW로 내려야 한다.
+출력 조합은 다음과 같다.
+
+- `늘림`: PIN8/9 모두 LOW 후 `/linear_motor/pin8=true`, `pin9=false`
+- `줄임`: PIN8/9 모두 LOW 후 `/linear_motor/pin8=false`, `pin9=true`
+- `정지`: `/linear_motor/pin8=false`, `/linear_motor/pin9=false`
+
+Arduino TTY 연결, PIN8/9 토픽 구독, RB eval 서비스 및 DOUT8 초기화가 모두
+완료되기 전에는 늘림·줄임·정지 버튼을 활성화하지 않는다. 늘림 또는 줄임은
+자동으로 꺼지지 않으므로 원하는 위치에 도달하면 반드시 `정지`를 눌러 두 Arduino
+핀을 LOW로 내려야 한다.
 
 `로봇 이동 속도`의 기본값은 RB Speed Bar `10%`, OMPL/Joint 속도와
 가속도 각각 `20%`이다. `속도 적용`을 누르면 계획 속도·가속도는 다음

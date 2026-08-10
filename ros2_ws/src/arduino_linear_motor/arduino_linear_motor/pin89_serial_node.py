@@ -1,0 +1,104 @@
+"""ROS 2 bridge that sends direct digital output commands to an Arduino Mega."""
+
+import threading
+
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from std_msgs.msg import Bool, String
+
+try:
+    import serial
+    from serial import SerialException
+except ImportError:  # Allows ROS package discovery even before pyserial is installed.
+    serial = None
+    SerialException = Exception
+
+
+class Pin89SerialNode(Node):
+    """Forward /linear_motor/pin8 and /linear_motor/pin9 Bool topics to Arduino."""
+
+    def __init__(self):
+        super().__init__('pin89_serial_node')
+        self.declare_parameter('port', '/dev/ttyUSB0')
+        self.declare_parameter('baudrate', 115200)
+        self.declare_parameter('reconnect_period_s', 2.0)
+        self._port = self.get_parameter('port').value
+        self._baudrate = self.get_parameter('baudrate').value
+        self._serial = None
+        self._lock = threading.Lock()
+
+        self.create_subscription(Bool, '/linear_motor/pin8', self._pin8_callback, 10)
+        self.create_subscription(Bool, '/linear_motor/pin9', self._pin9_callback, 10)
+        status_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self._status_pub = self.create_publisher(
+            String,
+            '/linear_motor/serial_status',
+            status_qos,
+        )
+        self.create_timer(self.get_parameter('reconnect_period_s').value, self._connect)
+        self._connect()
+
+    def _connect(self):
+        if self._serial is not None and self._serial.is_open:
+            return
+        if serial is None:
+            self.get_logger().error('pyserial is missing. Install: sudo apt install python3-serial')
+            return
+        try:
+            self._serial = serial.Serial(self._port, self._baudrate, timeout=0.2)
+            self.get_logger().info(f'Connected to Arduino at {self._port} ({self._baudrate} baud)')
+            self._publish_status('connected')
+        except SerialException as exc:
+            self._serial = None
+            self._publish_status(f'disconnected: {exc}')
+
+    def _send(self, pin, value):
+        command = f'PIN {pin} {1 if value else 0}\n'
+        with self._lock:
+            if self._serial is None or not self._serial.is_open:
+                self.get_logger().warning(f'Cannot send {command.strip()}: serial is disconnected')
+                return
+            try:
+                self._serial.write(command.encode('ascii'))
+                self._serial.flush()
+            except SerialException as exc:
+                self.get_logger().error(f'Serial write failed: {exc}')
+                self._publish_status(f'disconnected: {exc}')
+                try:
+                    self._serial.close()
+                except SerialException:
+                    pass
+                self._serial = None
+
+    def _pin8_callback(self, message):
+        self._send(8, message.data)
+
+    def _pin9_callback(self, message):
+        self._send(9, message.data)
+
+    def _publish_status(self, text):
+        message = String()
+        message.data = text
+        self._status_pub.publish(message)
+
+    def destroy_node(self):
+        if self._serial is not None:
+            self._serial.close()
+        super().destroy_node()
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = Pin89SerialNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()

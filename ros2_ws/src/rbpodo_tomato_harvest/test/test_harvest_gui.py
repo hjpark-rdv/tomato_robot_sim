@@ -48,13 +48,16 @@ from rbpodo_tomato_harvest.harvest_gui import (
     detected_tomato_marker_array,
     debug_frame_request,
     generate_sweep_cases,
-    gripper_stroke_script,
+    gripper_output_startup_scripts,
+    gripper_relay_power_script,
     harvest_all_jobs,
     harvest_command,
     harvest_failure_summary,
     harvest_result_marker,
     harvest_statistics_record,
     is_critical_process_output,
+    linear_motor_pin_sequence,
+    linear_motor_pin_values,
     lift_harvest_target_height_mm,
     named_pose_command,
     preplanned_batch_command,
@@ -2083,24 +2086,45 @@ def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
     assert request.goal_info.stamp.nanosec == 0
 
 
+def test_gripper_output_startup_keeps_only_dout8_high():
+    assert gripper_output_startup_scripts() == (
+        "set_dout_bit_combination(0,15,256,0)",
+    )
+    assert gripper_relay_power_script() == (
+        "set_dout_bit_combination(0,15,256,0)"
+    )
+
+
 @pytest.mark.parametrize(
-    ("command", "expected_script"),
+    ("command", "expected_sequence"),
     [
-        ("extend", "set_dout_bit_combination(10,11,1,0)"),
-        ("retract", "set_dout_bit_combination(10,11,2,0)"),
-        ("stop", "set_dout_bit_combination(10,11,0,0)"),
+        (
+            "extend",
+            (
+                (False, False),
+                (True, False),
+            ),
+        ),
+        (
+            "retract",
+            (
+                (False, False),
+                (False, True),
+            ),
+        ),
+        ("stop", ((False, False),)),
     ],
 )
-def test_gripper_stroke_script_maps_dout10_and_11_atomically(
+def test_linear_motor_pin_commands_use_break_before_make_sequence(
     command,
-    expected_script,
+    expected_sequence,
 ):
-    assert gripper_stroke_script(command) == expected_script
+    assert linear_motor_pin_sequence(command) == expected_sequence
 
 
-def test_gripper_stroke_script_rejects_unknown_command():
+def test_linear_motor_pin_values_reject_unknown_command():
     with pytest.raises(ValueError, match="지원하지 않는"):
-        gripper_stroke_script("invalid")
+        linear_motor_pin_values("invalid")
 
 
 def test_stepper_command_enables_detailed_cached_plan():
