@@ -97,6 +97,12 @@ def feedback_scene(payload: dict) -> dict:
         "camera_vine": _xyz(vision.get("vine_xyz"), "vision.vine_xyz"),
         "robot_tomato": _xyz(robot.get("tomato_xyz"), "robot.tomato_xyz"),
         "robot_vine": _xyz(robot.get("vine_xyz"), "robot.vine_xyz"),
+        "robot_angle_origin": (
+            _xyz(robot.get("calyx_xyz"), "robot.calyx_xyz")
+            if str(robot.get("angle_reference") or "") == "calyx_to_stem"
+            and robot.get("calyx_xyz") is not None
+            else _xyz(robot.get("tomato_xyz"), "robot.tomato_xyz")
+        ),
         "recommend": _xyz(
             robot.get("recommend_pregrasp_xyz"),
             "robot.recommend_pregrasp_xyz",
@@ -132,10 +138,16 @@ def extended_arrow_start(origin, start, factor: float = 3.0):
     )
 
 
-def raw_detection_recommend_point(tomato, vine, reference):
-    """Place Recommend opposite the exact stem while retaining plot length."""
-    outward_x = tomato[0] - vine[0]
-    outward_y = tomato[1] - vine[1]
+def raw_detection_recommend_point(
+    tomato,
+    vine,
+    reference,
+    angle_origin=None,
+):
+    """Place Recommend opposite the selected center/calyx-to-stem vector."""
+    origin = tomato if angle_origin is None else angle_origin
+    outward_x = origin[0] - vine[0]
+    outward_y = origin[1] - vine[1]
     outward_length = math.hypot(outward_x, outward_y)
     reference_length = math.hypot(
         reference[0] - tomato[0],
@@ -493,17 +505,20 @@ class PlotCanvas(ttk.Frame):
         scene = self.scene
         tomato = scene["robot_tomato"]
         vine = scene["robot_vine"]
+        angle_origin = scene.get("robot_angle_origin", tomato)
         recommend = scene["recommend"]
         final = scene.get("final")
 
         robot = (0.0, 0.0)
         tomato_2d = robot_top_projection(tomato)
         vine_2d = robot_top_projection(vine)
+        angle_origin_2d = robot_top_projection(angle_origin)
         planned_recommend_2d = robot_top_projection(recommend)
         recommend_2d = raw_detection_recommend_point(
             tomato_2d,
             vine_2d,
             planned_recommend_2d,
+            angle_origin_2d,
         )
         final_2d = robot_top_projection(final) if final is not None else None
         recommend_arrow_start = extended_arrow_start(

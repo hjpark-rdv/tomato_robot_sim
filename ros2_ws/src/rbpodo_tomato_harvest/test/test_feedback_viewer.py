@@ -59,6 +59,22 @@ def test_feedback_scene_extracts_camera_and_robot_frames():
     assert scene["correction_angle_deg"] == pytest.approx(22.6)
 
 
+def test_feedback_scene_uses_robot_calyx_for_selected_angle_reference():
+    payload = sample_payload()
+    payload["robot"].update(
+        {
+            "calyx_xyz": [0.56, -0.21, 0.74],
+            "angle_reference": "calyx_to_stem",
+        }
+    )
+
+    scene = feedback_scene(payload)
+
+    assert scene["robot_angle_origin"] == pytest.approx(
+        (0.56, -0.21, 0.74)
+    )
+
+
 def test_feedback_scene_requires_planned_robot_coordinates():
     payload = sample_payload()
     payload["robot"]["final_pregrasp_xyz"] = None
@@ -91,6 +107,17 @@ def test_recommend_direction_is_opposite_exact_stem_point():
     # Keep the original 2 m display length, but point to the side opposite
     # the exact stem instead of inheriting the tip-height reference offset.
     assert point == pytest.approx((math.sqrt(2.0), math.sqrt(2.0)))
+
+
+def test_recommend_direction_can_use_calyx_as_angle_origin():
+    point = raw_detection_recommend_point(
+        tomato=(0.0, 0.0),
+        vine=(1.0, 1.0),
+        reference=(-2.0, 0.0),
+        angle_origin=(1.0, 0.0),
+    )
+
+    assert point == pytest.approx((0.0, -2.0))
 
 
 def test_stem_label_extends_from_actual_vine_not_recommend_direction():

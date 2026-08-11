@@ -1,6 +1,25 @@
 import pytest
+from geometry_msgs.msg import Point
 
-from rbpodo_tomato_harvest.fake_camera_service import vertical_harvest_order
+from rbpodo_tomato_harvest.fake_camera_service import (
+    point_toward,
+    vertical_harvest_order,
+)
+
+
+def test_fake_calyx_point_is_between_tomato_center_and_stem():
+    center = Point(x=0.0, y=0.0, z=0.5)
+    stem = Point(x=0.03, y=0.04, z=0.5)
+
+    calyx = point_toward(center, stem, 0.01)
+
+    assert (calyx.x, calyx.y, calyx.z) == pytest.approx(
+        (0.006, 0.008, 0.5)
+    )
+
+    short_stem = Point(x=0.002, y=0.0, z=0.5)
+    bounded = point_toward(center, short_stem, 0.01)
+    assert bounded.x == pytest.approx(0.001)
 
 
 def test_vertical_order_finishes_first_xy_column_before_higher_other_column():

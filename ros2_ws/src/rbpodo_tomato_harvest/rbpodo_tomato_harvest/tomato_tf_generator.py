@@ -11,7 +11,7 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from std_msgs.msg import Header
-from std_srvs.srv import Trigger
+from std_srvs.srv import SetBool, Trigger
 from tf2_ros import Buffer, TransformBroadcaster, TransformException, TransformListener
 
 
@@ -34,6 +34,31 @@ def parent_frame_tomato_rotation(
     x_axis = _unit(horizontal_stem, "horizontal stem direction")
     y_axis = _unit(np.cross(z_axis, x_axis), "tomato Y axis")
     return np.column_stack((x_axis, y_axis, z_axis))
+
+
+def tomato_stem_direction(
+    center,
+    calyx_point,
+    stem_point,
+    use_calyx_angle_reference: bool = False,
+) -> np.ndarray:
+    """Return the selected center/calyx-to-stem direction vector."""
+    center_array = np.asarray(center, dtype=float)
+    calyx_array = np.asarray(calyx_point, dtype=float)
+    stem_array = np.asarray(stem_point, dtype=float)
+    if any(value.shape != (3,) for value in (center_array, calyx_array, stem_array)):
+        raise ValueError("center, calyx_point and stem_point must be 3D")
+    if not all(
+        np.all(np.isfinite(value))
+        for value in (center_array, calyx_array, stem_array)
+    ):
+        raise ValueError("detection points must contain finite values")
+    origin = calyx_array if bool(use_calyx_angle_reference) else center_array
+    direction = stem_array - origin
+    if float(np.linalg.norm(direction)) < 1e-9:
+        reference = "calyx_point" if use_calyx_angle_reference else "center"
+        raise ValueError(f"{reference}-to-stem direction is too short")
+    return direction
 
 
 def quaternion_from_rotation(rotation: np.ndarray) -> tuple[float, float, float, float]:
@@ -197,6 +222,7 @@ class TomatoTfGenerator(Node):
         self.declare_parameter("tf_prefix", "detected_tomato_")
         self.declare_parameter("start_index", 0)
         self.declare_parameter("auto_create_on_detection", True)
+        self.declare_parameter("use_calyx_angle_reference", False)
         self.declare_parameter("maximum_detection_age_sec", 2.0)
         self.declare_parameter("transform_timeout_sec", 2.0)
         self.declare_parameter("broadcast_rate_hz", 20.0)
@@ -216,6 +242,9 @@ class TomatoTfGenerator(Node):
         self.center_updated = False
         self.stem_point_updated = False
         self.transforms: dict[str, TransformStamped] = {}
+        self.use_calyx_angle_reference = bool(
+            self.get_parameter("use_calyx_angle_reference").value
+        )
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -249,14 +278,37 @@ class TomatoTfGenerator(Node):
             10,
         )
         self.create_service(Trigger, "~/create_tf", self._create_tf)
+        self.create_service(
+            SetBool,
+            "~/set_calyx_angle_reference",
+            self._set_calyx_angle_reference,
+        )
         period = 1.0 / max(1.0, float(self.get_parameter("broadcast_rate_hz").value))
         self.create_timer(period, self._broadcast_transforms)
         self.get_logger().info(
             "Ready to create parent-frame-fixed tomato TFs: "
             f"service=/{self.get_name()}/create_tf input={self.camera_frame} "
             f"parent={self.parent_frame} sky={self.sky_frame} auto_create="
-            f"{self.get_parameter('auto_create_on_detection').value}"
+            f"{self.get_parameter('auto_create_on_detection').value} "
+            f"angle_reference="
+            f"{'calyx->stem' if self.use_calyx_angle_reference else 'center->stem'}"
         )
+
+    def _set_calyx_angle_reference(
+        self,
+        request: SetBool.Request,
+        response: SetBool.Response,
+    ) -> SetBool.Response:
+        selected = bool(request.data)
+        changed = selected != self.use_calyx_angle_reference
+        self.use_calyx_angle_reference = selected
+        if changed:
+            self._clear_detected_transforms()
+        reference = "calyx_point→stem_point" if selected else "center→stem_point"
+        response.success = True
+        response.message = f"토마토 진입각 기준을 {reference}(으)로 설정했습니다."
+        self.get_logger().info(response.message)
+        return response
 
     def _center_callback(self, message: PointStamped) -> None:
         self.center = message
@@ -302,6 +354,9 @@ class TomatoTfGenerator(Node):
             stem_point = PointStamped()
             stem_point.header = message.header
             stem_point.point = detection.stem_point
+            calyx_point = PointStamped()
+            calyx_point.header = message.header
+            calyx_point.point = detection.calyx_point
             if not self._message_is_fresh(center) or not self._message_is_fresh(
                 stem_point
             ):
@@ -310,14 +365,37 @@ class TomatoTfGenerator(Node):
                     "카메라 검출을 다시 수행하세요."
                 )
                 continue
+            if self.use_calyx_angle_reference and all(
+                abs(float(value)) <= 1e-12
+                for value in (
+                    detection.calyx_point.x,
+                    detection.calyx_point.y,
+                    detection.calyx_point.z,
+                )
+            ):
+                failures.append(
+                    f"{detection.id}: calyx_point가 비어 있습니다. "
+                    "꼭지 기준을 사용하려면 비전 검출 결과에 꼭지 좌표가 필요합니다."
+                )
+                continue
             try:
                 center_in_parent = self._point_in_parent(center)
                 stem_in_parent = self._point_in_parent(stem_point)
+                angle_origin_in_parent = (
+                    self._point_in_parent(calyx_point)
+                    if self.use_calyx_angle_reference
+                    else center_in_parent
+                )
             except RuntimeError as error:
                 failures.append(f"{detection.id}: {error}")
                 continue
             prepared.append(
-                (detection.id, center_in_parent, stem_in_parent)
+                (
+                    detection.id,
+                    center_in_parent,
+                    stem_in_parent,
+                    angle_origin_in_parent,
+                )
             )
 
         try:
@@ -326,22 +404,28 @@ class TomatoTfGenerator(Node):
             sky_axis = None
             failures.extend(
                 f"{detection_id}: {error}"
-                for detection_id, _center, _stem in prepared
+                for detection_id, _center, _stem, _origin in prepared
             )
             prepared = []
 
         created = 0
         order = clustered_height_order(
-            [center for _detection_id, center, _stem in prepared],
-            [detection_id for detection_id, _center, _stem in prepared],
+            [center for _detection_id, center, _stem, _origin in prepared],
+            [
+                detection_id
+                for detection_id, _center, _stem, _origin in prepared
+            ],
         )
         for prepared_index in order:
-            detection_id, center, stem_point = prepared[prepared_index]
+            detection_id, center, stem_point, angle_origin = prepared[
+                prepared_index
+            ]
             success, result = self._store_parent_detection(
                 center,
                 stem_point,
                 sky_axis,
                 child_frame=camera_target_id(detection_id),
+                angle_origin=angle_origin,
             )
             if success:
                 created += 1
@@ -351,7 +435,8 @@ class TomatoTfGenerator(Node):
         self.get_logger().info(
             f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
             "(카메라 C#:T# TF 이름, 클러스터 합산 Z 내림차순, "
-            "클러스터 내부 Z 내림차순)"
+            "클러스터 내부 Z 내림차순, 진입각 기준="
+            f"{'꼭지→줄기' if self.use_calyx_angle_reference else '중심→줄기'})"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
@@ -459,11 +544,22 @@ class TomatoTfGenerator(Node):
         stem_point: np.ndarray,
         sky_axis: np.ndarray,
         child_frame: str | None = None,
+        angle_origin: np.ndarray | None = None,
     ) -> tuple[bool, str]:
         try:
+            reference_origin = (
+                center
+                if angle_origin is None
+                else np.asarray(angle_origin, dtype=float)
+            )
             rotation = parent_frame_tomato_rotation(
                 sky_axis,
-                stem_point - center,
+                tomato_stem_direction(
+                    center,
+                    reference_origin,
+                    stem_point,
+                    angle_origin is not None,
+                ),
             )
         except ValueError as error:
             return False, str(error)

@@ -3781,9 +3781,12 @@ class CartesianHarvestPlanner(Node):
         second_z_lift = float(
             self.get_parameter("harvest_second_z_lift").value
         )
+        x_forward = float(
+            self.get_parameter("harvest_x_forward").value
+        )
         tip_motion = make_tip_local_harvest_motion(
             step_target_pose,
-            x_forward=float(self.get_parameter("harvest_x_forward").value),
+            x_forward=x_forward,
             first_z_lift=first_z_lift,
             first_x_forward=first_x_forward,
             second_z_lift=second_z_lift,
@@ -3892,12 +3895,34 @@ class CartesianHarvestPlanner(Node):
             )
             return None
 
+        stage_4_delta = (
+            custom_step_deltas[1]
+            if custom_step_deltas
+            else (x_forward, 0.0, 0.0)
+        )
+        first_lift_curve_tip_waypoints = (
+            make_tip_local_transition_curve_waypoints(
+                tip_motion.before_wait_waypoints[0],
+                tip_motion.before_wait_waypoints[1],
+                incoming_delta_xyz=stage_4_delta,
+                waypoint_count=int(
+                    self.get_parameter(
+                        "harvest_lift_curve_waypoint_count"
+                    ).value
+                ),
+                control_ratio=float(
+                    self.get_parameter(
+                        "harvest_lift_curve_control_ratio"
+                    ).value
+                ),
+            )
+        )
         stage_5_delta = (
             custom_step_deltas[2]
             if custom_step_deltas
             else (first_x_forward, 0.0, first_z_lift)
         )
-        lift_curve_tip_waypoints = make_tip_local_transition_curve_waypoints(
+        second_lift_curve_tip_waypoints = make_tip_local_transition_curve_waypoints(
             tip_motion.before_wait_waypoints[1],
             tip_motion.before_wait_waypoints[2],
             incoming_delta_xyz=stage_5_delta,
@@ -3911,8 +3936,8 @@ class CartesianHarvestPlanner(Node):
         approach_tip_waypoint_groups = (
             (step_target_pose,),
             (tip_motion.before_wait_waypoints[0],),
-            (tip_motion.before_wait_waypoints[1],),
-            lift_curve_tip_waypoints,
+            first_lift_curve_tip_waypoints,
+            second_lift_curve_tip_waypoints,
             (tip_motion.before_wait_waypoints[3],),
         )
         approach_waypoint_groups = tuple(
@@ -3927,9 +3952,18 @@ class CartesianHarvestPlanner(Node):
         approach_stage_endpoints = tuple(
             group[-1] for group in approach_waypoint_groups
         )
+        self.last_plan_report["stage_4_to_5_curve"] = {
+            "enabled": True,
+            "waypoint_count": len(first_lift_curve_tip_waypoints),
+            "control_ratio": float(
+                self.get_parameter("harvest_lift_curve_control_ratio").value
+            ),
+            "start_stage": 4,
+            "end_stage": 5,
+        }
         self.last_plan_report["stage_5_to_6_curve"] = {
             "enabled": True,
-            "waypoint_count": len(lift_curve_tip_waypoints),
+            "waypoint_count": len(second_lift_curve_tip_waypoints),
             "control_ratio": float(
                 self.get_parameter("harvest_lift_curve_control_ratio").value
             ),
@@ -3947,7 +3981,7 @@ class CartesianHarvestPlanner(Node):
                 step_labels = (
                     "Step preapproach to target",
                     "Step tip +X forward",
-                    "Step tip +Z/+X first lift",
+                    "Step tip curved +Z/+X first lift",
                     "Step tip curved +Z second lift",
                     "Step tip -X back",
                 )
@@ -4172,7 +4206,7 @@ class CartesianHarvestPlanner(Node):
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
-            "-> (+Z20mm,+X20mm) -> curved +Z20mm "
+            "-> curved (+Z20mm,+X20mm) -> curved +Z20mm "
             "-> -X50mm -> -X10mm -> wait "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"

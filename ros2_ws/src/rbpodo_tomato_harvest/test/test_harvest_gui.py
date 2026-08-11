@@ -186,6 +186,8 @@ def test_camera_target_record_text_preserves_camera_id_and_xyz():
     assert payload["vision"]["vine_xyz"] == pytest.approx(
         [0.153456789, -0.2, 0.7654321]
     )
+    assert payload["vision"]["calyx_xyz"] is None
+    assert payload["vision"]["angle_reference"] == "center_to_stem"
     assert math.dist(
         payload["robot"]["tomato_xyz"],
         payload["robot"]["vine_xyz"],
@@ -199,7 +201,9 @@ def test_camera_target_record_text_preserves_camera_id_and_xyz():
         "coordinate_source",
         "reference_link",
         "tomato_xyz",
+        "calyx_xyz",
         "vine_xyz",
+        "angle_reference",
         "recommend_pregrasp_xyz",
         "recommend_angle_deg",
         "final_pregrasp_xyz",
@@ -249,6 +253,32 @@ def test_camera_target_record_uses_exact_transformed_detection_points():
     )
 
 
+def test_camera_target_record_preserves_calyx_angle_reference():
+    record = camera_target_record_text(
+        target_frame="C0:T1",
+        camera_frame="camera",
+        camera_id="C0:T1",
+        tomato_xyz=(0.10, 0.20, 0.30),
+        calyx_xyz=(0.11, 0.22, 0.31),
+        vine_xyz=(0.15, 0.28, 0.34),
+        angle_reference="calyx_to_stem",
+        detection_timestamp=1.0,
+        robot_frame_id="link0",
+        robot_tomato_xyz=(0.50, 0.10, 0.70),
+        robot_calyx_xyz=(0.51, 0.12, 0.71),
+        robot_vine_xyz=(0.55, 0.18, 0.74),
+    )
+    payload = json.loads(record)
+
+    assert payload["vision"]["calyx_xyz"] == pytest.approx(
+        [0.11, 0.22, 0.31]
+    )
+    assert payload["robot"]["calyx_xyz"] == pytest.approx(
+        [0.51, 0.12, 0.71]
+    )
+    assert payload["robot"]["angle_reference"] == "calyx_to_stem"
+
+
 def test_camera_target_record_text_rejects_nonfinite_coordinates():
     with pytest.raises(ValueError, match="유한한 X, Y, Z"):
         camera_target_record_text(
@@ -282,6 +312,18 @@ def test_selected_tomato_plot_omits_final_until_plan_report_exists():
         without_plan["robot_tomato"],
         without_plan["recommend"],
     ) == pytest.approx(0.04)
+
+
+def test_selected_tomato_plot_uses_calyx_to_stem_direction():
+    scene = tomato_selection_plot_scene(
+        tomato_xyz=(0.4, 0.2, 0.6),
+        vine_xyz=(0.43, 0.24, 0.6),
+        angle_origin_xyz=(0.43, 0.20, 0.6),
+    )
+
+    # calyx→stem is +Y, so Recommend is 40 mm along -Y from the tomato.
+    assert scene["recommend"] == pytest.approx((0.4, 0.16, 0.6))
+    assert scene["robot_angle_origin"] == pytest.approx((0.43, 0.20, 0.6))
 
 
 def test_debug_frame_request_preserves_feedback_json_text():
@@ -2607,6 +2649,34 @@ def test_detected_tomato_marker_array_shows_center_stem_and_approach():
     assert approach.color.b == pytest.approx(1.0)
 
 
+def test_detection_marker_can_use_calyx_to_stem_for_approach_angle():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera"
+    detections.detections = [
+        TomatoDetection(
+            id="tomato_a",
+            center=Point(x=0.0, y=0.0, z=0.5),
+            calyx_point=Point(x=0.01, y=0.0, z=0.5),
+            stem_point=Point(x=0.01, y=0.02, z=0.5),
+        )
+    ]
+
+    center_markers = detected_tomato_marker_array(
+        detections,
+        approach_length=0.06,
+    ).markers
+    calyx_markers = detected_tomato_marker_array(
+        detections,
+        approach_length=0.06,
+        use_calyx_angle_reference=True,
+    ).markers
+
+    assert center_markers[3].points[0].x < 0.0
+    assert center_markers[3].points[0].y < 0.0
+    assert calyx_markers[3].points[0] == Point(x=0.0, y=-0.06, z=0.5)
+    assert calyx_markers[3].points[1] == Point(x=0.0, y=0.0, z=0.5)
+
+
 def test_detection_message_is_sorted_by_transformed_world_height():
     detections = TomatoDetectionArray()
     detections.header.frame_id = "camera"
@@ -2793,6 +2863,7 @@ def test_detection_markers_do_not_publish_orange_approach_preview():
         detection_marker_diameter=0.0175,
         detection_stem_marker_diameter=0.006,
         detection_approach_marker_length=0.06,
+        use_calyx_angle_reference_var=SimpleNamespace(get=lambda: False),
         detection_marker_publisher=SimpleNamespace(
             publish=lambda message: published.append(message)
         ),
@@ -2833,6 +2904,9 @@ def test_detection_service_response_republishes_only_real_camera_results(
     callbacks = []
     gui = SimpleNamespace(
         detect_button=SimpleNamespace(configure=lambda **kwargs: None),
+        calyx_angle_reference_checkbox=SimpleNamespace(
+            configure=lambda **kwargs: None
+        ),
         camera_source_combo=SimpleNamespace(configure=lambda **kwargs: None),
         ui_busy=False,
         camera_source_var=SimpleNamespace(get=lambda: camera_source),
@@ -3019,6 +3093,7 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         detected_tomato_expected_world_x_axes={0: (1.0, 0.0)},
         detected_tomato_record_positions={0: (1.0, 2.0, 3.0)},
         detected_tomato_record_stem_positions={0: (1.1, 2.1, 3.1)},
+        detected_tomato_record_angle_origins={0: (1.0, 2.0, 3.0)},
         tomato_motion_results={0: "Plan 성공"},
         result_arrow_lengths={0: 0.1},
         result_detection_frame="old_camera_frame",

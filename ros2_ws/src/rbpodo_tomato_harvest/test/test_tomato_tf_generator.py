@@ -9,6 +9,7 @@ from rbpodo_tomato_harvest.tomato_tf_generator import (
     parent_frame_tomato_rotation,
     quaternion_from_rotation,
     rotation_from_quaternion,
+    tomato_stem_direction,
 )
 
 
@@ -109,6 +110,21 @@ def test_z_points_to_sky_and_x_points_to_horizontal_stem():
     assert np.allclose(rotation[:, 2], [0.0, 0.0, 1.0])
     assert np.allclose(rotation.T @ rotation, np.eye(3))
     assert np.linalg.det(rotation) > 0.999999
+
+
+def test_tomato_stem_direction_selects_center_or_calyx_origin():
+    center = (0.10, 0.20, 0.30)
+    calyx = (0.11, 0.22, 0.31)
+    stem = (0.15, 0.28, 0.34)
+
+    assert np.allclose(
+        tomato_stem_direction(center, calyx, stem, False),
+        np.asarray(stem) - np.asarray(center),
+    )
+    assert np.allclose(
+        tomato_stem_direction(center, calyx, stem, True),
+        np.asarray(stem) - np.asarray(calyx),
+    )
 
 
 def test_camera_rotation_does_not_change_world_sky_constraint():

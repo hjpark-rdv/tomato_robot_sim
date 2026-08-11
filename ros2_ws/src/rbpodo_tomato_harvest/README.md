@@ -29,7 +29,8 @@ MoveIt 실행 시 `tomato_tf_generator`가 함께 시작된다. 카메라 팀의
 farmily_tomato_interfaces/msg/TomatoDetectionArray
 ```
 
-배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 카메라 ID가
+배열의 각 원소에는 토마토 ID, 중심점(`center`), 꼭지점(`calyx_point`),
+줄기 방향점(`stem_point`)이 들어간다. 카메라 ID가
 `...C0:T7`처럼 끝나면 마지막 `C0:T7`만 추출해 실제 수확 TF 이름으로 사용한다.
 GUI 목록, 개별·스텝·자동 수확 및 전체 사전계획도 모두 같은 TF 이름을 전달한다.
 이 형식이 없는 Fake·구형 입력만 `detected_tomato_N_tf` 이름을 사용한다. 새 배열이
@@ -241,10 +242,11 @@ X/Y/Z 이동량을 직접 입력할 수 있다. 기본값은 3단계 `(10, 0, 0)
 설정하며 모두 `tomato_gripper_tip` 로컬 좌표다. Plan 생성 시 입력값을 검증하고
 trajectory에 고정하며, 해당 스텝 세션이 끝날 때까지 편집란을 잠근다. 역순 실행은
 커스텀 좌표로 생성해 캐시한 동일 trajectory를 반대로 재생한다.
-5단계에서 6단계로 전환할 때는 두 단계의 끝점을 직선으로 연결하지 않고,
-tip 로컬 수평 진행 방향에서 6단계 이동 방향으로 접선이 변하는 3차 곡선을
-7개 Cartesian waypoint로 계획한다. 단계별 최종 좌표는 변경하지 않으며,
-6→5 역순 실행도 캐시된 동일 곡선 trajectory를 역재생한다.
+4단계에서 5단계, 5단계에서 6단계로 전환할 때는 각 단계의 끝점을 직선으로
+연결하지 않는다. 바로 전 tip 로컬 진행 방향에서 다음 단계 이동 방향으로 접선이
+변하는 3차 곡선을 구간마다 7개 Cartesian waypoint로 계획한다. 단계별 최종
+좌표는 변경하지 않으며, 6→5와 5→4 역순 실행도 캐시된 각 곡선 trajectory를
+역재생한다.
 
 `접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대 6단계
 tip 로컬 `+Z 20 mm` 2차 상승까지 계획한다. `마지막 단계 X`에서
@@ -672,7 +674,7 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 - `실제 /detect_tomatoes`: `/detect_tomatoes`
 
 `검출 마커 표시`는 기본 체크되어 있다. 체크된 상태로 검출하면 메시지의
-`header.frame_id`와 각 토마토의 `center`, `stem_point`를 사용해 다음 마커를
+`header.frame_id`와 각 토마토의 `center`, `calyx_point`, `stem_point`를 사용해 다음 마커를
 `/detected_tomato_markers`에 발행한다.
 
 - 핑크색 구체: 지름 `0.0175 m`의 토마토 중심
@@ -681,7 +683,11 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 
 카메라 검출 단계에서는 아직 Planner가 확정하지 않은 접근 자세를 예측하지
 않으므로 주황색 접근 화살표를 발행하지 않는다. 하늘색 화살표는 검출된
-`center→stem_point` 축을 반대로 연장한 비전 기준 진입 방향이다.
+기본값인 `center→stem_point` 축을 반대로 연장한 비전 기준 진입 방향이다.
+카메라 검출 영역에서 `진입각: 꼭지→줄기`를 체크하면 촬영/검출 요청 전에
+TF 생성기와 기준을 동기화하고, `calyx_point→stem_point` 방향으로 토마토 TF의
+X축과 하늘색 화살표를 계산한다. 체크를 바꾸면 기존 Plan은 무효화되며 새 기준으로
+토마토 촬영/검출을 다시 실행해야 한다. TF의 원점은 두 모드 모두 토마토 중심이다.
 Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에 주황색
 화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
 preapproach 위치이다. 실제 접근 방향을 유지한 상태로 토마토 중심에 가장 가까운

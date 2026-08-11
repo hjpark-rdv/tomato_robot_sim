@@ -151,7 +151,7 @@ def step_stage_specs(
         {
             "key": "LIFT_Z20_FORWARD_X20",
             "label": "위로 1차 이동",
-            "detail": delta_detail(2),
+            "detail": f"{delta_detail(2)} / 4→5 곡선 Cartesian",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[2]),
         },

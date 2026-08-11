@@ -14,6 +14,25 @@ from rclpy.time import Time
 from tf2_ros import Buffer, TransformException, TransformListener
 
 
+def point_toward(start: Point, target: Point, distance: float) -> Point:
+    """Return a point a fixed distance from start toward target."""
+    dx = float(target.x) - float(start.x)
+    dy = float(target.y) - float(start.y)
+    dz = float(target.z) - float(start.z)
+    length = math.sqrt(dx * dx + dy * dy + dz * dz)
+    if length <= 1e-9:
+        raise ValueError("start-to-target direction is too short")
+    # Keep the synthetic calyx strictly between center and stem even when a
+    # fake tomato happens to have a very short center-to-stem segment.
+    offset = min(max(0.0, float(distance)), length * 0.5)
+    scale = offset / length
+    return Point(
+        x=float(start.x) + dx * scale,
+        y=float(start.y) + dy * scale,
+        z=float(start.z) + dz * scale,
+    )
+
+
 def vertical_harvest_order(points, xy_tolerance: float = 0.05) -> list[int]:
     """Order points by vertical columns, starting at the global highest point.
 
@@ -119,6 +138,7 @@ class FakeCameraService(Node):
         )
         self.declare_parameter("sorting_frame", "link0")
         self.declare_parameter("vertical_column_xy_tolerance", 0.05)
+        self.declare_parameter("fake_calyx_offset_from_center", 0.00875)
         self.declare_parameter(
             "detections_topic",
             "/tomato_detection/detections",
@@ -246,6 +266,15 @@ class FakeCameraService(Node):
                 detection = TomatoDetection()
                 detection.id = tomato_frame.removesuffix("_tf")
                 detection.center = center
+                detection.calyx_point = point_toward(
+                    center,
+                    stem_point,
+                    float(
+                        self.get_parameter(
+                            "fake_calyx_offset_from_center"
+                        ).value
+                    ),
+                )
                 detection.stem_point = stem_point
                 sorting_point = self._lookup_point(
                     tomato_frame,
