@@ -25,6 +25,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     select_robotward_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
+    translated_pose_in_local_frame,
     trajectory_joint_safety_violations,
 )
 
@@ -42,6 +43,54 @@ def _rotation(pose):
             [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
             [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
         ]
+    )
+
+
+def test_tip_local_second_lift_moves_only_along_tip_z():
+    start = Pose()
+    start.orientation.w = 1.0
+
+    motion = make_tip_local_harvest_motion(start)
+    before_wait = [_position(pose) for pose in motion.before_wait_waypoints]
+
+    assert np.allclose(
+        before_wait,
+        [
+            [0.040, 0.0, 0.0],
+            [0.060, 0.0, 0.020],
+            [0.060, 0.0, 0.040],
+            [0.010, 0.0, 0.040],
+        ],
+    )
+    assert _position(motion.after_wait_pose) == pytest.approx(
+        [0.0, 0.0, 0.040]
+    )
+
+
+def test_custom_tip_local_stage_motion_supports_xyz_on_every_stage():
+    start = Pose()
+    start.orientation.w = 1.0
+    target = translated_pose_in_local_frame(start, (0.010, 0.002, -0.003))
+
+    motion = make_tip_local_harvest_motion(
+        target,
+        custom_stage_deltas=(
+            (0.040, 0.004, 0.005),
+            (0.020, -0.006, 0.020),
+            (0.007, 0.008, 0.020),
+            (-0.050, 0.009, -0.010),
+        ),
+    )
+
+    assert np.allclose(_position(target), [0.010, 0.002, -0.003])
+    assert np.allclose(
+        [_position(pose) for pose in motion.before_wait_waypoints],
+        [
+            [0.050, 0.006, 0.002],
+            [0.070, 0.000, 0.022],
+            [0.077, 0.008, 0.042],
+            [0.027, 0.017, 0.032],
+        ],
     )
 
 
@@ -649,9 +698,9 @@ def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
 
     assert np.allclose(positions[0], [1.0, 2.040, 3.0])
     assert np.allclose(positions[1], [1.0, 2.060, 3.020])
-    assert np.allclose(positions[2], [1.0, 2.040, 3.040])
-    assert np.allclose(positions[3], [1.0, 1.990, 3.040])
-    assert np.allclose(positions[4], [1.0, 1.980, 3.040])
+    assert np.allclose(positions[2], [1.0, 2.060, 3.040])
+    assert np.allclose(positions[3], [1.0, 2.010, 3.040])
+    assert np.allclose(positions[4], [1.0, 2.000, 3.040])
 
 
 def test_tip_goal_is_converted_to_equivalent_planning_link_goal():

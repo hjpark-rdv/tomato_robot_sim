@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 138
+    Help Height: 292
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -8,9 +8,12 @@ Panels:
         - /Status1
         - /PlanningScene1
         - /PlanningScene1/Scene Geometry1
+        - /TomatoTF1
         - /Trajectory1
+        - /Image1
+        - /Image1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 733
+    Tree Height: 579
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -107,6 +110,16 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          farmily_lift:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          farmily_lift_platform:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           link0:
             Alpha: 1
             Show Axes: false
@@ -155,6 +168,10 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
@@ -163,15 +180,11 @@ Visualization Manager:
       Enabled: true
       Name: TomatoMarkers
       Namespaces:
-        ceiling_guard: true
         main_vine: true
         other_branch: true
         other_calyx_leaf: true
         other_calyx_stem: true
         other_tomato: true
-        robot_base_pedestal: true
-        robot_front_guard_wall: true
-        robot_rear_guard_wall: true
         target_branch: true
         target_calyx_leaf: true
         target_calyx_stem: true
@@ -213,6 +226,54 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        C0:T0:
+          Value: true
+        C0:T1:
+          Value: true
+        C0:T2:
+          Value: true
+        C0:T3:
+          Value: true
+        C0:T4:
+          Value: true
+        C0:T5:
+          Value: true
+        C1:T0:
+          Value: true
+        C1:T1:
+          Value: true
+        C1:T10:
+          Value: true
+        C1:T11:
+          Value: true
+        C1:T2:
+          Value: true
+        C1:T3:
+          Value: true
+        C1:T4:
+          Value: true
+        C1:T5:
+          Value: true
+        C1:T6:
+          Value: true
+        C1:T8:
+          Value: true
+        C1:T9:
+          Value: true
+        C2:T0:
+          Value: true
+        C2:T1:
+          Value: true
+        C2:T2:
+          Value: true
+        C2:T3:
+          Value: true
+        C2:T4:
+          Value: true
+        C2:T5:
+          Value: true
+        camera_link:
+          Value: true
         d435_bottom_screw_frame:
           Value: true
         d435_color_frame:
@@ -232,6 +293,10 @@ Visualization Manager:
         d435_infra2_optical_frame:
           Value: true
         d435_link:
+          Value: true
+        farmily_lift:
+          Value: true
+        farmily_lift_platform:
           Value: true
         link0:
           Value: true
@@ -277,38 +342,89 @@ Visualization Manager:
           Value: false
         world:
           Value: true
-      Marker Scale: 0.15000000596046448
+      Marker Scale: 0.10000000149011612
       Name: TomatoTF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
         world:
-          link0:
-            link1:
-              link2:
-                link3:
-                  link4:
-                    link5:
-                      link6:
-                        tcp:
-                          tomato_gripper:
-                            d435_bottom_screw_frame:
-                              d435_link:
-                                d435_color_frame:
-                                  d435_color_optical_frame:
+          C0:T0:
+            {}
+          C0:T1:
+            {}
+          C0:T2:
+            {}
+          C0:T3:
+            {}
+          C0:T4:
+            {}
+          C0:T5:
+            {}
+          C1:T0:
+            {}
+          C1:T1:
+            {}
+          C1:T10:
+            {}
+          C1:T11:
+            {}
+          C1:T2:
+            {}
+          C1:T3:
+            {}
+          C1:T4:
+            {}
+          C1:T5:
+            {}
+          C1:T6:
+            {}
+          C1:T8:
+            {}
+          C1:T9:
+            {}
+          C2:T0:
+            {}
+          C2:T1:
+            {}
+          C2:T2:
+            {}
+          C2:T3:
+            {}
+          C2:T4:
+            {}
+          C2:T5:
+            {}
+          farmily_lift:
+            {}
+          farmily_lift_platform:
+            link0:
+              link1:
+                link2:
+                  link3:
+                    link4:
+                      link5:
+                        link6:
+                          tcp:
+                            tomato_gripper:
+                              d435_bottom_screw_frame:
+                                d435_link:
+                                  camera_link:
                                     {}
-                                d435_depth_frame:
-                                  d435_depth_optical_frame:
-                                    {}
-                                d435_infra1_frame:
-                                  d435_infra1_optical_frame:
-                                    {}
-                                d435_infra2_frame:
-                                  d435_infra2_optical_frame:
-                                    {}
-                            tomato_gripper_tip:
-                              {}
+                                  d435_color_frame:
+                                    d435_color_optical_frame:
+                                      {}
+                                  d435_depth_frame:
+                                    d435_depth_optical_frame:
+                                      {}
+                                  d435_infra1_frame:
+                                    d435_infra1_optical_frame:
+                                      {}
+                                  d435_infra2_frame:
+                                    d435_infra2_optical_frame:
+                                      {}
+                              tomato_gripper_tip:
+                                {}
           tomato_floor_tf:
             main_vine_tf:
               tomato_0_tf:
@@ -382,6 +498,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        farmily_lift:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        farmily_lift_platform:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         link0:
           Alpha: 1
           Show Axes: false
@@ -427,6 +553,10 @@ Visualization Manager:
           Show Trail: false
           Value: true
         tomato_gripper_tip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        world:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -525,6 +655,20 @@ Visualization Manager:
         Show Robot Visual: true
       Value: false
       Velocity_Scaling_Factor: 0.1
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /tomato_vision/result_image_raw
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -571,25 +715,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.402465581893921
+      Distance: 0.02934584766626358
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.043283894658088684
-        Y: 0.1362927407026291
-        Z: 0.531113862991333
+        X: -0.17999961972236633
+        Y: 0.018475577235221863
+        Z: 0.7345719933509827
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.07479661703109741
+      Pitch: 0.2847953736782074
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.293580532073975
+      Yaw: 3.148576498031616
     Saved: ~
 Window Geometry:
   Displays:
@@ -597,11 +741,13 @@ Window Geometry:
   Height: 1016
   Hide Left Dock: false
   Hide Right Dock: false
+  Image:
+    collapsed: false
   MotionPlanning:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd000000040000000000000228000003a2fc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003b000003a2000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000186000002570000016900ffffff000000010000015f000003a2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003b000003a2000000a000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003a7000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000040000000000000228000003a2fc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003b000003a2000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000269000001740000016900ffffff000000010000015f000003a2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fc0000003b000003a20000002800fffffffa000000000100000002fb0000000a0049006d0061006700650100000000ffffffff0000005a00fffffffb0000000a0056006900650077007300000005db0000015f0000010000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003a7000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:

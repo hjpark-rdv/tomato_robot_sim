@@ -84,6 +84,7 @@ def step_stage_specs(
     plan: HarvestMotionPlan,
     wait_seconds: float,
     forward_distance_m: float = 0.040,
+    custom_stage_deltas_m=None,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -91,6 +92,33 @@ def step_stage_specs(
         raise ValueError(
             "stepwise plan must contain five detailed approach groups"
         )
+    if custom_stage_deltas_m is None:
+        custom_stage_deltas_m = (
+            (0.010, 0.0, 0.0),
+            (float(forward_distance_m), 0.0, 0.0),
+            (0.020, 0.0, 0.020),
+            (0.0, 0.0, 0.020),
+            (-0.050, 0.0, 0.0),
+        )
+    custom_stage_deltas_m = tuple(
+        tuple(float(value) for value in stage_delta)
+        for stage_delta in custom_stage_deltas_m
+    )
+    if (
+        len(custom_stage_deltas_m) != 5
+        or any(len(stage_delta) != 3 for stage_delta in custom_stage_deltas_m)
+    ):
+        raise ValueError("custom stage deltas must contain five XYZ triples")
+
+    def delta_detail(stage_index: int) -> str:
+        xyz_mm = tuple(
+            value * 1000.0 for value in custom_stage_deltas_m[stage_index]
+        )
+        return (
+            f"tip 로컬 X {xyz_mm[0]:+.1f} / "
+            f"Y {xyz_mm[1]:+.1f} / Z {xyz_mm[2]:+.1f} mm"
+        )
+
     return [
         {
             "key": "MOVE_TO_READY",
@@ -109,37 +137,35 @@ def step_stage_specs(
         {
             "key": "PREAPPROACH_TO_TARGET",
             "label": "PRE_APPROACH → 접근 목표",
-            "detail": "Cartesian 10 mm 전진",
+            "detail": delta_detail(0),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[0]),
         },
         {
             "key": "FORWARD_X",
             "label": "접근 목표 → 앞으로 이동",
-            "detail": (
-                f"tip 로컬 +X {float(forward_distance_m) * 1000.0:.1f} mm"
-            ),
+            "detail": delta_detail(1),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[1]),
         },
         {
             "key": "LIFT_Z20_FORWARD_X20",
             "label": "위로 1차 이동",
-            "detail": "tip 로컬 +Z 20 mm / +X 20 mm",
+            "detail": delta_detail(2),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[2]),
         },
         {
-            "key": "LIFT_Z20_BACK_X20",
+            "key": "LIFT_Z20_SECOND",
             "label": "위로 2차 이동",
-            "detail": "tip 로컬 +Z 20 mm / -X 20 mm",
+            "detail": delta_detail(3),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[3]),
         },
         {
             "key": "BACK_X50_FIRST",
             "label": "뒤로 1차 이동",
-            "detail": "tip 로컬 -X 50 mm",
+            "detail": delta_detail(4),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[4]),
         },
@@ -299,10 +325,22 @@ def main(args=None) -> None:
         forward_distance_m = float(
             planner.get_parameter("harvest_x_forward").value
         )
+        custom_stage_deltas_m = tuple(
+            tuple(
+                float(
+                    planner.get_parameter(
+                        f"step_stage_{stage_number}_{axis_name}_delta"
+                    ).value
+                )
+                for axis_name in ("x", "y", "z")
+            )
+            for stage_number in range(3, 8)
+        )
         stages = step_stage_specs(
             plan,
             wait_seconds,
             forward_distance_m,
+            custom_stage_deltas_m,
         )
         expected = {
             str(name): float(value)

@@ -66,6 +66,14 @@ VISION_REVIEW_ISSUES = {
 }
 VISION_REVIEW_OPTIONS = tuple(VISION_REVIEW_ISSUES)
 BATCH_HARVEST_STAGE_OPTIONS = ("전체 수확", "3단계까지", "4단계까지")
+STEP_CUSTOM_STAGE_DEFAULTS_MM = {
+    3: (10.0, 0.0, 0.0),
+    4: (40.0, 0.0, 0.0),
+    5: (20.0, 0.0, 20.0),
+    6: (0.0, 0.0, 20.0),
+    7: (-50.0, 0.0, 0.0),
+}
+STEP_CUSTOM_DELTA_LIMIT_MM = 200.0
 DETECTION_MARKER_NAMESPACE = "detected_tomato_preview"
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
@@ -562,6 +570,7 @@ def harvest_command(
     velocity_scale: float = 0.20,
     acceleration_scale: float = 0.20,
     harvest_wait_sec: float = 2.0,
+    harvest_x_forward_m: float = 0.040,
     continuous_transition: bool = False,
     return_to_pick_ready: bool = True,
     retreat_after_harvest: bool = False,
@@ -599,6 +608,11 @@ def harvest_command(
     harvest_wait_sec = float(harvest_wait_sec)
     if not math.isfinite(harvest_wait_sec) or harvest_wait_sec < 0.0:
         raise ValueError("harvest_wait_sec must be a finite value of zero or greater")
+    harvest_x_forward_m = float(harvest_x_forward_m)
+    if not 0.010 <= harvest_x_forward_m <= 0.070:
+        raise ValueError(
+            "harvest_x_forward_m must be between 0.010 and 0.070"
+        )
     if harvest_stage_limit is not None:
         harvest_stage_limit = int(harvest_stage_limit)
         if harvest_stage_limit not in (3, 4):
@@ -645,6 +659,8 @@ def harvest_command(
         f"pick_ready_acceleration_scale:={float(acceleration_scale)}",
         "-p",
         f"harvest_wait_sec:={harvest_wait_sec}",
+        "-p",
+        f"harvest_x_forward:={harvest_x_forward_m}",
         "-p",
         "continuous_transition:="
         f"{'true' if continuous_transition else 'false'}",
@@ -727,6 +743,7 @@ def preplanned_batch_command(
     velocity_scale: float = 0.2,
     acceleration_scale: float = 0.2,
     harvest_wait_sec: float = 2.0,
+    harvest_x_forward_m: float = 0.040,
     harvest_stage_limit: int | None = None,
     pick_ready_state_name: str = "PICK_READY",
     prefer_robot_direction: bool = False,
@@ -757,6 +774,7 @@ def preplanned_batch_command(
         velocity_scale=velocity_scale,
         acceleration_scale=acceleration_scale,
         harvest_wait_sec=harvest_wait_sec,
+        harvest_x_forward_m=harvest_x_forward_m,
         continuous_transition=False,
         return_to_pick_ready=True,
         retreat_after_harvest=False,
@@ -799,12 +817,60 @@ def stepper_command(
     cycle_only: bool = False,
     cycle_last_stage: int = 5,
     cycle_forward_distance_m: float = 0.040,
+    custom_stage_deltas_m: tuple[tuple[float, float, float], ...] | None = None,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     tomato_frame: str | None = None,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
+    cycle_last_stage = int(cycle_last_stage)
+    if not 1 <= cycle_last_stage <= 6:
+        raise ValueError("cycle_last_stage must be between 1 and 6")
+    cycle_forward_distance_m = float(cycle_forward_distance_m)
+    if not 0.010 <= cycle_forward_distance_m <= 0.070:
+        raise ValueError(
+            "cycle_forward_distance_m must be between 0.010 and 0.070"
+        )
+    if custom_stage_deltas_m is None:
+        custom_stage_deltas_m = tuple(
+            (
+                cycle_forward_distance_m
+                if stage_number == 4 and axis_index == 0
+                else STEP_CUSTOM_STAGE_DEFAULTS_MM[stage_number][axis_index]
+                / 1000.0
+            )
+            for stage_number in range(3, 8)
+            for axis_index in range(3)
+        )
+        custom_stage_deltas_m = tuple(
+            custom_stage_deltas_m[index:index + 3]
+            for index in range(0, len(custom_stage_deltas_m), 3)
+        )
+    try:
+        custom_stage_deltas_m = tuple(
+            tuple(float(value) for value in stage_delta)
+            for stage_delta in custom_stage_deltas_m
+        )
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "custom_stage_deltas_m must contain five XYZ triples"
+        ) from error
+    if (
+        len(custom_stage_deltas_m) != 5
+        or any(len(stage_delta) != 3 for stage_delta in custom_stage_deltas_m)
+    ):
+        raise ValueError(
+            "custom_stage_deltas_m must contain five XYZ triples"
+        )
+    if any(
+        not math.isfinite(value) or abs(value) > 0.200
+        for stage_delta in custom_stage_deltas_m
+        for value in stage_delta
+    ):
+        raise ValueError(
+            "custom stage XYZ values must be finite and within +/-0.200 m"
+        )
     command = harvest_command(
         tomato_index,
         True,
@@ -816,6 +882,7 @@ def stepper_command(
         velocity_scale=velocity_scale,
         acceleration_scale=acceleration_scale,
         harvest_wait_sec=harvest_wait_sec,
+        harvest_x_forward_m=cycle_forward_distance_m,
         continuous_transition=False,
         return_to_pick_ready=not cycle_only,
         retreat_after_harvest=False,
@@ -828,18 +895,18 @@ def stepper_command(
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
     command.extend(["-p", "stepwise_plan:=true"])
-    cycle_last_stage = int(cycle_last_stage)
-    if not 1 <= cycle_last_stage <= 6:
-        raise ValueError("cycle_last_stage must be between 1 and 6")
+    command.extend(["-p", "step_custom_stage_deltas_enabled:=true"])
+    for stage_number, stage_delta in zip(
+        range(3, 8), custom_stage_deltas_m
+    ):
+        for axis_name, value in zip(("x", "y", "z"), stage_delta):
+            command.extend(
+                [
+                    "-p",
+                    f"step_stage_{stage_number}_{axis_name}_delta:={value}",
+                ]
+            )
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
-    cycle_forward_distance_m = float(cycle_forward_distance_m)
-    if not 0.010 <= cycle_forward_distance_m <= 0.070:
-        raise ValueError(
-            "cycle_forward_distance_m must be between 0.010 and 0.070"
-        )
-    command.extend(
-        ["-p", f"harvest_x_forward:={cycle_forward_distance_m}"]
-    )
     command.extend(
         ["-p", f"step_cycle_only:={'true' if cycle_only else 'false'}"]
     )
@@ -893,6 +960,35 @@ def repeat_forward_distance_m(value) -> float:
     if not math.isfinite(millimeters) or not 10.0 <= millimeters <= 70.0:
         raise ValueError("4단계 진입 길이는 10~70 mm 범위여야 합니다.")
     return millimeters / 1000.0
+
+
+def step_custom_stage_deltas_m(values) -> tuple[tuple[float, float, float], ...]:
+    """Validate GUI stage 3~7 tip-local XYZ millimetres and convert to metres."""
+    converted = []
+    for stage_number in range(3, 8):
+        try:
+            stage_values = values[stage_number]
+            raw_values = (
+                stage_values["x"],
+                stage_values["y"],
+                stage_values["z"],
+            )
+            xyz_mm = tuple(float(value) for value in raw_values)
+        except (KeyError, TypeError, ValueError) as error:
+            raise ValueError(
+                f"{stage_number}단계 X/Y/Z는 숫자로 입력하세요."
+            ) from error
+        if any(not math.isfinite(value) for value in xyz_mm):
+            raise ValueError(
+                f"{stage_number}단계 X/Y/Z는 유한한 숫자여야 합니다."
+            )
+        if any(abs(value) > STEP_CUSTOM_DELTA_LIMIT_MM for value in xyz_mm):
+            raise ValueError(
+                f"{stage_number}단계 각 축은 "
+                f"±{STEP_CUSTOM_DELTA_LIMIT_MM:g} mm 범위여야 합니다."
+            )
+        converted.append(tuple(value / 1000.0 for value in xyz_mm))
+    return tuple(converted)
 
 
 def adaptive_grasp_max_rotation_degrees(value) -> float:
@@ -1427,6 +1523,9 @@ def camera_target_record_text(
     vine_xyz,
     detection_timestamp: float,
     plan_report: dict | None = None,
+    robot_frame_id: str | None = None,
+    robot_tomato_xyz=None,
+    robot_vine_xyz=None,
     review_issue: str = "문제 없음",
     review_note: str = "",
 ) -> str:
@@ -1452,9 +1551,20 @@ def camera_target_record_text(
     report = dict(plan_report or {})
     adaptive = dict(report.get("adaptive_grasp") or {})
     geometry = dict(report.get("approach_geometry") or {})
-    robot_tomato = geometry.get("tomato_xyz")
-    robot_vine = geometry.get("vine_xyz")
-    if robot_tomato is not None and robot_vine is not None:
+    exact_robot_coordinates = (
+        robot_tomato_xyz is not None and robot_vine_xyz is not None
+    )
+    if exact_robot_coordinates:
+        robot_tomato = xyz(robot_tomato_xyz, "robot.tomato_xyz")
+        robot_vine = xyz(robot_vine_xyz, "robot.vine_xyz")
+    else:
+        robot_tomato = geometry.get("tomato_xyz")
+        robot_vine = geometry.get("vine_xyz")
+    if (
+        not exact_robot_coordinates
+        and robot_tomato is not None
+        and robot_vine is not None
+    ):
         robot_tomato = xyz(robot_tomato, "robot.tomato_xyz")
         virtual_vine = xyz(robot_vine, "robot.vine_xyz")
         direction = [
@@ -1476,9 +1586,17 @@ def camera_target_record_text(
                 for axis in range(3)
             ]
     recommend_angle = optional_float(
-        adaptive.get("geometric_preferred_rotation_deg")
+        geometry.get(
+            "recommend_rotation_deg",
+            adaptive.get("geometric_preferred_rotation_deg"),
+        )
     )
-    final_angle = optional_float(adaptive.get("applied_rotation_deg"))
+    final_angle = optional_float(
+        geometry.get(
+            "final_rotation_deg",
+            adaptive.get("applied_rotation_deg"),
+        )
+    )
     correction_angle = (
         round(final_angle - recommend_angle, 6)
         if final_angle is not None and recommend_angle is not None
@@ -1513,7 +1631,16 @@ def camera_target_record_text(
             "plan_success": (
                 bool(report.get("success")) if report else None
             ),
-            "frame_id": geometry.get("planning_frame_id"),
+            "frame_id": (
+                str(robot_frame_id)
+                if exact_robot_coordinates and robot_frame_id
+                else geometry.get("planning_frame_id")
+            ),
+            "coordinate_source": (
+                "detection_tf_snapshot"
+                if exact_robot_coordinates
+                else "legacy_planning_geometry"
+            ),
             "reference_link": geometry.get(
                 "pregrasp_reference_link"
             ),
@@ -1635,6 +1762,7 @@ class HarvestGui(Node):
                 / "camera_target_records"
             ),
         )
+        self.declare_parameter("camera_target_record_robot_frame", "link0")
         self.declare_parameter("lift_node_name", "/lift_controller_node")
         self.declare_parameter(
             "lift_bottom_calibration_topic",
@@ -2014,6 +2142,8 @@ class HarvestGui(Node):
         self.active_camera_target_plan_report = {}
         self.detected_tomato_expected_world_positions = {}
         self.detected_tomato_expected_world_x_axes = {}
+        self.detected_tomato_record_positions = {}
+        self.detected_tomato_record_stem_positions = {}
         self.current_detection_stamp_ns = 0
         self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
@@ -2054,6 +2184,7 @@ class HarvestGui(Node):
         self.batch_planner = None
         self.batch_pick_ready_state = "PICK_READY"
         self.batch_harvest_wait_sec = 2.0
+        self.batch_harvest_x_forward_m = 0.040
         self.batch_harvest_stage_limit = None
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
@@ -2163,6 +2294,7 @@ class HarvestGui(Node):
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
+        self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.prefer_robot_direction_var = tk.BooleanVar(value=False)
         self.adaptive_grasp_max_rotation_var = tk.StringVar(value="45.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
@@ -2170,6 +2302,16 @@ class HarvestGui(Node):
         self.lift_harvest_var = tk.BooleanVar(value=False)
         self.preplan_all_var = tk.BooleanVar(value=False)
         self.step_execution_enabled_var = tk.BooleanVar(value=False)
+        self.step_custom_delta_vars = {
+            stage_number: {
+                axis_name: tk.StringVar(value=f"{value:g}")
+                for axis_name, value in zip(
+                    ("x", "y", "z"),
+                    STEP_CUSTOM_STAGE_DEFAULTS_MM[stage_number],
+                )
+            }
+            for stage_number in range(3, 8)
+        }
         self.step_status = tk.StringVar(
             value="토마토를 선택하고 스텝 Plan을 생성하세요."
         )
@@ -2710,6 +2852,34 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
+        ttk.Label(options, text="4단계 진입 길이 (mm)").grid(
+            row=3,
+            column=0,
+            sticky="w",
+            pady=(8, 0),
+        )
+        self.harvest_forward_distance_spinbox = ttk.Spinbox(
+            options,
+            textvariable=self.harvest_forward_distance_mm_var,
+            from_=10,
+            to=70,
+            increment=1,
+            width=7,
+            command=self._harvest_forward_distance_changed,
+        )
+        self.harvest_forward_distance_spinbox.grid(
+            row=3,
+            column=1,
+            sticky="w",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        self.harvest_forward_distance_spinbox.bind(
+            "<FocusOut>", self._harvest_forward_distance_changed
+        )
+        self.harvest_forward_distance_spinbox.bind(
+            "<Return>", self._harvest_forward_distance_changed
+        )
         self.prefer_robot_direction_checkbox = ttk.Checkbutton(
             options,
             text="진입각: Recommend보다 로봇 방향 우선",
@@ -2717,21 +2887,21 @@ class HarvestGui(Node):
             command=self._adaptive_grasp_mode_changed,
         )
         self.prefer_robot_direction_checkbox.grid(
-            row=3,
+            row=4,
             column=0,
             columnspan=2,
             sticky="w",
             pady=(8, 0),
         )
         ttk.Label(options, text="최대 보정각").grid(
-            row=4,
+            row=5,
             column=0,
             sticky="w",
             pady=(8, 0),
         )
         rotation_input = ttk.Frame(options)
         rotation_input.grid(
-            row=4,
+            row=5,
             column=1,
             sticky="w",
             padx=(8, 0),
@@ -2763,7 +2933,7 @@ class HarvestGui(Node):
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=5,
+            row=6,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2776,7 +2946,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=6,
+            row=7,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2789,7 +2959,7 @@ class HarvestGui(Node):
             command=self._preplan_all_mode_changed,
         )
         self.preplan_all_checkbox.grid(
-            row=7,
+            row=8,
             column=0,
             columnspan=2,
             sticky="w",
@@ -2944,8 +3114,14 @@ class HarvestGui(Node):
             justify="left",
         ).grid(row=1, column=0, columnspan=4, sticky="w", pady=(8, 0))
 
-        stages = ttk.LabelFrame(frame, text="수확 단계", padding=8)
-        stages.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        step_content = ttk.Frame(frame)
+        step_content.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        step_content.columnconfigure(0, weight=3, minsize=700)
+        step_content.columnconfigure(1, weight=1, minsize=390)
+        step_content.rowconfigure(0, weight=1)
+
+        stages = ttk.LabelFrame(step_content, text="수확 단계", padding=8)
+        stages.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
         stages.columnconfigure(0, weight=1)
         stages.rowconfigure(0, weight=1)
         columns = ("number", "motion", "detail", "status")
@@ -2958,9 +3134,9 @@ class HarvestGui(Node):
         )
         for column, heading, width, stretch in (
             ("number", "단계", 65, False),
-            ("motion", "동작", 390, True),
-            ("detail", "이동량 / 방식", 300, True),
-            ("status", "상태", 140, False),
+            ("motion", "동작", 270, True),
+            ("detail", "이동량 / 방식", 230, True),
+            ("status", "상태", 120, False),
         ):
             self.step_tree.heading(column, text=heading)
             self.step_tree.column(
@@ -2977,6 +3153,61 @@ class HarvestGui(Node):
         self.step_tree.configure(yscrollcommand=step_scrollbar.set)
         self.step_tree.grid(row=0, column=0, sticky="nsew")
         step_scrollbar.grid(row=0, column=1, sticky="ns")
+
+        custom = ttk.LabelFrame(
+            step_content,
+            text="3~7단계 tip 로컬 XYZ 커스텀 (mm)",
+            padding=10,
+        )
+        custom.grid(row=0, column=1, sticky="nsew", padx=(6, 0))
+        for column in range(4):
+            custom.columnconfigure(column, weight=1)
+        for column, text_value in enumerate(("단계", "X", "Y", "Z")):
+            ttk.Label(
+                custom,
+                text=text_value,
+                anchor="center",
+            ).grid(row=0, column=column, sticky="ew", padx=3)
+        self.step_custom_delta_entries = []
+        for row, stage_number in enumerate(range(3, 8), start=1):
+            ttk.Label(
+                custom,
+                text=f"{stage_number}단계",
+                anchor="center",
+            ).grid(row=row, column=0, sticky="ew", padx=3, pady=4)
+            for column, axis_name in enumerate(("x", "y", "z"), start=1):
+                entry = ttk.Entry(
+                    custom,
+                    textvariable=(
+                        self.step_custom_delta_vars[stage_number][axis_name]
+                    ),
+                    width=8,
+                    justify="center",
+                )
+                entry.grid(
+                    row=row,
+                    column=column,
+                    sticky="ew",
+                    padx=3,
+                    pady=4,
+                )
+                self.step_custom_delta_entries.append(entry)
+        ttk.Label(
+            custom,
+            text=(
+                "각 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
+                "입력 범위: 축별 -200~+200 mm\n"
+                "Plan 생성 후에는 세션 종료까지 잠깁니다."
+            ),
+            foreground="#666666",
+            justify="left",
+        ).grid(
+            row=6,
+            column=0,
+            columnspan=4,
+            sticky="w",
+            pady=(10, 0),
+        )
 
         controls = ttk.Frame(frame)
         controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
@@ -4266,6 +4497,49 @@ class HarvestGui(Node):
                 )
         self.detected_tomato_expected_world_positions = positions
         self.detected_tomato_expected_world_x_axes = x_axes
+
+    def _cache_detected_tomato_record_positions(
+        self,
+        message: TomatoDetectionArray,
+    ) -> None:
+        """Snapshot exact center/stem coordinates for RViz-matching records."""
+        source_frame = str(message.header.frame_id)
+        target_frame = str(
+            self.get_parameter("camera_target_record_robot_frame").value
+        )
+        if source_frame == target_frame:
+            transform = None
+        else:
+            transform = self.tf_buffer.lookup_transform(
+                target_frame,
+                source_frame,
+                Time(),
+            )
+        centers = {}
+        stems = {}
+        for index, detection in enumerate(message.detections):
+            if transform is None:
+                centers[index] = (
+                    float(detection.center.x),
+                    float(detection.center.y),
+                    float(detection.center.z),
+                )
+                stems[index] = (
+                    float(detection.stem_point.x),
+                    float(detection.stem_point.y),
+                    float(detection.stem_point.z),
+                )
+            else:
+                centers[index] = transformed_point_xyz(
+                    detection.center,
+                    transform,
+                )
+                stems[index] = transformed_point_xyz(
+                    detection.stem_point,
+                    transform,
+                )
+        self.detected_tomato_record_positions = centers
+        self.detected_tomato_record_stem_positions = stems
 
     def _sort_detection_message_by_height(
         self,
@@ -6301,6 +6575,19 @@ class HarvestGui(Node):
                 "[검출 TF 동기화 경고] 검출 중심의 world 좌표를 저장하지 "
                 f"못했습니다: {error}"
             )
+        try:
+            self._cache_detected_tomato_record_positions(message)
+        except TransformException as error:
+            self.detected_tomato_record_positions = {}
+            self.detected_tomato_record_stem_positions = {}
+            record_frame = str(
+                self.get_parameter("camera_target_record_robot_frame").value
+            )
+            self._append_log(
+                "[피드백 좌표 경고] 검출 중심/줄기점의 "
+                f"{record_frame} 좌표를 "
+                f"저장하지 못했습니다: {error}"
+            )
         self.detection_generation += 1
         self._invalidate_plan()
         if self.show_detection_markers_var.get():
@@ -6528,6 +6815,8 @@ class HarvestGui(Node):
         self.latest_detection_message = None
         self.detected_tomato_expected_world_positions.clear()
         self.detected_tomato_expected_world_x_axes.clear()
+        self.detected_tomato_record_positions.clear()
+        self.detected_tomato_record_stem_positions.clear()
         self.tomato_motion_results.clear()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = ""
@@ -6733,6 +7022,17 @@ class HarvestGui(Node):
                 ),
                 detection_timestamp=detection_timestamp,
                 plan_report=report,
+                robot_frame_id=str(
+                    self.get_parameter(
+                        "camera_target_record_robot_frame"
+                    ).value
+                ),
+                robot_tomato_xyz=(
+                    self.detected_tomato_record_positions.get(index)
+                ),
+                robot_vine_xyz=(
+                    self.detected_tomato_record_stem_positions.get(index)
+                ),
                 review_issue=self.camera_review_issue_var.get(),
                 review_note=self.camera_review_note_var.get(),
             )
@@ -6917,6 +7217,25 @@ class HarvestGui(Node):
             f"리니어모터 대기시간 변경: {wait_seconds:g}초"
         )
 
+    def _harvest_forward_distance_changed(self, _event=None) -> None:
+        try:
+            forward_distance_m = repeat_forward_distance_m(
+                self.harvest_forward_distance_mm_var.get()
+            )
+        except ValueError as error:
+            self._invalidate_plan()
+            self.status.set(str(error))
+            return
+        self._invalidate_plan()
+        self.status.set(
+            f"수확 4단계 진입 길이 {forward_distance_m * 1000.0:g}mm — "
+            "Plan-only를 다시 실행하세요."
+        )
+        self._append_log(
+            "수확 4단계 진입 길이 변경: "
+            f"{forward_distance_m * 1000.0:g}mm"
+        )
+
     def _adaptive_grasp_mode_changed(self, _event=None) -> None:
         try:
             prefer_robot, maximum = self._adaptive_grasp_options()
@@ -6955,6 +7274,19 @@ class HarvestGui(Node):
             prefer_robot_direction,
             adaptive_max_rotation,
         )
+        if len(verification) > len(expected):
+            distance_variable = getattr(
+                self, "harvest_forward_distance_mm_var", None
+            )
+            if distance_variable is None:
+                return False
+            try:
+                forward_distance_m = repeat_forward_distance_m(
+                    distance_variable.get()
+                )
+            except ValueError:
+                return False
+            return verification == expected + (forward_distance_m,)
         if len(verification) > 6:
             return verification == expected
         if len(verification) > 5:
@@ -7244,6 +7576,8 @@ class HarvestGui(Node):
                 "현재 모션 작업 또는 스텝 세션을 먼저 종료하세요.",
             )
             return False
+        cycle_forward_distance_m = 0.040
+        custom_stage_deltas_m = None
         try:
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
@@ -7260,6 +7594,21 @@ class HarvestGui(Node):
                     repeat_forward_distance_m(
                         self.repeat_forward_distance_mm_var.get()
                     )
+                )
+                cycle_forward_distance_m = (
+                    self.repeat_cycle_forward_distance_m
+                )
+            else:
+                custom_stage_deltas_m = step_custom_stage_deltas_m(
+                    {
+                        stage_number: {
+                            axis_name: variable.get()
+                            for axis_name, variable in axis_variables.items()
+                        }
+                        for stage_number, axis_variables in (
+                            self.step_custom_delta_vars.items()
+                        )
+                    }
                 )
         except ValueError as error:
             messagebox.showerror("스텝 Plan 설정 오류", str(error))
@@ -7279,11 +7628,8 @@ class HarvestGui(Node):
             pick_ready_state_name=pick_ready_state,
             cycle_only=(mode == "repeat"),
             cycle_last_stage=self.repeat_cycle_last_index + 1,
-            cycle_forward_distance_m=(
-                self.repeat_cycle_forward_distance_m
-                if mode == "repeat"
-                else 0.040
-            ),
+            cycle_forward_distance_m=cycle_forward_distance_m,
+            custom_stage_deltas_m=custom_stage_deltas_m,
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
         )
@@ -7347,10 +7693,16 @@ class HarvestGui(Node):
             f"토마토 {index}, 시작={pick_ready_state}, "
             f"planner={pipeline}/{planner_id}, preapproach={preapproach_mode}"
             + (
-                f", 4단계 진입="
-                f"{self.repeat_cycle_forward_distance_m * 1000.0:.1f} mm"
+                f", 4단계 진입={cycle_forward_distance_m * 1000.0:.1f} mm"
                 if mode == "repeat"
-                else ""
+                else ", 3~7단계 tip 로컬 XYZ="
+                + str(
+                    [
+                        [round(value * 1000.0, 3) for value in stage_delta]
+                        for stage_delta in custom_stage_deltas_m
+                    ]
+                )
+                + " mm"
             )
         )
         self._set_busy(True)
@@ -8059,6 +8411,9 @@ class HarvestGui(Node):
         self.step_tomato_combo.configure(
             state="disabled" if active or self.ui_busy else "readonly"
         )
+        custom_state = "disabled" if active or self.ui_busy else "normal"
+        for entry in self.step_custom_delta_entries:
+            entry.configure(state=custom_state)
         repeat_executable = (
             planned
             and repeat_active
@@ -8158,6 +8513,9 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
+            harvest_x_forward_m = repeat_forward_distance_m(
+                self.harvest_forward_distance_mm_var.get()
+            )
             pick_ready_state = self._selected_pick_ready_state()
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
@@ -8177,6 +8535,7 @@ class HarvestGui(Node):
             pick_ready_state,
             prefer_robot_direction,
             adaptive_max_rotation,
+            harvest_x_forward_m,
         )
         if execute and not self._verification_matches_current_selection(
             self.verified_plan
@@ -8204,6 +8563,7 @@ class HarvestGui(Node):
                 execute,
                 verification,
                 harvest_wait_sec=harvest_wait_sec,
+                harvest_x_forward_m=harvest_x_forward_m,
                 prefer_robot_direction=prefer_robot_direction,
                 adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
             ),
@@ -8317,6 +8677,9 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
+            harvest_x_forward_m = repeat_forward_distance_m(
+                self.harvest_forward_distance_mm_var.get()
+            )
             pick_ready_state = self._selected_pick_ready_state()
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
@@ -8382,6 +8745,10 @@ class HarvestGui(Node):
             )
         transition_message += (
             f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
+        )
+        transition_message += (
+            "수확 4단계 진입 길이는 "
+            f"{harvest_x_forward_m * 1000.0:g}mm입니다.\n"
         )
         transition_message += (
             "진입각은 "
@@ -8468,6 +8835,7 @@ class HarvestGui(Node):
         self.batch_planner = self._selected_planner_config()
         self.batch_pick_ready_state = pick_ready_state
         self.batch_harvest_wait_sec = harvest_wait_sec
+        self.batch_harvest_x_forward_m = harvest_x_forward_m
         self.batch_harvest_stage_limit = harvest_stage_limit
         self.batch_continuous_mode = continuous_mode
         self.batch_lift_harvest_mode = lift_mode
@@ -8505,6 +8873,8 @@ class HarvestGui(Node):
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
+            "4단계 진입="
+            f"{self.batch_harvest_x_forward_m * 1000.0:g}mm, "
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
             f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
             f"전체 사전계획 모드={self.batch_preplan_mode}, "
@@ -8536,6 +8906,7 @@ class HarvestGui(Node):
             velocity_scale=self.motion_velocity_scale,
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=self.batch_harvest_wait_sec,
+            harvest_x_forward_m=self.batch_harvest_x_forward_m,
             harvest_stage_limit=self.batch_harvest_stage_limit,
             pick_ready_state_name=self.batch_pick_ready_state,
             prefer_robot_direction=self.batch_prefer_robot_direction,
@@ -8839,6 +9210,7 @@ class HarvestGui(Node):
                 execute,
                 verification,
                 harvest_wait_sec=self.batch_harvest_wait_sec,
+                harvest_x_forward_m=self.batch_harvest_x_forward_m,
                 continuous_transition=continuous_transition,
                 return_to_pick_ready=return_to_pick_ready,
                 retreat_after_harvest=retreat_after_harvest,
@@ -8869,6 +9241,7 @@ class HarvestGui(Node):
         execute: bool,
         verification,
         harvest_wait_sec: float,
+        harvest_x_forward_m: float = 0.040,
         continuous_transition: bool = False,
         return_to_pick_ready: bool = True,
         retreat_after_harvest: bool = False,
@@ -8901,6 +9274,7 @@ class HarvestGui(Node):
             velocity_scale=self.motion_velocity_scale,
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=harvest_wait_sec,
+            harvest_x_forward_m=harvest_x_forward_m,
             continuous_transition=continuous_transition,
             return_to_pick_ready=return_to_pick_ready,
             retreat_after_harvest=retreat_after_harvest,
@@ -8943,6 +9317,7 @@ class HarvestGui(Node):
             f"max_rotation={adaptive_grasp_max_rotation_deg:g}°, "
             f"시작/복귀 자세={pick_ready_state}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
+            f"4단계 진입={harvest_x_forward_m * 1000.0:g}mm, "
             f"종료단계={harvest_stage_limit or '전체'}, "
             f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else pick_ready_state}, "
             f"종료={end_label}"
@@ -9552,6 +9927,7 @@ class HarvestGui(Node):
         self.batch_planner = None
         self.batch_pick_ready_state = "PICK_READY"
         self.batch_harvest_stage_limit = None
+        self.batch_harvest_x_forward_m = 0.040
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
         self.batch_preplan_mode = False
@@ -9707,6 +10083,7 @@ class HarvestGui(Node):
         self.set_scene_button.configure(state=state)
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
+        self.harvest_forward_distance_spinbox.configure(state=state)
         self.prefer_robot_direction_checkbox.configure(state=state)
         self.adaptive_grasp_max_rotation_entry.configure(state=state)
         ready_state = "disabled" if busy else "readonly"
@@ -9845,6 +10222,10 @@ class HarvestGui(Node):
             return
         self.detected_tomatoes = []
         self.latest_detection_message = None
+        self.detected_tomato_expected_world_positions.clear()
+        self.detected_tomato_expected_world_x_axes.clear()
+        self.detected_tomato_record_positions.clear()
+        self.detected_tomato_record_stem_positions.clear()
         self._clear_active_camera_target()
         self.tomato_motion_results.clear()
         if preserve_sweep_markers:

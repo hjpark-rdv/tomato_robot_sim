@@ -54,13 +54,16 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "PREAPPROACH_TO_TARGET",
         "FORWARD_X",
         "LIFT_Z20_FORWARD_X20",
-        "LIFT_Z20_BACK_X20",
+        "LIFT_Z20_SECOND",
         "BACK_X50_FIRST",
         "BACK_X10_SECOND",
         "HARVEST_WAIT",
         "RETURN_READY",
     ]
     assert stages[7]["trajectories"][0].name == "after_wait"
+    assert stages[5]["detail"] == (
+        "tip 로컬 X +0.0 / Y +0.0 / Z +20.0 mm"
+    )
     assert stages[8]["kind"] == "wait"
     assert stages[8]["wait_seconds"] == pytest.approx(2.25)
     assert stages[9]["trajectories"][0].name == "return_ready"
@@ -79,7 +82,41 @@ def test_step_stage_specs_displays_configured_forward_distance():
 
     stages = step_stage_specs(plan, 2.0, forward_distance_m=0.035)
 
-    assert stages[3]["detail"] == "tip 로컬 +X 35.0 mm"
+    assert stages[3]["detail"] == (
+        "tip 로컬 X +35.0 / Y +0.0 / Z +0.0 mm"
+    )
+
+
+def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(5)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+    deltas = (
+        (0.011, 0.002, -0.003),
+        (0.041, 0.004, 0.005),
+        (0.021, -0.006, 0.022),
+        (0.007, 0.008, 0.023),
+        (-0.051, 0.009, -0.010),
+    )
+
+    stages = step_stage_specs(
+        plan,
+        2.0,
+        custom_stage_deltas_m=deltas,
+    )
+
+    assert stages[2]["detail"] == (
+        "tip 로컬 X +11.0 / Y +2.0 / Z -3.0 mm"
+    )
+    assert stages[6]["detail"] == (
+        "tip 로컬 X -51.0 / Y +9.0 / Z -10.0 mm"
+    )
 
 
 def test_step_stage_specs_requires_five_detailed_approach_groups():

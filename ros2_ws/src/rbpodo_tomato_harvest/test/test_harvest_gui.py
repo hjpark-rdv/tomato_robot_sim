@@ -66,6 +66,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     repeat_stage_command,
     result_arrow_length_for_report,
     scene_parameters,
+    step_custom_stage_deltas_m,
     stepper_command,
     sweep_execution_duration_text,
     sweep_stage_detail,
@@ -156,7 +157,9 @@ def test_camera_target_record_text_preserves_camera_id_and_xyz():
                 "tomato_xyz": [0.55, -0.20, 0.74],
                 "vine_xyz": [0.60, -0.18, 0.74],
                 "recommend_pregrasp_xyz": [0.518, -0.205, 1.203],
+                "recommend_rotation_deg": 0.0,
                 "final_pregrasp_xyz": [0.541, -0.253, 1.198],
+                "final_rotation_deg": 36.8,
             },
         },
         review_issue="줄기 좌표 불일치",
@@ -186,12 +189,13 @@ def test_camera_target_record_text_preserves_camera_id_and_xyz():
         payload["robot"]["tomato_xyz"],
         payload["robot"]["vine_xyz"],
     ) == pytest.approx(payload["vision"]["tomato_vine_distance_m"])
-    assert payload["robot"]["recommend_angle_deg"] == pytest.approx(14.2)
+    assert payload["robot"]["recommend_angle_deg"] == pytest.approx(0.0)
     assert payload["robot"]["final_angle_deg"] == pytest.approx(36.8)
-    assert payload["robot"]["correction_angle_deg"] == pytest.approx(22.6)
+    assert payload["robot"]["correction_angle_deg"] == pytest.approx(36.8)
     assert set(payload["robot"]) == {
         "plan_success",
         "frame_id",
+        "coordinate_source",
         "reference_link",
         "tomato_xyz",
         "vine_xyz",
@@ -206,6 +210,42 @@ def test_camera_target_record_text_preserves_camera_id_and_xyz():
         "VINE_XYZ_MISMATCH"
     )
     assert record.endswith("\n")
+
+
+def test_camera_target_record_uses_exact_transformed_detection_points():
+    record = camera_target_record_text(
+        target_frame="detected_tomato_11_tf",
+        camera_frame="d435_color_optical_frame",
+        camera_id="C0:T0",
+        tomato_xyz=(-0.0104, -0.0986, 0.5498),
+        vine_xyz=(-0.0226, -0.0935, 0.5445),
+        detection_timestamp=1.0,
+        plan_report={
+            "success": True,
+            "approach_geometry": {
+                "planning_frame_id": "link0",
+                "tomato_xyz": [0.37, 0.15, 0.56],
+                # This is the virtual, horizontal planning direction and must
+                # not replace the exact transformed detection stem point.
+                "vine_xyz": [0.36, 0.17, 0.56],
+            },
+        },
+        robot_frame_id="link0",
+        robot_tomato_xyz=(0.375, 0.150, 0.561),
+        robot_vine_xyz=(0.370, 0.163, 0.555),
+    )
+    payload = json.loads(record)
+
+    assert payload["robot"]["frame_id"] == "link0"
+    assert payload["robot"]["coordinate_source"] == (
+        "detection_tf_snapshot"
+    )
+    assert payload["robot"]["tomato_xyz"] == pytest.approx(
+        [0.375, 0.150, 0.561]
+    )
+    assert payload["robot"]["vine_xyz"] == pytest.approx(
+        [0.370, 0.163, 0.555]
+    )
 
 
 def test_camera_target_record_text_rejects_nonfinite_coordinates():
@@ -648,6 +688,42 @@ def test_plan_verification_changes_when_adaptive_grasp_options_change():
     assert HarvestGui._verification_matches_current_selection(
         gui,
         (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 45.0),
+    ) is False
+
+
+def test_plan_verification_changes_when_harvest_forward_distance_changes():
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+        _adaptive_grasp_options=lambda: (False, 45.0),
+        harvest_forward_distance_mm_var=SimpleNamespace(get=lambda: "35"),
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (
+            7,
+            2,
+            *GUI_PLANNER_CONFIG,
+            "PICK_READY_RIGHT",
+            False,
+            45.0,
+            0.035,
+        ),
+    ) is True
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (
+            7,
+            2,
+            *GUI_PLANNER_CONFIG,
+            "PICK_READY_RIGHT",
+            False,
+            45.0,
+            0.040,
+        ),
     ) is False
 
 
@@ -1925,6 +2001,7 @@ def test_harvest_command_builds_plan_only_command():
         velocity_scale=0.35,
         acceleration_scale=0.25,
         harvest_wait_sec=3.5,
+        harvest_x_forward_m=0.055,
         continuous_transition=True,
         return_to_pick_ready=False,
         retreat_after_harvest=True,
@@ -1948,6 +2025,7 @@ def test_harvest_command_builds_plan_only_command():
     assert "pick_ready_velocity_scale:=0.35" in command
     assert "pick_ready_acceleration_scale:=0.25" in command
     assert "harvest_wait_sec:=3.5" in command
+    assert "harvest_x_forward:=0.055" in command
     assert "continuous_transition:=true" in command
     assert "return_to_pick_ready:=false" in command
     assert "retreat_after_harvest:=true" in command
@@ -1960,6 +2038,7 @@ def test_preplanned_batch_command_selects_worker_and_arc_mode():
     command, environment = preplanned_batch_command(
         5,
         continuous_arc=True,
+        harvest_x_forward_m=0.035,
         pick_ready_state_name="PICK_READY_RIGHT",
         python_executable="/usr/bin/python3",
     )
@@ -1969,6 +2048,7 @@ def test_preplanned_batch_command_selects_worker_and_arc_mode():
         "-m",
         "rbpodo_tomato_harvest.tomato_harvest_preplanned_batch",
     ]
+    assert "harvest_x_forward:=0.035" in command
     config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
     assert config == {
         "tomato_count": 5,
@@ -2036,6 +2116,10 @@ def test_harvest_command_rejects_invalid_motion_scale():
         harvest_command(0, False, acceleration_scale=0.0)
     with pytest.raises(ValueError, match="harvest_wait_sec"):
         harvest_command(0, False, harvest_wait_sec=-0.1)
+    with pytest.raises(ValueError, match="harvest_x_forward_m"):
+        harvest_command(0, False, harvest_x_forward_m=0.009)
+    with pytest.raises(ValueError, match="harvest_x_forward_m"):
+        harvest_command(0, False, harvest_x_forward_m=0.071)
     with pytest.raises(ValueError, match="ready state"):
         harvest_command(
             0,
@@ -2165,6 +2249,25 @@ def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
     assert command[-2:] == ["-p", "step_cycle_only:=true"]
 
 
+def test_stepper_command_forwards_custom_stage_xyz_parameters():
+    custom_deltas = (
+        (0.011, 0.002, -0.003),
+        (0.041, 0.004, 0.005),
+        (0.021, -0.006, 0.022),
+        (0.007, 0.008, 0.023),
+        (-0.051, 0.009, -0.010),
+    )
+
+    command = stepper_command(1, custom_stage_deltas_m=custom_deltas)
+
+    assert "step_custom_stage_deltas_enabled:=true" in command
+    assert "step_stage_3_x_delta:=0.011" in command
+    assert "step_stage_4_y_delta:=0.004" in command
+    assert "step_stage_5_z_delta:=0.022" in command
+    assert "step_stage_6_x_delta:=0.007" in command
+    assert "step_stage_7_z_delta:=-0.01" in command
+
+
 def test_stepper_command_rejects_invalid_repeat_last_stage():
     with pytest.raises(ValueError, match="between 1 and 6"):
         stepper_command(1, cycle_only=True, cycle_last_stage=7)
@@ -2200,6 +2303,39 @@ def test_adaptive_grasp_max_rotation_rejects_invalid_input(value):
 def test_repeat_forward_distance_rejects_values_outside_gui_range(value):
     with pytest.raises(ValueError, match="10~70 mm|숫자"):
         repeat_forward_distance_m(value)
+
+
+def test_step_custom_stage_deltas_converts_xyz_millimetres_to_metres():
+    values = {
+        3: {"x": "10", "y": "1", "z": "-2"},
+        4: {"x": "40", "y": "3", "z": "4"},
+        5: {"x": "20", "y": "-5", "z": "20"},
+        6: {"x": "0", "y": "6", "z": "20"},
+        7: {"x": "-50", "y": "7", "z": "0"},
+    }
+
+    actual = step_custom_stage_deltas_m(values)
+    expected = (
+        (0.010, 0.001, -0.002),
+        (0.040, 0.003, 0.004),
+        (0.020, -0.005, 0.020),
+        (0.0, 0.006, 0.020),
+        (-0.050, 0.007, 0.0),
+    )
+    for actual_stage, expected_stage in zip(actual, expected):
+        assert actual_stage == pytest.approx(expected_stage)
+
+
+@pytest.mark.parametrize("value", ["invalid", "nan", "201", "-201"])
+def test_step_custom_stage_deltas_rejects_invalid_or_oversized_values(value):
+    values = {
+        stage: {"x": "0", "y": "0", "z": "0"}
+        for stage in range(3, 8)
+    }
+    values[5]["y"] = value
+
+    with pytest.raises(ValueError, match="5단계"):
+        step_custom_stage_deltas_m(values)
 
 
 @pytest.mark.parametrize(
@@ -2857,6 +2993,8 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         detected_tomatoes=[object()],
         detected_tomato_expected_world_positions={0: (1.0, 2.0, 3.0)},
         detected_tomato_expected_world_x_axes={0: (1.0, 0.0)},
+        detected_tomato_record_positions={0: (1.0, 2.0, 3.0)},
+        detected_tomato_record_stem_positions={0: (1.1, 2.1, 3.1)},
         tomato_motion_results={0: "Plan 성공"},
         result_arrow_lengths={0: 0.1},
         result_detection_frame="old_camera_frame",
@@ -2898,6 +3036,8 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
     assert gui.camera_service == "/detect_tomatoes"
     assert gui.detected_tomatoes == []
     assert gui.detected_tomato_expected_world_positions == {}
+    assert gui.detected_tomato_record_positions == {}
+    assert gui.detected_tomato_record_stem_positions == {}
     assert gui.detection_generation == 5
     assert deleted == ["0"]
     assert values["service"] == "/detect_tomatoes"

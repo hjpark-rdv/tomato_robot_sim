@@ -541,51 +541,52 @@ def make_continuous_arc_waypoints(
     return tuple(waypoints)
 
 
+def translated_pose_in_local_frame(start_pose: Pose, delta_xyz) -> Pose:
+    """Translate a pose by one XYZ vector expressed in its local frame."""
+    delta = np.asarray(delta_xyz, dtype=float)
+    if delta.shape != (3,) or not np.all(np.isfinite(delta)):
+        raise ValueError("local pose delta must contain three finite values")
+    world_delta = rotation_from_pose(start_pose) @ delta
+    pose = copy.deepcopy(start_pose)
+    pose.position.x += float(world_delta[0])
+    pose.position.y += float(world_delta[1])
+    pose.position.z += float(world_delta[2])
+    return pose
+
+
 def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.040,
     first_z_lift: float = 0.020,
     first_x_forward: float = 0.020,
     second_z_lift: float = 0.020,
-    second_lift_x_back: float = 0.020,
     first_x_back: float = 0.050,
     second_x_back: float = 0.010,
+    custom_stage_deltas=None,
 ) -> TipLocalHarvestMotion:
     """Build the post-contact sequence along tomato_gripper_tip X/Z axes."""
-    rotation = rotation_from_pose(start_pose)
-    tip_x = rotation[:, 0]
-    tip_z = rotation[:, 2]
-    position = np.array(
-        [start_pose.position.x, start_pose.position.y, start_pose.position.z],
-        dtype=float,
-    )
-
-    def moved(delta: np.ndarray) -> Pose:
-        nonlocal position
-        position = position + delta
-        pose = Pose()
-        pose.position.x, pose.position.y, pose.position.z = (
-            float(position[0]),
-            float(position[1]),
-            float(position[2]),
+    if custom_stage_deltas is None:
+        custom_stage_deltas = (
+            (float(x_forward), 0.0, 0.0),
+            (float(first_x_forward), 0.0, float(first_z_lift)),
+            (0.0, 0.0, float(second_z_lift)),
+            (-float(first_x_back), 0.0, 0.0),
         )
-        pose.orientation = start_pose.orientation
-        return pose
-
-    before_wait = (
-        moved(tip_x * float(x_forward)),
-        moved(
-            tip_z * float(first_z_lift)
-            + tip_x * float(first_x_forward)
-        ),
-        moved(
-            tip_z * float(second_z_lift)
-            - tip_x * float(second_lift_x_back)
-        ),
-        moved(-tip_x * float(first_x_back)),
+    deltas = np.asarray(custom_stage_deltas, dtype=float)
+    if deltas.shape != (4, 3) or not np.all(np.isfinite(deltas)):
+        raise ValueError(
+            "custom harvest stage deltas must contain four finite XYZ triples"
+        )
+    current_pose = copy.deepcopy(start_pose)
+    before_wait = []
+    for delta in deltas:
+        current_pose = translated_pose_in_local_frame(current_pose, delta)
+        before_wait.append(current_pose)
+    after_wait = translated_pose_in_local_frame(
+        current_pose,
+        (-float(second_x_back), 0.0, 0.0),
     )
-    after_wait = moved(-tip_x * float(second_x_back))
-    return TipLocalHarvestMotion(before_wait, after_wait)
+    return TipLocalHarvestMotion(tuple(before_wait), after_wait)
 
 
 def stemward_and_outward_from_tomato_rotation(
@@ -1135,10 +1136,23 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("harvest_first_z_lift", 0.020)
         self.declare_parameter("harvest_first_x_forward", 0.020)
         self.declare_parameter("harvest_second_z_lift", 0.020)
-        self.declare_parameter("harvest_second_lift_x_back", 0.020)
         self.declare_parameter("harvest_first_x_back", 0.050)
         self.declare_parameter("harvest_wait_sec", 2.0)
         self.declare_parameter("harvest_second_x_back", 0.010)
+        self.declare_parameter("step_custom_stage_deltas_enabled", False)
+        default_step_deltas = {
+            3: (0.010, 0.0, 0.0),
+            4: (0.040, 0.0, 0.0),
+            5: (0.020, 0.0, 0.020),
+            6: (0.0, 0.0, 0.020),
+            7: (-0.050, 0.0, 0.0),
+        }
+        for stage_number, xyz in default_step_deltas.items():
+            for axis_name, value in zip(("x", "y", "z"), xyz):
+                self.declare_parameter(
+                    f"step_stage_{stage_number}_{axis_name}_delta",
+                    value,
+                )
         self.declare_parameter("max_step", 0.005)
         self.declare_parameter("jump_threshold", 2.0)
         self.declare_parameter(
@@ -3513,9 +3527,10 @@ class CartesianHarvestPlanner(Node):
             outward_hint=outward_hint,
             tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
         )
-        recommend_rotation_deg = float(
-            selection_report.get("geometric_preferred_rotation_deg", 0.0)
-        )
+        # The RViz Recommend arrow is the uncorrected camera/TF approach
+        # direction.  Robotward/IK preference belongs to candidate selection,
+        # not to the Recommend reference displayed to the operator.
+        recommend_rotation_deg = 0.0
         recommend_outward = outward_from_tomato_rotation(
             tomato_rotation,
             recommend_rotation_deg,
@@ -3568,11 +3583,15 @@ class CartesianHarvestPlanner(Node):
                 float(recommend_geometry.preapproach_pose.position.y),
                 float(recommend_geometry.preapproach_pose.position.z),
             ],
+            "recommend_rotation_deg": float(recommend_rotation_deg),
             "final_pregrasp_xyz": [
                 float(geometry.preapproach_pose.position.x),
                 float(geometry.preapproach_pose.position.y),
                 float(geometry.preapproach_pose.position.z),
             ],
+            "final_rotation_deg": float(
+                approach_direction.applied_rotation_deg
+            ),
             "preapproach_position": [
                 float(value)
                 for value in (
@@ -3620,8 +3639,47 @@ class CartesianHarvestPlanner(Node):
             )
             return None
 
+        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
+        custom_step_deltas_enabled = bool(
+            self.get_parameter("step_custom_stage_deltas_enabled").value
+        )
+        custom_step_deltas = None
+        step_target_pose = geometry.target_pose
+        if stepwise_plan and custom_step_deltas_enabled:
+            custom_step_deltas = tuple(
+                tuple(
+                    float(
+                        self.get_parameter(
+                            f"step_stage_{stage_number}_{axis_name}_delta"
+                        ).value
+                    )
+                    for axis_name in ("x", "y", "z")
+                )
+                for stage_number in range(3, 8)
+            )
+            if any(
+                not math.isfinite(value) or abs(value) > 0.200
+                for stage_delta in custom_step_deltas
+                for value in stage_delta
+            ):
+                self._record_plan_stage(
+                    "STEP_CUSTOM_STAGE_CONFIGURATION",
+                    "configuration",
+                    False,
+                    0.0,
+                    "INVALID_STEP_CUSTOM_STAGE_DELTA",
+                )
+                return None
+            step_target_pose = translated_pose_in_local_frame(
+                geometry.preapproach_pose,
+                custom_step_deltas[0],
+            )
+            self.last_plan_report["step_custom_stage_deltas_m"] = [
+                list(stage_delta) for stage_delta in custom_step_deltas
+            ]
+
         tip_motion = make_tip_local_harvest_motion(
-            geometry.target_pose,
+            step_target_pose,
             x_forward=float(self.get_parameter("harvest_x_forward").value),
             first_z_lift=float(
                 self.get_parameter("harvest_first_z_lift").value
@@ -3632,14 +3690,14 @@ class CartesianHarvestPlanner(Node):
             second_z_lift=float(
                 self.get_parameter("harvest_second_z_lift").value
             ),
-            second_lift_x_back=float(
-                self.get_parameter("harvest_second_lift_x_back").value
-            ),
             first_x_back=float(
                 self.get_parameter("harvest_first_x_back").value
             ),
             second_x_back=float(
                 self.get_parameter("harvest_second_x_back").value
+            ),
+            custom_stage_deltas=(
+                custom_step_deltas[1:] if custom_step_deltas else None
             ),
         )
         planning_to_tip_translation = self._translation(planning_to_tip_tf)
@@ -3653,7 +3711,6 @@ class CartesianHarvestPlanner(Node):
             )
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
-        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
         step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
         cycle_last_stage = int(
             self.get_parameter("step_cycle_last_stage").value
@@ -3739,18 +3796,24 @@ class CartesianHarvestPlanner(Node):
             return None
 
         approach_waypoints = (
-            as_planning_pose(geometry.target_pose),
+            as_planning_pose(step_target_pose),
             *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
         step_approach_trajectories = ()
         if stepwise_plan:
-            step_labels = (
-                "Step preapproach to target",
-                "Step tip +X forward",
-                "Step tip +Z/+X first lift",
-                "Step tip +Z/-X second lift",
-                "Step tip -X back",
-            )
+            if custom_step_deltas_enabled:
+                step_labels = tuple(
+                    f"Step {stage_number} custom tip-local XYZ"
+                    for stage_number in range(3, 8)
+                )
+            else:
+                step_labels = (
+                    "Step preapproach to target",
+                    "Step tip +X forward",
+                    "Step tip +Z/+X first lift",
+                    "Step tip +Z second lift",
+                    "Step tip -X back",
+                )
             step_groups = []
             flattened_approach = []
             step_start = preapproach_end
@@ -3972,7 +4035,7 @@ class CartesianHarvestPlanner(Node):
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
-            "-> (+Z20mm,+X20mm) -> (+Z20mm,-X20mm) "
+            "-> (+Z20mm,+X20mm) -> +Z20mm "
             "-> -X50mm -> -X10mm -> wait "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
