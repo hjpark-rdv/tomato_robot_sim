@@ -15,6 +15,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
+    make_tip_local_transition_curve_waypoints,
     outward_from_tomato_rotation,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
@@ -92,6 +93,49 @@ def test_custom_tip_local_stage_motion_supports_xyz_on_every_stage():
             [0.027, 0.017, 0.032],
         ],
     )
+
+
+def test_second_lift_curve_preserves_endpoints_and_bows_in_local_x():
+    start = Pose()
+    start.orientation.w = 1.0
+    target = Pose()
+    target.position.z = 0.020
+    target.orientation.w = 1.0
+
+    waypoints = make_tip_local_transition_curve_waypoints(
+        start,
+        target,
+        incoming_delta_xyz=(0.020, 0.0, 0.020),
+        waypoint_count=7,
+        control_ratio=0.5,
+    )
+
+    assert len(waypoints) == 7
+    assert max(pose.position.x for pose in waypoints[:-1]) > 0.003
+    assert all(pose.position.z >= 0.0 for pose in waypoints)
+    assert all(
+        earlier.position.z <= later.position.z
+        for earlier, later in zip(waypoints, waypoints[1:])
+    )
+    assert _position(waypoints[-1]) == pytest.approx([0.0, 0.0, 0.020])
+
+
+def test_second_lift_curve_uses_tip_local_axes_for_rotated_pose():
+    start = Pose()
+    start.orientation.z = np.sin(np.pi / 4.0)
+    start.orientation.w = np.cos(np.pi / 4.0)
+    target = translated_pose_in_local_frame(start, (0.0, 0.0, 0.020))
+
+    waypoints = make_tip_local_transition_curve_waypoints(
+        start,
+        target,
+        incoming_delta_xyz=(0.020, 0.0, 0.020),
+    )
+
+    # Local +X is world +Y after a +90 degree Z rotation.
+    assert max(pose.position.y for pose in waypoints[:-1]) > 0.003
+    assert max(abs(pose.position.x) for pose in waypoints) < 1e-9
+    assert _position(waypoints[-1]) == pytest.approx(_position(target))
 
 
 def test_continuous_arc_bows_outward_and_finishes_at_target():

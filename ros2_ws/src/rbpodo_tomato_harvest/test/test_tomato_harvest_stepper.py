@@ -62,7 +62,8 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
     ]
     assert stages[7]["trajectories"][0].name == "after_wait"
     assert stages[5]["detail"] == (
-        "tip 로컬 X +0.0 / Y +0.0 / Z +20.0 mm"
+        "tip 로컬 X +0.0 / Y +0.0 / Z +20.0 mm / "
+        "5→6 곡선 Cartesian"
     )
     assert stages[8]["kind"] == "wait"
     assert stages[8]["wait_seconds"] == pytest.approx(2.25)

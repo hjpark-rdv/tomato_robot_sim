@@ -554,6 +554,98 @@ def translated_pose_in_local_frame(start_pose: Pose, delta_xyz) -> Pose:
     return pose
 
 
+def make_tip_local_transition_curve_waypoints(
+    start_pose: Pose,
+    target_pose: Pose,
+    incoming_delta_xyz,
+    waypoint_count: int = 7,
+    control_ratio: float = 0.5,
+) -> tuple[Pose, ...]:
+    """Blend two tip-local moves with a cubic Cartesian curve.
+
+    The curve begins along the horizontal component of the incoming stage and
+    finishes along the start-to-target direction.  Both endpoint poses remain
+    unchanged; only intermediate positions are added.  Omitting the start pose
+    makes the result directly usable as MoveIt's Cartesian waypoints.
+    """
+    count = max(2, int(waypoint_count))
+    ratio = max(0.0, min(1.0, float(control_ratio)))
+    start_position = np.array(
+        [
+            start_pose.position.x,
+            start_pose.position.y,
+            start_pose.position.z,
+        ],
+        dtype=float,
+    )
+    target_position = np.array(
+        [
+            target_pose.position.x,
+            target_pose.position.y,
+            target_pose.position.z,
+        ],
+        dtype=float,
+    )
+    start_rotation = rotation_from_pose(start_pose)
+    local_delta = start_rotation.T @ (target_position - start_position)
+    distance = float(np.linalg.norm(local_delta))
+    if distance < 1e-9:
+        return (copy.deepcopy(target_pose),)
+
+    incoming = np.asarray(incoming_delta_xyz, dtype=float)
+    if incoming.shape != (3,) or not np.all(np.isfinite(incoming)):
+        raise ValueError(
+            "incoming local stage delta must contain three finite values"
+        )
+    horizontal_incoming = np.array(
+        [incoming[0], incoming[1], 0.0],
+        dtype=float,
+    )
+    if float(np.linalg.norm(horizontal_incoming)) > 1e-9:
+        start_tangent = _unit(
+            horizontal_incoming,
+            "curve incoming horizontal direction",
+        )
+    elif float(np.linalg.norm(incoming)) > 1e-9:
+        start_tangent = _unit(incoming, "curve incoming direction")
+    else:
+        start_tangent = _unit(local_delta, "curve target direction")
+    finish_tangent = _unit(local_delta, "curve target direction")
+    control_distance = distance * ratio
+    control_1 = start_tangent * control_distance
+    control_2 = local_delta - finish_tangent * control_distance
+    start_quaternion = _normalized_quaternion(start_pose)
+    target_quaternion = _normalized_quaternion(target_pose)
+
+    waypoints = []
+    for index in range(1, count + 1):
+        progress = index / count
+        inverse = 1.0 - progress
+        local_position = (
+            3.0 * inverse * inverse * progress * control_1
+            + 3.0 * inverse * progress * progress * control_2
+            + progress * progress * progress * local_delta
+        )
+        world_position = start_position + start_rotation @ local_position
+        quaternion = _slerp_quaternion(
+            start_quaternion,
+            target_quaternion,
+            progress,
+        )
+        pose = Pose()
+        pose.position.x, pose.position.y, pose.position.z = (
+            float(value) for value in world_position
+        )
+        (
+            pose.orientation.x,
+            pose.orientation.y,
+            pose.orientation.z,
+            pose.orientation.w,
+        ) = (float(value) for value in quaternion)
+        waypoints.append(pose)
+    return tuple(waypoints)
+
+
 def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.040,
@@ -1136,6 +1228,8 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("harvest_first_z_lift", 0.020)
         self.declare_parameter("harvest_first_x_forward", 0.020)
         self.declare_parameter("harvest_second_z_lift", 0.020)
+        self.declare_parameter("harvest_lift_curve_waypoint_count", 7)
+        self.declare_parameter("harvest_lift_curve_control_ratio", 0.5)
         self.declare_parameter("harvest_first_x_back", 0.050)
         self.declare_parameter("harvest_wait_sec", 2.0)
         self.declare_parameter("harvest_second_x_back", 0.010)
@@ -3678,18 +3772,21 @@ class CartesianHarvestPlanner(Node):
                 list(stage_delta) for stage_delta in custom_step_deltas
             ]
 
+        first_z_lift = float(
+            self.get_parameter("harvest_first_z_lift").value
+        )
+        first_x_forward = float(
+            self.get_parameter("harvest_first_x_forward").value
+        )
+        second_z_lift = float(
+            self.get_parameter("harvest_second_z_lift").value
+        )
         tip_motion = make_tip_local_harvest_motion(
             step_target_pose,
             x_forward=float(self.get_parameter("harvest_x_forward").value),
-            first_z_lift=float(
-                self.get_parameter("harvest_first_z_lift").value
-            ),
-            first_x_forward=float(
-                self.get_parameter("harvest_first_x_forward").value
-            ),
-            second_z_lift=float(
-                self.get_parameter("harvest_second_z_lift").value
-            ),
+            first_z_lift=first_z_lift,
+            first_x_forward=first_x_forward,
+            second_z_lift=second_z_lift,
             first_x_back=float(
                 self.get_parameter("harvest_first_x_back").value
             ),
@@ -3795,10 +3892,50 @@ class CartesianHarvestPlanner(Node):
             )
             return None
 
-        approach_waypoints = (
-            as_planning_pose(step_target_pose),
-            *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
+        stage_5_delta = (
+            custom_step_deltas[2]
+            if custom_step_deltas
+            else (first_x_forward, 0.0, first_z_lift)
         )
+        lift_curve_tip_waypoints = make_tip_local_transition_curve_waypoints(
+            tip_motion.before_wait_waypoints[1],
+            tip_motion.before_wait_waypoints[2],
+            incoming_delta_xyz=stage_5_delta,
+            waypoint_count=int(
+                self.get_parameter("harvest_lift_curve_waypoint_count").value
+            ),
+            control_ratio=float(
+                self.get_parameter("harvest_lift_curve_control_ratio").value
+            ),
+        )
+        approach_tip_waypoint_groups = (
+            (step_target_pose,),
+            (tip_motion.before_wait_waypoints[0],),
+            (tip_motion.before_wait_waypoints[1],),
+            lift_curve_tip_waypoints,
+            (tip_motion.before_wait_waypoints[3],),
+        )
+        approach_waypoint_groups = tuple(
+            tuple(as_planning_pose(pose) for pose in group)
+            for group in approach_tip_waypoint_groups
+        )
+        approach_waypoints = tuple(
+            waypoint
+            for group in approach_waypoint_groups
+            for waypoint in group
+        )
+        approach_stage_endpoints = tuple(
+            group[-1] for group in approach_waypoint_groups
+        )
+        self.last_plan_report["stage_5_to_6_curve"] = {
+            "enabled": True,
+            "waypoint_count": len(lift_curve_tip_waypoints),
+            "control_ratio": float(
+                self.get_parameter("harvest_lift_curve_control_ratio").value
+            ),
+            "start_stage": 5,
+            "end_stage": 6,
+        }
         step_approach_trajectories = ()
         if stepwise_plan:
             if custom_step_deltas_enabled:
@@ -3811,7 +3948,7 @@ class CartesianHarvestPlanner(Node):
                     "Step preapproach to target",
                     "Step tip +X forward",
                     "Step tip +Z/+X first lift",
-                    "Step tip +Z second lift",
+                    "Step tip curved +Z second lift",
                     "Step tip -X back",
                 )
             step_groups = []
@@ -3820,12 +3957,12 @@ class CartesianHarvestPlanner(Node):
             cycle_waypoint_count = (
                 max(0, cycle_last_stage - 2) if step_cycle_only else 5
             )
-            for waypoint, label in zip(
-                approach_waypoints[:cycle_waypoint_count],
+            for waypoint_group, label in zip(
+                approach_waypoint_groups[:cycle_waypoint_count],
                 step_labels[:cycle_waypoint_count],
             ):
                 group = self._plan_cartesian_with_ompl_fallback(
-                    [waypoint],
+                    waypoint_group,
                     step_start,
                     label,
                     pregrasp=False,
@@ -3870,7 +4007,7 @@ class CartesianHarvestPlanner(Node):
                 )
             else:
                 final_planning_pose = copy.deepcopy(
-                    approach_waypoints[cycle_last_stage - 3]
+                    approach_stage_endpoints[cycle_last_stage - 3]
                 )
             if return_to_pick_ready:
                 return_pick_ready_plan = self._plan_pick_ready(
@@ -4035,7 +4172,7 @@ class CartesianHarvestPlanner(Node):
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
-            "-> (+Z20mm,+X20mm) -> +Z20mm "
+            "-> (+Z20mm,+X20mm) -> curved +Z20mm "
             "-> -X50mm -> -X10mm -> wait "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
