@@ -5,18 +5,27 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
+    ApproachRotationEvaluation,
     CartesianHarvestPlanner,
     adaptive_outward_toward_robot,
+    deadline_safe_rotation_guard,
     format_joint_trajectory_ranges,
     load_srdf_group_state,
     make_continuous_arc_waypoints,
     make_centered_joint_path_constraints,
     make_harvest_geometry,
     make_tip_local_harvest_motion,
+    outward_from_tomato_rotation,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
+    is_within_robot_side_approach_sector,
+    joint_span_violations,
+    robot_side_approach_error_deg,
+    select_minimum_feasible_rotation,
+    select_robotward_feasible_rotation,
     stemward_and_outward_from_tomato_rotation,
     summarize_joint_trajectory_ranges,
+    trajectory_joint_safety_violations,
 )
 
 
@@ -309,6 +318,321 @@ def test_adaptive_grasp_ignores_small_robot_alignment_error():
     assert np.isclose(result.current_robot_error_deg, 5.0)
 
 
+def test_outward_rotation_uses_signed_tomato_local_y_direction():
+    assert np.allclose(
+        outward_from_tomato_rotation(np.eye(3), 45.0),
+        [-np.sqrt(0.5), np.sqrt(0.5), 0.0],
+    )
+
+
+def test_deadline_guard_is_inactive_when_nominal_pregrasp_is_robot_side():
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-1.0, 1.0, 0.4],
+        margin_deg=1.0,
+    )
+
+    assert not guard.active
+    assert np.isclose(guard.minimum_rotation_deg, 0.0)
+    assert guard.nominal_robot_side_dot > 0.0
+
+
+def test_deadline_guard_starts_at_ideal_boundary_toward_robot():
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[1.0, 1.0, 0.4],
+        margin_deg=15.0,
+    )
+
+    assert guard.active
+    assert guard.minimum_rotation_deg == pytest.approx(60.0)
+    selected = outward_from_tomato_rotation(
+        np.eye(3),
+        guard.minimum_rotation_deg,
+    )
+    robotward = np.array([1.0, 1.0, 0.0]) / np.sqrt(2.0)
+    assert np.dot(selected, robotward) > 0.0
+    assert np.allclose(
+        outward_from_tomato_rotation(np.eye(3), -90.0),
+        [0.0, -1.0, 0.0],
+        atol=1e-9,
+    )
+
+
+def test_deadline_guard_enforces_margin_even_just_inside_robot_side():
+    angle = np.deg2rad(80.0)
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=np.eye(3),
+        tomato_position=[0.0, 0.0, 0.4],
+        robot_position=[-np.cos(angle), np.sin(angle), 0.4],
+        margin_deg=15.0,
+    )
+
+    assert guard.active
+    assert abs(guard.minimum_rotation_deg) == pytest.approx(5.0)
+    selected = outward_from_tomato_rotation(
+        np.eye(3),
+        guard.minimum_rotation_deg,
+    )
+    robotward = np.array([-np.cos(angle), np.sin(angle), 0.0])
+    selected_error = np.rad2deg(
+        np.arccos(np.clip(np.dot(selected, robotward), -1.0, 1.0))
+    )
+    assert selected_error == pytest.approx(75.0)
+
+
+def test_robot_side_sector_accepts_150_degrees_when_margin_is_15():
+    tomato = [0.0, 0.0, 0.4]
+    robot = [-1.0, 0.0, 0.4]
+    boundary = np.deg2rad(75.0)
+    just_outside = np.deg2rad(75.01)
+
+    assert robot_side_approach_error_deg([-1.0, 0.0, 0.0], tomato, robot) == 0.0
+    assert is_within_robot_side_approach_sector(
+        [-np.cos(boundary), np.sin(boundary), 0.0],
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+    assert not is_within_robot_side_approach_sector(
+        [-np.cos(just_outside), np.sin(just_outside), 0.0],
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+
+
+def test_robot_side_sector_defaults_to_robot_facing_180_degrees():
+    tomato = [0.0, 0.0, 0.4]
+    robot = [-1.0, 0.0, 0.4]
+    boundary = np.deg2rad(90.0)
+    just_outside = np.deg2rad(90.01)
+
+    assert is_within_robot_side_approach_sector(
+        [-np.cos(boundary), np.sin(boundary), 0.0], tomato, robot
+    )
+    assert not is_within_robot_side_approach_sector(
+        [-np.cos(just_outside), np.sin(just_outside), 0.0], tomato, robot
+    )
+
+
+def test_robot_side_sector_includes_robot_height_in_deadline_check():
+    tomato = [0.0, 0.0, 1.0]
+    robot = [-1.0, 0.0, 0.0]
+    horizontal_boundary = np.deg2rad(75.0)
+    outward = [
+        -np.cos(horizontal_boundary),
+        np.sin(horizontal_boundary),
+        0.0,
+    ]
+
+    assert robot_side_approach_error_deg(outward, tomato, robot) > 75.0
+    assert not is_within_robot_side_approach_sector(
+        outward,
+        tomato,
+        robot,
+        margin_deg=15.0,
+    )
+
+
+def test_deadline_guard_rejects_captured_pose_when_45_degrees_is_insufficient():
+    tomato = np.array([0.430, -0.219, 0.692])
+    yaw = np.deg2rad(-143.620)
+    rotation = np.array(
+        [
+            [np.cos(yaw), -np.sin(yaw), 0.0],
+            [np.sin(yaw), np.cos(yaw), 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+
+    guard = deadline_safe_rotation_guard(
+        tomato_rotation=rotation,
+        tomato_position=tomato,
+        robot_position=[0.0, 0.0, 0.0],
+        margin_deg=15.0,
+    )
+
+    assert guard.active
+    assert abs(guard.minimum_rotation_deg) == pytest.approx(53.53, abs=0.02)
+    assert abs(guard.minimum_rotation_deg) > 45.0
+
+
+def test_minimum_ik_rotation_keeps_zero_when_nominal_pose_is_feasible():
+    requested = []
+
+    def evaluate(angle):
+        requested.append(angle)
+        return ApproachRotationEvaluation(angle, True, 0.25, 1)
+
+    selected, evaluations = select_minimum_feasible_rotation(evaluate)
+
+    assert selected is not None
+    assert np.isclose(selected.rotation_deg, 0.0)
+    assert requested == [0.0]
+    assert len(evaluations) == 1
+
+
+def test_minimum_ik_rotation_selects_closest_feasible_side_and_refines_it():
+    def evaluate(angle):
+        threshold = 28.0 if angle > 0.0 else 17.0
+        feasible = abs(angle) >= threshold
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle) / 100.0,
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=90.0,
+        coarse_step_deg=10.0,
+        resolution_deg=0.5,
+        preferred_sign=1.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg < 0.0
+    assert 17.0 <= abs(selected.rotation_deg) < 17.5
+    assert all(abs(item.rotation_deg) <= 20.0 for item in evaluations)
+
+
+def test_minimum_ik_rotation_respects_deadline_bound_and_single_direction():
+    def evaluate(angle):
+        feasible = angle >= 35.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=90.0,
+        coarse_step_deg=10.0,
+        resolution_deg=1.0,
+        preferred_sign=1.0,
+        minimum_abs_rotation_deg=30.0,
+        allow_opposite_sign=False,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg == pytest.approx(35.0)
+    assert all(item.rotation_deg >= 30.0 for item in evaluations)
+
+
+def test_minimum_ik_rotation_uses_joint_distance_to_break_angle_tie():
+    def evaluate(angle):
+        feasible = abs(angle) >= 20.0
+        distance = 0.2 if angle < 0.0 else 1.5
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            distance,
+            1 if feasible else -31,
+        )
+
+    selected, _ = select_minimum_feasible_rotation(
+        evaluate,
+        coarse_step_deg=10.0,
+        resolution_deg=1.0,
+        preferred_sign=1.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg < 0.0
+
+
+def test_minimum_ik_rotation_returns_none_when_every_angle_is_invalid():
+    def evaluate(angle):
+        return ApproachRotationEvaluation(angle, False, moveit_error_code=-31)
+
+    selected, evaluations = select_minimum_feasible_rotation(
+        evaluate,
+        max_rotation_deg=30.0,
+        coarse_step_deg=10.0,
+    )
+
+    assert selected is None
+    assert {item.rotation_deg for item in evaluations} == {
+        0.0,
+        -10.0,
+        10.0,
+        -20.0,
+        20.0,
+        -30.0,
+        30.0,
+    }
+
+
+def test_robotward_rotation_uses_requested_maximum_when_it_is_feasible():
+    requested = []
+
+    def evaluate(angle):
+        requested.append(angle)
+        return ApproachRotationEvaluation(angle, True, abs(angle), 1)
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=-45.0,
+        max_rotation_deg=45.0,
+    )
+
+    assert selected is not None
+    assert selected.rotation_deg == pytest.approx(-45.0)
+    assert requested == [-45.0]
+    assert len(evaluations) == 1
+
+
+def test_robotward_rotation_refines_to_most_robot_facing_feasible_angle():
+    def evaluate(angle):
+        feasible = 10.0 <= angle <= 32.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=45.0,
+        max_rotation_deg=45.0,
+        coarse_step_deg=10.0,
+        resolution_deg=0.25,
+    )
+
+    assert selected is not None
+    assert 31.75 <= selected.rotation_deg <= 32.0
+    assert all(item.rotation_deg >= 25.0 for item in evaluations)
+
+
+def test_robotward_rotation_does_not_cross_deadline_minimum():
+    def evaluate(angle):
+        feasible = angle <= 25.0
+        return ApproachRotationEvaluation(
+            angle,
+            feasible,
+            abs(angle),
+            1 if feasible else -31,
+        )
+
+    selected, evaluations = select_robotward_feasible_rotation(
+        evaluate,
+        desired_rotation_deg=45.0,
+        max_rotation_deg=45.0,
+        coarse_step_deg=10.0,
+        minimum_abs_rotation_deg=30.0,
+    )
+
+    assert selected is None
+    assert all(item.rotation_deg >= 30.0 for item in evaluations)
+
+
 def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
     start = Pose()
     start.position.x = 1.0
@@ -325,8 +649,8 @@ def test_post_harvest_motion_uses_tip_local_x_and_z_axes():
 
     assert np.allclose(positions[0], [1.0, 2.070, 3.0])
     assert np.allclose(positions[1], [1.0, 2.070, 3.040])
-    assert np.allclose(positions[2], [1.0, 2.040, 3.040])
-    assert np.allclose(positions[3], [1.0, 2.040, 3.050])
+    assert np.allclose(positions[2], [1.0, 2.020, 3.040])
+    assert np.allclose(positions[3], [1.0, 2.020, 3.050])
     assert np.allclose(positions[4], [1.0, 2.010, 3.050])
 
 
@@ -455,6 +779,94 @@ def test_joint_trajectory_summary_uses_joint_names_across_segments():
     assert "base" in formatted
     assert "wrist3" in formatted
     assert "Points" in formatted
+
+
+def test_joint_span_safety_gate_includes_wrist3():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = ["base", "wrist3"]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=[0.0, 0.0]),
+        JointTrajectoryPoint(
+            positions=[np.deg2rad(90.0), np.deg2rad(121.0)]
+        ),
+    ]
+
+    violations = joint_span_violations([trajectory], 120.0)
+
+    assert [item["joint_name"] for item in violations] == ["wrist3"]
+    assert violations[0]["span_deg"] == pytest.approx(121.0)
+
+
+def test_trajectory_safety_rejects_c0_t6_style_long_joint_branch():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = [
+        "base",
+        "shoulder",
+        "elbow",
+        "wrist1",
+        "wrist2",
+        "wrist3",
+    ]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(
+            positions=np.deg2rad(
+                [-203.35, 346.05, -54.06, 170.58, 89.96, 192.74]
+            )
+        )
+    ]
+    start = dict(
+        zip(
+            trajectory.joint_trajectory.joint_names,
+            np.deg2rad(
+                [181.98, 66.51, -118.33, -36.23, -91.34, 88.14]
+            ),
+        )
+    )
+
+    violations = trajectory_joint_safety_violations(
+        trajectory,
+        start,
+        ["base", "shoulder", "elbow", "wrist1", "wrist2"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=45.0,
+    )
+
+    names = {item["joint_name"] for item in violations}
+    assert {"base", "shoulder", "wrist1", "wrist2"} <= names
+    base = next(item for item in violations if item["joint_name"] == "base")
+    assert base["span_deg"] == pytest.approx(385.33)
+    assert "SPAN_LIMIT_EXCEEDED" in base["reason"]
+
+
+def test_trajectory_safety_allows_small_motion_and_limits_wrist3_separately():
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = ["base", "wrist3"]
+    trajectory.joint_trajectory.points = [
+        JointTrajectoryPoint(positions=np.deg2rad([20.0, 150.0]))
+    ]
+
+    assert trajectory_joint_safety_violations(
+        trajectory,
+        {"base": 0.0, "wrist3": 0.0},
+        ["base"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=180.0,
+    ) == []
+
+    trajectory.joint_trajectory.points[0].positions = list(
+        np.deg2rad([20.0, 181.0])
+    )
+    violations = trajectory_joint_safety_violations(
+        trajectory,
+        {"base": 0.0, "wrist3": 0.0},
+        ["base"],
+        maximum_span_deg=120.0,
+        wrist3_maximum_span_deg=180.0,
+        maximum_step_deg=180.0,
+    )
+    assert [item["joint_name"] for item in violations] == ["wrist3"]
 
 
 def test_failure_robot_state_uses_last_valid_trajectory_point():

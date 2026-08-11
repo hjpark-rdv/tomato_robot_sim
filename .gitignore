@@ -3,6 +3,7 @@
 /ros2_ws/install/
 /ros2_ws/log/
 /harvest_results/
+/camera_target_records/
 
 # Python generated files
 __pycache__/

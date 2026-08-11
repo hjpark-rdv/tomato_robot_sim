@@ -30,6 +30,15 @@
         <joint name="wrist2" value="-1.587345476125"/>
         <joint name="wrist3" value="1.570293655139"/>
     </group_state>
+    <!-- Captured from /joint_states on 2026-08-06. -->
+    <group_state name="CAPTURE_LEFT" group="mainpulation">
+        <joint name="base" value="3.184535327218994"/>
+        <joint name="shoulder" value="1.661961790388544"/>
+        <joint name="elbow" value="-1.814662653603725"/>
+        <joint name="wrist1" value="-1.418095729895824"/>
+        <joint name="wrist2" value="-1.570476214831869"/>
+        <joint name="wrist3" value="1.530852905185343"/>
+    </group_state>
     <!-- The physical lift is observed from /joint_states, not planned with the arm. -->
     <passive_joint name="farmily_lift_height_joint"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

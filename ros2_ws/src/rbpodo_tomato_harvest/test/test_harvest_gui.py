@@ -1,10 +1,14 @@
 from collections import deque
+import io
 import json
 import math
 import random
 from types import SimpleNamespace
 
 import pytest
+from PIL import Image as PilImage
+
+import rbpodo_tomato_harvest.harvest_gui as harvest_gui_module
 
 from farmily_tomato_interfaces.msg import (
     TomatoDetection,
@@ -13,7 +17,9 @@ from farmily_tomato_interfaces.msg import (
 from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Bool, Float64
+from std_srvs.srv import Trigger
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
@@ -21,19 +27,26 @@ from rbpodo_tomato_harvest.harvest_gui import (
     CAMERA_SOURCE_REAL,
     GUI_PLANNER_CONFIG,
     HarvestGui,
+    NAMED_POSE_STATES,
     PICK_READY_STATES,
     PLANNER_CONFIGS,
     PREPLANNED_BATCH_CONFIG_ENV,
+    adaptive_grasp_max_rotation_degrees,
     actual_approach_marker,
+    actual_approach_marker_length,
     adaptive_approach_axis_local,
     adaptive_rotation_degrees,
     adaptive_rotation_was_applied,
+    batch_harvest_stage_limit,
     cartesian_fallback_summary,
     cancel_all_goals_request,
     camera_service_for_source,
+    camera_target_record_text,
     concise_plan_report,
+    decode_compressed_result_image,
     detection_message_sorted_by_height,
     detected_tomato_marker_array,
+    debug_frame_request,
     generate_sweep_cases,
     gripper_stroke_script,
     harvest_all_jobs,
@@ -43,8 +56,12 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_statistics_record,
     is_critical_process_output,
     lift_harvest_target_height_mm,
+    named_pose_command,
     preplanned_batch_command,
-    predicted_approach_report,
+    repeat_cycle_command,
+    repeat_forward_distance_m,
+    repeat_stage_command,
+    result_arrow_length_for_report,
     scene_parameters,
     stepper_command,
     sweep_execution_duration_text,
@@ -58,9 +75,40 @@ from rbpodo_tomato_harvest.harvest_gui import (
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
     HarvestMotionPlan,
+    revolute_position_error,
 )
 import rbpodo_tomato_harvest.harvest_planner as harvest_planner_module
+from rbpodo_tomato_harvest.tomato_harvest_preplanned_batch import (
+    _candidate_failure_is_retryable,
+    _plan_independent_candidate,
+)
 from rbpodo_tomato_harvest.tomato_harvest_worker import _apply_request
+
+
+def test_revolute_position_error_treats_full_turn_as_same_joint_pose():
+    assert revolute_position_error(
+        math.radians(350.0), math.radians(-10.0)
+    ) == pytest.approx(0.0, abs=1e-12)
+    assert math.degrees(
+        revolute_position_error(math.radians(179.0), math.radians(-179.0))
+    ) == pytest.approx(2.0)
+
+
+def test_preplanned_candidate_always_uses_canonical_ready_state():
+    calls = []
+    planner = SimpleNamespace(
+        plan=lambda **kwargs: calls.append(kwargs) or "planned"
+    )
+    ready_state = object()
+
+    assert _plan_independent_candidate(planner, ready_state) == "planned"
+    assert calls == [
+        {
+            "start_state_override": ready_state,
+            "start_pose_override": None,
+            "arc_failure_reverse_trajectory": (),
+        }
+    ]
 
 
 def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
@@ -79,6 +127,120 @@ def test_generate_sweep_cases_stops_when_first_axis_reaches_end():
         (0.01, 0.01, 0.0, 5.0),
         (0.01, 0.01, 0.0, 10.0),
     ]
+
+
+def test_camera_target_record_text_preserves_camera_id_and_xyz():
+    record = camera_target_record_text(
+        target_frame="detected_tomato_3_tf",
+        camera_frame="d435_color_optical_frame",
+        camera_id="camera-tomato-17",
+        tomato_xyz=(0.1234567894, -0.2, 0.7654321),
+        vine_xyz=(0.1534567894, -0.2, 0.7654321),
+        detection_timestamp=1786002012.325,
+        plan_report={
+            "success": True,
+            "tomato_frame": "detected_tomato_3_tf",
+            "pipeline": "ompl",
+            "planner_id": "RRTConnect",
+            "adaptive_grasp": {
+                "geometric_preferred_rotation_deg": 14.2,
+                "applied_rotation_deg": 36.8,
+                "selected_rotation_deg": 36.8,
+            },
+            "approach_geometry": {
+                "planning_frame_id": "link0",
+                "pregrasp_reference_link": "tomato_gripper_tip",
+                "tomato_xyz": [0.55, -0.20, 0.74],
+                "vine_xyz": [0.60, -0.18, 0.74],
+                "recommend_pregrasp_xyz": [0.518, -0.205, 1.203],
+                "final_pregrasp_xyz": [0.541, -0.253, 1.198],
+            },
+        },
+        review_issue="줄기 좌표 불일치",
+        review_note="영상보다 오른쪽으로 검출됨",
+    )
+    payload = json.loads(record)
+
+    assert set(payload) == {
+        "target_id",
+        "timestamp",
+        "camera_id",
+        "vision",
+        "robot",
+        "review",
+    }
+    assert payload["target_id"] == "detected_tomato_3"
+    assert payload["timestamp"] == pytest.approx(1786002012.325)
+    assert payload["camera_id"] == "camera-tomato-17"
+    assert payload["vision"]["frame_id"] == "d435_color_optical_frame"
+    assert payload["vision"]["tomato_xyz"] == pytest.approx(
+        [0.123456789, -0.2, 0.7654321]
+    )
+    assert payload["vision"]["vine_xyz"] == pytest.approx(
+        [0.153456789, -0.2, 0.7654321]
+    )
+    assert math.dist(
+        payload["robot"]["tomato_xyz"],
+        payload["robot"]["vine_xyz"],
+    ) == pytest.approx(payload["vision"]["tomato_vine_distance_m"])
+    assert payload["robot"]["recommend_angle_deg"] == pytest.approx(14.2)
+    assert payload["robot"]["final_angle_deg"] == pytest.approx(36.8)
+    assert payload["robot"]["correction_angle_deg"] == pytest.approx(22.6)
+    assert set(payload["robot"]) == {
+        "plan_success",
+        "frame_id",
+        "reference_link",
+        "tomato_xyz",
+        "vine_xyz",
+        "recommend_pregrasp_xyz",
+        "recommend_angle_deg",
+        "final_pregrasp_xyz",
+        "final_angle_deg",
+        "correction_angle_deg",
+    }
+    assert payload["review"]["status"] == "REVIEW_REQUIRED"
+    assert payload["review"]["issue"]["code"] == (
+        "VINE_XYZ_MISMATCH"
+    )
+    assert record.endswith("\n")
+
+
+def test_camera_target_record_text_rejects_nonfinite_coordinates():
+    with pytest.raises(ValueError, match="유한한 X, Y, Z"):
+        camera_target_record_text(
+            target_frame="detected_tomato_0_tf",
+            camera_frame="camera",
+            camera_id="0",
+            tomato_xyz=(0.1, math.nan, 0.3),
+            vine_xyz=(0.2, 0.3, 0.4),
+            detection_timestamp=1.0,
+        )
+
+
+def test_debug_frame_request_preserves_feedback_json_text():
+    contents = '{"target_id":"detected_tomato_2","review":{"note":"확인"}}\n'
+
+    request = debug_frame_request(contents)
+
+    assert request.request_text == contents
+
+
+@pytest.mark.parametrize("contents", ["not-json", "[]", "null"])
+def test_debug_frame_request_rejects_invalid_payload(contents):
+    with pytest.raises(ValueError):
+        debug_frame_request(contents)
+
+
+def test_camera_target_record_prefers_running_target_then_selection():
+    gui = SimpleNamespace(
+        active_camera_target_index=2,
+        detected_tomatoes=[object(), object(), object()],
+        _selected_index=lambda: 1,
+    )
+
+    assert HarvestGui._camera_target_index_for_record(gui) == 2
+    gui.active_camera_target_index = None
+    assert HarvestGui._camera_target_index_for_record(gui) == 1
 
 
 def test_sweep_execution_duration_text_distinguishes_execution_from_plan_only():
@@ -110,6 +272,11 @@ def test_tomato_motion_result_text_distinguishes_plan_and_execution_failures():
         False,
         {"execution_attempted": True},
     ) == "수확 실행 실패"
+    assert tomato_motion_result_text(
+        True,
+        True,
+        {"step_cycle_only": True, "step_cycle_last_stage": 4},
+    ) == "4단계 실행 성공"
 
 
 def test_harvest_failure_summary_includes_stage_and_reason():
@@ -345,45 +512,6 @@ def test_detection_marker_sync_rejects_stale_tomato_tf_direction():
     assert "X축 오차 90.0°" in reason
 
 
-def test_detection_approach_marker_waits_for_matching_tf_positions():
-    scheduled = []
-    published = []
-    sync_states = iter(((False, "이전 TF"), (True, "")))
-    gui = SimpleNamespace(
-        latest_detection_message=object(),
-        show_detection_markers_var=SimpleNamespace(get=lambda: True),
-        detection_generation=4,
-        current_detection_stamp_ns=123,
-        detected_tf_sync_timeout_sec=8.0,
-        root=SimpleNamespace(
-            after=lambda delay, callback: scheduled.append((delay, callback))
-        ),
-        _detected_tf_generation_is_ready=lambda: True,
-        _detected_tf_positions_are_synchronized=lambda: next(sync_states),
-        _publish_detection_markers=lambda message, **kwargs: published.append(
-            (message, kwargs)
-        ),
-        _append_log=lambda message: None,
-    )
-    gui._refresh_detection_approach_markers = lambda *args: (
-        HarvestGui._refresh_detection_approach_markers(gui, *args)
-    )
-
-    HarvestGui._refresh_detection_approach_markers(
-        gui,
-        generation=4,
-        stamp_ns=123,
-        deadline=float("inf"),
-    )
-
-    assert published == []
-    assert scheduled[0][0] == 50
-    scheduled.pop(0)[1]()
-    assert published == [
-        (gui.latest_detection_message, {"include_actual_approach": True})
-    ]
-
-
 def test_sweep_tf_sync_failure_is_recorded_without_stopping_sweep():
     events = []
     verification = (3, 0, "ompl", "RRTConnect", "cartesian")
@@ -494,6 +622,29 @@ def test_plan_verification_changes_when_ready_state_changes():
     assert HarvestGui._verification_matches_current_selection(
         gui,
         (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY"),
+    ) is False
+
+
+def test_plan_verification_changes_when_adaptive_grasp_options_change():
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+        _adaptive_grasp_options=lambda: (True, 35.0),
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 35.0),
+    ) is True
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", False, 35.0),
+    ) is False
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 45.0),
     ) is False
 
 
@@ -815,6 +966,8 @@ def test_persistent_worker_updates_target_and_disables_display():
             "return_to_pick_ready": False,
             "retreat_after_harvest": True,
             "pick_ready_state_name": "PICK_READY_RIGHT",
+            "prefer_robot_direction": True,
+            "adaptive_grasp_max_rotation_deg": 37.5,
         },
     )
 
@@ -831,6 +984,8 @@ def test_persistent_worker_updates_target_and_disables_display():
     assert values["return_to_pick_ready"] is False
     assert values["retreat_after_harvest"] is True
     assert values["pick_ready_state_name"] == "PICK_READY_RIGHT"
+    assert values["adaptive_grasp_prefer_robot_direction"] is True
+    assert values["adaptive_grasp_max_rotation_deg"] == pytest.approx(37.5)
     assert len(values["pick_ready_joint_positions"]) == 6
 
 
@@ -871,6 +1026,7 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
     parameter_values = {
         "execute": True,
         "harvest_wait_sec": 2.75,
+        "step_cycle_only": False,
     }
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
@@ -925,6 +1081,44 @@ def test_execute_returns_to_pick_ready_after_configured_wait(monkeypatch):
     assert "returned to PICK_READY" in events[-1][1]
 
 
+def test_execution_safety_gate_blocks_unsafe_cached_trajectory():
+    logged = []
+    recorded = []
+    violation = {
+        "joint_name": "base",
+        "reason": "SPAN_LIMIT_EXCEEDED",
+        "span_deg": 385.0,
+        "maximum_span_deg": 120.0,
+        "max_step_deg": 5.0,
+        "maximum_step_deg": 45.0,
+    }
+    planner = SimpleNamespace(
+        _wait_for_current_joint_positions=lambda timeout_sec: {"base": 0.0},
+        _trajectory_safety_violations=lambda trajectory, start_positions: [
+            violation
+        ],
+        _log_trajectory_safety_failure=lambda label, violations: (
+            logged.append((label, violations))
+        ),
+        _record_plan_stage=lambda *args, **kwargs: recorded.append(
+            (args, kwargs)
+        ),
+    )
+
+    success = CartesianHarvestPlanner._execute_trajectory(
+        planner,
+        "unsafe_cached_path",
+        "접근 반복 역재생",
+    )
+
+    assert success is False
+    assert logged == [
+        ("접근 반복 역재생 실행 전 검사", [violation])
+    ]
+    assert recorded[0][0][0] == "EXECUTION_TRAJECTORY_SAFETY"
+    assert recorded[0][0][4] == "UNSAFE_CACHED_TRAJECTORY"
+
+
 def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     events = []
     monkeypatch.setattr(
@@ -933,7 +1127,11 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     )
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
-            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+            value={
+                "execute": True,
+                "harvest_wait_sec": 0.0,
+                "step_cycle_only": False,
+            }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: events.append(("log", message))
@@ -964,6 +1162,106 @@ def test_continuous_execute_skips_pick_ready_and_keeps_post_wait(monkeypatch):
     assert "post-wait pose is retained" in events[-1][1]
 
 
+def test_limited_stage_execute_skips_wait_and_post_wait(monkeypatch):
+    events = []
+    waits = []
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.harvest_planner.time.sleep",
+        waits.append,
+    )
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "execute": True,
+                "harvest_wait_sec": 2.0,
+                "step_cycle_only": True,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    planner._execute_trajectory_group = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_group(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("arc_to_preapproach",),
+        approach_trajectory=("through_stage_four",),
+        after_wait_trajectory=("must_not_execute",),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    assert waits == []
+    assert [event[1] for event in events if event[0] == "execute"] == [
+        "arc_to_preapproach",
+        "through_stage_four",
+    ]
+    assert "retained for the next continuous arc" in events[-1][1]
+
+
+def test_arc_reverse_recovery_executes_before_next_preapproach():
+    events = []
+    planner = SimpleNamespace(
+        get_parameter=lambda name: SimpleNamespace(
+            value={"execute": True, "step_cycle_only": True}[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: events.append(("log", message))
+        ),
+        _execute_trajectory=lambda trajectory, label: (
+            events.append(("execute", trajectory, label)) or True
+        ),
+    )
+    planner._execute_trajectory_sequence = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_sequence(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    planner._execute_trajectory_group = lambda trajectories, label: (
+        CartesianHarvestPlanner._execute_trajectory_group(
+            planner,
+            trajectories,
+            label,
+        )
+    )
+    plan = HarvestMotionPlan(
+        pick_ready_trajectory=(),
+        preapproach_trajectory=("next_preapproach",),
+        approach_trajectory=("next_target",),
+        after_wait_trajectory=(),
+        return_pick_ready_trajectory=(),
+        display_start_state=RobotState(),
+        arc_reverse_recovery_trajectory=("reverse_2", "reverse_1"),
+    )
+
+    assert CartesianHarvestPlanner.execute(planner, plan) is True
+    assert [event[1] for event in events if event[0] == "execute"] == [
+        "reverse_2",
+        "reverse_1",
+        "next_preapproach",
+        "next_target",
+    ]
+
+
 def test_lift_continuous_execute_reaches_safe_retreat_before_next_tomato(
     monkeypatch,
 ):
@@ -974,7 +1272,11 @@ def test_lift_continuous_execute_reaches_safe_retreat_before_next_tomato(
     )
     planner = SimpleNamespace(
         get_parameter=lambda name: SimpleNamespace(
-            value={"execute": True, "harvest_wait_sec": 0.0}[name]
+            value={
+                "execute": True,
+                "harvest_wait_sec": 0.0,
+                "step_cycle_only": False,
+            }[name]
         ),
         get_logger=lambda: SimpleNamespace(
             info=lambda message: events.append(("log", message))
@@ -1025,6 +1327,7 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1034,7 +1337,7 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
         _lookup_transform=lambda frame: transform,
     )
 
-    def plan_arc(waypoints, start_state, label, pregrasp):
+    def plan_arc(waypoints, start_state, label, pregrasp, **kwargs):
         calls.append((waypoints, start_state, label, pregrasp))
         return ("arc_preapproach_trajectory",)
 
@@ -1051,8 +1354,9 @@ def test_continuous_preapproach_plans_outward_arc_trajectory():
     )
 
     assert result[0] == ()
-    assert result[1] == ("arc_preapproach_trajectory",)
-    assert result[2].is_diff is True
+    assert result[1] == ()
+    assert result[2] == ("arc_preapproach_trajectory",)
+    assert result[3].is_diff is True
     waypoints, start_state, label, pregrasp = calls[0]
     assert len(waypoints) == 7
     assert start_state.is_diff is True
@@ -1085,6 +1389,7 @@ def test_preplanned_continuous_arc_uses_cached_end_state_and_pose():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1111,13 +1416,80 @@ def test_preplanned_continuous_arc_uses_cached_end_state_and_pose():
         start_pose_override=cached_pose,
     )
 
-    assert result[1] == ("cached_arc",)
-    assert list(result[2].joint_state.position) == [0.4]
+    assert result[2] == ("cached_arc",)
+    assert list(result[3].joint_state.position) == [0.4]
     assert list(calls[0][1].joint_state.position) == [0.4]
     expected_first_x = cached_pose.position.x + (
         target.position.x - cached_pose.position.x
     ) / 7.0
     assert calls[0][0][0].position.x == pytest.approx(expected_first_x)
+
+
+def test_transition_only_arc_preserves_independently_planned_target():
+    calls = []
+    finished = []
+    start_state = RobotState()
+    start_state.joint_state.name = ["base"]
+    start_state.joint_state.position = [0.2]
+    start_pose = Pose()
+    start_pose.position.x = -0.2
+    start_pose.orientation.w = 1.0
+    target_pose = Pose()
+    target_pose.position.x = 0.3
+    target_pose.orientation.w = 1.0
+    planner = SimpleNamespace(
+        last_plan_report={},
+        _begin_plan_report=lambda state: planner.last_plan_report.update(
+            {"stages": []}
+        ),
+        _synchronize_dynamic_base_transform=lambda: True,
+        _finish_plan_report=finished.append,
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
+            }[name]
+        ),
+        _plan_cartesian_with_ompl_fallback=(
+            lambda waypoints, state, *args, **kwargs: (
+                calls.append((waypoints, state, args, kwargs))
+                or ("arc_only",)
+            )
+        ),
+        get_logger=lambda: SimpleNamespace(warning=lambda message: None),
+    )
+
+    transition = CartesianHarvestPlanner.plan_continuous_transition_only(
+        planner,
+        start_state,
+        start_pose,
+        target_pose,
+        [0.0, 1.0, 0.0],
+    )
+
+    assert transition == ("arc_only",)
+    assert finished == [True]
+    assert len(calls[0][0]) == 7
+    assert list(calls[0][1].joint_state.position) == [0.2]
+    assert calls[0][3]["maximum_joint_span_deg"] == 120.0
+    assert planner.last_plan_report["continuous_transition_arc"] is True
+
+
+def test_arc_candidate_retries_only_stochastic_planning_failures():
+    assert _candidate_failure_is_retryable(
+        {
+            "failure_stage": "OMPL_FALLBACK_PREAPPROACH_1",
+            "failure_reason": "MOVEIT_PLANNING_FAILED",
+        }
+    ) is True
+    assert _candidate_failure_is_retryable(
+        {
+            "failure_stage": "TARGET_GEOMETRY",
+            "failure_reason": "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+        }
+    ) is False
 
 
 def test_display_start_state_keeps_current_lift_height_for_rviz_playback():
@@ -1246,11 +1618,13 @@ def test_dynamic_base_sync_uses_fresh_lift_joint_and_matching_tf(monkeypatch):
     assert sync["tf_stamp_nanoseconds"] >= sync["joint_stamp_nanoseconds"]
 
 
-def test_continuous_arc_failure_falls_back_through_pick_ready():
+def test_continuous_arc_failure_reverses_cached_path_to_pick_ready():
     preapproach_state = RobotState()
     preapproach_state.joint_state.name = ["base", "shoulder"]
     preapproach_state.joint_state.position = [0.4, -0.8]
     display_start = RobotState()
+    display_start.joint_state.name = ["base", "shoulder"]
+    display_start.joint_state.position = [0.8, -1.0]
     transform = TransformStamped()
     transform.transform.translation.z = 0.5
     transform.transform.rotation.w = 1.0
@@ -1263,6 +1637,7 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
                 "continuous_arc_min_clearance": 0.12,
                 "continuous_arc_max_clearance": 0.25,
                 "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
             }[name]
         ),
         get_logger=lambda: SimpleNamespace(
@@ -1275,10 +1650,7 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
             )
             or ("seed_preapproach",)
         ),
-        _plan_pick_ready=lambda start_state=None: (
-            "pick_ready",
-            display_start,
-        ),
+        _record_trajectory_range_input=lambda *args, **kwargs: None,
         _lookup_transform=lambda frame: transform,
     )
     planner._trajectory_end_state = lambda trajectory: preapproach_state
@@ -1311,18 +1683,79 @@ def test_continuous_arc_failure_falls_back_through_pick_ready():
         planner,
         target,
         outward_axis=[0.0, 1.0, 0.0],
+        start_state_override=display_start,
+        arc_failure_reverse_trajectory=("reverse_previous_path",),
     )
 
-    assert result == ("pick_ready", ("seed_preapproach",), display_start)
+    assert result == (
+        ("reverse_previous_path",),
+        (),
+        ("seed_preapproach",),
+        display_start,
+    )
     assert planner.last_plan_report["continuous_transition_direct"] is False
     assert planner.last_plan_report["continuous_transition_arc"] is False
     assert planner.last_plan_report["recovery_success"] is True
+    assert planner.last_plan_report["recovery_stage"] == (
+        "CACHED_TRAJECTORY_REVERSE_TO_PICK_READY"
+    )
     arc_stage = next(
         stage
         for stage in planner.last_plan_report["stages"]
         if stage["stage"] == "CARTESIAN_CONTINUOUS_ARC"
     )
     assert arc_stage["discarded"] is True
+
+
+def test_continuous_arc_failure_without_history_does_not_plan_new_ready_path():
+    transform = TransformStamped()
+    transform.transform.rotation.w = 1.0
+    planner = SimpleNamespace(
+        last_plan_report={"stages": [], "cartesian_fallbacks": []},
+        _trajectory_range_records=[],
+        planning_link="tcp",
+        get_parameter=lambda name: SimpleNamespace(
+            value={
+                "continuous_arc_min_clearance": 0.12,
+                "continuous_arc_max_clearance": 0.25,
+                "continuous_arc_waypoint_count": 7,
+                "continuous_arc_max_joint_span_deg": 120.0,
+            }[name]
+        ),
+        get_logger=lambda: SimpleNamespace(
+            info=lambda message: None,
+            warning=lambda message: None,
+            error=lambda message: None,
+        ),
+        _lookup_transform=lambda frame: transform,
+    )
+
+    def fail_arc(*args, **kwargs):
+        planner.last_plan_report["stages"].append(
+            {
+                "stage": "CARTESIAN_CONTINUOUS_ARC",
+                "planner_type": "cartesian",
+                "success": False,
+                "reason": "CARTESIAN_FRACTION_LOW",
+            }
+        )
+        return None
+
+    planner._plan_cartesian_with_ompl_fallback = fail_arc
+    target = Pose()
+    target.orientation.w = 1.0
+
+    result = CartesianHarvestPlanner._plan_continuous_preapproach(
+        planner,
+        target,
+        outward_axis=[0.0, 1.0, 0.0],
+    )
+
+    assert result is None
+    assert planner.last_plan_report["failure_reason"] == (
+        "ARC_FAILED_WITHOUT_REVERSE_HISTORY"
+    )
+    assert planner.last_plan_report["recovery_used"] is False
 
 
 def test_plan_report_keeps_first_failure_with_cartesian_details():
@@ -1493,6 +1926,8 @@ def test_harvest_command_builds_plan_only_command():
         return_to_pick_ready=False,
         retreat_after_harvest=True,
         pick_ready_state_name="PICK_READY_RIGHT",
+        prefer_robot_direction=True,
+        adaptive_grasp_max_rotation_deg=35.0,
         python_executable="/usr/bin/python3",
     )
 
@@ -1514,6 +1949,8 @@ def test_harvest_command_builds_plan_only_command():
     assert "return_to_pick_ready:=false" in command
     assert "retreat_after_harvest:=true" in command
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
+    assert "adaptive_grasp_prefer_robot_direction:=true" in command
+    assert "adaptive_grasp_max_rotation_deg:=35.0" in command
 
 
 def test_preplanned_batch_command_selects_worker_and_arc_mode():
@@ -1532,10 +1969,61 @@ def test_preplanned_batch_command_selects_worker_and_arc_mode():
     config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
     assert config == {
         "tomato_count": 5,
+        "tomato_frames": [
+            "detected_tomato_0_tf",
+            "detected_tomato_1_tf",
+            "detected_tomato_2_tf",
+            "detected_tomato_3_tf",
+            "detected_tomato_4_tf",
+        ],
         "continuous_arc": True,
         "execute": True,
         "start_tolerance_deg": 3.0,
+        "harvest_stage_limit": None,
+        "candidate_attempts": 3,
     }
+
+
+def test_commands_forward_camera_target_tf_names():
+    command = harvest_command(0, False, tomato_frame="C0:T7")
+    assert "tomato_frame:=C0:T7" in command
+
+    step_command = stepper_command(0, tomato_frame="C0:T7")
+    assert "tomato_frame:=C0:T7" in step_command
+
+    batch_command, environment = preplanned_batch_command(
+        2,
+        continuous_arc=True,
+        tomato_frames=("C0:T7", "C0:T8"),
+    )
+    assert "tomato_frame:=C0:T7" in batch_command
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["tomato_frames"] == ["C0:T7", "C0:T8"]
+
+
+def test_preplanned_batch_command_limits_each_tomato_stage_not_count():
+    command, environment = preplanned_batch_command(
+        5,
+        continuous_arc=True,
+        harvest_stage_limit=4,
+    )
+
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["tomato_count"] == 5
+    assert config["harvest_stage_limit"] == 4
+    assert "step_cycle_last_stage:=4" in command
+
+
+def test_preplanned_batch_command_can_plan_complete_sequence_without_execution():
+    command, environment = preplanned_batch_command(
+        5,
+        continuous_arc=True,
+        execute=False,
+    )
+
+    config = json.loads(environment[PREPLANNED_BATCH_CONFIG_ENV])
+    assert config["execute"] is False
+    assert "execute:=false" in command
 
 
 def test_harvest_command_rejects_invalid_motion_scale():
@@ -1551,6 +2039,23 @@ def test_harvest_command_rejects_invalid_motion_scale():
             False,
             pick_ready_state_name="UNKNOWN_READY",
         )
+    with pytest.raises(ValueError, match="harvest_stage_limit"):
+        harvest_command(0, False, harvest_stage_limit=5)
+
+
+def test_harvest_command_can_stop_each_tomato_at_stage_four():
+    command = harvest_command(
+        7,
+        True,
+        harvest_stage_limit=4,
+        continuous_transition=True,
+        return_to_pick_ready=False,
+    )
+
+    assert "tomato_frame:=detected_tomato_7_tf" in command
+    assert "stepwise_plan:=true" in command
+    assert "step_cycle_only:=true" in command
+    assert "step_cycle_last_stage:=4" in command
 
 
 def test_gui_percent_to_scale_validates_operator_input():
@@ -1616,14 +2121,234 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
     assert "harvest_wait_sec:=1.5" in command
     assert "stepwise_plan:=true" in command
+    assert "step_cycle_last_stage:=5" in command
+    assert "harvest_x_forward:=0.07" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
 
 
-def test_stepper_command_can_plan_only_repeat_stages_one_through_five():
-    command = stepper_command(1, cycle_only=True)
+def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
+    command = stepper_command(
+        1,
+        cycle_only=True,
+        cycle_last_stage=4,
+        cycle_forward_distance_m=0.035,
+    )
 
     assert "stepwise_plan:=true" in command
+    assert "step_cycle_last_stage:=4" in command
+    assert "harvest_x_forward:=0.035" in command
+    assert "return_to_pick_ready:=false" in command
     assert command[-2:] == ["-p", "step_cycle_only:=true"]
+
+
+def test_stepper_command_rejects_invalid_repeat_last_stage():
+    with pytest.raises(ValueError, match="between 1 and 5"):
+        stepper_command(1, cycle_only=True, cycle_last_stage=6)
+    with pytest.raises(ValueError, match="between 0.010 and 0.070"):
+        stepper_command(1, cycle_forward_distance_m=0.071)
+
+
+@pytest.mark.parametrize(
+    ("millimeters", "meters"),
+    [("10", 0.010), ("35.5", 0.0355), ("70", 0.070)],
+)
+def test_repeat_forward_distance_converts_operator_mm_to_m(
+    millimeters,
+    meters,
+):
+    assert repeat_forward_distance_m(millimeters) == pytest.approx(meters)
+
+
+@pytest.mark.parametrize("value", ["0", "45", "90"])
+def test_adaptive_grasp_max_rotation_accepts_gui_range(value):
+    assert adaptive_grasp_max_rotation_degrees(value) == pytest.approx(
+        float(value)
+    )
+
+
+@pytest.mark.parametrize("value", ["-0.1", "90.1", "invalid"])
+def test_adaptive_grasp_max_rotation_rejects_invalid_input(value):
+    with pytest.raises(ValueError, match="최대 보정각"):
+        adaptive_grasp_max_rotation_degrees(value)
+
+
+@pytest.mark.parametrize("value", ["9.9", "70.1", "invalid", "nan"])
+def test_repeat_forward_distance_rejects_values_outside_gui_range(value):
+    with pytest.raises(ValueError, match="10~70 mm|숫자"):
+        repeat_forward_distance_m(value)
+
+
+@pytest.mark.parametrize(
+    ("direction", "stage_number", "action", "last_index"),
+    [
+        ("forward", 1, "execute_cycle_forward", 0),
+        ("forward", 4, "execute_cycle_forward", 3),
+        ("reverse", 5, "execute_cycle_reverse", 4),
+    ],
+)
+def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
+    direction,
+    stage_number,
+    action,
+    last_index,
+):
+    assert repeat_cycle_command(direction, stage_number) == {
+        "command": action,
+        "last_stage_index": last_index,
+    }
+
+
+def test_repeat_cycle_command_rejects_invalid_stage_or_direction():
+    with pytest.raises(ValueError, match="between 1 and 5"):
+        repeat_cycle_command("forward", 6)
+    with pytest.raises(ValueError, match="direction"):
+        repeat_cycle_command("sideways", 3)
+
+
+@pytest.mark.parametrize(
+    ("direction", "next_index", "stage_number", "expected"),
+    [
+        ("forward", 0, 5, {"command": "execute_next"}),
+        ("forward", 4, 5, {"command": "execute_next"}),
+        ("forward", 5, 5, None),
+        ("reverse", 5, 5, {"command": "execute_previous"}),
+        ("reverse", 1, 5, {"command": "execute_previous"}),
+        ("reverse", 0, 5, None),
+    ],
+)
+def test_repeat_stage_command_advances_one_pause_safe_stage(
+    direction,
+    next_index,
+    stage_number,
+    expected,
+):
+    assert repeat_stage_command(direction, next_index, stage_number) == expected
+
+
+def test_repeat_stage_command_rejects_invalid_progress_state():
+    with pytest.raises(ValueError, match="outside the cycle"):
+        repeat_stage_command("forward", 6, 5)
+    with pytest.raises(ValueError, match="unsupported repeat direction"):
+        repeat_stage_command("sideways", 0, 5)
+
+
+def test_repeat_automation_sends_only_one_stage_before_next_event():
+    commands = []
+    gui = SimpleNamespace(
+        repeat_run_direction="forward",
+        step_execution_in_progress=False,
+        repeat_pause_requested=False,
+        repeat_cycle_last_index=4,
+        step_next_index=2,
+        repeat_paused=True,
+        _send_step_command=lambda command: commands.append(command) or True,
+        _complete_repeat_forward_cycle=lambda: pytest.fail(
+            "forward cycle completed too early"
+        ),
+        _complete_repeat_reverse_cycle=lambda: pytest.fail(
+            "reverse cycle completed unexpectedly"
+        ),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert commands == [{"command": "execute_next"}]
+    assert not gui.repeat_paused
+
+
+def test_repeat_execution_accepts_verification_with_adaptive_grasp_options(
+    monkeypatch,
+):
+    writes = []
+    verification = (
+        7,
+        2,
+        *GUI_PLANNER_CONFIG,
+        "PICK_READY_RIGHT",
+        True,
+        35.0,
+    )
+    gui = SimpleNamespace(
+        step_process=SimpleNamespace(
+            poll=lambda: None,
+            stdin=SimpleNamespace(
+                write=writes.append,
+                flush=lambda: None,
+            ),
+        ),
+        step_session_mode="repeat",
+        repeat_execution_enabled_var=SimpleNamespace(get=lambda: True),
+        step_execution_enabled_var=SimpleNamespace(get=lambda: True),
+        step_session_verification=verification,
+        step_execution_confirmed=True,
+        _verification_matches_current_selection=(
+            lambda current: current == verification
+        ),
+        _append_log=lambda _message: None,
+        _update_step_controls=lambda: None,
+    )
+    monkeypatch.setattr(
+        harvest_gui_module.messagebox,
+        "showerror",
+        lambda *_args, **_kwargs: pytest.fail(
+            "unchanged adaptive grasp verification must remain valid"
+        ),
+    )
+
+    assert HarvestGui._send_step_command(
+        gui,
+        {"command": "execute_next"},
+    ) is True
+    assert writes == [json.dumps({"command": "execute_next"}) + "\n"]
+
+
+def test_repeat_automation_holds_at_stage_boundary_when_pause_requested():
+    messages = []
+    gui = SimpleNamespace(
+        repeat_run_direction="reverse",
+        step_execution_in_progress=False,
+        repeat_pause_requested=True,
+        repeat_cycle_last_index=4,
+        step_next_index=3,
+        repeat_paused=False,
+        repeat_status=SimpleNamespace(
+            set=messages.append,
+            get=lambda: messages[-1],
+        ),
+        status=SimpleNamespace(set=messages.append),
+        _update_step_controls=lambda: None,
+        _send_step_command=lambda _command: pytest.fail(
+            "paused automation must not send a trajectory"
+        ),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert gui.repeat_paused
+    assert any("일시 정지" in message for message in messages)
+
+
+def test_repeat_automation_finishes_reverse_only_after_reaching_stage_zero():
+    completed = []
+    gui = SimpleNamespace(
+        repeat_run_direction="reverse",
+        step_execution_in_progress=False,
+        repeat_pause_requested=False,
+        repeat_cycle_last_index=4,
+        step_next_index=0,
+        repeat_paused=False,
+        _send_step_command=lambda _command: pytest.fail(
+            "completed reverse cycle must not send another trajectory"
+        ),
+        _complete_repeat_forward_cycle=lambda: pytest.fail(
+            "wrong completion direction"
+        ),
+        _complete_repeat_reverse_cycle=lambda: completed.append(True),
+    )
+
+    HarvestGui._continue_repeat_automation(gui)
+
+    assert completed == [True]
 
 
 def test_camera_service_for_source_maps_fake_and_real_services():
@@ -1726,6 +2451,62 @@ def test_detection_message_is_sorted_by_transformed_world_height():
     assert [item.id for item in sorted_message.detections] == ["high", "low"]
 
 
+def test_detection_message_prioritizes_cluster_summed_height():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "world"
+    specifications = (
+        ("capture/cluster_1/tomato_0", 0.90),
+        ("capture/cluster_1/tomato_1", 0.10),
+        ("capture/cluster_2/tomato_0", 0.70),
+        ("capture/cluster_2/tomato_1", 0.60),
+    )
+    detections.detections = [
+        TomatoDetection(
+            id=identifier,
+            center=Point(x=0.0, y=0.0, z=z),
+            stem_point=Point(x=0.01, y=0.0, z=z),
+        )
+        for identifier, z in specifications
+    ]
+
+    sorted_message = detection_message_sorted_by_height(detections)
+
+    assert [item.id for item in sorted_message.detections] == [
+        "capture/cluster_2/tomato_0",
+        "capture/cluster_2/tomato_1",
+        "capture/cluster_1/tomato_0",
+        "capture/cluster_1/tomato_1",
+    ]
+
+
+def test_detection_message_groups_camera_cluster_before_internal_height():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "world"
+    specifications = (
+        ("capture-C0:T7", 0.95),
+        ("capture-C1:T2", 0.40),
+        ("capture-C1:T3", 0.90),
+        ("capture-C0:T8", 0.30),
+    )
+    detections.detections = [
+        TomatoDetection(
+            id=identifier,
+            center=Point(x=0.0, y=0.0, z=z),
+            stem_point=Point(x=0.01, y=0.0, z=z),
+        )
+        for identifier, z in specifications
+    ]
+
+    sorted_message = detection_message_sorted_by_height(detections)
+
+    assert [item.id for item in sorted_message.detections] == [
+        "capture-C1:T3",
+        "capture-C1:T2",
+        "capture-C0:T7",
+        "capture-C0:T8",
+    ]
+
+
 def test_detected_tomato_marker_array_validates_frame_and_diameter():
     detections = TomatoDetectionArray()
     with pytest.raises(ValueError, match="frame_id"):
@@ -1786,55 +2567,68 @@ def test_actual_approach_marker_ignores_missing_geometry():
     assert actual_approach_marker(0, {}) is None
 
 
-def test_predicted_approach_report_rotates_outward_toward_robot():
-    report = predicted_approach_report(
-        "detected_tomato_0_tf",
-        robot_in_tomato=(-1.0, -1.0, 0.0),
-        max_rotation_deg=45.0,
-        deadband_deg=10.0,
-        tip_standoff=0.025,
-        tip_below_center=0.018,
-        preapproach_clearance=0.010,
+def test_actual_approach_marker_length_matches_displayed_orange_arrow():
+    report = {
+        "approach_geometry": {
+            "frame_id": "detected_tomato_2_tf",
+            "preapproach_position": [-0.035, 0.014, -0.018],
+            "target_position": [-0.025, 0.010, -0.018],
+        }
+    }
+
+    marker = actual_approach_marker(2, report)
+    expected = math.dist(
+        (marker.points[0].x, marker.points[0].y, marker.points[0].z),
+        (marker.points[1].x, marker.points[1].y, marker.points[1].z),
     )
 
-    geometry = report["approach_geometry"]
-    assert geometry["frame_id"] == "detected_tomato_0_tf"
-    root_half = math.sqrt(0.5)
-    assert geometry["preapproach_position"] == pytest.approx(
-        [-0.035 * root_half, -0.035 * root_half, -0.018]
+    assert actual_approach_marker_length(report) == pytest.approx(expected)
+    assert result_arrow_length_for_report(False, 0.015, report) == (
+        pytest.approx(expected)
     )
-    assert geometry["target_position"] == pytest.approx(
-        [-0.025 * root_half, -0.025 * root_half, -0.018]
+    assert result_arrow_length_for_report(True, 0.015, report) == (
+        pytest.approx(0.015)
     )
-
-
-def test_predicted_approach_report_uses_90_degree_default_limit():
-    report = predicted_approach_report(
-        "detected_tomato_6_tf",
-        robot_in_tomato=(1.0, -0.2, 0.0),
-    )
-
-    geometry = report["approach_geometry"]
-    assert geometry["preapproach_position"] == pytest.approx(
-        [0.0, -0.035, -0.018],
-        abs=1e-9,
-    )
-    assert geometry["target_position"] == pytest.approx(
-        [0.0, -0.025, -0.018],
-        abs=1e-9,
+    assert result_arrow_length_for_report(False, 0.06, {}) == pytest.approx(
+        0.06
     )
 
 
-def test_predicted_approach_report_keeps_nominal_direction_in_deadband():
-    report = predicted_approach_report(
-        "detected_tomato_1_tf",
-        robot_in_tomato=(-1.0, 0.05, 0.0),
+def test_detection_markers_do_not_publish_orange_approach_preview():
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "camera"
+    detections.detections = [
+        TomatoDetection(
+            id="tomato_a",
+            center=Point(x=0.0, y=0.0, z=0.5),
+            stem_point=Point(x=0.02, y=0.0, z=0.5),
+        )
+    ]
+    published = []
+    gui = SimpleNamespace(
+        detection_marker_diameter=0.0175,
+        detection_stem_marker_diameter=0.006,
+        detection_approach_marker_length=0.06,
+        detection_marker_publisher=SimpleNamespace(
+            publish=lambda message: published.append(message)
+        ),
+        _append_log=lambda _message: None,
     )
 
-    geometry = report["approach_geometry"]
-    assert geometry["preapproach_position"] == pytest.approx(
-        [-0.035, 0.0, -0.018],
-        abs=1e-9,
+    HarvestGui._publish_detection_markers(
+        gui,
+        detections,
+    )
+
+    assert len(published) == 1
+    assert len(published[0].markers) == 4
+    assert all(
+        not (
+            marker.type == marker.ARROW
+            and marker.color.r == pytest.approx(1.0)
+            and marker.color.g == pytest.approx(0.45)
+        )
+        for marker in published[0].markers[1:]
     )
 
 
@@ -1877,6 +2671,149 @@ def test_detection_service_response_republishes_only_real_camera_results(
     assert callbacks == [detections]
 
 
+def test_capture_camera_calls_trigger_service_and_locks_camera_controls():
+    states = {}
+    requests = []
+    callbacks = []
+    future = SimpleNamespace(add_done_callback=callbacks.append)
+    client = SimpleNamespace(
+        service_is_ready=lambda: True,
+        call_async=lambda request: requests.append(request) or future,
+    )
+    gui = SimpleNamespace(
+        capture_camera_client=client,
+        capture_camera_service="/capture_camera",
+        capture_camera_in_progress=False,
+        capture_camera_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("capture", kwargs)
+        ),
+        detect_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("detect", kwargs)
+        ),
+        camera_source_combo=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("source", kwargs)
+        ),
+        status=SimpleNamespace(
+            set=lambda value: states.__setitem__("status", value)
+        ),
+        _append_log=lambda value: states.__setitem__("log", value),
+        _capture_camera_done=lambda result: None,
+    )
+
+    HarvestGui.capture_camera(gui)
+
+    assert gui.capture_camera_in_progress is True
+    assert len(requests) == 1
+    assert isinstance(requests[0], Trigger.Request)
+    assert callbacks == [gui._capture_camera_done]
+    assert states["capture"] == {"state": "disabled"}
+    assert states["detect"] == {"state": "disabled"}
+    assert states["source"] == {"state": "disabled"}
+    assert states["status"] == "카메라 캡처 요청 중..."
+
+
+@pytest.mark.parametrize(
+    ("success", "response_message", "expected_log"),
+    [
+        (True, "이미지 저장 완료", "[카메라 캡처 성공] 이미지 저장 완료"),
+        (False, "카메라 오류", "[카메라 캡처 실패] 카메라 오류"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("ui_busy", "expected_detection_state", "expected_source_state"),
+    [
+        (False, "normal", "readonly"),
+        (True, "disabled", "disabled"),
+    ],
+)
+def test_capture_camera_response_updates_status_and_unlocks_capture_button(
+    success,
+    response_message,
+    expected_log,
+    ui_busy,
+    expected_detection_state,
+    expected_source_state,
+):
+    states = {}
+    gui = SimpleNamespace(
+        capture_camera_in_progress=True,
+        ui_busy=ui_busy,
+        capture_camera_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("capture", kwargs)
+        ),
+        detect_button=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("detect", kwargs)
+        ),
+        camera_source_combo=SimpleNamespace(
+            configure=lambda **kwargs: states.__setitem__("source", kwargs)
+        ),
+        status=SimpleNamespace(
+            set=lambda value: states.__setitem__("status", value)
+        ),
+        _append_log=lambda value: states.__setitem__("log", value),
+    )
+    response = SimpleNamespace(success=success, message=response_message)
+
+    HarvestGui._capture_camera_done(
+        gui,
+        SimpleNamespace(result=lambda: response),
+    )
+
+    assert gui.capture_camera_in_progress is False
+    assert states["capture"] == {"state": "normal"}
+    assert states["detect"] == {"state": expected_detection_state}
+    assert states["source"] == {"state": expected_source_state}
+    assert states["status"] == response_message
+    assert states["log"] == expected_log
+
+
+def _compressed_test_image(width=8, height=4):
+    output = io.BytesIO()
+    PilImage.new("RGB", (width, height), color=(220, 30, 20)).save(
+        output,
+        format="JPEG",
+    )
+    return output.getvalue()
+
+
+def test_decode_compressed_result_image_returns_independent_rgb_image():
+    image = decode_compressed_result_image(_compressed_test_image())
+
+    assert image.mode == "RGB"
+    assert image.size == (8, 4)
+
+
+def test_decode_compressed_result_image_rejects_empty_or_invalid_payload():
+    with pytest.raises(ValueError, match="비어"):
+        decode_compressed_result_image(b"")
+    with pytest.raises(ValueError, match="해석"):
+        decode_compressed_result_image(b"not an image")
+
+
+def test_result_image_callback_decodes_and_schedules_gui_render():
+    values = {}
+    scheduled = []
+    gui = SimpleNamespace(
+        result_image_topic="/tomato_vision/result_image",
+        result_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        latest_result_image=None,
+        _schedule_result_image_render=lambda: scheduled.append(True),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+    message = CompressedImage()
+    message.format = "jpeg"
+    message.data = _compressed_test_image(width=12, height=6)
+
+    HarvestGui._result_image_callback(gui, message)
+
+    assert gui.latest_result_image.size == (12, 6)
+    assert scheduled == [True]
+    assert values["status"].endswith("12×6 · jpeg")
+    assert "log" not in values
+
+
 def test_camera_source_change_selects_client_and_clears_old_detection():
     values = {}
     deleted = []
@@ -1917,6 +2854,9 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         plan_button=SimpleNamespace(configure=lambda **kwargs: None),
         execute_button=SimpleNamespace(configure=lambda **kwargs: None),
         harvest_all_button=SimpleNamespace(configure=lambda **kwargs: None),
+        harvest_all_plan_button=SimpleNamespace(
+            configure=lambda **kwargs: None
+        ),
         _invalidate_plan=lambda: values.__setitem__("invalidated", True),
         _clear_detection_markers=lambda: values.__setitem__(
             "markers_cleared", True
@@ -2041,6 +2981,32 @@ def test_harvest_command_can_disable_trajectory_display_for_automatic_test():
     assert "publish_display_trajectory:=false" in command
 
 
+def test_named_pose_command_builds_constrained_ompl_execute_command():
+    command = named_pose_command(
+        "CAPTURE_LEFT",
+        velocity_scale=0.35,
+        acceleration_scale=0.25,
+        python_executable="/usr/bin/python3",
+    )
+
+    assert command[:3] == [
+        "/usr/bin/python3",
+        "-m",
+        "rbpodo_tomato_harvest.named_pose_move",
+    ]
+    assert "pick_ready_state_name:=CAPTURE_LEFT" in command
+    assert "joint_planning_pipeline_id:=ompl" in command
+    assert "joint_planner_id:=RRTConnect" in command
+    assert "pick_ready_velocity_scale:=0.35" in command
+    assert "pick_ready_acceleration_scale:=0.25" in command
+    assert "publish_display_trajectory:=true" in command
+
+
+def test_named_pose_command_rejects_unknown_state():
+    with pytest.raises(ValueError, match="named pose"):
+        named_pose_command("UNKNOWN_POSE")
+
+
 def test_harvest_command_builds_pilz_lin_command():
     command = harvest_command(
         3,
@@ -2057,6 +3023,11 @@ def test_harvest_command_builds_pilz_lin_command():
 
 def test_planner_options_include_cartesian_and_pipeline_modes():
     assert PICK_READY_STATES == ("PICK_READY", "PICK_READY_RIGHT")
+    assert NAMED_POSE_STATES == (
+        "PICK_READY",
+        "PICK_READY_RIGHT",
+        "CAPTURE_LEFT",
+    )
     assert PLANNER_CONFIGS["Cartesian"] == (
         "ompl",
         "RRTConnect",
@@ -2250,6 +3221,17 @@ def test_harvest_all_jobs_rejects_negative_count():
         harvest_all_jobs(-1)
 
 
+def test_batch_harvest_stage_limit_uses_per_tomato_stage_number():
+    assert batch_harvest_stage_limit("전체 수확") is None
+    assert batch_harvest_stage_limit("3단계까지") == 3
+    assert batch_harvest_stage_limit("4단계까지") == 4
+
+
+def test_batch_harvest_stage_limit_rejects_tomato_number_selection():
+    with pytest.raises(ValueError):
+        batch_harvest_stage_limit("3번 토마토까지")
+
+
 def test_success_marker_is_green_and_points_along_tomato_positive_x():
     marker = harvest_result_marker(3, True, 0.05)
 
@@ -2301,8 +3283,9 @@ def test_nonrotated_success_marker_uses_exact_planner_axis():
 def test_failure_marker_is_red():
     marker = harvest_result_marker(0, False, 0.04)
 
-    assert marker.points[1].x == pytest.approx(0.04)
-    assert marker.points[1].y == pytest.approx(0.0)
+    assert marker.points[0].x == pytest.approx(-0.04)
+    assert marker.points[0].y == pytest.approx(0.0)
+    assert marker.points[1] == Point()
     assert (marker.color.r, marker.color.g, marker.color.b, marker.color.a) == (
         1.0,
         0.0,
@@ -2320,8 +3303,9 @@ def test_failure_marker_points_from_plus_x_toward_minus_y_after_rotation():
     )
 
     component = 0.04 / (2.0 ** 0.5)
-    assert marker.points[1].x == pytest.approx(component)
-    assert marker.points[1].y == pytest.approx(-component)
+    assert marker.points[0].x == pytest.approx(-component)
+    assert marker.points[0].y == pytest.approx(component)
+    assert marker.points[1] == Point()
 
 
 def test_failure_marker_points_toward_plus_y_after_negative_rotation():
@@ -2333,8 +3317,9 @@ def test_failure_marker_points_toward_plus_y_after_negative_rotation():
     )
 
     component = 0.04 / (2.0 ** 0.5)
-    assert marker.points[1].x == pytest.approx(component)
-    assert marker.points[1].y == pytest.approx(component)
+    assert marker.points[0].x == pytest.approx(-component)
+    assert marker.points[0].y == pytest.approx(-component)
+    assert marker.points[1] == Point()
 
 
 def test_failure_marker_uses_exact_planner_approach_axis():
@@ -2346,8 +3331,9 @@ def test_failure_marker_uses_exact_planner_approach_axis():
         approach_axis_local=(0.6, -0.8),
     )
 
-    assert marker.points[1].x == pytest.approx(0.024)
-    assert marker.points[1].y == pytest.approx(-0.032)
+    assert marker.points[0].x == pytest.approx(-0.024)
+    assert marker.points[0].y == pytest.approx(0.032)
+    assert marker.points[1] == Point()
 
 
 def test_adaptive_rotation_report_requires_nonzero_applied_angle():
@@ -2373,6 +3359,23 @@ def test_adaptive_rotation_report_requires_nonzero_applied_angle():
             }
         }
     ) == pytest.approx((0.6, -0.8))
+
+
+def test_final_approach_geometry_overrides_stale_recommend_axis_on_failure():
+    report = {
+        "success": False,
+        "adaptive_grasp": {
+            "approach_axis_tomato_local": [1.0, 0.0, 0.0],
+        },
+        "approach_geometry": {
+            "preapproach_position": [-0.03, 0.03, -0.018],
+            "target_position": [-0.02, 0.02, -0.018],
+        },
+    }
+
+    assert adaptive_approach_axis_local(report) == pytest.approx(
+        (2.0 ** -0.5, -(2.0 ** -0.5))
+    )
 
 
 def test_sweep_marker_is_frozen_in_robot_base_frame():

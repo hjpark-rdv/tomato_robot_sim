@@ -29,14 +29,21 @@ MoveIt 실행 시 `tomato_tf_generator`가 함께 시작된다. 카메라 팀의
 farmily_tomato_interfaces/msg/TomatoDetectionArray
 ```
 
-배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 새 배열이
-들어오면 이전 `detected_tomato_*` 목록을 교체하고
-`detected_tomato_0_tf`부터 다시 생성한다. 따라서 여러 번 촬영해도 TF가
-누적되지 않는다. TF를 등록하기 전에 모든 중심점을 `world`로 변환하고 Z가 높은
-순서로 다시 정렬하므로, 가장 높은 토마토가 항상 `detected_tomato_0_tf`가 되고
-아래쪽으로 내려가며 번호가 증가한다. 같은 높이는 X, Y 순서로 고정한다. GUI의
-검출 목록도 같은 정렬을 사용한다. 운영 시 사용자는 카메라 팀이 제공하는 촬영
-서비스만 호출한다.
+배열의 각 원소에는 토마토 ID, 중심점, 줄기 방향점이 들어간다. 카메라 ID가
+`...C0:T7`처럼 끝나면 마지막 `C0:T7`만 추출해 실제 수확 TF 이름으로 사용한다.
+GUI 목록, 개별·스텝·자동 수확 및 전체 사전계획도 모두 같은 TF 이름을 전달한다.
+이 형식이 없는 Fake·구형 입력만 `detected_tomato_N_tf` 이름을 사용한다. 새 배열이
+들어오면 이전 수확 TF 목록을 교체하므로 여러 번 촬영해도 TF가 누적되지 않는다.
+
+TF를 등록하기 전에 모든 중심점을 `world`로 변환한다. `C0:T7`에서는 `C0`을
+클러스터 ID로 인식하며, 같은 `C#`의 토마토가 중간에 다른 클러스터와 섞이지
+않도록 먼저 묶는다. 기존 `cluster_*` 경로 형식도 지원한다. 각 클러스터에 속한
+토마토의 `world Z` 합계가 큰 클러스터부터 처리하고, 한 클러스터 안에서는 Z가
+높은 토마토부터 정렬한다. 클러스터 합계가 같으면 클러스터 최고 Z와 클러스터
+ID를 안정적인 tie-breaker로 사용한다. 클러스터 정보가 없는 원본 ID는 각각
+독립 클러스터로 취급하므로 기존 입력은 전체 높이 내림차순을 유지한다. GUI 검출
+목록과 TF generator가 동일한 정렬 함수를 사용한다. 운영 시 사용자는 카메라
+팀이 제공하는 촬영 서비스만 호출한다.
 
 카메라 서비스의 응답값은 그 서비스를 호출한 클라이언트만 받을 수 있으므로,
 카메라 노드는 서비스 응답과 별개로 위 배열 토픽도 발행해야 한다. 각 토마토의
@@ -64,7 +71,8 @@ fake 카메라는 `tomato_0_tf`부터 `tomato_7_tf`까지 총 8개를 한 번에
 Fake 카메라가 만드는 원본 검출 배열은 XY 거리가 기본 5 cm 이내인 토마토를
 같은 세로 열로 묶어 위에서 아래로 나열한다. 하지만 최종
 `detected_tomato_N_tf` ID는 실제 카메라와 동일하게 TF generator에서 `world` Z
-높이 내림차순으로 다시 부여한다. Fake 검출 배열의 열 판정 거리는 launch 인자
+높이 내림차순으로 다시 부여한다. Fake ID에는 명시적 `cluster_*` 성분이 없어서
+각 토마토를 독립 클러스터로 취급한다. Fake 검출 배열의 열 판정 거리는 launch 인자
 `vertical_column_xy_tolerance`로 조절할 수 있다.
 
 ```bash
@@ -125,7 +133,76 @@ GUI는 `수확 작업`, `스텝 실행`, `접근 반복 테스트`, `자동 테�
 16. DOUT10/11을 이용한 그리퍼 스트로크 늘림·줄임·정지
 17. 검출된 토마토 중심을 RViz에 핑크색 구형 마커로 표시
 18. 전체 수확 궤적을 한 번 계산한 뒤 실제 로봇을 한 단계씩 선택 실행
-19. 접근 1~5단계를 연속 진입하고 같은 trajectory로 역순 복귀하는 반복 테스트
+19. 접근 1~X단계를 선택해 연속 진입·역순 복귀하고 전체 토마토까지 순회하는 테스트
+20. `/capture_camera` Trigger 서비스를 GUI에서 독립적으로 호출해 카메라 캡처
+21. SRDF 저장 자세를 선택해 constrained OMPL로 Plan & Execute
+22. 현재 Plan/스텝 대상의 비전 피드백 JSON을 로컬 TXT로 저장하고
+    `DebugFrame.srv` 서비스로 전송
+
+`수확 작업` 탭의 `카메라 캡처` 버튼은 `/capture_camera`
+(`std_srvs/srv/Trigger`)를 호출한다. 이 버튼은 토마토 좌표를 갱신하는
+`토마토 촬영 / 검출`과 별개이며, 서비스 응답의 성공 여부와 메시지를 하단 상태창과
+실행 로그에 표시한다.
+
+카메라 검출 영역의 `비전 피드백 JSON 저장/전송` 버튼은 실제로 계획 중인
+`detected_tomato_N_tf`에 대응하는 카메라 검출 원본을 저장한다. 스텝 실행과
+접근 반복 테스트의 Plan 대기·실행·일시정지 상태에서도 버튼을 사용할 수 있으며,
+GUI에서 다른 행을 선택하더라도 실행 프로세스가 잡은 토마토를 기록한다. 파일에는
+카메라 ID, 카메라 프레임 기준 토마토/줄기 X/Y/Z, 두 점 거리, 실제
+Planner가 계산한 Recommend/최종 pre-grasp와 접근각 보정 결과가 JSON으로
+포함되고 기본 저장 경로는 `~/farmily_tomato/camera_target_records/`이다.
+`문제 유형`은 목록에서 고르거나 직접 입력할 수 있고 `비고`에는 영상 검토 요청을
+자유롭게 적을 수 있다. 현재 `TomatoDetection` 인터페이스가 제공하지 않는 UV와
+confidence는 임의 값을 만들지 않고 JSON에서 제외한다. Plan 결과가 아직 없는
+시점의 로봇 계산값은 `null`로 저장된다. 서비스 전달에 불필요한 GUI 상태,
+Planner 내부 설정, detection generation과 중복 진단 정보는 저장하지 않는다.
+동일한 JSON 문자열은 `farmily_tomato_interfaces/srv/DebugFrame`의
+`request_text` 필드에 그대로 담아 기본 `/debug_frame` 서비스로 전송한다.
+서비스 이름은 GUI 노드의 `debug_frame_service` 파라미터로 변경할 수 있다.
+서비스가 실행되지 않았거나 응답이 실패해도 로컬 TXT는 유지되며, 저장 성공과
+서비스 전송 결과를 상태창과 실행 로그에 각각 표시한다.
+
+Plan 완료 후 저장한 JSON은 별도의 좌표 그래프 프로그램으로 확인할 수 있다.
+
+```bash
+source ~/farmily_tomato/ros2_ws/install/setup.bash
+ros2 run rbpodo_tomato_harvest vision_feedback_viewer
+```
+
+인자 없이 실행하면 가장 최근 피드백 파일을 열고, 파일 선택 버튼으로 다른 결과를
+불러올 수 있다. 특정 파일을 바로 열 수도 있다.
+
+```bash
+ros2 run rbpodo_tomato_harvest vision_feedback_viewer \
+  ~/farmily_tomato/camera_target_records/파일명_feedback.txt
+```
+
+그래프는 외부 plotting 패키지 없이 Tkinter로 동작하며, 로봇 좌우축 `-Y`와 높이
+Z를 사용하는 `link0` 기준 측면도 하나만 표시한다. `link0 +Y`는 그래프 왼쪽,
+`link0 -Y`는 오른쪽에 표시되므로 좌우 정보가 사라지지 않는다. 로봇 base, 토마토,
+실제 검출 거리로 보정된 줄기점, Recommend 진입선과 최종 진입선을 색상으로
+구분하고 base→tomato 및 tomato→vine 실제 3D 거리도 함께 표시한다. 진입선은
+실제 pre-grasp 지점을 점으로 유지하면서 화살표 꼬리를 3배로 연장해 구별하기 쉽게
+표시하고, 화살표 촉은 확대된 토마토 원의 바깥에서 멈춘다. 줄기점은 실제 거리값을
+유지하되 Recommend 진입선이 토마토를 통과한 연장 방향의 콜아웃으로 분리하여
+라벨이 겹치지 않게 표시한다. 기존
+JSON에는 `link0` 기준 토마토/줄기 좌표가 없으므로 새 코드로 Plan한 뒤 JSON을
+다시 저장해야 한다.
+
+카메라 검출 영역의 `저장 자세` 콤보박스에서는 MoveIt SRDF에 등록된
+`PICK_READY`, `PICK_READY_RIGHT`, `CAPTURE_LEFT`를 선택할 수 있다.
+`Plan & Execute`를 누르면 현재 관절 자세에서 선택 자세까지 충돌 검사와 현재
+자세 중심 ±120° joint constraint를 적용한 OMPL/RRTConnect 경로를 계획하고,
+계획 성공 시에만 실제 trajectory를 실행한다. 실행 중에는 다른 수확 명령이
+비활성화되며 기존 `모션 정지` 버튼으로 계획·실행 취소와 RB5 정지를 요청할 수
+있다.
+
+같은 탭의 `수확 옵션` 아래에는 `/tomato_vision/result_image`
+(`sensor_msgs/msg/CompressedImage`)의 마지막 검출 결과를 표시한다. JPEG/PNG를
+직접 디코딩하고 표시 영역에 맞춰 종횡비를 유지해 축소하며, 새 결과를 받기
+전까지 마지막 이미지를 유지한다. 토픽은 서비스 호출 시점에만 발행되는
+`RELIABLE`/`VOLATILE` 데이터이므로 GUI는 동일한 reliable QoS로 구독하지만,
+GUI 실행 전에 발행된 과거 이미지는 표시하지 않는다.
 
 `스텝 실행` 탭에서는 토마토와 시작 자세를 선택하고 `스텝 Plan 생성`을 누른다.
 이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, pre-approach,
@@ -141,21 +218,44 @@ trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로
 `로봇 즉시 정지`는 MoveIt/controller goal 취소와 RB 정지를 요청하고 캐시를
 폐기하므로, 정지 후에는 스텝 Plan을 다시 생성해야 한다.
 
-`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 5단계
-tip 로컬 `+Z 40 mm` 1차 상승까지만 계획한다. `1 → 5 연속 진입`은 다섯 단계를
-중단 없이 순서대로 실행한다. 이후 `5 → 1 역순 복귀`를 누르면 별도 복귀 경로를
+`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대 5단계
+tip 로컬 `+Z 40 mm` 1차 상승까지만 계획한다. `마지막 단계 X`에서 1~5 중 하나를
+선택하면 `1 → X 연속 진입`은 해당 단계까지 중단 없이 순서대로 실행한다. 이후
+`X → 1 역순 복귀`를 누르면 별도 복귀 경로를
 재계획하지 않고, 캐시된 각 joint trajectory의 구간 순서·point 순서·시간과
 속도 방향을 뒤집어 정확히 같은 관절 경로로 원래 시작 자세까지 복귀한다. 복귀가
 끝나면 같은 두 버튼을 반복해서 사용할 수 있다. 매 구간 직전 실제 관절 시작
 오차가 `3°`를 넘거나 trajectory 실행이 실패하면 캐시를 폐기하고 새 Plan 생성을
-요구한다. 이 모드는 6단계 이후를 계획하지 않으므로 이후 수확 동작의 성공 여부와
-무관하게 접근·1차 상승 구간만 독립적으로 시험할 수 있다.
+요구한다. `4단계 진입 길이 (mm)`는 기본 `70`이며 `10~70 mm` 범위에서 직접
+설정할 수 있다. 이 값은 4단계 tip 로컬 `+X` trajectory 계획과 화면의 단계
+설명에 동일하게 적용되며, X가 4보다 작으면 해당 반복에서는 실행되지 않는다.
+`전체 토마토 1 → X → 1`은 검출 순서대로 각 토마토의 Plan을 새로
+계산하고 정방향 진입과 동일 trajectory 역순 복귀를 완료한 뒤 다음 토마토로
+넘어간다. Plan 실패는 결과에 남기고 다음 토마토를 계속 시험하지만, 실제
+trajectory 실행 실패는 로봇의 다음 시작 상태를 보장할 수 없으므로 전체 실행을
+즉시 중단한다. 이 모드는 6단계 이후를 계획하지 않으므로 이후 수확 동작의 성공
+여부와 무관하게 원하는 접근 구간만 독립적으로 시험할 수 있다.
+`일시 정지`는 실행 중인 trajectory를 강제로 끊지 않고 현재 단계가 끝난 직후
+다음 단계를 보류한다. 버튼이 `계속 실행`으로 바뀌며, 다시 누르면 같은 토마토의
+저장된 진행 단계와 정·역방향 상태부터 이어서 실행한다. 전체 토마토 모드에서도
+현재 토마토의 단계 사이, 정방향과 역방향 사이, 토마토와 다음 토마토 사이에서
+동일하게 동작한다. 일시 정지 중 로봇 자세가 바뀌어 캐시 시작점 오차가 3°를
+초과하면 기존 안전 검사에 의해 재개가 차단된다.
 
 `리니어모터 대기시간`의 기본값은 `2.0초`이다. 실제 수확 시 pre-wait
 Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 post-wait 후퇴를
 시작한다. 입력값은 개별 수확, 전체 연속 수확과 실제 실행을 활성화한 자동
 테스트에 동일하게 적용된다. Plan-only에서는 궤적만 계산하므로 실제로 기다리지
 않는다.
+
+`토마토별 종료 단계`는 처리할 토마토 번호가 아니라 각 토마토에서 실행할 수확
+단계를 제한한다. `3단계까지`는 모든 검출 토마토에서 `현재 자세 → PICK_READY`,
+`PICK_READY → PRE_APPROACH`, `PRE_APPROACH → 접근 목표`까지만 실행한다.
+`4단계까지`는 여기에 `접근 목표 → 앞으로 이동`을 추가한다. 제한 모드에서는
+리니어모터 대기와 이후 수확·후퇴 동작을 실행하지 않는다. Arc를 체크하면 이전
+토마토의 선택 종료 자세에서 식물 바깥 arc를 거쳐 다음 토마토로 이동하고, 전체
+목록의 마지막 토마토가 끝난 뒤 선택된 `PICK_READY` 자세로 복귀한다. 리프트를
+움직일 안전 후퇴 단계가 없으므로 단계 제한과 리프트 수확은 함께 사용할 수 없다.
 
 `연속 수확: 식물 바깥 arc로 다음 pre-grasp 이동`은 기본 해제되어 있다. 체크하면
 전체 연속 수확과 실제 실행 자동 테스트에서 첫 토마토는 `PICK_READY`로
@@ -165,22 +265,46 @@ pre-grasp`를 하나의 trajectory로 연결한다. TCP 시작·목표 자세 �
 `0.25 m` 휘어진 경로를 생성한다. TCP 방향은 각 waypoint에서 부드럽게
 보간한다. 먼저 충돌 검사를 포함한 Cartesian 경로를 시도하고, 일부 구간이
 실패하면 해당 waypoint까지 시작 자세 중심 `±120°` constraint가 적용된 OMPL
-RRTConnect로 대체한다. arc 전환 전체가 실패하면 해당 토마토에 한해서 `현재
-자세 → PICK_READY → pre-grasp` 기존 경로로 fallback한다. 마지막 토마토 수확이
-끝난 뒤에는 `PICK_READY`로 복귀한다. Plan-only 자동 테스트에는 실제 이전
-토마토의 종료 자세가 없으므로 이 모드를 적용하지 않고 각 토마토를 독립
-계획한다.
+RRTConnect로 대체한다. Cartesian이나 OMPL이 성공을 반환해도 Arc 전체에서
+관절 하나의 span이 `continuous_arc_max_joint_span_deg` 기본 `120°`를 넘으면
+대회전 경로로 판단해 폐기한다. 이 검사에는 `wrist3`도 포함한다. arc 전환
+전체가 실패하면 현재 자세에서
+`PICK_READY`까지 새로운 OMPL 우회 경로를 만들지 않는다. 대신
+`PICK_READY` 이후 지금까지 성공한 연속 수확 trajectory 전체를 역순으로
+재생하여 검증된 경로 그대로 `PICK_READY`에 복귀한 뒤, 다음 토마토에서 이미
+독립 검증한 `PICK_READY → pre-grasp` trajectory를 재사용한다. 따라서 Arc
+실패가 다음 토마토 자체의 성공 판정을 실패로 바꾸지 않는다. 역재생할 이력이
+없으면 안전 복구 계획을 실패로 처리한다. 마지막 토마토 수확이 끝난 뒤에는
+`PICK_READY`로 복귀한다.
 
 `전체 모션 사전계획 후 저장 trajectory 실행`은 기본 해제되어 있다. 체크한 뒤
 `전체 연속 수확`을 누르면 별도 planner 프로세스가 로봇을 움직이지 않은 상태로
 모든 토마토의 전체 trajectory를 먼저 계산한다. 기본 수확에서는 이전 수확의
 `RETURN_PICK_READY` 마지막 관절 상태를 다음 수확의 시작 상태로 사용한다. Arc
-수확에서는 이전 post-wait 마지막 관절 상태와 TCP 자세를 다음 Arc의 시작점으로
-사용한다. 모든 계획이 성공한 경우에만 저장된 trajectory를 순서대로 실행하며,
-하나라도 실패하면 실제 로봇은 움직이지 않는다. 사전계획 완료 후 실행 전 로봇
-관절이 최초 계획 시작점에서 `3°` 이상 달라진 경우에도 캐시를 실행하지 않고
-중단한다. 리프트 수확은 미래 리프트 높이의 planning scene을 별도로 구성해야
-하므로 현재 사전계획 옵션과 함께 사용할 수 없다.
+수확에서는 각 토마토를 먼저 `PICK_READY` 기준으로 독립 계획한다. 일시적인 OMPL
+실패는 기본 3회까지 다시 시도하고, deadline·TF·geometry처럼 재시도로 바뀌지
+않는 실패는 즉시 건너뛴다. 독립 계획에 성공한 토마토만 이전 post-wait 마지막
+관절 상태와 TCP 자세에서 Arc 전환을 별도로 계산한다. Arc가 실패해도 토마토의
+독립 성공 결과는 유지하며 cached reverse 복구와 독립 trajectory를 조합한다.
+자세·각도·IK·경로 계획에 실패한 토마토는 실패 결과를 남기고 건너뛰며, 성공한
+토마토의 저장 trajectory만 순서대로 실행한다. 마지막 번호의 토마토가 실패하면
+마지막 성공 자세에서 저장된 성공 경로를 역재생하여 `PICK_READY`로 복귀한다.
+모든 토마토가 계획에 실패한 경우에만 실행할 경로가 없으므로 종료한다. 사전계획
+완료 후 실행 전 로봇 관절이 최초 계획 시작점에서 `3°` 이상 달라진 경우에도
+캐시를 실행하지 않고 중단한다. 실제 trajectory 실행
+실패는 안전상 전체 수확을 중단한다. 리프트 수확은 미래 리프트 높이의 planning
+scene을 별도로 구성해야 하므로 현재 사전계획 옵션과 함께 사용할 수 없다.
+
+수확 모션 영역의 `전체 연속 Plan` 버튼은 위 사전계획 절차만 수행하고 저장된
+trajectory를 실제 로봇에 실행하지 않는다. 현재 선택한 시작 자세, 토마토별 종료
+단계와 식물 바깥 Arc 옵션을 그대로 사용하며, 각 토마토의 성공·실패 결과와 실패
+단계는 검출 토마토 목록과 실행 로그에 표시한다. 리프트 수확은 미래 리프트 높이별
+planning scene을 한 번에 구성할 수 없으므로 이 버튼과 함께 사용할 수 없다.
+
+식물바깥 Arc 전체수확은 Arc 실패 시 사용할 정확한 역방향 trajectory 이력을
+보장하기 위해 리프트 수확이 아닐 때 사전계획 옵션을 자동 활성화한다. 복구가
+발생한 계획에는 `recovery_stage=CACHED_TRAJECTORY_REVERSE_TO_PICK_READY`가
+기록된다.
 
 `리프트 수확: 토마토보다 40cm 낮게`를 체크하면 수확 계획 전에 검출 토마토의
 `world` 기준 Z 높이를 조회하고 다음 식으로 Bottom 기준 목표 높이를 계산한다.
@@ -330,6 +454,13 @@ Pre-approach 이후의 접근과 수확 동작은 우선 TCP Cartesian 경로를
 각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
 `wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
 `wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
+같은 시작 자세 중심 constraint는 `GetCartesianPath.path_constraints`에도
+적용된다. Cartesian은 상대 jump threshold `2.0`, revolute 절대 jump threshold
+`20°`를 사용한다. MoveIt이 성공을 반환하더라도 실행 전에 모든 trajectory를
+다시 검사하여 base~wrist2의 관절 span이 `120°`, wrist3 span이 `180°`, 인접
+point의 관절 변화가 `45°`를 넘으면 경로를 폐기한다. Cartesian 경로가 이 검사에
+걸리면 기존 constrained OMPL fallback으로 전환하며, 캐시된 정방향·역방향
+trajectory도 실제 실행 직전에 동일한 검사를 다시 수행한다.
 Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `0.05 rad`
 (약 `2.86°`)이다. 이후 수확 목표까지는 Cartesian 경로가 정확한 pose로
 보정한다.
@@ -345,35 +476,73 @@ PICK_READY joint goal은 기존 `pick_ready_planning_time=10.0`,
 `pick_ready_planning_attempts=5`를 유지한다. `±120°` constraint는 관절의
 허용 범위를 제한하는 조건이며 최단 trajectory를 보장하는 품질 기준은 아니다.
 
-Pre-grasp 접근 방향은 토마토 TF의 `-X`를 기본으로 하되 로봇 베이스
-(`link0` 원점)를 향하도록 토마토 로컬 `+Y` 또는 `-Y` 중 가까운 쪽으로
-필요한 만큼 회전한다. signed 회전각은 local `+Y` 방향이 양수, local `-Y`
-방향이 음수이며 `-90°~+90°`로 제한한다. 기존 `-X` 방향과 로봇 방향의
-차이가 `10°` 이내이면 회전하지 않는다. 원본 토마토 TF는 변경하지 않고 tip
-target과 pre-grasp geometry만 회전한 뒤 기존과 동일하게 TCP pose로 환산한다.
+Pre-grasp 접근 방향은 토마토 TF의 `-X`를 최우선으로 사용한다. 먼저 0°
+pre-grasp의 IK를 충돌 검사와 PICK_READY 기준 `±120°` 관절 constraint를
+포함해 검사하고, 불가능할 때만 토마토 로컬 `+Y`/`-Y` 방향의 보정각을
+늘린다. 양쪽을 같은 절댓값 순서로 검사해 가능한 구간을 찾고 그 구간을 다시
+좁혀, 가능한 자세 중 보정각이 가장 작은 방향을 선택한다. 같은 보정각이면
+PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검사에서는 OMPL을
+호출하지 않으며, 선택된 최종 자세에 대해서만 기존 Cartesian/OMPL 계획을
+수행한다. signed 회전각은 local `+Y` 방향이 양수, local `-Y` 방향이 음수다.
+원본 토마토 TF는 변경하지 않고 tip target과 pre-grasp geometry만 회전한 뒤
+기존과 동일하게 TCP pose로 환산한다. `/compute_ik`를 사용할 수 없거나 유효한
+후보가 하나도 없을 때만 기존 로봇 방향 기반 보정값으로 fallback한다.
+
+수확 옵션의 `진입각: Recommend보다 로봇 방향 우선`을 체크하면 후보 탐색 순서를
+반대로 적용한다. `최대 보정각` 입력값 안에서 먼저 로봇 방향에 가장 가까운 각도를
+검사하고, 해당 IK가 불가능하면 Recommend 쪽으로 각도를 줄여가며 가장 로봇 쪽에
+가까운 유효 경계를 선택한다. 로봇 방향이 최대각보다 가까우면 필요한 각도까지만
+회전하며, 입력 범위는 `0~90°`, 기본값은 `45°`이다. 체크를 해제하면 기존처럼
+유효한 최소 보정각을 선택한다. 이 두 값은 개별 수확, 전체 연속 Plan·수확,
+스텝·접근 반복과 자동 테스트에 동일하게 적용된다.
+
+추천 0° pre-grasp가 토마토 중심을 지나면서 토마토→로봇 베이스 방향에
+수직인 deadline의 반대편에 있거나, 로봇 쪽이더라도 기본 15° 안전 영역을
+확보하지 못하면 deadline guard가 활성화된다. 이 경우 deadline과 만나는
+`ideal` 각도에 안전 여유각을 더한 값을 최소 보정각으로
+사용하고, 로봇 쪽으로 향하는 동일 부호의 최소각~최대각 범위만 검사한다.
+반대 방향과 ideal보다 추천 방향에 가까운 후보는 IK 가능 여부와 관계없이
+제외한다. 설정된 최대각으로도 deadline을 지킬 수 없으면
+`DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM`으로 즉시 실패한다.
 
 - `adaptive_grasp_enabled`: 적응형 접근각 사용 여부, 기본 `true`
-- `adaptive_grasp_max_rotation_deg`: 최대 회전각, 기본 `90.0`
-- `adaptive_grasp_deadband_deg`: 기존 방향 유지 범위, 기본 `10.0`
+- `adaptive_grasp_max_rotation_deg`: 추천 진입각 기준 최대 보정각, 기본 `45.0`
+- `adaptive_grasp_prefer_robot_direction`: `true`이면 최소 보정각 대신 허용 범위의
+  유효 후보 중 로봇 방향에 가장 가까운 각도를 선택, 기본 `false`
+- `adaptive_grasp_deadband_deg`: geometric fallback의 기존 방향 유지 범위, 기본 `10.0`
+- `adaptive_grasp_ik_timeout_sec`: 후보 하나의 IK 제한 시간, 기본 `0.05`
+- `adaptive_grasp_ik_service_wait_sec`: `/compute_ik` 연결 대기, 기본 `0.5`
+- `adaptive_grasp_search_step_deg`: 최초 가능 구간 탐색 간격, 기본 `10.0`
+- `adaptive_grasp_search_resolution_deg`: 최소각 경계 정밀도, 기본 `1.0`
+- `adaptive_grasp_deadline_margin_deg`: ideal에서 로봇 쪽으로 더하는 안전 여유각,
+  기본 `0.0`. 이에 따라 실제 3차원 `토마토→로봇 베이스` 방향을 중심으로
+  `±90°`, 전체 180° 진입 영역을 허용한다. deadline 평면 뒤쪽의 진입은 계속
+  금지하지만 deadline 안쪽의 추가 안전 여유각은 적용하지 않는다.
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
-회전 전후 로봇 방향 오차가 기록된다.
+회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.
 
-`검출 토마토 전체 연속 수확`은 현재 검출 목록을 0번부터 순서대로 처리한다.
-각 토마토마다 Plan-only를 먼저 수행하고 성공한 경우에만 실제 수확하며, 로봇은
-매 수확 후 `PICK_READY`로 복귀한다. 계획에 실패한 토마토는 실제로 움직이지
-않고 건너뛴 뒤 다음 토마토를 계속 처리한다. 실제 실행이 실패하거나 작업 도중
-새 검출 결과가 들어오면 남은 수확은 실행하지 않고 즉시 중단한다.
+`검출 토마토 전체 연속 수확`은 `토마토별 종료 단계` 선택과 관계없이 현재 검출된
+모든 토마토를 0번부터 순서대로 처리한다.
+각 토마토마다 Plan-only를 먼저 수행하고 성공한 경우에만 실제 수확한다. Arc가
+해제되어 있으면 매 토마토 후 `PICK_READY`로 복귀하고, Arc가 켜져 있으면 검출
+목록의 마지막 토마토에서만 복귀한다. 계획에 실패한 토마토는 실제로 움직이지 않고
+건너뛴 뒤 다음 토마토를 계속 처리한다. 실제 실행이 실패하거나 작업 도중 새
+검출 결과가 들어오면 남은 수확은 실행하지 않고 즉시 중단한다.
 
 RViz의 `HarvestPlanResults` 화살표는 성공·실패 여부와 관계없이 planner가
 실제로 사용한 토마토 로컬 pre-grasp 진입 벡터를 표시한다. 보정이 없으면
 토마토 로컬 +X축이다. local `+Y` 쪽으로 pre-grasp 위치가 보정되면 화살표는
 `+X→-Y`, local `-Y` 쪽으로 보정되면 `+X→+Y` 방향으로 회전한다.
 pre-grasp 위치 벡터와 화살표가 나타내는 토마토 방향 진입 벡터는 서로
-반대이기 때문이다. 길이는 검출된 중심→줄기점
-거리를 지면에 투영한 뒤 8 mm를
-줄인 값을 사용한다. Plan-only 회전 없는 성공은 초록색, 적응 접근각이 적용된
-성공은 하늘색, 실패는 빨간색이다.
+반대이기 때문이다. 성공 화살표 길이는 검출된 중심→줄기점 거리를 지면에 투영한
+뒤 8 mm를 줄인 값을 사용한다. 실패 화살표는 보정 후 최종
+`preapproach_position → target_position`에서 방향을 직접 계산하고, 함께 표시되는
+주황색 실제 접근 화살표와 동일한 길이를 사용한다. 최종 접근 geometry가 생성되기
+전에 실패하면 하늘색 검출 화살표와 같은 60 mm 길이를 사용한다. 빨간색 화살표만
+꼬리를 토마토 뒤쪽에 두고 화살표 촉이 토마토 중심을 바라보도록 배치한다.
+Plan-only 회전 없는 성공은 초록색, 적응 접근각이 적용된 성공은 하늘색, 실패는
+빨간색이다.
 결과가 바뀔 때만 Transient Local 마커를
 발행하므로 깜빡이지 않고 유지된다. 새 검출 결과가 들어와도 기존 결과 마커는
 유지되며, GUI의 `결과 마커 지우기` 버튼을 눌렀을 때 전체 마커를 삭제한다.
@@ -460,17 +629,12 @@ ros2 run rbpodo_tomato_harvest harvest_report \
 - 핑크색 구체: 지름 `0.0175 m`의 토마토 중심
 - 초록색 구체: 지름 `0.006 m`의 줄기 좌표
 - 하늘색 화살표: 줄기 반대편에서 토마토 중심으로 들어오는 `0.06 m` 진입 방향
-- 주황색 화살표: 현재 로봇 베이스 방향과 최대 `90°` 적응형 보정을 적용한
-  preapproach 위치에서 Cartesian 접근 목표까지의 예상 실제 접근 구간
 
-검출 TF 생성 완료 신호를 받은 뒤 모든 `detected_tomato_*_tf` 중심이 이번 검출
-중심과 `3 mm` 이내이고 X축 방향도 `2°` 이내로 일치하는지 확인한 후 주황색
-화살표를 추가한다. 이전 검출의 TF가 남아 있거나 TF 생성기와 GUI의 정렬 버전이
-다르면 최대 8초간 갱신을
-기다리며, 끝내 일치하지 않으면 잘못된 접근 방향을 표시하지 않고 실행 로그에
-동기화 경고를 남긴다.
-Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에도 같은
-색상의 화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
+카메라 검출 단계에서는 아직 Planner가 확정하지 않은 접근 자세를 예측하지
+않으므로 주황색 접근 화살표를 발행하지 않는다. 하늘색 화살표는 검출된
+`center→stem_point` 축을 반대로 연장한 비전 기준 진입 방향이다.
+Plan을 실행해 정확한 접근 좌표가 계산되면 `/harvest_result_markers`에 주황색
+화살표를 발행한다. Plan 결과 화살표의 시작점은 Planner가 계산한
 preapproach 위치이다. 실제 접근 방향을 유지한 상태로 토마토 중심에 가장 가까운
 지점까지 시각적으로 연장하여 핑크색 중심 마커와 떨어져 보이지 않게 한다. 이
 연장은 마커 표시에만 적용되며 실제 trajectory의 목표 위치는 변경하지 않는다.
@@ -603,10 +767,10 @@ initial Cartesian approach, the complete sequence uses the local axes of
 
 1. Move +70 mm along tip X.
 2. Move +40 mm along tip Z.
-3. Move -30 mm along tip X.
+3. Move -50 mm along tip X.
 4. Move +10 mm along tip Z.
 5. Hold for the configured `harvest_wait_sec` duration (GUI default: 2 seconds).
-6. Move -30 mm along tip X.
+6. Move -10 mm along tip X.
 7. Return directly to all PICK_READY joint targets with PILZ PTP.
 
 The dwell separates the Cartesian motion into pre-wait and post-wait

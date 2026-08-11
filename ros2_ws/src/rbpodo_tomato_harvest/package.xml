@@ -16,6 +16,8 @@
   <exec_depend>farmily_uv_lift</exec_depend>
   <exec_depend>moveit_msgs</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-pil</exec_depend>
+  <exec_depend>python3-pil.imagetk</exec_depend>
   <exec_depend>python3-tk</exec_depend>
   <exec_depend>rcl_interfaces</exec_depend>
   <exec_depend>rclpy</exec_depend>

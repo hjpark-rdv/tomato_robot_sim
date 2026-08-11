@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import rclpy
 from ament_index_python.packages import get_package_share_directory
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, PoseStamped
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
     BoundingVolume,
@@ -21,7 +21,7 @@ from moveit_msgs.msg import (
     PositionConstraint,
     RobotState,
 )
-from moveit_msgs.srv import GetCartesianPath
+from moveit_msgs.srv import GetCartesianPath, GetPositionIK
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -84,6 +84,12 @@ def default_pick_ready_joint_positions(
     )
 
 
+def revolute_position_error(position: float, target: float) -> float:
+    """Return shortest absolute angular error for equivalent joint turns."""
+    difference = float(position) - float(target)
+    return abs(math.atan2(math.sin(difference), math.cos(difference)))
+
+
 @dataclass(frozen=True)
 class HarvestGeometry:
     """Poses and axes used for one tomato Cartesian approach."""
@@ -114,6 +120,26 @@ class AdaptiveApproachDirection:
 
 
 @dataclass(frozen=True)
+class ApproachRotationEvaluation:
+    """Fast IK feasibility result for one tomato-local approach angle."""
+
+    rotation_deg: float
+    feasible: bool
+    joint_distance: float = math.inf
+    moveit_error_code: int = MoveItErrorCodes.FAILURE
+    rejection_reason: str = ""
+
+
+@dataclass(frozen=True)
+class DeadlineRotationGuard:
+    """Minimum signed correction that keeps pre-grasp on the robot side."""
+
+    active: bool
+    minimum_rotation_deg: float
+    nominal_robot_side_dot: float
+
+
+@dataclass(frozen=True)
 class HarvestMotionPlan:
     """Trajectories for the complete PICK_READY-to-harvest sequence."""
 
@@ -123,9 +149,13 @@ class HarvestMotionPlan:
     after_wait_trajectory: object
     return_pick_ready_trajectory: object
     display_start_state: RobotState
+    arc_reverse_recovery_trajectory: object = ()
     outward_retreat_trajectory: object = ()
     end_planning_pose: Pose | None = None
     step_approach_trajectories: tuple = ()
+    return_pick_ready_is_cached_reverse: bool = False
+    preapproach_planning_pose: Pose | None = None
+    outward_axis: tuple = ()
 
 
 def make_centered_joint_path_constraints(
@@ -213,6 +243,97 @@ def format_joint_trajectory_ranges(
             f"{item['sample_count']:>6}"
         )
     return "\n".join(lines)
+
+
+def joint_span_violations(trajectories, maximum_span_deg: float) -> list[dict]:
+    """Return joints whose cached path exceeds the allowed angular span."""
+    limit = max(0.0, float(maximum_span_deg))
+    ranges = summarize_joint_trajectory_ranges(trajectories)
+    return [
+        item
+        for item in ranges
+        if float(item["span_deg"]) > limit + 1e-9
+    ]
+
+
+def trajectory_joint_safety_violations(
+    trajectories,
+    start_positions: dict[str, float],
+    limited_joint_names,
+    maximum_span_deg: float,
+    wrist3_maximum_span_deg: float,
+    maximum_step_deg: float,
+) -> list[dict]:
+    """Reject long-turn joint branches and discontinuities before execution."""
+    sequence = (
+        tuple(trajectories)
+        if isinstance(trajectories, (list, tuple))
+        else (() if not trajectories else (trajectories,))
+    )
+    limited_names = [str(name) for name in limited_joint_names]
+    safety_names = list(dict.fromkeys([*limited_names, "wrist3"]))
+    samples = {
+        name: [float(start_positions[name])]
+        for name in safety_names
+        if name in start_positions
+    }
+    maximum_steps = {name: 0.0 for name in safety_names}
+    previous = {
+        str(name): float(position)
+        for name, position in start_positions.items()
+    }
+
+    for robot_trajectory in sequence:
+        joint_trajectory = robot_trajectory.joint_trajectory
+        names = [str(name) for name in joint_trajectory.joint_names]
+        for point in joint_trajectory.points:
+            for name, position in zip(names, point.positions):
+                if name not in safety_names:
+                    continue
+                value = float(position)
+                if name in previous:
+                    maximum_steps[name] = max(
+                        maximum_steps[name],
+                        abs(value - previous[name]),
+                    )
+                samples.setdefault(name, []).append(value)
+                previous[name] = value
+
+    violations = []
+    for name in safety_names:
+        values = samples.get(name, [])
+        if not values:
+            violations.append(
+                {
+                    "joint_name": name,
+                    "reason": "START_POSITION_MISSING",
+                }
+            )
+            continue
+        span_deg = math.degrees(max(values) - min(values))
+        max_step_deg = math.degrees(maximum_steps.get(name, 0.0))
+        span_limit = (
+            float(wrist3_maximum_span_deg)
+            if name == "wrist3"
+            else float(maximum_span_deg)
+        )
+        reasons = []
+        if span_deg > span_limit + 1e-9:
+            reasons.append("SPAN_LIMIT_EXCEEDED")
+        if max_step_deg > float(maximum_step_deg) + 1e-9:
+            reasons.append("POINT_JUMP_LIMIT_EXCEEDED")
+        if reasons:
+            violations.append(
+                {
+                    "joint_name": name,
+                    "reason": "+".join(reasons),
+                    "span_deg": float(span_deg),
+                    "maximum_span_deg": float(span_limit),
+                    "max_step_deg": float(max_step_deg),
+                    "maximum_step_deg": float(maximum_step_deg),
+                }
+            )
+    return violations
 
 
 def _unit(vector: np.ndarray, label: str) -> np.ndarray:
@@ -424,9 +545,9 @@ def make_tip_local_harvest_motion(
     start_pose: Pose,
     x_forward: float = 0.070,
     first_z_lift: float = 0.040,
-    first_x_back: float = 0.030,
+    first_x_back: float = 0.050,
     second_z_lift: float = 0.010,
-    second_x_back: float = 0.030,
+    second_x_back: float = 0.010,
 ) -> TipLocalHarvestMotion:
     """Build the post-contact sequence along tomato_gripper_tip X/Z axes."""
     rotation = rotation_from_pose(start_pose)
@@ -470,6 +591,307 @@ def stemward_and_outward_from_tomato_rotation(
     horizontal_stemward = np.array([tomato_x[0], tomato_x[1], 0.0])
     stemward = _unit(horizontal_stemward, "detected tomato stem direction")
     return stemward, -stemward
+
+
+def outward_from_tomato_rotation(
+    tomato_rotation,
+    rotation_deg: float,
+) -> np.ndarray:
+    """Rotate tomato-local -X toward local +Y by a signed angle."""
+    rotation = np.asarray(tomato_rotation, dtype=float)
+    if rotation.shape != (3, 3):
+        raise ValueError("tomato_rotation must be a 3x3 matrix")
+    angle = math.radians(float(rotation_deg))
+    local_outward = np.array(
+        [-math.cos(angle), math.sin(angle), 0.0],
+        dtype=float,
+    )
+    world_outward = rotation @ local_outward
+    world_outward[2] = 0.0
+    return _unit(world_outward, "rotated tomato approach direction")
+
+
+def deadline_safe_rotation_guard(
+    tomato_rotation,
+    tomato_position,
+    robot_position,
+    margin_deg: float = 0.0,
+) -> DeadlineRotationGuard:
+    """Return the ideal boundary angle when nominal pre-grasp is too deep."""
+    rotation = np.asarray(tomato_rotation, dtype=float)
+    tomato = np.asarray(tomato_position, dtype=float)
+    robot = np.asarray(robot_position, dtype=float)
+    if rotation.shape != (3, 3):
+        raise ValueError("tomato_rotation must be a 3x3 matrix")
+    if tomato.shape != (3,) or robot.shape != (3,):
+        raise ValueError("tomato_position and robot_position must be 3D")
+
+    nominal_outward = outward_from_tomato_rotation(rotation, 0.0)
+    robotward_vector = robot - tomato
+    if float(np.linalg.norm(robotward_vector)) < 1e-9:
+        return DeadlineRotationGuard(False, 0.0, 1.0)
+    robotward = _unit(robotward_vector, "tomato-to-robot direction")
+    robot_side_dot = float(np.dot(nominal_outward, robotward))
+    current_error_deg = math.degrees(
+        math.acos(max(-1.0, min(1.0, robot_side_dot)))
+    )
+    safety_margin_deg = min(90.0, max(0.0, float(margin_deg)))
+    maximum_safe_error_deg = 90.0 - safety_margin_deg
+    if current_error_deg <= maximum_safe_error_deg + 1e-9:
+        return DeadlineRotationGuard(False, 0.0, robot_side_dot)
+
+    preferred = adaptive_outward_toward_robot(
+        tomato_rotation=rotation,
+        tomato_position=tomato,
+        robot_position=robot,
+        max_rotation_deg=90.0,
+        deadband_deg=0.0,
+    )
+    direction_sign = (
+        1.0 if preferred.applied_rotation_deg >= 0.0 else -1.0
+    )
+    # The candidate approach remains level, but the base can be substantially
+    # below the tomato. Convert the 3D cone limit into the corresponding,
+    # narrower XY angular limit before calculating the required correction.
+    horizontal_robotward = np.array(
+        [robotward[0], robotward[1], 0.0],
+        dtype=float,
+    )
+    horizontal_scale = float(np.linalg.norm(horizontal_robotward))
+    required_dot = math.cos(math.radians(maximum_safe_error_deg))
+    if horizontal_scale <= 1e-9 or horizontal_scale < required_dot - 1e-9:
+        boundary_magnitude = 90.0
+    else:
+        horizontal_robotward = _unit(
+            horizontal_robotward,
+            "horizontal tomato-to-robot direction",
+        )
+        horizontal_error_deg = math.degrees(
+            math.acos(
+                max(
+                    -1.0,
+                    min(
+                        1.0,
+                        float(np.dot(nominal_outward, horizontal_robotward)),
+                    ),
+                )
+            )
+        )
+        maximum_horizontal_error_deg = math.degrees(
+            math.acos(
+                max(-1.0, min(1.0, required_dot / horizontal_scale))
+            )
+        )
+        boundary_magnitude = max(
+            0.0,
+            horizontal_error_deg - maximum_horizontal_error_deg,
+        )
+    return DeadlineRotationGuard(
+        True,
+        direction_sign * min(90.0, boundary_magnitude),
+        robot_side_dot,
+    )
+
+
+def robot_side_approach_error_deg(
+    outward_axis,
+    tomato_position,
+    robot_position,
+) -> float:
+    """Return the 3D angle between an approach and tomato-to-robot."""
+    outward = np.asarray(outward_axis, dtype=float)
+    tomato = np.asarray(tomato_position, dtype=float)
+    robot = np.asarray(robot_position, dtype=float)
+    if outward.shape != (3,):
+        raise ValueError("outward_axis must be 3D")
+    if tomato.shape != (3,) or robot.shape != (3,):
+        raise ValueError("tomato_position and robot_position must be 3D")
+
+    robotward_vector = robot - tomato
+    if float(np.linalg.norm(robotward_vector)) < 1e-9:
+        return 0.0
+    outward_direction = _unit(outward, "approach direction")
+    robotward = _unit(robotward_vector, "tomato-to-robot direction")
+    return math.degrees(
+        math.acos(
+            max(-1.0, min(1.0, float(np.dot(outward_direction, robotward))))
+        )
+    )
+
+
+def is_within_robot_side_approach_sector(
+    outward_axis,
+    tomato_position,
+    robot_position,
+    margin_deg: float = 0.0,
+) -> bool:
+    """Whether an approach is inside the robot-facing 180-2*margin sector."""
+    safety_margin_deg = min(90.0, max(0.0, float(margin_deg)))
+    maximum_error_deg = 90.0 - safety_margin_deg
+    return (
+        robot_side_approach_error_deg(
+            outward_axis,
+            tomato_position,
+            robot_position,
+        )
+        <= maximum_error_deg + 1e-9
+    )
+
+
+def select_minimum_feasible_rotation(
+    evaluator,
+    max_rotation_deg: float = 90.0,
+    coarse_step_deg: float = 10.0,
+    resolution_deg: float = 1.0,
+    preferred_sign: float = 1.0,
+    minimum_abs_rotation_deg: float = 0.0,
+    allow_opposite_sign: bool = True,
+) -> tuple[ApproachRotationEvaluation | None, tuple[ApproachRotationEvaluation, ...]]:
+    """
+    Find the smallest feasible |angle| using fast endpoint IK checks.
+
+    OMPL is deliberately not involved.  Angles are checked in increasing
+    absolute order on both sides, then the first feasible interval is refined
+    by binary search.  Joint distance only breaks ties between equally small
+    rotations.
+    """
+    maximum = max(0.0, min(90.0, float(max_rotation_deg)))
+    coarse_step = max(0.1, float(coarse_step_deg))
+    resolution = max(0.1, float(resolution_deg))
+    first_sign = 1.0 if float(preferred_sign) >= 0.0 else -1.0
+    minimum = max(0.0, min(maximum, float(minimum_abs_rotation_deg)))
+    evaluations: list[ApproachRotationEvaluation] = []
+    cache: dict[float, ApproachRotationEvaluation] = {}
+
+    def evaluate(angle: float) -> ApproachRotationEvaluation:
+        normalized = round(float(angle), 6)
+        if normalized not in cache:
+            result = evaluator(normalized)
+            if not isinstance(result, ApproachRotationEvaluation):
+                raise TypeError(
+                    "rotation evaluator must return ApproachRotationEvaluation"
+                )
+            cache[normalized] = result
+            evaluations.append(result)
+        return cache[normalized]
+
+    if minimum <= 1e-9:
+        zero = evaluate(0.0)
+        if zero.feasible or maximum <= 0.0:
+            return (zero if zero.feasible else None), tuple(evaluations)
+    elif maximum <= 0.0:
+        return None, tuple(evaluations)
+
+    previous_magnitude = minimum
+    magnitude = minimum
+    while magnitude <= maximum + 1e-9:
+        endpoints = [evaluate(first_sign * magnitude)]
+        if allow_opposite_sign:
+            endpoints.append(evaluate(-first_sign * magnitude))
+        feasible_endpoints = [item for item in endpoints if item.feasible]
+        if feasible_endpoints:
+            refined: list[ApproachRotationEvaluation] = []
+            for endpoint in feasible_endpoints:
+                sign = 1.0 if endpoint.rotation_deg >= 0.0 else -1.0
+                lower = previous_magnitude
+                upper = magnitude
+                best = endpoint
+                while upper - lower > resolution:
+                    middle = 0.5 * (lower + upper)
+                    candidate = evaluate(sign * middle)
+                    if candidate.feasible:
+                        upper = middle
+                        best = candidate
+                    else:
+                        lower = middle
+                refined.append(best)
+            selected = min(
+                refined,
+                key=lambda item: (
+                    abs(item.rotation_deg),
+                    item.joint_distance,
+                    0 if item.rotation_deg * first_sign >= 0.0 else 1,
+                ),
+            )
+            return selected, tuple(evaluations)
+
+        if math.isclose(magnitude, maximum, abs_tol=1e-9):
+            break
+        previous_magnitude = magnitude
+        magnitude = min(
+            maximum,
+            magnitude + coarse_step,
+        )
+
+    return None, tuple(evaluations)
+
+
+def select_robotward_feasible_rotation(
+    evaluator,
+    desired_rotation_deg: float,
+    max_rotation_deg: float = 90.0,
+    coarse_step_deg: float = 10.0,
+    resolution_deg: float = 1.0,
+    minimum_abs_rotation_deg: float = 0.0,
+) -> tuple[ApproachRotationEvaluation | None, tuple[ApproachRotationEvaluation, ...]]:
+    """Find the feasible angle closest to the requested robotward angle.
+
+    Candidates move from the robotward target back toward the recommend angle.
+    Once a feasible coarse endpoint is found, the boundary toward the robot is
+    refined so the returned angle remains as robot-facing as possible.
+    """
+    maximum = max(0.0, min(90.0, float(max_rotation_deg)))
+    coarse_step = max(0.1, float(coarse_step_deg))
+    resolution = max(0.1, float(resolution_deg))
+    desired = max(
+        -maximum,
+        min(maximum, float(desired_rotation_deg)),
+    )
+    sign = 1.0 if desired >= 0.0 else -1.0
+    minimum = max(
+        0.0,
+        min(maximum, float(minimum_abs_rotation_deg)),
+    )
+    target = max(minimum, abs(desired))
+    evaluations: list[ApproachRotationEvaluation] = []
+    cache: dict[float, ApproachRotationEvaluation] = {}
+
+    def evaluate(angle: float) -> ApproachRotationEvaluation:
+        normalized = round(float(angle), 6)
+        if normalized not in cache:
+            result = evaluator(normalized)
+            if not isinstance(result, ApproachRotationEvaluation):
+                raise TypeError(
+                    "rotation evaluator must return ApproachRotationEvaluation"
+                )
+            cache[normalized] = result
+            evaluations.append(result)
+        return cache[normalized]
+
+    magnitude = target
+    previous_infeasible = None
+    while magnitude >= minimum - 1e-9:
+        candidate = evaluate(sign * magnitude)
+        if candidate.feasible:
+            best = candidate
+            if previous_infeasible is not None:
+                lower = magnitude
+                upper = previous_infeasible
+                while upper - lower > resolution:
+                    middle = 0.5 * (lower + upper)
+                    refined = evaluate(sign * middle)
+                    if refined.feasible:
+                        lower = middle
+                        best = refined
+                    else:
+                        upper = middle
+            return best, tuple(evaluations)
+        if math.isclose(magnitude, minimum, abs_tol=1e-9):
+            break
+        previous_infeasible = magnitude
+        magnitude = max(minimum, magnitude - coarse_step)
+
+    return None, tuple(evaluations)
 
 
 def adaptive_outward_toward_robot(
@@ -530,18 +952,10 @@ def adaptive_outward_toward_robot(
             ),
         )
 
-    applied_angle = toward_y_sign * math.radians(applied_rotation_deg)
-    cosine = math.cos(applied_angle)
-    sine = math.sin(applied_angle)
-    selected_outward = np.array(
-        [
-            cosine * current_outward[0] - sine * current_outward[1],
-            sine * current_outward[0] + cosine * current_outward[1],
-            0.0,
-        ],
-        dtype=float,
+    selected_outward = outward_from_tomato_rotation(
+        rotation,
+        applied_rotation_deg,
     )
-    selected_outward = _unit(selected_outward, "adaptive approach direction")
     selected_error_deg = abs(
         math.degrees(signed_angle(selected_outward, robotward))
     )
@@ -682,6 +1096,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("continuous_arc_min_clearance", 0.12)
         self.declare_parameter("continuous_arc_max_clearance", 0.25)
         self.declare_parameter("continuous_arc_waypoint_count", 7)
+        self.declare_parameter("continuous_arc_max_joint_span_deg", 120.0)
         self.declare_parameter("return_to_pick_ready", True)
         self.declare_parameter("retreat_after_harvest", False)
         self.declare_parameter("lift_retreat_clearance", 0.12)
@@ -695,19 +1110,38 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
         self.declare_parameter("adaptive_grasp_enabled", True)
-        self.declare_parameter("adaptive_grasp_max_rotation_deg", 90.0)
+        self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
+        self.declare_parameter(
+            "adaptive_grasp_prefer_robot_direction", False
+        )
         self.declare_parameter("adaptive_grasp_deadband_deg", 10.0)
+        self.declare_parameter("adaptive_grasp_ik_timeout_sec", 0.05)
+        self.declare_parameter("adaptive_grasp_ik_service_wait_sec", 0.5)
+        self.declare_parameter("adaptive_grasp_search_step_deg", 10.0)
+        self.declare_parameter("adaptive_grasp_search_resolution_deg", 1.0)
+        self.declare_parameter("adaptive_grasp_deadline_margin_deg", 0.0)
         self.declare_parameter("tip_standoff", 0.025)
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.070)
         self.declare_parameter("harvest_first_z_lift", 0.040)
-        self.declare_parameter("harvest_first_x_back", 0.030)
+        self.declare_parameter("harvest_first_x_back", 0.050)
         self.declare_parameter("harvest_second_z_lift", 0.010)
         self.declare_parameter("harvest_wait_sec", 2.0)
-        self.declare_parameter("harvest_second_x_back", 0.030)
+        self.declare_parameter("harvest_second_x_back", 0.010)
         self.declare_parameter("max_step", 0.005)
-        self.declare_parameter("jump_threshold", 0.0)
+        self.declare_parameter("jump_threshold", 2.0)
+        self.declare_parameter(
+            "cartesian_revolute_jump_threshold_deg", 20.0
+        )
+        self.declare_parameter(
+            "cartesian_prismatic_jump_threshold_m", 0.02
+        )
+        self.declare_parameter("trajectory_safety_max_span_deg", 120.0)
+        self.declare_parameter(
+            "trajectory_safety_wrist3_max_span_deg", 180.0
+        )
+        self.declare_parameter("trajectory_safety_max_step_deg", 45.0)
         self.declare_parameter("minimum_fraction", 0.98)
         self.declare_parameter("avoid_collisions", True)
         self.declare_parameter("service_timeout_sec", 30.0)
@@ -715,6 +1149,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("publish_display_trajectory", True)
         self.declare_parameter("stepwise_plan", False)
         self.declare_parameter("step_cycle_only", False)
+        self.declare_parameter("step_cycle_last_stage", 5)
         self.declare_parameter("execute", False)
 
         self.base_frame = str(self.get_parameter("base_frame").value)
@@ -730,6 +1165,7 @@ class CartesianHarvestPlanner(Node):
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
         )
+        self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
         self.execute_client = ActionClient(
             self, ExecuteTrajectory, "/execute_trajectory"
@@ -1122,6 +1558,19 @@ class CartesianHarvestPlanner(Node):
     ) -> bool:
         if pipeline.strip().lower() != "ompl":
             return True
+        return self._apply_centered_joint_path_constraints(
+            request,
+            start_state,
+            "OMPL",
+        )
+
+    def _apply_centered_joint_path_constraints(
+        self,
+        request,
+        start_state: RobotState | None,
+        context: str,
+    ) -> bool:
+        """Apply the configured start-centered limits to any planner request."""
         joint_names = [
             str(name)
             for name in self.get_parameter("ompl_limited_joint_names").value
@@ -1142,7 +1591,7 @@ class CartesianHarvestPlanner(Node):
         ]
         if missing_names:
             self.get_logger().error(
-                "OMPL 시작 자세 중심 constraint를 만들 수 없습니다. "
+                f"{context} 시작 자세 중심 constraint를 만들 수 없습니다. "
                 f"관절 상태 누락: {', '.join(missing_names)}"
             )
             return False
@@ -1162,10 +1611,69 @@ class CartesianHarvestPlanner(Node):
             for name, position in constrained_positions.items()
         )
         self.get_logger().info(
-            f"OMPL 시작 자세 중심 constraint ±{tolerance_deg:.1f}°: "
+            f"{context} 시작 자세 중심 constraint ±{tolerance_deg:.1f}°: "
             f"{centers}; wrist3=제외"
         )
         return True
+
+    @staticmethod
+    def _state_positions(state: RobotState | None) -> dict[str, float]:
+        if state is None:
+            return {}
+        return {
+            str(name): float(position)
+            for name, position in zip(
+                state.joint_state.name,
+                state.joint_state.position,
+            )
+        }
+
+    def _trajectory_safety_violations(
+        self,
+        trajectories,
+        start_state: RobotState | None = None,
+        start_positions: dict[str, float] | None = None,
+    ) -> list[dict]:
+        positions = dict(start_positions or {})
+        if not positions:
+            positions = self._state_positions(start_state)
+        if not positions:
+            positions = dict(self._plan_start_joint_positions)
+        return trajectory_joint_safety_violations(
+            trajectories,
+            positions,
+            self.get_parameter("ompl_limited_joint_names").value,
+            float(
+                self.get_parameter("trajectory_safety_max_span_deg").value
+            ),
+            float(
+                self.get_parameter(
+                    "trajectory_safety_wrist3_max_span_deg"
+                ).value
+            ),
+            float(
+                self.get_parameter("trajectory_safety_max_step_deg").value
+            ),
+        )
+
+    def _log_trajectory_safety_failure(
+        self,
+        label: str,
+        violations: list[dict],
+    ) -> None:
+        details = ", ".join(
+            (
+                f"{item['joint_name']} span="
+                f"{item.get('span_deg', float('nan')):.1f}°/"
+                f"{item.get('maximum_span_deg', float('nan')):.1f}°, "
+                f"step={item.get('max_step_deg', float('nan')):.1f}°/"
+                f"{item.get('maximum_step_deg', float('nan')):.1f}°"
+            )
+            for item in violations
+        )
+        self.get_logger().error(
+            f"{label} 궤적 폐기: 관절 안전 한도 위반 ({details})"
+        )
 
     def _plan_pick_ready(
         self,
@@ -1213,6 +1721,49 @@ class CartesianHarvestPlanner(Node):
             start_state=start_state,
             label=label,
         )
+
+    def plan_and_execute_named_state(self) -> bool:
+        """Move from the live robot state to the selected SRDF group state."""
+        self._begin_plan_report()
+        state_name = str(self.get_parameter("pick_ready_state_name").value)
+        planned = self._plan_pick_ready(label="PICK_READY")
+        if planned is None:
+            self._finish_plan_report(False)
+            return False
+
+        trajectory, display_start_state = planned
+        if bool(self.get_parameter("publish_display_trajectory").value):
+            display = DisplayTrajectory()
+            display.model_id = self.robot_model_id
+            display.trajectory_start = self._complete_display_start_state(
+                display_start_state
+            )
+            display.trajectory.append(trajectory)
+            self.display_publisher.publish(display)
+
+        execution_started = time.monotonic()
+        success = self._execute_trajectory_group(
+            trajectory,
+            f"SRDF named pose {state_name}",
+        )
+        execution_duration = time.monotonic() - execution_started
+        self.last_plan_report["execution_requested"] = True
+        self.last_plan_report["execution_attempted"] = True
+        self.last_plan_report["execution_success"] = bool(success)
+        self.last_plan_report["execution_duration_sec"] = round(
+            execution_duration,
+            6,
+        )
+        if not success:
+            self._record_plan_stage(
+                "EXECUTION_NAMED_POSE",
+                "execution",
+                False,
+                execution_duration,
+                "TRAJECTORY_EXECUTION_FAILED",
+            )
+        self._finish_plan_report(success)
+        return success
 
     def _plan_joint_target(
         self,
@@ -1348,9 +1899,18 @@ class CartesianHarvestPlanner(Node):
         result = wrapped_result.result
         trajectory = result.planned_trajectory
         point_count = len(trajectory.joint_trajectory.points)
-        success = (
+        moveit_success = (
             result.error_code.val == MoveItErrorCodes.SUCCESS and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                trajectory,
+                start_state=result.trajectory_start,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         self._record_trajectory_range_input(
             stage,
             trajectory,
@@ -1360,21 +1920,29 @@ class CartesianHarvestPlanner(Node):
                 or stage.endswith("_PREAPPROACH")
             ),
         )
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
         self.get_logger().info(
             f"{label} plan success={success} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
         if not success:
             self._record_failure_robot_state(stage, trajectory)
+            reason = (
+                "JOINT_SAFETY_LIMIT_EXCEEDED"
+                if safety_violations
+                else "MOVEIT_PLANNING_FAILED"
+            )
             self._record_plan_stage(
                 stage,
                 pipeline,
                 False,
                 time.monotonic() - stage_started,
-                "MOVEIT_PLANNING_FAILED",
+                reason,
                 moveit_error_code=int(result.error_code.val),
                 point_count=point_count,
                 planning_time_sec=float(result.planning_time),
+                trajectory_safety_violations=safety_violations,
             )
             return None
         self._record_plan_stage(
@@ -1576,10 +2144,19 @@ class CartesianHarvestPlanner(Node):
         result = wrapped_result.result
         trajectory = result.planned_trajectory
         point_count = len(trajectory.joint_trajectory.points)
-        success = (
+        moveit_success = (
             result.error_code.val == MoveItErrorCodes.SUCCESS
             and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                trajectory,
+                start_state=start_state,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         if report_trajectory:
             self._record_trajectory_range_input(
                 stage,
@@ -1592,7 +2169,17 @@ class CartesianHarvestPlanner(Node):
             f"planner={selected_planner_id} error_code={result.error_code.val} "
             f"points={point_count} planning_time={result.planning_time:.3f}s"
         )
-        reason = "" if success else "MOVEIT_PLANNING_FAILED"
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
+        reason = (
+            ""
+            if success
+            else (
+                "JOINT_SAFETY_LIMIT_EXCEEDED"
+                if safety_violations
+                else "MOVEIT_PLANNING_FAILED"
+            )
+        )
         if not success:
             self._record_failure_robot_state(stage, trajectory)
         self._record_plan_stage(
@@ -1605,6 +2192,7 @@ class CartesianHarvestPlanner(Node):
             point_count=point_count,
             planning_time_sec=float(result.planning_time),
             planner_id=selected_planner_id,
+            trajectory_safety_violations=safety_violations,
         )
         return trajectory if success else None
 
@@ -1660,7 +2248,39 @@ class CartesianHarvestPlanner(Node):
         request.jump_threshold = max(
             0.0, float(self.get_parameter("jump_threshold").value)
         )
+        request.revolute_jump_threshold = math.radians(
+            max(
+                0.0,
+                float(
+                    self.get_parameter(
+                        "cartesian_revolute_jump_threshold_deg"
+                    ).value
+                ),
+            )
+        )
+        request.prismatic_jump_threshold = max(
+            0.0,
+            float(
+                self.get_parameter(
+                    "cartesian_prismatic_jump_threshold_m"
+                ).value
+            ),
+        )
         request.avoid_collisions = bool(self.get_parameter("avoid_collisions").value)
+        if not self._apply_centered_joint_path_constraints(
+            request,
+            start_state,
+            "Cartesian",
+        ):
+            self._record_plan_stage(
+                stage,
+                "cartesian",
+                False,
+                time.monotonic() - stage_started,
+                "CARTESIAN_CONSTRAINT_START_STATE_MISSING",
+                terminal_failure=terminal_failure,
+            )
+            return None
 
         future = self.cartesian_client.call_async(request)
         rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
@@ -1679,11 +2299,20 @@ class CartesianHarvestPlanner(Node):
 
         point_count = len(response.solution.joint_trajectory.points)
         minimum_fraction = float(self.get_parameter("minimum_fraction").value)
-        success = (
+        moveit_success = (
             response.error_code.val == MoveItErrorCodes.SUCCESS
             and response.fraction >= minimum_fraction
             and point_count > 0
         )
+        safety_violations = (
+            self._trajectory_safety_violations(
+                response.solution,
+                start_state=start_state,
+            )
+            if moveit_success
+            else []
+        )
+        success = moveit_success and not safety_violations
         self._record_trajectory_range_input(
             stage,
             response.solution,
@@ -1701,9 +2330,13 @@ class CartesianHarvestPlanner(Node):
             f"fraction={response.fraction:.3f}/{minimum_fraction:.3f} "
             f"points={point_count} error_code={response.error_code.val}"
         )
+        if safety_violations:
+            self._log_trajectory_safety_failure(label, safety_violations)
         reason = ""
         if not success:
-            if response.fraction < minimum_fraction:
+            if safety_violations:
+                reason = "JOINT_SAFETY_LIMIT_EXCEEDED"
+            elif response.fraction < minimum_fraction:
                 reason = "CARTESIAN_FRACTION_LOW"
             elif response.error_code.val != MoveItErrorCodes.SUCCESS:
                 reason = "MOVEIT_CARTESIAN_FAILED"
@@ -1722,6 +2355,7 @@ class CartesianHarvestPlanner(Node):
             cartesian_fraction=float(response.fraction),
             required_fraction=minimum_fraction,
             point_count=point_count,
+            trajectory_safety_violations=safety_violations,
             fallback_planner=(
                 "ompl" if not success and not terminal_failure else ""
             ),
@@ -1734,6 +2368,7 @@ class CartesianHarvestPlanner(Node):
         start_state: RobotState,
         label: str,
         pregrasp: bool,
+        maximum_joint_span_deg: float | None = None,
     ):
         """Use Cartesian first, then constrained OMPL for each failed waypoint."""
         waypoint_list = list(waypoints)
@@ -1744,7 +2379,42 @@ class CartesianHarvestPlanner(Node):
             terminal_failure=False,
         )
         if cartesian is not None:
-            return (cartesian,)
+            violations = (
+                joint_span_violations(
+                    [cartesian],
+                    maximum_joint_span_deg,
+                )
+                if maximum_joint_span_deg is not None
+                else []
+            )
+            if not violations:
+                return (cartesian,)
+            if self._trajectory_range_records:
+                self._trajectory_range_records[-1]["accepted"] = False
+            violation_text = ", ".join(
+                f"{item['joint_name']}={item['span_deg']:.1f}°"
+                for item in violations
+            )
+            self._record_plan_stage(
+                "CONTINUOUS_ARC_JOINT_SPAN",
+                "trajectory_validation",
+                False,
+                0.0,
+                "JOINT_SPAN_LIMIT_EXCEEDED",
+                maximum_joint_span_deg=float(maximum_joint_span_deg),
+                violations=[
+                    {
+                        "joint_name": item["joint_name"],
+                        "span_deg": float(item["span_deg"]),
+                    }
+                    for item in violations
+                ],
+            )
+            self.get_logger().error(
+                f"{label} 결과 폐기: 관절 span 안전 한도 "
+                f"{float(maximum_joint_span_deg):.1f}° 초과 "
+                f"({violation_text})"
+            )
         recorded_stages = self.last_plan_report.get("stages", [])
         cartesian_failure = (
             dict(recorded_stages[-1]) if recorded_stages else {}
@@ -1797,8 +2467,7 @@ class CartesianHarvestPlanner(Node):
             trajectories.append(trajectory)
             waypoint_start = self._trajectory_end_state(trajectory)
 
-        self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
-            {
+        fallback_record = {
                 "segment": fallback_stage,
                 "cartesian_stage": cartesian_failure.get("stage", ""),
                 "cartesian_reason": cartesian_failure.get("reason", ""),
@@ -1816,11 +2485,53 @@ class CartesianHarvestPlanner(Node):
                 ],
                 "success": True,
             }
+        self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
+            fallback_record
         )
         self.get_logger().info(
             f"{label} OMPL fallback 성공: "
             f"{len(trajectories)}개 waypoint"
         )
+        violations = (
+            joint_span_violations(
+                trajectories,
+                maximum_joint_span_deg,
+            )
+            if maximum_joint_span_deg is not None
+            else []
+        )
+        if violations:
+            fallback_record.update(
+                {
+                    "success": False,
+                    "reason": "JOINT_SPAN_LIMIT_EXCEEDED",
+                }
+            )
+            violation_text = ", ".join(
+                f"{item['joint_name']}={item['span_deg']:.1f}°"
+                for item in violations
+            )
+            self._record_plan_stage(
+                "CONTINUOUS_ARC_OMPL_JOINT_SPAN",
+                "trajectory_validation",
+                False,
+                0.0,
+                "JOINT_SPAN_LIMIT_EXCEEDED",
+                maximum_joint_span_deg=float(maximum_joint_span_deg),
+                violations=[
+                    {
+                        "joint_name": item["joint_name"],
+                        "span_deg": float(item["span_deg"]),
+                    }
+                    for item in violations
+                ],
+            )
+            self.get_logger().error(
+                f"{label} OMPL fallback 결과 폐기: 관절 span 안전 한도 "
+                f"{float(maximum_joint_span_deg):.1f}° 초과 "
+                f"({violation_text})"
+            )
+            return None
         return tuple(trajectories)
 
     def _plan_preapproach(
@@ -1880,6 +2591,410 @@ class CartesianHarvestPlanner(Node):
             raise ValueError("PICK_READY must contain exactly six joint values")
         return state
 
+    def _evaluate_preapproach_ik(
+        self,
+        pose: Pose,
+        seed_state: RobotState,
+        constraints: Constraints,
+        rotation_deg: float,
+    ) -> ApproachRotationEvaluation:
+        timeout_sec = max(
+            0.01,
+            float(self.get_parameter("adaptive_grasp_ik_timeout_sec").value),
+        )
+        request = GetPositionIK.Request()
+        request.ik_request.group_name = self.group_name
+        request.ik_request.robot_state = copy.deepcopy(seed_state)
+        request.ik_request.constraints = copy.deepcopy(constraints)
+        request.ik_request.avoid_collisions = bool(
+            self.get_parameter("avoid_collisions").value
+        )
+        request.ik_request.ik_link_name = self.planning_link
+        stamped_pose = PoseStamped()
+        stamped_pose.header.frame_id = self.base_frame
+        stamped_pose.header.stamp = self.get_clock().now().to_msg()
+        stamped_pose.pose = copy.deepcopy(pose)
+        request.ik_request.pose_stamped = stamped_pose
+        request.ik_request.timeout = Duration(seconds=timeout_sec).to_msg()
+
+        future = self.ik_client.call_async(request)
+        rclpy.spin_until_future_complete(
+            self,
+            future,
+            timeout_sec=timeout_sec + 0.10,
+        )
+        response = future.result() if future.done() else None
+        if response is None:
+            if not future.done():
+                future.cancel()
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=MoveItErrorCodes.TIMED_OUT,
+            )
+
+        error_code = int(response.error_code.val)
+        if error_code != MoveItErrorCodes.SUCCESS:
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=error_code,
+            )
+
+        seed_positions = {
+            str(name): float(position)
+            for name, position in zip(
+                seed_state.joint_state.name,
+                seed_state.joint_state.position,
+            )
+        }
+        solution_positions = {
+            str(name): float(position)
+            for name, position in zip(
+                response.solution.joint_state.name,
+                response.solution.joint_state.position,
+            )
+        }
+        shared_names = [
+            name for name in seed_positions if name in solution_positions
+        ]
+        if not shared_names:
+            return ApproachRotationEvaluation(
+                rotation_deg=float(rotation_deg),
+                feasible=False,
+                moveit_error_code=MoveItErrorCodes.INVALID_ROBOT_STATE,
+            )
+        squared_distance = 0.0
+        for name in shared_names:
+            difference = math.atan2(
+                math.sin(solution_positions[name] - seed_positions[name]),
+                math.cos(solution_positions[name] - seed_positions[name]),
+            )
+            squared_distance += difference * difference
+        return ApproachRotationEvaluation(
+            rotation_deg=float(rotation_deg),
+            feasible=True,
+            joint_distance=math.sqrt(squared_distance),
+            moveit_error_code=error_code,
+        )
+
+    def _select_minimum_ik_approach(
+        self,
+        tomato_position: np.ndarray,
+        tomato_rotation: np.ndarray,
+        stemward: np.ndarray,
+        gripper_to_tip_rotation: np.ndarray,
+        planning_to_tip_translation: np.ndarray,
+        planning_to_tip_rotation: np.ndarray,
+    ) -> tuple[AdaptiveApproachDirection | None, dict]:
+        maximum = float(
+            self.get_parameter("adaptive_grasp_max_rotation_deg").value
+        )
+        prefer_robot_direction = bool(
+            self.get_parameter(
+                "adaptive_grasp_prefer_robot_direction"
+            ).value
+        )
+        deadband = float(
+            self.get_parameter("adaptive_grasp_deadband_deg").value
+        )
+        geometric_preference = adaptive_outward_toward_robot(
+            tomato_rotation=tomato_rotation,
+            tomato_position=tomato_position,
+            robot_position=[0.0, 0.0, 0.0],
+            max_rotation_deg=maximum,
+            deadband_deg=deadband,
+        )
+        deadline_guard = deadline_safe_rotation_guard(
+            tomato_rotation=tomato_rotation,
+            tomato_position=tomato_position,
+            robot_position=[0.0, 0.0, 0.0],
+            margin_deg=float(
+                self.get_parameter(
+                    "adaptive_grasp_deadline_margin_deg"
+                ).value
+            ),
+        )
+        deadline_margin_deg = float(
+            self.get_parameter("adaptive_grasp_deadline_margin_deg").value
+        )
+        allowed_sector_deg = 180.0 - 2.0 * min(
+            90.0,
+            max(0.0, deadline_margin_deg),
+        )
+        sector_rejection_reason = (
+            f"PREGRASP_OUTSIDE_{allowed_sector_deg:g}_DEG_SECTOR"
+        )
+        report = {
+            "selection_mode": (
+                "robot_direction_priority"
+                if prefer_robot_direction
+                else "minimum_ik_angle"
+            ),
+            "prefer_robot_direction": prefer_robot_direction,
+            "geometric_preferred_rotation_deg": float(
+                geometric_preference.applied_rotation_deg
+            ),
+            "fallback_used": False,
+            "deadline_guard_active": bool(deadline_guard.active),
+            "deadline_minimum_rotation_deg": float(
+                deadline_guard.minimum_rotation_deg
+            ),
+            "deadline_nominal_robot_side_dot": float(
+                deadline_guard.nominal_robot_side_dot
+            ),
+            "allowed_robot_side_sector_deg": float(allowed_sector_deg),
+        }
+        if (
+            deadline_guard.active
+            and abs(deadline_guard.minimum_rotation_deg) > maximum + 1e-9
+        ):
+            report.update(
+                {
+                    "selection_mode": "deadline_rejected",
+                    "fallback_used": False,
+                    "fallback_reason": "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return None, report
+
+        def direction_for_rotation(
+            rotation_deg: float,
+        ) -> AdaptiveApproachDirection:
+            outward = outward_from_tomato_rotation(
+                tomato_rotation,
+                rotation_deg,
+            )
+            selected_error = robot_side_approach_error_deg(
+                outward,
+                tomato_position,
+                [0.0, 0.0, 0.0],
+            )
+            nominal_error = robot_side_approach_error_deg(
+                outward_from_tomato_rotation(tomato_rotation, 0.0),
+                tomato_position,
+                [0.0, 0.0, 0.0],
+            )
+            return AdaptiveApproachDirection(
+                outward_axis=outward,
+                applied_rotation_deg=float(rotation_deg),
+                current_robot_error_deg=float(nominal_error),
+                selected_robot_error_deg=float(selected_error),
+            )
+
+        fallback_rotation = float(
+            geometric_preference.applied_rotation_deg
+        )
+        if deadline_guard.active and (
+            fallback_rotation * deadline_guard.minimum_rotation_deg <= 0.0
+            or abs(fallback_rotation)
+            < abs(deadline_guard.minimum_rotation_deg)
+        ):
+            fallback_rotation = float(
+                deadline_guard.minimum_rotation_deg
+            )
+        safe_geometric_fallback = direction_for_rotation(fallback_rotation)
+        if not is_within_robot_side_approach_sector(
+            safe_geometric_fallback.outward_axis,
+            tomato_position,
+            [0.0, 0.0, 0.0],
+            margin_deg=deadline_margin_deg,
+        ):
+            report.update(
+                {
+                    "selection_mode": "deadline_rejected",
+                    "fallback_used": False,
+                    "fallback_reason": sector_rejection_reason,
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return None, report
+
+        wait_sec = max(
+            0.0,
+            float(
+                self.get_parameter("adaptive_grasp_ik_service_wait_sec").value
+            ),
+        )
+        if not self.ik_client.wait_for_service(timeout_sec=wait_sec):
+            report.update(
+                {
+                    "selection_mode": "geometric_fallback",
+                    "fallback_used": True,
+                    "fallback_reason": "COMPUTE_IK_SERVICE_UNAVAILABLE",
+                    "ik_evaluation_count": 0,
+                }
+            )
+            return safe_geometric_fallback, report
+
+        ready_state = self._pick_ready_robot_state()
+        ready_positions = dict(
+            zip(
+                ready_state.joint_state.name,
+                ready_state.joint_state.position,
+            )
+        )
+        limited_names = [
+            str(name)
+            for name in self.get_parameter("ompl_limited_joint_names").value
+        ]
+        tolerance = math.radians(
+            float(self.get_parameter("ompl_joint_tolerance_deg").value)
+        )
+        constraints = make_centered_joint_path_constraints(
+            {
+                name: float(ready_positions[name])
+                for name in limited_names
+                if name in ready_positions
+            },
+            tolerance,
+        )
+        virtual_vine_origin = tomato_position + stemward
+
+        def evaluate(rotation_deg: float) -> ApproachRotationEvaluation:
+            outward = outward_from_tomato_rotation(
+                tomato_rotation,
+                rotation_deg,
+            )
+            # This is a hard candidate-domain restriction, not a post-plan
+            # warning.  Out-of-sector poses never reach IK or OMPL.
+            if not is_within_robot_side_approach_sector(
+                outward,
+                tomato_position,
+                [0.0, 0.0, 0.0],
+                margin_deg=deadline_margin_deg,
+            ):
+                return ApproachRotationEvaluation(
+                    rotation_deg=float(rotation_deg),
+                    feasible=False,
+                    moveit_error_code=(
+                        MoveItErrorCodes.GOAL_VIOLATES_PATH_CONSTRAINTS
+                    ),
+                    rejection_reason=sector_rejection_reason,
+                )
+            geometry = make_harvest_geometry(
+                tomato_position=tomato_position,
+                vine_origin=virtual_vine_origin,
+                vine_axis=[0.0, 0.0, 1.0],
+                tip_standoff=float(self.get_parameter("tip_standoff").value),
+                tip_below_center=float(
+                    self.get_parameter("tip_below_center").value
+                ),
+                preapproach_clearance=float(
+                    self.get_parameter("preapproach_clearance").value
+                ),
+                outward_hint=outward,
+                tip_rotation_from_gripper=gripper_to_tip_rotation,
+            )
+            planning_pose = planning_pose_from_tip_pose(
+                geometry.preapproach_pose,
+                planning_to_tip_translation,
+                planning_to_tip_rotation,
+            )
+            return self._evaluate_preapproach_ik(
+                planning_pose,
+                ready_state,
+                constraints,
+                rotation_deg,
+            )
+
+        preferred_rotation = float(
+            geometric_preference.applied_rotation_deg
+        )
+        if math.isclose(preferred_rotation, 0.0, abs_tol=1e-9):
+            no_deadband_preference = adaptive_outward_toward_robot(
+                tomato_rotation=tomato_rotation,
+                tomato_position=tomato_position,
+                robot_position=[0.0, 0.0, 0.0],
+                max_rotation_deg=maximum,
+                deadband_deg=0.0,
+            )
+            preferred_rotation = float(
+                no_deadband_preference.applied_rotation_deg
+            )
+        search_step = float(
+            self.get_parameter("adaptive_grasp_search_step_deg").value
+        )
+        search_resolution = float(
+            self.get_parameter(
+                "adaptive_grasp_search_resolution_deg"
+            ).value
+        )
+        minimum_rotation = (
+            abs(deadline_guard.minimum_rotation_deg)
+            if deadline_guard.active
+            else 0.0
+        )
+        if prefer_robot_direction:
+            desired_rotation = preferred_rotation
+            if deadline_guard.active:
+                deadline_sign = (
+                    1.0
+                    if deadline_guard.minimum_rotation_deg >= 0.0
+                    else -1.0
+                )
+                if desired_rotation * deadline_sign <= 0.0:
+                    desired_rotation = deadline_sign * maximum
+                elif abs(desired_rotation) < minimum_rotation:
+                    desired_rotation = deadline_sign * minimum_rotation
+            selected, evaluations = select_robotward_feasible_rotation(
+                evaluate,
+                desired_rotation_deg=desired_rotation,
+                max_rotation_deg=maximum,
+                coarse_step_deg=search_step,
+                resolution_deg=search_resolution,
+                minimum_abs_rotation_deg=minimum_rotation,
+            )
+        else:
+            selected, evaluations = select_minimum_feasible_rotation(
+                evaluate,
+                max_rotation_deg=maximum,
+                coarse_step_deg=search_step,
+                resolution_deg=search_resolution,
+                preferred_sign=(
+                    deadline_guard.minimum_rotation_deg
+                    if deadline_guard.active
+                    else preferred_rotation
+                ),
+                minimum_abs_rotation_deg=minimum_rotation,
+                allow_opposite_sign=not deadline_guard.active,
+            )
+        report["ik_evaluation_count"] = len(evaluations)
+        report["ik_evaluations"] = [
+            {
+                "rotation_deg": float(item.rotation_deg),
+                "feasible": bool(item.feasible),
+                "joint_distance_rad": (
+                    float(item.joint_distance)
+                    if math.isfinite(item.joint_distance)
+                    else None
+                ),
+                "moveit_error_code": int(item.moveit_error_code),
+                "rejection_reason": str(item.rejection_reason),
+            }
+            for item in evaluations
+        ]
+        if selected is None:
+            report.update(
+                {
+                    "selection_mode": "geometric_fallback",
+                    "fallback_used": True,
+                    "fallback_reason": "NO_CONSTRAINT_VALID_IK_CANDIDATE",
+                }
+            )
+            return safe_geometric_fallback, report
+
+        report.update(
+            {
+                "selected_rotation_deg": float(selected.rotation_deg),
+                "selected_joint_distance_rad": float(
+                    selected.joint_distance
+                ),
+            }
+        )
+        return direction_for_rotation(selected.rotation_deg), report
+
     def _state_matches_pick_ready(self, state: RobotState | None) -> bool:
         if state is None:
             return False
@@ -1897,7 +3012,7 @@ class CartesianHarvestPlanner(Node):
         )
         return all(
             name in positions
-            and abs(positions[name] - float(target)) <= tolerance
+            and revolute_position_error(positions[name], target) <= tolerance
             for name, target in zip(
                 ready.joint_state.name,
                 ready.joint_state.position,
@@ -1910,8 +3025,9 @@ class CartesianHarvestPlanner(Node):
         outward_axis,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
-        """Plan current -> outward arc -> pre-grasp, with PICK_READY fallback."""
+        """Plan an outward arc, unwinding the cached path if it fails."""
         stage_start = len(self.last_plan_report.get("stages", []))
         fallback_start = len(
             self.last_plan_report.get("cartesian_fallbacks", [])
@@ -1965,9 +3081,19 @@ class CartesianHarvestPlanner(Node):
                 current_state,
                 "Continuous arc pre-approach",
                 pregrasp=True,
+                maximum_joint_span_deg=float(
+                    self.get_parameter(
+                        "continuous_arc_max_joint_span_deg"
+                    ).value
+                ),
             )
             self.last_plan_report["continuous_arc"] = {
                 "waypoint_count": len(arc_waypoints),
+                "maximum_joint_span_deg": float(
+                    self.get_parameter(
+                        "continuous_arc_max_joint_span_deg"
+                    ).value
+                ),
                 "minimum_clearance_m": float(
                     self.get_parameter("continuous_arc_min_clearance").value
                 ),
@@ -1997,7 +3123,7 @@ class CartesianHarvestPlanner(Node):
                 "연속 수확 arc 전환 성공: 현재 post-wait 자세에서 식물 "
                 "바깥쪽 반원 경로를 거쳐 다음 pre-grasp로 이동"
             )
-            return (), arc_plan, display_start_state
+            return (), (), arc_plan, display_start_state
 
         arc_stages = self.last_plan_report.get("stages", [])[stage_start:]
         for stage in arc_stages:
@@ -2028,15 +3154,40 @@ class CartesianHarvestPlanner(Node):
         ):
             self.last_plan_report.pop(key, None)
 
-        self.get_logger().warning(
-            "연속 수확 arc 전환 실패: 현재 자세에서 PICK_READY로 복귀한 "
-            "뒤 기존 pre-grasp 경로를 사용하는 fallback을 계획합니다."
-        )
-        pick_ready_plan = self._plan_pick_ready(start_state_override)
-        if pick_ready_plan is None:
+        reverse_trajectories = tuple(arc_failure_reverse_trajectory or ())
+        if not reverse_trajectories:
+            self.get_logger().error(
+                "연속 수확 arc 전환 실패: 안전하게 역재생할 이전 궤적이 "
+                "없으므로 신규 OMPL PICK_READY 우회 경로를 만들지 않습니다."
+            )
+            self.last_plan_report.update(
+                {
+                    "continuous_transition_direct": False,
+                    "continuous_transition_arc": False,
+                    "failure_stage": "CONTINUOUS_ARC_PREAPPROACH",
+                    "failure_planner_type": arc_failure.get(
+                        "planner_type", "cartesian/ompl"
+                    ),
+                    "failure_reason": "ARC_FAILED_WITHOUT_REVERSE_HISTORY",
+                    "recovery_used": False,
+                    "recovery_success": False,
+                }
+            )
             return None
-        pick_ready_trajectory, display_start_state = pick_ready_plan
-        pick_ready_end = self._trajectory_end_state(pick_ready_trajectory)
+
+        self.get_logger().warning(
+            "연속 수확 arc 전환 실패: 지금까지 실행한 연속 수확 궤적을 "
+            "역순으로 따라 PICK_READY까지 안전 복귀한 뒤 다음 "
+            "pre-grasp를 계획합니다."
+        )
+        for index, trajectory in enumerate(reverse_trajectories, start=1):
+            self._record_trajectory_range_input(
+                f"ARC_REVERSE_RECOVERY_{index}",
+                trajectory,
+                True,
+                True,
+            )
+        pick_ready_end = self._trajectory_end_state(reverse_trajectories)
         fallback_preapproach = self._plan_preapproach(
             preapproach_pose,
             pick_ready_end,
@@ -2056,22 +3207,112 @@ class CartesianHarvestPlanner(Node):
                 ),
                 "recovery_used": True,
                 "recovery_success": True,
-                "recovery_stage": "OMPL_PICK_READY_FALLBACK",
+                "recovery_stage": "CACHED_TRAJECTORY_REVERSE_TO_PICK_READY",
                 "recovery_reason": (
-                    "arc pre-grasp 전환 실패 후 PICK_READY 경유 성공"
+                    "arc 실패 후 기존 성공 궤적을 역재생하여 "
+                    "PICK_READY 복귀 성공"
+                ),
+                "continuous_reverse_recovery": True,
+                "reverse_recovery_trajectory_count": len(
+                    reverse_trajectories
                 ),
             }
         )
+        if start_state_override is None:
+            display_start_state = RobotState()
+            display_start_state.is_diff = True
+        else:
+            display_start_state = copy.deepcopy(start_state_override)
         return (
-            pick_ready_trajectory,
+            reverse_trajectories,
+            (),
             fallback_preapproach,
             display_start_state,
         )
+
+    def plan_continuous_transition_only(
+        self,
+        start_state: RobotState,
+        start_pose: Pose,
+        target_preapproach_pose: Pose,
+        outward_axis,
+    ):
+        """Plan only the inter-tomato arc to a cached pre-grasp pose.
+
+        The next tomato's READY-to-harvest motion is planned independently by
+        the batch worker.  A failure here therefore rejects only the arc; the
+        worker can still reverse its cached path to READY and reuse the
+        already validated next-tomato trajectory.
+        """
+        self._begin_plan_report(start_state)
+        if not self._synchronize_dynamic_base_transform():
+            self._record_plan_stage(
+                "DYNAMIC_BASE_TF_SYNC",
+                "tf",
+                False,
+                0.0,
+                "FRESH_LIFT_TF_NOT_RECEIVED",
+            )
+            self._finish_plan_report(False)
+            return None
+
+        waypoints = make_continuous_arc_waypoints(
+            start_pose,
+            target_preapproach_pose,
+            outward_axis,
+            minimum_clearance=float(
+                self.get_parameter("continuous_arc_min_clearance").value
+            ),
+            maximum_clearance=float(
+                self.get_parameter("continuous_arc_max_clearance").value
+            ),
+            waypoint_count=int(
+                self.get_parameter("continuous_arc_waypoint_count").value
+            ),
+        )
+        transition = self._plan_cartesian_with_ompl_fallback(
+            waypoints,
+            copy.deepcopy(start_state),
+            "Continuous arc pre-approach",
+            pregrasp=True,
+            maximum_joint_span_deg=float(
+                self.get_parameter(
+                    "continuous_arc_max_joint_span_deg"
+                ).value
+            ),
+        )
+        self.last_plan_report["continuous_arc"] = {
+            "waypoint_count": len(waypoints),
+            "maximum_joint_span_deg": float(
+                self.get_parameter(
+                    "continuous_arc_max_joint_span_deg"
+                ).value
+            ),
+            "minimum_clearance_m": float(
+                self.get_parameter("continuous_arc_min_clearance").value
+            ),
+            "maximum_clearance_m": float(
+                self.get_parameter("continuous_arc_max_clearance").value
+            ),
+            "outward_axis": [float(value) for value in outward_axis],
+        }
+        success = transition is not None
+        self.last_plan_report["continuous_transition_direct"] = success
+        self.last_plan_report["continuous_transition_arc"] = success
+        self._finish_plan_report(success)
+        if not success:
+            self.get_logger().warning(
+                "토마토 간 Arc 전환 계획 실패: 다음 토마토의 독립 계획은 "
+                "유지하고 cached reverse 복구를 사용합니다."
+            )
+            return None
+        return tuple(transition)
 
     def plan(
         self,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
         self._begin_plan_report(start_state_override)
         if not self._synchronize_dynamic_base_transform():
@@ -2088,6 +3329,9 @@ class CartesianHarvestPlanner(Node):
             result = self._plan_impl(
                 start_state_override=start_state_override,
                 start_pose_override=start_pose_override,
+                arc_failure_reverse_trajectory=(
+                    arc_failure_reverse_trajectory
+                ),
             )
         except Exception as error:
             self._record_plan_stage(
@@ -2106,6 +3350,7 @@ class CartesianHarvestPlanner(Node):
         self,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
+        arc_failure_reverse_trajectory=(),
     ):
         tomato_tf = self._lookup_transform(self.tomato_frame)
         if tomato_tf is None:
@@ -2123,30 +3368,6 @@ class CartesianHarvestPlanner(Node):
             stemward, outward_hint = stemward_and_outward_from_tomato_rotation(
                 tomato_rotation
             )
-            if bool(self.get_parameter("adaptive_grasp_enabled").value):
-                approach_direction = adaptive_outward_toward_robot(
-                    tomato_rotation=tomato_rotation,
-                    tomato_position=tomato_position,
-                    robot_position=[0.0, 0.0, 0.0],
-                    max_rotation_deg=float(
-                        self.get_parameter(
-                            "adaptive_grasp_max_rotation_deg"
-                        ).value
-                    ),
-                    deadband_deg=float(
-                        self.get_parameter(
-                            "adaptive_grasp_deadband_deg"
-                        ).value
-                    ),
-                )
-                outward_hint = approach_direction.outward_axis
-            else:
-                approach_direction = AdaptiveApproachDirection(
-                    outward_hint,
-                    0.0,
-                    0.0,
-                    0.0,
-                )
         except ValueError as error:
             self.get_logger().error(str(error))
             self._record_plan_stage(
@@ -2157,39 +3378,6 @@ class CartesianHarvestPlanner(Node):
                 "INVALID_TOMATO_ORIENTATION",
             )
             return None
-        self.last_plan_report["adaptive_grasp"] = {
-            "enabled": bool(
-                self.get_parameter("adaptive_grasp_enabled").value
-            ),
-            "applied_rotation_deg": float(
-                approach_direction.applied_rotation_deg
-            ),
-            "current_robot_error_deg": float(
-                approach_direction.current_robot_error_deg
-            ),
-            "selected_robot_error_deg": float(
-                approach_direction.selected_robot_error_deg
-            ),
-            "outward_axis": [
-                float(value) for value in approach_direction.outward_axis
-            ],
-            "approach_axis_tomato_local": [
-                float(value)
-                for value in (
-                    tomato_rotation.T
-                    @ (-approach_direction.outward_axis)
-                )
-            ],
-        }
-        self.get_logger().info(
-            "Adaptive grasp approach: "
-            f"enabled={self.last_plan_report['adaptive_grasp']['enabled']} "
-            f"local_y_signed_rotation="
-            f"{approach_direction.applied_rotation_deg:+.1f}° "
-            f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
-            f"->{approach_direction.selected_robot_error_deg:.1f}° "
-            f"outward={approach_direction.outward_axis.round(4).tolist()}"
-        )
 
         tip_tf = self._lookup_transform(self.tip_link)
         gripper_to_tip_tf = self._lookup_transform(
@@ -2212,6 +3400,95 @@ class CartesianHarvestPlanner(Node):
             )
             return None
 
+        adaptive_enabled = bool(
+            self.get_parameter("adaptive_grasp_enabled").value
+        )
+        selection_report = {
+            "selection_mode": "disabled",
+            "fallback_used": False,
+            "ik_evaluation_count": 0,
+        }
+        if adaptive_enabled:
+            approach_direction, selection_report = (
+                self._select_minimum_ik_approach(
+                    tomato_position=tomato_position,
+                    tomato_rotation=tomato_rotation,
+                    stemward=stemward,
+                    gripper_to_tip_rotation=self._rotation_matrix(
+                        gripper_to_tip_tf
+                    ),
+                    planning_to_tip_translation=self._translation(
+                        planning_to_tip_tf
+                    ),
+                    planning_to_tip_rotation=self._rotation_matrix(
+                        planning_to_tip_tf
+                    ),
+                )
+            )
+            if approach_direction is None:
+                self.last_plan_report["adaptive_grasp"] = {
+                    "enabled": True,
+                    **selection_report,
+                }
+                self.get_logger().error(
+                    "접근각 선택 실패: deadline을 지키기 위한 최소 보정각이 "
+                    "설정된 최대 보정각을 초과합니다."
+                )
+                self._record_plan_stage(
+                    "TARGET_GEOMETRY",
+                    "geometry",
+                    False,
+                    0.0,
+                    "DEADLINE_REQUIRES_ANGLE_OVER_MAXIMUM",
+                )
+                return None
+            outward_hint = approach_direction.outward_axis
+        else:
+            approach_direction = AdaptiveApproachDirection(
+                outward_hint,
+                0.0,
+                0.0,
+                0.0,
+            )
+
+        self.last_plan_report["adaptive_grasp"] = {
+            "enabled": adaptive_enabled,
+            "applied_rotation_deg": float(
+                approach_direction.applied_rotation_deg
+            ),
+            "current_robot_error_deg": float(
+                approach_direction.current_robot_error_deg
+            ),
+            "selected_robot_error_deg": float(
+                approach_direction.selected_robot_error_deg
+            ),
+            "outward_axis": [
+                float(value) for value in approach_direction.outward_axis
+            ],
+            "approach_axis_tomato_local": [
+                float(value)
+                for value in (
+                    tomato_rotation.T
+                    @ (-approach_direction.outward_axis)
+                )
+            ],
+            **selection_report,
+        }
+        fallback_text = (
+            f", fallback={selection_report.get('fallback_reason')}"
+            if selection_report.get("fallback_used")
+            else ""
+        )
+        self.get_logger().info(
+            "접근각 선택: "
+            f"mode={selection_report.get('selection_mode')} "
+            f"rotation={approach_direction.applied_rotation_deg:+.1f}° "
+            f"IK검사={selection_report.get('ik_evaluation_count', 0)}회 "
+            f"robot_error={approach_direction.current_robot_error_deg:.1f}°"
+            f"->{approach_direction.selected_robot_error_deg:.1f}°"
+            f"{fallback_text}"
+        )
+
         virtual_vine_origin = tomato_position + stemward
         current_tip_position = self._translation(tip_tf)
         geometry = make_harvest_geometry(
@@ -2225,6 +3502,29 @@ class CartesianHarvestPlanner(Node):
             ),
             outward_hint=outward_hint,
             tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
+        )
+        recommend_rotation_deg = float(
+            selection_report.get("geometric_preferred_rotation_deg", 0.0)
+        )
+        recommend_outward = outward_from_tomato_rotation(
+            tomato_rotation,
+            recommend_rotation_deg,
+        )
+        recommend_geometry = make_harvest_geometry(
+            tomato_position=tomato_position,
+            vine_origin=virtual_vine_origin,
+            vine_axis=[0.0, 0.0, 1.0],
+            tip_standoff=float(self.get_parameter("tip_standoff").value),
+            tip_below_center=float(
+                self.get_parameter("tip_below_center").value
+            ),
+            preapproach_clearance=float(
+                self.get_parameter("preapproach_clearance").value
+            ),
+            outward_hint=recommend_outward,
+            tip_rotation_from_gripper=self._rotation_matrix(
+                gripper_to_tip_tf
+            ),
         )
 
         preapproach_world = np.array(
@@ -2245,6 +3545,24 @@ class CartesianHarvestPlanner(Node):
         )
         self.last_plan_report["approach_geometry"] = {
             "frame_id": self.tomato_frame,
+            "planning_frame_id": self.base_frame,
+            "pregrasp_reference_link": self.tip_link,
+            "tomato_xyz": [
+                float(value) for value in geometry.tomato_position
+            ],
+            "vine_xyz": [
+                float(value) for value in geometry.vine_point
+            ],
+            "recommend_pregrasp_xyz": [
+                float(recommend_geometry.preapproach_pose.position.x),
+                float(recommend_geometry.preapproach_pose.position.y),
+                float(recommend_geometry.preapproach_pose.position.z),
+            ],
+            "final_pregrasp_xyz": [
+                float(geometry.preapproach_pose.position.x),
+                float(geometry.preapproach_pose.position.y),
+                float(geometry.preapproach_pose.position.z),
+            ],
             "preapproach_position": [
                 float(value)
                 for value in (
@@ -2319,19 +3637,40 @@ class CartesianHarvestPlanner(Node):
             )
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
+        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
+        step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
+        cycle_last_stage = int(
+            self.get_parameter("step_cycle_last_stage").value
+        )
+        if step_cycle_only and not 1 <= cycle_last_stage <= 5:
+            self._record_plan_stage(
+                "STEP_CYCLE_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "INVALID_STEP_CYCLE_LAST_STAGE",
+                requested_stage=cycle_last_stage,
+            )
+            return None
         continuous_transition = bool(
             self.get_parameter("continuous_transition").value
         )
+        pick_ready_end = None
+        arc_reverse_recovery_trajectory = ()
         if continuous_transition:
             continuous_plan = self._plan_continuous_preapproach(
                 preapproach_planning_pose,
                 geometry.outward_axis,
                 start_state_override=start_state_override,
                 start_pose_override=start_pose_override,
+                arc_failure_reverse_trajectory=(
+                    arc_failure_reverse_trajectory
+                ),
             )
             if continuous_plan is None:
                 return None
             (
+                arc_reverse_recovery_trajectory,
                 pick_ready_trajectory,
                 preapproach_trajectory,
                 display_start_state,
@@ -2358,21 +3697,36 @@ class CartesianHarvestPlanner(Node):
                 pick_ready_end = self._trajectory_end_state(
                     pick_ready_trajectory
                 )
-            preapproach_trajectory = self._plan_preapproach(
-                preapproach_planning_pose,
-                pick_ready_end,
+            if step_cycle_only and cycle_last_stage == 1:
+                preapproach_trajectory = ()
+            else:
+                preapproach_trajectory = self._plan_preapproach(
+                    preapproach_planning_pose,
+                    pick_ready_end,
+                )
+                if preapproach_trajectory is None:
+                    return None
+        if preapproach_trajectory:
+            preapproach_end = self._trajectory_end_state(
+                preapproach_trajectory
             )
-            if preapproach_trajectory is None:
-                return None
-        preapproach_end = self._trajectory_end_state(preapproach_trajectory)
+        elif pick_ready_end is not None:
+            preapproach_end = copy.deepcopy(pick_ready_end)
+        else:
+            self._record_plan_stage(
+                "STEP_CYCLE_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "STEP_CYCLE_END_STATE_MISSING",
+            )
+            return None
 
         approach_waypoints = (
             as_planning_pose(geometry.target_pose),
             *(as_planning_pose(pose) for pose in tip_motion.before_wait_waypoints),
         )
         step_approach_trajectories = ()
-        stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
-        step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
         if stepwise_plan:
             step_labels = (
                 "Step preapproach to target",
@@ -2384,7 +3738,9 @@ class CartesianHarvestPlanner(Node):
             step_groups = []
             flattened_approach = []
             step_start = preapproach_end
-            cycle_waypoint_count = 3 if step_cycle_only else 5
+            cycle_waypoint_count = (
+                max(0, cycle_last_stage - 2) if step_cycle_only else 5
+            )
             for waypoint, label in zip(
                 approach_waypoints[:cycle_waypoint_count],
                 step_labels[:cycle_waypoint_count],
@@ -2415,15 +3771,36 @@ class CartesianHarvestPlanner(Node):
             if approach_trajectory is None:
                 return None
 
-        approach_end = self._trajectory_end_state(approach_trajectory)
+        approach_end = (
+            self._trajectory_end_state(approach_trajectory)
+            if approach_trajectory
+            else copy.deepcopy(preapproach_end)
+        )
         after_wait_trajectory = ()
         after_wait_end = approach_end
         outward_retreat_trajectory = ()
         return_pick_ready_trajectory = ()
         if step_cycle_only:
             retreat_after_harvest = False
-            return_to_pick_ready = False
-            final_planning_pose = copy.deepcopy(approach_waypoints[2])
+            return_to_pick_ready = bool(
+                self.get_parameter("return_to_pick_ready").value
+            )
+            if cycle_last_stage <= 2:
+                final_planning_pose = copy.deepcopy(
+                    preapproach_planning_pose
+                )
+            else:
+                final_planning_pose = copy.deepcopy(
+                    approach_waypoints[cycle_last_stage - 3]
+                )
+            if return_to_pick_ready:
+                return_pick_ready_plan = self._plan_pick_ready(
+                    approach_end,
+                    label="RETURN_PICK_READY",
+                )
+                if return_pick_ready_plan is None:
+                    return None
+                return_pick_ready_trajectory, _ = return_pick_ready_plan
         else:
             after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
                 [as_planning_pose(tip_motion.after_wait_pose)],
@@ -2512,11 +3889,21 @@ class CartesianHarvestPlanner(Node):
             outward_retreat_trajectory=outward_retreat_trajectory,
             return_pick_ready_trajectory=return_pick_ready_trajectory,
             display_start_state=display_start_state,
+            arc_reverse_recovery_trajectory=(
+                arc_reverse_recovery_trajectory
+            ),
             end_planning_pose=final_planning_pose,
             step_approach_trajectories=step_approach_trajectories,
+            preapproach_planning_pose=copy.deepcopy(
+                preapproach_planning_pose
+            ),
+            outward_axis=tuple(
+                float(value) for value in geometry.outward_axis
+            ),
         )
         planned_trajectories = []
         for segment in (
+            arc_reverse_recovery_trajectory,
             pick_ready_trajectory,
             preapproach_trajectory,
             approach_trajectory,
@@ -2536,10 +3923,13 @@ class CartesianHarvestPlanner(Node):
             self.display_publisher.publish(display)
         if step_cycle_only:
             self.last_plan_report["step_cycle_only"] = True
+            self.last_plan_report["step_cycle_last_stage"] = (
+                cycle_last_stage
+            )
             self.get_logger().info(
-                "Approach repeat plan ready: current -> PICK_READY -> "
-                "pre-approach -> target -> +X70mm -> +Z40mm. "
-                "Stages after the first lift were intentionally not planned."
+                f"Approach repeat plan ready through stage "
+                f"{cycle_last_stage}. Later stages were intentionally "
+                "not planned."
             )
             return plan
         if return_to_pick_ready:
@@ -2554,7 +3944,7 @@ class CartesianHarvestPlanner(Node):
                 if self.last_plan_report.get(
                     "continuous_transition_arc", False
                 )
-                else "PICK_READY fallback pre-grasp"
+                else "cached reverse-to-PICK_READY fallback pre-grasp"
             )
         else:
             start_label = "PICK_READY"
@@ -2565,7 +3955,8 @@ class CartesianHarvestPlanner(Node):
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
-            "+X70mm -> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
+            f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
+            "-> +Z40mm -> -X30mm -> +Z10mm -> wait -> -X30mm "
             f"-> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )
@@ -2577,6 +3968,17 @@ class CartesianHarvestPlanner(Node):
                 "Plan-only test complete. Set execute:=true only after inspecting the RViz path."
             )
             return True
+
+        if plan.arc_reverse_recovery_trajectory:
+            if not self._execute_trajectory_sequence(
+                plan.arc_reverse_recovery_trajectory,
+                "Arc failure cached reverse recovery to PICK_READY",
+            ):
+                return False
+            self.get_logger().info(
+                "Arc 실패 복구 완료: 기존 성공 궤적을 역순으로 따라 "
+                "PICK_READY에 도착했습니다."
+            )
 
         if plan.pick_ready_trajectory and not self._execute_trajectory_group(
             plan.pick_ready_trajectory, "PICK_READY"
@@ -2592,6 +3994,34 @@ class CartesianHarvestPlanner(Node):
             "Approach and pre-wait harvest",
         ):
             return False
+
+        if bool(self.get_parameter("step_cycle_only").value):
+            if plan.return_pick_ready_trajectory:
+                return_label = (
+                    "CACHED REVERSE RETURN_PICK_READY"
+                    if plan.return_pick_ready_is_cached_reverse
+                    else "OMPL RETURN_PICK_READY"
+                )
+                if not self._execute_trajectory_group(
+                    plan.return_pick_ready_trajectory,
+                    return_label,
+                ):
+                    return False
+                self.get_logger().info(
+                    "Limited-stage batch segment complete; robot returned "
+                    "to PICK_READY"
+                    + (
+                        " by reversing the cached successful path."
+                        if plan.return_pick_ready_is_cached_reverse
+                        else "."
+                    )
+                )
+            else:
+                self.get_logger().info(
+                    "Limited-stage batch segment complete; current stage "
+                    "pose is retained for the next continuous arc."
+                )
+            return True
 
         wait_seconds = max(
             0.0, float(self.get_parameter("harvest_wait_sec").value)
@@ -2616,13 +4046,23 @@ class CartesianHarvestPlanner(Node):
             )
 
         if plan.return_pick_ready_trajectory:
+            return_label = (
+                "CACHED REVERSE RETURN_PICK_READY"
+                if plan.return_pick_ready_is_cached_reverse
+                else "OMPL RETURN_PICK_READY"
+            )
             if not self._execute_trajectory_group(
                 plan.return_pick_ready_trajectory,
-                "OMPL RETURN_PICK_READY",
+                return_label,
             ):
                 return False
             self.get_logger().info(
-                "Harvest sequence complete; robot returned to PICK_READY."
+                "Harvest sequence complete; robot returned to PICK_READY"
+                + (
+                    " by reversing the cached successful path."
+                    if plan.return_pick_ready_is_cached_reverse
+                    else "."
+                )
             )
         elif plan.outward_retreat_trajectory:
             self.get_logger().info(
@@ -2658,6 +4098,28 @@ class CartesianHarvestPlanner(Node):
         return True
 
     def _execute_trajectory(self, trajectory, label: str) -> bool:
+        current_positions = self._wait_for_current_joint_positions(
+            timeout_sec=2.0
+        )
+        safety_violations = self._trajectory_safety_violations(
+            trajectory,
+            start_positions=current_positions,
+        )
+        if safety_violations:
+            self._log_trajectory_safety_failure(
+                f"{label} 실행 전 검사",
+                safety_violations,
+            )
+            self._record_plan_stage(
+                "EXECUTION_TRAJECTORY_SAFETY",
+                "trajectory_validation",
+                False,
+                0.0,
+                "UNSAFE_CACHED_TRAJECTORY",
+                trajectory_safety_violations=safety_violations,
+                execution_label=label,
+            )
+            return False
 
         timeout = max(1.0, float(self.get_parameter("execution_timeout_sec").value))
         if not self.execute_client.wait_for_server(timeout_sec=10.0):

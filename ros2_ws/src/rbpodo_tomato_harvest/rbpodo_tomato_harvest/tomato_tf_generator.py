@@ -1,4 +1,5 @@
 import math
+import re
 
 import numpy as np
 import rclpy
@@ -86,7 +87,9 @@ def descending_height_order(points) -> list[int]:
     coordinates = [tuple(float(value) for value in point) for point in points]
     for point in coordinates:
         if len(point) != 3 or not all(math.isfinite(value) for value in point):
-            raise ValueError("tomato center coordinates must be finite XYZ values")
+            raise ValueError(
+                "tomato center coordinates must be finite XYZ values"
+            )
     return sorted(
         range(len(coordinates)),
         key=lambda index: (
@@ -96,6 +99,86 @@ def descending_height_order(points) -> list[int]:
             index,
         ),
     )
+
+
+def camera_target_id(detection_id: str) -> str | None:
+    """Extract a trailing vision target token such as ``C0:T7``."""
+    identifier = str(detection_id).strip()
+    match = re.search(r"(C\d+:T\d+)$", identifier, flags=re.IGNORECASE)
+    return match.group(1).upper() if match else None
+
+
+def harvest_tf_frame_id(detection_id: str, fallback_index: int) -> str:
+    """Return the camera target token used as the harvest TF frame name."""
+    target_id = camera_target_id(detection_id)
+    if target_id:
+        return target_id
+    return f"detected_tomato_{int(fallback_index)}_tf"
+
+
+def detection_cluster_id(detection_id: str) -> str:
+    """Extract ``C0`` or a legacy ``cluster_1`` token from a vision ID."""
+    identifier = str(detection_id).strip()
+    target_id = camera_target_id(identifier)
+    if target_id:
+        return target_id.split(":", maxsplit=1)[0].lower()
+    match = re.search(
+        r"(?:^|/)(cluster(?:[_-]?[A-Za-z0-9]+)?)(?:/|$)",
+        identifier,
+        flags=re.IGNORECASE,
+    )
+    return match.group(1).lower() if match else identifier
+
+
+def clustered_height_order(points, detection_ids) -> list[int]:
+    """Order clusters by summed Z, then tomatoes by descending Z.
+
+    Vision IDs ending in the same ``C#`` component of ``C#:T#``, or containing
+    the same legacy ``cluster_*`` path component, belong to one cluster. IDs
+    without either form are treated as separate clusters, preserving ordinary
+    global height ordering for legacy/fake inputs.
+    """
+    coordinates = [tuple(float(value) for value in point) for point in points]
+    identifiers = [str(value) for value in detection_ids]
+    if len(coordinates) != len(identifiers):
+        raise ValueError("points and detection_ids must have the same length")
+    for point in coordinates:
+        if len(point) != 3 or not all(math.isfinite(value) for value in point):
+            raise ValueError("tomato center coordinates must be finite XYZ values")
+
+    clusters: dict[str, list[int]] = {}
+    first_indices: dict[str, int] = {}
+    for index, identifier in enumerate(identifiers):
+        cluster_id = detection_cluster_id(identifier)
+        if not cluster_id:
+            cluster_id = f"__unclustered_{index}"
+        clusters.setdefault(cluster_id, []).append(index)
+        first_indices.setdefault(cluster_id, index)
+
+    for indices in clusters.values():
+        indices.sort(
+            key=lambda index: (
+                -coordinates[index][2],
+                coordinates[index][0],
+                coordinates[index][1],
+                index,
+            )
+        )
+
+    ordered_cluster_ids = sorted(
+        clusters,
+        key=lambda cluster_id: (
+            -sum(coordinates[index][2] for index in clusters[cluster_id]),
+            -max(coordinates[index][2] for index in clusters[cluster_id]),
+            cluster_id,
+            first_indices[cluster_id],
+        ),
+    )
+    return [
+        index
+        for cluster_id in ordered_cluster_ids
+        for index in clusters[cluster_id]
+    ]
 
 
 class TomatoTfGenerator(Node):
@@ -248,8 +331,9 @@ class TomatoTfGenerator(Node):
             prepared = []
 
         created = 0
-        order = descending_height_order(
-            [center for _detection_id, center, _stem in prepared]
+        order = clustered_height_order(
+            [center for _detection_id, center, _stem in prepared],
+            [detection_id for detection_id, _center, _stem in prepared],
         )
         for prepared_index in order:
             detection_id, center, stem_point = prepared[prepared_index]
@@ -257,6 +341,7 @@ class TomatoTfGenerator(Node):
                 center,
                 stem_point,
                 sky_axis,
+                child_frame=camera_target_id(detection_id),
             )
             if success:
                 created += 1
@@ -265,7 +350,8 @@ class TomatoTfGenerator(Node):
 
         self.get_logger().info(
             f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
-            "(parent Z 높이 내림차순으로 ID 부여)"
+            "(카메라 C#:T# TF 이름, 클러스터 합산 Z 내림차순, "
+            "클러스터 내부 Z 내림차순)"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
@@ -372,6 +458,7 @@ class TomatoTfGenerator(Node):
         center: np.ndarray,
         stem_point: np.ndarray,
         sky_axis: np.ndarray,
+        child_frame: str | None = None,
     ) -> tuple[bool, str]:
         try:
             rotation = parent_frame_tomato_rotation(
@@ -381,7 +468,11 @@ class TomatoTfGenerator(Node):
         except ValueError as error:
             return False, str(error)
 
-        child_frame = f"{self.tf_prefix}{self.next_index}_tf"
+        child_frame = str(child_frame or "").strip()
+        if not child_frame:
+            child_frame = f"{self.tf_prefix}{self.next_index}_tf"
+        if child_frame in self.transforms:
+            return False, f"중복 수확 TF 이름입니다: {child_frame}"
         transform = TransformStamped()
         transform.header.frame_id = self.parent_frame
         transform.child_frame_id = child_frame
