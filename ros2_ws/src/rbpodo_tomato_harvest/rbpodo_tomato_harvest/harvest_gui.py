@@ -25,6 +25,7 @@ from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
+from rbpodo_tomato_harvest.feedback_viewer import PlotCanvas
 from rbpodo_tomato_harvest.tomato_tf_generator import (
     clustered_height_order,
     harvest_tf_frame_id,
@@ -1668,6 +1669,56 @@ def camera_target_record_text(
     ) + "\n"
 
 
+def tomato_selection_plot_scene(
+    tomato_xyz,
+    vine_xyz,
+    plan_report: dict | None = None,
+    recommend_length_m: float = 0.04,
+) -> dict:
+    """Build an embedded side-view scene for one selected detection."""
+
+    def xyz(values, label: str) -> tuple[float, float, float]:
+        coordinates = tuple(float(value) for value in values)
+        if len(coordinates) != 3 or not all(
+            math.isfinite(value) for value in coordinates
+        ):
+            raise ValueError(f"{label}는 유한한 X, Y, Z 값이어야 합니다.")
+        return coordinates
+
+    tomato = xyz(tomato_xyz, "토마토 중심 좌표")
+    vine = xyz(vine_xyz, "줄기점 좌표")
+    length = float(recommend_length_m)
+    if not math.isfinite(length) or length <= 0.0:
+        raise ValueError("Recommend 표시 길이는 0보다 커야 합니다.")
+    outward = tuple(
+        tomato[axis] - vine[axis]
+        for axis in range(3)
+    )
+    outward_norm = math.sqrt(sum(value * value for value in outward))
+    if outward_norm <= 1e-9:
+        outward = (1.0, 0.0, 0.0)
+        outward_norm = 1.0
+    recommend = tuple(
+        tomato[axis] + outward[axis] / outward_norm * length
+        for axis in range(3)
+    )
+
+    report = dict(plan_report or {})
+    geometry = dict(report.get("approach_geometry") or {})
+    final_values = geometry.get("final_pregrasp_xyz")
+    final = (
+        xyz(final_values, "최종 pre-grasp 좌표")
+        if final_values is not None
+        else None
+    )
+    return {
+        "robot_tomato": tomato,
+        "robot_vine": vine,
+        "recommend": recommend,
+        "final": final,
+    }
+
+
 def debug_frame_request(json_text: str) -> DebugFrame.Request:
     """Wrap one valid feedback JSON object in a DebugFrame request."""
     text = str(json_text)
@@ -3045,10 +3096,20 @@ class HarvestGui(Node):
             padx=(5, 0),
             pady=(5, 0),
         )
-        log_frame.columnconfigure(0, weight=1)
+        log_frame.columnconfigure(0, weight=3, minsize=360)
+        log_frame.columnconfigure(1, weight=2, minsize=300)
         log_frame.rowconfigure(0, weight=1)
+        log_text_frame = ttk.Frame(log_frame)
+        log_text_frame.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=(0, 5),
+        )
+        log_text_frame.columnconfigure(0, weight=1)
+        log_text_frame.rowconfigure(0, weight=1)
         self.log_text = tk.Text(
-            log_frame,
+            log_text_frame,
             height=5,
             wrap="word",
             state="disabled",
@@ -3056,13 +3117,28 @@ class HarvestGui(Node):
             pady=4,
         )
         log_scrollbar = ttk.Scrollbar(
-            log_frame,
+            log_text_frame,
             orient="vertical",
             command=self.log_text.yview,
         )
         self.log_text.configure(yscrollcommand=log_scrollbar.set)
         self.log_text.grid(row=0, column=0, sticky="nsew")
         log_scrollbar.grid(row=0, column=1, sticky="ns")
+        self.selected_tomato_plot = PlotCanvas(
+            log_frame,
+            "선택 토마토 진입 방향",
+            empty_message="검출된 토마토를 선택하세요.",
+            show_legend=False,
+            marker_scale=0.7,
+            stem_marker_scale=0.5,
+            show_point_labels=False,
+        )
+        self.selected_tomato_plot.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=(5, 0),
+        )
 
     def _build_step_ui(self, frame) -> None:
         frame.columnconfigure(0, weight=1)
@@ -5560,6 +5636,8 @@ class HarvestGui(Node):
             )
         self.clear_markers_button.configure(state="normal")
         self._publish_harvest_result_markers()
+        if self._selected_index() == int(tomato_index):
+            self._update_selected_tomato_plot()
 
     def _set_tomato_motion_result(self, tomato_index: int, result: str) -> None:
         """Update the current detection row without disturbing its selection."""
@@ -5615,6 +5693,7 @@ class HarvestGui(Node):
         self.sweep_markers.clear()
         self.sweep_marker_next_id = 0
         self.clear_markers_button.configure(state="disabled")
+        self._update_selected_tomato_plot()
 
     def clear_harvest_result_markers(self) -> None:
         self._clear_harvest_results()
@@ -6645,6 +6724,7 @@ class HarvestGui(Node):
         self._append_log(
             f"[{message.header.frame_id}] 새 검출 결과: 토마토 {len(choices)}개"
         )
+        self._update_selected_tomato_plot()
         self._update_step_controls()
         update_target_controls = getattr(
             self, "_update_camera_target_record_controls", None
@@ -6844,6 +6924,7 @@ class HarvestGui(Node):
             f"[카메라 소스 변경] {source}: {service}. "
             "이전 검출 좌표와 Plan 상태를 초기화했습니다."
         )
+        self._update_selected_tomato_plot()
         self._update_step_controls()
         update_target_controls = getattr(
             self, "_update_camera_target_record_controls", None
@@ -7166,8 +7247,50 @@ class HarvestGui(Node):
         index = self._selected_index()
         if index is not None:
             self.status.set(f"토마토 {index} 선택됨 — Plan-only를 먼저 실행하세요.")
+        self._update_selected_tomato_plot()
         self._update_step_controls()
         self._update_camera_target_record_controls()
+
+    def _selected_tomato_plan_report(self, index: int) -> dict:
+        report = self.harvest_result_approach_reports.get(int(index))
+        if report:
+            return report
+        if (
+            self.active_camera_target_index == int(index)
+            and self.active_camera_target_plan_report
+        ):
+            return self.active_camera_target_plan_report
+        report = self.harvest_plan_report or {}
+        if str(report.get("tomato_frame") or "") == self._tomato_frame(index):
+            return report
+        return {}
+
+    def _update_selected_tomato_plot(self) -> None:
+        plot = getattr(self, "selected_tomato_plot", None)
+        if plot is None:
+            return
+        index = self._selected_index()
+        if index is None:
+            plot.clear("검출된 토마토를 선택하세요.")
+            return
+        tomato = self.detected_tomato_record_positions.get(index)
+        vine = self.detected_tomato_record_stem_positions.get(index)
+        if tomato is None or vine is None:
+            plot.clear(
+                "선택 토마토의 link0 좌표가 없습니다.\n"
+                "카메라 검출을 다시 실행하세요."
+            )
+            return
+        try:
+            scene = tomato_selection_plot_scene(
+                tomato,
+                vine,
+                self._selected_tomato_plan_report(index),
+            )
+        except (TypeError, ValueError) as error:
+            plot.clear(f"선택 토마토 그래프 생성 실패:\n{error}")
+            return
+        plot.set_scene(scene)
 
     def _selected_planner_config(self) -> tuple[str, str, str]:
         """Return the production GUI's fixed Cartesian-first configuration."""
@@ -10268,6 +10391,7 @@ class HarvestGui(Node):
             )
             + "기존 검출/계획은 사용하지 말고 다시 검출하세요."
         )
+        self._update_selected_tomato_plot()
 
     def _spin_ros(self) -> None:
         if self.closing or not rclpy.ok():

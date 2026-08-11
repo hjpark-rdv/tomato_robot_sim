@@ -4,6 +4,7 @@ import argparse
 import json
 import math
 import tkinter as tk
+from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
@@ -40,6 +41,28 @@ def load_feedback(path) -> dict:
     if not isinstance(payload, dict):
         raise ValueError("JSON 최상위 값은 object여야 합니다.")
     return payload
+
+
+def feedback_files_newest_first(directory) -> list[Path]:
+    """Return JSON/TXT feedback files ordered by newest modification time."""
+    folder = Path(directory).expanduser()
+    try:
+        candidates = [
+            path
+            for path in folder.iterdir()
+            if path.is_file() and path.suffix.lower() in {".txt", ".json"}
+        ]
+    except OSError:
+        return []
+
+    def sort_key(path: Path):
+        try:
+            modified_ns = path.stat().st_mtime_ns
+        except OSError:
+            modified_ns = -1
+        return (modified_ns, path.name)
+
+    return sorted(candidates, key=sort_key, reverse=True)
 
 
 def feedback_scene(payload: dict) -> dict:
@@ -143,9 +166,14 @@ def stem_label_position(
     )
 
 
-def robot_side_projection(point):
-    """Project link0 XYZ to a signed left/right (-Y) and height (Z) view."""
-    return (-float(point[1]), float(point[2]))
+def robot_top_projection(point):
+    """Project link0 XYZ into the robot-centred top view used in RViz.
+
+    Link0 +X (robot forward) is drawn upward and Link0 +Y is drawn to the
+    left.  This preserves the physical X-Y approach angle instead of hiding
+    it in a Y-Z side projection.
+    """
+    return (-float(point[1]), float(point[0]))
 
 
 def projected_metric_radius(
@@ -179,7 +207,16 @@ def _bounds(points, minimum_span: float = 0.25):
 class PlotCanvas(ttk.Frame):
     """Small dependency-free coordinate plot backed by Tk Canvas."""
 
-    def __init__(self, parent, title: str):
+    def __init__(
+        self,
+        parent,
+        title: str,
+        empty_message: str = "",
+        show_legend: bool = True,
+        marker_scale: float = 1.0,
+        stem_marker_scale: float = 1.0,
+        show_point_labels: bool = True,
+    ):
         super().__init__(parent)
         ttk.Label(self, text=title, font=("TkDefaultFont", 11, "bold")).pack(
             anchor="w", padx=6, pady=(4, 0)
@@ -187,11 +224,22 @@ class PlotCanvas(ttk.Frame):
         self.canvas = tk.Canvas(self, background="white", highlightthickness=1)
         self.canvas.pack(fill="both", expand=True, padx=4, pady=4)
         self.scene = None
+        self.empty_message = str(empty_message)
+        self.show_legend = bool(show_legend)
+        self.marker_scale = max(0.1, float(marker_scale))
+        self.stem_marker_scale = max(0.1, float(stem_marker_scale))
+        self.show_point_labels = bool(show_point_labels)
         self.mode = "xy"
         self.canvas.bind("<Configure>", lambda _event: self.redraw())
 
     def set_scene(self, scene: dict) -> None:
         self.scene = scene
+        self.redraw()
+
+    def clear(self, message: str | None = None) -> None:
+        self.scene = None
+        if message is not None:
+            self.empty_message = str(message)
         self.redraw()
 
     def _projector(self, points):
@@ -296,28 +344,39 @@ class PlotCanvas(ttk.Frame):
                 fill=color,
             )
 
-    def _stem_marker(self, project, tomato, vine, radius_px: float) -> None:
+    def _stem_marker(
+        self,
+        project,
+        tomato,
+        vine,
+        radius_px: float,
+        show_label: bool = True,
+    ) -> None:
         """Draw the stem at its exact coordinate and offset only its label."""
         tomato_x, tomato_y = project(tomato)
         vine_x, vine_y = project(vine)
-        label_x, label_y = stem_label_position(
-            (tomato_x, tomato_y),
-            (vine_x, vine_y),
-        )
-        direction_x = label_x - vine_x
-        direction_y = label_y - vine_y
-        direction_length = max(1e-6, math.hypot(direction_x, direction_y))
-        unit_x = direction_x / direction_length
-        unit_y = direction_y / direction_length
-        self.canvas.create_line(
-            vine_x + unit_x * (radius_px + 1.0),
-            vine_y + unit_y * (radius_px + 1.0),
-            label_x - unit_x * 18,
-            label_y - unit_y * 18,
-            fill=COLORS["vine"],
-            width=2,
-            dash=(4, 3),
-        )
+        if show_label:
+            label_x, label_y = stem_label_position(
+                (tomato_x, tomato_y),
+                (vine_x, vine_y),
+            )
+            direction_x = label_x - vine_x
+            direction_y = label_y - vine_y
+            direction_length = max(
+                1e-6,
+                math.hypot(direction_x, direction_y),
+            )
+            unit_x = direction_x / direction_length
+            unit_y = direction_y / direction_length
+            self.canvas.create_line(
+                vine_x + unit_x * (radius_px + 1.0),
+                vine_y + unit_y * (radius_px + 1.0),
+                label_x - unit_x * 18,
+                label_y - unit_y * 18,
+                fill=COLORS["vine"],
+                width=2,
+                dash=(4, 3),
+            )
         self.canvas.create_oval(
             vine_x - radius_px,
             vine_y - radius_px,
@@ -327,21 +386,23 @@ class PlotCanvas(ttk.Frame):
             outline="#145a32",
             width=2,
         )
-        self.canvas.create_text(
-            label_x,
-            label_y,
-            text="줄기점 (실좌표)",
-            anchor="center",
-            fill=COLORS["vine"],
-        )
+        if show_label:
+            self.canvas.create_text(
+                label_x,
+                label_y,
+                text="줄기점 (실좌표)",
+                anchor="center",
+                fill=COLORS["vine"],
+            )
 
-    def _legend(self) -> None:
-        items = (
+    def _legend(self, show_final: bool = True) -> None:
+        items = [
             (COLORS["recommend"], "Recommend 진입"),
-            (COLORS["final"], "Final 진입"),
             (COLORS["tomato"], "토마토"),
             (COLORS["vine"], "줄기점"),
-        )
+        ]
+        if show_final:
+            items.insert(1, (COLORS["final"], "Final 진입"))
         x = 58
         canvas_height = max(200, self.canvas.winfo_height())
         rectangle_bottom = canvas_height - 26
@@ -420,53 +481,66 @@ class PlotCanvas(ttk.Frame):
     def redraw(self) -> None:
         self.canvas.delete("all")
         if self.scene is None:
+            if self.empty_message:
+                self.canvas.create_text(
+                    max(100, self.canvas.winfo_width() * 0.5),
+                    max(100, self.canvas.winfo_height() * 0.5),
+                    text=self.empty_message,
+                    fill=COLORS["text"],
+                    justify="center",
+                )
             return
         scene = self.scene
         tomato = scene["robot_tomato"]
         vine = scene["robot_vine"]
         recommend = scene["recommend"]
-        final = scene["final"]
+        final = scene.get("final")
 
         robot = (0.0, 0.0)
-        tomato_2d = robot_side_projection(tomato)
-        vine_2d = robot_side_projection(vine)
-        planned_recommend_2d = robot_side_projection(recommend)
+        tomato_2d = robot_top_projection(tomato)
+        vine_2d = robot_top_projection(vine)
+        planned_recommend_2d = robot_top_projection(recommend)
         recommend_2d = raw_detection_recommend_point(
             tomato_2d,
             vine_2d,
             planned_recommend_2d,
         )
-        final_2d = robot_side_projection(final)
+        final_2d = robot_top_projection(final) if final is not None else None
         recommend_arrow_start = extended_arrow_start(
             tomato_2d,
             recommend_2d,
         )
-        final_arrow_start = extended_arrow_start(tomato_2d, final_2d)
+        final_arrow_start = (
+            extended_arrow_start(tomato_2d, final_2d)
+            if final_2d is not None
+            else None
+        )
         points = [
             robot,
             tomato_2d,
             vine_2d,
             recommend_arrow_start,
-            final_arrow_start,
         ]
+        if final_arrow_start is not None:
+            points.append(final_arrow_start)
         project, bounds = self._projector(points)
         tomato_radius_px = projected_metric_radius(
             project,
             tomato_2d,
             0.0175 * 0.5,
             minimum_px=4.0,
-        )
+        ) * self.marker_scale
         stem_radius_px = projected_metric_radius(
             project,
             vine_2d,
             0.006 * 0.5,
             minimum_px=6.0,
-        )
+        ) * self.marker_scale * self.stem_marker_scale
         self._grid(
             project,
             bounds,
-            "좌측 ←  Link0 -Y (m)  → 우측",
-            "Z (m)",
+            "Link0  +Y ← / → -Y (m)",
+            "Link0 +X (전방)",
         )
 
         self._point(
@@ -492,14 +566,15 @@ class PlotCanvas(ttk.Frame):
             width=7,
             end_gap_px=tomato_radius_px + 4.0,
         )
-        self._arrow(
-            project,
-            final_arrow_start,
-            tomato_2d,
-            COLORS["final"],
-            width=3,
-            end_gap_px=tomato_radius_px + 4.0,
-        )
+        if final_arrow_start is not None:
+            self._arrow(
+                project,
+                final_arrow_start,
+                tomato_2d,
+                COLORS["final"],
+                width=3,
+                end_gap_px=tomato_radius_px + 4.0,
+            )
         self._point(
             project,
             recommend_2d,
@@ -507,18 +582,19 @@ class PlotCanvas(ttk.Frame):
             "",
             4,
         )
-        self._point(
-            project,
-            final_2d,
-            COLORS["final"],
-            "",
-            4,
-        )
+        if final_2d is not None:
+            self._point(
+                project,
+                final_2d,
+                COLORS["final"],
+                "",
+                4,
+            )
         self._point(
             project,
             tomato_2d,
             COLORS["tomato"],
-            "토마토",
+            "토마토" if self.show_point_labels else "",
             tomato_radius_px,
             label_offset=(0, tomato_radius_px + 16.0),
             outline="#8e2c23",
@@ -529,8 +605,10 @@ class PlotCanvas(ttk.Frame):
             tomato_2d,
             vine_2d,
             stem_radius_px,
+            show_label=self.show_point_labels,
         )
-        self._legend()
+        if self.show_legend:
+            self._legend(show_final=final_2d is not None)
 
 
 class FeedbackViewer:
@@ -555,7 +633,10 @@ class FeedbackViewer:
             side="left"
         )
 
-        self.side_plot = PlotCanvas(root, "로봇 기준 좌우 측면도 (Y-Z)")
+        self.side_plot = PlotCanvas(
+            root,
+            "로봇 기준 평면도 (X-Y, 위에서 본 모습)",
+        )
         self.side_plot.pack(fill="both", expand=True, padx=8, pady=(0, 8))
 
         summary = ttk.Label(
@@ -571,16 +652,110 @@ class FeedbackViewer:
             root.after(50, self.load_current)
 
     def choose_file(self) -> None:
-        path = filedialog.askopenfilename(
-            title="비전 피드백 JSON/TXT 선택",
-            initialdir=str(
-                Path.home() / "farmily_tomato" / "camera_target_records"
-            ),
-            filetypes=(("JSON text", "*.txt *.json"), ("All files", "*")),
+        directory = (
+            Path.home() / "farmily_tomato" / "camera_target_records"
         )
-        if path:
-            self.path_var.set(path)
+        paths = feedback_files_newest_first(directory)
+        dialog = tk.Toplevel(self.root)
+        dialog.title("비전 피드백 파일 선택 — 최신순")
+        dialog.geometry("820x560")
+        dialog.minsize(620, 380)
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        ttk.Label(
+            dialog,
+            text=f"최근 파일이 위에 표시됩니다.  경로: {directory}",
+            padding=(10, 10, 10, 6),
+        ).pack(fill="x")
+
+        table_frame = ttk.Frame(dialog, padding=(10, 0, 10, 8))
+        table_frame.pack(fill="both", expand=True)
+        table = ttk.Treeview(
+            table_frame,
+            columns=("modified", "filename"),
+            show="headings",
+            selectmode="browse",
+        )
+        table.heading("modified", text="수정 시각 (최신순)")
+        table.heading("filename", text="파일 이름")
+        table.column("modified", width=165, minwidth=145, stretch=False)
+        table.column("filename", width=590, minwidth=320, stretch=True)
+        scrollbar = ttk.Scrollbar(
+            table_frame,
+            orient="vertical",
+            command=table.yview,
+        )
+        table.configure(yscrollcommand=scrollbar.set)
+        table.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        for index, path in enumerate(paths):
+            try:
+                modified = datetime.fromtimestamp(
+                    path.stat().st_mtime
+                ).strftime("%Y-%m-%d %H:%M:%S")
+            except OSError:
+                modified = "알 수 없음"
+            table.insert(
+                "",
+                "end",
+                iid=str(index),
+                values=(modified, path.name),
+            )
+
+        def open_path(path: Path) -> None:
+            self.path_var.set(str(path))
+            dialog.destroy()
             self.load_current()
+
+        def open_selected(_event=None) -> None:
+            selection = table.selection()
+            if not selection:
+                return
+            open_path(paths[int(selection[0])])
+
+        def browse_other() -> None:
+            path = filedialog.askopenfilename(
+                parent=dialog,
+                title="다른 비전 피드백 JSON/TXT 선택",
+                initialdir=str(directory),
+                filetypes=(
+                    ("JSON text", "*.txt *.json"),
+                    ("All files", "*"),
+                ),
+            )
+            if path:
+                open_path(Path(path))
+
+        buttons = ttk.Frame(dialog, padding=(10, 0, 10, 10))
+        buttons.pack(fill="x")
+        ttk.Button(
+            buttons,
+            text="다른 위치...",
+            command=browse_other,
+        ).pack(side="left")
+        ttk.Button(
+            buttons,
+            text="취소",
+            command=dialog.destroy,
+        ).pack(side="right")
+        open_button = ttk.Button(
+            buttons,
+            text="선택 파일 열기",
+            command=open_selected,
+        )
+        open_button.pack(side="right", padx=(0, 8))
+
+        table.bind("<Double-1>", open_selected)
+        table.bind("<Return>", open_selected)
+        if paths:
+            table.selection_set("0")
+            table.focus("0")
+            table.see("0")
+            table.focus_set()
+        else:
+            open_button.configure(state="disabled")
 
     def load_current(self) -> None:
         try:
@@ -625,8 +800,8 @@ class FeedbackViewer:
 
 def _latest_feedback_file() -> Path | None:
     directory = Path.home() / "farmily_tomato" / "camera_target_records"
-    candidates = sorted(directory.glob("*_feedback.txt"))
-    return candidates[-1] if candidates else None
+    candidates = feedback_files_newest_first(directory)
+    return candidates[0] if candidates else None
 
 
 def main(argv=None) -> None:

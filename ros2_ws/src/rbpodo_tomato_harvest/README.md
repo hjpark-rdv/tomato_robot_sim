@@ -180,9 +180,10 @@ ros2 run rbpodo_tomato_harvest vision_feedback_viewer \
   ~/farmily_tomato/camera_target_records/파일명_feedback.txt
 ```
 
-그래프는 외부 plotting 패키지 없이 Tkinter로 동작하며, 로봇 좌우축 `-Y`와 높이
-Z를 사용하는 `link0` 기준 측면도 하나만 표시한다. `link0 +Y`는 그래프 왼쪽,
-`link0 -Y`는 오른쪽에 표시되므로 좌우 정보가 사라지지 않는다. 로봇 base, 토마토,
+그래프는 외부 plotting 패키지 없이 Tkinter로 동작하며, RViz를 위에서 본 것과
+같은 `link0` 기준 X-Y 평면도를 표시한다. `link0 +X`는 그래프 위쪽(로봇 전방),
+`link0 +Y`는 왼쪽, `link0 -Y`는 오른쪽에 표시한다. 따라서 RViz의 수평 진입
+각도가 Y-Z 측면 투영으로 사라지지 않는다. 로봇 base, 토마토,
 실제 검출 줄기점, Recommend 진입선과 최종 진입선을 색상으로
 구분하고 base→tomato 및 tomato→vine 실제 3D 거리도 함께 표시한다. 진입선은
 실제 pre-grasp 지점을 점으로 유지하면서 화살표 꼬리를 3배로 연장해 구별하기 쉽게
@@ -190,7 +191,7 @@ Z를 사용하는 `link0` 기준 측면도 하나만 표시한다. `link0 +Y`는
 RViz 검출 마커의 실제 지름(17.5 mm, 6 mm)을 그래프 축척에 맞춰 표시하되,
 줄기점은 전체 로봇 범위에서 사라지지 않도록 최소 반지름 6 px로 표시한다.
 마커 중심 좌표는 확대와 무관하게 실제 좌표를 유지한다. 줄기점 마커는
-`robot.vine_xyz`의 Y-Z 실좌표에 그대로 표시하고, 겹침을 줄이기 위해 텍스트
+`robot.vine_xyz`의 X-Y 실좌표에 그대로 표시하고, 겹침을 줄이기 위해 텍스트
 라벨만 리더선으로 분리한다. 화면 하단에는 카메라 광학 프레임의
 `ΔZ(vine-tomato)`와 어느 점이 카메라에 가까운지도 함께 표시한다.
 하늘색 Recommend 화살표는 RViz 검출 마커와 동일하게 `robot.tomato_xyz`와
@@ -213,6 +214,12 @@ JSON에는 `link0` 기준 토마토/줄기 좌표가 없으므로 새 코드로 
 전까지 마지막 이미지를 유지한다. 토픽은 서비스 호출 시점에만 발행되는
 `RELIABLE`/`VOLATILE` 데이터이므로 GUI는 동일한 reliable QoS로 구독하지만,
 GUI 실행 전에 발행된 과거 이미지는 표시하지 않는다.
+
+검출된 토마토 목록에서 행을 선택하면 실행 로그 오른쪽의 측면 그래프가 즉시
+갱신된다. 검출 직후에는 `link0`로 변환해 보존한 토마토 중심과 줄기점으로
+Recommend 진입 방향만 표시한다. 해당 토마토의 Plan 결과가 있으면 Planner의
+최종 pre-grasp를 주황색 Final 화살표로 함께 표시하며, 아직 Plan하지 않았거나
+최종 접근 형상이 계산되기 전에 실패했다면 Final 화살표는 표시하지 않는다.
 
 `스텝 실행` 탭에서는 토마토와 시작 자세를 선택하고 `스텝 Plan 생성`을 누른다.
 이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, pre-approach,

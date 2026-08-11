@@ -74,6 +74,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     sweep_result_marker,
     tomato_stem_arrow_length,
     tomato_motion_result_text,
+    tomato_selection_plot_scene,
     transformed_point_xyz,
 )
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -258,6 +259,29 @@ def test_camera_target_record_text_rejects_nonfinite_coordinates():
             vine_xyz=(0.2, 0.3, 0.4),
             detection_timestamp=1.0,
         )
+
+
+def test_selected_tomato_plot_omits_final_until_plan_report_exists():
+    without_plan = tomato_selection_plot_scene(
+        tomato_xyz=(0.4, 0.2, 0.6),
+        vine_xyz=(0.4, 0.22, 0.59),
+    )
+    with_plan = tomato_selection_plot_scene(
+        tomato_xyz=(0.4, 0.2, 0.6),
+        vine_xyz=(0.4, 0.22, 0.59),
+        plan_report={
+            "approach_geometry": {
+                "final_pregrasp_xyz": [0.35, 0.17, 0.58],
+            }
+        },
+    )
+
+    assert without_plan["final"] is None
+    assert with_plan["final"] == pytest.approx((0.35, 0.17, 0.58))
+    assert math.dist(
+        without_plan["robot_tomato"],
+        without_plan["recommend"],
+    ) == pytest.approx(0.04)
 
 
 def test_debug_frame_request_preserves_feedback_json_text():
@@ -3023,6 +3047,9 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
         _clear_detection_markers=lambda: values.__setitem__(
             "markers_cleared", True
         ),
+        _update_selected_tomato_plot=lambda: values.__setitem__(
+            "plot_cleared", True
+        ),
         _update_step_controls=lambda: None,
         status=SimpleNamespace(
             set=lambda value: values.__setitem__("status", value)
@@ -3045,6 +3072,7 @@ def test_camera_source_change_selects_client_and_clears_old_detection():
     assert values["selected"] == ""
     assert values["invalidated"] is True
     assert values["markers_cleared"] is True
+    assert values["plot_cleared"] is True
 
 
 def test_stop_active_motion_cancels_individual_harvest_without_failure_result():
