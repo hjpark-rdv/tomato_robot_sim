@@ -73,6 +73,25 @@ def test_feedback_scene_uses_robot_calyx_for_selected_angle_reference():
     assert scene["robot_angle_origin"] == pytest.approx(
         (0.56, -0.21, 0.74)
     )
+    assert scene["robot_calyx"] == pytest.approx((0.56, -0.21, 0.74))
+
+
+def test_feedback_scene_uses_saved_base_to_center_segment():
+    payload = sample_payload()
+    payload["robot"].update(
+        {
+            "angle_reference": "base_to_center",
+            "angle_origin_xyz": [0.0, 0.0, 0.0],
+            "angle_target_xyz": [0.55, -0.20, 0.74],
+        }
+    )
+
+    scene = feedback_scene(payload)
+
+    assert scene["robot_angle_origin"] == pytest.approx((0.0, 0.0, 0.0))
+    assert scene["robot_angle_target"] == pytest.approx(
+        (0.55, -0.20, 0.74)
+    )
 
 
 def test_feedback_scene_requires_planned_robot_coordinates():

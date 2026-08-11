@@ -1,6 +1,9 @@
 import numpy as np
 
 from rbpodo_tomato_harvest.tomato_tf_generator import (
+    ANGLE_REFERENCE_BASE_TO_CENTER,
+    ANGLE_REFERENCE_CALYX_TO_STEM,
+    ANGLE_REFERENCE_CENTER_TO_STEM,
     camera_target_id,
     clustered_height_order,
     descending_height_order,
@@ -9,6 +12,7 @@ from rbpodo_tomato_harvest.tomato_tf_generator import (
     parent_frame_tomato_rotation,
     quaternion_from_rotation,
     rotation_from_quaternion,
+    tomato_angle_direction,
     tomato_stem_direction,
 )
 
@@ -124,6 +128,36 @@ def test_tomato_stem_direction_selects_center_or_calyx_origin():
     assert np.allclose(
         tomato_stem_direction(center, calyx, stem, True),
         np.asarray(stem) - np.asarray(calyx),
+    )
+
+
+def test_tomato_angle_direction_supports_all_three_reference_modes():
+    center = np.array([0.50, 0.20, 0.70])
+    calyx = np.array([0.51, 0.22, 0.71])
+    stem = np.array([0.55, 0.28, 0.74])
+    base = np.array([0.0, 0.0, 0.0])
+
+    assert np.allclose(
+        tomato_angle_direction(
+            center, calyx, stem, ANGLE_REFERENCE_CENTER_TO_STEM
+        ),
+        stem - center,
+    )
+    assert np.allclose(
+        tomato_angle_direction(
+            center, calyx, stem, ANGLE_REFERENCE_CALYX_TO_STEM
+        ),
+        stem - calyx,
+    )
+    assert np.allclose(
+        tomato_angle_direction(
+            center,
+            calyx,
+            stem,
+            ANGLE_REFERENCE_BASE_TO_CENTER,
+            base_origin=base,
+        ),
+        center - base,
     )
 
 

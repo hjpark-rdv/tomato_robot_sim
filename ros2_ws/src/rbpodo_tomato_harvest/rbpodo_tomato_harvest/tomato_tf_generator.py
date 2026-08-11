@@ -5,14 +5,38 @@ import numpy as np
 import rclpy
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from geometry_msgs.msg import PointStamped, TransformStamped
+from rcl_interfaces.msg import SetParametersResult
 from rclpy.duration import Duration
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from std_msgs.msg import Header
 from std_srvs.srv import SetBool, Trigger
 from tf2_ros import Buffer, TransformBroadcaster, TransformException, TransformListener
+
+
+ANGLE_REFERENCE_CENTER_TO_STEM = "center_to_stem"
+ANGLE_REFERENCE_CALYX_TO_STEM = "calyx_to_stem"
+ANGLE_REFERENCE_BASE_TO_CENTER = "base_to_center"
+ANGLE_REFERENCE_MODES = (
+    ANGLE_REFERENCE_CENTER_TO_STEM,
+    ANGLE_REFERENCE_CALYX_TO_STEM,
+    ANGLE_REFERENCE_BASE_TO_CENTER,
+)
+
+
+def angle_reference_label(mode: str) -> str:
+    labels = {
+        ANGLE_REFERENCE_CENTER_TO_STEM: "토마토 중심→줄기",
+        ANGLE_REFERENCE_CALYX_TO_STEM: "꼭지→줄기",
+        ANGLE_REFERENCE_BASE_TO_CENTER: "로봇 베이스→토마토 중심",
+    }
+    try:
+        return labels[str(mode)]
+    except KeyError as error:
+        raise ValueError(f"unsupported angle reference mode: {mode}") from error
 
 
 def _unit(vector: np.ndarray, label: str) -> np.ndarray:
@@ -58,6 +82,35 @@ def tomato_stem_direction(
     if float(np.linalg.norm(direction)) < 1e-9:
         reference = "calyx_point" if use_calyx_angle_reference else "center"
         raise ValueError(f"{reference}-to-stem direction is too short")
+    return direction
+
+
+def tomato_angle_direction(
+    center,
+    calyx_point,
+    stem_point,
+    mode: str = ANGLE_REFERENCE_CENTER_TO_STEM,
+    base_origin=None,
+) -> np.ndarray:
+    """Return the TF X-axis source vector selected by the GUI mode."""
+    mode = str(mode)
+    center_array = np.asarray(center, dtype=float)
+    calyx_array = np.asarray(calyx_point, dtype=float)
+    stem_array = np.asarray(stem_point, dtype=float)
+    if mode == ANGLE_REFERENCE_CENTER_TO_STEM:
+        direction = stem_array - center_array
+    elif mode == ANGLE_REFERENCE_CALYX_TO_STEM:
+        direction = stem_array - calyx_array
+    elif mode == ANGLE_REFERENCE_BASE_TO_CENTER:
+        if base_origin is None:
+            raise ValueError("base origin is required for base-to-center mode")
+        direction = center_array - np.asarray(base_origin, dtype=float)
+    else:
+        raise ValueError(f"unsupported angle reference mode: {mode}")
+    if direction.shape != (3,) or not np.all(np.isfinite(direction)):
+        raise ValueError("angle reference direction must contain three finite values")
+    if float(np.linalg.norm(direction)) < 1e-9:
+        raise ValueError(f"{mode} direction is too short")
     return direction
 
 
@@ -223,6 +276,11 @@ class TomatoTfGenerator(Node):
         self.declare_parameter("start_index", 0)
         self.declare_parameter("auto_create_on_detection", True)
         self.declare_parameter("use_calyx_angle_reference", False)
+        self.declare_parameter(
+            "angle_reference_mode",
+            ANGLE_REFERENCE_CENTER_TO_STEM,
+        )
+        self.declare_parameter("robot_base_frame", "link0")
         self.declare_parameter("maximum_detection_age_sec", 2.0)
         self.declare_parameter("transform_timeout_sec", 2.0)
         self.declare_parameter("broadcast_rate_hz", 20.0)
@@ -234,6 +292,9 @@ class TomatoTfGenerator(Node):
         self.camera_frame = str(self.get_parameter("camera_frame").value)
         self.parent_frame = str(self.get_parameter("parent_frame").value)
         self.sky_frame = str(self.get_parameter("sky_frame").value)
+        self.robot_base_frame = str(
+            self.get_parameter("robot_base_frame").value
+        )
         self.tf_prefix = str(self.get_parameter("tf_prefix").value)
         self.start_index = int(self.get_parameter("start_index").value)
         self.next_index = self.start_index
@@ -242,13 +303,26 @@ class TomatoTfGenerator(Node):
         self.center_updated = False
         self.stem_point_updated = False
         self.transforms: dict[str, TransformStamped] = {}
-        self.use_calyx_angle_reference = bool(
-            self.get_parameter("use_calyx_angle_reference").value
+        configured_mode = str(
+            self.get_parameter("angle_reference_mode").value
+        )
+        if bool(self.get_parameter("use_calyx_angle_reference").value):
+            configured_mode = ANGLE_REFERENCE_CALYX_TO_STEM
+        if configured_mode not in ANGLE_REFERENCE_MODES:
+            raise ValueError(
+                f"지원하지 않는 진입각 기준입니다: {configured_mode}"
+            )
+        self.angle_reference_mode = configured_mode
+        self.use_calyx_angle_reference = (
+            configured_mode == ANGLE_REFERENCE_CALYX_TO_STEM
         )
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_broadcaster = TransformBroadcaster(self)
+        self.add_on_set_parameters_callback(
+            self._parameter_update_callback
+        )
         ready_qos = QoSProfile(
             depth=1,
             reliability=ReliabilityPolicy.RELIABLE,
@@ -291,22 +365,51 @@ class TomatoTfGenerator(Node):
             f"parent={self.parent_frame} sky={self.sky_frame} auto_create="
             f"{self.get_parameter('auto_create_on_detection').value} "
             f"angle_reference="
-            f"{'calyx->stem' if self.use_calyx_angle_reference else 'center->stem'}"
+            f"{self.angle_reference_mode}"
         )
+
+    def _parameter_update_callback(self, parameters) -> SetParametersResult:
+        for parameter in parameters:
+            if parameter.name != "angle_reference_mode":
+                continue
+            mode = str(parameter.value)
+            if mode not in ANGLE_REFERENCE_MODES:
+                return SetParametersResult(
+                    successful=False,
+                    reason=f"지원하지 않는 진입각 기준입니다: {mode}",
+                )
+            changed = mode != self.angle_reference_mode
+            self.angle_reference_mode = mode
+            self.use_calyx_angle_reference = (
+                mode == ANGLE_REFERENCE_CALYX_TO_STEM
+            )
+            if changed:
+                self._clear_detected_transforms()
+            self.get_logger().info(
+                "토마토 진입각 기준 설정: "
+                f"{angle_reference_label(mode)}"
+            )
+        return SetParametersResult(successful=True)
 
     def _set_calyx_angle_reference(
         self,
         request: SetBool.Request,
         response: SetBool.Response,
     ) -> SetBool.Response:
-        selected = bool(request.data)
-        changed = selected != self.use_calyx_angle_reference
-        self.use_calyx_angle_reference = selected
-        if changed:
-            self._clear_detected_transforms()
-        reference = "calyx_point→stem_point" if selected else "center→stem_point"
-        response.success = True
-        response.message = f"토마토 진입각 기준을 {reference}(으)로 설정했습니다."
+        mode = (
+            ANGLE_REFERENCE_CALYX_TO_STEM
+            if bool(request.data)
+            else ANGLE_REFERENCE_CENTER_TO_STEM
+        )
+        result = self.set_parameters(
+            [Parameter("angle_reference_mode", value=mode)]
+        )[0]
+        response.success = bool(result.successful)
+        response.message = (
+            f"토마토 진입각 기준을 {angle_reference_label(mode)}(으)로 설정했습니다."
+            if result.successful
+            else result.reason
+        )
         self.get_logger().info(response.message)
         return response
 
@@ -347,6 +450,18 @@ class TomatoTfGenerator(Node):
 
         prepared = []
         failures = []
+        base_origin_in_parent = None
+        if self.angle_reference_mode == ANGLE_REFERENCE_BASE_TO_CENTER:
+            try:
+                base_origin_in_parent = self._frame_origin_in_parent(
+                    self.robot_base_frame
+                )
+            except RuntimeError as error:
+                self.get_logger().warning(
+                    "토마토 TF 생성 실패: 로봇 베이스 원점을 변환할 수 "
+                    f"없습니다: {error}"
+                )
+                return
         for detection in message.detections:
             center = PointStamped()
             center.header = message.header
@@ -365,12 +480,16 @@ class TomatoTfGenerator(Node):
                     "카메라 검출을 다시 수행하세요."
                 )
                 continue
-            if self.use_calyx_angle_reference and all(
+            if (
+                self.angle_reference_mode
+                == ANGLE_REFERENCE_CALYX_TO_STEM
+                and all(
                 abs(float(value)) <= 1e-12
                 for value in (
                     detection.calyx_point.x,
                     detection.calyx_point.y,
                     detection.calyx_point.z,
+                )
                 )
             ):
                 failures.append(
@@ -381,12 +500,20 @@ class TomatoTfGenerator(Node):
             try:
                 center_in_parent = self._point_in_parent(center)
                 stem_in_parent = self._point_in_parent(stem_point)
-                angle_origin_in_parent = (
+                calyx_in_parent = (
                     self._point_in_parent(calyx_point)
-                    if self.use_calyx_angle_reference
+                    if self.angle_reference_mode
+                    == ANGLE_REFERENCE_CALYX_TO_STEM
                     else center_in_parent
                 )
-            except RuntimeError as error:
+                angle_direction = tomato_angle_direction(
+                    center_in_parent,
+                    calyx_in_parent,
+                    stem_in_parent,
+                    self.angle_reference_mode,
+                    base_origin=base_origin_in_parent,
+                )
+            except (RuntimeError, ValueError) as error:
                 failures.append(f"{detection.id}: {error}")
                 continue
             prepared.append(
@@ -394,7 +521,7 @@ class TomatoTfGenerator(Node):
                     detection.id,
                     center_in_parent,
                     stem_in_parent,
-                    angle_origin_in_parent,
+                    angle_direction,
                 )
             )
 
@@ -404,20 +531,20 @@ class TomatoTfGenerator(Node):
             sky_axis = None
             failures.extend(
                 f"{detection_id}: {error}"
-                for detection_id, _center, _stem, _origin in prepared
+                for detection_id, _center, _stem, _direction in prepared
             )
             prepared = []
 
         created = 0
         order = clustered_height_order(
-            [center for _detection_id, center, _stem, _origin in prepared],
+            [center for _detection_id, center, _stem, _direction in prepared],
             [
                 detection_id
-                for detection_id, _center, _stem, _origin in prepared
+                for detection_id, _center, _stem, _direction in prepared
             ],
         )
         for prepared_index in order:
-            detection_id, center, stem_point, angle_origin = prepared[
+            detection_id, center, stem_point, angle_direction = prepared[
                 prepared_index
             ]
             success, result = self._store_parent_detection(
@@ -425,7 +552,7 @@ class TomatoTfGenerator(Node):
                 stem_point,
                 sky_axis,
                 child_frame=camera_target_id(detection_id),
-                angle_origin=angle_origin,
+                angle_direction=angle_direction,
             )
             if success:
                 created += 1
@@ -436,7 +563,7 @@ class TomatoTfGenerator(Node):
             f"카메라 검출 {len(message.detections)}개 중 TF {created}개 생성 완료 "
             "(카메라 C#:T# TF 이름, 클러스터 합산 Z 내림차순, "
             "클러스터 내부 Z 내림차순, 진입각 기준="
-            f"{'꼭지→줄기' if self.use_calyx_angle_reference else '중심→줄기'})"
+            f"{angle_reference_label(self.angle_reference_mode)})"
         )
         for failure in failures:
             self.get_logger().warning(f"토마토 TF 생성 실패: {failure}")
@@ -500,6 +627,16 @@ class TomatoTfGenerator(Node):
             [translation.x, translation.y, translation.z], dtype=float
         )
 
+    def _frame_origin_in_parent(self, source_frame: str) -> np.ndarray:
+        if source_frame == self.parent_frame:
+            return np.zeros(3, dtype=float)
+        transform = self._lookup_transform(self.parent_frame, source_frame)
+        translation = transform.transform.translation
+        return np.array(
+            [translation.x, translation.y, translation.z],
+            dtype=float,
+        )
+
     def _sky_axis_in_parent(self) -> np.ndarray:
         if self.sky_frame == self.parent_frame:
             return np.array([0.0, 0.0, 1.0], dtype=float)
@@ -533,10 +670,32 @@ class TomatoTfGenerator(Node):
             center = self._point_in_parent(center_message)
             stem_point = self._point_in_parent(stem_point_message)
             sky_axis = self._sky_axis_in_parent()
-        except RuntimeError as error:
+            if self.angle_reference_mode == ANGLE_REFERENCE_CALYX_TO_STEM:
+                return False, (
+                    "단일 center/stem 입력에는 calyx_point가 없어 꼭지→줄기 "
+                    "모드를 사용할 수 없습니다."
+                )
+            angle_direction = tomato_angle_direction(
+                center,
+                center,
+                stem_point,
+                self.angle_reference_mode,
+                base_origin=(
+                    self._frame_origin_in_parent(self.robot_base_frame)
+                    if self.angle_reference_mode
+                    == ANGLE_REFERENCE_BASE_TO_CENTER
+                    else None
+                ),
+            )
+        except (RuntimeError, ValueError) as error:
             return False, str(error)
 
-        return self._store_parent_detection(center, stem_point, sky_axis)
+        return self._store_parent_detection(
+            center,
+            stem_point,
+            sky_axis,
+            angle_direction=angle_direction,
+        )
 
     def _store_parent_detection(
         self,
@@ -544,22 +703,18 @@ class TomatoTfGenerator(Node):
         stem_point: np.ndarray,
         sky_axis: np.ndarray,
         child_frame: str | None = None,
-        angle_origin: np.ndarray | None = None,
+        angle_direction: np.ndarray | None = None,
     ) -> tuple[bool, str]:
         try:
-            reference_origin = (
-                center
-                if angle_origin is None
-                else np.asarray(angle_origin, dtype=float)
+            direction = (
+                np.asarray(stem_point, dtype=float)
+                - np.asarray(center, dtype=float)
+                if angle_direction is None
+                else np.asarray(angle_direction, dtype=float)
             )
             rotation = parent_frame_tomato_rotation(
                 sky_axis,
-                tomato_stem_direction(
-                    center,
-                    reference_origin,
-                    stem_point,
-                    angle_origin is not None,
-                ),
+                direction,
             )
         except ValueError as error:
             return False, str(error)

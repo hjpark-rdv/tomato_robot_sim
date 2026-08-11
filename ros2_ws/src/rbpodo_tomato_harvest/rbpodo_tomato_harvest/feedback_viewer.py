@@ -13,6 +13,7 @@ COLORS = {
     "robot": "#17324d",
     "tomato": "#e53935",
     "vine": "#43a047",
+    "calyx": "#8e44ad",
     "recommend": "#168aad",
     "final": "#fb8c00",
     "grid": "#d9e1e8",
@@ -97,11 +98,26 @@ def feedback_scene(payload: dict) -> dict:
         "camera_vine": _xyz(vision.get("vine_xyz"), "vision.vine_xyz"),
         "robot_tomato": _xyz(robot.get("tomato_xyz"), "robot.tomato_xyz"),
         "robot_vine": _xyz(robot.get("vine_xyz"), "robot.vine_xyz"),
-        "robot_angle_origin": (
+        "robot_calyx": (
             _xyz(robot.get("calyx_xyz"), "robot.calyx_xyz")
-            if str(robot.get("angle_reference") or "") == "calyx_to_stem"
-            and robot.get("calyx_xyz") is not None
-            else _xyz(robot.get("tomato_xyz"), "robot.tomato_xyz")
+            if robot.get("calyx_xyz") is not None
+            else None
+        ),
+        "robot_angle_origin": (
+            _xyz(robot.get("angle_origin_xyz"), "robot.angle_origin_xyz")
+            if robot.get("angle_origin_xyz") is not None
+            else (
+                _xyz(robot.get("calyx_xyz"), "robot.calyx_xyz")
+                if str(robot.get("angle_reference") or "")
+                == "calyx_to_stem"
+                and robot.get("calyx_xyz") is not None
+                else _xyz(robot.get("tomato_xyz"), "robot.tomato_xyz")
+            )
+        ),
+        "robot_angle_target": (
+            _xyz(robot.get("angle_target_xyz"), "robot.angle_target_xyz")
+            if robot.get("angle_target_xyz") is not None
+            else _xyz(robot.get("vine_xyz"), "robot.vine_xyz")
         ),
         "recommend": _xyz(
             robot.get("recommend_pregrasp_xyz"),
@@ -143,11 +159,13 @@ def raw_detection_recommend_point(
     vine,
     reference,
     angle_origin=None,
+    angle_target=None,
 ):
     """Place Recommend opposite the selected center/calyx-to-stem vector."""
     origin = tomato if angle_origin is None else angle_origin
-    outward_x = origin[0] - vine[0]
-    outward_y = origin[1] - vine[1]
+    target = vine if angle_target is None else angle_target
+    outward_x = origin[0] - target[0]
+    outward_y = origin[1] - target[1]
     outward_length = math.hypot(outward_x, outward_y)
     reference_length = math.hypot(
         reference[0] - tomato[0],
@@ -407,18 +425,24 @@ class PlotCanvas(ttk.Frame):
                 fill=COLORS["vine"],
             )
 
-    def _legend(self, show_final: bool = True) -> None:
+    def _legend(
+        self,
+        show_final: bool = True,
+        show_calyx: bool = False,
+    ) -> None:
         items = [
             (COLORS["recommend"], "Recommend 진입"),
             (COLORS["tomato"], "토마토"),
             (COLORS["vine"], "줄기점"),
         ]
+        if show_calyx:
+            items.append((COLORS["calyx"], "꼭지점"))
         if show_final:
             items.insert(1, (COLORS["final"], "Final 진입"))
         x = 58
         canvas_height = max(200, self.canvas.winfo_height())
         rectangle_bottom = canvas_height - 26
-        rectangle_top = rectangle_bottom - 102
+        rectangle_top = rectangle_bottom - (len(items) * 23 + 20)
         y = rectangle_top + 18
         self.canvas.create_rectangle(
             36,
@@ -505,20 +529,25 @@ class PlotCanvas(ttk.Frame):
         scene = self.scene
         tomato = scene["robot_tomato"]
         vine = scene["robot_vine"]
+        calyx = scene.get("robot_calyx")
         angle_origin = scene.get("robot_angle_origin", tomato)
+        angle_target = scene.get("robot_angle_target", vine)
         recommend = scene["recommend"]
         final = scene.get("final")
 
         robot = (0.0, 0.0)
         tomato_2d = robot_top_projection(tomato)
         vine_2d = robot_top_projection(vine)
+        calyx_2d = robot_top_projection(calyx) if calyx is not None else None
         angle_origin_2d = robot_top_projection(angle_origin)
+        angle_target_2d = robot_top_projection(angle_target)
         planned_recommend_2d = robot_top_projection(recommend)
         recommend_2d = raw_detection_recommend_point(
             tomato_2d,
             vine_2d,
             planned_recommend_2d,
             angle_origin_2d,
+            angle_target_2d,
         )
         final_2d = robot_top_projection(final) if final is not None else None
         recommend_arrow_start = extended_arrow_start(
@@ -536,6 +565,8 @@ class PlotCanvas(ttk.Frame):
             vine_2d,
             recommend_arrow_start,
         ]
+        if calyx_2d is not None:
+            points.append(calyx_2d)
         if final_arrow_start is not None:
             points.append(final_arrow_start)
         project, bounds = self._projector(points)
@@ -551,6 +582,17 @@ class PlotCanvas(ttk.Frame):
             0.006 * 0.5,
             minimum_px=6.0,
         ) * self.marker_scale * self.stem_marker_scale
+        calyx_radius_px = (
+            projected_metric_radius(
+                project,
+                calyx_2d,
+                0.003,
+                minimum_px=4.0,
+            )
+            * self.marker_scale
+            if calyx_2d is not None
+            else 0.0
+        )
         self._grid(
             project,
             bounds,
@@ -622,8 +664,22 @@ class PlotCanvas(ttk.Frame):
             stem_radius_px,
             show_label=self.show_point_labels,
         )
+        if calyx_2d is not None:
+            self._point(
+                project,
+                calyx_2d,
+                COLORS["calyx"],
+                "꼭지점" if self.show_point_labels else "",
+                calyx_radius_px,
+                label_offset=(0, -calyx_radius_px - 12.0),
+                outline="#4a235a",
+                outline_width=2,
+            )
         if self.show_legend:
-            self._legend(show_final=final_2d is not None)
+            self._legend(
+                show_final=final_2d is not None,
+                show_calyx=calyx_2d is not None,
+            )
 
 
 class FeedbackViewer:

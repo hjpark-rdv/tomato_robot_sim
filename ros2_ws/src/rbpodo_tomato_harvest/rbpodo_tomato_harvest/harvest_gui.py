@@ -27,6 +27,11 @@ from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
 from rbpodo_tomato_harvest.feedback_viewer import PlotCanvas
 from rbpodo_tomato_harvest.tomato_tf_generator import (
+    ANGLE_REFERENCE_BASE_TO_CENTER,
+    ANGLE_REFERENCE_CALYX_TO_STEM,
+    ANGLE_REFERENCE_CENTER_TO_STEM,
+    ANGLE_REFERENCE_MODES,
+    angle_reference_label,
     clustered_height_order,
     harvest_tf_frame_id,
 )
@@ -38,7 +43,7 @@ from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Bool, Float64, Header, String
-from std_srvs.srv import SetBool, Trigger
+from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -55,6 +60,12 @@ NAMED_POSE_STATES = (*PICK_READY_STATES, "CAPTURE_LEFT")
 CAMERA_SOURCE_FAKE = "Fake tomato"
 CAMERA_SOURCE_REAL = "실제 /detect_tomatoes"
 CAMERA_SOURCE_OPTIONS = (CAMERA_SOURCE_FAKE, CAMERA_SOURCE_REAL)
+ANGLE_REFERENCE_DISPLAY_OPTIONS = tuple(
+    angle_reference_label(mode) for mode in ANGLE_REFERENCE_MODES
+)
+ANGLE_REFERENCE_MODE_BY_LABEL = {
+    angle_reference_label(mode): mode for mode in ANGLE_REFERENCE_MODES
+}
 VISION_REVIEW_ISSUES = {
     "문제 없음": "NO_ISSUE",
     "토마토 중심 좌표 불일치": "TOMATO_XYZ_MISMATCH",
@@ -1131,13 +1142,24 @@ def tomato_stem_arrow_length(
     return max(float(minimum_length), horizontal_distance - float(stem_margin))
 
 
-def detection_angle_origin(detection, use_calyx_angle_reference: bool):
-    """Return the detection point used as the start of the stem vector."""
-    return (
-        detection.calyx_point
-        if bool(use_calyx_angle_reference)
-        else detection.center
-    )
+def detection_angle_segment(
+    detection,
+    angle_reference_mode: str,
+    base_point=None,
+):
+    """Return source and target points for the selected approach axis."""
+    mode = str(angle_reference_mode)
+    if mode == ANGLE_REFERENCE_CENTER_TO_STEM:
+        return detection.center, detection.stem_point
+    if mode == ANGLE_REFERENCE_CALYX_TO_STEM:
+        return detection.calyx_point, detection.stem_point
+    if mode == ANGLE_REFERENCE_BASE_TO_CENTER:
+        if base_point is None:
+            raise ValueError(
+                "로봇 베이스→토마토 중심 모드에는 베이스 원점이 필요합니다."
+            )
+        return base_point, detection.center
+    raise ValueError(f"지원하지 않는 진입각 기준입니다: {mode}")
 
 
 def detected_tomato_marker_array(
@@ -1145,7 +1167,8 @@ def detected_tomato_marker_array(
     diameter: float = 0.0175,
     stem_diameter: float = 0.006,
     approach_length: float = 0.06,
-    use_calyx_angle_reference: bool = False,
+    angle_reference_mode: str = ANGLE_REFERENCE_CENTER_TO_STEM,
+    base_point=None,
 ) -> MarkerArray:
     """Create tomato, stem-point, and approach-direction preview markers."""
     if not detections.header.frame_id:
@@ -1172,14 +1195,20 @@ def detected_tomato_marker_array(
             y=float(detection.stem_point.y),
             z=float(detection.stem_point.z),
         )
-        angle_origin_value = detection_angle_origin(
+        angle_origin_value, angle_target_value = detection_angle_segment(
             detection,
-            use_calyx_angle_reference,
+            angle_reference_mode,
+            base_point=base_point,
         )
         angle_origin = Point(
             x=float(angle_origin_value.x),
             y=float(angle_origin_value.y),
             z=float(angle_origin_value.z),
+        )
+        angle_target = Point(
+            x=float(angle_target_value.x),
+            y=float(angle_target_value.y),
+            z=float(angle_target_value.z),
         )
 
         tomato_marker = Marker()
@@ -1216,9 +1245,9 @@ def detected_tomato_marker_array(
         stem_marker.color.a = 0.95
         markers.append(stem_marker)
 
-        axis_x = stem.x - angle_origin.x
-        axis_y = stem.y - angle_origin.y
-        axis_z = stem.z - angle_origin.z
+        axis_x = angle_target.x - angle_origin.x
+        axis_y = angle_target.y - angle_origin.y
+        axis_z = angle_target.z - angle_origin.z
         axis_norm = math.sqrt(axis_x * axis_x + axis_y * axis_y + axis_z * axis_z)
         if axis_norm <= 1e-9:
             continue
@@ -1549,6 +1578,8 @@ def camera_target_record_text(
     robot_tomato_xyz=None,
     robot_vine_xyz=None,
     robot_calyx_xyz=None,
+    robot_angle_origin_xyz=None,
+    robot_angle_target_xyz=None,
     review_issue: str = "문제 없음",
     review_note: str = "",
 ) -> str:
@@ -1574,7 +1605,7 @@ def camera_target_record_text(
         xyz(calyx_xyz, "꼭지 좌표") if calyx_xyz is not None else None
     )
     angle_reference = str(angle_reference).strip()
-    if angle_reference not in {"center_to_stem", "calyx_to_stem"}:
+    if angle_reference not in ANGLE_REFERENCE_MODES:
         raise ValueError(f"지원하지 않는 진입각 기준입니다: {angle_reference}")
     if angle_reference == "calyx_to_stem" and calyx is None:
         raise ValueError("꼭지→줄기 진입각에는 calyx_point 좌표가 필요합니다.")
@@ -1593,10 +1624,22 @@ def camera_target_record_text(
             if robot_calyx_xyz is not None
             else None
         )
+        robot_angle_origin = (
+            xyz(robot_angle_origin_xyz, "robot.angle_origin_xyz")
+            if robot_angle_origin_xyz is not None
+            else None
+        )
+        robot_angle_target = (
+            xyz(robot_angle_target_xyz, "robot.angle_target_xyz")
+            if robot_angle_target_xyz is not None
+            else None
+        )
     else:
         robot_tomato = geometry.get("tomato_xyz")
         robot_vine = geometry.get("vine_xyz")
         robot_calyx = None
+        robot_angle_origin = None
+        robot_angle_target = None
     if (
         not exact_robot_coordinates
         and robot_tomato is not None
@@ -1687,6 +1730,8 @@ def camera_target_record_text(
             "calyx_xyz": robot_calyx,
             "vine_xyz": robot_vine,
             "angle_reference": angle_reference,
+            "angle_origin_xyz": robot_angle_origin,
+            "angle_target_xyz": robot_angle_target,
             "recommend_pregrasp_xyz": geometry.get(
                 "recommend_pregrasp_xyz"
             ),
@@ -1712,7 +1757,9 @@ def camera_target_record_text(
 def tomato_selection_plot_scene(
     tomato_xyz,
     vine_xyz,
+    calyx_xyz=None,
     angle_origin_xyz=None,
+    angle_target_xyz=None,
     plan_report: dict | None = None,
     recommend_length_m: float = 0.04,
 ) -> dict:
@@ -1728,16 +1775,24 @@ def tomato_selection_plot_scene(
 
     tomato = xyz(tomato_xyz, "토마토 중심 좌표")
     vine = xyz(vine_xyz, "줄기점 좌표")
+    calyx = (
+        None if calyx_xyz is None else xyz(calyx_xyz, "꼭지 좌표")
+    )
     angle_origin = (
         tomato
         if angle_origin_xyz is None
         else xyz(angle_origin_xyz, "진입각 시작점 좌표")
     )
+    angle_target = (
+        vine
+        if angle_target_xyz is None
+        else xyz(angle_target_xyz, "진입각 목표점 좌표")
+    )
     length = float(recommend_length_m)
     if not math.isfinite(length) or length <= 0.0:
         raise ValueError("Recommend 표시 길이는 0보다 커야 합니다.")
     outward = tuple(
-        angle_origin[axis] - vine[axis]
+        angle_origin[axis] - angle_target[axis]
         for axis in range(3)
     )
     outward_norm = math.sqrt(sum(value * value for value in outward))
@@ -1751,16 +1806,48 @@ def tomato_selection_plot_scene(
 
     report = dict(plan_report or {})
     geometry = dict(report.get("approach_geometry") or {})
-    final_values = geometry.get("final_pregrasp_xyz")
-    final = (
-        xyz(final_values, "최종 pre-grasp 좌표")
-        if final_values is not None
-        else None
-    )
+    local_preapproach_values = geometry.get("preapproach_position")
+    if local_preapproach_values is not None:
+        local_preapproach = xyz(
+            local_preapproach_values,
+            "토마토 TF 기준 최종 pre-grasp 좌표",
+        )
+        direction_x = angle_target[0] - angle_origin[0]
+        direction_y = angle_target[1] - angle_origin[1]
+        direction_norm = math.hypot(direction_x, direction_y)
+        if direction_norm <= 1e-9:
+            raise ValueError("진입각 기준의 수평 방향이 너무 짧습니다.")
+        tomato_x = (
+            direction_x / direction_norm,
+            direction_y / direction_norm,
+        )
+        tomato_y = (-tomato_x[1], tomato_x[0])
+        # RViz의 노란 actual-approach marker도 동일한 tomato-frame
+        # preapproach_position을 사용한다. 절대 final_pregrasp_xyz를 현재
+        # 검출 중심과 섞지 않고 같은 로컬 벡터를 현재 TF 축으로 변환해야
+        # 재검출 이후에도 두 화면의 방향이 일치한다.
+        final = (
+            tomato[0]
+            + tomato_x[0] * local_preapproach[0]
+            + tomato_y[0] * local_preapproach[1],
+            tomato[1]
+            + tomato_x[1] * local_preapproach[0]
+            + tomato_y[1] * local_preapproach[1],
+            tomato[2] + local_preapproach[2],
+        )
+    else:
+        final_values = geometry.get("final_pregrasp_xyz")
+        final = (
+            xyz(final_values, "최종 pre-grasp 좌표")
+            if final_values is not None
+            else None
+        )
     return {
         "robot_tomato": tomato,
         "robot_vine": vine,
+        "robot_calyx": calyx,
         "robot_angle_origin": angle_origin,
+        "robot_angle_target": angle_target,
         "recommend": recommend,
         "final": final,
     }
@@ -1918,8 +2005,9 @@ class HarvestGui(Node):
         )
         self.declare_parameter(
             "tf_angle_reference_service",
-            "/tomato_tf_generator/set_calyx_angle_reference",
+            "/tomato_tf_generator/set_parameters",
         )
+        self.declare_parameter("angle_reference_robot_base_frame", "link0")
 
         camera_service = str(self.get_parameter("camera_service").value)
         real_camera_service = str(
@@ -1964,7 +2052,7 @@ class HarvestGui(Node):
             self.get_parameter("tf_angle_reference_service").value
         )
         self.tf_angle_reference_client = self.create_client(
-            SetBool,
+            SetParameters,
             self.tf_angle_reference_service,
         )
         self.debug_frame_service = str(
@@ -2253,7 +2341,9 @@ class HarvestGui(Node):
         self.detected_tomato_expected_world_x_axes = {}
         self.detected_tomato_record_positions = {}
         self.detected_tomato_record_stem_positions = {}
+        self.detected_tomato_record_calyx_positions = {}
         self.detected_tomato_record_angle_origins = {}
+        self.detected_tomato_record_angle_targets = {}
         self.current_detection_stamp_ns = 0
         self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
@@ -2394,7 +2484,9 @@ class HarvestGui(Node):
             value=f"결과 이미지 대기: {self.result_image_topic}"
         )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
-        self.use_calyx_angle_reference_var = tk.BooleanVar(value=False)
+        self.angle_reference_mode_var = tk.StringVar(
+            value=angle_reference_label(ANGLE_REFERENCE_CENTER_TO_STEM)
+        )
         self.named_pose_var = tk.StringVar(value="PICK_READY")
         self.pick_ready_state_var = tk.StringVar(value="PICK_READY")
         self.scene_x = tk.StringVar(value="0.355")
@@ -2613,18 +2705,23 @@ class HarvestGui(Node):
             sticky="w",
             pady=(8, 0),
         )
-        self.calyx_angle_reference_checkbox = ttk.Checkbutton(
+        self.angle_reference_mode_combo = ttk.Combobox(
             camera_frame,
-            text="진입각: 꼭지→줄기 (해제: 중심→줄기)",
-            variable=self.use_calyx_angle_reference_var,
-            command=self._calyx_angle_reference_changed,
+            textvariable=self.angle_reference_mode_var,
+            values=ANGLE_REFERENCE_DISPLAY_OPTIONS,
+            state="readonly",
+            width=25,
         )
-        self.calyx_angle_reference_checkbox.grid(
+        self.angle_reference_mode_combo.grid(
             row=3,
             column=0,
             columnspan=2,
-            sticky="w",
+            sticky="ew",
             pady=(8, 0),
+        )
+        self.angle_reference_mode_combo.bind(
+            "<<ComboboxSelected>>",
+            self._angle_reference_mode_changed,
         )
         self.detect_button = ttk.Button(
             camera_frame,
@@ -4601,6 +4698,33 @@ class HarvestGui(Node):
         )
         return float(transform.transform.translation.z)
 
+    def _selected_angle_reference_mode(self) -> str:
+        label = str(self.angle_reference_mode_var.get())
+        try:
+            return ANGLE_REFERENCE_MODE_BY_LABEL[label]
+        except KeyError as error:
+            raise ValueError(
+                f"지원하지 않는 진입각 기준입니다: {label}"
+            ) from error
+
+    def _robot_base_origin_in_frame(self, target_frame: str) -> Point:
+        base_frame = str(
+            self.get_parameter("angle_reference_robot_base_frame").value
+        )
+        if target_frame == base_frame:
+            return Point(x=0.0, y=0.0, z=0.0)
+        transform = self.tf_buffer.lookup_transform(
+            target_frame,
+            base_frame,
+            Time(),
+        )
+        translation = transform.transform.translation
+        return Point(
+            x=float(translation.x),
+            y=float(translation.y),
+            z=float(translation.z),
+        )
+
     def _cache_detected_tomato_world_positions(
         self,
         message: TomatoDetectionArray,
@@ -4618,12 +4742,18 @@ class HarvestGui(Node):
             )
         positions = {}
         x_axes = {}
+        mode = self._selected_angle_reference_mode()
+        base_world = (
+            self._robot_base_origin_in_frame(world_frame)
+            if mode == ANGLE_REFERENCE_BASE_TO_CENTER
+            else None
+        )
         for index, detection in enumerate(message.detections):
             center = detection.center
-            stem = detection.stem_point
-            angle_origin = detection_angle_origin(
+            angle_origin, angle_target = detection_angle_segment(
                 detection,
-                self.use_calyx_angle_reference_var.get(),
+                mode,
+                base_point=base_world,
             )
             if transform is None:
                 center_world = (
@@ -4631,26 +4761,34 @@ class HarvestGui(Node):
                     float(center.y),
                     float(center.z),
                 )
-                stem_world = (
-                    float(stem.x),
-                    float(stem.y),
-                    float(stem.z),
-                )
                 angle_origin_world = (
                     float(angle_origin.x),
                     float(angle_origin.y),
                     float(angle_origin.z),
                 )
+                angle_target_world = (
+                    float(angle_target.x),
+                    float(angle_target.y),
+                    float(angle_target.z),
+                )
             else:
                 center_world = transformed_point_xyz(center, transform)
-                stem_world = transformed_point_xyz(stem, transform)
-                angle_origin_world = transformed_point_xyz(
-                    angle_origin,
+                angle_origin_world = (
+                    (
+                        float(base_world.x),
+                        float(base_world.y),
+                        float(base_world.z),
+                    )
+                    if mode == ANGLE_REFERENCE_BASE_TO_CENTER
+                    else transformed_point_xyz(angle_origin, transform)
+                )
+                angle_target_world = transformed_point_xyz(
+                    angle_target,
                     transform,
                 )
             positions[index] = center_world
-            horizontal_x = stem_world[0] - angle_origin_world[0]
-            horizontal_y = stem_world[1] - angle_origin_world[1]
+            horizontal_x = angle_target_world[0] - angle_origin_world[0]
+            horizontal_y = angle_target_world[1] - angle_origin_world[1]
             horizontal_norm = math.hypot(horizontal_x, horizontal_y)
             if horizontal_norm > 1e-9:
                 x_axes[index] = (
@@ -4679,11 +4817,20 @@ class HarvestGui(Node):
             )
         centers = {}
         stems = {}
+        calyxes = {}
         angle_origins = {}
+        angle_targets = {}
+        mode = self._selected_angle_reference_mode()
+        base_target = (
+            self._robot_base_origin_in_frame(target_frame)
+            if mode == ANGLE_REFERENCE_BASE_TO_CENTER
+            else None
+        )
         for index, detection in enumerate(message.detections):
-            angle_origin = detection_angle_origin(
+            angle_origin, angle_target = detection_angle_segment(
                 detection,
-                self.use_calyx_angle_reference_var.get(),
+                mode,
+                base_point=base_target,
             )
             if transform is None:
                 centers[index] = (
@@ -4696,10 +4843,20 @@ class HarvestGui(Node):
                     float(detection.stem_point.y),
                     float(detection.stem_point.z),
                 )
+                calyxes[index] = (
+                    float(detection.calyx_point.x),
+                    float(detection.calyx_point.y),
+                    float(detection.calyx_point.z),
+                )
                 angle_origins[index] = (
                     float(angle_origin.x),
                     float(angle_origin.y),
                     float(angle_origin.z),
+                )
+                angle_targets[index] = (
+                    float(angle_target.x),
+                    float(angle_target.y),
+                    float(angle_target.z),
                 )
             else:
                 centers[index] = transformed_point_xyz(
@@ -4710,13 +4867,28 @@ class HarvestGui(Node):
                     detection.stem_point,
                     transform,
                 )
-                angle_origins[index] = transformed_point_xyz(
-                    angle_origin,
+                calyxes[index] = transformed_point_xyz(
+                    detection.calyx_point,
+                    transform,
+                )
+                angle_origins[index] = (
+                    (
+                        float(base_target.x),
+                        float(base_target.y),
+                        float(base_target.z),
+                    )
+                    if mode == ANGLE_REFERENCE_BASE_TO_CENTER
+                    else transformed_point_xyz(angle_origin, transform)
+                )
+                angle_targets[index] = transformed_point_xyz(
+                    angle_target,
                     transform,
                 )
         self.detected_tomato_record_positions = centers
         self.detected_tomato_record_stem_positions = stems
+        self.detected_tomato_record_calyx_positions = calyxes
         self.detected_tomato_record_angle_origins = angle_origins
+        self.detected_tomato_record_angle_targets = angle_targets
 
     def _sort_detection_message_by_height(
         self,
@@ -6724,7 +6896,13 @@ class HarvestGui(Node):
             )
             for detection in message.detections
         )
-        return (stamp.sec, stamp.nanosec, message.header.frame_id, points)
+        return (
+            stamp.sec,
+            stamp.nanosec,
+            message.header.frame_id,
+            self._selected_angle_reference_mode(),
+            points,
+        )
 
     def _detections_callback(self, message: TomatoDetectionArray) -> None:
         sorter = getattr(self, "_sort_detection_message_by_height", None)
@@ -6760,10 +6938,12 @@ class HarvestGui(Node):
             )
         try:
             self._cache_detected_tomato_record_positions(message)
-        except TransformException as error:
+        except (TransformException, ValueError) as error:
             self.detected_tomato_record_positions = {}
             self.detected_tomato_record_stem_positions = {}
+            self.detected_tomato_record_calyx_positions = {}
             self.detected_tomato_record_angle_origins = {}
+            self.detected_tomato_record_angle_targets = {}
             record_frame = str(
                 self.get_parameter("camera_target_record_robot_frame").value
             )
@@ -6857,33 +7037,48 @@ class HarvestGui(Node):
                 return
         self.detect_button.configure(state="disabled")
         self.camera_source_combo.configure(state="disabled")
-        self.calyx_angle_reference_checkbox.configure(state="disabled")
+        self.angle_reference_mode_combo.configure(state="disabled")
         self.status.set("TF 진입각 기준 동기화 중...")
-        request = SetBool.Request()
-        request.data = bool(self.use_calyx_angle_reference_var.get())
+        request = self._angle_reference_parameter_request()
         future = self.tf_angle_reference_client.call_async(request)
         future.add_done_callback(self._angle_reference_before_detection_done)
+
+    def _angle_reference_parameter_request(self) -> SetParameters.Request:
+        request = SetParameters.Request()
+        request.parameters = [
+            Parameter(
+                name="angle_reference_mode",
+                value=ParameterValue(
+                    type=ParameterType.PARAMETER_STRING,
+                    string_value=self._selected_angle_reference_mode(),
+                ),
+            )
+        ]
+        return request
 
     def _angle_reference_before_detection_done(self, future) -> None:
         try:
             response = future.result()
-            if not response.success:
-                raise RuntimeError(response.message or "TF 생성기 설정 거부")
+            if not response.results or not response.results[0].successful:
+                reason = (
+                    response.results[0].reason
+                    if response.results
+                    else "설정 응답이 비어 있습니다."
+                )
+                raise RuntimeError(reason or "TF 생성기 설정 거부")
         except Exception as error:
             self.detect_button.configure(state="normal")
             self.camera_source_combo.configure(
                 state="disabled" if self.ui_busy else "readonly"
             )
-            self.calyx_angle_reference_checkbox.configure(
-                state="disabled" if self.ui_busy else "normal"
+            self.angle_reference_mode_combo.configure(
+                state="disabled" if self.ui_busy else "readonly"
             )
             self.status.set("TF 진입각 기준 동기화 실패")
             self._append_log(f"진입각 기준 동기화 실패: {error}")
             return
-        reference = (
-            "꼭지→줄기"
-            if self.use_calyx_angle_reference_var.get()
-            else "토마토 중심→줄기"
+        reference = angle_reference_label(
+            self._selected_angle_reference_mode()
         )
         self.status.set("카메라 촬영 및 토마토 검출 요청 중...")
         self._append_log(
@@ -6988,8 +7183,8 @@ class HarvestGui(Node):
 
     def _detection_service_done(self, future) -> None:
         self.detect_button.configure(state="normal")
-        self.calyx_angle_reference_checkbox.configure(
-            state="disabled" if self.ui_busy else "normal"
+        self.angle_reference_mode_combo.configure(
+            state="disabled" if self.ui_busy else "readonly"
         )
         self.camera_source_combo.configure(
             state="disabled" if self.ui_busy else "readonly"
@@ -7043,7 +7238,9 @@ class HarvestGui(Node):
         self.detected_tomato_expected_world_x_axes.clear()
         self.detected_tomato_record_positions.clear()
         self.detected_tomato_record_stem_positions.clear()
+        self.detected_tomato_record_calyx_positions.clear()
         self.detected_tomato_record_angle_origins.clear()
+        self.detected_tomato_record_angle_targets.clear()
         self.tomato_motion_results.clear()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = ""
@@ -7084,16 +7281,21 @@ class HarvestGui(Node):
         message: TomatoDetectionArray,
     ) -> None:
         try:
+            mode = self._selected_angle_reference_mode()
+            base_point = (
+                self._robot_base_origin_in_frame(message.header.frame_id)
+                if mode == ANGLE_REFERENCE_BASE_TO_CENTER
+                else None
+            )
             markers = detected_tomato_marker_array(
                 message,
                 diameter=self.detection_marker_diameter,
                 stem_diameter=self.detection_stem_marker_diameter,
                 approach_length=self.detection_approach_marker_length,
-                use_calyx_angle_reference=(
-                    self.use_calyx_angle_reference_var.get()
-                ),
+                angle_reference_mode=mode,
+                base_point=base_point,
             )
-        except ValueError as error:
+        except (TransformException, ValueError) as error:
             self._append_log(f"검출 토마토 마커 생성 실패: {error}")
             return
         self.detection_marker_publisher.publish(markers)
@@ -7102,14 +7304,18 @@ class HarvestGui(Node):
             f"{len(message.detections)}세트 표시: "
             f"핑크=중심, 초록=줄기점, 하늘색=진입 방향, "
             "각도기준="
-            f"{'꼭지→줄기' if self.use_calyx_angle_reference_var.get() else '중심→줄기'}, "
+            f"{angle_reference_label(mode)}, "
             f"frame={message.header.frame_id}"
         )
 
-    def _calyx_angle_reference_changed(self) -> None:
-        use_calyx = bool(self.use_calyx_angle_reference_var.get())
-        reference = "꼭지→줄기" if use_calyx else "토마토 중심→줄기"
+    def _angle_reference_mode_changed(self, _event=None) -> None:
+        mode = self._selected_angle_reference_mode()
+        reference = angle_reference_label(mode)
         self._invalidate_plan()
+        self.detection_signature = None
+        self.detected_tomato_expected_world_x_axes.clear()
+        self.detected_tomato_record_angle_origins.clear()
+        self.detected_tomato_record_angle_targets.clear()
         self.plan_button.configure(state="disabled")
         self.harvest_all_button.configure(state="disabled")
         self.harvest_all_plan_button.configure(state="disabled")
@@ -7125,20 +7331,27 @@ class HarvestGui(Node):
             self._update_selected_tomato_plot()
         if not self.tf_angle_reference_client.service_is_ready():
             return
-        request = SetBool.Request()
-        request.data = use_calyx
+        request = self._angle_reference_parameter_request()
         future = self.tf_angle_reference_client.call_async(request)
-        future.add_done_callback(self._calyx_angle_reference_setting_done)
+        future.add_done_callback(self._angle_reference_mode_setting_done)
 
-    def _calyx_angle_reference_setting_done(self, future) -> None:
+    def _angle_reference_mode_setting_done(self, future) -> None:
         try:
             response = future.result()
-            if not response.success:
-                raise RuntimeError(response.message or "설정 거부")
+            if not response.results or not response.results[0].successful:
+                reason = (
+                    response.results[0].reason
+                    if response.results
+                    else "설정 응답이 비어 있습니다."
+                )
+                raise RuntimeError(reason or "설정 거부")
         except Exception as error:
             self._append_log(f"[진입각 기준 설정 경고] {error}")
             return
-        self._append_log(f"[TF 생성기] {response.message}")
+        self._append_log(
+            "[TF 생성기] 진입각 기준 적용: "
+            f"{angle_reference_label(self._selected_angle_reference_mode())}"
+        )
 
     def _clear_detection_markers(self) -> None:
         marker = Marker()
@@ -7292,11 +7505,7 @@ class HarvestGui(Node):
                     detection.calyx_point.y,
                     detection.calyx_point.z,
                 ),
-                angle_reference=(
-                    "calyx_to_stem"
-                    if self.use_calyx_angle_reference_var.get()
-                    else "center_to_stem"
-                ),
+                angle_reference=self._selected_angle_reference_mode(),
                 detection_timestamp=detection_timestamp,
                 plan_report=report,
                 robot_frame_id=str(
@@ -7311,9 +7520,13 @@ class HarvestGui(Node):
                     self.detected_tomato_record_stem_positions.get(index)
                 ),
                 robot_calyx_xyz=(
+                    self.detected_tomato_record_calyx_positions.get(index)
+                ),
+                robot_angle_origin_xyz=(
                     self.detected_tomato_record_angle_origins.get(index)
-                    if self.use_calyx_angle_reference_var.get()
-                    else None
+                ),
+                robot_angle_target_xyz=(
+                    self.detected_tomato_record_angle_targets.get(index)
                 ),
                 review_issue=self.camera_review_issue_var.get(),
                 review_note=self.camera_review_note_var.get(),
@@ -7476,8 +7689,16 @@ class HarvestGui(Node):
             return
         tomato = self.detected_tomato_record_positions.get(index)
         vine = self.detected_tomato_record_stem_positions.get(index)
+        calyx = self.detected_tomato_record_calyx_positions.get(index)
         angle_origin = self.detected_tomato_record_angle_origins.get(index)
-        if tomato is None or vine is None or angle_origin is None:
+        angle_target = self.detected_tomato_record_angle_targets.get(index)
+        if (
+            tomato is None
+            or vine is None
+            or calyx is None
+            or angle_origin is None
+            or angle_target is None
+        ):
             plot.clear(
                 "선택 토마토의 link0 좌표가 없습니다.\n"
                 "카메라 검출을 다시 실행하세요."
@@ -7487,7 +7708,9 @@ class HarvestGui(Node):
             scene = tomato_selection_plot_scene(
                 tomato,
                 vine,
+                calyx,
                 angle_origin,
+                angle_target,
                 self._selected_tomato_plan_report(index),
             )
         except (TypeError, ValueError) as error:
@@ -10401,7 +10624,9 @@ class HarvestGui(Node):
                 else "readonly"
             )
         )
-        self.calyx_angle_reference_checkbox.configure(state=state)
+        self.angle_reference_mode_combo.configure(
+            state="disabled" if busy else "readonly"
+        )
         self.named_pose_combo.configure(
             state="disabled" if busy else "readonly"
         )
@@ -10553,6 +10778,9 @@ class HarvestGui(Node):
         self.detected_tomato_expected_world_x_axes.clear()
         self.detected_tomato_record_positions.clear()
         self.detected_tomato_record_stem_positions.clear()
+        self.detected_tomato_record_calyx_positions.clear()
+        self.detected_tomato_record_angle_origins.clear()
+        self.detected_tomato_record_angle_targets.clear()
         self._clear_active_camera_target()
         self.tomato_motion_results.clear()
         if preserve_sweep_markers:
