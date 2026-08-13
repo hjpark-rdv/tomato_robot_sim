@@ -56,7 +56,7 @@ PLANNER_CONFIGS = {
 }
 GUI_PLANNER_CONFIG = PLANNER_CONFIGS["Cartesian"]
 PICK_READY_STATES = ("PICK_READY", "PICK_READY_RIGHT")
-NAMED_POSE_STATES = (*PICK_READY_STATES, "CAPTURE_LEFT")
+NAMED_POSE_STATES = (*PICK_READY_STATES, "CAPTURE_LEFT", "CAPTURE_RIGHT")
 CAMERA_SOURCE_FAKE = "Fake tomato"
 CAMERA_SOURCE_REAL = "실제 /detect_tomatoes"
 CAMERA_SOURCE_OPTIONS = (CAMERA_SOURCE_FAKE, CAMERA_SOURCE_REAL)
@@ -66,6 +66,31 @@ ANGLE_REFERENCE_DISPLAY_OPTIONS = tuple(
 ANGLE_REFERENCE_MODE_BY_LABEL = {
     angle_reference_label(mode): mode for mode in ANGLE_REFERENCE_MODES
 }
+
+
+def pick_ready_state_for_capture_pose(
+    capture_pose: str | None,
+    default_state: str = "PICK_READY",
+    target_link0_x: float | None = None,
+) -> str:
+    """Select the matching harvest-ready state for a camera pose."""
+    pose = str(capture_pose or "").strip()
+    if pose == "CAPTURE_RIGHT":
+        return "PICK_READY_RIGHT"
+    if pose == "CAPTURE_LEFT":
+        return "PICK_READY"
+    if target_link0_x is not None:
+        target_x = float(target_link0_x)
+        if not math.isfinite(target_x):
+            raise ValueError("target_link0_x must be finite")
+        # The RIGHT-side view sees the plant behind Link0.  This geometry is
+        # still available after restarting the GUI, unlike transient camera
+        # pose bookkeeping.
+        return "PICK_READY_RIGHT" if target_x < 0.0 else "PICK_READY"
+    state = str(default_state).strip()
+    if state not in PICK_READY_STATES:
+        raise ValueError(f"unsupported ready state: {state}")
+    return state
 VISION_REVIEW_ISSUES = {
     "문제 없음": "NO_ISSUE",
     "토마토 중심 좌표 불일치": "TOMATO_XYZ_MISMATCH",
@@ -81,9 +106,9 @@ BATCH_HARVEST_STAGE_OPTIONS = ("전체 수확", "3단계까지", "4단계까지"
 STEP_CUSTOM_STAGE_DEFAULTS_MM = {
     3: (10.0, 0.0, 0.0),
     4: (40.0, 0.0, 0.0),
-    5: (20.0, 0.0, 20.0),
-    6: (0.0, 0.0, 20.0),
-    7: (-50.0, 0.0, 0.0),
+    6: (20.0, 0.0, 20.0),
+    7: (0.0, 0.0, 20.0),
+    8: (-50.0, 0.0, 0.0),
 }
 STEP_CUSTOM_DELTA_LIMIT_MM = 200.0
 DETECTION_MARKER_NAMESPACE = "detected_tomato_preview"
@@ -583,6 +608,8 @@ def harvest_command(
     acceleration_scale: float = 0.20,
     harvest_wait_sec: float = 2.0,
     harvest_x_forward_m: float = 0.040,
+    harvest_tcp_wrist_oscillation_enabled: bool = True,
+    harvest_tcp_wrist_rotation_deg: float = 10.0,
     continuous_transition: bool = False,
     return_to_pick_ready: bool = True,
     retreat_after_harvest: bool = False,
@@ -624,6 +651,14 @@ def harvest_command(
     if not 0.010 <= harvest_x_forward_m <= 0.070:
         raise ValueError(
             "harvest_x_forward_m must be between 0.010 and 0.070"
+        )
+    harvest_tcp_wrist_rotation_deg = float(harvest_tcp_wrist_rotation_deg)
+    if (
+        not math.isfinite(harvest_tcp_wrist_rotation_deg)
+        or not 1.0 <= harvest_tcp_wrist_rotation_deg <= 45.0
+    ):
+        raise ValueError(
+            "harvest_tcp_wrist_rotation_deg must be between 1 and 45"
         )
     if harvest_stage_limit is not None:
         harvest_stage_limit = int(harvest_stage_limit)
@@ -673,6 +708,12 @@ def harvest_command(
         f"harvest_wait_sec:={harvest_wait_sec}",
         "-p",
         f"harvest_x_forward:={harvest_x_forward_m}",
+        "-p",
+        "harvest_tcp_wrist_oscillation_enabled:="
+        f"{'true' if harvest_tcp_wrist_oscillation_enabled else 'false'}",
+        "-p",
+        "harvest_tcp_wrist_rotation_deg:="
+        f"{harvest_tcp_wrist_rotation_deg}",
         "-p",
         "continuous_transition:="
         f"{'true' if continuous_transition else 'false'}",
@@ -756,6 +797,7 @@ def preplanned_batch_command(
     acceleration_scale: float = 0.2,
     harvest_wait_sec: float = 2.0,
     harvest_x_forward_m: float = 0.040,
+    harvest_tcp_wrist_rotation_deg: float = 10.0,
     harvest_stage_limit: int | None = None,
     pick_ready_state_name: str = "PICK_READY",
     prefer_robot_direction: bool = False,
@@ -787,6 +829,7 @@ def preplanned_batch_command(
         acceleration_scale=acceleration_scale,
         harvest_wait_sec=harvest_wait_sec,
         harvest_x_forward_m=harvest_x_forward_m,
+        harvest_tcp_wrist_rotation_deg=harvest_tcp_wrist_rotation_deg,
         continuous_transition=False,
         return_to_pick_ready=True,
         retreat_after_harvest=False,
@@ -829,6 +872,8 @@ def stepper_command(
     cycle_only: bool = False,
     cycle_last_stage: int = 5,
     cycle_forward_distance_m: float = 0.040,
+    tcp_wrist_oscillation_enabled: bool = True,
+    tcp_wrist_rotation_deg: float = 10.0,
     custom_stage_deltas_m: tuple[tuple[float, float, float], ...] | None = None,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
@@ -837,8 +882,8 @@ def stepper_command(
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
     cycle_last_stage = int(cycle_last_stage)
-    if not 1 <= cycle_last_stage <= 6:
-        raise ValueError("cycle_last_stage must be between 1 and 6")
+    if not 1 <= cycle_last_stage <= 7:
+        raise ValueError("cycle_last_stage must be between 1 and 7")
     cycle_forward_distance_m = float(cycle_forward_distance_m)
     if not 0.010 <= cycle_forward_distance_m <= 0.070:
         raise ValueError(
@@ -852,7 +897,7 @@ def stepper_command(
                 else STEP_CUSTOM_STAGE_DEFAULTS_MM[stage_number][axis_index]
                 / 1000.0
             )
-            for stage_number in range(3, 8)
+            for stage_number in STEP_CUSTOM_STAGE_DEFAULTS_MM
             for axis_index in range(3)
         )
         custom_stage_deltas_m = tuple(
@@ -883,6 +928,12 @@ def stepper_command(
         raise ValueError(
             "custom stage XYZ values must be finite and within +/-0.200 m"
         )
+    tcp_wrist_rotation_deg = float(tcp_wrist_rotation_deg)
+    if (
+        not math.isfinite(tcp_wrist_rotation_deg)
+        or not 1.0 <= tcp_wrist_rotation_deg <= 45.0
+    ):
+        raise ValueError("tcp_wrist_rotation_deg must be between 1 and 45")
     command = harvest_command(
         tomato_index,
         True,
@@ -895,6 +946,10 @@ def stepper_command(
         acceleration_scale=acceleration_scale,
         harvest_wait_sec=harvest_wait_sec,
         harvest_x_forward_m=cycle_forward_distance_m,
+        harvest_tcp_wrist_oscillation_enabled=(
+            tcp_wrist_oscillation_enabled
+        ),
+        harvest_tcp_wrist_rotation_deg=tcp_wrist_rotation_deg,
         continuous_transition=False,
         return_to_pick_ready=not cycle_only,
         retreat_after_harvest=False,
@@ -909,7 +964,7 @@ def stepper_command(
     command.extend(["-p", "stepwise_plan:=true"])
     command.extend(["-p", "step_custom_stage_deltas_enabled:=true"])
     for stage_number, stage_delta in zip(
-        range(3, 8), custom_stage_deltas_m
+        STEP_CUSTOM_STAGE_DEFAULTS_MM, custom_stage_deltas_m
     ):
         for axis_name, value in zip(("x", "y", "z"), stage_delta):
             command.extend(
@@ -928,8 +983,8 @@ def stepper_command(
 def repeat_cycle_command(direction: str, last_stage_number: int) -> dict:
     """Build the persistent stepper command for a selected 1↔X range."""
     stage_number = int(last_stage_number)
-    if not 1 <= stage_number <= 6:
-        raise ValueError("repeat last stage must be between 1 and 6")
+    if not 1 <= stage_number <= 7:
+        raise ValueError("repeat last stage must be between 1 and 7")
     actions = {
         "forward": "execute_cycle_forward",
         "reverse": "execute_cycle_reverse",
@@ -950,8 +1005,8 @@ def repeat_stage_command(
     """Return one cached-stage command, or None when the cycle is complete."""
     stage_number = int(last_stage_number)
     index = int(next_index)
-    if not 1 <= stage_number <= 6:
-        raise ValueError("repeat last stage must be between 1 and 6")
+    if not 1 <= stage_number <= 7:
+        raise ValueError("repeat last stage must be between 1 and 7")
     if direction == "forward":
         if index < 0 or index > stage_number:
             raise ValueError("forward repeat index is outside the cycle")
@@ -975,9 +1030,9 @@ def repeat_forward_distance_m(value) -> float:
 
 
 def step_custom_stage_deltas_m(values) -> tuple[tuple[float, float, float], ...]:
-    """Validate GUI stage 3~7 tip-local XYZ millimetres and convert to metres."""
+    """Validate GUI positional-stage XYZ millimetres and convert to metres."""
     converted = []
-    for stage_number in range(3, 8):
+    for stage_number in STEP_CUSTOM_STAGE_DEFAULTS_MM:
         try:
             stage_values = values[stage_number]
             raw_values = (
@@ -2373,6 +2428,9 @@ class HarvestGui(Node):
         self.harvest_plan_report = {}
         self.named_pose_report = {}
         self.named_pose_active_state = None
+        self.last_completed_named_pose = None
+        self.pending_detection_capture_pose = None
+        self.detection_capture_pose = None
         self.last_failure_robot_state = None
         self.process_queue = queue.Queue()
         self.batch_active = False
@@ -2385,6 +2443,7 @@ class HarvestGui(Node):
         self.batch_pick_ready_state = "PICK_READY"
         self.batch_harvest_wait_sec = 2.0
         self.batch_harvest_x_forward_m = 0.040
+        self.batch_tcp_wrist_rotation_deg = 10.0
         self.batch_harvest_stage_limit = None
         self.batch_continuous_mode = False
         self.batch_lift_harvest_mode = False
@@ -2418,6 +2477,7 @@ class HarvestGui(Node):
         self.sweep_cancel_requested = False
         self.sweep_execute_motion = False
         self.sweep_harvest_wait_sec = 2.0
+        self.sweep_tcp_wrist_rotation_deg = 10.0
         self.sweep_continuous_mode = False
         self.sweep_lift_harvest_mode = False
         self.sweep_pick_ready_state = "PICK_READY"
@@ -2498,6 +2558,10 @@ class HarvestGui(Node):
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
+        self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
+        self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
+            value=True
+        )
         self.prefer_robot_direction_var = tk.BooleanVar(value=False)
         self.adaptive_grasp_max_rotation_var = tk.StringVar(value="45.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
@@ -2513,7 +2577,7 @@ class HarvestGui(Node):
                     STEP_CUSTOM_STAGE_DEFAULTS_MM[stage_number],
                 )
             }
-            for stage_number in range(3, 8)
+            for stage_number in STEP_CUSTOM_STAGE_DEFAULTS_MM
         }
         self.step_status = tk.StringVar(
             value="토마토를 선택하고 스텝 Plan을 생성하세요."
@@ -2768,6 +2832,10 @@ class HarvestGui(Node):
             sticky="ew",
             padx=(8, 0),
             pady=(8, 0),
+        )
+        self.named_pose_combo.bind(
+            "<<ComboboxSelected>>",
+            self._named_pose_selection_changed,
         )
         self.named_pose_button = ttk.Button(
             camera_frame,
@@ -3101,6 +3169,35 @@ class HarvestGui(Node):
         self.harvest_forward_distance_spinbox.bind(
             "<Return>", self._harvest_forward_distance_changed
         )
+        ttk.Label(options, text="5단계 TCP 회전각 (°)").grid(
+            row=4,
+            column=0,
+            sticky="w",
+            pady=(8, 0),
+        )
+        self.harvest_tcp_wrist_rotation_spinbox = ttk.Spinbox(
+            options,
+            textvariable=self.tcp_wrist_rotation_deg_var,
+            from_=1,
+            to=45,
+            increment=1,
+            format="%.0f",
+            width=7,
+            command=self._invalidate_plan,
+        )
+        self.harvest_tcp_wrist_rotation_spinbox.grid(
+            row=4,
+            column=1,
+            sticky="w",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        self.harvest_tcp_wrist_rotation_spinbox.bind(
+            "<FocusOut>", lambda _event: self._invalidate_plan()
+        )
+        self.harvest_tcp_wrist_rotation_spinbox.bind(
+            "<Return>", lambda _event: self._invalidate_plan()
+        )
         self.prefer_robot_direction_checkbox = ttk.Checkbutton(
             options,
             text="진입각: Recommend보다 로봇 방향 우선",
@@ -3108,21 +3205,21 @@ class HarvestGui(Node):
             command=self._adaptive_grasp_mode_changed,
         )
         self.prefer_robot_direction_checkbox.grid(
-            row=4,
+            row=5,
             column=0,
             columnspan=2,
             sticky="w",
             pady=(8, 0),
         )
         ttk.Label(options, text="최대 보정각").grid(
-            row=5,
+            row=6,
             column=0,
             sticky="w",
             pady=(8, 0),
         )
         rotation_input = ttk.Frame(options)
         rotation_input.grid(
-            row=5,
+            row=6,
             column=1,
             sticky="w",
             padx=(8, 0),
@@ -3154,7 +3251,7 @@ class HarvestGui(Node):
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=6,
+            row=7,
             column=0,
             columnspan=2,
             sticky="w",
@@ -3167,7 +3264,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=7,
+            row=8,
             column=0,
             columnspan=2,
             sticky="w",
@@ -3180,7 +3277,7 @@ class HarvestGui(Node):
             command=self._preplan_all_mode_changed,
         )
         self.preplan_all_checkbox.grid(
-            row=8,
+            row=9,
             column=0,
             columnspan=2,
             sticky="w",
@@ -3302,6 +3399,7 @@ class HarvestGui(Node):
             marker_scale=0.7,
             stem_marker_scale=0.5,
             show_point_labels=False,
+            keep_robot_below_tomato=True,
         )
         self.selected_tomato_plot.grid(
             row=0,
@@ -3402,7 +3500,7 @@ class HarvestGui(Node):
 
         custom = ttk.LabelFrame(
             step_content,
-            text="3~7단계 tip 로컬 XYZ 커스텀 (mm)",
+            text="위치 이동 단계 tip 로컬 XYZ 커스텀 (mm)",
             padding=10,
         )
         custom.grid(row=0, column=1, sticky="nsew", padx=(6, 0))
@@ -3415,18 +3513,25 @@ class HarvestGui(Node):
                 anchor="center",
             ).grid(row=0, column=column, sticky="ew", padx=3)
         self.step_custom_delta_entries = []
-        for row, stage_number in enumerate(range(3, 8), start=1):
+        for row, stage_number in enumerate(
+            STEP_CUSTOM_STAGE_DEFAULTS_MM,
+            start=1,
+        ):
             ttk.Label(
                 custom,
                 text=f"{stage_number}단계",
                 anchor="center",
             ).grid(row=row, column=0, sticky="ew", padx=3, pady=4)
             for column, axis_name in enumerate(("x", "y", "z"), start=1):
-                entry = ttk.Entry(
+                entry = ttk.Spinbox(
                     custom,
                     textvariable=(
                         self.step_custom_delta_vars[stage_number][axis_name]
                     ),
+                    from_=-200,
+                    to=200,
+                    increment=1,
+                    format="%.0f",
                     width=8,
                     justify="center",
                 )
@@ -3440,15 +3545,62 @@ class HarvestGui(Node):
                 self.step_custom_delta_entries.append(entry)
         ttk.Label(
             custom,
+            text="5단계 TCP 회전각",
+            anchor="center",
+        ).grid(row=6, column=0, sticky="ew", padx=3, pady=(10, 4))
+        self.tcp_wrist_rotation_spinbox = ttk.Spinbox(
+            custom,
+            textvariable=self.tcp_wrist_rotation_deg_var,
+            from_=1,
+            to=45,
+            increment=1,
+            format="%.0f",
+            width=8,
+            justify="center",
+        )
+        self.tcp_wrist_rotation_spinbox.grid(
+            row=6,
+            column=1,
+            sticky="ew",
+            padx=3,
+            pady=(10, 4),
+        )
+        ttk.Label(custom, text="° (-X → +X → 원점)").grid(
+            row=6,
+            column=2,
+            columnspan=2,
+            sticky="w",
+            padx=3,
+            pady=(10, 4),
+        )
+        self.step_custom_delta_entries.append(
+            self.tcp_wrist_rotation_spinbox
+        )
+        self.step_tcp_wrist_oscillation_checkbox = ttk.Checkbutton(
+            custom,
+            text="TCP 좌우 흔들기 사용",
+            variable=self.step_tcp_wrist_oscillation_enabled_var,
+            command=self._step_wrist_oscillation_changed,
+        )
+        self.step_tcp_wrist_oscillation_checkbox.grid(
+            row=7,
+            column=0,
+            columnspan=4,
+            sticky="w",
+            padx=3,
+            pady=(5, 0),
+        )
+        ttk.Label(
+            custom,
             text=(
                 "각 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
-                "입력 범위: 축별 -200~+200 mm\n"
+                "입력 범위: 축별 -200~+200 mm (화살표 1회 = 1 mm)\n"
                 "Plan 생성 후에는 세션 종료까지 잠깁니다."
             ),
             foreground="#666666",
             justify="left",
         ).grid(
-            row=6,
+            row=8,
             column=0,
             columnspan=4,
             sticky="w",
@@ -3533,7 +3685,7 @@ class HarvestGui(Node):
         self.repeat_last_stage_combo = ttk.Combobox(
             setup,
             textvariable=self.repeat_last_stage_var,
-            values=("1", "2", "3", "4", "5", "6"),
+            values=("1", "2", "3", "4", "5", "6", "7"),
             state="readonly",
             width=5,
         )
@@ -3992,11 +4144,26 @@ class HarvestGui(Node):
                 row=row, column=0, sticky="w", padx=(0, 8), pady=3
             )
             for column, prefix in enumerate(("start", "end", "step"), start=1):
-                ttk.Entry(
-                    range_frame,
-                    textvariable=self.sweep_inputs[f"{prefix}_{key}"],
-                    width=11,
-                ).grid(row=row, column=column, padx=4, pady=3)
+                variable = self.sweep_inputs[f"{prefix}_{key}"]
+                if key in ("x", "y", "z"):
+                    # XYZ values use metres internally. One arrow click changes
+                    # the selected value by exactly 1 mm.
+                    widget = ttk.Spinbox(
+                        range_frame,
+                        textvariable=variable,
+                        from_=0.001 if prefix == "step" else -10.0,
+                        to=10.0,
+                        increment=0.001,
+                        format="%.3f",
+                        width=11,
+                    )
+                else:
+                    widget = ttk.Entry(
+                        range_frame,
+                        textvariable=variable,
+                        width=11,
+                    )
+                widget.grid(row=row, column=column, padx=4, pady=3)
             random_checkbox = ttk.Checkbutton(
                 range_frame,
                 variable=self.sweep_inputs[f"random_{key}"],
@@ -6294,6 +6461,11 @@ class HarvestGui(Node):
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
             )
+            tcp_wrist_rotation_deg = float(
+                self.tcp_wrist_rotation_deg_var.get()
+            )
+            if not 1.0 <= tcp_wrist_rotation_deg <= 45.0:
+                raise ValueError("5단계 TCP 회전각은 1~45도 범위여야 합니다.")
         except ValueError as error:
             messagebox.showerror("대기시간 입력 오류", str(error))
             return
@@ -6346,6 +6518,7 @@ class HarvestGui(Node):
             return
         self.sweep_execute_motion = execute_motion
         self.sweep_harvest_wait_sec = harvest_wait_sec
+        self.sweep_tcp_wrist_rotation_deg = tcp_wrist_rotation_deg
         self.sweep_continuous_mode = continuous_mode
         self.sweep_lift_harvest_mode = lift_harvest_mode
         self.sweep_pick_ready_state = pick_ready_state
@@ -6803,6 +6976,9 @@ class HarvestGui(Node):
             "velocity_scale": self.motion_velocity_scale,
             "acceleration_scale": self.motion_acceleration_scale,
             "harvest_wait_sec": self.sweep_harvest_wait_sec,
+            "harvest_tcp_wrist_rotation_deg": (
+                self.sweep_tcp_wrist_rotation_deg
+            ),
             "continuous_transition": continuous_transition,
             "return_to_pick_ready": return_to_pick_ready,
             "retreat_after_harvest": retreat_after_harvest,
@@ -6917,6 +7093,19 @@ class HarvestGui(Node):
         signature = self._detection_key(message)
         if signature == self.detection_signature:
             return
+        capture_pose = self.pending_detection_capture_pose
+        self.pending_detection_capture_pose = None
+        if capture_pose is not None:
+            self.detection_capture_pose = str(capture_pose)
+            ready_state = pick_ready_state_for_capture_pose(
+                self.detection_capture_pose,
+                self.pick_ready_state_var.get(),
+            )
+            self.pick_ready_state_var.set(ready_state)
+            self._append_log(
+                f"[촬영 자세 연동] {self.detection_capture_pose} 검출 → "
+                f"수확 시작/복귀 자세 {ready_state} 자동 선택"
+            )
         self._clear_active_camera_target()
         self.latest_detection_message = message
         self.result_arrow_lengths.clear()
@@ -7009,6 +7198,11 @@ class HarvestGui(Node):
         self._append_log(
             f"[{message.header.frame_id}] 새 검출 결과: 토마토 {len(choices)}개"
         )
+        if choices:
+            # Synchronize the visible combo as well as the planner parameter.
+            # This also restores RIGHT correctly for a retained detection after
+            # restarting only the GUI.
+            self._selected_pick_ready_state()
         self._update_selected_tomato_plot()
         self._update_step_controls()
         update_target_controls = getattr(
@@ -7024,7 +7218,17 @@ class HarvestGui(Node):
                 self._append_log(
                     f"카메라 서비스를 먼저 실행하세요: {self.camera_service}"
                 )
+                self.pending_detection_capture_pose = None
                 return
+        self.pending_detection_capture_pose = (
+            str(self.named_pose_var.get()).strip()
+            if str(self.named_pose_var.get()).strip()
+            in ("CAPTURE_LEFT", "CAPTURE_RIGHT")
+            else self.last_completed_named_pose
+            if self.last_completed_named_pose
+            in ("CAPTURE_LEFT", "CAPTURE_RIGHT")
+            else None
+        )
         if not self.tf_angle_reference_client.service_is_ready():
             if not self.tf_angle_reference_client.wait_for_service(
                 timeout_sec=0.10
@@ -7034,6 +7238,7 @@ class HarvestGui(Node):
                     "진입각 기준을 TF 생성기에 전달할 수 없습니다: "
                     f"{self.tf_angle_reference_service}"
                 )
+                self.pending_detection_capture_pose = None
                 return
         self.detect_button.configure(state="disabled")
         self.camera_source_combo.configure(state="disabled")
@@ -7067,6 +7272,7 @@ class HarvestGui(Node):
                 )
                 raise RuntimeError(reason or "TF 생성기 설정 거부")
         except Exception as error:
+            self.pending_detection_capture_pose = None
             self.detect_button.configure(state="normal")
             self.camera_source_combo.configure(
                 state="disabled" if self.ui_busy else "readonly"
@@ -7192,10 +7398,12 @@ class HarvestGui(Node):
         try:
             response = future.result()
         except Exception as error:
+            self.pending_detection_capture_pose = None
             self.status.set("카메라 서비스 호출 실패")
             self._append_log(f"카메라 서비스 오류: {error}")
             return
         if not response.success:
+            self.pending_detection_capture_pose = None
             self.status.set("토마토 검출 실패")
             self._append_log(f"검출 실패: {response.message}")
             return
@@ -7234,6 +7442,8 @@ class HarvestGui(Node):
             clear_active_target()
         self.detected_tomatoes = []
         self.latest_detection_message = None
+        self.pending_detection_capture_pose = None
+        self.detection_capture_pose = None
         self.detected_tomato_expected_world_positions.clear()
         self.detected_tomato_expected_world_x_axes.clear()
         self.detected_tomato_record_positions.clear()
@@ -7726,7 +7936,45 @@ class HarvestGui(Node):
         state_name = str(self.pick_ready_state_var.get())
         if state_name not in PICK_READY_STATES:
             raise ValueError(f"지원하지 않는 시작 자세입니다: {state_name}")
-        return state_name
+        capture_pose = self.detection_capture_pose
+        if capture_pose not in ("CAPTURE_LEFT", "CAPTURE_RIGHT"):
+            selected_pose = str(self.named_pose_var.get()).strip()
+            capture_pose = (
+                selected_pose
+                if selected_pose in ("CAPTURE_LEFT", "CAPTURE_RIGHT")
+                else self.last_completed_named_pose
+                if self.last_completed_named_pose
+                in ("CAPTURE_LEFT", "CAPTURE_RIGHT")
+                else None
+            )
+        index = self._selected_index()
+        if index is None and self.detected_tomato_record_positions:
+            index = min(self.detected_tomato_record_positions)
+        tomato = self.detected_tomato_record_positions.get(index)
+        target_x = float(tomato[0]) if tomato is not None else None
+        resolved = pick_ready_state_for_capture_pose(
+            capture_pose,
+            state_name,
+            target_x,
+        )
+        if resolved != state_name:
+            self.pick_ready_state_var.set(resolved)
+        return resolved
+
+    def _named_pose_selection_changed(self, _event=None) -> None:
+        pose = str(self.named_pose_var.get()).strip()
+        if pose not in ("CAPTURE_LEFT", "CAPTURE_RIGHT"):
+            return
+        ready_state = pick_ready_state_for_capture_pose(pose)
+        self.pick_ready_state_var.set(ready_state)
+        self._invalidate_plan()
+        self.status.set(
+            f"촬영 자세 {pose} 선택 — 수확 시작/복귀를 "
+            f"{ready_state}(으)로 설정했습니다."
+        )
+        self._append_log(
+            f"[촬영 자세 선택] {pose} → 시작/복귀 {ready_state}"
+        )
 
     def _pick_ready_state_changed(self, _event=None) -> None:
         state_name = self._selected_pick_ready_state()
@@ -7747,6 +7995,29 @@ class HarvestGui(Node):
                 self.adaptive_grasp_max_rotation_var.get()
             ),
         )
+
+    def _step_wrist_oscillation_changed(self) -> None:
+        """Invalidate cached step plans when stage 5 is toggled."""
+        self._invalidate_plan()
+        enabled = bool(self.step_tcp_wrist_oscillation_enabled_var.get())
+        if hasattr(self, "tcp_wrist_rotation_spinbox"):
+            self.tcp_wrist_rotation_spinbox.configure(
+                state=(
+                    "normal"
+                    if enabled and not self.ui_busy and self.step_process is None
+                    else "disabled"
+                )
+            )
+        self.status.set(
+            "스텝 5 TCP 좌우 흔들기 사용 — 스텝 Plan을 다시 생성하세요."
+            if enabled
+            else "스텝 5 TCP 좌우 흔들기 제외 — 스텝 Plan을 다시 생성하세요."
+        )
+        self._append_log(
+            f"[스텝 옵션] TCP 좌우 흔들기: "
+            f"{'사용' if enabled else '사용 안 함'}"
+        )
+        self._update_step_controls()
 
     def _linear_motor_wait_changed(self, _event=None) -> None:
         try:
@@ -7823,6 +8094,23 @@ class HarvestGui(Node):
             prefer_robot_direction,
             adaptive_max_rotation,
         )
+        # Step sessions append one Boolean for the optional wrist oscillation.
+        # Handle it before the legacy extended-plan tuple below, where the next
+        # element is a numeric forward distance.  Without this distinction a
+        # Boolean was parsed as a distance and every cached step plan appeared
+        # invalid even though no operator setting had changed.
+        if (
+            len(verification) == len(expected) + 1
+            and type(verification[-1]) is bool
+        ):
+            wrist_option = getattr(
+                self,
+                "step_tcp_wrist_oscillation_enabled_var",
+                None,
+            )
+            if wrist_option is None:
+                return False
+            return verification == expected + (bool(wrist_option.get()),)
         if len(verification) > len(expected):
             distance_variable = getattr(
                 self, "harvest_forward_distance_mm_var", None
@@ -7835,6 +8123,17 @@ class HarvestGui(Node):
                 )
             except ValueError:
                 return False
+            wrist_variable = getattr(
+                self, "tcp_wrist_rotation_deg_var", None
+            )
+            wrist_rotation = (
+                float(wrist_variable.get())
+                if wrist_variable is not None
+                else 10.0
+            )
+            extended = expected + (forward_distance_m, wrist_rotation)
+            if len(verification) == len(extended):
+                return verification == extended
             return verification == expected + (forward_distance_m,)
         if len(verification) > 6:
             return verification == expected
@@ -7950,9 +8249,9 @@ class HarvestGui(Node):
         try:
             stage_number = int(self.repeat_last_stage_var.get())
         except (TypeError, ValueError) as error:
-            raise ValueError("반복 마지막 단계는 1~6 중에서 선택하세요.") from error
-        if not 1 <= stage_number <= 6:
-            raise ValueError("반복 마지막 단계는 1~6 중에서 선택하세요.")
+            raise ValueError("반복 마지막 단계는 1~7 중에서 선택하세요.") from error
+        if not 1 <= stage_number <= 7:
+            raise ValueError("반복 마지막 단계는 1~7 중에서 선택하세요.")
         return stage_number
 
     def _repeat_last_stage_changed(self, _event=None) -> None:
@@ -8131,10 +8430,27 @@ class HarvestGui(Node):
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
             )
-            pick_ready_state = self._selected_pick_ready_state()
+            pick_ready_state = pick_ready_state_for_capture_pose(
+                self.detection_capture_pose,
+                self._selected_pick_ready_state(),
+            )
+            if self.pick_ready_state_var.get() != pick_ready_state:
+                self.pick_ready_state_var.set(pick_ready_state)
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
             )
+            tcp_wrist_oscillation_enabled = bool(
+                self.step_tcp_wrist_oscillation_enabled_var.get()
+            )
+            tcp_wrist_rotation_deg = 10.0
+            if tcp_wrist_oscillation_enabled:
+                tcp_wrist_rotation_deg = float(
+                    self.tcp_wrist_rotation_deg_var.get()
+                )
+                if not 1.0 <= tcp_wrist_rotation_deg <= 45.0:
+                    raise ValueError(
+                        "5단계 TCP 회전각은 1~45도 범위여야 합니다."
+                    )
             if mode == "repeat":
                 self.repeat_cycle_last_index = (
                     self._repeat_last_stage_number() - 1
@@ -8178,6 +8494,10 @@ class HarvestGui(Node):
             cycle_only=(mode == "repeat"),
             cycle_last_stage=self.repeat_cycle_last_index + 1,
             cycle_forward_distance_m=cycle_forward_distance_m,
+            tcp_wrist_oscillation_enabled=(
+                tcp_wrist_oscillation_enabled
+            ),
+            tcp_wrist_rotation_deg=tcp_wrist_rotation_deg,
             custom_stage_deltas_m=custom_stage_deltas_m,
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
@@ -8217,6 +8537,7 @@ class HarvestGui(Node):
             pick_ready_state,
             prefer_robot_direction,
             adaptive_max_rotation,
+            tcp_wrist_oscillation_enabled,
         )
         self._set_active_camera_target(
             index,
@@ -8244,14 +8565,19 @@ class HarvestGui(Node):
             + (
                 f", 4단계 진입={cycle_forward_distance_m * 1000.0:.1f} mm"
                 if mode == "repeat"
-                else ", 3~7단계 tip 로컬 XYZ="
+                else ", 3/4/6/7/8단계 tip 로컬 XYZ="
                 + str(
                     [
                         [round(value * 1000.0, 3) for value in stage_delta]
                         for stage_delta in custom_stage_deltas_m
                     ]
                 )
-                + " mm"
+                + (
+                    f" mm, 5단계 TCP 좌우 흔들기 "
+                    f"±{tcp_wrist_rotation_deg:g}°"
+                    if tcp_wrist_oscillation_enabled
+                    else " mm, 5단계 TCP 좌우 흔들기 사용 안 함"
+                )
             )
         )
         self._set_busy(True)
@@ -8963,6 +9289,11 @@ class HarvestGui(Node):
         custom_state = "disabled" if active or self.ui_busy else "normal"
         for entry in self.step_custom_delta_entries:
             entry.configure(state=custom_state)
+        self.step_tcp_wrist_oscillation_checkbox.configure(
+            state="disabled" if active or self.ui_busy else "normal"
+        )
+        if not self.step_tcp_wrist_oscillation_enabled_var.get():
+            self.tcp_wrist_rotation_spinbox.configure(state="disabled")
         repeat_executable = (
             planned
             and repeat_active
@@ -9065,6 +9396,11 @@ class HarvestGui(Node):
             harvest_x_forward_m = repeat_forward_distance_m(
                 self.harvest_forward_distance_mm_var.get()
             )
+            tcp_wrist_rotation_deg = float(
+                self.tcp_wrist_rotation_deg_var.get()
+            )
+            if not 1.0 <= tcp_wrist_rotation_deg <= 45.0:
+                raise ValueError("5단계 TCP 회전각은 1~45도 범위여야 합니다.")
             pick_ready_state = self._selected_pick_ready_state()
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
@@ -9085,6 +9421,7 @@ class HarvestGui(Node):
             prefer_robot_direction,
             adaptive_max_rotation,
             harvest_x_forward_m,
+            tcp_wrist_rotation_deg,
         )
         if execute and not self._verification_matches_current_selection(
             self.verified_plan
@@ -9113,6 +9450,7 @@ class HarvestGui(Node):
                 verification,
                 harvest_wait_sec=harvest_wait_sec,
                 harvest_x_forward_m=harvest_x_forward_m,
+                harvest_tcp_wrist_rotation_deg=tcp_wrist_rotation_deg,
                 prefer_robot_direction=prefer_robot_direction,
                 adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
             ),
@@ -9229,6 +9567,11 @@ class HarvestGui(Node):
             harvest_x_forward_m = repeat_forward_distance_m(
                 self.harvest_forward_distance_mm_var.get()
             )
+            tcp_wrist_rotation_deg = float(
+                self.tcp_wrist_rotation_deg_var.get()
+            )
+            if not 1.0 <= tcp_wrist_rotation_deg <= 45.0:
+                raise ValueError("5단계 TCP 회전각은 1~45도 범위여야 합니다.")
             pick_ready_state = self._selected_pick_ready_state()
             prefer_robot_direction, adaptive_max_rotation = (
                 self._adaptive_grasp_options()
@@ -9385,6 +9728,7 @@ class HarvestGui(Node):
         self.batch_pick_ready_state = pick_ready_state
         self.batch_harvest_wait_sec = harvest_wait_sec
         self.batch_harvest_x_forward_m = harvest_x_forward_m
+        self.batch_tcp_wrist_rotation_deg = tcp_wrist_rotation_deg
         self.batch_harvest_stage_limit = harvest_stage_limit
         self.batch_continuous_mode = continuous_mode
         self.batch_lift_harvest_mode = lift_mode
@@ -9424,6 +9768,7 @@ class HarvestGui(Node):
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
             "4단계 진입="
             f"{self.batch_harvest_x_forward_m * 1000.0:g}mm, "
+            f"5단계 TCP 회전=±{self.batch_tcp_wrist_rotation_deg:g}°, "
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
             f"리프트 수확 모드={self.batch_lift_harvest_mode}, "
             f"전체 사전계획 모드={self.batch_preplan_mode}, "
@@ -9456,6 +9801,9 @@ class HarvestGui(Node):
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=self.batch_harvest_wait_sec,
             harvest_x_forward_m=self.batch_harvest_x_forward_m,
+            harvest_tcp_wrist_rotation_deg=(
+                self.batch_tcp_wrist_rotation_deg
+            ),
             harvest_stage_limit=self.batch_harvest_stage_limit,
             pick_ready_state_name=self.batch_pick_ready_state,
             prefer_robot_direction=self.batch_prefer_robot_direction,
@@ -9760,6 +10108,9 @@ class HarvestGui(Node):
                 verification,
                 harvest_wait_sec=self.batch_harvest_wait_sec,
                 harvest_x_forward_m=self.batch_harvest_x_forward_m,
+                harvest_tcp_wrist_rotation_deg=(
+                    self.batch_tcp_wrist_rotation_deg
+                ),
                 continuous_transition=continuous_transition,
                 return_to_pick_ready=return_to_pick_ready,
                 retreat_after_harvest=retreat_after_harvest,
@@ -9791,6 +10142,7 @@ class HarvestGui(Node):
         verification,
         harvest_wait_sec: float,
         harvest_x_forward_m: float = 0.040,
+        harvest_tcp_wrist_rotation_deg: float | None = None,
         continuous_transition: bool = False,
         return_to_pick_ready: bool = True,
         retreat_after_harvest: bool = False,
@@ -9812,6 +10164,10 @@ class HarvestGui(Node):
                     self.adaptive_grasp_max_rotation_var.get()
                 )
             )
+        if harvest_tcp_wrist_rotation_deg is None:
+            harvest_tcp_wrist_rotation_deg = float(
+                self.tcp_wrist_rotation_deg_var.get()
+            )
         command = harvest_command(
             index,
             execute,
@@ -9824,6 +10180,9 @@ class HarvestGui(Node):
             acceleration_scale=self.motion_acceleration_scale,
             harvest_wait_sec=harvest_wait_sec,
             harvest_x_forward_m=harvest_x_forward_m,
+            harvest_tcp_wrist_rotation_deg=(
+                harvest_tcp_wrist_rotation_deg
+            ),
             continuous_transition=continuous_transition,
             return_to_pick_ready=return_to_pick_ready,
             retreat_after_harvest=retreat_after_harvest,
@@ -9867,6 +10226,7 @@ class HarvestGui(Node):
             f"시작/복귀 자세={pick_ready_state}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
             f"4단계 진입={harvest_x_forward_m * 1000.0:g}mm, "
+            f"5단계 TCP 회전=±{harvest_tcp_wrist_rotation_deg:g}°, "
             f"종료단계={harvest_stage_limit or '전체'}, "
             f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else pick_ready_state}, "
             f"종료={end_label}"
@@ -9990,6 +10350,12 @@ class HarvestGui(Node):
                     self.named_pose_report.get("duration_sec", 0.0)
                 )
                 if return_code == 0:
+                    self.last_completed_named_pose = state_name
+                    if state_name in ("CAPTURE_LEFT", "CAPTURE_RIGHT"):
+                        ready_state = pick_ready_state_for_capture_pose(
+                            state_name
+                        )
+                        self.pick_ready_state_var.set(ready_state)
                     message = (
                         f"저장 자세 {state_name} 이동 완료 "
                         f"({duration:.2f}s)"
@@ -10636,6 +11002,7 @@ class HarvestGui(Node):
         self.apply_speed_button.configure(state=state)
         self.linear_motor_wait_entry.configure(state=state)
         self.harvest_forward_distance_spinbox.configure(state=state)
+        self.harvest_tcp_wrist_rotation_spinbox.configure(state=state)
         self.prefer_robot_direction_checkbox.configure(state=state)
         self.adaptive_grasp_max_rotation_entry.configure(state=state)
         ready_state = "disabled" if busy else "readonly"

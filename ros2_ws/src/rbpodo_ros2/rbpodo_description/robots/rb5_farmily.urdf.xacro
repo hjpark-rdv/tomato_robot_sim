@@ -6,7 +6,7 @@
   <xacro:include filename="$(find rbpodo_description)/robots/realsense_d435.urdf.xacro" />
 
   <xacro:arg name="d435_mount_x" default="-0.076" />
-  <xacro:arg name="d435_mount_y" default="-0.018" />
+  <xacro:arg name="d435_mount_y" default="-0.006" />
   <xacro:arg name="d435_mount_z" default="0.0" />
   <xacro:arg name="d435_mount_roll" default="-1.57" />
   <xacro:arg name="d435_mount_pitch" default="0.0" />

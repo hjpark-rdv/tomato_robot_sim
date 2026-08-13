@@ -60,6 +60,12 @@ def _apply_request(node: CartesianHarvestPlanner, request: dict) -> None:
             value=float(request.get("harvest_wait_sec", 2.0)),
         ),
         Parameter(
+            "harvest_tcp_wrist_rotation_deg",
+            value=float(
+                request.get("harvest_tcp_wrist_rotation_deg", 10.0)
+            ),
+        ),
+        Parameter(
             "continuous_transition",
             value=bool(request.get("continuous_transition", False)),
         ),

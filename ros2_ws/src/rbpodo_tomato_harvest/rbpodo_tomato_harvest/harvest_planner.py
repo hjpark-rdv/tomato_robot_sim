@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import rclpy
 from ament_index_python.packages import get_package_share_directory
+from builtin_interfaces.msg import Duration as DurationMessage
 from geometry_msgs.msg import Pose, PoseStamped
 from moveit_msgs.action import ExecuteTrajectory, MoveGroup
 from moveit_msgs.msg import (
@@ -20,8 +21,9 @@ from moveit_msgs.msg import (
     OrientationConstraint,
     PositionConstraint,
     RobotState,
+    RobotTrajectory,
 )
-from moveit_msgs.srv import GetCartesianPath, GetPositionIK
+from moveit_msgs.srv import GetCartesianPath, GetPositionIK, GetStateValidity
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -29,6 +31,7 @@ from rclpy.time import Time
 from sensor_msgs.msg import JointState
 from shape_msgs.msg import SolidPrimitive
 from tf2_ros import Buffer, TransformException, TransformListener
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 def load_srdf_group_state(
@@ -552,6 +555,79 @@ def translated_pose_in_local_frame(start_pose: Pose, delta_xyz) -> Pose:
     pose.position.y += float(world_delta[1])
     pose.position.z += float(world_delta[2])
     return pose
+
+
+def make_wrist3_oscillation_trajectory(
+    start_state: RobotState,
+    rotation_deg: float,
+    *,
+    maximum_step_deg: float = 2.0,
+    speed_deg_sec: float = 20.0,
+) -> RobotTrajectory:
+    """Rotate only wrist3 through -angle, +angle, then its start value.
+
+    All other joints remain numerically fixed at every trajectory point.  On
+    RB5, wrist3 rotates link6 around the axis that passes through the fixed TCP,
+    so this produces the requested in-place TCP rotation without allowing IK or
+    OMPL to move the rest of the arm.
+    """
+    angle = abs(float(rotation_deg))
+    maximum_step = abs(float(maximum_step_deg))
+    speed = abs(float(speed_deg_sec))
+    if not math.isfinite(angle) or not 0.0 < angle <= 45.0:
+        raise ValueError("TCP wrist rotation must be greater than 0 and at most 45 degrees")
+    if not math.isfinite(maximum_step) or maximum_step <= 0.0:
+        raise ValueError("maximum wrist interpolation step must be positive")
+    if not math.isfinite(speed) or speed <= 0.0:
+        raise ValueError("wrist rotation speed must be positive")
+
+    names = [str(name) for name in start_state.joint_state.name]
+    positions = [float(value) for value in start_state.joint_state.position]
+    if len(names) != len(positions) or "wrist3" not in names:
+        raise ValueError("start state must contain wrist3 and matching joint positions")
+    if not all(math.isfinite(value) for value in positions):
+        raise ValueError("start state contains a non-finite joint position")
+
+    wrist_index = names.index("wrist3")
+    start_wrist = positions[wrist_index]
+    targets_deg = (-angle, angle, 0.0)
+    current_offset_deg = 0.0
+    elapsed_sec = 0.0
+    # The controller must receive the current state as the first point.  If
+    # the trajectory begins at the first interpolated offset (for example
+    # wrist3=-2 deg), MoveIt can reject it because that first point does not
+    # match the actual state within the controller's start tolerance.
+    start_point = JointTrajectoryPoint()
+    start_point.positions = list(positions)
+    start_point.time_from_start = DurationMessage(sec=0, nanosec=0)
+    points = [start_point]
+    for target_offset_deg in targets_deg:
+        delta_deg = target_offset_deg - current_offset_deg
+        count = max(1, int(math.ceil(abs(delta_deg) / maximum_step)))
+        for index in range(1, count + 1):
+            ratio = index / count
+            offset_deg = current_offset_deg + delta_deg * ratio
+            point_positions = list(positions)
+            point_positions[wrist_index] = start_wrist + math.radians(offset_deg)
+            elapsed_sec += abs(delta_deg) / count / speed
+            seconds = int(elapsed_sec)
+            nanoseconds = int(round((elapsed_sec - seconds) * 1_000_000_000))
+            if nanoseconds >= 1_000_000_000:
+                seconds += 1
+                nanoseconds -= 1_000_000_000
+            point = JointTrajectoryPoint()
+            point.positions = point_positions
+            point.time_from_start = DurationMessage(
+                sec=seconds,
+                nanosec=nanoseconds,
+            )
+            points.append(point)
+        current_offset_deg = target_offset_deg
+
+    trajectory = RobotTrajectory()
+    trajectory.joint_trajectory.joint_names = names
+    trajectory.joint_trajectory.points = points
+    return trajectory
 
 
 def make_tip_local_transition_curve_waypoints(
@@ -1225,6 +1301,12 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.040)
+        self.declare_parameter(
+            "harvest_tcp_wrist_oscillation_enabled", True
+        )
+        self.declare_parameter("harvest_tcp_wrist_rotation_deg", 10.0)
+        self.declare_parameter("harvest_tcp_wrist_rotation_step_deg", 2.0)
+        self.declare_parameter("harvest_tcp_wrist_rotation_speed_deg_sec", 20.0)
         self.declare_parameter("harvest_first_z_lift", 0.020)
         self.declare_parameter("harvest_first_x_forward", 0.020)
         self.declare_parameter("harvest_second_z_lift", 0.020)
@@ -1237,9 +1319,9 @@ class CartesianHarvestPlanner(Node):
         default_step_deltas = {
             3: (0.010, 0.0, 0.0),
             4: (0.040, 0.0, 0.0),
-            5: (0.020, 0.0, 0.020),
-            6: (0.0, 0.0, 0.020),
-            7: (-0.050, 0.0, 0.0),
+            6: (0.020, 0.0, 0.020),
+            7: (0.0, 0.0, 0.020),
+            8: (-0.050, 0.0, 0.0),
         }
         for stage_number, xyz in default_step_deltas.items():
             for axis_name, value in zip(("x", "y", "z"), xyz):
@@ -1284,6 +1366,9 @@ class CartesianHarvestPlanner(Node):
             GetCartesianPath, "/compute_cartesian_path"
         )
         self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
+        self.state_validity_client = self.create_client(
+            GetStateValidity, "/check_state_validity"
+        )
         self.move_group_client = ActionClient(self, MoveGroup, "/move_action")
         self.execute_client = ActionClient(
             self, ExecuteTrajectory, "/execute_trajectory"
@@ -2479,6 +2564,132 @@ class CartesianHarvestPlanner(Node):
             ),
         )
         return response.solution if success else None
+
+    def _plan_wrist3_oscillation(
+        self,
+        start_state: RobotState,
+    ):
+        """Build and collision-check the fixed-position wrist3-only stage."""
+        stage_started = time.monotonic()
+        stage = "JOINT_TCP_WRIST_OSCILLATION"
+        try:
+            trajectory = make_wrist3_oscillation_trajectory(
+                start_state,
+                float(
+                    self.get_parameter(
+                        "harvest_tcp_wrist_rotation_deg"
+                    ).value
+                ),
+                maximum_step_deg=float(
+                    self.get_parameter(
+                        "harvest_tcp_wrist_rotation_step_deg"
+                    ).value
+                ),
+                speed_deg_sec=float(
+                    self.get_parameter(
+                        "harvest_tcp_wrist_rotation_speed_deg_sec"
+                    ).value
+                ),
+            )
+        except ValueError as error:
+            self._record_plan_stage(
+                stage,
+                "joint_interpolation",
+                False,
+                time.monotonic() - stage_started,
+                "INVALID_TCP_WRIST_ROTATION",
+                message=str(error),
+            )
+            return None
+
+        timeout = max(
+            0.1,
+            float(self.get_parameter("service_timeout_sec").value),
+        )
+        if not self.state_validity_client.wait_for_service(
+            timeout_sec=timeout
+        ):
+            self._record_plan_stage(
+                stage,
+                "joint_interpolation",
+                False,
+                time.monotonic() - stage_started,
+                "STATE_VALIDITY_SERVICE_UNAVAILABLE",
+            )
+            return None
+
+        names = list(trajectory.joint_trajectory.joint_names)
+        for index, point in enumerate(
+            trajectory.joint_trajectory.points,
+            start=1,
+        ):
+            request = GetStateValidity.Request()
+            request.group_name = self.group_name
+            # Overlay the six planned arm joints on the live robot state so
+            # passive joints such as the current lift height remain correct.
+            request.robot_state.is_diff = True
+            request.robot_state.joint_state.name = names
+            request.robot_state.joint_state.position = list(point.positions)
+            future = self.state_validity_client.call_async(request)
+            rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
+            response = future.result() if future.done() else None
+            if response is None or not response.valid:
+                reason = (
+                    "STATE_VALIDITY_TIMEOUT"
+                    if response is None
+                    else "TCP_WRIST_ROTATION_COLLISION_OR_LIMIT"
+                )
+                self._record_plan_stage(
+                    stage,
+                    "joint_interpolation",
+                    False,
+                    time.monotonic() - stage_started,
+                    reason,
+                    invalid_point_index=index - 1,
+                    point_count=len(
+                        trajectory.joint_trajectory.points
+                    ),
+                )
+                return None
+
+        violations = self._trajectory_safety_violations(
+            trajectory,
+            start_state=start_state,
+        )
+        if violations:
+            self._log_trajectory_safety_failure(
+                "TCP wrist3 oscillation",
+                violations,
+            )
+            self._record_plan_stage(
+                stage,
+                "joint_interpolation",
+                False,
+                time.monotonic() - stage_started,
+                "JOINT_SAFETY_LIMIT_EXCEEDED",
+                trajectory_safety_violations=violations,
+            )
+            return None
+
+        self._record_trajectory_range_input(
+            stage,
+            trajectory,
+            True,
+            pregrasp=False,
+        )
+        self._record_plan_stage(
+            stage,
+            "joint_interpolation",
+            True,
+            time.monotonic() - stage_started,
+            point_count=len(trajectory.joint_trajectory.points),
+            rotation_deg=float(
+                self.get_parameter(
+                    "harvest_tcp_wrist_rotation_deg"
+                ).value
+            ),
+        )
+        return trajectory
 
     def _plan_cartesian_with_ompl_fallback(
         self,
@@ -3734,6 +3945,14 @@ class CartesianHarvestPlanner(Node):
             return None
 
         stepwise_plan = bool(self.get_parameter("stepwise_plan").value)
+        wrist_oscillation_enabled = bool(
+            self.get_parameter(
+                "harvest_tcp_wrist_oscillation_enabled"
+            ).value
+        )
+        self.last_plan_report["tcp_wrist_oscillation_enabled"] = (
+            wrist_oscillation_enabled
+        )
         custom_step_deltas_enabled = bool(
             self.get_parameter("step_custom_stage_deltas_enabled").value
         )
@@ -3749,7 +3968,7 @@ class CartesianHarvestPlanner(Node):
                     )
                     for axis_name in ("x", "y", "z")
                 )
-                for stage_number in range(3, 8)
+                for stage_number in (3, 4, 6, 7, 8)
             )
             if any(
                 not math.isfinite(value) or abs(value) > 0.200
@@ -3815,7 +4034,7 @@ class CartesianHarvestPlanner(Node):
         cycle_last_stage = int(
             self.get_parameter("step_cycle_last_stage").value
         )
-        if step_cycle_only and not 1 <= cycle_last_stage <= 6:
+        if step_cycle_only and not 1 <= cycle_last_stage <= 7:
             self._record_plan_stage(
                 "STEP_CYCLE_CONFIGURATION",
                 "configuration",
@@ -3949,77 +4168,147 @@ class CartesianHarvestPlanner(Node):
             for group in approach_waypoint_groups
             for waypoint in group
         )
-        approach_stage_endpoints = tuple(
-            group[-1] for group in approach_waypoint_groups
-        )
-        self.last_plan_report["stage_4_to_5_curve"] = {
+        approach_stage_endpoints = tuple(group[-1] for group in approach_waypoint_groups)
+        self.last_plan_report["stage_4_to_6_curve"] = {
             "enabled": True,
             "waypoint_count": len(first_lift_curve_tip_waypoints),
             "control_ratio": float(
                 self.get_parameter("harvest_lift_curve_control_ratio").value
             ),
             "start_stage": 4,
-            "end_stage": 5,
+            "end_stage": 6,
         }
-        self.last_plan_report["stage_5_to_6_curve"] = {
+        self.last_plan_report["stage_6_to_7_curve"] = {
             "enabled": True,
             "waypoint_count": len(second_lift_curve_tip_waypoints),
             "control_ratio": float(
                 self.get_parameter("harvest_lift_curve_control_ratio").value
             ),
-            "start_stage": 5,
-            "end_stage": 6,
+            "start_stage": 6,
+            "end_stage": 7,
         }
         step_approach_trajectories = ()
+        positional_labels = (
+            tuple(
+                f"Step {stage_number} custom tip-local XYZ"
+                for stage_number in (3, 4, 6, 7, 8)
+            )
+            if custom_step_deltas_enabled
+            else (
+                "Step preapproach to target",
+                "Step tip +X forward",
+                "Step tip curved +Z/+X first lift",
+                "Step tip curved +Z second lift",
+                "Step tip -X back",
+            )
+        )
+
+        def plan_positional_group(group_index, start_state):
+            return self._plan_cartesian_with_ompl_fallback(
+                approach_waypoint_groups[group_index],
+                start_state,
+                positional_labels[group_index],
+                pregrasp=False,
+            )
+
         if stepwise_plan:
-            if custom_step_deltas_enabled:
-                step_labels = tuple(
-                    f"Step {stage_number} custom tip-local XYZ"
-                    for stage_number in range(3, 8)
-                )
-            else:
-                step_labels = (
-                    "Step preapproach to target",
-                    "Step tip +X forward",
-                    "Step tip curved +Z/+X first lift",
-                    "Step tip curved +Z second lift",
-                    "Step tip -X back",
-                )
             step_groups = []
             flattened_approach = []
             step_start = preapproach_end
-            cycle_waypoint_count = (
-                max(0, cycle_last_stage - 2) if step_cycle_only else 5
-            )
-            for waypoint_group, label in zip(
-                approach_waypoint_groups[:cycle_waypoint_count],
-                step_labels[:cycle_waypoint_count],
-            ):
-                group = self._plan_cartesian_with_ompl_fallback(
-                    waypoint_group,
-                    step_start,
-                    label,
-                    pregrasp=False,
+            positional_count = 5
+            include_wrist_stage = True
+            if step_cycle_only:
+                include_wrist_stage = cycle_last_stage >= 5
+                positional_count = (
+                    max(0, cycle_last_stage - 2)
+                    if cycle_last_stage <= 4
+                    else max(2, cycle_last_stage - 3)
                 )
+            for group_index in range(positional_count):
+                group = plan_positional_group(group_index, step_start)
                 if group is None:
                     return None
                 group = tuple(group)
                 step_groups.append(group)
                 flattened_approach.extend(group)
                 step_start = self._trajectory_end_state(group)
+                if group_index == 1 and include_wrist_stage:
+                    if wrist_oscillation_enabled:
+                        wrist_trajectory = self._plan_wrist3_oscillation(
+                            step_start
+                        )
+                        if wrist_trajectory is None:
+                            return None
+                        wrist_group = (wrist_trajectory,)
+                        step_start = self._trajectory_end_state(
+                            wrist_trajectory
+                        )
+                    else:
+                        wrist_group = ()
+                        self._record_plan_stage(
+                            "JOINT_TCP_WRIST_OSCILLATION",
+                            "disabled",
+                            True,
+                            0.0,
+                            "OPERATOR_DISABLED",
+                        )
+                    step_groups.append(wrist_group)
+                    flattened_approach.extend(wrist_group)
             if step_cycle_only:
-                step_groups.extend([()] * (5 - len(step_groups)))
+                step_groups.extend([()] * (6 - len(step_groups)))
             step_approach_trajectories = tuple(step_groups)
             approach_trajectory = tuple(flattened_approach)
         else:
-            approach_trajectory = self._plan_cartesian_with_ompl_fallback(
-                approach_waypoints,
+            before_wrist_waypoints = tuple(
+                waypoint
+                for group in approach_waypoint_groups[:2]
+                for waypoint in group
+            )
+            before_wrist = self._plan_cartesian_with_ompl_fallback(
+                before_wrist_waypoints,
                 preapproach_end,
-                "Approach and pre-wait harvest",
+                "Approach through forward insertion",
                 pregrasp=False,
             )
-            if approach_trajectory is None:
+            if before_wrist is None:
                 return None
+            before_wrist = tuple(before_wrist)
+            wrist_start = self._trajectory_end_state(before_wrist)
+            wrist_trajectory = None
+            if wrist_oscillation_enabled:
+                wrist_trajectory = self._plan_wrist3_oscillation(wrist_start)
+                if wrist_trajectory is None:
+                    return None
+                after_wrist_start = self._trajectory_end_state(
+                    wrist_trajectory
+                )
+            else:
+                after_wrist_start = wrist_start
+                self._record_plan_stage(
+                    "JOINT_TCP_WRIST_OSCILLATION",
+                    "disabled",
+                    True,
+                    0.0,
+                    "OPERATOR_DISABLED",
+                )
+            after_wrist_waypoints = tuple(
+                waypoint
+                for group in approach_waypoint_groups[2:]
+                for waypoint in group
+            )
+            after_wrist = self._plan_cartesian_with_ompl_fallback(
+                after_wrist_waypoints,
+                after_wrist_start,
+                "Post-rotation lift and retreat",
+                pregrasp=False,
+            )
+            if after_wrist is None:
+                return None
+            approach_trajectory = (
+                *before_wrist,
+                *((wrist_trajectory,) if wrist_trajectory is not None else ()),
+                *tuple(after_wrist),
+            )
 
         approach_end = (
             self._trajectory_end_state(approach_trajectory)
@@ -4039,9 +4328,11 @@ class CartesianHarvestPlanner(Node):
                 final_planning_pose = copy.deepcopy(
                     preapproach_planning_pose
                 )
+            elif cycle_last_stage == 5:
+                final_planning_pose = copy.deepcopy(approach_stage_endpoints[1])
             else:
                 final_planning_pose = copy.deepcopy(
-                    approach_stage_endpoints[cycle_last_stage - 3]
+                    approach_stage_endpoints[cycle_last_stage - 4]
                 )
             if return_to_pick_ready:
                 return_pick_ready_plan = self._plan_pick_ready(

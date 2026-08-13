@@ -19,7 +19,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
-CYCLE_LAST_STAGE_INDEX = 5
+CYCLE_LAST_STAGE_INDEX = 6
 
 
 def _emit(event: str, **values) -> None:
@@ -85,12 +85,14 @@ def step_stage_specs(
     wait_seconds: float,
     forward_distance_m: float = 0.040,
     custom_stage_deltas_m=None,
+    wrist_rotation_deg: float = 10.0,
+    ready_state_name: str = "PICK_READY",
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
-    if len(approach) != 5:
+    if len(approach) != 6:
         raise ValueError(
-            "stepwise plan must contain five detailed approach groups"
+            "stepwise plan must contain six detailed approach groups"
         )
     if custom_stage_deltas_m is None:
         custom_stage_deltas_m = (
@@ -109,6 +111,8 @@ def step_stage_specs(
         or any(len(stage_delta) != 3 for stage_delta in custom_stage_deltas_m)
     ):
         raise ValueError("custom stage deltas must contain five XYZ triples")
+    ready_state_name = str(ready_state_name).strip() or "PICK_READY"
+    wrist_enabled = bool(_trajectory_group(approach[2]))
 
     def delta_detail(stage_index: int) -> str:
         xyz_mm = tuple(
@@ -122,14 +126,14 @@ def step_stage_specs(
     return [
         {
             "key": "MOVE_TO_READY",
-            "label": "현재 자세 → PICK_READY",
+            "label": f"현재 자세 → {ready_state_name}",
             "detail": "선택한 시작 자세로 이동",
             "kind": "trajectory",
             "trajectories": _trajectory_group(plan.pick_ready_trajectory),
         },
         {
             "key": "READY_TO_PREAPPROACH",
-            "label": "PICK_READY → PRE_APPROACH",
+            "label": f"{ready_state_name} → PRE_APPROACH",
             "detail": "토마토 외곽 사전 접근",
             "kind": "trajectory",
             "trajectories": _trajectory_group(plan.preapproach_trajectory),
@@ -149,25 +153,37 @@ def step_stage_specs(
             "trajectories": _trajectory_group(approach[1]),
         },
         {
+            "key": "TCP_WRIST_OSCILLATION",
+            "label": "TCP 제자리 회전",
+            "detail": (
+                f"wrist3만 -{abs(float(wrist_rotation_deg)):g}° → "
+                f"+{abs(float(wrist_rotation_deg)):g}° → 원래 각도"
+                if wrist_enabled
+                else "사용 안 함 (체크 해제)"
+            ),
+            "kind": "trajectory" if wrist_enabled else "skip",
+            "trajectories": _trajectory_group(approach[2]),
+        },
+        {
             "key": "LIFT_Z20_FORWARD_X20",
             "label": "위로 1차 이동",
-            "detail": f"{delta_detail(2)} / 4→5 곡선 Cartesian",
+            "detail": f"{delta_detail(2)} / 5→6 곡선 Cartesian",
             "kind": "trajectory",
-            "trajectories": _trajectory_group(approach[2]),
+            "trajectories": _trajectory_group(approach[3]),
         },
         {
             "key": "LIFT_Z20_SECOND",
             "label": "위로 2차 이동",
-            "detail": f"{delta_detail(3)} / 5→6 곡선 Cartesian",
+            "detail": f"{delta_detail(3)} / 6→7 곡선 Cartesian",
             "kind": "trajectory",
-            "trajectories": _trajectory_group(approach[3]),
+            "trajectories": _trajectory_group(approach[4]),
         },
         {
             "key": "BACK_X50_FIRST",
             "label": "뒤로 1차 이동",
             "detail": delta_detail(4),
             "kind": "trajectory",
-            "trajectories": _trajectory_group(approach[4]),
+            "trajectories": _trajectory_group(approach[5]),
         },
         {
             "key": "BACK_X10_SECOND",
@@ -186,7 +202,7 @@ def step_stage_specs(
         },
         {
             "key": "RETURN_READY",
-            "label": "현재 자세 → PICK_READY",
+            "label": f"현재 자세 → {ready_state_name}",
             "detail": "constrained OMPL 복귀",
             "kind": "trajectory",
             "trajectories": _trajectory_group(
@@ -281,6 +297,8 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
     if stage["kind"] == "wait":
         time.sleep(float(stage["wait_seconds"]))
         success = True
+    elif stage["kind"] == "skip":
+        success = True
     else:
         trajectories = stage["trajectories"]
         if reverse:
@@ -334,13 +352,21 @@ def main(args=None) -> None:
                 )
                 for axis_name in ("x", "y", "z")
             )
-            for stage_number in range(3, 8)
+            for stage_number in (3, 4, 6, 7, 8)
         )
         stages = step_stage_specs(
             plan,
             wait_seconds,
             forward_distance_m,
             custom_stage_deltas_m,
+            float(
+                planner.get_parameter(
+                    "harvest_tcp_wrist_rotation_deg"
+                ).value
+            ),
+            str(
+                planner.get_parameter("pick_ready_state_name").value
+            ),
         )
         expected = {
             str(name): float(value)
@@ -444,7 +470,10 @@ def main(args=None) -> None:
                 if next_index != 0:
                     _emit(
                         "command_error",
-                        message="5→1 역순 복귀를 먼저 완료하세요.",
+                        message=(
+                            f"{CYCLE_LAST_STAGE_INDEX + 1}→1 역순 복귀를 "
+                            "먼저 완료하세요."
+                        ),
                     )
                     continue
                 try:

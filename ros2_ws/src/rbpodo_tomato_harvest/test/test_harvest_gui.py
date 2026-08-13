@@ -76,6 +76,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     tomato_stem_arrow_length,
     tomato_motion_result_text,
     tomato_selection_plot_scene,
+    pick_ready_state_for_capture_pose,
     transformed_point_xyz,
 )
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -341,6 +342,40 @@ def test_selected_tomato_plot_omits_final_until_plan_report_exists():
         without_plan["robot_tomato"],
         without_plan["recommend"],
     ) == pytest.approx(0.04)
+
+
+@pytest.mark.parametrize(
+    ("capture_pose", "default_state", "expected"),
+    [
+        ("CAPTURE_RIGHT", "PICK_READY", "PICK_READY_RIGHT"),
+        ("CAPTURE_LEFT", "PICK_READY_RIGHT", "PICK_READY"),
+        (None, "PICK_READY_RIGHT", "PICK_READY_RIGHT"),
+    ],
+)
+def test_capture_pose_selects_matching_pick_ready_state(
+    capture_pose,
+    default_state,
+    expected,
+):
+    assert pick_ready_state_for_capture_pose(
+        capture_pose,
+        default_state,
+    ) == expected
+
+
+@pytest.mark.parametrize(
+    ("target_x", "expected"),
+    [(-0.42, "PICK_READY_RIGHT"), (0.42, "PICK_READY")],
+)
+def test_target_side_restores_ready_state_when_capture_metadata_is_missing(
+    target_x,
+    expected,
+):
+    assert pick_ready_state_for_capture_pose(
+        None,
+        "PICK_READY",
+        target_x,
+    ) == expected
 
 
 def test_selected_tomato_plot_final_uses_same_local_vector_as_rviz_marker():
@@ -821,6 +856,37 @@ def test_plan_verification_changes_when_adaptive_grasp_options_change():
     assert HarvestGui._verification_matches_current_selection(
         gui,
         (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", False, 35.0),
+    ) is False
+
+
+def test_step_plan_verification_handles_wrist_checkbox_as_boolean_option():
+    wrist_enabled = SimpleNamespace(get=lambda: False)
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+        _adaptive_grasp_options=lambda: (False, 45.0),
+        step_tcp_wrist_oscillation_enabled_var=wrist_enabled,
+    )
+    verification = (
+        7,
+        2,
+        *GUI_PLANNER_CONFIG,
+        "PICK_READY_RIGHT",
+        False,
+        45.0,
+        False,
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        verification,
+    ) is True
+    wrist_enabled.get = lambda: True
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        verification,
     ) is False
     assert HarvestGui._verification_matches_current_selection(
         gui,
@@ -2400,14 +2466,24 @@ def test_stepper_command_forwards_custom_stage_xyz_parameters():
     assert "step_custom_stage_deltas_enabled:=true" in command
     assert "step_stage_3_x_delta:=0.011" in command
     assert "step_stage_4_y_delta:=0.004" in command
-    assert "step_stage_5_z_delta:=0.022" in command
-    assert "step_stage_6_x_delta:=0.007" in command
-    assert "step_stage_7_z_delta:=-0.01" in command
+    assert "step_stage_6_z_delta:=0.022" in command
+    assert "step_stage_7_x_delta:=0.007" in command
+    assert "step_stage_8_z_delta:=-0.01" in command
+    assert "harvest_tcp_wrist_rotation_deg:=10.0" in command
+
+
+def test_stepper_command_can_disable_tcp_wrist_oscillation():
+    command = stepper_command(
+        1,
+        tcp_wrist_oscillation_enabled=False,
+    )
+
+    assert "harvest_tcp_wrist_oscillation_enabled:=false" in command
 
 
 def test_stepper_command_rejects_invalid_repeat_last_stage():
-    with pytest.raises(ValueError, match="between 1 and 6"):
-        stepper_command(1, cycle_only=True, cycle_last_stage=7)
+    with pytest.raises(ValueError, match="between 1 and 7"):
+        stepper_command(1, cycle_only=True, cycle_last_stage=8)
     with pytest.raises(ValueError, match="between 0.010 and 0.070"):
         stepper_command(1, cycle_forward_distance_m=0.071)
 
@@ -2446,9 +2522,9 @@ def test_step_custom_stage_deltas_converts_xyz_millimetres_to_metres():
     values = {
         3: {"x": "10", "y": "1", "z": "-2"},
         4: {"x": "40", "y": "3", "z": "4"},
-        5: {"x": "20", "y": "-5", "z": "20"},
-        6: {"x": "0", "y": "6", "z": "20"},
-        7: {"x": "-50", "y": "7", "z": "0"},
+        6: {"x": "20", "y": "-5", "z": "20"},
+        7: {"x": "0", "y": "6", "z": "20"},
+        8: {"x": "-50", "y": "7", "z": "0"},
     }
 
     actual = step_custom_stage_deltas_m(values)
@@ -2467,11 +2543,11 @@ def test_step_custom_stage_deltas_converts_xyz_millimetres_to_metres():
 def test_step_custom_stage_deltas_rejects_invalid_or_oversized_values(value):
     values = {
         stage: {"x": "0", "y": "0", "z": "0"}
-        for stage in range(3, 8)
+        for stage in (3, 4, 6, 7, 8)
     }
-    values[5]["y"] = value
+    values[6]["y"] = value
 
-    with pytest.raises(ValueError, match="5단계"):
+    with pytest.raises(ValueError, match="6단계"):
         step_custom_stage_deltas_m(values)
 
 
@@ -2496,8 +2572,8 @@ def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
 
 
 def test_repeat_cycle_command_rejects_invalid_stage_or_direction():
-    with pytest.raises(ValueError, match="between 1 and 6"):
-        repeat_cycle_command("forward", 7)
+    with pytest.raises(ValueError, match="between 1 and 7"):
+        repeat_cycle_command("forward", 8)
     with pytest.raises(ValueError, match="direction"):
         repeat_cycle_command("sideways", 3)
 
@@ -3389,6 +3465,7 @@ def test_planner_options_include_cartesian_and_pipeline_modes():
         "PICK_READY",
         "PICK_READY_RIGHT",
         "CAPTURE_LEFT",
+        "CAPTURE_RIGHT",
     )
     assert PLANNER_CONFIGS["Cartesian"] == (
         "ompl",

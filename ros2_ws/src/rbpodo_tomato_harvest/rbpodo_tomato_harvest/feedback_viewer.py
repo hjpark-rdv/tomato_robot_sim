@@ -246,6 +246,7 @@ class PlotCanvas(ttk.Frame):
         marker_scale: float = 1.0,
         stem_marker_scale: float = 1.0,
         show_point_labels: bool = True,
+        keep_robot_below_tomato: bool = False,
     ):
         super().__init__(parent)
         ttk.Label(self, text=title, font=("TkDefaultFont", 11, "bold")).pack(
@@ -259,6 +260,7 @@ class PlotCanvas(ttk.Frame):
         self.marker_scale = max(0.1, float(marker_scale))
         self.stem_marker_scale = max(0.1, float(stem_marker_scale))
         self.show_point_labels = bool(show_point_labels)
+        self.keep_robot_below_tomato = bool(keep_robot_below_tomato)
         self.mode = "xy"
         self.canvas.bind("<Configure>", lambda _event: self.redraw())
 
@@ -559,6 +561,25 @@ class PlotCanvas(ttk.Frame):
             if final_2d is not None
             else None
         )
+        # The embedded operator graph is easier to read when the robot base is
+        # always below the selected tomato.  A RIGHT-side capture can put the
+        # target behind Link0 (X < 0), which otherwise draws the base above it.
+        # Rotate the complete top view by 180 degrees instead of mirroring one
+        # axis so all approach angles and handedness remain unchanged.
+        view_rotated = (
+            self.keep_robot_below_tomato and tomato_2d[1] < -1e-9
+        )
+        if view_rotated:
+            def half_turn(point):
+                return None if point is None else (-point[0], -point[1])
+
+            tomato_2d = half_turn(tomato_2d)
+            vine_2d = half_turn(vine_2d)
+            calyx_2d = half_turn(calyx_2d)
+            recommend_2d = half_turn(recommend_2d)
+            final_2d = half_turn(final_2d)
+            recommend_arrow_start = half_turn(recommend_arrow_start)
+            final_arrow_start = half_turn(final_arrow_start)
         points = [
             robot,
             tomato_2d,
@@ -596,8 +617,12 @@ class PlotCanvas(ttk.Frame):
         self._grid(
             project,
             bounds,
-            "Link0  +Y ← / → -Y (m)",
-            "Link0 +X (전방)",
+            (
+                "Link0  -Y ← / → +Y (m)"
+                if view_rotated
+                else "Link0  +Y ← / → -Y (m)"
+            ),
+            "Link0 -X (후방)" if view_rotated else "Link0 +X (전방)",
         )
 
         self._point(

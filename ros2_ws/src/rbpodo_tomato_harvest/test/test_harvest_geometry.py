@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from geometry_msgs.msg import Pose
 from moveit_msgs.msg import RobotTrajectory
+from moveit_msgs.msg import RobotState
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -16,6 +17,7 @@ from rbpodo_tomato_harvest.harvest_planner import (
     make_harvest_geometry,
     make_tip_local_harvest_motion,
     make_tip_local_transition_curve_waypoints,
+    make_wrist3_oscillation_trajectory,
     outward_from_tomato_rotation,
     planning_pose_from_tip_pose,
     quaternion_from_rotation,
@@ -29,6 +31,32 @@ from rbpodo_tomato_harvest.harvest_planner import (
     translated_pose_in_local_frame,
     trajectory_joint_safety_violations,
 )
+
+
+def test_wrist3_oscillation_keeps_other_joints_fixed_and_returns_to_start():
+    state = RobotState()
+    state.joint_state.name = [
+        "base", "shoulder", "elbow", "wrist1", "wrist2", "wrist3"
+    ]
+    state.joint_state.position = [0.1, 0.2, -0.3, 0.4, -0.5, 1.0]
+
+    trajectory = make_wrist3_oscillation_trajectory(
+        state,
+        10.0,
+        maximum_step_deg=2.0,
+        speed_deg_sec=20.0,
+    )
+    points = trajectory.joint_trajectory.points
+    wrist_values = [point.positions[5] for point in points]
+
+    assert points[0].positions == pytest.approx(state.joint_state.position)
+    assert points[0].time_from_start.sec == 0
+    assert points[0].time_from_start.nanosec == 0
+    assert min(wrist_values) == pytest.approx(1.0 - np.deg2rad(10.0))
+    assert max(wrist_values) == pytest.approx(1.0 + np.deg2rad(10.0))
+    assert wrist_values[-1] == pytest.approx(1.0)
+    assert all(point.positions[:5] == pytest.approx([0.1, 0.2, -0.3, 0.4, -0.5]) for point in points)
+    assert len(points) == 21
 
 
 def _position(pose):
