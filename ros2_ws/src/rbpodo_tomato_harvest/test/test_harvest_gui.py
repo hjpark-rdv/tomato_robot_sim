@@ -50,6 +50,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     debug_frame_request,
     generate_sweep_cases,
     gripper_output_startup_scripts,
+    gripper_relay_power_off_script,
     gripper_relay_power_script,
     harvest_all_jobs,
     harvest_command,
@@ -59,6 +60,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     is_critical_process_output,
     linear_motor_pin_sequence,
     linear_motor_pin_values,
+    servo_angle_degrees,
     lift_harvest_target_height_mm,
     named_pose_command,
     preplanned_batch_command,
@@ -2373,12 +2375,15 @@ def test_cancel_all_goals_request_uses_zero_id_and_timestamp():
     assert request.goal_info.stamp.nanosec == 0
 
 
-def test_gripper_output_startup_keeps_only_dout8_high():
+def test_gripper_output_startup_keeps_dout0_and_dout8_high():
     assert gripper_output_startup_scripts() == (
-        "set_dout_bit_combination(0,15,256,0)",
+        "set_dout_bit_combination(0,15,257,0)",
     )
     assert gripper_relay_power_script() == (
-        "set_dout_bit_combination(0,15,256,0)"
+        "set_dout_bit_combination(0,15,257,0)"
+    )
+    assert gripper_relay_power_off_script() == (
+        "set_dout_bit_combination(0,15,0,0)"
     )
 
 
@@ -2412,6 +2417,20 @@ def test_linear_motor_pin_commands_use_break_before_make_sequence(
 def test_linear_motor_pin_values_reject_unknown_command():
     with pytest.raises(ValueError, match="지원하지 않는"):
         linear_motor_pin_values("invalid")
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    (("10", 10), ("90", 90), ("173", 173), ("89.6", 90)),
+)
+def test_servo_angle_degrees_normalizes_valid_values(value, expected):
+    assert servo_angle_degrees(value) == expected
+
+
+@pytest.mark.parametrize("value", ("", "nan", "9", "174", "invalid"))
+def test_servo_angle_degrees_rejects_invalid_values(value):
+    with pytest.raises(ValueError):
+        servo_angle_degrees(value)
 
 
 def test_stepper_command_enables_detailed_cached_plan():

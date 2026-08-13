@@ -1,11 +1,12 @@
-"""ROS 2 bridge that sends direct digital output commands to an Arduino Mega."""
+"""ROS 2 bridge for Arduino Mega digital outputs and a pin 10 servo."""
 
+import math
 import threading
 
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
-from std_msgs.msg import Bool, String
+from std_msgs.msg import Bool, Float64, String
 
 try:
     import serial
@@ -16,7 +17,7 @@ except ImportError:  # Allows ROS package discovery even before pyserial is inst
 
 
 class Pin89SerialNode(Node):
-    """Forward /linear_motor/pin8 and /linear_motor/pin9 Bool topics to Arduino."""
+    """Forward digital output and servo angle topics to Arduino."""
 
     def __init__(self):
         super().__init__('pin89_serial_node')
@@ -30,6 +31,12 @@ class Pin89SerialNode(Node):
 
         self.create_subscription(Bool, '/linear_motor/pin8', self._pin8_callback, 10)
         self.create_subscription(Bool, '/linear_motor/pin9', self._pin9_callback, 10)
+        self.create_subscription(
+            Float64,
+            '/linear_motor/servo10_angle_deg',
+            self._servo10_angle_callback,
+            10,
+        )
         status_qos = QoSProfile(
             depth=1,
             reliability=ReliabilityPolicy.RELIABLE,
@@ -57,14 +64,16 @@ class Pin89SerialNode(Node):
             self._serial = None
             self._publish_status(f'disconnected: {exc}')
 
-    def _send(self, pin, value):
-        command = f'PIN {pin} {1 if value else 0}\n'
+    def _send_command(self, command):
+        wire_command = f'{command}\n'
         with self._lock:
             if self._serial is None or not self._serial.is_open:
-                self.get_logger().warning(f'Cannot send {command.strip()}: serial is disconnected')
+                self.get_logger().warning(
+                    f'Cannot send {command}: serial is disconnected'
+                )
                 return
             try:
-                self._serial.write(command.encode('ascii'))
+                self._serial.write(wire_command.encode('ascii'))
                 self._serial.flush()
             except SerialException as exc:
                 self.get_logger().error(f'Serial write failed: {exc}')
@@ -76,10 +85,21 @@ class Pin89SerialNode(Node):
                 self._serial = None
 
     def _pin8_callback(self, message):
-        self._send(8, message.data)
+        self._send_command(f'PIN 8 {1 if message.data else 0}')
 
     def _pin9_callback(self, message):
-        self._send(9, message.data)
+        self._send_command(f'PIN 9 {1 if message.data else 0}')
+
+    def _servo10_angle_callback(self, message):
+        angle = float(message.data)
+        if not math.isfinite(angle) or angle < 10.0 or angle > 173.0:
+            self.get_logger().error(
+                f'Rejected servo angle {angle}: expected 10..173 degrees'
+            )
+            return
+        angle_deg = int(round(angle))
+        self._send_command(f'ANGLE 10 {angle_deg}')
+        self.get_logger().info(f'Servo pin 10 angle command: {angle_deg} deg')
 
     def _publish_status(self, text):
         message = String()

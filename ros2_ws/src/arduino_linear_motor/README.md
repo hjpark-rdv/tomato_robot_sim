@@ -1,13 +1,22 @@
-# Arduino Mega pin 8/9 serial control
+# Arduino Mega pin 8/9 serial control and pin 10 servo
 
 This package relays ROS 2 Boolean topics to an Arduino Mega.  It directly sets
-digital pins **8** and **9** to `HIGH` or `LOW`; it does not generate PWM.
+digital pins **8** and **9** to `HIGH` or `LOW`. Separately, the Arduino sketch
+drives a servo connected to pin **10** to the angle received from ROS 2.
 
 ## Arduino
 
 Open `arduino/mega_pin89_serial/mega_pin89_serial.ino` in Arduino IDE, select
 your Arduino Mega board and its CH340 serial port, then upload. Pins 8 and 9
-start `LOW` after every reset.
+start `LOW` after every reset. Pin 10 does not produce servo PWM or move on boot.
+It starts producing PWM only after an angle command is received and then holds
+the most recently requested angle.
+
+The sketch uses the official Arduino `Servo` library. If it is not already
+available, install **Servo by Arduino** from the Arduino IDE Library Manager
+before compiling. Power the servo from a supply suitable for its current
+requirement and connect the supply ground to the Arduino ground; do not power a
+high-current servo directly from the board's 5 V pin.
 
 ## Build and run
 
@@ -30,6 +39,7 @@ Publish `std_msgs/msg/Bool` from the GUI:
 ros2 topic pub --once /linear_motor/pin8 std_msgs/msg/Bool '{data: true}'
 ros2 topic pub --once /linear_motor/pin8 std_msgs/msg/Bool '{data: false}'
 ros2 topic pub --once /linear_motor/pin9 std_msgs/msg/Bool '{data: true}'
+ros2 topic pub --once /linear_motor/servo10_angle_deg std_msgs/msg/Float64 '{data: 90.0}'
 ```
 
 The bridge publishes connection errors and successful connection changes on
@@ -37,5 +47,6 @@ The bridge publishes connection errors and successful connection changes on
 The status publisher uses transient-local durability so a GUI started after
 the bridge still receives the most recent TTY connection state.
 
-Serial protocol: `PIN 8 0`, `PIN 8 1`, `PIN 9 0`, `PIN 9 1`, each terminated
-by a newline. The Arduino accepts only pins 8 and 9 and values 0 or 1.
+Serial protocol: `PIN 8 0`, `PIN 8 1`, `PIN 9 0`, `PIN 9 1`, or
+`ANGLE 10 <10..173>`, each terminated by a newline. The angle command switches
+pin 10 to the requested position and holds it.

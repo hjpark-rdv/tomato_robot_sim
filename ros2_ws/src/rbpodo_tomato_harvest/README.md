@@ -714,12 +714,12 @@ MarkerArray display가 기본 등록되어 있다.
 `camera_color_optical_frame`을 로봇 TF 트리에 연결한다. 이미 외부에서 두 TF
 트리를 연결한다면 `bridge_realsense_driver_tf:=false`로 비활성화할 수 있다.
 
-기본 선택은 `Fake tomato`이다. GUI 시작 시 실제 카메라를 기본으로 선택하려면
-다음과 같이 실행한다.
+기본 선택은 실제 `/detect_tomatoes` 서비스이다. Fake 카메라를 기본으로
+선택해야 할 때는 다음과 같이 실행한다.
 
 ```bash
 ./scripts/run_harvest_gui.sh \
-  default_camera_source:=real
+  default_camera_source:=fake
 ```
 
 Fake 또는 실제 카메라 팀의 서비스 이름이 다른 경우 각각 `camera_service`와

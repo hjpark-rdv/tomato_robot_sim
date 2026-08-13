@@ -1069,6 +1069,17 @@ def adaptive_grasp_max_rotation_degrees(value) -> float:
     return degrees
 
 
+def servo_angle_degrees(value) -> int:
+    """Validate and normalize a pin 10 servo angle from the GUI."""
+    try:
+        degrees = float(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError("서보 각도는 숫자로 입력하세요.") from error
+    if not math.isfinite(degrees) or not 10.0 <= degrees <= 173.0:
+        raise ValueError("서보 각도는 10~173° 범위여야 합니다.")
+    return int(round(degrees))
+
+
 def lift_harvest_target_height_mm(
     tomato_world_z_m: float,
     offset_m: float = 0.40,
@@ -1555,8 +1566,14 @@ def cancel_all_goals_request() -> CancelGoal.Request:
 
 
 def gripper_relay_power_script() -> str:
-    """Keep only RB DOUT8 HIGH and force every other DOUT LOW."""
-    return "set_dout_bit_combination(0,15,256,0)"
+    """Keep RB DOUT0/DOUT8 HIGH and force every other DOUT LOW."""
+    # Bit 0 + bit 8 = 1 + 256 = 257.
+    return "set_dout_bit_combination(0,15,257,0)"
+
+
+def gripper_relay_power_off_script() -> str:
+    """Force RB DOUT0..15 LOW, including relay outputs 0 and 8."""
+    return "set_dout_bit_combination(0,15,0,0)"
 
 
 def linear_motor_pin_values(command: str) -> tuple[bool, bool]:
@@ -1937,7 +1954,7 @@ class HarvestGui(Node):
             "result_image_topic",
             "/tomato_vision/result_image",
         )
-        self.declare_parameter("default_camera_source", "fake")
+        self.declare_parameter("default_camera_source", "real")
         self.declare_parameter(
             "detections_topic", "/tomato_detection/detections"
         )
@@ -1966,6 +1983,10 @@ class HarvestGui(Node):
         )
         self.declare_parameter(
             "linear_motor_pin9_topic", "/linear_motor/pin9"
+        )
+        self.declare_parameter(
+            "linear_motor_servo10_angle_topic",
+            "/linear_motor/servo10_angle_deg",
         )
         self.declare_parameter(
             "linear_motor_serial_status_topic",
@@ -2173,6 +2194,9 @@ class HarvestGui(Node):
         self.linear_motor_pin9_topic = str(
             self.get_parameter("linear_motor_pin9_topic").value
         )
+        self.linear_motor_servo10_angle_topic = str(
+            self.get_parameter("linear_motor_servo10_angle_topic").value
+        )
         self.linear_motor_serial_status_topic = str(
             self.get_parameter("linear_motor_serial_status_topic").value
         )
@@ -2184,6 +2208,11 @@ class HarvestGui(Node):
         self.linear_motor_pin9_publisher = self.create_publisher(
             Bool,
             self.linear_motor_pin9_topic,
+            10,
+        )
+        self.linear_motor_servo10_angle_publisher = self.create_publisher(
+            Float64,
+            self.linear_motor_servo10_angle_topic,
             10,
         )
         linear_motor_status_qos = QoSProfile(
@@ -2506,6 +2535,7 @@ class HarvestGui(Node):
         self.linear_motor_pin_state_initialized = False
         self.gripper_stroke_request_id = 0
         self.gripper_outputs_initialized = False
+        self.gripper_power_requested = True
         self.gripper_command_in_progress = False
         self.gripper_service_connected = False
         self.capture_camera_in_progress = False
@@ -2557,6 +2587,7 @@ class HarvestGui(Node):
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
+        self.servo10_angle_deg_var = tk.StringVar(value="90")
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
@@ -3998,15 +4029,74 @@ class HarvestGui(Node):
             state="disabled",
         )
         self.gripper_stop_button.grid(row=2, column=4)
+        self.gripper_power_on_button = ttk.Button(
+            frame,
+            text="전원 ON",
+            command=lambda: self.control_gripper_power(True),
+            style="Action.TButton",
+            width=12,
+            state="disabled",
+        )
+        self.gripper_power_on_button.grid(row=2, column=5, padx=(12, 6))
+        self.gripper_power_off_button = ttk.Button(
+            frame,
+            text="전원 OFF",
+            command=lambda: self.control_gripper_power(False),
+            style="Compact.TButton",
+            width=12,
+            state="disabled",
+        )
+        self.gripper_power_off_button.grid(row=2, column=6)
         ttk.Label(
             frame,
             text=(
-                "RB: DOUT8만 HIGH, 나머지 DOUT LOW · "
+                "RB: DOUT0·DOUT8 HIGH, 나머지 DOUT LOW · "
                 "Arduino: 늘림 PIN8 HIGH/PIN9 LOW, "
                 "줄임 PIN8 LOW/PIN9 HIGH, 정지 모두 LOW"
             ),
             foreground="#666666",
-        ).grid(row=3, column=0, columnspan=7, sticky="w", pady=(8, 0))
+        ).grid(row=4, column=0, columnspan=7, sticky="w", pady=(8, 0))
+
+        ttk.Label(frame, text="PIN10 서보 각도").grid(
+            row=3, column=0, sticky="w", pady=(10, 0)
+        )
+        self.servo10_angle_entry = ttk.Spinbox(
+            frame,
+            from_=10,
+            to=173,
+            increment=1,
+            textvariable=self.servo10_angle_deg_var,
+            width=8,
+        )
+        self.servo10_angle_entry.grid(
+            row=3, column=1, sticky="w", padx=(8, 4), pady=(10, 0)
+        )
+        ttk.Label(frame, text="°").grid(
+            row=3, column=1, sticky="w", padx=(78, 0), pady=(10, 0)
+        )
+        self.servo10_angle_button = ttk.Button(
+            frame,
+            text="각도 전송",
+            command=self.send_servo10_angle,
+            style="Action.TButton",
+            width=12,
+            state="disabled",
+        )
+        self.servo10_angle_button.grid(
+            row=3, column=2, sticky="w", pady=(10, 0)
+        )
+        ttk.Label(
+            frame,
+            text="10~173°를 전송하면 PIN10 서보가 해당 각도를 유지합니다.",
+            foreground="#666666",
+        ).grid(
+            row=3,
+            column=3,
+            columnspan=4,
+            sticky="w",
+            padx=(8, 0),
+            pady=(10, 0),
+        )
 
     def _build_lift_ui(self, frame) -> None:
         """Build controls backed by the farmily_uv_lift ROS topics."""
@@ -4500,6 +4590,47 @@ class HarvestGui(Node):
         pin9_message.data = bool(pin9_high)
         self.linear_motor_pin8_publisher.publish(pin8_message)
         self.linear_motor_pin9_publisher.publish(pin9_message)
+
+    def send_servo10_angle(self) -> None:
+        """Send a manual pin 10 servo angle through the serial bridge."""
+        try:
+            angle_deg = servo_angle_degrees(
+                self.servo10_angle_deg_var.get()
+            )
+        except ValueError as error:
+            self.status.set(str(error))
+            messagebox.showerror("PIN10 서보 각도 오류", str(error))
+            return
+
+        if not self.linear_motor_node_online:
+            self.status.set("서보 각도 미전송 — Arduino 노드가 없습니다.")
+            self._append_log(
+                "[PIN10 서보 미전송] Arduino 노드를 먼저 실행하세요."
+            )
+            return
+        if not self.linear_motor_serial_connected:
+            self.status.set("서보 각도 미전송 — Arduino TTY 연결이 없습니다.")
+            self._append_log(
+                "[PIN10 서보 미전송] Arduino TTY 연결을 확인하세요."
+            )
+            return
+        if self.count_subscribers(self.linear_motor_servo10_angle_topic) < 1:
+            self.status.set("서보 각도 미전송 — ANGLE 토픽 구독자가 없습니다.")
+            self._append_log(
+                "[PIN10 서보 미전송] serial bridge를 최신 빌드로 "
+                "다시 실행하세요."
+            )
+            return
+
+        message = Float64()
+        message.data = float(angle_deg)
+        self.linear_motor_servo10_angle_publisher.publish(message)
+        self.servo10_angle_deg_var.set(str(angle_deg))
+        self.status.set(f"PIN10 서보 {angle_deg}° 명령 전송 완료")
+        self._append_log(
+            f"[PIN10 서보] ANGLE DEG={angle_deg}° 전송 — "
+            "해당 각도를 유지합니다."
+        )
 
     def _initialize_linear_motor_pin_state(self) -> bool:
         if not self.linear_motor_serial_connected:
@@ -5536,6 +5667,10 @@ class HarvestGui(Node):
                 self.gripper_stroke_status.set("Arduino TTY 연결 필요")
             elif not self.linear_motor_pin_state_initialized:
                 self.gripper_stroke_status.set("PIN8/9 안전 초기화 대기")
+            elif not self.gripper_power_requested:
+                self.gripper_stroke_status.set(
+                    "전원 OFF (DOUT0·DOUT8 LOW)"
+                )
             elif (
                 not self.gripper_outputs_initialized
                 and not self.gripper_command_in_progress
@@ -5558,9 +5693,11 @@ class HarvestGui(Node):
         self.root.after(1000, self._refresh_gripper_stroke_status)
 
     def _update_gripper_stroke_controls(self) -> None:
+        service_ready = self.hardware_eval_client.service_is_ready()
         enabled = (
-            self.hardware_eval_client.service_is_ready()
+            service_ready
             and self.gripper_outputs_initialized
+            and self.gripper_power_requested
             and self.linear_motor_node_online
             and self.linear_motor_serial_connected
             and self.linear_motor_pin_state_initialized
@@ -5573,12 +5710,41 @@ class HarvestGui(Node):
             self.gripper_stop_button,
         ):
             button.configure(state=state)
+        power_on_enabled = (
+            service_ready
+            and not self.gripper_command_in_progress
+            and not self.gripper_outputs_initialized
+            and self.linear_motor_node_online
+            and self.linear_motor_serial_connected
+            and self.linear_motor_pin_state_initialized
+        )
+        power_off_enabled = (
+            service_ready
+            and not self.gripper_command_in_progress
+        )
+        self.gripper_power_on_button.configure(
+            state="normal" if power_on_enabled else "disabled"
+        )
+        self.gripper_power_off_button.configure(
+            state="normal" if power_off_enabled else "disabled"
+        )
+        servo_enabled = (
+            self.linear_motor_node_online
+            and self.linear_motor_serial_connected
+            and self.count_subscribers(
+                self.linear_motor_servo10_angle_topic
+            ) >= 1
+        )
+        self.servo10_angle_button.configure(
+            state="normal" if servo_enabled else "disabled"
+        )
 
     def _initialize_gripper_outputs(self) -> None:
         """Set direction LOW before applying power to the relay outputs."""
         if (
             self.gripper_outputs_initialized
             or self.gripper_command_in_progress
+            or not self.gripper_power_requested
             or not self.hardware_eval_client.service_is_ready()
             or not self.linear_motor_serial_connected
             or not self.linear_motor_pin_state_initialized
@@ -5587,10 +5753,12 @@ class HarvestGui(Node):
         self.gripper_stroke_request_id += 1
         request_id = self.gripper_stroke_request_id
         self.gripper_command_in_progress = True
-        self.gripper_stroke_status.set("안전 초기화: DOUT8만 HIGH")
+        self.gripper_stroke_status.set(
+            "안전 초기화: DOUT0·DOUT8 HIGH"
+        )
         self._update_gripper_stroke_controls()
         self._append_log(
-            "[그리퍼 DOUT 초기화] DOUT8=HIGH, "
+            "[그리퍼 DOUT 초기화] DOUT0=HIGH, DOUT8=HIGH, "
             "나머지 DOUT=LOW로 적용합니다."
         )
         self._send_gripper_script_sequence(
@@ -5598,10 +5766,119 @@ class HarvestGui(Node):
             request_id=request_id,
             label="안전 초기화",
             output_description=(
-                "DOUT8=HIGH, 나머지 DOUT=LOW"
+                "DOUT0=HIGH, DOUT8=HIGH, 나머지 DOUT=LOW"
             ),
             initialization=True,
         )
+
+    def control_gripper_power(self, enabled: bool) -> None:
+        """Turn the RB relay supply on or off using DOUT0 and DOUT8."""
+        enabled = bool(enabled)
+        if not self.hardware_eval_client.service_is_ready():
+            if not self.hardware_eval_client.wait_for_service(
+                timeout_sec=0.05
+            ):
+                self.gripper_stroke_status.set(
+                    "하드웨어 서비스 연결 안 됨"
+                )
+                self._append_log(
+                    "[그리퍼 전원 미적용] rbpodo eval 서비스가 없습니다."
+                )
+                return
+        if self.gripper_command_in_progress:
+            self.status.set("이전 그리퍼 출력 명령 처리 중입니다.")
+            return
+        if enabled and (
+            not self.linear_motor_node_online
+            or not self.linear_motor_serial_connected
+            or not self.linear_motor_pin_state_initialized
+        ):
+            self.gripper_stroke_status.set(
+                "전원 ON 불가 — Arduino PIN 안전 초기화 필요"
+            )
+            self._append_log(
+                "[그리퍼 전원 ON 보류] Arduino 노드·TTY·PIN8/9 "
+                "안전 초기화를 먼저 완료하세요."
+            )
+            return
+
+        self.gripper_stroke_request_id += 1
+        request_id = self.gripper_stroke_request_id
+        self.gripper_command_in_progress = True
+        label = "전원 ON" if enabled else "전원 OFF"
+        script = (
+            gripper_relay_power_script()
+            if enabled
+            else gripper_relay_power_off_script()
+        )
+        self.gripper_stroke_status.set(f"{label} 명령 전송 중")
+        self.status.set(f"그리퍼 {label} 명령 전송 중...")
+        self._update_gripper_stroke_controls()
+        self._append_log(
+            f"[그리퍼 {label}] "
+            + (
+                "DOUT0=HIGH, DOUT8=HIGH"
+                if enabled
+                else "DOUT0=LOW, DOUT8=LOW"
+            )
+        )
+        request = Eval.Request()
+        request.script = script
+        future = self.hardware_eval_client.call_async(request)
+        future.add_done_callback(
+            lambda completed: self._gripper_power_command_completed(
+                completed,
+                request_id=request_id,
+                enabled=enabled,
+                script=script,
+            )
+        )
+
+    def _gripper_power_command_completed(
+        self,
+        future,
+        *,
+        request_id: int,
+        enabled: bool,
+        script: str,
+    ) -> None:
+        if request_id != self.gripper_stroke_request_id:
+            return
+        success = False
+        try:
+            response = future.result()
+            success = bool(response.success)
+        except Exception as error:
+            self._append_log(
+                f"[그리퍼 전원 실패] 서비스 호출 오류: {error}"
+            )
+        self.gripper_command_in_progress = False
+        label = "ON" if enabled else "OFF"
+        if not success:
+            self.gripper_stroke_status.set(f"전원 {label} 실패")
+            self.status.set(f"그리퍼 전원 {label} 실패")
+            self._append_log(
+                f"[그리퍼 전원 실패] RB 컨트롤러가 거부: {script}"
+            )
+            self._update_gripper_stroke_controls()
+            return
+
+        self.gripper_power_requested = enabled
+        self.gripper_outputs_initialized = enabled
+        if enabled:
+            self.gripper_stroke_status.set(
+                "제어 준비 (DOUT0·8 HIGH / Arduino PIN)"
+            )
+            self.status.set("그리퍼 전원 ON 완료")
+            description = "DOUT0=HIGH, DOUT8=HIGH"
+        else:
+            self.gripper_stroke_status.set(
+                "전원 OFF (DOUT0·DOUT8 LOW)"
+            )
+            self.status.set("그리퍼 전원 OFF 완료")
+            description = "DOUT0=LOW, DOUT8=LOW"
+        self._append_log(f"[그리퍼 전원 {label} 완료] {description}")
+        self._update_gripper_stroke_controls()
 
     def control_gripper_stroke(self, command: str) -> None:
         """Drive the gripper linear actuator through RB control-box DOUTs."""
@@ -5891,7 +6168,7 @@ class HarvestGui(Node):
         if initialization:
             self.gripper_outputs_initialized = True
             self.gripper_stroke_status.set(
-                "제어 준비 (DOUT8 HIGH / Arduino PIN)"
+                "제어 준비 (DOUT0·8 HIGH / Arduino PIN)"
             )
             self.status.set("그리퍼 DOUT 안전 초기화 완료")
             self._append_log(

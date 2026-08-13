@@ -17,7 +17,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "default_camera_source",
-                default_value="fake",
+                default_value="real",
                 description="Initial GUI camera source: fake or real",
             ),
             DeclareLaunchArgument(
