@@ -156,6 +156,8 @@ class HarvestMotionPlan:
     outward_retreat_trajectory: object = ()
     end_planning_pose: Pose | None = None
     step_approach_trajectories: tuple = ()
+    step_approach_waypoints: tuple = ()
+    after_wait_waypoints: tuple = ()
     return_pick_ready_is_cached_reverse: bool = False
     preapproach_planning_pose: Pose | None = None
     outward_axis: tuple = ()
@@ -4163,12 +4165,15 @@ class CartesianHarvestPlanner(Node):
             tuple(as_planning_pose(pose) for pose in group)
             for group in approach_tip_waypoint_groups
         )
-        approach_waypoints = tuple(
-            waypoint
-            for group in approach_waypoint_groups
-            for waypoint in group
-        )
         approach_stage_endpoints = tuple(group[-1] for group in approach_waypoint_groups)
+        step_approach_waypoints = (
+            tuple(approach_waypoint_groups[0]),
+            tuple(approach_waypoint_groups[1]),
+            (),
+            tuple(approach_waypoint_groups[2]),
+            tuple(approach_waypoint_groups[3]),
+            tuple(approach_waypoint_groups[4]),
+        )
         self.last_plan_report["stage_4_to_6_curve"] = {
             "enabled": True,
             "waypoint_count": len(first_lift_curve_tip_waypoints),
@@ -4316,6 +4321,7 @@ class CartesianHarvestPlanner(Node):
             else copy.deepcopy(preapproach_end)
         )
         after_wait_trajectory = ()
+        after_wait_waypoints = ()
         after_wait_end = approach_end
         outward_retreat_trajectory = ()
         return_pick_ready_trajectory = ()
@@ -4343,8 +4349,11 @@ class CartesianHarvestPlanner(Node):
                     return None
                 return_pick_ready_trajectory, _ = return_pick_ready_plan
         else:
+            after_wait_waypoints = (
+                as_planning_pose(tip_motion.after_wait_pose),
+            )
             after_wait_trajectory = self._plan_cartesian_with_ompl_fallback(
-                [as_planning_pose(tip_motion.after_wait_pose)],
+                after_wait_waypoints,
                 approach_end,
                 "Post-wait harvest",
                 pregrasp=False,
@@ -4435,6 +4444,8 @@ class CartesianHarvestPlanner(Node):
             ),
             end_planning_pose=final_planning_pose,
             step_approach_trajectories=step_approach_trajectories,
+            step_approach_waypoints=step_approach_waypoints,
+            after_wait_waypoints=after_wait_waypoints,
             preapproach_planning_pose=copy.deepcopy(
                 preapproach_planning_pose
             ),

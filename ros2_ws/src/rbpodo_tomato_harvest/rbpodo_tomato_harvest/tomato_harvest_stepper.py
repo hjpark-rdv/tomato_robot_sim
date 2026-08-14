@@ -10,6 +10,7 @@ from copy import deepcopy
 
 import rclpy
 from builtin_interfaces.msg import Duration as DurationMessage
+from moveit_msgs.msg import RobotState
 from rclpy.executors import ExternalShutdownException
 
 from rbpodo_tomato_harvest.harvest_planner import (
@@ -94,6 +95,15 @@ def step_stage_specs(
         raise ValueError(
             "stepwise plan must contain six detailed approach groups"
         )
+    approach_waypoints = tuple(
+        getattr(plan, "step_approach_waypoints", ())
+    )
+    if not approach_waypoints:
+        approach_waypoints = ((),) * 6
+    if len(approach_waypoints) != 6:
+        raise ValueError(
+            "stepwise plan must contain six detailed approach waypoint groups"
+        )
     if custom_stage_deltas_m is None:
         custom_stage_deltas_m = (
             (0.010, 0.0, 0.0),
@@ -144,6 +154,7 @@ def step_stage_specs(
             "detail": delta_detail(0),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[0]),
+            "cartesian_waypoints": approach_waypoints[0],
         },
         {
             "key": "FORWARD_X",
@@ -151,6 +162,7 @@ def step_stage_specs(
             "detail": delta_detail(1),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[1]),
+            "cartesian_waypoints": approach_waypoints[1],
         },
         {
             "key": "TCP_WRIST_OSCILLATION",
@@ -163,6 +175,7 @@ def step_stage_specs(
             ),
             "kind": "trajectory" if wrist_enabled else "skip",
             "trajectories": _trajectory_group(approach[2]),
+            "cartesian_waypoints": (),
         },
         {
             "key": "LIFT_Z20_FORWARD_X20",
@@ -170,6 +183,7 @@ def step_stage_specs(
             "detail": f"{delta_detail(2)} / 5→6 곡선 Cartesian",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[3]),
+            "cartesian_waypoints": approach_waypoints[3],
         },
         {
             "key": "LIFT_Z20_SECOND",
@@ -177,6 +191,7 @@ def step_stage_specs(
             "detail": f"{delta_detail(3)} / 6→7 곡선 Cartesian",
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[4]),
+            "cartesian_waypoints": approach_waypoints[4],
         },
         {
             "key": "BACK_X50_FIRST",
@@ -184,6 +199,7 @@ def step_stage_specs(
             "detail": delta_detail(4),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[5]),
+            "cartesian_waypoints": approach_waypoints[5],
         },
         {
             "key": "BACK_X10_SECOND",
@@ -191,6 +207,9 @@ def step_stage_specs(
             "detail": "tip 로컬 -X 10 mm",
             "kind": "trajectory",
             "trajectories": _trajectory_group(plan.after_wait_trajectory),
+            "cartesian_waypoints": tuple(
+                getattr(plan, "after_wait_waypoints", ())
+            ),
         },
         {
             "key": "HARVEST_WAIT",
@@ -265,6 +284,174 @@ def cycle_last_stage_index(command: dict, stage_count: int) -> int:
             f"반복 마지막 단계는 1~{maximum + 1} 범위여야 합니다."
         )
     return last_index
+
+
+def continuous_cartesian_stage_blocks(
+    stages: list[dict],
+    start_index: int,
+    target_index: int,
+) -> list[dict]:
+    """Find mergeable Cartesian runs without crossing hard stage boundaries."""
+    blocks = []
+    cursor = max(0, int(start_index))
+    final_index = min(int(target_index), len(stages) - 1)
+    while cursor <= final_index:
+        stage = stages[cursor]
+        if not (
+            stage.get("kind") == "trajectory"
+            and stage.get("cartesian_waypoints")
+        ):
+            cursor += 1
+            continue
+
+        block_start = cursor
+        block_end = cursor - 1
+        movement_count = 0
+        waypoints = []
+        stage_indices = []
+        while cursor <= final_index:
+            candidate = stages[cursor]
+            candidate_waypoints = tuple(
+                candidate.get("cartesian_waypoints", ())
+            )
+            if candidate.get("kind") == "trajectory" and candidate_waypoints:
+                movement_count += 1
+                waypoints.extend(candidate_waypoints)
+                stage_indices.append(cursor)
+                block_end = cursor
+                cursor += 1
+                continue
+            if candidate.get("kind") == "skip":
+                stage_indices.append(cursor)
+                block_end = cursor
+                cursor += 1
+                continue
+            break
+
+        if movement_count >= 2:
+            blocks.append(
+                {
+                    "start_index": block_start,
+                    "end_index": block_end,
+                    "stage_indices": tuple(stage_indices),
+                    "waypoints": tuple(waypoints),
+                }
+            )
+    return blocks
+
+
+def _robot_state_from_positions(positions: dict[str, float]) -> RobotState:
+    state = RobotState()
+    state.is_diff = False
+    state.joint_state.name = list(positions)
+    state.joint_state.position = [
+        float(positions[name]) for name in state.joint_state.name
+    ]
+    return state
+
+
+def _plan_continuous_cartesian_blocks(
+    planner,
+    stages: list[dict],
+    start_index: int,
+    target_index: int,
+):
+    """Plan every merged run before any cached stage starts executing."""
+    planned = {}
+    blocks = continuous_cartesian_stage_blocks(
+        stages,
+        start_index,
+        target_index,
+    )
+    _emit(
+        "continuous_planning",
+        blocks=[
+            {
+                "start_index": block["start_index"],
+                "end_index": block["end_index"],
+                "stage_indices": block["stage_indices"],
+                "waypoint_count": len(block["waypoints"]),
+            }
+            for block in blocks
+        ],
+    )
+    for block in blocks:
+        first = block["start_index"]
+        last = block["end_index"]
+        label = f"Step {first + 1}-{last + 1} continuous Cartesian"
+        trajectory = planner._plan_cartesian(
+            block["waypoints"],
+            _robot_state_from_positions(stages[first]["expected_start"]),
+            label,
+            terminal_failure=True,
+        )
+        if trajectory is None:
+            _emit(
+                "continuous_failed",
+                start_index=first,
+                end_index=last,
+                stage_indices=block["stage_indices"],
+                reason="CONTINUOUS_CARTESIAN_PLAN_FAILED",
+            )
+            return None
+        planned[first] = {
+            **block,
+            "trajectory": trajectory,
+            "label": label,
+        }
+    return planned
+
+
+def _execute_continuous_cartesian_block(
+    planner,
+    stages: list[dict],
+    block: dict,
+) -> bool:
+    first = int(block["start_index"])
+    last = int(block["end_index"])
+    error_deg = _start_error_deg(planner, stages[first]["expected_start"])
+    if not math.isfinite(error_deg) or error_deg > 3.0:
+        _emit(
+            "continuous_failed",
+            start_index=first,
+            end_index=last,
+            stage_indices=block["stage_indices"],
+            reason="ROBOT_STATE_CHANGED",
+            start_error_deg=error_deg,
+        )
+        return False
+
+    _emit(
+        "continuous_started",
+        start_index=first,
+        end_index=last,
+        stage_indices=block["stage_indices"],
+        label=block["label"],
+    )
+    started = time.monotonic()
+    success = planner._execute_trajectory_group(
+        (block["trajectory"],),
+        block["label"],
+    )
+    duration = time.monotonic() - started
+    if not success:
+        _emit(
+            "continuous_failed",
+            start_index=first,
+            end_index=last,
+            stage_indices=block["stage_indices"],
+            reason="TRAJECTORY_EXECUTION_FAILED",
+            duration_sec=round(duration, 6),
+        )
+        return False
+    _emit(
+        "continuous_completed",
+        start_index=first,
+        end_index=last,
+        stage_indices=block["stage_indices"],
+        duration_sec=round(duration, 6),
+    )
+    return True
 
 
 def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bool:
@@ -499,7 +686,32 @@ def main(args=None) -> None:
                 _emit("command_error", message=f"알 수 없는 명령: {action}")
                 continue
 
+            continuous_blocks = {}
+            if (
+                action == "execute_through"
+                and bool(command.get("merge_cartesian", False))
+            ):
+                continuous_blocks = _plan_continuous_cartesian_blocks(
+                    planner,
+                    stages,
+                    next_index,
+                    target_index,
+                )
+                if continuous_blocks is None:
+                    continue
+
             while next_index <= target_index:
+                continuous_block = continuous_blocks.get(next_index)
+                if continuous_block is not None:
+                    if not _execute_continuous_cartesian_block(
+                        planner,
+                        stages,
+                        continuous_block,
+                    ):
+                        failed = True
+                        break
+                    next_index = int(continuous_block["end_index"]) + 1
+                    continue
                 stage = stages[next_index]
                 if not _execute_cached_stage(
                     planner,

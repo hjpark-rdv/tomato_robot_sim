@@ -93,6 +93,8 @@ def pick_ready_state_for_capture_pose(
     if state not in PICK_READY_STATES:
         raise ValueError(f"unsupported ready state: {state}")
     return state
+
+
 VISION_REVIEW_ISSUES = {
     "문제 없음": "NO_ISSUE",
     "토마토 중심 좌표 불일치": "TOMATO_XYZ_MISMATCH",
@@ -3244,6 +3246,7 @@ class HarvestGui(Node):
         self.lift_harvest_var = tk.BooleanVar(value=False)
         self.preplan_all_var = tk.BooleanVar(value=False)
         self.step_execution_enabled_var = tk.BooleanVar(value=False)
+        self.step_merge_cartesian_var = tk.BooleanVar(value=False)
         self.step_custom_delta_vars = {
             stage_number: {
                 axis_name: tk.StringVar(value=f"{value:g}")
@@ -4348,6 +4351,19 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.step_execute_to_button.grid(row=0, column=2, padx=6)
+        self.step_merge_cartesian_checkbox = ttk.Checkbutton(
+            controls,
+            text="접근 Cartesian 경로 합쳐서 실행",
+            variable=self.step_merge_cartesian_var,
+            command=self._update_step_controls,
+        )
+        self.step_merge_cartesian_checkbox.grid(
+            row=1,
+            column=0,
+            columnspan=3,
+            sticky="w",
+            pady=(7, 0),
+        )
         self.step_stop_button = ttk.Button(
             controls,
             text="모션 즉시 정지",
@@ -4369,6 +4385,23 @@ class HarvestGui(Node):
             textvariable=self.step_status,
             anchor="w",
         ).grid(row=0, column=5, sticky="ew", padx=(14, 0))
+        ttk.Label(
+            controls,
+            text=(
+                "선택 단계까지 실행할 때 연속 Cartesian 구간을 한 trajectory로 "
+                "사전계획합니다. READY·PRE_APPROACH·TCP 흔들기·대기·복귀는 "
+                "안전 경계로 분리됩니다."
+            ),
+            foreground="#666666",
+            anchor="w",
+        ).grid(
+            row=1,
+            column=3,
+            columnspan=3,
+            sticky="w",
+            padx=(12, 0),
+            pady=(7, 0),
+        )
 
     def _build_repeat_ui(self, frame) -> None:
         frame.columnconfigure(0, weight=1)
@@ -10089,6 +10122,96 @@ class HarvestGui(Node):
                 f"{'역순 복귀' if reverse else '완료'}] "
                 f"{duration:.2f}s"
             )
+        elif event_name == "continuous_planning":
+            blocks = list(event.get("blocks", []))
+            if blocks:
+                ranges = ", ".join(
+                    f"{int(block['start_index']) + 1}~"
+                    f"{int(block['end_index']) + 1}단계"
+                    for block in blocks
+                )
+                message = f"연속 Cartesian 경로 사전계획 중: {ranges}"
+            else:
+                message = (
+                    "합칠 수 있는 연속 Cartesian 구간이 없어 "
+                    "기존 단계 실행을 사용합니다."
+                )
+            self.step_status.set(message)
+            self.status.set(message)
+            self._append_log(f"[스텝 연속 경로] {message}")
+        elif event_name == "continuous_started":
+            start_index = int(event.get("start_index", -1))
+            end_index = int(event.get("end_index", start_index))
+            self.step_execution_in_progress = True
+            for index in event.get(
+                "stage_indices", range(start_index, end_index + 1)
+            ):
+                if self.step_tree.exists(str(index)):
+                    self.step_tree.set(str(index), "status", "연속 실행 중")
+            if self.step_tree.exists(str(start_index)):
+                self.step_tree.selection_set(str(start_index))
+                self.step_tree.see(str(start_index))
+            message = (
+                f"{start_index + 1}~{end_index + 1}단계 "
+                "연속 Cartesian 실행 중"
+            )
+            self.step_status.set(message)
+            self.status.set(message)
+        elif event_name == "continuous_completed":
+            start_index = int(event.get("start_index", -1))
+            end_index = int(event.get("end_index", start_index))
+            duration = float(event.get("duration_sec", 0.0))
+            self.step_execution_in_progress = False
+            self.step_next_index = end_index + 1
+            for index in event.get(
+                "stage_indices", range(start_index, end_index + 1)
+            ):
+                if self.step_tree.exists(str(index)):
+                    self.step_tree.set(
+                        str(index),
+                        "status",
+                        f"연속 완료 ({duration:.2f}s)",
+                    )
+            if self.step_next_index < len(self.step_stages):
+                next_item = str(self.step_next_index)
+                self.step_tree.selection_set(next_item)
+                self.step_tree.focus(next_item)
+                self.step_tree.see(next_item)
+            self._append_log(
+                f"[스텝 연속 실행 완료] {start_index + 1}~"
+                f"{end_index + 1}단계 / {duration:.2f}s"
+            )
+        elif event_name == "continuous_failed":
+            start_index = int(event.get("start_index", -1))
+            end_index = int(event.get("end_index", start_index))
+            reason = str(event.get("reason", "UNKNOWN"))
+            start_error = event.get("start_error_deg")
+            reason_text = reason
+            if start_error is not None:
+                reason_text += f" (시작 오차 {float(start_error):.2f}°)"
+            plan_only_failure = reason == "CONTINUOUS_CARTESIAN_PLAN_FAILED"
+            self.step_execution_in_progress = False
+            if not plan_only_failure:
+                self.step_session_failed = True
+            status_prefix = "연속 계획 실패" if plan_only_failure else "연속 실행 실패"
+            for index in event.get(
+                "stage_indices", range(start_index, end_index + 1)
+            ):
+                if self.step_tree.exists(str(index)):
+                    self.step_tree.set(
+                        str(index),
+                        "status",
+                        f"{status_prefix}: {reason_text}",
+                    )
+            message = (
+                f"{start_index + 1}~{end_index + 1}단계 "
+                f"{status_prefix}: {reason_text}"
+            )
+            if plan_only_failure:
+                message += " — 체크 해제 후 기존 단계 실행 가능"
+            self.step_status.set(message)
+            self.status.set(message)
+            self._append_log(f"[스텝 {status_prefix}] {message}")
         elif event_name == "stage_failed":
             index = int(event.get("index", -1))
             self.step_execution_in_progress = False
@@ -10568,8 +10691,15 @@ class HarvestGui(Node):
                 "완료된 단계는 현재 세션에서 다시 실행할 수 없습니다.",
             )
             return
+        merge_cartesian = bool(self.step_merge_cartesian_var.get())
+        if merge_cartesian:
+            self.step_status.set("연속 Cartesian 경로 사전계획 요청 중...")
         self._send_step_command(
-            {"command": "execute_through", "stage_index": target}
+            {
+                "command": "execute_through",
+                "stage_index": target,
+                "merge_cartesian": merge_cartesian,
+            }
         )
 
     def close_step_session(self) -> None:
@@ -10646,6 +10776,13 @@ class HarvestGui(Node):
         )
         self.step_execute_to_button.configure(
             state="normal" if executable else "disabled"
+        )
+        self.step_merge_cartesian_checkbox.configure(
+            state=(
+                "normal"
+                if manual_active and not self.step_execution_in_progress
+                else "disabled"
+            )
         )
         self.step_stop_button.configure(
             state="normal" if manual_active else "disabled"
