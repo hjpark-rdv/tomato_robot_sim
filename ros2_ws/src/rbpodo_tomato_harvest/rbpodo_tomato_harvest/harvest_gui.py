@@ -1954,6 +1954,10 @@ class HarvestGui(Node):
             "result_image_topic",
             "/tomato_vision/result_image",
         )
+        self.declare_parameter(
+            "camera_color_image_topic",
+            "/tomato_vision/result_image",
+        )
         self.declare_parameter("default_camera_source", "real")
         self.declare_parameter(
             "detections_topic", "/tomato_detection/detections"
@@ -2151,6 +2155,20 @@ class HarvestGui(Node):
             self.result_image_topic,
             self._result_image_callback,
             result_image_qos,
+        )
+        self.camera_color_image_topic = str(
+            self.get_parameter("camera_color_image_topic").value
+        )
+        camera_color_image_qos = QoSProfile(
+            depth=2,
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.VOLATILE,
+        )
+        self.camera_color_image_subscription = self.create_subscription(
+            CompressedImage,
+            self.camera_color_image_topic,
+            self._camera_color_image_callback,
+            camera_color_image_qos,
         )
         self.scene_get_client = self.create_client(
             GetParameters, f"{scene_node}/get_parameters"
@@ -2542,6 +2560,9 @@ class HarvestGui(Node):
         self.latest_result_image = None
         self.result_image_photo = None
         self.result_image_render_job = None
+        self.latest_camera_color_image = None
+        self.camera_color_image_photo = None
+        self.camera_color_image_render_job = None
         self.ui_busy = False
         self.closing = False
 
@@ -2573,6 +2594,9 @@ class HarvestGui(Node):
         self.result_image_status = tk.StringVar(
             value=f"결과 이미지 대기: {self.result_image_topic}"
         )
+        self.camera_color_image_status = tk.StringVar(
+            value=f"Camera Color 이미지 대기: {self.camera_color_image_topic}"
+        )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
         self.angle_reference_mode_var = tk.StringVar(
             value=angle_reference_label(ANGLE_REFERENCE_CENTER_TO_STEM)
@@ -2591,7 +2615,7 @@ class HarvestGui(Node):
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
-            value=True
+            value=False
         )
         self.prefer_robot_direction_var = tk.BooleanVar(value=False)
         self.adaptive_grasp_max_rotation_var = tk.StringVar(value="45.0")
@@ -3364,15 +3388,26 @@ class HarvestGui(Node):
             pady=(0, 5),
         )
         result_image_frame.columnconfigure(0, weight=1)
-        result_image_frame.rowconfigure(1, weight=1)
+        result_image_frame.rowconfigure(0, weight=1)
+
+        self.result_image_notebook = ttk.Notebook(result_image_frame)
+        self.result_image_notebook.grid(row=0, column=0, sticky="nsew")
+
+        result_image_tab = ttk.Frame(self.result_image_notebook, padding=4)
+        result_image_tab.columnconfigure(0, weight=1)
+        result_image_tab.rowconfigure(1, weight=1)
+        self.result_image_notebook.add(
+            result_image_tab,
+            text="검출 결과",
+        )
         ttk.Label(
-            result_image_frame,
+            result_image_tab,
             textvariable=self.result_image_status,
             foreground="#666666",
             anchor="w",
         ).grid(row=0, column=0, sticky="ew", pady=(0, 4))
         self.result_image_label = tk.Label(
-            result_image_frame,
+            result_image_tab,
             text="토마토 촬영/검출 후 결과 이미지가 표시됩니다.",
             background="#202020",
             foreground="#dddddd",
@@ -3384,6 +3419,45 @@ class HarvestGui(Node):
         self.result_image_label.bind(
             "<Configure>",
             self._schedule_result_image_render,
+        )
+
+        camera_color_image_tab = ttk.Frame(
+            self.result_image_notebook,
+            padding=4,
+        )
+        camera_color_image_tab.columnconfigure(0, weight=1)
+        camera_color_image_tab.rowconfigure(1, weight=1)
+        self.result_image_notebook.add(
+            camera_color_image_tab,
+            text="Camera Color Raw",
+        )
+        ttk.Label(
+            camera_color_image_tab,
+            textvariable=self.camera_color_image_status,
+            foreground="#666666",
+            anchor="w",
+        ).grid(row=0, column=0, sticky="ew", pady=(0, 4))
+        self.camera_color_image_label = tk.Label(
+            camera_color_image_tab,
+            text="Camera Color 이미지가 표시됩니다.",
+            background="#202020",
+            foreground="#dddddd",
+            anchor="center",
+            relief="sunken",
+            borderwidth=1,
+        )
+        self.camera_color_image_label.grid(
+            row=1,
+            column=0,
+            sticky="nsew",
+        )
+        self.camera_color_image_label.bind(
+            "<Configure>",
+            self._schedule_camera_color_image_render,
+        )
+        self.result_image_notebook.bind(
+            "<<NotebookTabChanged>>",
+            self._image_notebook_tab_changed,
         )
 
         log_frame = ttk.LabelFrame(right_panel, text="실행 로그", padding=6)
@@ -7663,6 +7737,66 @@ class HarvestGui(Node):
             image=self.result_image_photo,
             text="",
         )
+
+    def _camera_color_image_callback(
+        self,
+        message: CompressedImage,
+    ) -> None:
+        try:
+            image = decode_compressed_result_image(message.data)
+        except ValueError as error:
+            self.camera_color_image_status.set(
+                "Camera Color 이미지 디코딩 실패"
+            )
+            self._append_log(f"[Camera Color 이미지 오류] {error}")
+            return
+        self.latest_camera_color_image = image
+        image_format = str(message.format or "compressed")
+        self.camera_color_image_status.set(
+            f"{self.camera_color_image_topic} · "
+            f"{image.width}×{image.height} · {image_format}"
+        )
+        self._schedule_camera_color_image_render()
+
+    def _schedule_camera_color_image_render(self, _event=None) -> None:
+        if self.latest_camera_color_image is None or self.closing:
+            return
+        if self.camera_color_image_render_job is not None:
+            try:
+                self.root.after_cancel(self.camera_color_image_render_job)
+            except tk.TclError:
+                pass
+        self.camera_color_image_render_job = self.root.after(
+            60,
+            self._render_camera_color_image,
+        )
+
+    def _render_camera_color_image(self) -> None:
+        self.camera_color_image_render_job = None
+        if self.latest_camera_color_image is None or self.closing:
+            return
+        maximum_width = max(
+            120,
+            self.camera_color_image_label.winfo_width() - 8,
+        )
+        maximum_height = max(
+            100,
+            self.camera_color_image_label.winfo_height() - 8,
+        )
+        display_image = self.latest_camera_color_image.copy()
+        display_image.thumbnail(
+            (maximum_width, maximum_height),
+            Image.Resampling.LANCZOS,
+        )
+        self.camera_color_image_photo = ImageTk.PhotoImage(display_image)
+        self.camera_color_image_label.configure(
+            image=self.camera_color_image_photo,
+            text="",
+        )
+
+    def _image_notebook_tab_changed(self, _event=None) -> None:
+        self._schedule_result_image_render()
+        self._schedule_camera_color_image_render()
 
     def _detection_service_done(self, future) -> None:
         self.detect_button.configure(state="normal")

@@ -209,12 +209,13 @@ JSON에는 `link0` 기준 토마토/줄기 좌표가 없으므로 새 코드로 
 비활성화되며 기존 `모션 정지` 버튼으로 계획·실행 취소와 RB5 정지를 요청할 수
 있다.
 
-같은 탭의 `수확 옵션` 아래에는 `/tomato_vision/result_image`
-(`sensor_msgs/msg/CompressedImage`)의 마지막 검출 결과를 표시한다. JPEG/PNG를
-직접 디코딩하고 표시 영역에 맞춰 종횡비를 유지해 축소하며, 새 결과를 받기
-전까지 마지막 이미지를 유지한다. 토픽은 서비스 호출 시점에만 발행되는
-`RELIABLE`/`VOLATILE` 데이터이므로 GUI는 동일한 reliable QoS로 구독하지만,
-GUI 실행 전에 발행된 과거 이미지는 표시하지 않는다.
+이미지 영역은 `검출 결과`와 `Camera Color Raw` 내부 탭으로 구분한다. 검출 결과
+탭은 `/tomato_vision/result_image` (`sensor_msgs/msg/CompressedImage`)의 마지막
+이미지를 표시한다. Camera Color Raw 탭도 현재는 같은 토픽을 Best Effort QoS로
+구독하며, 나중에 `camera_color_image_topic` launch 인자로 별도 compressed image
+토픽을 지정할 수 있다. JPEG/PNG를 직접 디코딩하고 표시 영역에 맞춰 종횡비를
+유지해 축소하며, 새 결과를 받기 전까지 각 탭의 마지막 이미지를 유지한다. GUI
+실행 전에 발행된 과거 이미지는 표시하지 않는다.
 
 검출된 토마토 목록에서 행을 선택하면 실행 로그 오른쪽의 측면 그래프가 즉시
 갱신된다. 검출 직후에는 `link0`로 변환해 보존한 토마토 중심, 줄기점과 꼭지점을

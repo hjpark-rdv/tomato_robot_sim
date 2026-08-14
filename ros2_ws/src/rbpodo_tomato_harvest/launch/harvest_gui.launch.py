@@ -21,6 +21,11 @@ def generate_launch_description():
                 description="Initial GUI camera source: fake or real",
             ),
             DeclareLaunchArgument(
+                "camera_color_image_topic",
+                default_value="/tomato_vision/result_image",
+                description="Compressed image topic shown in Camera Color Raw tab",
+            ),
+            DeclareLaunchArgument(
                 "detections_topic",
                 default_value="/tomato_detection/detections",
             ),
@@ -41,6 +46,9 @@ def generate_launch_description():
                         ),
                         "default_camera_source": LaunchConfiguration(
                             "default_camera_source"
+                        ),
+                        "camera_color_image_topic": LaunchConfiguration(
+                            "camera_color_image_topic"
                         ),
                         "detections_topic": LaunchConfiguration("detections_topic"),
                         "scene_node": LaunchConfiguration("scene_node"),

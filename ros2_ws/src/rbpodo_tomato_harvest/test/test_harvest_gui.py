@@ -3259,6 +3259,30 @@ def test_result_image_callback_decodes_and_schedules_gui_render():
     assert "log" not in values
 
 
+def test_camera_color_image_callback_uses_independent_tab_state():
+    values = {}
+    scheduled = []
+    gui = SimpleNamespace(
+        camera_color_image_topic="/tomato_vision/result_image",
+        camera_color_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        latest_camera_color_image=None,
+        _schedule_camera_color_image_render=lambda: scheduled.append(True),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+    message = CompressedImage()
+    message.format = "jpeg"
+    message.data = _compressed_test_image(width=16, height=9)
+
+    HarvestGui._camera_color_image_callback(gui, message)
+
+    assert gui.latest_camera_color_image.size == (16, 9)
+    assert scheduled == [True]
+    assert values["status"].endswith("16×9 · jpeg")
+    assert "log" not in values
+
+
 def test_camera_source_change_selects_client_and_clears_old_detection():
     values = {}
     deleted = []
