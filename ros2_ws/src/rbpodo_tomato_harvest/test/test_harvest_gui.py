@@ -18,12 +18,13 @@ from farmily_tomato_interfaces.msg import (
 from geometry_msgs.msg import Point, Pose, TransformStamped
 from moveit_msgs.msg import RobotState, RobotTrajectory
 from rcl_interfaces.msg import ParameterType
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CameraInfo, CompressedImage, Image as RosImage
 from std_msgs.msg import Bool, Float64
 from std_srvs.srv import Trigger
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_gui import (
+    ANGLE_REFERENCE_CENTER_TO_STEM,
     CAMERA_SOURCE_FAKE,
     CAMERA_SOURCE_REAL,
     GUI_PLANNER_CONFIG,
@@ -43,10 +44,14 @@ from rbpodo_tomato_harvest.harvest_gui import (
     cancel_all_goals_request,
     camera_service_for_source,
     camera_target_record_text,
+    camera_xyz_to_image_pixel,
     concise_plan_report,
     decode_compressed_result_image,
+    decode_raw_result_image,
+    detection_label_layout,
     detection_message_sorted_by_height,
     detected_tomato_marker_array,
+    draw_detection_label_overlay,
     debug_frame_request,
     generate_sweep_cases,
     gripper_output_startup_scripts,
@@ -3221,6 +3226,18 @@ def _compressed_test_image(width=8, height=4):
     return output.getvalue()
 
 
+def _raw_test_image(width=8, height=4, encoding="rgb8"):
+    message = RosImage()
+    message.width = width
+    message.height = height
+    message.encoding = encoding
+    channels = 1 if encoding == "mono8" else 3
+    message.step = width * channels
+    pixel = b"\xDC" if channels == 1 else b"\xDC\x1E\x14"
+    message.data = pixel * (width * height)
+    return message
+
+
 def test_decode_compressed_result_image_returns_independent_rgb_image():
     image = decode_compressed_result_image(_compressed_test_image())
 
@@ -3233,6 +3250,125 @@ def test_decode_compressed_result_image_rejects_empty_or_invalid_payload():
         decode_compressed_result_image(b"")
     with pytest.raises(ValueError, match="해석"):
         decode_compressed_result_image(b"not an image")
+
+
+def test_decode_raw_result_image_supports_rgb_bgr_and_row_stride():
+    rgb = _raw_test_image(width=4, height=2, encoding="rgb8")
+    assert decode_raw_result_image(rgb).size == (4, 2)
+
+    bgr = RosImage()
+    bgr.width = 2
+    bgr.height = 1
+    bgr.encoding = "bgr8"
+    bgr.step = 8
+    bgr.data = bytes((10, 20, 30, 40, 50, 60, 0, 0))
+    decoded = decode_raw_result_image(bgr)
+    assert decoded.getpixel((0, 0)) == (30, 20, 10)
+    assert decoded.getpixel((1, 0)) == (60, 50, 40)
+
+
+def test_camera_xyz_projection_scales_camera_info_to_raw_image():
+    pixel = camera_xyz_to_image_pixel(
+        (0.1, -0.05, 1.0),
+        (900.0, 0.0, 640.0, 0.0, 900.0, 360.0, 0.0, 0.0, 1.0),
+        (1280, 720),
+        (640, 360),
+    )
+    assert pixel == pytest.approx((365.0, 157.5))
+
+
+def test_detection_label_layout_avoids_other_tomato_centers():
+    anchors = ((100.0, 100.0), (115.0, 105.0), (105.0, 120.0))
+    rectangles = detection_label_layout(
+        anchors,
+        ((55.0, 20.0),) * len(anchors),
+        (400, 300),
+    )
+    for rectangle in rectangles:
+        for point in anchors:
+            assert not (
+                rectangle[0] - 10.0 <= point[0] <= rectangle[2] + 10.0
+                and rectangle[1] - 10.0 <= point[1] <= rectangle[3] + 10.0
+            )
+
+
+def test_detection_label_layout_enforces_arrow_based_left_right_side():
+    anchors = ((220.0, 100.0), (420.0, 100.0))
+    rectangles = detection_label_layout(
+        anchors,
+        ((90.0, 34.0), (90.0, 34.0)),
+        (640, 360),
+        preferred_sides=(-1, 1),
+    )
+
+    assert (rectangles[0][0] + rectangles[0][2]) / 2.0 < anchors[0][0]
+    assert (rectangles[1][0] + rectangles[1][2]) / 2.0 > anchors[1][0]
+
+
+def test_detection_label_layout_avoids_box_overlap_in_dense_cluster():
+    anchors = tuple(
+        (600.0 + (index % 3) * 14.0, 300.0 + (index // 3) * 14.0)
+        for index in range(12)
+    )
+    rectangles = detection_label_layout(
+        anchors,
+        ((82.0, 34.0),) * len(anchors),
+        (1280, 720),
+        padding_scale=0.35,
+        preferred_sides=tuple(-1 if index % 2 == 0 else 1 for index in range(12)),
+    )
+
+    for index, rectangle in enumerate(rectangles):
+        for other in rectangles[index + 1 :]:
+            assert (
+                harvest_gui_module._rectangle_overlap_area(rectangle, other)
+                == 0.0
+            )
+
+
+def test_detection_label_layout_uses_outer_column_before_vertical_shift():
+    anchors = ((640.0, 360.0), (640.0, 360.0))
+    rectangles = detection_label_layout(
+        anchors,
+        ((76.0, 30.0), (76.0, 30.0)),
+        (1280, 720),
+        padding_scale=0.35,
+        preferred_sides=(-1, -1),
+    )
+    centers = tuple(
+        ((left + right) / 2.0, (top + bottom) / 2.0)
+        for left, top, right, bottom in rectangles
+    )
+
+    assert centers[1][0] < centers[0][0]
+    assert centers[1][1] == pytest.approx(centers[0][1])
+
+
+def test_detection_overlay_draws_projected_labels_on_clean_image():
+    image = PilImage.new("RGB", (640, 360), color=(240, 240, 240))
+    overlay, count = draw_detection_label_overlay(
+        image,
+        (("C0:T1", (0.0, 0.0, 1.0)), ("C0:T2", (0.08, 0.04, 1.0))),
+        (450.0, 0.0, 320.0, 0.0, 450.0, 180.0, 0.0, 0.0, 1.0),
+        (640, 360),
+    )
+    assert count == 2
+    assert overlay.size == image.size
+    assert overlay.tobytes() != image.tobytes()
+
+
+def test_detection_overlay_draws_blue_recommend_entry_arrow():
+    image = PilImage.new("RGB", (640, 360), color=(240, 240, 240))
+    overlay, count = draw_detection_label_overlay(
+        image,
+        (("C0:T1", (0.0, 0.0, 1.0), (-0.04, 0.0, 1.0)),),
+        (450.0, 0.0, 320.0, 0.0, 450.0, 180.0, 0.0, 0.0, 1.0),
+        (640, 360),
+    )
+
+    assert count == 1
+    pixels = np.asarray(overlay)
+    assert np.any(np.all(pixels == (15, 108, 148), axis=2))
 
 
 def test_result_image_callback_decodes_and_schedules_gui_render():
@@ -3268,19 +3404,95 @@ def test_camera_color_image_callback_uses_independent_tab_state():
             set=lambda value: values.__setitem__("status", value)
         ),
         latest_camera_color_image=None,
-        _schedule_camera_color_image_render=lambda: scheduled.append(True),
+        _update_detection_image_overlay=lambda: scheduled.append("overlay"),
         _append_log=lambda value: values.__setitem__("log", value),
     )
-    message = CompressedImage()
-    message.format = "jpeg"
-    message.data = _compressed_test_image(width=16, height=9)
+    message = _raw_test_image(width=16, height=9, encoding="rgb8")
 
     HarvestGui._camera_color_image_callback(gui, message)
 
     assert gui.latest_camera_color_image.size == (16, 9)
-    assert scheduled == [True]
-    assert values["status"].endswith("16×9 · jpeg")
+    assert scheduled == ["overlay"]
+    assert values["status"].endswith("16×9 · rgb8")
     assert "log" not in values
+
+
+def test_vision_result_image_callback_displays_raw_without_overlay():
+    values = {}
+    scheduled = []
+    gui = SimpleNamespace(
+        vision_result_image_topic="/tomato_vision/result_image_raw",
+        result_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        latest_result_image=None,
+        _schedule_result_image_render=lambda: scheduled.append(True),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+    message = _raw_test_image(width=16, height=9, encoding="bgr8")
+
+    HarvestGui._vision_result_image_callback(gui, message)
+
+    assert gui.latest_result_image.size == (16, 9)
+    assert scheduled == [True]
+    assert values["status"].endswith("16×9 · bgr8")
+    assert "log" not in values
+
+
+def test_camera_color_info_callback_updates_overlay_only_when_changed():
+    updates = []
+    gui = SimpleNamespace(
+        latest_camera_color_info=None,
+        _update_detection_image_overlay=lambda: updates.append(True),
+    )
+    message = CameraInfo()
+    message.width = 1280
+    message.height = 720
+    message.header.frame_id = "d435_color_optical_frame"
+    message.k = [900.0, 0.0, 640.0, 0.0, 900.0, 360.0, 0.0, 0.0, 1.0]
+
+    HarvestGui._camera_color_info_callback(gui, message)
+    HarvestGui._camera_color_info_callback(gui, message)
+
+    assert gui.latest_camera_color_info is message
+    assert updates == [True]
+
+
+def test_detection_overlay_is_rendered_only_in_camera_color_tab():
+    source = PilImage.new("RGB", (640, 360), color=(240, 240, 240))
+    vision_result = PilImage.new("RGB", (32, 18), color=(10, 20, 30))
+    camera_info = CameraInfo()
+    camera_info.width = 640
+    camera_info.height = 360
+    camera_info.header.frame_id = "d435_color_optical_frame"
+    camera_info.k = [450.0, 0.0, 320.0, 0.0, 450.0, 180.0, 0.0, 0.0, 1.0]
+    detection = TomatoDetection()
+    detection.id = "capture/C0:T1"
+    detection.center = Point(x=0.0, y=0.0, z=1.0)
+    detection.stem_point = Point(x=0.04, y=0.0, z=1.0)
+    detections = TomatoDetectionArray()
+    detections.header.frame_id = "d435_color_optical_frame"
+    detections.detections = [detection]
+    scheduled = []
+    gui = SimpleNamespace(
+        latest_camera_color_image=source,
+        latest_camera_color_display_image=None,
+        latest_camera_color_info=camera_info,
+        latest_detection_message=detections,
+        latest_result_image=vision_result,
+        camera_color_image_topic="/tomato_vision/camera_preview",
+        camera_color_info_topic="/camera/d435/color/camera_info",
+        camera_color_image_status=SimpleNamespace(set=lambda _value: None),
+        _selected_angle_reference_mode=lambda: ANGLE_REFERENCE_CENTER_TO_STEM,
+        _schedule_camera_color_image_render=lambda: scheduled.append(True),
+        _append_log=lambda _value: None,
+    )
+
+    HarvestGui._update_detection_image_overlay(gui)
+
+    assert gui.latest_camera_color_display_image.tobytes() != source.tobytes()
+    assert gui.latest_result_image is vision_result
+    assert scheduled == [True]
 
 
 def test_camera_source_change_selects_client_and_clears_old_detection():

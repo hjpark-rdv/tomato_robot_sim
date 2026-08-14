@@ -18,7 +18,7 @@ from tkinter import font as tkfont
 from tkinter import messagebox, ttk
 
 import rclpy
-from PIL import Image, ImageTk, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont, ImageTk, UnidentifiedImageError
 from action_msgs.srv import CancelGoal
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
@@ -41,7 +41,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CameraInfo, CompressedImage, Image as RosImage
 from std_msgs.msg import Bool, Float64, Header, String
 from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformException, TransformListener
@@ -1228,6 +1228,38 @@ def detection_angle_segment(
     raise ValueError(f"지원하지 않는 진입각 기준입니다: {mode}")
 
 
+def recommend_entry_point(
+    tomato_xyz,
+    angle_origin_xyz,
+    angle_target_xyz,
+    length_m: float = 0.04,
+) -> tuple[float, float, float]:
+    """Return the same Recommend pre-grasp point used by the target plot."""
+    tomato = tuple(float(value) for value in tomato_xyz)
+    origin = tuple(float(value) for value in angle_origin_xyz)
+    target = tuple(float(value) for value in angle_target_xyz)
+    length = float(length_m)
+    if any(len(values) != 3 for values in (tomato, origin, target)):
+        raise ValueError("진입각 좌표는 X, Y, Z 3개 값이어야 합니다.")
+    if not all(
+        math.isfinite(value)
+        for values in (tomato, origin, target)
+        for value in values
+    ):
+        raise ValueError("진입각 좌표는 유한값이어야 합니다.")
+    if not math.isfinite(length) or length <= 0.0:
+        raise ValueError("Recommend 표시 길이는 0보다 커야 합니다.")
+    outward = tuple(origin[axis] - target[axis] for axis in range(3))
+    outward_norm = math.sqrt(sum(value * value for value in outward))
+    if outward_norm <= 1e-9:
+        outward = (1.0, 0.0, 0.0)
+        outward_norm = 1.0
+    return tuple(
+        tomato[axis] + outward[axis] / outward_norm * length
+        for axis in range(3)
+    )
+
+
 def detected_tomato_marker_array(
     detections: TomatoDetectionArray,
     diameter: float = 0.0175,
@@ -1635,6 +1667,471 @@ def decode_compressed_result_image(data) -> Image.Image:
         raise ValueError("JPEG/PNG 압축 이미지를 해석할 수 없습니다.") from error
 
 
+def decode_raw_result_image(message: RosImage) -> Image.Image:
+    """Decode common 8-bit ROS Image encodings into an independent RGB image."""
+    width = int(message.width)
+    height = int(message.height)
+    step = int(message.step)
+    encoding = str(message.encoding).strip().lower()
+    formats = {
+        "rgb8": ("RGB", "RGB", 3),
+        "bgr8": ("RGB", "BGR", 3),
+        "rgba8": ("RGBA", "RGBA", 4),
+        "bgra8": ("RGBA", "BGRA", 4),
+        "mono8": ("L", "L", 1),
+    }
+    if width <= 0 or height <= 0:
+        raise ValueError("원본 이미지 크기가 올바르지 않습니다.")
+    if encoding not in formats:
+        raise ValueError(f"지원하지 않는 원본 이미지 인코딩: {encoding}")
+    mode, raw_mode, channels = formats[encoding]
+    minimum_step = width * channels
+    if step < minimum_step:
+        raise ValueError("원본 이미지 step이 픽셀 폭보다 작습니다.")
+    payload = bytes(message.data)
+    if len(payload) < step * height:
+        raise ValueError("원본 이미지 데이터 길이가 부족합니다.")
+    try:
+        image = Image.frombytes(
+            mode,
+            (width, height),
+            payload,
+            "raw",
+            raw_mode,
+            step,
+            1,
+        )
+    except (TypeError, ValueError) as error:
+        raise ValueError("원본 이미지 픽셀을 해석할 수 없습니다.") from error
+    return image.convert("RGB")
+
+
+def camera_xyz_to_image_pixel(
+    xyz,
+    camera_matrix,
+    camera_info_size,
+    image_size,
+) -> tuple[float, float]:
+    """Project an optical-frame XYZ point into the displayed image."""
+    x, y, z = (float(value) for value in xyz)
+    matrix = tuple(float(value) for value in camera_matrix)
+    info_width, info_height = (int(value) for value in camera_info_size)
+    image_width, image_height = (int(value) for value in image_size)
+    if len(matrix) != 9 or not all(math.isfinite(value) for value in matrix):
+        raise ValueError("CameraInfo K 행렬이 올바르지 않습니다.")
+    if not all(math.isfinite(value) for value in (x, y, z)) or z <= 0.0:
+        raise ValueError("카메라 좌표 Z는 0보다 큰 유한값이어야 합니다.")
+    if min(info_width, info_height, image_width, image_height) <= 0:
+        raise ValueError("카메라 또는 이미지 해상도가 올바르지 않습니다.")
+    fx, fy = matrix[0], matrix[4]
+    cx, cy = matrix[2], matrix[5]
+    if fx <= 0.0 or fy <= 0.0:
+        raise ValueError("CameraInfo 초점거리가 올바르지 않습니다.")
+    source_u = fx * x / z + cx
+    source_v = fy * y / z + cy
+    return (
+        source_u * image_width / info_width,
+        source_v * image_height / info_height,
+    )
+
+
+def _label_font(image_height: int, size_scale: float = 1.0):
+    base_size = max(16, min(28, int(round(image_height * 0.028))))
+    font_size = max(10, int(round(base_size * float(size_scale))))
+    font_paths = (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf",
+    )
+    for path in font_paths:
+        try:
+            return ImageFont.truetype(path, font_size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
+
+
+def _rectangle_overlap_area(first, second) -> float:
+    left = max(first[0], second[0])
+    top = max(first[1], second[1])
+    right = min(first[2], second[2])
+    bottom = min(first[3], second[3])
+    return max(0.0, right - left) * max(0.0, bottom - top)
+
+
+def detection_label_layout(
+    anchors,
+    text_sizes,
+    image_size,
+    padding_scale: float = 1.0,
+    preferred_sides=None,
+):
+    """Place compact labels around detections while avoiding tomatoes/labels."""
+    width, height = (int(value) for value in image_size)
+    if len(anchors) != len(text_sizes):
+        raise ValueError("라벨 좌표와 텍스트 크기 개수가 다릅니다.")
+    sides = (
+        tuple(0 for _anchor in anchors)
+        if preferred_sides is None
+        else tuple(int(value) for value in preferred_sides)
+    )
+    if len(sides) != len(anchors):
+        raise ValueError("라벨 좌우 배치 개수가 다릅니다.")
+    if not anchors:
+        return []
+    center_x = sum(float(point[0]) for point in anchors) / len(anchors)
+    center_y = sum(float(point[1]) for point in anchors) / len(anchors)
+    margin = 6.0
+    padding_x = 8.0 * float(padding_scale)
+    padding_y = 5.0 * float(padding_scale)
+    placed = []
+    directions = tuple(
+        (math.cos(math.radians(angle)), math.sin(math.radians(angle)))
+        for angle in range(0, 360, 30)
+    )
+    for index, (anchor, text_size) in enumerate(zip(anchors, text_sizes)):
+        anchor_x, anchor_y = (float(value) for value in anchor)
+        text_width, text_height = (float(value) for value in text_size)
+        box_width = text_width + padding_x * 2.0
+        box_height = text_height + padding_y * 2.0
+        outward_angle = math.atan2(anchor_y - center_y, anchor_x - center_x)
+        if math.hypot(anchor_x - center_x, anchor_y - center_y) < 2.0:
+            outward_angle = math.radians((index * 137.5) % 360.0)
+        ordered_directions = sorted(
+            directions,
+            key=lambda direction: abs(
+                math.atan2(
+                    math.sin(math.atan2(direction[1], direction[0]) - outward_angle),
+                    math.cos(math.atan2(direction[1], direction[0]) - outward_angle),
+                )
+            ),
+        )
+        best = None
+        candidate_centers = []
+        if sides[index] == 0:
+            for radius in (52.0, 78.0, 108.0, 140.0):
+                for direction_x, direction_y in ordered_directions:
+                    candidate_centers.append(
+                        (
+                            anchor_x + direction_x * radius,
+                            anchor_y + direction_y * radius,
+                        )
+                    )
+        else:
+            vertical_steps = (0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5)
+            for column in range(5):
+                horizontal_offset = (
+                    box_width / 2.0
+                    + 22.0
+                    + column * (box_width + 8.0)
+                )
+                for vertical_step in vertical_steps:
+                    candidate_centers.append(
+                        (
+                            anchor_x + sides[index] * horizontal_offset,
+                            anchor_y
+                            + vertical_step * (box_height + 6.0),
+                        )
+                    )
+
+        seen_rectangles = set()
+        for box_center_x, box_center_y in candidate_centers:
+            left = min(
+                max(margin, box_center_x - box_width / 2.0),
+                max(margin, width - margin - box_width),
+            )
+            top = min(
+                max(margin, box_center_y - box_height / 2.0),
+                max(margin, height - margin - box_height),
+            )
+            rectangle = (left, top, left + box_width, top + box_height)
+            rectangle_center_x = (rectangle[0] + rectangle[2]) / 2.0
+            if (
+                sides[index] < 0
+                and rectangle_center_x >= anchor_x
+            ) or (
+                sides[index] > 0
+                and rectangle_center_x <= anchor_x
+            ):
+                side_violation = 1
+            else:
+                side_violation = 0
+            rectangle_key = tuple(round(value, 3) for value in rectangle)
+            if rectangle_key in seen_rectangles:
+                continue
+            seen_rectangles.add(rectangle_key)
+            spaced_rectangle = (
+                rectangle[0] - 4.0,
+                rectangle[1] - 4.0,
+                rectangle[2] + 4.0,
+                rectangle[3] + 4.0,
+            )
+            overlap_areas = [
+                _rectangle_overlap_area(spaced_rectangle, existing)
+                for existing in placed
+            ]
+            overlap_count = sum(area > 0.0 for area in overlap_areas)
+            overlap_area = sum(overlap_areas)
+            expanded = (
+                rectangle[0] - 6.0,
+                rectangle[1] - 6.0,
+                rectangle[2] + 6.0,
+                rectangle[3] + 6.0,
+            )
+            covered_tomatoes = 0
+            for tomato_x, tomato_y in anchors:
+                if (
+                    expanded[0] <= tomato_x <= expanded[2]
+                    and expanded[1] <= tomato_y <= expanded[3]
+                ):
+                    covered_tomatoes += 1
+            placement_cost = (
+                abs(rectangle_center_x - anchor_x)
+                + 3.0
+                * abs((rectangle[1] + rectangle[3]) / 2.0 - anchor_y)
+            )
+            candidate = (
+                side_violation,
+                overlap_count + covered_tomatoes,
+                overlap_area,
+                covered_tomatoes,
+                placement_cost,
+                rectangle,
+            )
+            if best is None or candidate[:-1] < best[:-1]:
+                best = candidate
+        rectangle = best[-1]
+        placed.append(rectangle)
+    return placed
+
+
+def draw_detection_label_overlay(
+    image: Image.Image,
+    detections,
+    camera_matrix,
+    camera_info_size,
+) -> tuple[Image.Image, int]:
+    """Draw ID labels, leader lines, and Recommend entry arrows."""
+    output = image.convert("RGB").copy()
+    projected = []
+    for detection in detections:
+        if len(detection) not in (2, 3):
+            raise ValueError("오버레이 검출 항목 형식이 올바르지 않습니다.")
+        label, xyz = detection[:2]
+        recommend_xyz = detection[2] if len(detection) == 3 else None
+        try:
+            pixel = camera_xyz_to_image_pixel(
+                xyz,
+                camera_matrix,
+                camera_info_size,
+                output.size,
+            )
+        except ValueError:
+            continue
+        if (
+            -10.0 <= pixel[0] <= output.width + 10.0
+            and -10.0 <= pixel[1] <= output.height + 10.0
+        ):
+            recommend_pixel = None
+            if recommend_xyz is not None:
+                try:
+                    recommend_pixel = camera_xyz_to_image_pixel(
+                        recommend_xyz,
+                        camera_matrix,
+                        camera_info_size,
+                        output.size,
+                    )
+                except ValueError:
+                    recommend_pixel = None
+            projected.append((str(label), pixel, recommend_pixel))
+    if not projected:
+        return output, 0
+
+    card_scale = 0.80
+    layout_padding_scale = 0.35
+    font = _label_font(output.height, card_scale)
+    measure = ImageDraw.Draw(output)
+    scale = max(1.0, output.height / 720.0)
+    arrow_visual_size = max(26.0, 32.0 * scale) * card_scale
+    arrow_text_gap = max(2.0, 3.0 * scale) * card_scale
+    text_sizes = []
+    layout_sizes = []
+    for label, _pixel, recommend_pixel in projected:
+        bounds = measure.textbbox((0, 0), label, font=font)
+        text_size = (bounds[2] - bounds[0], bounds[3] - bounds[1])
+        text_sizes.append(text_size)
+        layout_sizes.append(
+            (
+                text_size[0] + arrow_visual_size + arrow_text_gap
+                if recommend_pixel is not None
+                else text_size[0],
+                max(text_size[1], arrow_visual_size)
+                if recommend_pixel is not None
+                else text_size[1],
+            )
+        )
+    anchors = [pixel for _label, pixel, _recommend_pixel in projected]
+    preferred_sides = []
+    for _label, (anchor_x, _anchor_y), recommend_pixel in projected:
+        if recommend_pixel is None:
+            preferred_sides.append(0)
+            continue
+        # Arrow points left→right: label belongs left of the tomato.
+        # Arrow points right→left: label belongs right of the tomato.
+        preferred_sides.append(
+            -1 if anchor_x - float(recommend_pixel[0]) >= 0.0 else 1
+        )
+    rectangles = detection_label_layout(
+        anchors,
+        layout_sizes,
+        output.size,
+        padding_scale=layout_padding_scale,
+        preferred_sides=preferred_sides,
+    )
+
+    layer = Image.new("RGBA", output.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    line_width = max(2, int(round(3 * scale)))
+    connection_line_width = max(3, int(round(4 * scale)))
+    color = (238, 101, 43, 255)
+    recommend_color = (15, 108, 148, 255)
+    label_outline_color = color
+    for (
+        label,
+        (anchor_x, anchor_y),
+        recommend_pixel,
+    ), rectangle, text_size in zip(
+        projected,
+        rectangles,
+        text_sizes,
+    ):
+        left, top, right, bottom = rectangle
+        line_start = (
+            min(max(anchor_x, left), right),
+            min(max(anchor_y, top), bottom),
+        )
+        vector_x = anchor_x - line_start[0]
+        vector_y = anchor_y - line_start[1]
+        vector_length = math.hypot(vector_x, vector_y)
+        if vector_length > 1e-6:
+            connection_x = vector_x / vector_length
+            connection_y = vector_y / vector_length
+            connection_head_length = max(7.0, 9.0 * scale)
+            connection_head_half_width = max(4.0, 5.0 * scale)
+            connection_head_base = (
+                anchor_x - connection_x * connection_head_length,
+                anchor_y - connection_y * connection_head_length,
+            )
+            connection_perpendicular = (-connection_y, connection_x)
+            draw.line(
+                (line_start, connection_head_base),
+                fill=color,
+                width=connection_line_width,
+            )
+            draw.polygon(
+                (
+                    (anchor_x, anchor_y),
+                    (
+                        connection_head_base[0]
+                        + connection_perpendicular[0]
+                        * connection_head_half_width,
+                        connection_head_base[1]
+                        + connection_perpendicular[1]
+                        * connection_head_half_width,
+                    ),
+                    (
+                        connection_head_base[0]
+                        - connection_perpendicular[0]
+                        * connection_head_half_width,
+                        connection_head_base[1]
+                        - connection_perpendicular[1]
+                        * connection_head_half_width,
+                    ),
+                ),
+                fill=color,
+            )
+        draw.rounded_rectangle(
+            rectangle,
+            radius=max(4, int(round(10 * scale * card_scale))),
+            fill=(255, 255, 255, 178),
+            outline=label_outline_color,
+            width=line_width,
+        )
+        content_padding = max(2.5, 3.5 * scale) * card_scale
+        text_y = top + (bottom - top - text_size[1]) / 2.0 - 1.0
+        if recommend_pixel is None:
+            text_x = left + (right - left - text_size[0]) / 2.0
+            draw.text(
+                (text_x, text_y),
+                label,
+                font=font,
+                fill=(0, 0, 0, 255),
+            )
+            continue
+        direction_x = anchor_x - float(recommend_pixel[0])
+        direction_y = anchor_y - float(recommend_pixel[1])
+        direction_norm = math.hypot(direction_x, direction_y)
+        if direction_norm <= 1e-6:
+            continue
+        direction_x /= direction_norm
+        direction_y /= direction_norm
+        arrow_length = min(
+            arrow_visual_size,
+            bottom - top - content_padding * 2.0,
+        )
+        half_length = arrow_length / 2.0
+        if direction_x >= 0.0:
+            text_x = left + content_padding
+            midpoint_x = right - content_padding - half_length
+        else:
+            midpoint_x = left + content_padding + half_length
+            text_x = right - content_padding - text_size[0]
+        midpoint_y = (top + bottom) / 2.0
+        draw.text(
+            (text_x, text_y),
+            label,
+            font=font,
+            fill=(0, 0, 0, 255),
+        )
+        arrow_start = (
+            midpoint_x - direction_x * half_length,
+            midpoint_y - direction_y * half_length,
+        )
+        arrow_end = (
+            midpoint_x + direction_x * half_length,
+            midpoint_y + direction_y * half_length,
+        )
+        arrow_head_length = max(10.0, 13.0 * scale) * card_scale
+        arrow_head_half_width = max(6.0, 7.0 * scale) * card_scale
+        head_base_x = arrow_end[0] - direction_x * arrow_head_length
+        head_base_y = arrow_end[1] - direction_y * arrow_head_length
+        perpendicular_x = -direction_y
+        perpendicular_y = direction_x
+        draw.line(
+            (arrow_start, (head_base_x, head_base_y)),
+            fill=recommend_color,
+            width=max(3, int(round(4 * scale * card_scale))),
+        )
+        draw.polygon(
+            (
+                arrow_end,
+                (
+                    head_base_x
+                    + perpendicular_x * arrow_head_half_width,
+                    head_base_y
+                    + perpendicular_y * arrow_head_half_width,
+                ),
+                (
+                    head_base_x
+                    - perpendicular_x * arrow_head_half_width,
+                    head_base_y
+                    - perpendicular_y * arrow_head_half_width,
+                ),
+            ),
+            fill=recommend_color,
+        )
+    return Image.alpha_composite(output.convert("RGBA"), layer).convert("RGB"), len(projected)
+
+
 def camera_target_record_text(
     *,
     target_frame: str,
@@ -1863,17 +2360,11 @@ def tomato_selection_plot_scene(
     length = float(recommend_length_m)
     if not math.isfinite(length) or length <= 0.0:
         raise ValueError("Recommend 표시 길이는 0보다 커야 합니다.")
-    outward = tuple(
-        angle_origin[axis] - angle_target[axis]
-        for axis in range(3)
-    )
-    outward_norm = math.sqrt(sum(value * value for value in outward))
-    if outward_norm <= 1e-9:
-        outward = (1.0, 0.0, 0.0)
-        outward_norm = 1.0
-    recommend = tuple(
-        tomato[axis] + outward[axis] / outward_norm * length
-        for axis in range(3)
+    recommend = recommend_entry_point(
+        tomato,
+        angle_origin,
+        angle_target,
+        length,
     )
 
     report = dict(plan_report or {})
@@ -1955,8 +2446,16 @@ class HarvestGui(Node):
             "/tomato_vision/result_image",
         )
         self.declare_parameter(
+            "vision_result_image_topic",
+            "/tomato_vision/result_image_raw",
+        )
+        self.declare_parameter(
             "camera_color_image_topic",
-            "/tomato_vision/result_image",
+            "/tomato_vision/camera_preview",
+        )
+        self.declare_parameter(
+            "camera_color_info_topic",
+            "/camera/d435/color/camera_info",
         )
         self.declare_parameter("default_camera_source", "real")
         self.declare_parameter(
@@ -2145,30 +2644,42 @@ class HarvestGui(Node):
         self.result_image_topic = str(
             self.get_parameter("result_image_topic").value
         )
-        result_image_qos = QoSProfile(
-            depth=10,
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.VOLATILE,
-        )
-        self.result_image_subscription = self.create_subscription(
-            CompressedImage,
-            self.result_image_topic,
-            self._result_image_callback,
-            result_image_qos,
+        self.vision_result_image_topic = str(
+            self.get_parameter("vision_result_image_topic").value
         )
         self.camera_color_image_topic = str(
             self.get_parameter("camera_color_image_topic").value
         )
-        camera_color_image_qos = QoSProfile(
+        self.camera_color_info_topic = str(
+            self.get_parameter("camera_color_info_topic").value
+        )
+        reliable_image_qos = QoSProfile(
+            depth=5,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.VOLATILE,
+        )
+        camera_info_qos = QoSProfile(
             depth=2,
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE,
         )
         self.camera_color_image_subscription = self.create_subscription(
-            CompressedImage,
+            RosImage,
             self.camera_color_image_topic,
             self._camera_color_image_callback,
-            camera_color_image_qos,
+            reliable_image_qos,
+        )
+        self.vision_result_image_subscription = self.create_subscription(
+            RosImage,
+            self.vision_result_image_topic,
+            self._vision_result_image_callback,
+            reliable_image_qos,
+        )
+        self.camera_color_info_subscription = self.create_subscription(
+            CameraInfo,
+            self.camera_color_info_topic,
+            self._camera_color_info_callback,
+            camera_info_qos,
         )
         self.scene_get_client = self.create_client(
             GetParameters, f"{scene_node}/get_parameters"
@@ -2561,8 +3072,10 @@ class HarvestGui(Node):
         self.result_image_photo = None
         self.result_image_render_job = None
         self.latest_camera_color_image = None
+        self.latest_camera_color_display_image = None
         self.camera_color_image_photo = None
         self.camera_color_image_render_job = None
+        self.latest_camera_color_info = None
         self.ui_busy = False
         self.closing = False
 
@@ -2592,7 +3105,7 @@ class HarvestGui(Node):
         self.camera_review_issue_var = tk.StringVar(value="문제 없음")
         self.camera_review_note_var = tk.StringVar(value="")
         self.result_image_status = tk.StringVar(
-            value=f"결과 이미지 대기: {self.result_image_topic}"
+            value=f"Vision Result 대기: {self.vision_result_image_topic}"
         )
         self.camera_color_image_status = tk.StringVar(
             value=f"Camera Color 이미지 대기: {self.camera_color_image_topic}"
@@ -3398,7 +3911,7 @@ class HarvestGui(Node):
         result_image_tab.rowconfigure(1, weight=1)
         self.result_image_notebook.add(
             result_image_tab,
-            text="검출 결과",
+            text="Vision Result",
         )
         ttk.Label(
             result_image_tab,
@@ -3408,7 +3921,7 @@ class HarvestGui(Node):
         ).grid(row=0, column=0, sticky="ew", pady=(0, 4))
         self.result_image_label = tk.Label(
             result_image_tab,
-            text="토마토 촬영/검출 후 결과 이미지가 표시됩니다.",
+            text="원본 이미지와 검출 좌표를 기다리는 중입니다.",
             background="#202020",
             foreground="#dddddd",
             anchor="center",
@@ -7466,6 +7979,7 @@ class HarvestGui(Node):
             message.header.stamp
         )
         self.detected_tomatoes = list(message.detections)
+        self._update_detection_image_overlay()
         self.tomato_motion_results.clear()
         try:
             self._cache_detected_tomato_world_positions(message)
@@ -7738,12 +8252,9 @@ class HarvestGui(Node):
             text="",
         )
 
-    def _camera_color_image_callback(
-        self,
-        message: CompressedImage,
-    ) -> None:
+    def _camera_color_image_callback(self, message: RosImage) -> None:
         try:
-            image = decode_compressed_result_image(message.data)
+            image = decode_raw_result_image(message)
         except ValueError as error:
             self.camera_color_image_status.set(
                 "Camera Color 이미지 디코딩 실패"
@@ -7751,15 +8262,172 @@ class HarvestGui(Node):
             self._append_log(f"[Camera Color 이미지 오류] {error}")
             return
         self.latest_camera_color_image = image
-        image_format = str(message.format or "compressed")
+        image_format = str(message.encoding or "raw")
         self.camera_color_image_status.set(
             f"{self.camera_color_image_topic} · "
             f"{image.width}×{image.height} · {image_format}"
         )
+        self._update_detection_image_overlay()
+
+    def _vision_result_image_callback(self, message: RosImage) -> None:
+        try:
+            image = decode_raw_result_image(message)
+        except ValueError as error:
+            self.result_image_status.set("Vision Result 디코딩 실패")
+            self._append_log(f"[Vision Result 이미지 오류] {error}")
+            return
+        self.latest_result_image = image
+        image_format = str(message.encoding or "raw")
+        self.result_image_status.set(
+            f"{self.vision_result_image_topic} · "
+            f"{image.width}×{image.height} · {image_format}"
+        )
+        self._schedule_result_image_render()
+
+    def _camera_color_info_callback(self, message: CameraInfo) -> None:
+        signature = (
+            int(message.width),
+            int(message.height),
+            str(message.header.frame_id),
+            tuple(float(value) for value in message.k),
+        )
+        previous = self.latest_camera_color_info
+        previous_signature = None
+        if previous is not None:
+            previous_signature = (
+                int(previous.width),
+                int(previous.height),
+                str(previous.header.frame_id),
+                tuple(float(value) for value in previous.k),
+            )
+        self.latest_camera_color_info = message
+        if signature != previous_signature:
+            self._update_detection_image_overlay()
+
+    def _update_detection_image_overlay(self) -> None:
+        image = self.latest_camera_color_image
+        if image is None:
+            self.camera_color_image_status.set(
+                f"Camera Color 이미지 대기: {self.camera_color_image_topic}"
+            )
+            return
+        camera_info = self.latest_camera_color_info
+        if camera_info is None:
+            self.latest_camera_color_display_image = image.copy()
+            self.camera_color_image_status.set(
+                f"CameraInfo 대기: {self.camera_color_info_topic}"
+            )
+            self._schedule_camera_color_image_render()
+            return
+        detection_message = self.latest_detection_message
+        if detection_message is None or not detection_message.detections:
+            self.latest_camera_color_display_image = image.copy()
+            self.camera_color_image_status.set(
+                f"{self.camera_color_image_topic} · 검출 좌표 대기"
+            )
+            self._schedule_camera_color_image_render()
+            return
+
+        detection_frame = str(detection_message.header.frame_id).strip()
+        camera_frame = str(camera_info.header.frame_id).strip()
+        transform = None
+        if detection_frame and camera_frame and detection_frame != camera_frame:
+            try:
+                transform = self.tf_buffer.lookup_transform(
+                    camera_frame,
+                    detection_frame,
+                    Time(),
+                )
+            except TransformException as error:
+                self.latest_camera_color_display_image = image.copy()
+                self.camera_color_image_status.set(
+                    f"좌표 변환 대기: {detection_frame} → {camera_frame}"
+                )
+                self._append_log(
+                    "[검출 이미지 오버레이 보류] camera XYZ 프레임을 "
+                    f"변환할 수 없습니다: {error}"
+                )
+                self._schedule_camera_color_image_render()
+                return
+
+        angle_mode = self._selected_angle_reference_mode()
+        angle_base_point = None
+        angle_available = True
+        if angle_mode == ANGLE_REFERENCE_BASE_TO_CENTER:
+            try:
+                angle_base_point = self._robot_base_origin_in_frame(
+                    detection_frame
+                )
+            except TransformException as error:
+                angle_available = False
+                self._append_log(
+                    "[카메라 진입각 오버레이 보류] 로봇 베이스 "
+                    f"좌표를 계산할 수 없습니다: {error}"
+                )
+
+        projected_detections = []
+        for index, detection in enumerate(detection_message.detections):
+            full_label = str(detection.id).strip()
+            label = full_label.rsplit("/", 1)[-1] if full_label else f"T{index}"
+            if transform is None:
+                xyz = (
+                    float(detection.center.x),
+                    float(detection.center.y),
+                    float(detection.center.z),
+                )
+            else:
+                xyz = transformed_point_xyz(detection.center, transform)
+            recommend_xyz = None
+            if angle_available:
+                try:
+                    angle_origin, angle_target = detection_angle_segment(
+                        detection,
+                        angle_mode,
+                        base_point=angle_base_point,
+                    )
+                    if transform is None:
+                        angle_origin_xyz = (
+                            float(angle_origin.x),
+                            float(angle_origin.y),
+                            float(angle_origin.z),
+                        )
+                        angle_target_xyz = (
+                            float(angle_target.x),
+                            float(angle_target.y),
+                            float(angle_target.z),
+                        )
+                    else:
+                        angle_origin_xyz = transformed_point_xyz(
+                            angle_origin,
+                            transform,
+                        )
+                        angle_target_xyz = transformed_point_xyz(
+                            angle_target,
+                            transform,
+                        )
+                    recommend_xyz = recommend_entry_point(
+                        xyz,
+                        angle_origin_xyz,
+                        angle_target_xyz,
+                    )
+                except ValueError:
+                    recommend_xyz = None
+            projected_detections.append((label, xyz, recommend_xyz))
+        overlay, projected_count = draw_detection_label_overlay(
+            image,
+            projected_detections,
+            camera_info.k,
+            (camera_info.width, camera_info.height),
+        )
+        self.latest_camera_color_display_image = overlay
+        self.camera_color_image_status.set(
+            f"사용자 오버레이 {projected_count}/{len(projected_detections)}개 · "
+            f"원본={self.camera_color_image_topic}"
+        )
         self._schedule_camera_color_image_render()
 
     def _schedule_camera_color_image_render(self, _event=None) -> None:
-        if self.latest_camera_color_image is None or self.closing:
+        if self.latest_camera_color_display_image is None or self.closing:
             return
         if self.camera_color_image_render_job is not None:
             try:
@@ -7773,7 +8441,7 @@ class HarvestGui(Node):
 
     def _render_camera_color_image(self) -> None:
         self.camera_color_image_render_job = None
-        if self.latest_camera_color_image is None or self.closing:
+        if self.latest_camera_color_display_image is None or self.closing:
             return
         maximum_width = max(
             120,
@@ -7783,7 +8451,7 @@ class HarvestGui(Node):
             100,
             self.camera_color_image_label.winfo_height() - 8,
         )
-        display_image = self.latest_camera_color_image.copy()
+        display_image = self.latest_camera_color_display_image.copy()
         display_image.thumbnail(
             (maximum_width, maximum_height),
             Image.Resampling.LANCZOS,
@@ -7853,6 +8521,13 @@ class HarvestGui(Node):
             clear_active_target()
         self.detected_tomatoes = []
         self.latest_detection_message = None
+        update_overlay = getattr(
+            self,
+            "_update_detection_image_overlay",
+            None,
+        )
+        if update_overlay is not None:
+            update_overlay()
         self.pending_detection_capture_pose = None
         self.detection_capture_pose = None
         self.detected_tomato_expected_world_positions.clear()
@@ -11552,6 +12227,7 @@ class HarvestGui(Node):
             return
         self.detected_tomatoes = []
         self.latest_detection_message = None
+        self._update_detection_image_overlay()
         self.detected_tomato_expected_world_positions.clear()
         self.detected_tomato_expected_world_x_axes.clear()
         self.detected_tomato_record_positions.clear()

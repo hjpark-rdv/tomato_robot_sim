@@ -21,9 +21,19 @@ def generate_launch_description():
                 description="Initial GUI camera source: fake or real",
             ),
             DeclareLaunchArgument(
+                "vision_result_image_topic",
+                default_value="/tomato_vision/result_image_raw",
+                description="sensor_msgs/Image shown unchanged in Vision Result tab",
+            ),
+            DeclareLaunchArgument(
                 "camera_color_image_topic",
-                default_value="/tomato_vision/result_image",
-                description="Compressed image topic shown in Camera Color Raw tab",
+                default_value="/tomato_vision/camera_preview",
+                description="sensor_msgs/Image topic shown in Camera Color Raw tab",
+            ),
+            DeclareLaunchArgument(
+                "camera_color_info_topic",
+                default_value="/camera/d435/color/camera_info",
+                description="CameraInfo used to project detection XYZ onto the raw image",
             ),
             DeclareLaunchArgument(
                 "detections_topic",
@@ -47,8 +57,14 @@ def generate_launch_description():
                         "default_camera_source": LaunchConfiguration(
                             "default_camera_source"
                         ),
+                        "vision_result_image_topic": LaunchConfiguration(
+                            "vision_result_image_topic"
+                        ),
                         "camera_color_image_topic": LaunchConfiguration(
                             "camera_color_image_topic"
+                        ),
+                        "camera_color_info_topic": LaunchConfiguration(
+                            "camera_color_info_topic"
                         ),
                         "detections_topic": LaunchConfiguration("detections_topic"),
                         "scene_node": LaunchConfiguration("scene_node"),
