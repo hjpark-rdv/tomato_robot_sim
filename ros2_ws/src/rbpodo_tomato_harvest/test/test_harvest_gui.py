@@ -73,6 +73,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     repeat_forward_distance_m,
     repeat_stage_command,
     result_arrow_length_for_report,
+    selection_plot_recommend_screen_direction,
     scene_parameters,
     step_custom_stage_deltas_m,
     stepper_command,
@@ -437,6 +438,32 @@ def test_selected_tomato_plot_uses_base_to_center_direction():
     direction /= np.linalg.norm(direction)
     expected = np.asarray((0.4, 0.2, 0.6)) - direction * 0.04
     assert scene["recommend"] == pytest.approx(expected)
+
+
+def test_camera_overlay_direction_matches_selected_plot_top_view():
+    direction = selection_plot_recommend_screen_direction(
+        tomato_xyz=(0.50, 0.10, 0.70),
+        angle_origin_xyz=(0.50, 0.10, 0.70),
+        angle_target_xyz=(0.56, 0.14, 0.72),
+    )
+
+    # PlotCanvas maps Link0 (X,Y) to screen (-Y,-X).  The arrow points from
+    # Recommend toward the tomato, i.e. along origin→target in X-Y.
+    expected = np.asarray((-0.04, -0.06), dtype=float)
+    expected /= np.linalg.norm(expected)
+    assert direction == pytest.approx(expected)
+
+
+def test_camera_overlay_direction_applies_same_right_capture_half_turn():
+    direction = selection_plot_recommend_screen_direction(
+        tomato_xyz=(-0.50, 0.10, 0.70),
+        angle_origin_xyz=(-0.50, 0.10, 0.70),
+        angle_target_xyz=(-0.44, 0.14, 0.72),
+    )
+
+    expected = np.asarray((0.04, 0.06), dtype=float)
+    expected /= np.linalg.norm(expected)
+    assert direction == pytest.approx(expected)
 
 
 def test_debug_frame_request_preserves_feedback_json_text():
@@ -3484,6 +3511,9 @@ def test_detection_overlay_is_rendered_only_in_camera_color_tab():
         camera_color_info_topic="/camera/d435/color/camera_info",
         camera_color_image_status=SimpleNamespace(set=lambda _value: None),
         _selected_angle_reference_mode=lambda: ANGLE_REFERENCE_CENTER_TO_STEM,
+        get_parameter=lambda _name: SimpleNamespace(
+            value="d435_color_optical_frame"
+        ),
         _schedule_camera_color_image_render=lambda: scheduled.append(True),
         _append_log=lambda _value: None,
     )

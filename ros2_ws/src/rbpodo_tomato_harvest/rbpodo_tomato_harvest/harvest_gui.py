@@ -25,7 +25,7 @@ from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
-from rbpodo_tomato_harvest.feedback_viewer import PlotCanvas
+from rbpodo_tomato_harvest.feedback_viewer import PlotCanvas, robot_top_projection
 from rbpodo_tomato_harvest.tomato_tf_generator import (
     ANGLE_REFERENCE_BASE_TO_CENTER,
     ANGLE_REFERENCE_CALYX_TO_STEM,
@@ -1260,6 +1260,49 @@ def recommend_entry_point(
     )
 
 
+def selection_plot_recommend_screen_direction(
+    tomato_xyz,
+    angle_origin_xyz,
+    angle_target_xyz,
+    keep_robot_below_tomato: bool = True,
+) -> tuple[float, float]:
+    """Return the Recommend arrow direction exactly as drawn by PlotCanvas.
+
+    The selected-tomato plot uses a Link0 X-Y top view, not the camera image
+    plane.  Its canvas also performs a half turn for targets behind Link0 so
+    that the robot remains below the tomato.  Camera overlays must apply the
+    same two rules or their arrow can disagree with the selected-target plot.
+    """
+    tomato = tuple(float(value) for value in tomato_xyz)
+    origin = tuple(float(value) for value in angle_origin_xyz)
+    target = tuple(float(value) for value in angle_target_xyz)
+    if any(len(values) != 3 for values in (tomato, origin, target)):
+        raise ValueError("진입각 좌표는 X, Y, Z 3개 값이어야 합니다.")
+    if not all(
+        math.isfinite(value)
+        for values in (tomato, origin, target)
+        for value in values
+    ):
+        raise ValueError("진입각 좌표는 유한값이어야 합니다.")
+
+    tomato_2d = robot_top_projection(tomato)
+    origin_2d = robot_top_projection(origin)
+    target_2d = robot_top_projection(target)
+    plot_dx = target_2d[0] - origin_2d[0]
+    plot_dy = target_2d[1] - origin_2d[1]
+    if keep_robot_below_tomato and tomato_2d[1] < -1e-9:
+        plot_dx = -plot_dx
+        plot_dy = -plot_dy
+
+    # Plot coordinates grow upward; image/Tk canvas coordinates grow down.
+    screen_dx = plot_dx
+    screen_dy = -plot_dy
+    norm = math.hypot(screen_dx, screen_dy)
+    if norm <= 1e-9:
+        raise ValueError("진입 방향의 X-Y 길이가 0입니다.")
+    return (screen_dx / norm, screen_dy / norm)
+
+
 def detected_tomato_marker_array(
     detections: TomatoDetectionArray,
     diameter: float = 0.0175,
@@ -1914,10 +1957,11 @@ def draw_detection_label_overlay(
     output = image.convert("RGB").copy()
     projected = []
     for detection in detections:
-        if len(detection) not in (2, 3):
+        if len(detection) not in (2, 3, 4):
             raise ValueError("오버레이 검출 항목 형식이 올바르지 않습니다.")
         label, xyz = detection[:2]
-        recommend_xyz = detection[2] if len(detection) == 3 else None
+        recommend_xyz = detection[2] if len(detection) >= 3 else None
+        recommend_direction = detection[3] if len(detection) == 4 else None
         try:
             pixel = camera_xyz_to_image_pixel(
                 xyz,
@@ -1942,7 +1986,27 @@ def draw_detection_label_overlay(
                     )
                 except ValueError:
                     recommend_pixel = None
-            projected.append((str(label), pixel, recommend_pixel))
+            if recommend_direction is not None:
+                direction_x = float(recommend_direction[0])
+                direction_y = float(recommend_direction[1])
+                direction_norm = math.hypot(direction_x, direction_y)
+                recommend_direction = (
+                    (direction_x / direction_norm, direction_y / direction_norm)
+                    if direction_norm > 1e-9
+                    else None
+                )
+            if recommend_direction is None and recommend_pixel is not None:
+                direction_x = pixel[0] - recommend_pixel[0]
+                direction_y = pixel[1] - recommend_pixel[1]
+                direction_norm = math.hypot(direction_x, direction_y)
+                if direction_norm > 1e-9:
+                    recommend_direction = (
+                        direction_x / direction_norm,
+                        direction_y / direction_norm,
+                    )
+            projected.append(
+                (str(label), pixel, recommend_pixel, recommend_direction)
+            )
     if not projected:
         return output, 0
 
@@ -1955,30 +2019,32 @@ def draw_detection_label_overlay(
     arrow_text_gap = max(2.0, 3.0 * scale) * card_scale
     text_sizes = []
     layout_sizes = []
-    for label, _pixel, recommend_pixel in projected:
+    for label, _pixel, _recommend_pixel, recommend_direction in projected:
         bounds = measure.textbbox((0, 0), label, font=font)
         text_size = (bounds[2] - bounds[0], bounds[3] - bounds[1])
         text_sizes.append(text_size)
         layout_sizes.append(
             (
                 text_size[0] + arrow_visual_size + arrow_text_gap
-                if recommend_pixel is not None
+                if recommend_direction is not None
                 else text_size[0],
                 max(text_size[1], arrow_visual_size)
-                if recommend_pixel is not None
+                if recommend_direction is not None
                 else text_size[1],
             )
         )
-    anchors = [pixel for _label, pixel, _recommend_pixel in projected]
+    anchors = [
+        pixel for _label, pixel, _recommend_pixel, _direction in projected
+    ]
     preferred_sides = []
-    for _label, (anchor_x, _anchor_y), recommend_pixel in projected:
-        if recommend_pixel is None:
+    for _label, _pixel, _recommend_pixel, recommend_direction in projected:
+        if recommend_direction is None:
             preferred_sides.append(0)
             continue
         # Arrow points left→right: label belongs left of the tomato.
         # Arrow points right→left: label belongs right of the tomato.
         preferred_sides.append(
-            -1 if anchor_x - float(recommend_pixel[0]) >= 0.0 else 1
+            -1 if float(recommend_direction[0]) >= 0.0 else 1
         )
     rectangles = detection_label_layout(
         anchors,
@@ -1999,6 +2065,7 @@ def draw_detection_label_overlay(
         label,
         (anchor_x, anchor_y),
         recommend_pixel,
+        recommend_direction,
     ), rectangle, text_size in zip(
         projected,
         rectangles,
@@ -2058,7 +2125,7 @@ def draw_detection_label_overlay(
         )
         content_padding = max(2.5, 3.5 * scale) * card_scale
         text_y = top + (bottom - top - text_size[1]) / 2.0 - 1.0
-        if recommend_pixel is None:
+        if recommend_direction is None:
             text_x = left + (right - left - text_size[0]) / 2.0
             draw.text(
                 (text_x, text_y),
@@ -2067,8 +2134,8 @@ def draw_detection_label_overlay(
                 fill=(0, 0, 0, 255),
             )
             continue
-        direction_x = anchor_x - float(recommend_pixel[0])
-        direction_y = anchor_y - float(recommend_pixel[1])
+        direction_x = float(recommend_direction[0])
+        direction_y = float(recommend_direction[1])
         direction_norm = math.hypot(direction_x, direction_y)
         if direction_norm <= 1e-6:
             continue
@@ -3251,14 +3318,14 @@ class HarvestGui(Node):
         frame.columnconfigure(1, weight=1, minsize=560, uniform="harvest")
         frame.rowconfigure(0, weight=1)
 
-        # The left and right halves intentionally use independent row ratios:
-        # the tomato list gets the spare room on the left, while the result
-        # image/log retain their original 3:2 size ratio on the right.
+        # Camera and motion controls share a compact notebook at the top. The
+        # tomato table receives all remaining vertical room so large detection
+        # sets can be inspected without constantly scrolling.
         left_panel = ttk.Frame(frame)
         left_panel.grid(row=0, column=0, sticky="nsew")
         left_panel.columnconfigure(0, weight=1)
-        left_panel.rowconfigure(0, weight=0, minsize=430)
-        left_panel.rowconfigure(1, weight=1, minsize=280)
+        left_panel.rowconfigure(0, weight=0, minsize=265)
+        left_panel.rowconfigure(1, weight=1, minsize=390)
 
         right_panel = ttk.Frame(frame)
         right_panel.grid(row=0, column=1, sticky="nsew")
@@ -3278,26 +3345,23 @@ class HarvestGui(Node):
             padx=(0, 5),
             pady=(0, 5),
         )
-        controls_frame.columnconfigure(
-            0, weight=1, minsize=350, uniform="harvest_controls"
-        )
-        controls_frame.columnconfigure(
-            1, weight=1, minsize=350, uniform="harvest_controls"
-        )
+        controls_frame.columnconfigure(0, weight=1)
         controls_frame.rowconfigure(0, weight=1)
 
-        camera_frame = ttk.LabelFrame(
-            controls_frame,
-            text="카메라 검출",
+        self.harvest_controls_notebook = ttk.Notebook(controls_frame)
+        self.harvest_controls_notebook.grid(
+            row=0, column=0, sticky="nsew"
+        )
+        camera_frame = ttk.Frame(
+            self.harvest_controls_notebook,
             padding=8,
         )
-        camera_frame.grid(
-            row=0,
-            column=0,
-            sticky="nsew",
-            padx=(0, 4),
+        self.harvest_controls_notebook.add(
+            camera_frame,
+            text="  카메라 검출  ",
         )
         camera_frame.columnconfigure(1, weight=1)
+        camera_frame.columnconfigure(3, weight=1)
         ttk.Label(camera_frame, text="검출 소스", foreground="#666666").grid(
             row=0, column=0, sticky="w"
         )
@@ -3316,13 +3380,13 @@ class HarvestGui(Node):
             self._camera_source_changed,
         )
         ttk.Label(camera_frame, text="서비스", foreground="#666666").grid(
-            row=1, column=0, sticky="w", pady=(8, 0)
+            row=0, column=2, sticky="w", padx=(16, 0)
         )
         ttk.Label(
             camera_frame,
             textvariable=self.camera_service_display,
         ).grid(
-            row=1, column=1, sticky="w", padx=(8, 0), pady=(8, 0)
+            row=0, column=3, sticky="w", padx=(8, 0)
         )
         self.detection_markers_checkbox = ttk.Checkbutton(
             camera_frame,
@@ -3331,9 +3395,8 @@ class HarvestGui(Node):
             command=self._detection_marker_option_changed,
         )
         self.detection_markers_checkbox.grid(
-            row=2,
+            row=1,
             column=0,
-            columnspan=2,
             sticky="w",
             pady=(8, 0),
         )
@@ -3345,10 +3408,10 @@ class HarvestGui(Node):
             width=25,
         )
         self.angle_reference_mode_combo.grid(
-            row=3,
-            column=0,
-            columnspan=2,
+            row=1,
+            column=1,
             sticky="ew",
+            padx=(8, 0),
             pady=(8, 0),
         )
         self.angle_reference_mode_combo.bind(
@@ -3362,10 +3425,9 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.detect_button.grid(
-            row=4,
+            row=2,
             column=0,
-            sticky="ew",
-            padx=(0, 4),
+            sticky="w",
             pady=(8, 0),
         )
         self.capture_camera_button = ttk.Button(
@@ -3375,10 +3437,10 @@ class HarvestGui(Node):
             style="Compact.TButton",
         )
         self.capture_camera_button.grid(
-            row=4,
+            row=2,
             column=1,
-            sticky="ew",
-            padx=(4, 0),
+            sticky="w",
+            padx=(8, 0),
             pady=(8, 0),
         )
 
@@ -3386,7 +3448,9 @@ class HarvestGui(Node):
             camera_frame,
             text="저장 자세",
             foreground="#666666",
-        ).grid(row=5, column=0, sticky="w", pady=(8, 0))
+        ).grid(
+            row=1, column=2, sticky="w", padx=(16, 0), pady=(8, 0)
+        )
         self.named_pose_combo = ttk.Combobox(
             camera_frame,
             textvariable=self.named_pose_var,
@@ -3395,8 +3459,8 @@ class HarvestGui(Node):
             width=20,
         )
         self.named_pose_combo.grid(
-            row=5,
-            column=1,
+            row=1,
+            column=3,
             sticky="ew",
             padx=(8, 0),
             pady=(8, 0),
@@ -3412,10 +3476,10 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.named_pose_button.grid(
-            row=6,
-            column=0,
-            columnspan=2,
-            sticky="ew",
+            row=2,
+            column=3,
+            sticky="w",
+            padx=(8, 0),
             pady=(8, 0),
         )
         ttk.Label(
@@ -3423,9 +3487,9 @@ class HarvestGui(Node):
             textvariable=self.camera_target_display,
             foreground="#444444",
         ).grid(
-            row=7,
+            row=3,
             column=0,
-            columnspan=2,
+            columnspan=4,
             sticky="w",
             pady=(8, 0),
         )
@@ -3437,17 +3501,17 @@ class HarvestGui(Node):
             style="Compact.TButton",
         )
         self.save_camera_target_button.grid(
-            row=8,
+            row=5,
             column=0,
-            columnspan=2,
-            sticky="ew",
+            columnspan=4,
+            sticky="w",
             pady=(8, 0),
         )
         ttk.Label(
             camera_frame,
             text="문제 유형",
             foreground="#666666",
-        ).grid(row=9, column=0, sticky="w", pady=(8, 0))
+        ).grid(row=4, column=0, sticky="w", pady=(8, 0))
         self.camera_review_issue_combo = ttk.Combobox(
             camera_frame,
             textvariable=self.camera_review_issue_var,
@@ -3456,7 +3520,7 @@ class HarvestGui(Node):
             width=20,
         )
         self.camera_review_issue_combo.grid(
-            row=9,
+            row=4,
             column=1,
             sticky="ew",
             padx=(8, 0),
@@ -3466,14 +3530,16 @@ class HarvestGui(Node):
             camera_frame,
             text="비고",
             foreground="#666666",
-        ).grid(row=10, column=0, sticky="w", pady=(8, 0))
+        ).grid(
+            row=4, column=2, sticky="w", padx=(16, 0), pady=(8, 0)
+        )
         self.camera_review_note_entry = ttk.Entry(
             camera_frame,
             textvariable=self.camera_review_note_var,
         )
         self.camera_review_note_entry.grid(
-            row=10,
-            column=1,
+            row=4,
+            column=3,
             sticky="ew",
             padx=(8, 0),
             pady=(8, 0),
@@ -3543,19 +3609,16 @@ class HarvestGui(Node):
         horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
         self.tomato_tree.bind("<<TreeviewSelect>>", self._tree_selection_changed)
 
-        motion_frame = ttk.LabelFrame(
-            controls_frame,
-            text="수확 모션",
-            padding=10,
+        motion_frame = ttk.Frame(
+            self.harvest_controls_notebook,
+            padding=8,
         )
-        motion_frame.grid(
-            row=0,
-            column=1,
-            sticky="nsew",
-            padx=(4, 0),
+        self.harvest_controls_notebook.add(
+            motion_frame,
+            text="  수확 모션  ",
         )
-        motion_frame.columnconfigure(0, weight=1)
         motion_frame.columnconfigure(1, weight=1)
+        motion_frame.columnconfigure(3, weight=1)
         ttk.Label(motion_frame, text="선택 토마토").grid(
             row=0, column=0, sticky="w"
         )
@@ -3568,19 +3631,17 @@ class HarvestGui(Node):
             row=0,
             column=1,
             sticky="ew",
-            padx=(10, 0),
+            padx=(8, 12),
             pady=(0, 8),
         )
         self.tomato_combo.bind("<<ComboboxSelected>>", self._combo_selection_changed)
         action_frame = ttk.Frame(motion_frame)
         action_frame.grid(
-            row=1,
-            column=0,
+            row=0,
+            column=2,
             columnspan=2,
-            sticky="ew",
+            sticky="e",
         )
-        for column in range(2):
-            action_frame.columnconfigure(column, weight=1)
         self.plan_button = ttk.Button(
             action_frame,
             text="Plan-only 확인",
@@ -3588,7 +3649,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Action.TButton",
         )
-        self.plan_button.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        self.plan_button.grid(row=0, column=0, padx=(0, 3))
         self.execute_button = ttk.Button(
             action_frame,
             text="실제 수확 실행",
@@ -3596,7 +3657,7 @@ class HarvestGui(Node):
             state="disabled",
             style="Action.TButton",
         )
-        self.execute_button.grid(row=0, column=1, sticky="ew", padx=4)
+        self.execute_button.grid(row=0, column=1, padx=3)
         self.harvest_all_button = ttk.Button(
             action_frame,
             text="전체 연속 수확",
@@ -3605,11 +3666,9 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.harvest_all_button.grid(
-            row=1,
-            column=1,
-            sticky="ew",
-            padx=(4, 0),
-            pady=(6, 0),
+            row=0,
+            column=3,
+            padx=3,
         )
         self.harvest_all_plan_button = ttk.Button(
             action_frame,
@@ -3619,11 +3678,9 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.harvest_all_plan_button.grid(
-            row=1,
-            column=0,
-            sticky="ew",
-            padx=(0, 4),
-            pady=(6, 0),
+            row=0,
+            column=2,
+            padx=3,
         )
         self.motion_stop_button = ttk.Button(
             action_frame,
@@ -3633,20 +3690,18 @@ class HarvestGui(Node):
             style="Action.TButton",
         )
         self.motion_stop_button.grid(
-            row=2,
-            column=0,
-            columnspan=2,
-            sticky="ew",
-            padx=0,
-            pady=(6, 0),
+            row=0,
+            column=4,
+            padx=(3, 0),
         )
         ttk.Separator(motion_frame, orient="horizontal").grid(
-            row=2, column=0, columnspan=2, sticky="ew", pady=10
+            row=1, column=0, columnspan=4, sticky="ew", pady=(4, 8)
         )
 
         options = ttk.LabelFrame(motion_frame, text="수확 옵션", padding=8)
-        options.grid(row=3, column=0, columnspan=2, sticky="ew")
+        options.grid(row=2, column=0, columnspan=4, sticky="ew")
         options.columnconfigure(1, weight=1)
+        options.columnconfigure(3, weight=1)
         ttk.Label(options, text="시작/복귀 자세").grid(
             row=0, column=0, sticky="w"
         )
@@ -3665,11 +3720,11 @@ class HarvestGui(Node):
             self._pick_ready_state_changed,
         )
         ttk.Label(options, text="리니어모터 대기").grid(
-            row=1, column=0, sticky="w", pady=(8, 0)
+            row=0, column=2, sticky="w", padx=(16, 0)
         )
         wait_input = ttk.Frame(options)
         wait_input.grid(
-            row=1, column=1, sticky="w", padx=(8, 0), pady=(8, 0)
+            row=0, column=3, sticky="w", padx=(8, 0)
         )
         self.linear_motor_wait_entry = ttk.Spinbox(
             wait_input,
@@ -3690,7 +3745,7 @@ class HarvestGui(Node):
         )
         ttk.Label(wait_input, text="초").grid(row=0, column=1, padx=(4, 0))
         ttk.Label(options, text="토마토별 종료 단계").grid(
-            row=2,
+            row=1,
             column=0,
             sticky="w",
             pady=(8, 0),
@@ -3703,16 +3758,17 @@ class HarvestGui(Node):
             width=20,
         )
         self.batch_harvest_stage_combo.grid(
-            row=2,
+            row=1,
             column=1,
             sticky="ew",
             padx=(8, 0),
             pady=(8, 0),
         )
         ttk.Label(options, text="4단계 진입 길이 (mm)").grid(
-            row=3,
-            column=0,
+            row=1,
+            column=2,
             sticky="w",
+            padx=(16, 0),
             pady=(8, 0),
         )
         self.harvest_forward_distance_spinbox = ttk.Spinbox(
@@ -3725,8 +3781,8 @@ class HarvestGui(Node):
             command=self._harvest_forward_distance_changed,
         )
         self.harvest_forward_distance_spinbox.grid(
-            row=3,
-            column=1,
+            row=1,
+            column=3,
             sticky="w",
             padx=(8, 0),
             pady=(8, 0),
@@ -3738,7 +3794,7 @@ class HarvestGui(Node):
             "<Return>", self._harvest_forward_distance_changed
         )
         ttk.Label(options, text="5단계 TCP 회전각 (°)").grid(
-            row=4,
+            row=2,
             column=0,
             sticky="w",
             pady=(8, 0),
@@ -3754,7 +3810,7 @@ class HarvestGui(Node):
             command=self._invalidate_plan,
         )
         self.harvest_tcp_wrist_rotation_spinbox.grid(
-            row=4,
+            row=2,
             column=1,
             sticky="w",
             padx=(8, 0),
@@ -3773,22 +3829,23 @@ class HarvestGui(Node):
             command=self._adaptive_grasp_mode_changed,
         )
         self.prefer_robot_direction_checkbox.grid(
-            row=5,
+            row=3,
             column=0,
             columnspan=2,
             sticky="w",
             pady=(8, 0),
         )
         ttk.Label(options, text="최대 보정각").grid(
-            row=6,
-            column=0,
+            row=2,
+            column=2,
             sticky="w",
+            padx=(16, 0),
             pady=(8, 0),
         )
         rotation_input = ttk.Frame(options)
         rotation_input.grid(
-            row=6,
-            column=1,
+            row=2,
+            column=3,
             sticky="w",
             padx=(8, 0),
             pady=(8, 0),
@@ -3819,8 +3876,8 @@ class HarvestGui(Node):
             variable=self.continuous_harvest_var,
         )
         self.continuous_harvest_checkbox.grid(
-            row=7,
-            column=0,
+            row=3,
+            column=2,
             columnspan=2,
             sticky="w",
             pady=(8, 0),
@@ -3832,7 +3889,7 @@ class HarvestGui(Node):
             command=self._lift_harvest_mode_changed,
         )
         self.lift_harvest_checkbox.grid(
-            row=8,
+            row=4,
             column=0,
             columnspan=2,
             sticky="w",
@@ -3845,17 +3902,15 @@ class HarvestGui(Node):
             command=self._preplan_all_mode_changed,
         )
         self.preplan_all_checkbox.grid(
-            row=9,
-            column=0,
+            row=4,
+            column=2,
             columnspan=2,
             sticky="w",
             pady=(6, 0),
         )
 
         utility = ttk.Frame(motion_frame)
-        utility.grid(row=4, column=0, columnspan=2, sticky="ew", pady=(8, 0))
-        utility.columnconfigure(0, weight=1)
-        utility.columnconfigure(1, weight=1)
+        utility.grid(row=3, column=0, columnspan=4, sticky="w", pady=(8, 0))
         self.clear_markers_button = ttk.Button(
             utility,
             text="마커 지우기",
@@ -3884,9 +3939,9 @@ class HarvestGui(Node):
             motion_frame,
             text="Plan-only 성공 후 실제 실행이 활성화되며, 성공한 실행은 반복할 수 있습니다.",
             foreground="#666666",
-            wraplength=315,
+            wraplength=680,
             justify="left",
-        ).grid(row=5, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        ).grid(row=4, column=0, columnspan=4, sticky="w", pady=(8, 0))
 
         result_image_frame = ttk.LabelFrame(
             right_panel,
@@ -3968,6 +4023,7 @@ class HarvestGui(Node):
             "<Configure>",
             self._schedule_camera_color_image_render,
         )
+        self.result_image_notebook.select(camera_color_image_tab)
         self.result_image_notebook.bind(
             "<<NotebookTabChanged>>",
             self._image_notebook_tab_changed,
@@ -8350,6 +8406,25 @@ class HarvestGui(Node):
                 self._schedule_camera_color_image_render()
                 return
 
+        robot_frame = str(
+            self.get_parameter("camera_target_record_robot_frame").value
+        ).strip()
+        robot_transform = None
+        robot_angle_available = bool(detection_frame and robot_frame)
+        if robot_angle_available and detection_frame != robot_frame:
+            try:
+                robot_transform = self.tf_buffer.lookup_transform(
+                    robot_frame,
+                    detection_frame,
+                    Time(),
+                )
+            except TransformException as error:
+                robot_angle_available = False
+                self._append_log(
+                    "[카메라 진입각 오버레이 보류] 선택 토마토 그래프의 "
+                    f"{robot_frame} 좌표를 계산할 수 없습니다: {error}"
+                )
+
         angle_mode = self._selected_angle_reference_mode()
         angle_base_point = None
         angle_available = True
@@ -8378,6 +8453,7 @@ class HarvestGui(Node):
             else:
                 xyz = transformed_point_xyz(detection.center, transform)
             recommend_xyz = None
+            recommend_direction = None
             if angle_available:
                 try:
                     angle_origin, angle_target = detection_angle_segment(
@@ -8410,9 +8486,49 @@ class HarvestGui(Node):
                         angle_origin_xyz,
                         angle_target_xyz,
                     )
+                    if robot_angle_available:
+                        if robot_transform is None:
+                            robot_tomato_xyz = (
+                                float(detection.center.x),
+                                float(detection.center.y),
+                                float(detection.center.z),
+                            )
+                            robot_angle_origin_xyz = (
+                                float(angle_origin.x),
+                                float(angle_origin.y),
+                                float(angle_origin.z),
+                            )
+                            robot_angle_target_xyz = (
+                                float(angle_target.x),
+                                float(angle_target.y),
+                                float(angle_target.z),
+                            )
+                        else:
+                            robot_tomato_xyz = transformed_point_xyz(
+                                detection.center,
+                                robot_transform,
+                            )
+                            robot_angle_origin_xyz = transformed_point_xyz(
+                                angle_origin,
+                                robot_transform,
+                            )
+                            robot_angle_target_xyz = transformed_point_xyz(
+                                angle_target,
+                                robot_transform,
+                            )
+                        recommend_direction = (
+                            selection_plot_recommend_screen_direction(
+                                robot_tomato_xyz,
+                                robot_angle_origin_xyz,
+                                robot_angle_target_xyz,
+                            )
+                        )
                 except ValueError:
                     recommend_xyz = None
-            projected_detections.append((label, xyz, recommend_xyz))
+                    recommend_direction = None
+            projected_detections.append(
+                (label, xyz, recommend_xyz, recommend_direction)
+            )
         overlay, projected_count = draw_detection_label_overlay(
             image,
             projected_detections,
