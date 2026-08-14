@@ -2562,7 +2562,14 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "stepwise_plan:=true" in command
     assert "step_cycle_last_stage:=5" in command
     assert "harvest_x_forward:=0.04" in command
+    assert "step_servo_speed_percent:=50.0" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
+
+
+def test_stepper_command_forwards_servo_speed_percent():
+    command = stepper_command(3, servo_speed_percent=75)
+
+    assert "step_servo_speed_percent:=75.0" in command
 
 
 def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
@@ -3423,7 +3430,7 @@ def test_detection_label_layout_avoids_box_overlap_in_dense_cluster():
     )
 
     for index, rectangle in enumerate(rectangles):
-        for other in rectangles[index + 1 :]:
+        for other in rectangles[index + 1:]:
             assert (
                 harvest_gui_module._rectangle_overlap_area(rectangle, other)
                 == 0.0

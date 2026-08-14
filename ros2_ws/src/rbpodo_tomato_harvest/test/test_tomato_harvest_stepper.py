@@ -6,6 +6,7 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
+    _execute_servo_sequence,
     continuous_cartesian_stage_blocks,
     cycle_last_stage_index,
     reverse_robot_trajectory,
@@ -60,6 +61,7 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "BACK_X50_FIRST",
         "BACK_X10_SECOND",
         "HARVEST_WAIT",
+        "SERVO_CLOSE_OPEN",
         "RETURN_READY",
     ]
     assert stages[8]["trajectories"][0].name == "after_wait"
@@ -73,7 +75,11 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
     )
     assert stages[9]["kind"] == "wait"
     assert stages[9]["wait_seconds"] == pytest.approx(2.25)
-    assert stages[10]["trajectories"][0].name == "return_ready"
+    assert stages[10]["kind"] == "servo_sequence"
+    assert stages[10]["close_angle_deg"] == pytest.approx(90.0)
+    assert stages[10]["open_angle_deg"] == pytest.approx(170.0)
+    assert stages[10]["dwell_seconds"] == pytest.approx(1.0)
+    assert stages[11]["trajectories"][0].name == "return_ready"
 
 
 def test_step_stage_specs_displays_configured_forward_distance():
@@ -200,6 +206,36 @@ def test_continuous_blocks_split_at_enabled_wrist_trajectory():
         (0, 1),
         (3, 4),
     ]
+
+
+def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
+    published = []
+    sleeps = []
+    planner = SimpleNamespace(
+        count_subscribers=lambda _topic: 1,
+        get_logger=lambda: SimpleNamespace(
+            info=lambda _message: None,
+            error=lambda _message: None,
+        ),
+    )
+    stage = {
+        "servo_publisher": SimpleNamespace(
+            publish=lambda message: published.append(list(message.data))
+        ),
+        "servo_topic": "/linear_motor/servo10_command",
+        "close_angle_deg": 90.0,
+        "open_angle_deg": 170.0,
+        "speed_percent": 50.0,
+        "dwell_seconds": 1.0,
+    }
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper.time.sleep",
+        sleeps.append,
+    )
+
+    assert _execute_servo_sequence(planner, stage) is True
+    assert published == [[90.0, 50.0], [170.0, 50.0]]
+    assert sleeps == [1.0, 1.0]
 
 
 def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():

@@ -881,6 +881,7 @@ def stepper_command(
     custom_stage_deltas_m: tuple[tuple[float, float, float], ...] | None = None,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
+    servo_speed_percent: float = SERVO10_DEFAULT_SPEED_PERCENT,
     tomato_frame: str | None = None,
     python_executable: str | None = None,
 ) -> list[str]:
@@ -938,6 +939,12 @@ def stepper_command(
         or not 1.0 <= tcp_wrist_rotation_deg <= 45.0
     ):
         raise ValueError("tcp_wrist_rotation_deg must be between 1 and 45")
+    servo_speed_percent = float(servo_speed_percent)
+    if (
+        not math.isfinite(servo_speed_percent)
+        or not 1.0 <= servo_speed_percent <= 100.0
+    ):
+        raise ValueError("servo_speed_percent must be between 1 and 100")
     command = harvest_command(
         tomato_index,
         True,
@@ -978,6 +985,9 @@ def stepper_command(
                 ]
             )
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
+    command.extend(
+        ["-p", f"step_servo_speed_percent:={servo_speed_percent}"]
+    )
     command.extend(
         ["-p", f"step_cycle_only:={'true' if cycle_only else 'false'}"]
     )
@@ -9904,6 +9914,11 @@ class HarvestGui(Node):
             custom_stage_deltas_m=custom_stage_deltas_m,
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
+            servo_speed_percent=(
+                servo_speed_percent(self.servo10_speed_percent_var.get())
+                if self.servo10_speed_enabled_var.get()
+                else SERVO10_DEFAULT_SPEED_PERCENT
+            ),
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"

@@ -12,6 +12,7 @@ import rclpy
 from builtin_interfaces.msg import Duration as DurationMessage
 from moveit_msgs.msg import RobotState
 from rclpy.executors import ExternalShutdownException
+from std_msgs.msg import Float64MultiArray
 
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
@@ -21,6 +22,10 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
 CYCLE_LAST_STAGE_INDEX = 6
+SERVO_COMMAND_TOPIC = "/linear_motor/servo10_command"
+SERVO_CLOSE_ANGLE_DEG = 90.0
+SERVO_OPEN_ANGLE_DEG = 170.0
+SERVO_DWELL_SECONDS = 1.0
 
 
 def _emit(event: str, **values) -> None:
@@ -88,6 +93,7 @@ def step_stage_specs(
     custom_stage_deltas_m=None,
     wrist_rotation_deg: float = 10.0,
     ready_state_name: str = "PICK_READY",
+    servo_speed_percent: float = 50.0,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -122,6 +128,12 @@ def step_stage_specs(
     ):
         raise ValueError("custom stage deltas must contain five XYZ triples")
     ready_state_name = str(ready_state_name).strip() or "PICK_READY"
+    servo_speed_percent = float(servo_speed_percent)
+    if (
+        not math.isfinite(servo_speed_percent)
+        or not 1.0 <= servo_speed_percent <= 100.0
+    ):
+        raise ValueError("servo speed percent must be between 1 and 100")
     wrist_enabled = bool(_trajectory_group(approach[2]))
 
     def delta_detail(stage_index: int) -> str:
@@ -217,6 +229,21 @@ def step_stage_specs(
             "detail": f"{max(0.0, float(wait_seconds)):.2f}초 대기",
             "kind": "wait",
             "wait_seconds": max(0.0, float(wait_seconds)),
+            "trajectories": (),
+        },
+        {
+            "key": "SERVO_CLOSE_OPEN",
+            "label": "서보 닫기 → 열기",
+            "detail": (
+                f"90° 닫기 → {SERVO_DWELL_SECONDS:.1f}초 대기 → "
+                f"170° 열기 → {SERVO_DWELL_SECONDS:.1f}초 대기 "
+                f"(속도 {servo_speed_percent:g}%)"
+            ),
+            "kind": "servo_sequence",
+            "close_angle_deg": SERVO_CLOSE_ANGLE_DEG,
+            "open_angle_deg": SERVO_OPEN_ANGLE_DEG,
+            "speed_percent": servo_speed_percent,
+            "dwell_seconds": SERVO_DWELL_SECONDS,
             "trajectories": (),
         },
         {
@@ -454,6 +481,42 @@ def _execute_continuous_cartesian_block(
     return True
 
 
+def _execute_servo_sequence(planner, stage: dict) -> bool:
+    publisher = stage.get("servo_publisher")
+    topic = str(stage.get("servo_topic", SERVO_COMMAND_TOPIC))
+    if publisher is None:
+        planner.get_logger().error("Servo command publisher is unavailable")
+        return False
+
+    subscriber_deadline = time.monotonic() + 1.0
+    while (
+        planner.count_subscribers(topic) < 1
+        and time.monotonic() < subscriber_deadline
+    ):
+        time.sleep(0.05)
+    if planner.count_subscribers(topic) < 1:
+        planner.get_logger().error(
+            f"Servo command subscriber is unavailable: {topic}"
+        )
+        return False
+
+    speed_percent = float(stage["speed_percent"])
+    dwell_seconds = max(0.0, float(stage["dwell_seconds"]))
+    for angle_deg, action in (
+        (float(stage["close_angle_deg"]), "close"),
+        (float(stage["open_angle_deg"]), "open"),
+    ):
+        message = Float64MultiArray()
+        message.data = [angle_deg, speed_percent]
+        publisher.publish(message)
+        planner.get_logger().info(
+            f"Servo {action} command: angle={angle_deg:.0f} deg, "
+            f"speed={speed_percent:g}%, dwell={dwell_seconds:.1f}s"
+        )
+        time.sleep(dwell_seconds)
+    return True
+
+
 def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bool:
     direction = "reverse" if reverse else "forward"
     expected = (
@@ -481,11 +544,17 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
         direction=direction,
     )
     started = time.monotonic()
+    failure_reason = "TRAJECTORY_EXECUTION_FAILED"
     if stage["kind"] == "wait":
         time.sleep(float(stage["wait_seconds"]))
         success = True
     elif stage["kind"] == "skip":
         success = True
+    elif stage["kind"] == "servo_sequence":
+        # The sequence finishes open, so reverse traversal has no servo-side
+        # state to restore and intentionally performs no command.
+        success = True if reverse else _execute_servo_sequence(planner, stage)
+        failure_reason = "SERVO_COMMAND_FAILED"
     else:
         trajectories = stage["trajectories"]
         if reverse:
@@ -501,7 +570,7 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
             index=index,
             key=stage["key"],
             direction=direction,
-            reason="TRAJECTORY_EXECUTION_FAILED",
+            reason=failure_reason,
             duration_sec=round(duration, 6),
         )
         return False
@@ -518,6 +587,11 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
 def main(args=None) -> None:
     rclpy.init(args=args)
     planner = CartesianHarvestPlanner()
+    planner.declare_parameter(
+        "step_servo_command_topic",
+        SERVO_COMMAND_TOPIC,
+    )
+    planner.declare_parameter("step_servo_speed_percent", 50.0)
     exit_code = 1
     try:
         plan = planner.plan()
@@ -554,7 +628,22 @@ def main(args=None) -> None:
             str(
                 planner.get_parameter("pick_ready_state_name").value
             ),
+            float(
+                planner.get_parameter("step_servo_speed_percent").value
+            ),
         )
+        servo_topic = str(
+            planner.get_parameter("step_servo_command_topic").value
+        )
+        servo_publisher = planner.create_publisher(
+            Float64MultiArray,
+            servo_topic,
+            10,
+        )
+        for stage in stages:
+            if stage["kind"] == "servo_sequence":
+                stage["servo_topic"] = servo_topic
+                stage["servo_publisher"] = servo_publisher
         expected = {
             str(name): float(value)
             for name, value in report.get("start_joint_positions", {}).items()
