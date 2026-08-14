@@ -66,6 +66,8 @@ from rbpodo_tomato_harvest.harvest_gui import (
     linear_motor_pin_sequence,
     linear_motor_pin_values,
     servo_angle_degrees,
+    servo_speed_degrees_per_second,
+    servo_speed_percent,
     lift_harvest_target_height_mm,
     named_pose_command,
     preplanned_batch_command,
@@ -2463,6 +2465,81 @@ def test_servo_angle_degrees_normalizes_valid_values(value, expected):
 def test_servo_angle_degrees_rejects_invalid_values(value):
     with pytest.raises(ValueError):
         servo_angle_degrees(value)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    (("1", 1), ("90", 90), ("100", 100), ("89.6", 90)),
+)
+def test_servo_speed_percent_normalizes_valid_values(value, expected):
+    assert servo_speed_percent(value) == expected
+
+
+@pytest.mark.parametrize("value", ("", "nan", "0", "101", "invalid"))
+def test_servo_speed_percent_rejects_invalid_values(value):
+    with pytest.raises(ValueError):
+        servo_speed_percent(value)
+
+
+def test_servo_speed_rate_uses_provisional_max_and_100_is_immediate():
+    assert servo_speed_degrees_per_second(90) == pytest.approx(162.0)
+    assert servo_speed_degrees_per_second(100) is None
+
+
+@pytest.mark.parametrize("preset_angle", (90, 170))
+def test_servo_preset_button_publishes_requested_angle(preset_angle):
+    published = []
+    displayed = []
+    gui = SimpleNamespace(
+        servo10_angle_deg_var=SimpleNamespace(
+            get=lambda: "10",
+            set=lambda value: displayed.append(value),
+        ),
+        servo10_speed_enabled_var=SimpleNamespace(get=lambda: True),
+        servo10_speed_percent_var=SimpleNamespace(get=lambda: "90"),
+        linear_motor_node_online=True,
+        linear_motor_serial_connected=True,
+        linear_motor_servo10_command_topic="/linear_motor/servo10_command",
+        count_subscribers=lambda _topic: 1,
+        linear_motor_servo10_command_publisher=SimpleNamespace(
+            publish=lambda message: published.append(message.data)
+        ),
+        status=SimpleNamespace(set=lambda _value: None),
+        _append_log=lambda _value: None,
+    )
+
+    HarvestGui.send_servo10_angle(gui, preset_angle)
+
+    assert [list(values) for values in published] == [
+        [float(preset_angle), 90.0]
+    ]
+    assert displayed == [str(preset_angle)]
+
+
+def test_servo_speed_unchecked_uses_default_fifty_percent():
+    published = []
+    gui = SimpleNamespace(
+        servo10_angle_deg_var=SimpleNamespace(
+            get=lambda: "170",
+            set=lambda _value: None,
+        ),
+        servo10_speed_enabled_var=SimpleNamespace(get=lambda: False),
+        # An old/custom entry value must not leak into unchecked operation.
+        servo10_speed_percent_var=SimpleNamespace(get=lambda: "90"),
+        linear_motor_node_online=True,
+        linear_motor_serial_connected=True,
+        linear_motor_servo10_command_topic="/linear_motor/servo10_command",
+        count_subscribers=lambda _topic: 1,
+        linear_motor_servo10_command_publisher=SimpleNamespace(
+            publish=lambda message: published.append(list(message.data))
+        ),
+        status=SimpleNamespace(set=lambda _value: None),
+        _append_log=lambda _value: None,
+    )
+
+    HarvestGui.send_servo10_angle(gui)
+
+    assert published == [[170.0, 50.0]]
 
 
 def test_stepper_command_enables_detailed_cached_plan():

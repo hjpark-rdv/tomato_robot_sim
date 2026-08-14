@@ -42,7 +42,7 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from sensor_msgs.msg import CameraInfo, CompressedImage, Image as RosImage
-from std_msgs.msg import Bool, Float64, Header, String
+from std_msgs.msg import Bool, Float64, Float64MultiArray, Header, String
 from std_srvs.srv import Trigger
 from tf2_ros import Buffer, TransformException, TransformListener
 from visualization_msgs.msg import Marker, MarkerArray
@@ -60,6 +60,8 @@ NAMED_POSE_STATES = (*PICK_READY_STATES, "CAPTURE_LEFT", "CAPTURE_RIGHT")
 CAMERA_SOURCE_FAKE = "Fake tomato"
 CAMERA_SOURCE_REAL = "실제 /detect_tomatoes"
 CAMERA_SOURCE_OPTIONS = (CAMERA_SOURCE_FAKE, CAMERA_SOURCE_REAL)
+SERVO10_MAX_SPEED_DEG_PER_SEC = 180.0
+SERVO10_DEFAULT_SPEED_PERCENT = 50
 ANGLE_REFERENCE_DISPLAY_OPTIONS = tuple(
     angle_reference_label(mode) for mode in ANGLE_REFERENCE_MODES
 )
@@ -1078,6 +1080,25 @@ def servo_angle_degrees(value) -> int:
     if not math.isfinite(degrees) or not 10.0 <= degrees <= 173.0:
         raise ValueError("서보 각도는 10~173° 범위여야 합니다.")
     return int(round(degrees))
+
+
+def servo_speed_percent(value) -> int:
+    """Validate and normalize a PIN10 servo speed percentage."""
+    try:
+        percent = float(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError("서보 속도는 숫자로 입력하세요.") from error
+    if not math.isfinite(percent) or not 1.0 <= percent <= 100.0:
+        raise ValueError("서보 속도는 1~100% 범위여야 합니다.")
+    return int(round(percent))
+
+
+def servo_speed_degrees_per_second(percent) -> float | None:
+    """Return the provisional servo rate; 100% means immediate movement."""
+    normalized = servo_speed_percent(percent)
+    if normalized >= 100:
+        return None
+    return SERVO10_MAX_SPEED_DEG_PER_SEC * normalized / 100.0
 
 
 def lift_harvest_target_height_mm(
@@ -2559,6 +2580,10 @@ class HarvestGui(Node):
             "/linear_motor/servo10_angle_deg",
         )
         self.declare_parameter(
+            "linear_motor_servo10_command_topic",
+            "/linear_motor/servo10_command",
+        )
+        self.declare_parameter(
             "linear_motor_serial_status_topic",
             "/linear_motor/serial_status",
         )
@@ -2793,6 +2818,9 @@ class HarvestGui(Node):
         self.linear_motor_servo10_angle_topic = str(
             self.get_parameter("linear_motor_servo10_angle_topic").value
         )
+        self.linear_motor_servo10_command_topic = str(
+            self.get_parameter("linear_motor_servo10_command_topic").value
+        )
         self.linear_motor_serial_status_topic = str(
             self.get_parameter("linear_motor_serial_status_topic").value
         )
@@ -2809,6 +2837,11 @@ class HarvestGui(Node):
         self.linear_motor_servo10_angle_publisher = self.create_publisher(
             Float64,
             self.linear_motor_servo10_angle_topic,
+            10,
+        )
+        self.linear_motor_servo10_command_publisher = self.create_publisher(
+            Float64MultiArray,
+            self.linear_motor_servo10_command_topic,
             10,
         )
         linear_motor_status_qos = QoSProfile(
@@ -3192,6 +3225,13 @@ class HarvestGui(Node):
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
         self.servo10_angle_deg_var = tk.StringVar(value="90")
+        self.servo10_speed_enabled_var = tk.BooleanVar(value=False)
+        self.servo10_speed_percent_var = tk.StringVar(
+            value=str(SERVO10_DEFAULT_SPEED_PERCENT)
+        )
+        self.servo10_speed_display = tk.StringVar(
+            value="사용자 지정 해제: 기본 50% (약 90.0°/s) 적용"
+        )
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
@@ -4698,7 +4738,7 @@ class HarvestGui(Node):
                 "줄임 PIN8 LOW/PIN9 HIGH, 정지 모두 LOW"
             ),
             foreground="#666666",
-        ).grid(row=4, column=0, columnspan=7, sticky="w", pady=(8, 0))
+        ).grid(row=5, column=0, columnspan=7, sticky="w", pady=(8, 0))
 
         ttk.Label(frame, text="PIN10 서보 각도").grid(
             row=3, column=0, sticky="w", pady=(10, 0)
@@ -4728,18 +4768,128 @@ class HarvestGui(Node):
         self.servo10_angle_button.grid(
             row=3, column=2, sticky="w", pady=(10, 0)
         )
+        self.servo10_close_button = ttk.Button(
+            frame,
+            text="90° 닫기",
+            command=lambda: self.send_servo10_angle(90),
+            style="Action.TButton",
+            width=12,
+            state="disabled",
+        )
+        self.servo10_close_button.grid(
+            row=3,
+            column=3,
+            sticky="w",
+            padx=(6, 0),
+            pady=(10, 0),
+        )
+        self.servo10_open_button = ttk.Button(
+            frame,
+            text="170° 열기",
+            command=lambda: self.send_servo10_angle(170),
+            style="Action.TButton",
+            width=12,
+            state="disabled",
+        )
+        self.servo10_open_button.grid(
+            row=3,
+            column=4,
+            sticky="w",
+            padx=(6, 0),
+            pady=(10, 0),
+        )
         ttk.Label(
             frame,
-            text="10~173°를 전송하면 PIN10 서보가 해당 각도를 유지합니다.",
+            text="직접 각도 전송 또는 닫기/열기 위치로 즉시 이동합니다.",
             foreground="#666666",
         ).grid(
             row=3,
-            column=3,
-            columnspan=4,
+            column=5,
+            columnspan=2,
             sticky="w",
             padx=(8, 0),
             pady=(10, 0),
         )
+
+        self.servo10_speed_checkbox = ttk.Checkbutton(
+            frame,
+            text="서보 속도 조정",
+            variable=self.servo10_speed_enabled_var,
+            command=self._servo10_speed_option_changed,
+        )
+        self.servo10_speed_checkbox.grid(
+            row=4,
+            column=0,
+            sticky="w",
+            pady=(8, 0),
+        )
+        speed_input = ttk.Frame(frame)
+        speed_input.grid(
+            row=4,
+            column=1,
+            sticky="w",
+            padx=(8, 4),
+            pady=(8, 0),
+        )
+        self.servo10_speed_spinbox = ttk.Spinbox(
+            speed_input,
+            from_=1,
+            to=100,
+            increment=1,
+            textvariable=self.servo10_speed_percent_var,
+            command=self._servo10_speed_option_changed,
+            width=7,
+            state="disabled",
+        )
+        self.servo10_speed_spinbox.grid(row=0, column=0)
+        self.servo10_speed_spinbox.bind(
+            "<FocusOut>", self._servo10_speed_option_changed
+        )
+        self.servo10_speed_spinbox.bind(
+            "<Return>", self._servo10_speed_option_changed
+        )
+        ttk.Label(speed_input, text="%").grid(row=0, column=1, padx=(3, 0))
+        ttk.Label(
+            frame,
+            textvariable=self.servo10_speed_display,
+            foreground="#666666",
+        ).grid(
+            row=4,
+            column=2,
+            columnspan=5,
+            sticky="w",
+            padx=(4, 0),
+            pady=(8, 0),
+        )
+
+    def _servo10_speed_option_changed(self, _event=None) -> None:
+        enabled = bool(self.servo10_speed_enabled_var.get())
+        self.servo10_speed_spinbox.configure(
+            state="normal" if enabled else "disabled"
+        )
+        if not enabled:
+            self.servo10_speed_display.set(
+                "사용자 지정 해제: 기본 50% (약 90.0°/s) 적용"
+            )
+            return
+        try:
+            percent = servo_speed_percent(
+                self.servo10_speed_percent_var.get()
+            )
+        except ValueError as error:
+            self.servo10_speed_display.set(str(error))
+            return
+        self.servo10_speed_percent_var.set(str(percent))
+        degrees_per_second = servo_speed_degrees_per_second(percent)
+        if degrees_per_second is None:
+            self.servo10_speed_display.set(
+                "100%: 목표 각도로 즉시 이동"
+            )
+        else:
+            self.servo10_speed_display.set(
+                f"{percent}%: 임시 기준 약 {degrees_per_second:.1f}°/s "
+                f"(100% 기준 {SERVO10_MAX_SPEED_DEG_PER_SEC:.0f}°/s)"
+            )
 
     def _build_lift_ui(self, frame) -> None:
         """Build controls backed by the farmily_uv_lift ROS topics."""
@@ -5234,11 +5384,18 @@ class HarvestGui(Node):
         self.linear_motor_pin8_publisher.publish(pin8_message)
         self.linear_motor_pin9_publisher.publish(pin9_message)
 
-    def send_servo10_angle(self) -> None:
+    def send_servo10_angle(self, preset_angle=None) -> None:
         """Send a manual pin 10 servo angle through the serial bridge."""
         try:
             angle_deg = servo_angle_degrees(
                 self.servo10_angle_deg_var.get()
+                if preset_angle is None
+                else preset_angle
+            )
+            speed_percent = (
+                servo_speed_percent(self.servo10_speed_percent_var.get())
+                if self.servo10_speed_enabled_var.get()
+                else SERVO10_DEFAULT_SPEED_PERCENT
             )
         except ValueError as error:
             self.status.set(str(error))
@@ -5257,22 +5414,29 @@ class HarvestGui(Node):
                 "[PIN10 서보 미전송] Arduino TTY 연결을 확인하세요."
             )
             return
-        if self.count_subscribers(self.linear_motor_servo10_angle_topic) < 1:
-            self.status.set("서보 각도 미전송 — ANGLE 토픽 구독자가 없습니다.")
+        if self.count_subscribers(self.linear_motor_servo10_command_topic) < 1:
+            self.status.set("서보 명령 미전송 — COMMAND 토픽 구독자가 없습니다.")
             self._append_log(
                 "[PIN10 서보 미전송] serial bridge를 최신 빌드로 "
                 "다시 실행하세요."
             )
             return
 
-        message = Float64()
-        message.data = float(angle_deg)
-        self.linear_motor_servo10_angle_publisher.publish(message)
+        message = Float64MultiArray()
+        message.data = [float(angle_deg), float(speed_percent)]
+        self.linear_motor_servo10_command_publisher.publish(message)
         self.servo10_angle_deg_var.set(str(angle_deg))
-        self.status.set(f"PIN10 서보 {angle_deg}° 명령 전송 완료")
+        speed_text = (
+            "즉시"
+            if speed_percent >= 100
+            else f"{servo_speed_degrees_per_second(speed_percent):.1f}°/s"
+        )
+        self.status.set(
+            f"PIN10 서보 {angle_deg}° 명령 전송 완료 ({speed_text})"
+        )
         self._append_log(
-            f"[PIN10 서보] ANGLE DEG={angle_deg}° 전송 — "
-            "해당 각도를 유지합니다."
+            f"[PIN10 서보] 목표={angle_deg}°, 속도={speed_percent}% "
+            f"({speed_text}) — 도착 후 해당 각도를 유지합니다."
         )
 
     def _initialize_linear_motor_pin_state(self) -> bool:
@@ -6375,12 +6539,16 @@ class HarvestGui(Node):
             self.linear_motor_node_online
             and self.linear_motor_serial_connected
             and self.count_subscribers(
-                self.linear_motor_servo10_angle_topic
+                self.linear_motor_servo10_command_topic
             ) >= 1
         )
-        self.servo10_angle_button.configure(
-            state="normal" if servo_enabled else "disabled"
-        )
+        servo_state = "normal" if servo_enabled else "disabled"
+        for button in (
+            self.servo10_angle_button,
+            self.servo10_close_button,
+            self.servo10_open_button,
+        ):
+            button.configure(state=servo_state)
 
     def _initialize_gripper_outputs(self) -> None:
         """Set direction LOW before applying power to the relay outputs."""

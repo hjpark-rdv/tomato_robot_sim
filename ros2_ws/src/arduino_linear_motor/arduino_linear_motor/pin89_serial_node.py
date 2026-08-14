@@ -6,7 +6,7 @@ import threading
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
-from std_msgs.msg import Bool, Float64, String
+from std_msgs.msg import Bool, Float64, Float64MultiArray, String
 
 try:
     import serial
@@ -35,6 +35,12 @@ class Pin89SerialNode(Node):
             Float64,
             '/linear_motor/servo10_angle_deg',
             self._servo10_angle_callback,
+            10,
+        )
+        self.create_subscription(
+            Float64MultiArray,
+            '/linear_motor/servo10_command',
+            self._servo10_command_callback,
             10,
         )
         status_qos = QoSProfile(
@@ -100,6 +106,35 @@ class Pin89SerialNode(Node):
         angle_deg = int(round(angle))
         self._send_command(f'ANGLE 10 {angle_deg}')
         self.get_logger().info(f'Servo pin 10 angle command: {angle_deg} deg')
+
+    def _servo10_command_callback(self, message):
+        if len(message.data) != 2:
+            self.get_logger().error(
+                'Rejected servo command: expected [angle_deg, speed_percent]'
+            )
+            return
+        angle = float(message.data[0])
+        speed_percent = float(message.data[1])
+        if not math.isfinite(angle) or angle < 10.0 or angle > 173.0:
+            self.get_logger().error(
+                f'Rejected servo angle {angle}: expected 10..173 degrees'
+            )
+            return
+        if (
+            not math.isfinite(speed_percent)
+            or speed_percent < 1.0
+            or speed_percent > 100.0
+        ):
+            self.get_logger().error(
+                f'Rejected servo speed {speed_percent}: expected 1..100 percent'
+            )
+            return
+        angle_deg = int(round(angle))
+        speed = int(round(speed_percent))
+        self._send_command(f'ANGLE 10 {angle_deg} {speed}')
+        self.get_logger().info(
+            f'Servo pin 10 command: {angle_deg} deg, {speed}% speed'
+        )
 
     def _publish_status(self, text):
         message = String()

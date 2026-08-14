@@ -18,6 +18,7 @@ model_id = LaunchConfiguration("model_id")
 cb_simulation = LaunchConfiguration("cb_simulation")
 activate_arm_controller = LaunchConfiguration("activate_arm_controller")
 show_tomato_scene = LaunchConfiguration("show_tomato_scene")
+show_tomato_gripper = LaunchConfiguration("show_tomato_gripper")
 enable_detected_tomato_tf = LaunchConfiguration("enable_detected_tomato_tf")
 
 
@@ -104,6 +105,15 @@ def generate_launch_description():
             "model_id",
             default_value="rb5_farmily",
             description="RB Series currently using",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "show_tomato_gripper",
+            default_value="true",
+            description=(
+                "Show the tomato gripper visual mesh; collision remains active"
+            ),
         )
     )
     declared_arguments.append(
@@ -282,6 +292,7 @@ def launch_setup(context, *args, **kwargs):
         "use_fake_hardware": use_fake_hardware,
         "fake_sensor_commands": fake_sensor_commands,
         "model_id": model_id,
+        "show_tomato_gripper": show_tomato_gripper,
         "cb_simulation": cb_simulation,
         "initial_base": str(initial_positions[0]),
         "initial_shoulder": str(initial_positions[1]),

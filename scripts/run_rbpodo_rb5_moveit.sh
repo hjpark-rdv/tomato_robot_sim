@@ -73,6 +73,7 @@ export DISPLAY="${DISPLAY:-:0}"
 exec /usr/bin/python3.10 /opt/ros/humble/bin/ros2 launch \
   rbpodo_moveit_config moveit.launch.py \
   model_id:=rb5_farmily \
+  show_tomato_gripper:=true \
   use_fake_hardware:=true \
   fake_sensor_commands:=true \
   cb_simulation:=Simulation \

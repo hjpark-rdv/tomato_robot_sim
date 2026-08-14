@@ -106,6 +106,7 @@ echo "Connected to ${robot_ip}; saved as the default for the next run."
 exec /usr/bin/python3.10 /opt/ros/humble/bin/ros2 launch \
   rbpodo_moveit_config moveit.launch.py \
   model_id:=rb5_farmily \
+  show_tomato_gripper:=true \
   robot_ip:="${robot_ip}" \
   use_fake_hardware:=false \
   fake_sensor_commands:=false \
