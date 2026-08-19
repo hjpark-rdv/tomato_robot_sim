@@ -28,6 +28,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     CAMERA_SOURCE_FAKE,
     CAMERA_SOURCE_REAL,
     GUI_PLANNER_CONFIG,
+    GRIPPER_EXTEND_AUTO_STOP_SECONDS,
     HarvestGui,
     NAMED_POSE_STATES,
     PICK_READY_STATES,
@@ -927,6 +928,40 @@ def test_step_plan_verification_handles_wrist_checkbox_as_boolean_option():
     assert HarvestGui._verification_matches_current_selection(
         gui,
         (7, 2, *GUI_PLANNER_CONFIG, "PICK_READY_RIGHT", True, 45.0),
+    ) is False
+
+
+def test_step_plan_verification_handles_wrist_and_wave_boolean_options():
+    wrist_enabled = SimpleNamespace(get=lambda: False)
+    wave_enabled = SimpleNamespace(get=lambda: True)
+    gui = SimpleNamespace(
+        detection_generation=7,
+        _selected_index=lambda: 2,
+        _selected_planner_config=lambda: GUI_PLANNER_CONFIG,
+        _selected_pick_ready_state=lambda: "PICK_READY_RIGHT",
+        _adaptive_grasp_options=lambda: (False, 45.0),
+        step_tcp_wrist_oscillation_enabled_var=wrist_enabled,
+        step_forward_wave_enabled_var=wave_enabled,
+    )
+    verification = (
+        7,
+        2,
+        *GUI_PLANNER_CONFIG,
+        "PICK_READY_RIGHT",
+        False,
+        45.0,
+        False,
+        True,
+    )
+
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        verification,
+    ) is True
+    wave_enabled.get = lambda: False
+    assert HarvestGui._verification_matches_current_selection(
+        gui,
+        verification,
     ) is False
 
 
@@ -1962,7 +1997,7 @@ def test_continuous_arc_failure_reverses_cached_path_to_pick_ready():
             info=lambda message: None,
             warning=lambda message: None,
         ),
-        _plan_preapproach=lambda pose, state: (
+            _plan_preapproach=lambda pose, state, **kwargs: (
             planner.last_plan_report["stages"].append(
                 {"stage": "CARTESIAN_PREAPPROACH", "success": True}
             )
@@ -2453,6 +2488,71 @@ def test_linear_motor_pin_values_reject_unknown_command():
         linear_motor_pin_values("invalid")
 
 
+def test_gripper_extend_target_schedules_three_second_auto_stop():
+    scheduled = []
+    published = []
+    finished = []
+    auto_stops = []
+    gui = SimpleNamespace(
+        gripper_stroke_request_id=7,
+        linear_motor_serial_connected=True,
+        linear_motor_pin_state_initialized=True,
+        _publish_linear_motor_pin_levels=lambda pin8, pin9: published.append(
+            (pin8, pin9)
+        ),
+        _append_log=lambda message: None,
+        _finish_linear_motor_pin_command=lambda *args: finished.append(args),
+        _auto_stop_gripper_extension=lambda *args: auto_stops.append(args),
+        root=SimpleNamespace(
+            after=lambda milliseconds, callback: scheduled.append(
+                (milliseconds, callback)
+            )
+        ),
+    )
+
+    HarvestGui._apply_linear_motor_pin_target(
+        gui,
+        ((False, False), (True, False)),
+        command="extend",
+        request_id=7,
+        label="늘림",
+        output_description="PIN8=HIGH, PIN9=LOW",
+    )
+
+    assert published == [(True, False)]
+    assert finished == [(7, "늘림", "PIN8=HIGH, PIN9=LOW")]
+    assert scheduled[0][0] == 3000
+    scheduled[0][1]()
+    assert auto_stops == [(7, GRIPPER_EXTEND_AUTO_STOP_SECONDS)]
+
+
+def test_gripper_extend_auto_stop_forces_both_pins_low():
+    published = []
+    status_messages = []
+    logs = []
+    gui = SimpleNamespace(
+        closing=False,
+        gripper_stroke_request_id=4,
+        gripper_command_in_progress=False,
+        _publish_linear_motor_pin_levels=lambda pin8, pin9: published.append(
+            (pin8, pin9)
+        ),
+        gripper_stroke_status=SimpleNamespace(
+            set=lambda message: status_messages.append(message)
+        ),
+        status=SimpleNamespace(set=lambda message: status_messages.append(message)),
+        _append_log=lambda message: logs.append(message),
+        _update_gripper_stroke_controls=lambda: None,
+    )
+
+    HarvestGui._auto_stop_gripper_extension(gui, 4, 3.0)
+
+    assert gui.gripper_stroke_request_id == 5
+    assert published == [(False, False)]
+    assert any("자동 정지" in message for message in status_messages)
+    assert any("PIN8=LOW, PIN9=LOW" in message for message in logs)
+
+
 @pytest.mark.parametrize(
     ("value", "expected"),
     (("10", 10), ("90", 90), ("173", 173), ("89.6", 90)),
@@ -2563,6 +2663,8 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "step_cycle_last_stage:=5" in command
     assert "harvest_x_forward:=0.04" in command
     assert "step_servo_speed_percent:=50.0" in command
+    assert "step_servo_close_angle_deg:=100.0" in command
+    assert "harvest_forward_wave_enabled:=false" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
 
 
@@ -2570,6 +2672,18 @@ def test_stepper_command_forwards_servo_speed_percent():
     command = stepper_command(3, servo_speed_percent=75)
 
     assert "step_servo_speed_percent:=75.0" in command
+
+
+def test_stepper_command_forwards_servo_close_angle():
+    command = stepper_command(3, servo_close_angle_deg=112)
+
+    assert "step_servo_close_angle_deg:=112.0" in command
+
+
+def test_stepper_command_can_enable_stage_four_forward_wave():
+    command = stepper_command(3, forward_wave_enabled=True)
+
+    assert "harvest_forward_wave_enabled:=true" in command
 
 
 def test_stepper_command_can_limit_repeat_plan_to_selected_stage():
@@ -3802,6 +3916,7 @@ def test_named_pose_command_builds_constrained_ompl_execute_command():
         "rbpodo_tomato_harvest.named_pose_move",
     ]
     assert "pick_ready_state_name:=CAPTURE_LEFT" in command
+    assert "pick_ready_joint_tolerance:=0.0001" in command
     assert "joint_planning_pipeline_id:=ompl" in command
     assert "joint_planner_id:=RRTConnect" in command
     assert "pick_ready_velocity_scale:=0.35" in command
@@ -3876,10 +3991,11 @@ def test_preapproach_selection_routes_to_requested_planner(mode, expected):
             calls.append(("cartesian", waypoints, start_state, label))
             or ("cartesian_trajectory",)
         ),
-        _plan_pose_target=lambda pose, start_state, label: (
+        _plan_pose_target=lambda pose, start_state, label, **kwargs: (
             calls.append(("planner", pose, start_state, label))
             or "pipeline_trajectory"
         ),
+        _trajectory_end_state=lambda trajectory: "planned_end_state",
     )
 
     result = CartesianHarvestPlanner._plan_preapproach(
@@ -3904,6 +4020,7 @@ def test_chomp_preapproach_uses_ik_joint_target_route():
         _plan_chomp_pose_target=lambda pose, start_state: (
             calls.append((pose, start_state)) or "chomp_trajectory"
         ),
+        _trajectory_end_state=lambda trajectory: "planned_end_state",
     )
 
     result = CartesianHarvestPlanner._plan_preapproach(

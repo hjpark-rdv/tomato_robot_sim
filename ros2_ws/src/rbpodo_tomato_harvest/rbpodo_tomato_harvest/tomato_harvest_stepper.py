@@ -12,7 +12,7 @@ import rclpy
 from builtin_interfaces.msg import Duration as DurationMessage
 from moveit_msgs.msg import RobotState
 from rclpy.executors import ExternalShutdownException
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Bool, Float64MultiArray
 
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
@@ -23,7 +23,10 @@ from rbpodo_tomato_harvest.harvest_planner import (
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
 CYCLE_LAST_STAGE_INDEX = 6
 SERVO_COMMAND_TOPIC = "/linear_motor/servo10_command"
-SERVO_CLOSE_ANGLE_DEG = 90.0
+LINEAR_MOTOR_PIN8_TOPIC = "/linear_motor/pin8"
+LINEAR_MOTOR_PIN9_TOPIC = "/linear_motor/pin9"
+LINEAR_MOTOR_RUN_SECONDS = 3.0
+SERVO_CLOSE_ANGLE_DEG = 100.0
 SERVO_OPEN_ANGLE_DEG = 170.0
 SERVO_DWELL_SECONDS = 1.0
 
@@ -94,6 +97,8 @@ def step_stage_specs(
     wrist_rotation_deg: float = 10.0,
     ready_state_name: str = "PICK_READY",
     servo_speed_percent: float = 50.0,
+    servo_close_angle_deg: float = SERVO_CLOSE_ANGLE_DEG,
+    forward_wave_enabled: bool = False,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -134,6 +139,12 @@ def step_stage_specs(
         or not 1.0 <= servo_speed_percent <= 100.0
     ):
         raise ValueError("servo speed percent must be between 1 and 100")
+    servo_close_angle_deg = float(servo_close_angle_deg)
+    if (
+        not math.isfinite(servo_close_angle_deg)
+        or not 10.0 <= servo_close_angle_deg <= 173.0
+    ):
+        raise ValueError("servo close angle must be between 10 and 173")
     wrist_enabled = bool(_trajectory_group(approach[2]))
 
     def delta_detail(stage_index: int) -> str:
@@ -156,7 +167,7 @@ def step_stage_specs(
         {
             "key": "READY_TO_PREAPPROACH",
             "label": f"{ready_state_name} → PRE_APPROACH",
-            "detail": "토마토 외곽 사전 접근",
+            "detail": "안전 경유점 A를 거쳐 토마토 외곽 사전 접근",
             "kind": "trajectory",
             "trajectories": _trajectory_group(plan.preapproach_trajectory),
         },
@@ -171,7 +182,11 @@ def step_stage_specs(
         {
             "key": "FORWARD_X",
             "label": "접근 목표 → 앞으로 이동",
-            "detail": delta_detail(1),
+            "detail": (
+                f"{delta_detail(1)} / Z축 ±5mm × 3회 웨이브 Cartesian"
+                if forward_wave_enabled
+                else f"{delta_detail(1)} / 직선 Cartesian"
+            ),
             "kind": "trajectory",
             "trajectories": _trajectory_group(approach[1]),
             "cartesian_waypoints": approach_waypoints[1],
@@ -224,32 +239,36 @@ def step_stage_specs(
             ),
         },
         {
-            "key": "HARVEST_WAIT",
-            "label": "리니어모터 대기",
-            "detail": f"{max(0.0, float(wait_seconds)):.2f}초 대기",
-            "kind": "wait",
-            "wait_seconds": max(0.0, float(wait_seconds)),
+            "key": "LINEAR_MOTOR_EXTEND",
+            "label": "리니어모터 늘림",
+            "detail": "3.0초 늘림 → 자동 정지",
+            "kind": "linear_motor",
+            "linear_motor_command": "extend",
+            "linear_motor_duration_seconds": LINEAR_MOTOR_RUN_SECONDS,
             "trajectories": (),
         },
         {
             "key": "SERVO_CLOSE_OPEN",
             "label": "서보 닫기 → 열기",
             "detail": (
-                f"90° 닫기 → {SERVO_DWELL_SECONDS:.1f}초 대기 → "
+                f"{servo_close_angle_deg:g}° 닫기 → "
+                f"{SERVO_DWELL_SECONDS:.1f}초 대기 → "
+                f"리니어모터 {LINEAR_MOTOR_RUN_SECONDS:.1f}초 줄임 → "
                 f"170° 열기 → {SERVO_DWELL_SECONDS:.1f}초 대기 "
                 f"(속도 {servo_speed_percent:g}%)"
             ),
             "kind": "servo_sequence",
-            "close_angle_deg": SERVO_CLOSE_ANGLE_DEG,
+            "close_angle_deg": servo_close_angle_deg,
             "open_angle_deg": SERVO_OPEN_ANGLE_DEG,
             "speed_percent": servo_speed_percent,
             "dwell_seconds": SERVO_DWELL_SECONDS,
+            "retract_duration_seconds": LINEAR_MOTOR_RUN_SECONDS,
             "trajectories": (),
         },
         {
             "key": "RETURN_READY",
             "label": f"현재 자세 → {ready_state_name}",
-            "detail": "constrained OMPL 복귀",
+            "detail": "안전 경유점 A로 이탈 후 constrained OMPL 복귀",
             "kind": "trajectory",
             "trajectories": _trajectory_group(
                 plan.return_pick_ready_trajectory
@@ -481,6 +500,95 @@ def _execute_continuous_cartesian_block(
     return True
 
 
+def _linear_motor_publish(stage: dict, pin8_high: bool, pin9_high: bool) -> None:
+    pin8_message = Bool()
+    pin8_message.data = bool(pin8_high)
+    pin9_message = Bool()
+    pin9_message.data = bool(pin9_high)
+    stage["linear_motor_pin8_publisher"].publish(pin8_message)
+    stage["linear_motor_pin9_publisher"].publish(pin9_message)
+
+
+def _execute_linear_motor_action(
+    planner,
+    stage: dict,
+    *,
+    command: str | None = None,
+    duration_seconds: float | None = None,
+) -> bool:
+    pin8_publisher = stage.get("linear_motor_pin8_publisher")
+    pin9_publisher = stage.get("linear_motor_pin9_publisher")
+    pin8_topic = str(
+        stage.get("linear_motor_pin8_topic", LINEAR_MOTOR_PIN8_TOPIC)
+    )
+    pin9_topic = str(
+        stage.get("linear_motor_pin9_topic", LINEAR_MOTOR_PIN9_TOPIC)
+    )
+    if pin8_publisher is None or pin9_publisher is None:
+        planner.get_logger().error("Linear motor PIN publishers are unavailable")
+        return False
+
+    subscriber_deadline = time.monotonic() + 1.0
+    while (
+        (
+            planner.count_subscribers(pin8_topic) < 1
+            or planner.count_subscribers(pin9_topic) < 1
+        )
+        and time.monotonic() < subscriber_deadline
+    ):
+        time.sleep(0.05)
+    if (
+        planner.count_subscribers(pin8_topic) < 1
+        or planner.count_subscribers(pin9_topic) < 1
+    ):
+        planner.get_logger().error(
+            "Linear motor PIN subscriber is unavailable: "
+            f"{pin8_topic}, {pin9_topic}"
+        )
+        return False
+
+    selected_command = str(
+        command or stage.get("linear_motor_command", "")
+    )
+    levels = {
+        "extend": (True, False),
+        "retract": (False, True),
+    }
+    if selected_command not in levels:
+        planner.get_logger().error(
+            f"Unsupported linear motor command: {selected_command}"
+        )
+        return False
+    duration = max(
+        0.0,
+        float(
+            stage.get("linear_motor_duration_seconds", 0.0)
+            if duration_seconds is None
+            else duration_seconds
+        ),
+    )
+
+    # Match the manual GUI's safe switching sequence: neutral first, then the
+    # requested direction.  Always return both outputs LOW when finished.
+    _linear_motor_publish(stage, False, False)
+    time.sleep(0.1)
+    pin8_high, pin9_high = levels[selected_command]
+    _linear_motor_publish(stage, pin8_high, pin9_high)
+    planner.get_logger().info(
+        f"Linear motor {selected_command} started: duration={duration:.1f}s, "
+        f"PIN8={'HIGH' if pin8_high else 'LOW'}, "
+        f"PIN9={'HIGH' if pin9_high else 'LOW'}"
+    )
+    try:
+        time.sleep(duration)
+    finally:
+        _linear_motor_publish(stage, False, False)
+    planner.get_logger().info(
+        f"Linear motor {selected_command} complete; PIN8/PIN9 LOW"
+    )
+    return True
+
+
 def _execute_servo_sequence(planner, stage: dict) -> bool:
     publisher = stage.get("servo_publisher")
     topic = str(stage.get("servo_topic", SERVO_COMMAND_TOPIC))
@@ -502,10 +610,7 @@ def _execute_servo_sequence(planner, stage: dict) -> bool:
 
     speed_percent = float(stage["speed_percent"])
     dwell_seconds = max(0.0, float(stage["dwell_seconds"]))
-    for angle_deg, action in (
-        (float(stage["close_angle_deg"]), "close"),
-        (float(stage["open_angle_deg"]), "open"),
-    ):
+    for angle_deg, action in ((float(stage["close_angle_deg"]), "close"),):
         message = Float64MultiArray()
         message.data = [angle_deg, speed_percent]
         publisher.publish(message)
@@ -514,6 +619,27 @@ def _execute_servo_sequence(planner, stage: dict) -> bool:
             f"speed={speed_percent:g}%, dwell={dwell_seconds:.1f}s"
         )
         time.sleep(dwell_seconds)
+
+    retract_duration = max(
+        0.0,
+        float(stage.get("retract_duration_seconds", 0.0)),
+    )
+    if retract_duration > 0.0 and not _execute_linear_motor_action(
+        planner,
+        stage,
+        command="retract",
+        duration_seconds=retract_duration,
+    ):
+        return False
+
+    message = Float64MultiArray()
+    message.data = [float(stage["open_angle_deg"]), speed_percent]
+    publisher.publish(message)
+    planner.get_logger().info(
+        f"Servo open command: angle={float(stage['open_angle_deg']):.0f} deg, "
+        f"speed={speed_percent:g}%, dwell={dwell_seconds:.1f}s"
+    )
+    time.sleep(dwell_seconds)
     return True
 
 
@@ -548,6 +674,10 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
     if stage["kind"] == "wait":
         time.sleep(float(stage["wait_seconds"]))
         success = True
+    elif stage["kind"] == "linear_motor":
+        # Reverse trajectory traversal does not replay actuator operations.
+        success = True if reverse else _execute_linear_motor_action(planner, stage)
+        failure_reason = "LINEAR_MOTOR_COMMAND_FAILED"
     elif stage["kind"] == "skip":
         success = True
     elif stage["kind"] == "servo_sequence":
@@ -592,6 +722,18 @@ def main(args=None) -> None:
         SERVO_COMMAND_TOPIC,
     )
     planner.declare_parameter("step_servo_speed_percent", 50.0)
+    planner.declare_parameter(
+        "step_servo_close_angle_deg",
+        SERVO_CLOSE_ANGLE_DEG,
+    )
+    planner.declare_parameter(
+        "step_linear_motor_pin8_topic",
+        LINEAR_MOTOR_PIN8_TOPIC,
+    )
+    planner.declare_parameter(
+        "step_linear_motor_pin9_topic",
+        LINEAR_MOTOR_PIN9_TOPIC,
+    )
     exit_code = 1
     try:
         plan = planner.plan()
@@ -631,6 +773,14 @@ def main(args=None) -> None:
             float(
                 planner.get_parameter("step_servo_speed_percent").value
             ),
+            float(
+                planner.get_parameter(
+                    "step_servo_close_angle_deg"
+                ).value
+            ),
+            bool(
+                planner.get_parameter("harvest_forward_wave_enabled").value
+            ),
         )
         servo_topic = str(
             planner.get_parameter("step_servo_command_topic").value
@@ -640,10 +790,23 @@ def main(args=None) -> None:
             servo_topic,
             10,
         )
+        pin8_topic = str(
+            planner.get_parameter("step_linear_motor_pin8_topic").value
+        )
+        pin9_topic = str(
+            planner.get_parameter("step_linear_motor_pin9_topic").value
+        )
+        pin8_publisher = planner.create_publisher(Bool, pin8_topic, 10)
+        pin9_publisher = planner.create_publisher(Bool, pin9_topic, 10)
         for stage in stages:
             if stage["kind"] == "servo_sequence":
                 stage["servo_topic"] = servo_topic
                 stage["servo_publisher"] = servo_publisher
+            if stage["kind"] in {"linear_motor", "servo_sequence"}:
+                stage["linear_motor_pin8_topic"] = pin8_topic
+                stage["linear_motor_pin9_topic"] = pin9_topic
+                stage["linear_motor_pin8_publisher"] = pin8_publisher
+                stage["linear_motor_pin9_publisher"] = pin9_publisher
         expected = {
             str(name): float(value)
             for name, value in report.get("start_joint_positions", {}).items()

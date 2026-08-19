@@ -23,7 +23,12 @@ from moveit_msgs.msg import (
     RobotState,
     RobotTrajectory,
 )
-from moveit_msgs.srv import GetCartesianPath, GetPositionIK, GetStateValidity
+from moveit_msgs.srv import (
+    GetCartesianPath,
+    GetPositionFK,
+    GetPositionIK,
+    GetStateValidity,
+)
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -161,6 +166,80 @@ class HarvestMotionPlan:
     return_pick_ready_is_cached_reverse: bool = False
     preapproach_planning_pose: Pose | None = None
     outward_axis: tuple = ()
+
+
+def make_preapproach_via_pose(
+    ready_ee_pose: Pose,
+    crop_position,
+    preapproach_pose: Pose,
+    recommend_outward_axis,
+    interpolation_ratio: float = 0.5,
+    lateral_ratio: float = 0.38,
+) -> Pose:
+    """Place waypoint A midway to the crop, offset toward the plant exterior.
+
+    The longitudinal position follows the READY-EE-to-crop-center segment.  In
+    XY, A is moved perpendicular to that segment toward the *uncorrected*
+    Recommend outward axis.  This creates a plant-exterior arc without letting
+    the adaptive final grasp correction drag A through the crop cluster.
+    Orientation is copied from pre-approach so the remaining segment does not
+    require a large tool rotation near the plant.
+    """
+    ratio = float(interpolation_ratio)
+    if not math.isfinite(ratio) or not 0.0 < ratio < 1.0:
+        raise ValueError("interpolation_ratio must be between 0 and 1")
+    lateral_scale = float(lateral_ratio)
+    if not math.isfinite(lateral_scale) or lateral_scale < 0.0:
+        raise ValueError("lateral_ratio must be finite and non-negative")
+    start = np.array(
+        [
+            ready_ee_pose.position.x,
+            ready_ee_pose.position.y,
+            ready_ee_pose.position.z,
+        ],
+        dtype=float,
+    )
+    target = np.asarray(crop_position, dtype=float)
+    recommend_outward = np.asarray(recommend_outward_axis, dtype=float)
+    if target.shape != (3,):
+        raise ValueError("crop_position must contain three values")
+    if recommend_outward.shape != (3,):
+        raise ValueError("recommend_outward_axis must contain three values")
+    if (
+        not np.all(np.isfinite(start))
+        or not np.all(np.isfinite(target))
+        or not np.all(np.isfinite(recommend_outward))
+    ):
+        raise ValueError("READY EE, crop and Recommend-axis values must be finite")
+
+    chord = target - start
+    midpoint = start + chord * ratio
+    chord_xy = chord[:2]
+    horizontal_distance = float(np.linalg.norm(chord_xy))
+    if horizontal_distance <= 1e-9:
+        raise ValueError("READY EE and crop must have different XY positions")
+
+    # Remove the component parallel to READY->crop.  The remaining vector is
+    # the shortest horizontal escape direction consistent with Recommend.
+    chord_xy_unit = chord_xy / horizontal_distance
+    outward_xy = recommend_outward[:2]
+    lateral_xy = outward_xy - np.dot(outward_xy, chord_xy_unit) * chord_xy_unit
+    lateral_norm = float(np.linalg.norm(lateral_xy))
+    if lateral_norm <= 1e-9:
+        # Recommend is parallel to the travel chord.  Either perpendicular is
+        # geometrically equivalent; choose the side most aligned with it after
+        # a +90-degree rotation for deterministic behavior.
+        lateral_xy = np.array([-chord_xy_unit[1], chord_xy_unit[0]])
+    else:
+        lateral_xy = lateral_xy / lateral_norm
+
+    lateral_distance = horizontal_distance * lateral_scale
+    midpoint[:2] += lateral_xy * lateral_distance
+    waypoint = copy.deepcopy(preapproach_pose)
+    waypoint.position.x = float(midpoint[0])
+    waypoint.position.y = float(midpoint[1])
+    waypoint.position.z = float(midpoint[2])
+    return waypoint
 
 
 def make_centered_joint_path_constraints(
@@ -704,6 +783,80 @@ def make_tip_local_transition_curve_waypoints(
             + 3.0 * inverse * progress * progress * control_2
             + progress * progress * progress * local_delta
         )
+        world_position = start_position + start_rotation @ local_position
+        quaternion = _slerp_quaternion(
+            start_quaternion,
+            target_quaternion,
+            progress,
+        )
+        pose = Pose()
+        pose.position.x, pose.position.y, pose.position.z = (
+            float(value) for value in world_position
+        )
+        (
+            pose.orientation.x,
+            pose.orientation.y,
+            pose.orientation.z,
+            pose.orientation.w,
+        ) = (float(value) for value in quaternion)
+        waypoints.append(pose)
+    return tuple(waypoints)
+
+
+def make_tip_local_sine_wave_waypoints(
+    start_pose: Pose,
+    target_pose: Pose,
+    amplitude_m: float = 0.005,
+    cycles: float = 3.0,
+    waypoint_count: int = 25,
+) -> tuple[Pose, ...]:
+    """Move toward a target while oscillating along tip-local Z.
+
+    The wave is multiplied by a smooth envelope so both its displacement and
+    slope reach zero at the segment endpoints.  Therefore the target pose is
+    unchanged and the preceding/following Cartesian stages do not receive a
+    sharp vertical direction change.
+    """
+    amplitude = float(amplitude_m)
+    cycle_count = float(cycles)
+    count = max(2, int(waypoint_count))
+    if not math.isfinite(amplitude) or amplitude < 0.0:
+        raise ValueError("sine wave amplitude must be finite and non-negative")
+    if not math.isfinite(cycle_count) or cycle_count <= 0.0:
+        raise ValueError("sine wave cycles must be finite and positive")
+
+    start_position = np.array(
+        [start_pose.position.x, start_pose.position.y, start_pose.position.z],
+        dtype=float,
+    )
+    target_position = np.array(
+        [target_pose.position.x, target_pose.position.y, target_pose.position.z],
+        dtype=float,
+    )
+    start_rotation = rotation_from_pose(start_pose)
+    local_delta = start_rotation.T @ (target_position - start_position)
+    start_quaternion = _normalized_quaternion(start_pose)
+    target_quaternion = _normalized_quaternion(target_pose)
+
+    progress_values = [index / count for index in range(count + 1)]
+    raw_wave = [
+        math.sin(2.0 * math.pi * cycle_count * progress)
+        * math.sin(math.pi * progress) ** 2
+        for progress in progress_values
+    ]
+    wave_scale = max(abs(value) for value in raw_wave)
+    if wave_scale <= 1e-12 or amplitude == 0.0:
+        normalized_wave = [0.0] * len(raw_wave)
+    else:
+        normalized_wave = [
+            amplitude * value / wave_scale for value in raw_wave
+        ]
+
+    waypoints = []
+    for index in range(1, count + 1):
+        progress = progress_values[index]
+        local_position = local_delta * progress
+        local_position[2] += normalized_wave[index]
         world_position = start_position + start_rotation @ local_position
         quaternion = _slerp_quaternion(
             start_quaternion,
@@ -1285,9 +1438,12 @@ class CartesianHarvestPlanner(Node):
             "ompl_limited_joint_names",
             ["base", "shoulder", "elbow", "wrist1", "wrist2"],
         )
-        self.declare_parameter("ompl_joint_tolerance_deg", 120.0)
+        self.declare_parameter("ompl_joint_tolerance_deg", 100.0)
         self.declare_parameter("preapproach_position_tolerance", 0.005)
         self.declare_parameter("preapproach_orientation_tolerance", 0.05)
+        self.declare_parameter("preapproach_via_enabled", True)
+        self.declare_parameter("preapproach_via_ratio", 0.5)
+        self.declare_parameter("preapproach_via_lateral_ratio", 0.38)
         self.declare_parameter("adaptive_grasp_enabled", True)
         self.declare_parameter("adaptive_grasp_max_rotation_deg", 45.0)
         self.declare_parameter(
@@ -1303,6 +1459,10 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tip_below_center", 0.018)
         self.declare_parameter("preapproach_clearance", 0.010)
         self.declare_parameter("harvest_x_forward", 0.040)
+        self.declare_parameter("harvest_forward_wave_enabled", False)
+        self.declare_parameter("harvest_forward_wave_amplitude", 0.005)
+        self.declare_parameter("harvest_forward_wave_cycles", 3.0)
+        self.declare_parameter("harvest_forward_wave_waypoint_count", 25)
         self.declare_parameter(
             "harvest_tcp_wrist_oscillation_enabled", True
         )
@@ -1367,6 +1527,7 @@ class CartesianHarvestPlanner(Node):
         self.cartesian_client = self.create_client(
             GetCartesianPath, "/compute_cartesian_path"
         )
+        self.fk_client = self.create_client(GetPositionFK, "/compute_fk")
         self.ik_client = self.create_client(GetPositionIK, "/compute_ik")
         self.state_validity_client = self.create_client(
             GetStateValidity, "/check_state_validity"
@@ -2424,10 +2585,19 @@ class CartesianHarvestPlanner(Node):
         stage_started = time.monotonic()
         stage_names = {
             "TCP direct pre-approach": "CARTESIAN_PREAPPROACH",
+            "TCP move to clearance waypoint": (
+                "CARTESIAN_PREAPPROACH_VIA"
+            ),
+            "TCP clearance waypoint to pre-approach": (
+                "CARTESIAN_PREAPPROACH_FINAL"
+            ),
             "Continuous arc pre-approach": "CARTESIAN_CONTINUOUS_ARC",
             "Approach and pre-wait harvest": "CARTESIAN_APPROACH",
             "Post-wait harvest": "CARTESIAN_POST_WAIT",
             "Fallback return PICK_READY": "CARTESIAN_RETURN_PICK_READY",
+            "Return via clearance waypoint": (
+                "CARTESIAN_RETURN_VIA_CLEARANCE"
+            ),
         }
         stage = stage_names.get(label, f"CARTESIAN_{label.upper()}")
         timeout = max(0.1, float(self.get_parameter("service_timeout_sec").value))
@@ -2753,9 +2923,14 @@ class CartesianHarvestPlanner(Node):
 
         stage_names = {
             "TCP direct pre-approach": "PREAPPROACH",
+            "TCP move to clearance waypoint": "PREAPPROACH_VIA",
+            "TCP clearance waypoint to pre-approach": (
+                "PREAPPROACH_FINAL"
+            ),
             "Continuous arc pre-approach": "CONTINUOUS_ARC",
             "Approach and pre-wait harvest": "APPROACH",
             "Post-wait harvest": "POST_WAIT",
+            "Return via clearance waypoint": "RETURN_VIA_CLEARANCE",
         }
         fallback_stage = stage_names.get(
             label,
@@ -2869,29 +3044,62 @@ class CartesianHarvestPlanner(Node):
         self,
         preapproach_pose: Pose,
         pick_ready_end: RobotState,
+        via_pose: Pose | None = None,
     ):
         mode = str(self.get_parameter("preapproach_mode").value)
+        waypoints = (
+            [via_pose, preapproach_pose]
+            if via_pose is not None
+            else [preapproach_pose]
+        )
         if mode == "cartesian":
-            return self._plan_cartesian_with_ompl_fallback(
-                [preapproach_pose],
-                pick_ready_end,
-                "TCP direct pre-approach",
-                pregrasp=True,
-            )
+            trajectories = []
+            waypoint_start = pick_ready_end
+            for index, waypoint in enumerate(waypoints):
+                if via_pose is None:
+                    label = "TCP direct pre-approach"
+                elif index == 0:
+                    label = "TCP move to clearance waypoint"
+                else:
+                    label = "TCP clearance waypoint to pre-approach"
+                segment = self._plan_cartesian_with_ompl_fallback(
+                    [waypoint],
+                    waypoint_start,
+                    label,
+                    pregrasp=True,
+                )
+                if segment is None:
+                    return None
+                trajectories.extend(segment)
+                waypoint_start = self._trajectory_end_state(segment)
+            return tuple(trajectories)
         if mode == "planner":
             pipeline = str(self.get_parameter("planning_pipeline_id").value)
-            if pipeline == "chomp":
-                trajectory = self._plan_chomp_pose_target(
-                    preapproach_pose,
-                    pick_ready_end,
+            trajectories = []
+            waypoint_start = pick_ready_end
+            for index, waypoint in enumerate(waypoints, start=1):
+                label = (
+                    f"TCP planned pre-approach ({index}/{len(waypoints)})"
                 )
-            else:
-                trajectory = self._plan_pose_target(
-                    preapproach_pose,
-                    pick_ready_end,
-                    "TCP planned pre-approach",
-                )
-            return (trajectory,) if trajectory is not None else None
+                if pipeline == "chomp":
+                    trajectory = self._plan_chomp_pose_target(
+                        waypoint,
+                        waypoint_start,
+                    )
+                else:
+                    trajectory = self._plan_pose_target(
+                        waypoint,
+                        waypoint_start,
+                        label,
+                        stage_name=(
+                            f"{pipeline.upper()}_PREAPPROACH_{index}"
+                        ),
+                    )
+                if trajectory is None:
+                    return None
+                trajectories.append(trajectory)
+                waypoint_start = self._trajectory_end_state(trajectory)
+            return tuple(trajectories)
         self.get_logger().error(f"Unsupported preapproach_mode: {mode}")
         self._record_plan_stage(
             "PREAPPROACH_CONFIGURATION",
@@ -2902,6 +3110,163 @@ class CartesianHarvestPlanner(Node):
             preapproach_mode=mode,
         )
         return None
+
+    def _plan_return_pick_ready_via(
+        self,
+        start_state: RobotState,
+        via_pose: Pose | None,
+    ):
+        """Retreat to the clearance waypoint before constrained READY return."""
+        trajectories = []
+        return_start = copy.deepcopy(start_state)
+        if via_pose is not None:
+            retreat = self._plan_cartesian_with_ompl_fallback(
+                [via_pose],
+                return_start,
+                "Return via clearance waypoint",
+                pregrasp=False,
+            )
+            if retreat is None:
+                return None
+            trajectories.extend(retreat)
+            return_start = self._trajectory_end_state(retreat)
+
+        ready_plan = self._plan_pick_ready(
+            return_start,
+            label="RETURN_PICK_READY",
+        )
+        if ready_plan is None:
+            return None
+        ready_trajectory, _ = ready_plan
+        trajectories.append(ready_trajectory)
+        return tuple(trajectories)
+
+    def _make_preapproach_via_pose(
+        self,
+        preapproach_pose: Pose,
+        crop_position,
+        recommend_outward_axis,
+    ) -> Pose | None:
+        """Build plant-exterior A from canonical READY EE and target geometry."""
+        if not bool(self.get_parameter("preapproach_via_enabled").value):
+            return None
+        ratio = float(self.get_parameter("preapproach_via_ratio").value)
+        lateral_ratio = float(
+            self.get_parameter("preapproach_via_lateral_ratio").value
+        )
+        if not math.isfinite(ratio) or not 0.0 < ratio < 1.0:
+            self._record_plan_stage(
+                "PREAPPROACH_VIA_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "INVALID_PREAPPROACH_VIA_RATIO",
+                interpolation_ratio=ratio,
+            )
+            return None
+        if not math.isfinite(lateral_ratio) or lateral_ratio < 0.0:
+            self._record_plan_stage(
+                "PREAPPROACH_VIA_CONFIGURATION",
+                "configuration",
+                False,
+                0.0,
+                "INVALID_PREAPPROACH_VIA_LATERAL_RATIO",
+                lateral_ratio=lateral_ratio,
+            )
+            return None
+        ready_ee_pose = self._compute_planning_link_pose(
+            self._pick_ready_robot_state()
+        )
+        if ready_ee_pose is None:
+            self._record_plan_stage(
+                "PREAPPROACH_VIA_FK",
+                "fk",
+                False,
+                0.0,
+                "PICK_READY_EE_FK_FAILED",
+            )
+            return None
+        try:
+            via_pose = make_preapproach_via_pose(
+                ready_ee_pose,
+                crop_position,
+                preapproach_pose,
+                recommend_outward_axis,
+                interpolation_ratio=ratio,
+                lateral_ratio=lateral_ratio,
+            )
+        except ValueError as exc:
+            self._record_plan_stage(
+                "PREAPPROACH_VIA_GEOMETRY",
+                "geometry",
+                False,
+                0.0,
+                "INVALID_PREAPPROACH_VIA_GEOMETRY",
+                detail=str(exc),
+            )
+            return None
+        ready_xyz = np.array(
+            [
+                ready_ee_pose.position.x,
+                ready_ee_pose.position.y,
+                ready_ee_pose.position.z,
+            ],
+            dtype=float,
+        )
+        crop_xyz = np.asarray(crop_position, dtype=float)
+        horizontal_distance = float(np.linalg.norm((crop_xyz - ready_xyz)[:2]))
+        midpoint_xyz = ready_xyz + (crop_xyz - ready_xyz) * ratio
+        via_xyz = np.array(
+            [
+                via_pose.position.x,
+                via_pose.position.y,
+                via_pose.position.z,
+            ],
+            dtype=float,
+        )
+        lateral_delta_xy = via_xyz[:2] - midpoint_xyz[:2]
+        lateral_distance = float(np.linalg.norm(lateral_delta_xy))
+        lateral_axis_xy = (
+            lateral_delta_xy / lateral_distance
+            if lateral_distance > 1e-9
+            else np.zeros(2, dtype=float)
+        )
+        self.last_plan_report["preapproach_via"] = {
+            "enabled": True,
+            "construction": "READY_CROP_MIDPOINT_WITH_RECOMMEND_OUTWARD_OFFSET",
+            "interpolation_ratio": ratio,
+            "lateral_ratio": lateral_ratio,
+            "horizontal_ready_crop_distance_m": horizontal_distance,
+            "lateral_clearance_m": lateral_distance,
+            "lateral_axis_xy": [float(value) for value in lateral_axis_xy],
+            "recommend_outward_axis": [
+                float(value) for value in recommend_outward_axis
+            ],
+            "ready_ee_xyz": [
+                float(ready_ee_pose.position.x),
+                float(ready_ee_pose.position.y),
+                float(ready_ee_pose.position.z),
+            ],
+            "crop_xyz": [float(value) for value in crop_position],
+            "preapproach_xyz": [
+                float(preapproach_pose.position.x),
+                float(preapproach_pose.position.y),
+                float(preapproach_pose.position.z),
+            ],
+            "midpoint_xyz": [float(value) for value in midpoint_xyz],
+            "planning_xyz": [
+                float(via_pose.position.x),
+                float(via_pose.position.y),
+                float(via_pose.position.z),
+            ],
+        }
+        self.get_logger().info(
+            "Pre-approach A: "
+            f"midpoint={midpoint_xyz.round(4).tolist()} "
+            f"outside_offset={lateral_distance:.3f}m "
+            f"A={via_xyz.round(4).tolist()}"
+        )
+        return via_pose
 
     def _pick_ready_robot_state(self) -> RobotState:
         state = RobotState()
@@ -3350,10 +3715,48 @@ class CartesianHarvestPlanner(Node):
             )
         )
 
+    def _compute_planning_link_pose(
+        self,
+        robot_state: RobotState,
+    ) -> Pose | None:
+        """Compute the planning-link pose for a planned joint state."""
+        timeout = max(
+            1.0,
+            float(self.get_parameter("service_timeout_sec").value),
+        )
+        if not self.fk_client.wait_for_service(timeout_sec=timeout):
+            self.get_logger().error("MoveIt compute_fk service is unavailable")
+            return None
+
+        request = GetPositionFK.Request()
+        request.header.frame_id = self.base_frame
+        request.fk_link_names = [self.planning_link]
+        request.robot_state = self._complete_display_start_state(robot_state)
+        future = self.fk_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
+        response = future.result() if future.done() else None
+        if (
+            response is None
+            or response.error_code.val != MoveItErrorCodes.SUCCESS
+            or not response.pose_stamped
+        ):
+            error_code = (
+                response.error_code.val
+                if response is not None
+                else "timeout"
+            )
+            self.get_logger().error(
+                f"PICK_READY {self.planning_link} FK failed: "
+                f"error_code={error_code}"
+            )
+            return None
+        return copy.deepcopy(response.pose_stamped[0].pose)
+
     def _plan_continuous_preapproach(
         self,
         preapproach_pose: Pose,
         outward_axis,
+        via_pose: Pose | None = None,
         start_state_override: RobotState | None = None,
         start_pose_override: Pose | None = None,
         arc_failure_reverse_trajectory=(),
@@ -3522,6 +3925,7 @@ class CartesianHarvestPlanner(Node):
         fallback_preapproach = self._plan_preapproach(
             preapproach_pose,
             pick_ready_end,
+            via_pose=via_pose,
         )
         if fallback_preapproach is None:
             return None
@@ -4032,6 +4436,19 @@ class CartesianHarvestPlanner(Node):
             )
 
         preapproach_planning_pose = as_planning_pose(geometry.preapproach_pose)
+        via_planning_pose = self._make_preapproach_via_pose(
+            preapproach_planning_pose,
+            geometry.tomato_position,
+            recommend_outward,
+        )
+        if bool(self.get_parameter("preapproach_via_enabled").value) and (
+            via_planning_pose is None
+        ):
+            return None
+        if via_planning_pose is None:
+            self.last_plan_report["preapproach_via"] = {
+                "enabled": False,
+            }
         step_cycle_only = bool(self.get_parameter("step_cycle_only").value)
         cycle_last_stage = int(
             self.get_parameter("step_cycle_last_stage").value
@@ -4055,6 +4472,7 @@ class CartesianHarvestPlanner(Node):
             continuous_plan = self._plan_continuous_preapproach(
                 preapproach_planning_pose,
                 geometry.outward_axis,
+                via_pose=via_planning_pose,
                 start_state_override=start_state_override,
                 start_pose_override=start_pose_override,
                 arc_failure_reverse_trajectory=(
@@ -4097,6 +4515,7 @@ class CartesianHarvestPlanner(Node):
                 preapproach_trajectory = self._plan_preapproach(
                     preapproach_planning_pose,
                     pick_ready_end,
+                    via_pose=via_planning_pose,
                 )
                 if preapproach_trajectory is None:
                     return None
@@ -4121,6 +4540,32 @@ class CartesianHarvestPlanner(Node):
             if custom_step_deltas
             else (x_forward, 0.0, 0.0)
         )
+        forward_wave_enabled = bool(
+            stepwise_plan
+            and self.get_parameter("harvest_forward_wave_enabled").value
+        )
+        if forward_wave_enabled:
+            forward_wave_tip_waypoints = make_tip_local_sine_wave_waypoints(
+                step_target_pose,
+                tip_motion.before_wait_waypoints[0],
+                amplitude_m=float(
+                    self.get_parameter(
+                        "harvest_forward_wave_amplitude"
+                    ).value
+                ),
+                cycles=float(
+                    self.get_parameter("harvest_forward_wave_cycles").value
+                ),
+                waypoint_count=int(
+                    self.get_parameter(
+                        "harvest_forward_wave_waypoint_count"
+                    ).value
+                ),
+            )
+        else:
+            forward_wave_tip_waypoints = (
+                tip_motion.before_wait_waypoints[0],
+            )
         first_lift_curve_tip_waypoints = (
             make_tip_local_transition_curve_waypoints(
                 tip_motion.before_wait_waypoints[0],
@@ -4156,7 +4601,7 @@ class CartesianHarvestPlanner(Node):
         )
         approach_tip_waypoint_groups = (
             (step_target_pose,),
-            (tip_motion.before_wait_waypoints[0],),
+            forward_wave_tip_waypoints,
             first_lift_curve_tip_waypoints,
             second_lift_curve_tip_waypoints,
             (tip_motion.before_wait_waypoints[3],),
@@ -4183,6 +4628,16 @@ class CartesianHarvestPlanner(Node):
             "start_stage": 4,
             "end_stage": 6,
         }
+        self.last_plan_report["stage_4_forward_wave"] = {
+            "enabled": forward_wave_enabled,
+            "amplitude_m": float(
+                self.get_parameter("harvest_forward_wave_amplitude").value
+            ),
+            "cycles": float(
+                self.get_parameter("harvest_forward_wave_cycles").value
+            ),
+            "waypoint_count": len(forward_wave_tip_waypoints),
+        }
         self.last_plan_report["stage_6_to_7_curve"] = {
             "enabled": True,
             "waypoint_count": len(second_lift_curve_tip_waypoints),
@@ -4194,21 +4649,45 @@ class CartesianHarvestPlanner(Node):
         }
         step_approach_trajectories = ()
         positional_labels = (
-            tuple(
+            list(
                 f"Step {stage_number} custom tip-local XYZ"
                 for stage_number in (3, 4, 6, 7, 8)
             )
             if custom_step_deltas_enabled
             else (
                 "Step preapproach to target",
-                "Step tip +X forward",
+                (
+                    "Step tip +X forward with Z sine wave"
+                    if forward_wave_enabled
+                    else "Step tip +X forward"
+                ),
                 "Step tip curved +Z/+X first lift",
                 "Step tip curved +Z second lift",
                 "Step tip -X back",
             )
         )
+        if custom_step_deltas_enabled and forward_wave_enabled:
+            positional_labels[1] = (
+                "Step 4 custom tip-local XYZ with Z sine wave"
+            )
 
         def plan_positional_group(group_index, start_state):
+            if forward_wave_enabled and group_index == 1:
+                # A waypoint-by-waypoint OMPL fallback would execute as many
+                # separate trajectories and destroy the continuous wave.  The
+                # wave stage is accepted only as one collision-checked
+                # Cartesian trajectory.
+                wave_trajectory = self._plan_cartesian(
+                    approach_waypoint_groups[group_index],
+                    start_state,
+                    positional_labels[group_index],
+                    terminal_failure=True,
+                )
+                return (
+                    None
+                    if wave_trajectory is None
+                    else (wave_trajectory,)
+                )
             return self._plan_cartesian_with_ompl_fallback(
                 approach_waypoint_groups[group_index],
                 start_state,
@@ -4341,13 +4820,18 @@ class CartesianHarvestPlanner(Node):
                     approach_stage_endpoints[cycle_last_stage - 4]
                 )
             if return_to_pick_ready:
-                return_pick_ready_plan = self._plan_pick_ready(
-                    approach_end,
-                    label="RETURN_PICK_READY",
+                return_pick_ready_trajectory = (
+                    self._plan_return_pick_ready_via(
+                        approach_end,
+                        (
+                            via_planning_pose
+                            if cycle_last_stage >= 2
+                            else None
+                        ),
+                    )
                 )
-                if return_pick_ready_plan is None:
+                if return_pick_ready_trajectory is None:
                     return None
-                return_pick_ready_trajectory, _ = return_pick_ready_plan
         else:
             after_wait_waypoints = (
                 as_planning_pose(tip_motion.after_wait_pose),
@@ -4417,13 +4901,14 @@ class CartesianHarvestPlanner(Node):
                 )
                 return None
             if return_to_pick_ready:
-                return_pick_ready_plan = self._plan_pick_ready(
-                    after_wait_end,
-                    label="RETURN_PICK_READY",
+                return_pick_ready_trajectory = (
+                    self._plan_return_pick_ready_via(
+                        after_wait_end,
+                        via_planning_pose,
+                    )
                 )
-                if return_pick_ready_plan is None:
+                if return_pick_ready_trajectory is None:
                     return None
-                return_pick_ready_trajectory, _ = return_pick_ready_plan
             final_planning_pose = copy.deepcopy(
                 as_planning_pose(tip_motion.after_wait_pose)
             )
@@ -4503,14 +4988,14 @@ class CartesianHarvestPlanner(Node):
         self.get_logger().info(
             "Full harvest plan ready: "
             f"{start_label} "
-            "-> direct TCP pre-approach "
+            "-> clearance waypoint A -> TCP pre-approach "
             f"({self.get_parameter('preapproach_mode').value}/"
             f"{self.get_parameter('planning_pipeline_id').value}) -> "
             f"{self.planning_link}-based Cartesian-first approach -> "
             f"+X{float(self.get_parameter('harvest_x_forward').value) * 1000.0:.0f}mm "
             "-> curved (+Z20mm,+X20mm) -> curved +Z20mm "
             "-> -X50mm -> -X10mm -> wait "
-            f"-> {finish_label} "
+            f"-> clearance waypoint A -> {finish_label} "
             "(Cartesian 실패 구간은 constrained OMPL fallback)"
         )
         return plan
@@ -4553,7 +5038,15 @@ class CartesianHarvestPlanner(Node):
                 return_label = (
                     "CACHED REVERSE RETURN_PICK_READY"
                     if plan.return_pick_ready_is_cached_reverse
-                    else "OMPL RETURN_PICK_READY"
+                    else (
+                        "CLEARANCE VIA + OMPL RETURN_PICK_READY"
+                        if isinstance(
+                            plan.return_pick_ready_trajectory,
+                            (list, tuple),
+                        )
+                        and len(plan.return_pick_ready_trajectory) > 1
+                        else "OMPL RETURN_PICK_READY"
+                    )
                 )
                 if not self._execute_trajectory_group(
                     plan.return_pick_ready_trajectory,
@@ -4602,7 +5095,15 @@ class CartesianHarvestPlanner(Node):
             return_label = (
                 "CACHED REVERSE RETURN_PICK_READY"
                 if plan.return_pick_ready_is_cached_reverse
-                else "OMPL RETURN_PICK_READY"
+                else (
+                    "CLEARANCE VIA + OMPL RETURN_PICK_READY"
+                    if isinstance(
+                        plan.return_pick_ready_trajectory,
+                        (list, tuple),
+                    )
+                    and len(plan.return_pick_ready_trajectory) > 1
+                    else "OMPL RETURN_PICK_READY"
+                )
             )
             if not self._execute_trajectory_group(
                 plan.return_pick_ready_trajectory,

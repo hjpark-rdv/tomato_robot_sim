@@ -42,7 +42,24 @@ joint_trajectory_controller:
     action_monitor_rate: 20.0
 
     allow_partial_joints_goal: false
-    open_loop_control: true
+    # Use measured joint positions when evaluating trajectory completion.
+    # With open-loop control the action can finish at the scheduled end time
+    # while the filtered RB servo command is still catching up.
+    open_loop_control: false
     constraints:
       stopped_velocity_tolerance: 0.01
-      goal_time: 0.0
+      # Keep the action EXECUTING (and therefore keep forwarding the final
+      # servo target) for up to two seconds while the real robot converges.
+      goal_time: 2.0
+      base:
+        goal: 0.003490659  # 0.2 deg
+      shoulder:
+        goal: 0.003490659  # 0.2 deg
+      elbow:
+        goal: 0.003490659  # 0.2 deg
+      wrist1:
+        goal: 0.003490659  # 0.2 deg
+      wrist2:
+        goal: 0.003490659  # 0.2 deg
+      wrist3:
+        goal: 0.003490659  # 0.2 deg

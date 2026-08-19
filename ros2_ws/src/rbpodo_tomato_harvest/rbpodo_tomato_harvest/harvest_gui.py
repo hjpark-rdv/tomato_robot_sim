@@ -62,6 +62,7 @@ CAMERA_SOURCE_REAL = "실제 /detect_tomatoes"
 CAMERA_SOURCE_OPTIONS = (CAMERA_SOURCE_FAKE, CAMERA_SOURCE_REAL)
 SERVO10_MAX_SPEED_DEG_PER_SEC = 180.0
 SERVO10_DEFAULT_SPEED_PERCENT = 50
+GRIPPER_EXTEND_AUTO_STOP_SECONDS = 3.0
 ANGLE_REFERENCE_DISPLAY_OPTIONS = tuple(
     angle_reference_label(mode) for mode in ANGLE_REFERENCE_MODES
 )
@@ -776,6 +777,12 @@ def named_pose_command(
         "-p",
         f"pick_ready_state_name:={state_name}",
         "-p",
+        # RViz named-state planning targets the stored joint values almost
+        # exactly.  The harvest planner's wider default tolerance (0.005 rad)
+        # lets OMPL choose a different endpoint inside the tolerance band on
+        # every click, which makes repeated named-pose moves creep slightly.
+        "pick_ready_joint_tolerance:=0.0001",
+        "-p",
         "joint_planning_pipeline_id:=ompl",
         "-p",
         "joint_planner_id:=RRTConnect",
@@ -882,6 +889,8 @@ def stepper_command(
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     servo_speed_percent: float = SERVO10_DEFAULT_SPEED_PERCENT,
+    servo_close_angle_deg: float = 100.0,
+    forward_wave_enabled: bool = False,
     tomato_frame: str | None = None,
     python_executable: str | None = None,
 ) -> list[str]:
@@ -945,6 +954,7 @@ def stepper_command(
         or not 1.0 <= servo_speed_percent <= 100.0
     ):
         raise ValueError("servo_speed_percent must be between 1 and 100")
+    servo_close_angle_deg = float(servo_angle_degrees(servo_close_angle_deg))
     command = harvest_command(
         tomato_index,
         True,
@@ -973,6 +983,13 @@ def stepper_command(
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
     command.extend(["-p", "stepwise_plan:=true"])
+    command.extend(
+        [
+            "-p",
+            "harvest_forward_wave_enabled:="
+            f"{'true' if forward_wave_enabled else 'false'}",
+        ]
+    )
     command.extend(["-p", "step_custom_stage_deltas_enabled:=true"])
     for stage_number, stage_delta in zip(
         STEP_CUSTOM_STAGE_DEFAULTS_MM, custom_stage_deltas_m
@@ -987,6 +1004,9 @@ def stepper_command(
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
     command.extend(
         ["-p", f"step_servo_speed_percent:={servo_speed_percent}"]
+    )
+    command.extend(
+        ["-p", f"step_servo_close_angle_deg:={servo_close_angle_deg}"]
     )
     command.extend(
         ["-p", f"step_cycle_only:={'true' if cycle_only else 'false'}"]
@@ -3224,7 +3244,7 @@ class HarvestGui(Node):
         )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
         self.angle_reference_mode_var = tk.StringVar(
-            value=angle_reference_label(ANGLE_REFERENCE_CENTER_TO_STEM)
+            value=angle_reference_label(ANGLE_REFERENCE_CALYX_TO_STEM)
         )
         self.named_pose_var = tk.StringVar(value="PICK_READY")
         self.pick_ready_state_var = tk.StringVar(value="PICK_READY")
@@ -3246,11 +3266,13 @@ class HarvestGui(Node):
         )
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
+        self.step_servo_close_angle_deg_var = tk.StringVar(value="100")
+        self.step_forward_wave_enabled_var = tk.BooleanVar(value=False)
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
             value=False
         )
-        self.prefer_robot_direction_var = tk.BooleanVar(value=False)
-        self.adaptive_grasp_max_rotation_var = tk.StringVar(value="45.0")
+        self.prefer_robot_direction_var = tk.BooleanVar(value=True)
+        self.adaptive_grasp_max_rotation_var = tk.StringVar(value="5.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
         self.batch_harvest_stage_var = tk.StringVar(value="전체 수확")
         self.lift_harvest_var = tk.BooleanVar(value=False)
@@ -4319,15 +4341,63 @@ class HarvestGui(Node):
         )
         ttk.Label(
             custom,
+            text="서보 닫기 각도",
+            anchor="center",
+        ).grid(row=8, column=0, sticky="ew", padx=3, pady=(10, 4))
+        self.step_servo_close_angle_spinbox = ttk.Spinbox(
+            custom,
+            textvariable=self.step_servo_close_angle_deg_var,
+            from_=10,
+            to=173,
+            increment=1,
+            format="%.0f",
+            width=8,
+            justify="center",
+        )
+        self.step_servo_close_angle_spinbox.grid(
+            row=8,
+            column=1,
+            sticky="ew",
+            padx=3,
+            pady=(10, 4),
+        )
+        ttk.Label(custom, text="° (10~173°)").grid(
+            row=8,
+            column=2,
+            columnspan=2,
+            sticky="w",
+            padx=3,
+            pady=(10, 4),
+        )
+        self.step_custom_delta_entries.append(
+            self.step_servo_close_angle_spinbox
+        )
+        self.step_forward_wave_checkbox = ttk.Checkbutton(
+            custom,
+            text="4단계 Z축 웨이브 사용 (±5mm × 3회)",
+            variable=self.step_forward_wave_enabled_var,
+            command=self._step_forward_wave_changed,
+        )
+        self.step_forward_wave_checkbox.grid(
+            row=9,
+            column=0,
+            columnspan=4,
+            sticky="w",
+            padx=3,
+            pady=(8, 0),
+        )
+        ttk.Label(
+            custom,
             text=(
-                "각 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
+                "XYZ 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
                 "입력 범위: 축별 -200~+200 mm (화살표 1회 = 1 mm)\n"
+                "서보 닫기 각도: 10~173° (화살표 1회 = 1°)\n"
                 "Plan 생성 후에는 세션 종료까지 잠깁니다."
             ),
             foreground="#666666",
             justify="left",
         ).grid(
-            row=8,
+            row=10,
             column=0,
             columnspan=4,
             sticky="w",
@@ -4730,7 +4800,7 @@ class HarvestGui(Node):
         ).grid(row=2, column=1, sticky="w", padx=(8, 20))
         self.gripper_extend_button = ttk.Button(
             frame,
-            text="늘림",
+            text="늘림 (3초)",
             command=lambda: self.control_gripper_stroke("extend"),
             style="Action.TButton",
             width=12,
@@ -4777,7 +4847,7 @@ class HarvestGui(Node):
             frame,
             text=(
                 "RB: DOUT0·DOUT8 HIGH, 나머지 DOUT LOW · "
-                "Arduino: 늘림 PIN8 HIGH/PIN9 LOW, "
+                "Arduino: 늘림 PIN8 HIGH/PIN9 LOW 후 3초 자동 정지, "
                 "줄임 PIN8 LOW/PIN9 HIGH, 정지 모두 LOW"
             ),
             foreground="#666666",
@@ -6806,6 +6876,7 @@ class HarvestGui(Node):
         )
         self._start_linear_motor_pin_sequence(
             pin_sequence,
+            command=command,
             request_id=request_id,
             label=label,
             output_description=output_description,
@@ -6815,6 +6886,7 @@ class HarvestGui(Node):
         self,
         pin_sequence: tuple[tuple[bool, bool], ...],
         *,
+        command: str,
         request_id: int,
         label: str,
         output_description: str,
@@ -6845,6 +6917,7 @@ class HarvestGui(Node):
             100,
             lambda: self._apply_linear_motor_pin_target(
                 pin_sequence,
+                command=command,
                 request_id=request_id,
                 label=label,
                 output_description=output_description,
@@ -6855,6 +6928,7 @@ class HarvestGui(Node):
         self,
         pin_sequence: tuple[tuple[bool, bool], ...],
         *,
+        command: str,
         request_id: int,
         label: str,
         output_description: str,
@@ -6882,6 +6956,39 @@ class HarvestGui(Node):
             label,
             output_description,
         )
+        if command == "extend":
+            duration = GRIPPER_EXTEND_AUTO_STOP_SECONDS
+            self._append_log(
+                f"[그리퍼 스트로크 자동 정지 예약] {duration:.1f}초 후 "
+                "PIN8/PIN9를 LOW로 변경합니다."
+            )
+            self.root.after(
+                int(round(duration * 1000.0)),
+                lambda: self._auto_stop_gripper_extension(
+                    request_id,
+                    duration,
+                ),
+            )
+
+    def _auto_stop_gripper_extension(
+        self,
+        request_id: int,
+        duration_seconds: float,
+    ) -> None:
+        """Stop an unchanged extend command after its bounded run time."""
+        if self.closing or request_id != self.gripper_stroke_request_id:
+            return
+        self.gripper_stroke_request_id += 1
+        self._publish_linear_motor_pin_levels(False, False)
+        self.gripper_command_in_progress = False
+        self.gripper_stroke_status.set("늘림 3초 완료 — 자동 정지")
+        self.status.set("그리퍼 늘림 3초 완료 — PIN8/PIN9 LOW")
+        self._append_log(
+            "[그리퍼 스트로크 자동 정지] "
+            f"늘림 {float(duration_seconds):.1f}초 완료: "
+            "PIN8=LOW, PIN9=LOW"
+        )
+        self._update_gripper_stroke_controls()
 
     def _finish_linear_motor_pin_command(
         self,
@@ -7783,6 +7890,13 @@ class HarvestGui(Node):
             "요청합니다."
         )
         self._request_robot_motion_stop()
+        # A step may currently be driving the Arduino linear actuator.  Force
+        # both direction outputs LOW before terminating its worker process.
+        if hasattr(self, "_publish_linear_motor_pin_levels"):
+            self._publish_linear_motor_pin_levels(False, False)
+            self._append_log(
+                "[정지 요청] 리니어모터 PIN8/PIN9도 LOW로 정지했습니다."
+            )
         if self.lift_harvest_pending is not None:
             self.lift_harvest_pending = None
             stop_message = Bool()
@@ -9432,6 +9546,21 @@ class HarvestGui(Node):
         )
         self._update_step_controls()
 
+    def _step_forward_wave_changed(self) -> None:
+        """Invalidate cached step plans when the stage-4 wave is toggled."""
+        self._invalidate_plan()
+        enabled = bool(self.step_forward_wave_enabled_var.get())
+        self.status.set(
+            "스텝 4 Z축 웨이브 사용 — 스텝 Plan을 다시 생성하세요."
+            if enabled
+            else "스텝 4 직선 Cartesian 사용 — 스텝 Plan을 다시 생성하세요."
+        )
+        self._append_log(
+            f"[스텝 옵션] 4단계 Z축 웨이브: "
+            f"{'사용 (±5mm × 3회)' if enabled else '사용 안 함'}"
+        )
+        self._update_step_controls()
+
     def _linear_motor_wait_changed(self, _event=None) -> None:
         try:
             wait_seconds = self._wait_seconds(
@@ -9512,6 +9641,26 @@ class HarvestGui(Node):
         # element is a numeric forward distance.  Without this distinction a
         # Boolean was parsed as a distance and every cached step plan appeared
         # invalid even though no operator setting had changed.
+        if (
+            len(verification) == len(expected) + 2
+            and all(type(value) is bool for value in verification[-2:])
+        ):
+            wrist_option = getattr(
+                self,
+                "step_tcp_wrist_oscillation_enabled_var",
+                None,
+            )
+            wave_option = getattr(
+                self,
+                "step_forward_wave_enabled_var",
+                None,
+            )
+            if wrist_option is None or wave_option is None:
+                return False
+            return verification == expected + (
+                bool(wrist_option.get()),
+                bool(wave_option.get()),
+            )
         if (
             len(verification) == len(expected) + 1
             and type(verification[-1]) is bool
@@ -9864,6 +10013,12 @@ class HarvestGui(Node):
                     raise ValueError(
                         "5단계 TCP 회전각은 1~45도 범위여야 합니다."
                     )
+            servo_close_angle_deg = servo_angle_degrees(
+                self.step_servo_close_angle_deg_var.get()
+            )
+            forward_wave_enabled = bool(
+                self.step_forward_wave_enabled_var.get()
+            )
             if mode == "repeat":
                 self.repeat_cycle_last_index = (
                     self._repeat_last_stage_number() - 1
@@ -9919,6 +10074,8 @@ class HarvestGui(Node):
                 if self.servo10_speed_enabled_var.get()
                 else SERVO10_DEFAULT_SPEED_PERCENT
             ),
+            servo_close_angle_deg=servo_close_angle_deg,
+            forward_wave_enabled=forward_wave_enabled,
         )
         environment = os.environ.copy()
         environment["PYTHONUNBUFFERED"] = "1"
@@ -9956,6 +10113,7 @@ class HarvestGui(Node):
             prefer_robot_direction,
             adaptive_max_rotation,
             tcp_wrist_oscillation_enabled,
+            forward_wave_enabled,
         )
         self._set_active_camera_target(
             index,
@@ -10812,6 +10970,9 @@ class HarvestGui(Node):
         for entry in self.step_custom_delta_entries:
             entry.configure(state=custom_state)
         self.step_tcp_wrist_oscillation_checkbox.configure(
+            state="disabled" if active or self.ui_busy else "normal"
+        )
+        self.step_forward_wave_checkbox.configure(
             state="disabled" if active or self.ui_busy else "normal"
         )
         if not self.step_tcp_wrist_oscillation_enabled_var.get():
@@ -12410,6 +12571,14 @@ class HarvestGui(Node):
             "실제 RB5 정지를 요청합니다."
         )
         self._request_robot_motion_stop()
+        # A step may currently be driving the Arduino linear actuator. Force
+        # both direction outputs LOW before terminating its worker process.
+        pin_stop = getattr(self, "_publish_linear_motor_pin_levels", None)
+        if pin_stop is not None:
+            pin_stop(False, False)
+            self._append_log(
+                "[정지 요청] 리니어모터 PIN8/PIN9도 LOW로 정지했습니다."
+            )
         if lift_pending is not None:
             self.lift_harvest_pending = None
             simulation = self.lift_simulation_mode

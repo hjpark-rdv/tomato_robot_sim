@@ -18,9 +18,9 @@ More than 80% of the sampled goal states fail to satisfy the constraints
 
 현재 적용 중인 아래 조건은 성능 개선 이후에도 유지해야 한다.
 
-- 각 OMPL 단계 시작 자세 기준 관절 범위 `±120°`
+- 각 OMPL 단계 시작 자세 기준 관절 범위 `±100°`
 - 제한 대상: `base`, `shoulder`, `elbow`, `wrist1`, `wrist2`
-- `wrist3`는 `±120°` 제한에서 제외
+- `wrist3`는 `±100°` 제한에서 제외
 - 기존 로봇 관절 한계 및 collision 검사
 - 기존 planning time, planning attempts, 속도 및 가속도 scaling
 - 기존 TCP Pose 허용 오차
@@ -34,7 +34,7 @@ More than 80% of the sampled goal states fail to satisfy the constraints
 2. IK 요청의 목표 링크는 SRDF 기본 tip에 맡기지 않고 반드시 `tcp`로 명시한다.
 3. 다음 조건을 모두 통과한 IK 후보만 남긴다.
    - 로봇 관절 한계
-   - 단계 시작 자세 기준 `±120°` 관절 constraint
+   - 단계 시작 자세 기준 `±100°` 관절 constraint
    - collision-free 상태
    - TCP 위치 및 자세 허용 오차
 4. 유효 후보를 현재 관절 자세와의 거리로 정렬한다.
@@ -42,7 +42,7 @@ More than 80% of the sampled goal states fail to satisfy the constraints
    - 불필요한 관절 회전을 줄이도록 관절별 가중치를 적용할 수 있다.
 5. 현재 자세와 가장 가까운 후보를 joint goal로 선택한다.
 6. 선택한 joint goal로 OMPL RRTConnect 계획을 실행한다.
-   - 경로 전체에는 기존 시작 자세 기준 `±120°` path constraint를 그대로
+   - 경로 전체에는 기존 시작 자세 기준 `±100°` path constraint를 그대로
      적용한다.
    - collision 검사도 그대로 유지한다.
 7. 첫 후보가 실패하면 필요에 따라 두 번째 또는 세 번째 후보까지 시도한다.
@@ -108,7 +108,7 @@ More than 80% of the sampled goal states fail to satisfy the constraints
 
 ### 완료 조건
 
-- 기존 `±120°` constraint와 collision 검사를 위반하지 않는다.
+- 기존 `±100°` constraint와 collision 검사를 위반하지 않는다.
 - TCP 목표 Pose 오차가 기존 허용 범위 안에 있다.
 - 기존 Pose goal 방식과 비교해 성공률이 낮아지지 않는다.
 - 대표 실패 케이스에서 평균 및 95백분위 planning 시간이 감소한다.
@@ -120,7 +120,8 @@ More than 80% of the sampled goal states fail to satisfy the constraints
 1차 적용에서 계획 시간은 줄었지만, 가까운 IK endpoint만 선택하고 실제 OMPL
 trajectory 품질을 평가하지 않아 관절이 크게 우회하는 경로가 발생했다.
 따라서 IK 후보 기반 계획은 현재 코드에서 제거하고 기존 Pose goal +
-시작 자세 중심 `±120°` constrained OMPL 방식으로 복원했다.
+시작 자세 중심 constrained OMPL 방식으로 복원했다. 이후 C0:T1에서 확인된
+비정상 IK branch를 차단하기 위해 기본 범위를 `±100°`로 축소했다.
 
 당분간은 `rbpodo_moveit_config/config/ompl_planning.yaml`에서
 `mainpulation` 그룹의 RRTConnect 설정을 명시하고, 수확 planner의 OMPL Pose

@@ -138,7 +138,7 @@
   <link name="$(arg prefix)tomato_gripper_tip" />
 
   <joint name="$(arg prefix)tomato_gripper_tip_joint" type="fixed">
-    <origin xyz="-0.162 -0.006 0" rpy="1.57 3.14 0.0" />
+    <origin xyz="-0.162 0.020 0" rpy="1.57 3.14 0.0" />
     <parent link="$(arg prefix)tomato_gripper" />
     <child link="$(arg prefix)tomato_gripper_tip" />
   </joint>

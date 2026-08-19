@@ -15,7 +15,9 @@ from rbpodo_tomato_harvest.harvest_planner import (
     make_continuous_arc_waypoints,
     make_centered_joint_path_constraints,
     make_harvest_geometry,
+    make_preapproach_via_pose,
     make_tip_local_harvest_motion,
+    make_tip_local_sine_wave_waypoints,
     make_tip_local_transition_curve_waypoints,
     make_wrist3_oscillation_trajectory,
     outward_from_tomato_rotation,
@@ -146,6 +148,38 @@ def test_second_lift_curve_preserves_endpoints_and_bows_in_local_x():
         for earlier, later in zip(waypoints, waypoints[1:])
     )
     assert _position(waypoints[-1]) == pytest.approx([0.0, 0.0, 0.020])
+
+
+def test_forward_sine_wave_moves_in_local_x_and_returns_to_target_height():
+    start = Pose()
+    start.orientation.w = 1.0
+    target = Pose()
+    target.position.x = 0.040
+    target.orientation.w = 1.0
+
+    waypoints = make_tip_local_sine_wave_waypoints(start, target)
+    positions = np.asarray([_position(pose) for pose in waypoints])
+
+    assert len(waypoints) == 25
+    assert np.all(np.diff(positions[:, 0]) > 0.0)
+    assert np.max(positions[:, 2]) == pytest.approx(0.005)
+    assert np.min(positions[:, 2]) == pytest.approx(-0.005)
+    assert _position(waypoints[-1]) == pytest.approx([0.040, 0.0, 0.0])
+
+
+def test_forward_sine_wave_uses_tip_local_z_for_rotated_pose():
+    start = Pose()
+    start.orientation.x = np.sin(np.pi / 4.0)
+    start.orientation.w = np.cos(np.pi / 4.0)
+    target = translated_pose_in_local_frame(start, (0.040, 0.0, 0.0))
+
+    waypoints = make_tip_local_sine_wave_waypoints(start, target)
+    positions = np.asarray([_position(pose) for pose in waypoints])
+
+    # A +90 degree local-X rotation maps local Z onto world -Y.
+    assert np.max(positions[:, 1]) == pytest.approx(0.005)
+    assert np.min(positions[:, 1]) == pytest.approx(-0.005)
+    assert _position(waypoints[-1]) == pytest.approx(_position(target))
 
 
 def test_second_lift_curve_uses_tip_local_axes_for_rotated_pose():
@@ -289,6 +323,58 @@ def test_tomato_is_between_tip_and_vine_and_tip_is_lower():
     assert tip[2] == tomato[2] - 0.010
     assert np.dot(tomato - tip, result.vine_point - tomato) > 0.0
     assert np.dot(preapproach - tip, result.outward_axis) > 0.0
+
+
+def test_preapproach_via_pose_moves_outward_and_keeps_orientation():
+    ready = Pose()
+    ready.position.x = 0.10
+    ready.position.y = 0.20
+    ready.position.z = 0.15
+    preapproach = Pose()
+    preapproach.position.x = 0.40
+    preapproach.position.y = -0.20
+    preapproach.position.z = 0.35
+    preapproach.orientation.x = 0.1
+    preapproach.orientation.y = 0.2
+    preapproach.orientation.z = 0.3
+    preapproach.orientation.w = 0.9
+
+    via = make_preapproach_via_pose(
+        ready,
+        [0.50, -0.30, 0.45],
+        preapproach,
+        [-1.0, -1.0, 0.0],
+        interpolation_ratio=0.5,
+        lateral_ratio=0.25,
+    )
+
+    # Midpoint is [0.30, -0.05, 0.30].  Recommend's component perpendicular
+    # to the READY->crop chord points toward negative X/Y.
+    assert _position(via) == pytest.approx(
+        [0.175, -0.15, 0.30], abs=1e-9
+    )
+    assert via.orientation == preapproach.orientation
+    assert via is not preapproach
+
+
+@pytest.mark.parametrize("ratio", [-0.001, 0.0, 1.0, float("nan")])
+def test_preapproach_via_pose_rejects_invalid_ratio(ratio):
+    with pytest.raises(ValueError, match="interpolation_ratio"):
+        make_preapproach_via_pose(
+            Pose(), [1.0, 0.0, 0.0], Pose(), [0.0, 1.0, 0.0], ratio
+        )
+
+
+@pytest.mark.parametrize("ratio", [-0.001, float("nan")])
+def test_preapproach_via_pose_rejects_invalid_lateral_ratio(ratio):
+    with pytest.raises(ValueError, match="lateral_ratio"):
+        make_preapproach_via_pose(
+            Pose(),
+            [1.0, 0.0, 0.0],
+            Pose(),
+            [0.0, 1.0, 0.0],
+            lateral_ratio=ratio,
+        )
 
 
 def test_gripper_longitudinal_axis_and_roll_are_level():

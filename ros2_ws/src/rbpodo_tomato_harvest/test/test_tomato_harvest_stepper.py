@@ -6,6 +6,7 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
+    _execute_linear_motor_action,
     _execute_servo_sequence,
     continuous_cartesian_stage_blocks,
     cycle_last_stage_index,
@@ -60,7 +61,7 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "LIFT_Z20_SECOND",
         "BACK_X50_FIRST",
         "BACK_X10_SECOND",
-        "HARVEST_WAIT",
+        "LINEAR_MOTOR_EXTEND",
         "SERVO_CLOSE_OPEN",
         "RETURN_READY",
     ]
@@ -73,12 +74,14 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "tip 로컬 X +20.0 / Y +0.0 / Z +20.0 mm / "
         "5→6 곡선 Cartesian"
     )
-    assert stages[9]["kind"] == "wait"
-    assert stages[9]["wait_seconds"] == pytest.approx(2.25)
+    assert stages[9]["kind"] == "linear_motor"
+    assert stages[9]["linear_motor_command"] == "extend"
+    assert stages[9]["linear_motor_duration_seconds"] == pytest.approx(3.0)
     assert stages[10]["kind"] == "servo_sequence"
-    assert stages[10]["close_angle_deg"] == pytest.approx(90.0)
+    assert stages[10]["close_angle_deg"] == pytest.approx(100.0)
     assert stages[10]["open_angle_deg"] == pytest.approx(170.0)
     assert stages[10]["dwell_seconds"] == pytest.approx(1.0)
+    assert stages[10]["retract_duration_seconds"] == pytest.approx(3.0)
     assert stages[11]["trajectories"][0].name == "return_ready"
 
 
@@ -96,8 +99,46 @@ def test_step_stage_specs_displays_configured_forward_distance():
     stages = step_stage_specs(plan, 2.0, forward_distance_m=0.035)
 
     assert stages[3]["detail"] == (
-        "tip 로컬 X +35.0 / Y +0.0 / Z +0.0 mm"
+        "tip 로컬 X +35.0 / Y +0.0 / Z +0.0 mm / "
+        "직선 Cartesian"
     )
+
+
+def test_step_stage_specs_displays_enabled_forward_wave():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(plan, 2.0, forward_wave_enabled=True)
+
+    assert "Z축 ±5mm × 3회 웨이브 Cartesian" in stages[3]["detail"]
+
+
+def test_step_stage_specs_uses_configured_servo_close_angle():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(
+        plan,
+        2.0,
+        servo_close_angle_deg=112.0,
+    )
+
+    assert stages[10]["close_angle_deg"] == pytest.approx(112.0)
+    assert "112° 닫기" in stages[10]["detail"]
 
 
 def test_step_stage_specs_labels_right_ready_for_right_capture():
@@ -210,6 +251,8 @@ def test_continuous_blocks_split_at_enabled_wrist_trajectory():
 
 def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
     published = []
+    pin8_published = []
+    pin9_published = []
     sleeps = []
     planner = SimpleNamespace(
         count_subscribers=lambda _topic: 1,
@@ -227,6 +270,13 @@ def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
         "open_angle_deg": 170.0,
         "speed_percent": 50.0,
         "dwell_seconds": 1.0,
+        "retract_duration_seconds": 3.0,
+        "linear_motor_pin8_publisher": SimpleNamespace(
+            publish=lambda message: pin8_published.append(message.data)
+        ),
+        "linear_motor_pin9_publisher": SimpleNamespace(
+            publish=lambda message: pin9_published.append(message.data)
+        ),
     }
     monkeypatch.setattr(
         "rbpodo_tomato_harvest.tomato_harvest_stepper.time.sleep",
@@ -235,7 +285,41 @@ def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
 
     assert _execute_servo_sequence(planner, stage) is True
     assert published == [[90.0, 50.0], [170.0, 50.0]]
-    assert sleeps == [1.0, 1.0]
+    assert pin8_published == [False, False, False]
+    assert pin9_published == [False, True, False]
+    assert sleeps == [1.0, 0.1, 3.0, 1.0]
+
+
+def test_execute_linear_motor_action_extends_then_stops(monkeypatch):
+    pin8_published = []
+    pin9_published = []
+    sleeps = []
+    planner = SimpleNamespace(
+        count_subscribers=lambda _topic: 1,
+        get_logger=lambda: SimpleNamespace(
+            info=lambda _message: None,
+            error=lambda _message: None,
+        ),
+    )
+    stage = {
+        "linear_motor_pin8_publisher": SimpleNamespace(
+            publish=lambda message: pin8_published.append(message.data)
+        ),
+        "linear_motor_pin9_publisher": SimpleNamespace(
+            publish=lambda message: pin9_published.append(message.data)
+        ),
+        "linear_motor_command": "extend",
+        "linear_motor_duration_seconds": 3.0,
+    }
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper.time.sleep",
+        sleeps.append,
+    )
+
+    assert _execute_linear_motor_action(planner, stage) is True
+    assert pin8_published == [False, True, False]
+    assert pin9_published == [False, False, False]
+    assert sleeps == [0.1, 3.0]
 
 
 def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():

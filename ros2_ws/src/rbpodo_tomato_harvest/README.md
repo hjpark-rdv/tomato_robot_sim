@@ -204,7 +204,7 @@ JSON에는 `link0` 기준 토마토/줄기 좌표가 없으므로 새 코드로 
 카메라 검출 영역의 `저장 자세` 콤보박스에서는 MoveIt SRDF에 등록된
 `PICK_READY`, `PICK_READY_RIGHT`, `CAPTURE_LEFT`를 선택할 수 있다.
 `Plan & Execute`를 누르면 현재 관절 자세에서 선택 자세까지 충돌 검사와 현재
-자세 중심 ±120° joint constraint를 적용한 OMPL/RRTConnect 경로를 계획하고,
+자세 중심 ±100° joint constraint를 적용한 OMPL/RRTConnect 경로를 계획하고,
 계획 성공 시에만 실제 trajectory를 실행한다. 실행 중에는 다른 수확 명령이
 비활성화되며 기존 `모션 정지` 버튼으로 계획·실행 취소와 RB5 정지를 요청할 수
 있다.
@@ -315,7 +315,7 @@ pre-grasp`를 하나의 trajectory로 연결한다. TCP 시작·목표 자세 �
 7개 waypoint를 만들고, 직선 경로에서 식물 바깥 방향으로 최소 `0.12 m`, 최대
 `0.25 m` 휘어진 경로를 생성한다. TCP 방향은 각 waypoint에서 부드럽게
 보간한다. 먼저 충돌 검사를 포함한 Cartesian 경로를 시도하고, 일부 구간이
-실패하면 해당 waypoint까지 시작 자세 중심 `±120°` constraint가 적용된 OMPL
+실패하면 해당 waypoint까지 시작 자세 중심 `±100°` constraint가 적용된 OMPL
 RRTConnect로 대체한다. Cartesian이나 OMPL이 성공을 반환해도 Arc 전체에서
 관절 하나의 span이 `continuous_arc_max_joint_span_deg` 기본 `120°`를 넘으면
 대회전 경로로 판단해 폐기한다. 이 검사에는 `wrist3`도 포함한다. arc 전환
@@ -438,12 +438,14 @@ Arduino 토픽으로만 제어한다.
 
 출력 조합은 다음과 같다.
 
-- `늘림`: PIN8/9 모두 LOW 후 `/linear_motor/pin8=true`, `pin9=false`
+- `늘림`: PIN8/9 모두 LOW 후 `/linear_motor/pin8=true`, `pin9=false`를
+  3초간 출력하고 자동으로 두 핀을 LOW로 변경
 - `줄임`: PIN8/9 모두 LOW 후 `/linear_motor/pin8=false`, `pin9=true`
 - `정지`: `/linear_motor/pin8=false`, `/linear_motor/pin9=false`
 
 Arduino TTY 연결, PIN8/9 토픽 구독, RB eval 서비스 및 DOUT8 초기화가 모두
-완료되기 전에는 늘림·줄임·정지 버튼을 활성화하지 않는다. 늘림 또는 줄임은
+완료되기 전에는 늘림·줄임·정지 버튼을 활성화하지 않는다. 늘림은 3초 후 자동
+정지하며, 그 전에 줄임·정지를 누르면 기존 자동 정지 예약은 취소된다. 줄임은
 자동으로 꺼지지 않으므로 원하는 위치에 도달하면 반드시 `정지`를 눌러 두 Arduino
 핀을 LOW로 내려야 한다.
 
@@ -491,7 +493,8 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 `Query Goal State`를 이동한다. 실제 IK가 존재하지 않는 실패 보간점 자체는
 관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
 표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
-기본 수확 순서는 `PICK_READY → Cartesian pre-approach`이다.
+기본 수확 순서는
+`PICK_READY → 안전 경유점 A → Cartesian pre-approach`이다.
 접근 목표 이후 tip 로컬 수확 동작은 `+X 40 mm → (+Z 20 mm, +X 20 mm)
 → +Z 20 mm → -X 50 mm → -X 10 mm → 리니어모터 대기` 순서다.
 괄호로 묶인 X/Z 변화량은 각각 하나의 Cartesian 대각선 이동으로 동시에 적용한다.
@@ -501,23 +504,24 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 fake hardware 초기 자세가 모두 이 값을 읽으므로 SRDF를 수정한 뒤 두 패키지를
 다시 빌드하고 MoveIt을 재시작해야 한다.
 tip 기준으로 계산한 pre-grasp pose는 고정된 TCP-to-tip transform을 사용해
-TCP 목표 pose로 환산한다. GUI는 PICK_READY의 TCP 자세에서 이 목표까지
-위치와 자세를 한 경로에서 함께 변경한다. 별도의 TCP 제자리 회전 trajectory는
-생성하지 않으며 `Cartesian 우선 + constrained OMPL fallback` 알고리즘으로
-고정되어 있다.
-이 direct Cartesian pre-approach가 실패하면 원래 PICK_READY 상태에서 같은
-TCP 목표까지 constrained OMPL RRTConnect로 한 번에 재계획하며, 이것도 실패할
-때 전체 Plan을 실패 처리한다.
+TCP 목표 pose로 환산한다. GUI는 먼저 식물에서 떨어진 A에서 최종 TCP 자세를
+정렬하고, A에서 pre-approach까지 짧은 Cartesian 구간으로 진입한다. 별도의 TCP
+제자리 회전 trajectory는 생성하지 않으며 각 구간은
+`Cartesian 우선 + constrained OMPL fallback` 알고리즘으로 고정되어 있다.
+`PICK_READY → A` Cartesian이 실패하면 해당 구간만 constrained OMPL
+RRTConnect로 재계획하고, 성공한 A 상태에서 `A → pre-approach` Cartesian을
+새로 계산한다. 따라서 첫 구간이 OMPL로 전환되어도 식물 가까운 두 번째 구간까지
+자동으로 OMPL에 합쳐지지 않는다.
 pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면 해당 구간만
 OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확 구간은 동작을
 생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 모든 OMPL fallback에는 각
-단계 시작 자세 중심의 `±120°` 관절 path constraint가 동일하게 적용된다.
+단계 시작 자세 중심의 `±100°` 관절 path constraint가 동일하게 적용된다.
 Cartesian 실패 후 OMPL fallback이 성공하면 전체 Plan은 성공으로 처리하고,
 결과 로그의 `cartesian_fallbacks`와 단계별 기록에 전환 구간을 남긴다.
 최초 PICK_READY 진입은 OMPL RRTConnect를 사용한다.
 Pre-approach 이후의 접근과 수확 동작은 우선 TCP Cartesian 경로를 시도한다.
 각 OMPL 단계에는 그 단계의 시작 자세를 중심으로 `base`, `shoulder`, `elbow`,
-`wrist1`, `wrist2`를 `±120°`로 제한하는 path constraint가 적용된다.
+`wrist1`, `wrist2`를 `±100°`로 제한하는 path constraint가 적용된다.
 `wrist3`는 이 제한에서 제외되며 기존 로봇 관절 범위를 사용한다.
 같은 시작 자세 중심 constraint는 `GetCartesianPath.path_constraints`에도
 적용된다. Cartesian은 상대 jump threshold `2.0`, revolute 절대 jump threshold
@@ -538,11 +542,11 @@ Planner 기반 pre-grasp pose의 허용 오차는 위치 `5 mm`, 자세 축별 `
 - `ompl_pose_planning_attempts`: OMPL Pose goal 계획 시도 수, 기본 `2`
 
 PICK_READY joint goal은 기존 `pick_ready_planning_time=10.0`,
-`pick_ready_planning_attempts=5`를 유지한다. `±120°` constraint는 관절의
+`pick_ready_planning_attempts=5`를 유지한다. `±100°` constraint는 관절의
 허용 범위를 제한하는 조건이며 최단 trajectory를 보장하는 품질 기준은 아니다.
 
 Pre-grasp 접근 방향은 토마토 TF의 `-X`를 최우선으로 사용한다. 먼저 0°
-pre-grasp의 IK를 충돌 검사와 PICK_READY 기준 `±120°` 관절 constraint를
+pre-grasp의 IK를 충돌 검사와 PICK_READY 기준 `±100°` 관절 constraint를
 포함해 검사하고, 불가능할 때만 토마토 로컬 `+Y`/`-Y` 방향의 보정각을
 늘린다. 양쪽을 같은 절댓값 순서로 검사해 가능한 구간을 찾고 그 구간을 다시
 좁혀, 가능한 자세 중 보정각이 가장 작은 방향을 선택한다. 같은 보정각이면
@@ -583,6 +587,16 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
   기본 `0.0`. 이에 따라 실제 3차원 `토마토→로봇 베이스` 방향을 중심으로
   `±90°`, 전체 180° 진입 영역을 허용한다. deadline 평면 뒤쪽의 진입은 계속
   금지하지만 deadline 안쪽의 추가 안전 여유각은 적용하지 않는다.
+- `preapproach_via_enabled`: `PICK_READY → 안전 경유점 A → pre-approach`와
+  `수확 종료점 → A → PICK_READY` 경로를 사용하며 기본 `true`
+- `preapproach_via_ratio`: `PICK_READY` EE 위치에서 토마토 중심까지의 보간
+  비율이며 기본 `0.5`, 즉 진행 방향의 정확한 중간점이다.
+- `preapproach_via_lateral_ratio`: READY EE와 토마토 중심의 수평거리 대비 A의
+  횡방향 우회 비율이며 기본 `0.38`이다. 보정된 최종 진입축이 아니라 원래
+  Recommend 바깥방향을 READY→토마토 진행축에 직교 투영하여 식물 바깥쪽으로
+  우회한다. 따라서 토마토 위치에 따라 좌우 방향은 자동으로 바뀌고, 큰 접근각
+  보정이 A를 식물 군집 안쪽으로 밀어내지 않는다. A의 자세는 최종 TCP 방향을
+  사용한다.
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
 회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.
@@ -664,7 +678,7 @@ Cartesian 실패에는 경로 fraction과 MoveIt 오류 코드가, OMPL/CHOMP/PI
 
 수확 후 마지막 post-wait 자세에서 `PICK_READY` joint goal까지 OMPL로
 복귀한다. 복귀 시작 자세를 중심으로 wrist3를 제외한 관절에 기존
-`±120°` path constraint와 충돌 검사를 적용한다. 복귀 계획이 실패하면
+`±100°` path constraint와 충돌 검사를 적용한다. 복귀 계획이 실패하면
 `failure_stage=OMPL_RETURN_PICK_READY`로 기록하고 전체 Plan을 실패 처리하며,
 Plan-only/RViz에서 검증된 동일 trajectory를 실제 수확 마지막에 실행한다.
 
@@ -820,14 +834,21 @@ robot. In plan-only mode RViz receives the complete trajectory sequence in
 order:
 
 1. Current joint state to `PICK_READY`
-2. Cartesian-first motion to the pre-approach TCP pose
-3. Cartesian motion from pre-approach through the tomato harvest sequence
-4. Cartesian post-wait retreat
+2. Cartesian-first motion to clearance waypoint A, with constrained OMPL
+   fallback only for this segment
+3. A fresh Cartesian motion from A to the pre-approach TCP pose
+4. Cartesian motion from pre-approach through the tomato harvest sequence
+5. Cartesian post-wait retreat to A, then constrained OMPL return to
+   `PICK_READY`
 
-The GUI fixes the motion from `PICK_READY` to the pre-approach pose to a
-Cartesian-first path. Entering `PICK_READY` uses OMPL RRTConnect. If any
-Cartesian segment fails, that segment is retried with constrained OMPL
-RRTConnect. Multi-waypoint harvest
+The GUI starts waypoint A at the midpoint between the selected `PICK_READY` EE
+position and the tomato center, then offsets it horizontally toward the plant
+exterior. The clearance is 38% of the READY-to-tomato horizontal distance and
+uses the uncorrected Recommend axis projected perpendicular to the travel
+line. Its orientation is the final pre-approach orientation. The
+A-to-pre-approach segment is then planned independently.
+Entering `PICK_READY` uses OMPL RRTConnect. If any Cartesian segment fails,
+only that segment is retried with constrained OMPL RRTConnect. Multi-waypoint harvest
 segments retain every waypoint and retry them sequentially. The harvest target
 and local offsets are still defined at `tomato_gripper_tip`, but every target
 pose is converted through the fixed TCP-to-tip transform before MoveIt plans
