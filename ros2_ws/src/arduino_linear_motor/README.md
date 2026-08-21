@@ -41,8 +41,8 @@ Publish `std_msgs/msg/Bool` from the GUI:
 ros2 topic pub --once /linear_motor/pin8 std_msgs/msg/Bool '{data: true}'
 ros2 topic pub --once /linear_motor/pin8 std_msgs/msg/Bool '{data: false}'
 ros2 topic pub --once /linear_motor/pin9 std_msgs/msg/Bool '{data: true}'
-ros2 topic pub --once /linear_motor/servo10_angle_deg std_msgs/msg/Float64 '{data: 90.0}'
-ros2 topic pub --once /linear_motor/servo10_command std_msgs/msg/Float64MultiArray '{data: [170.0, 50.0]}'
+ros2 topic pub --once /linear_motor/servo10_angle_deg std_msgs/msg/Float64 '{data: 110.0}'
+ros2 topic pub --once /linear_motor/servo10_command std_msgs/msg/Float64MultiArray '{data: [159.0, 50.0]}'
 ```
 
 The bridge publishes connection errors and successful connection changes on

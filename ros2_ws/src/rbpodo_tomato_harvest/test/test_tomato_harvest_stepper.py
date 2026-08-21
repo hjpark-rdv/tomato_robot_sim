@@ -1,3 +1,4 @@
+import math
 from types import SimpleNamespace
 
 import pytest
@@ -6,14 +7,44 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
+    _stage_metadata,
     _execute_linear_motor_action,
     _execute_servo_sequence,
+    continuous_all_trajectory_stage_blocks,
     continuous_cartesian_stage_blocks,
     cycle_last_stage_index,
+    merge_and_retime_robot_trajectories,
     reverse_robot_trajectory,
     reverse_trajectory_group,
+    scale_robot_trajectory_speed,
     step_stage_specs,
 )
+
+
+def test_stage_metadata_keeps_planned_joint_boundaries_for_rviz_goal():
+    metadata = _stage_metadata(
+        [
+            {
+                "key": "READY_TO_PREAPPROACH",
+                "label": "PICK_READY → PRE_APPROACH",
+                "detail": "test",
+                "kind": "trajectory",
+                "trajectories": (_trajectory("preapproach"),),
+                "speed_percent": 30.0,
+                "expected_start": {"base": 0.1, "wrist3": -0.2},
+                "expected_end": {"base": 0.3, "wrist3": 0.4},
+            }
+        ]
+    )
+
+    assert metadata[0]["expected_start"] == {
+        "base": pytest.approx(0.1),
+        "wrist3": pytest.approx(-0.2),
+    }
+    assert metadata[0]["expected_end"] == {
+        "base": pytest.approx(0.3),
+        "wrist3": pytest.approx(0.4),
+    }
 
 
 @pytest.mark.parametrize(
@@ -78,9 +109,9 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
     assert stages[9]["linear_motor_command"] == "extend"
     assert stages[9]["linear_motor_duration_seconds"] == pytest.approx(3.0)
     assert stages[10]["kind"] == "servo_sequence"
-    assert stages[10]["close_angle_deg"] == pytest.approx(100.0)
-    assert stages[10]["open_angle_deg"] == pytest.approx(170.0)
-    assert stages[10]["dwell_seconds"] == pytest.approx(1.0)
+    assert stages[10]["close_angle_deg"] == pytest.approx(110.0)
+    assert stages[10]["open_angle_deg"] == pytest.approx(159.0)
+    assert stages[10]["dwell_seconds"] == pytest.approx(0.7)
     assert stages[10]["retract_duration_seconds"] == pytest.approx(3.0)
     assert stages[11]["trajectories"][0].name == "return_ready"
 
@@ -120,6 +151,107 @@ def test_step_stage_specs_displays_enabled_forward_wave():
     assert "Z축 ±5mm × 3회 웨이브 Cartesian" in stages[3]["detail"]
 
 
+def test_step_stage_specs_assigns_individual_motion_stage_speeds():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=(
+            _trajectory("return_via_a"),
+            _trajectory("return_ready"),
+        ),
+    )
+
+    stages = step_stage_specs(
+        plan,
+        2.0,
+        stage_speed_percents=(30, 40, 50, 60, 70, 80, 35),
+    )
+
+    assert [stages[index]["speed_percent"] for index in range(2, 8)] == [
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+    ]
+    assert stages[11]["speed_percent"] == pytest.approx(35.0)
+    assert stages[11]["trajectory_speed_percents"] == pytest.approx(
+        (35.0, 100.0)
+    )
+
+
+def test_step_stage_specs_defaults_only_cartesian_stages_to_thirty_percent():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(plan, 2.0)
+
+    assert [stages[index]["speed_percent"] for index in range(2, 8)] == [
+        30,
+        30,
+        100,
+        30,
+        30,
+        30,
+    ]
+    assert stages[11]["trajectory_speed_percents"] == pytest.approx(
+        (100.0,)
+    )
+
+
+def test_step_stage_specs_applies_speed_only_to_a_to_preapproach_segment():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=(
+            _trajectory("ready_to_a"),
+            _trajectory("a_to_preapproach"),
+        ),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(
+        plan,
+        2.0,
+        preapproach_final_speed_percent=45.0,
+    )
+
+    assert stages[1]["trajectory_speed_percents"] == (100.0, 45.0)
+    assert "A→PRE 속도 45%" in stages[1]["detail"]
+
+
+def test_step_stage_specs_labels_single_segment_as_direct_preapproach():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=(_trajectory("direct_preapproach"),),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(plan, 2.0)
+
+    assert stages[1]["trajectory_speed_percents"] == (100.0,)
+    assert stages[1]["detail"] == "경유점 A 없이 PRE_APPROACH 직접 접근"
+
+
 def test_step_stage_specs_uses_configured_servo_close_angle():
     plan = SimpleNamespace(
         pick_ready_trajectory=_trajectory("ready"),
@@ -139,6 +271,27 @@ def test_step_stage_specs_uses_configured_servo_close_angle():
 
     assert stages[10]["close_angle_deg"] == pytest.approx(112.0)
     assert "112° 닫기" in stages[10]["detail"]
+
+
+def test_step_stage_specs_uses_configured_linear_motor_extend_time():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=_trajectory("preapproach"),
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(
+        plan,
+        2.0,
+        linear_motor_extend_seconds=8.0,
+    )
+
+    assert stages[9]["linear_motor_duration_seconds"] == pytest.approx(8.0)
+    assert stages[9]["detail"] == "8초 늘림 → 자동 정지"
 
 
 def test_step_stage_specs_labels_right_ready_for_right_capture():
@@ -232,6 +385,39 @@ def test_continuous_blocks_cross_disabled_wrist_but_not_ready_or_wait():
     assert blocks[0]["waypoints"] == ("a", "b", "c", "d", "e", "f", "g")
 
 
+def test_continuous_block_uses_slowest_included_stage_speed():
+    stages = [
+        {
+            "kind": "trajectory",
+            "cartesian_waypoints": (name,),
+            "speed_percent": speed,
+        }
+        for name, speed in (("a", 80.0), ("b", 35.0), ("c", 60.0))
+    ]
+
+    blocks = continuous_cartesian_stage_blocks(stages, 0, 2)
+
+    assert blocks[0]["speed_percent"] == pytest.approx(35.0)
+
+
+def test_all_trajectory_blocks_include_ompl_and_cartesian_until_actuator():
+    stages = [
+        {"kind": "trajectory", "trajectories": (_trajectory("ompl"),)},
+        {"kind": "trajectory", "trajectories": (_trajectory("cart"),)},
+        {"kind": "skip", "trajectories": ()},
+        {"kind": "trajectory", "trajectories": (_trajectory("cart2"),)},
+        {"kind": "linear_motor", "trajectories": ()},
+        {"kind": "trajectory", "trajectories": (_trajectory("return"),)},
+    ]
+
+    blocks = continuous_all_trajectory_stage_blocks(stages, 0, 5)
+
+    assert len(blocks) == 1
+    assert blocks[0]["start_index"] == 0
+    assert blocks[0]["end_index"] == 3
+    assert blocks[0]["stage_indices"] == (0, 1, 2, 3)
+
+
 def test_continuous_blocks_split_at_enabled_wrist_trajectory():
     stages = [
         {"kind": "trajectory", "cartesian_waypoints": ("a",)},
@@ -251,9 +437,7 @@ def test_continuous_blocks_split_at_enabled_wrist_trajectory():
 
 def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
     published = []
-    pin8_published = []
-    pin9_published = []
-    sleeps = []
+    events = []
     planner = SimpleNamespace(
         count_subscribers=lambda _topic: 1,
         get_logger=lambda: SimpleNamespace(
@@ -269,25 +453,43 @@ def test_execute_servo_sequence_closes_waits_opens_and_waits(monkeypatch):
         "close_angle_deg": 90.0,
         "open_angle_deg": 170.0,
         "speed_percent": 50.0,
-        "dwell_seconds": 1.0,
+        "dwell_seconds": 0.7,
         "retract_duration_seconds": 3.0,
-        "linear_motor_pin8_publisher": SimpleNamespace(
-            publish=lambda message: pin8_published.append(message.data)
-        ),
-        "linear_motor_pin9_publisher": SimpleNamespace(
-            publish=lambda message: pin9_published.append(message.data)
-        ),
     }
     monkeypatch.setattr(
         "rbpodo_tomato_harvest.tomato_harvest_stepper.time.sleep",
-        sleeps.append,
+        lambda seconds: events.append(("sleep", seconds)),
+    )
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper._execute_linear_motor_action",
+        lambda _planner, _stage, **kwargs: (
+            events.append(("linear_motor", kwargs)) or True
+        ),
+    )
+
+    stage["servo_publisher"] = SimpleNamespace(
+        publish=lambda message: (
+            published.append(list(message.data)),
+            events.append(("servo", list(message.data))),
+        )
     )
 
     assert _execute_servo_sequence(planner, stage) is True
     assert published == [[90.0, 50.0], [170.0, 50.0]]
-    assert pin8_published == [False, False, False]
-    assert pin9_published == [False, True, False]
-    assert sleeps == [1.0, 0.1, 3.0, 1.0]
+    assert events == [
+        ("servo", [90.0, 50.0]),
+        ("sleep", 0.7),
+        ("servo", [170.0, 50.0]),
+        ("sleep", 0.7),
+        (
+            "linear_motor",
+            {
+                "command": "retract",
+                "duration_seconds": 3.0,
+                "wait_for_completion": False,
+            },
+        ),
+    ]
 
 
 def test_execute_linear_motor_action_extends_then_stops(monkeypatch):
@@ -320,6 +522,67 @@ def test_execute_linear_motor_action_extends_then_stops(monkeypatch):
     assert pin8_published == [False, True, False]
     assert pin9_published == [False, False, False]
     assert sleeps == [0.1, 3.0]
+
+
+def test_execute_linear_motor_action_can_stop_in_background(monkeypatch):
+    pin8_published = []
+    pin9_published = []
+    sleeps = []
+    created_timers = []
+
+    class FakeTimer:
+        def __init__(self, interval, function):
+            self.interval = interval
+            self.function = function
+            self.daemon = None
+            self.started = False
+            created_timers.append(self)
+
+        def start(self):
+            self.started = True
+
+    planner = SimpleNamespace(
+        count_subscribers=lambda _topic: 1,
+        get_logger=lambda: SimpleNamespace(
+            info=lambda _message: None,
+            error=lambda _message: None,
+        ),
+    )
+    stage = {
+        "linear_motor_pin8_publisher": SimpleNamespace(
+            publish=lambda message: pin8_published.append(message.data)
+        ),
+        "linear_motor_pin9_publisher": SimpleNamespace(
+            publish=lambda message: pin9_published.append(message.data)
+        ),
+    }
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper.time.sleep",
+        sleeps.append,
+    )
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper.threading.Timer",
+        FakeTimer,
+    )
+
+    assert _execute_linear_motor_action(
+        planner,
+        stage,
+        command="retract",
+        duration_seconds=3.0,
+        wait_for_completion=False,
+    ) is True
+    assert pin8_published == [False, False]
+    assert pin9_published == [False, True]
+    assert sleeps == [0.1]
+    assert len(created_timers) == 1
+    assert created_timers[0].interval == pytest.approx(3.0)
+    assert created_timers[0].daemon is False
+    assert created_timers[0].started is True
+
+    created_timers[0].function()
+    assert pin8_published == [False, False, False]
+    assert pin9_published == [False, True, False]
 
 
 def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():
@@ -406,3 +669,136 @@ def test_reverse_trajectory_group_reverses_segment_order():
     assert [
         item.joint_trajectory.header.frame_id for item in reversed_group
     ] == ["second", "first"]
+
+
+def test_scale_robot_trajectory_speed_retimes_velocity_and_acceleration():
+    trajectory = _robot_trajectory(
+        "stage",
+        [
+            (0, 1.0, 0.0, 0.0),
+            (2, 2.0, 0.8, 0.4),
+        ],
+    )
+
+    scaled = scale_robot_trajectory_speed(trajectory, 50.0)
+    points = scaled.joint_trajectory.points
+
+    assert points[1].time_from_start.sec == 4
+    assert points[1].velocities[0] == pytest.approx(0.4)
+    assert points[1].accelerations[0] == pytest.approx(0.1)
+    assert trajectory.joint_trajectory.points[1].time_from_start.sec == 2
+
+
+def test_merge_and_retime_removes_boundary_stop_between_two_paths():
+    first = _robot_trajectory(
+        "ompl",
+        [
+            (0, 0.0, 0.0, 0.0),
+            (1, 0.4, 0.0, 0.0),
+        ],
+    )
+    second = _robot_trajectory(
+        "cartesian",
+        [
+            (0, 0.4, 0.0, 0.0),
+            (1, 0.8, 0.0, 0.0),
+        ],
+    )
+
+    merged = merge_and_retime_robot_trajectories((first, second))
+    points = merged.joint_trajectory.points
+
+    assert [point.positions[0] for point in points] == pytest.approx(
+        [0.0, 0.4, 0.8]
+    )
+    assert points[1].velocities[0] > 0.0
+    assert points[0].velocities[0] == pytest.approx(0.0)
+    assert points[-1].velocities[0] == pytest.approx(0.0)
+    times = [
+        point.time_from_start.sec + point.time_from_start.nanosec / 1e9
+        for point in points
+    ]
+    assert times[0] == pytest.approx(0.0)
+    assert times[0] < times[1] < times[2]
+
+
+def test_merge_and_retime_uses_requested_speed_not_old_source_duration():
+    trajectory = _robot_trajectory(
+        "slow_source",
+        [
+            (0, 0.0, 0.0, 0.0),
+            (100, 1.0, 0.0, 0.0),
+        ],
+    )
+
+    merged = merge_and_retime_robot_trajectories(
+        (trajectory,),
+        maximum_acceleration=1000.0,
+        speed_percents=(100.0,),
+    )
+    final = merged.joint_trajectory.points[-1].time_from_start
+    duration = final.sec + final.nanosec / 1e9
+
+    assert duration < 2.0
+
+
+def test_merge_and_retime_lower_speed_percent_increases_duration():
+    trajectory = _robot_trajectory(
+        "path",
+        [
+            (0, 0.0, 0.0, 0.0),
+            (1, 1.0, 0.0, 0.0),
+            (2, 2.0, 0.0, 0.0),
+        ],
+    )
+
+    full_speed = merge_and_retime_robot_trajectories(
+        (trajectory,),
+        maximum_acceleration=1000.0,
+        speed_percents=(100.0,),
+    )
+    half_speed = merge_and_retime_robot_trajectories(
+        (trajectory,),
+        maximum_acceleration=1000.0,
+        speed_percents=(50.0,),
+    )
+
+    def duration(result):
+        final = result.joint_trajectory.points[-1].time_from_start
+        return final.sec + final.nanosec / 1e9
+
+    assert duration(half_speed) > duration(full_speed)
+
+
+def test_merge_and_retime_duration_does_not_grow_with_sampling_density():
+    def sampled_path(point_count):
+        trajectory = RobotTrajectory()
+        trajectory.joint_trajectory.joint_names = ["joint0", "joint1"]
+        for index in range(point_count):
+            ratio = index / (point_count - 1)
+            trajectory.joint_trajectory.points.append(
+                JointTrajectoryPoint(
+                    positions=[
+                        ratio,
+                        0.3 * math.sin(math.pi * ratio),
+                    ]
+                )
+            )
+        return trajectory
+
+    sparse = merge_and_retime_robot_trajectories(
+        (sampled_path(50),),
+        maximum_acceleration=2.4,
+        speed_percents=(100.0,),
+    )
+    dense = merge_and_retime_robot_trajectories(
+        (sampled_path(500),),
+        maximum_acceleration=2.4,
+        speed_percents=(100.0,),
+    )
+
+    def duration(result):
+        final = result.joint_trajectory.points[-1].time_from_start
+        return final.sec + final.nanosec / 1e9
+
+    assert duration(dense) == pytest.approx(duration(sparse), rel=0.05)

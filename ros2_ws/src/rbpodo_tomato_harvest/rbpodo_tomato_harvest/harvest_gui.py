@@ -115,7 +115,17 @@ STEP_CUSTOM_STAGE_DEFAULTS_MM = {
     7: (0.0, 0.0, 20.0),
     8: (-50.0, 0.0, 0.0),
 }
+STEP_CUSTOM_SPEED_STAGE_NUMBERS = (*range(3, 9), 12)
+STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE = {
+    stage_number: (100.0 if stage_number == 5 else 30.0)
+    for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
+}
+STEP_CUSTOM_SPEED_MIN_PERCENT = 10.0
+STEP_CUSTOM_SPEED_MAX_PERCENT = 100.0
+STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT = 30.0
 STEP_CUSTOM_DELTA_LIMIT_MM = 200.0
+SERVO10_CLOSE_ANGLE_DEG = 110
+SERVO10_OPEN_ANGLE_DEG = 159
 DETECTION_MARKER_NAMESPACE = "detected_tomato_preview"
 HARVEST_RESULT_NAMESPACE = "harvest_plan_result"
 HARVEST_SWEEP_NAMESPACE = "harvest_sweep_result"
@@ -886,10 +896,16 @@ def stepper_command(
     tcp_wrist_oscillation_enabled: bool = True,
     tcp_wrist_rotation_deg: float = 10.0,
     custom_stage_deltas_m: tuple[tuple[float, float, float], ...] | None = None,
+    stage_speed_percents: tuple[float, ...] | None = None,
+    preapproach_final_speed_percent: float = (
+        STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT
+    ),
+    preapproach_via_enabled: bool = True,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     servo_speed_percent: float = SERVO10_DEFAULT_SPEED_PERCENT,
-    servo_close_angle_deg: float = 100.0,
+    servo_close_angle_deg: float = SERVO10_CLOSE_ANGLE_DEG,
+    linear_motor_extend_seconds: float = 3.0,
     forward_wave_enabled: bool = False,
     tomato_frame: str | None = None,
     python_executable: str | None = None,
@@ -942,6 +958,42 @@ def stepper_command(
         raise ValueError(
             "custom stage XYZ values must be finite and within +/-0.200 m"
         )
+    if stage_speed_percents is None:
+        stage_speed_percents = tuple(
+            STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE[stage_number]
+            for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
+        )
+    try:
+        stage_speed_percents = tuple(
+            float(value) for value in stage_speed_percents
+        )
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "stage_speed_percents must contain seven numeric percentages"
+        ) from error
+    if len(stage_speed_percents) != len(STEP_CUSTOM_SPEED_STAGE_NUMBERS):
+        raise ValueError(
+            "stage_speed_percents must contain seven percentages"
+        )
+    if any(
+        not math.isfinite(value)
+        or not STEP_CUSTOM_SPEED_MIN_PERCENT
+        <= value
+        <= STEP_CUSTOM_SPEED_MAX_PERCENT
+        for value in stage_speed_percents
+    ):
+        raise ValueError("stage speed percentages must be between 10 and 100")
+    preapproach_final_speed_percent = float(
+        preapproach_final_speed_percent
+    )
+    if not math.isfinite(preapproach_final_speed_percent) or not (
+        STEP_CUSTOM_SPEED_MIN_PERCENT
+        <= preapproach_final_speed_percent
+        <= STEP_CUSTOM_SPEED_MAX_PERCENT
+    ):
+        raise ValueError(
+            "preapproach_final_speed_percent must be between 10 and 100"
+        )
     tcp_wrist_rotation_deg = float(tcp_wrist_rotation_deg)
     if (
         not math.isfinite(tcp_wrist_rotation_deg)
@@ -955,6 +1007,9 @@ def stepper_command(
     ):
         raise ValueError("servo_speed_percent must be between 1 and 100")
     servo_close_angle_deg = float(servo_angle_degrees(servo_close_angle_deg))
+    linear_motor_extend_seconds = step_linear_motor_extend_seconds(
+        linear_motor_extend_seconds
+    )
     command = harvest_command(
         tomato_index,
         True,
@@ -1001,12 +1056,43 @@ def stepper_command(
                     f"step_stage_{stage_number}_{axis_name}_delta:={value}",
                 ]
             )
+    for stage_number, speed_percent in zip(
+        STEP_CUSTOM_SPEED_STAGE_NUMBERS,
+        stage_speed_percents,
+    ):
+        command.extend(
+            [
+                "-p",
+                f"step_stage_{stage_number}_speed_percent:={speed_percent}",
+            ]
+        )
+    command.extend(
+        [
+            "-p",
+            "step_preapproach_final_speed_percent:="
+            f"{preapproach_final_speed_percent}",
+        ]
+    )
+    command.extend(
+        [
+            "-p",
+            "preapproach_via_enabled:="
+            f"{'true' if preapproach_via_enabled else 'false'}",
+        ]
+    )
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
     command.extend(
         ["-p", f"step_servo_speed_percent:={servo_speed_percent}"]
     )
     command.extend(
         ["-p", f"step_servo_close_angle_deg:={servo_close_angle_deg}"]
+    )
+    command.extend(
+        [
+            "-p",
+            "step_linear_motor_extend_seconds:="
+            f"{linear_motor_extend_seconds}",
+        ]
     )
     command.extend(
         ["-p", f"step_cycle_only:={'true' if cycle_only else 'false'}"]
@@ -1092,6 +1178,30 @@ def step_custom_stage_deltas_m(values) -> tuple[tuple[float, float, float], ...]
     return tuple(converted)
 
 
+def step_stage_speed_percents(values) -> tuple[float, ...]:
+    """Validate GUI speed percentages for detailed motion stages."""
+    converted = []
+    for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS:
+        try:
+            percent = float(values[stage_number])
+        except (KeyError, TypeError, ValueError) as error:
+            raise ValueError(
+                f"{stage_number}단계 속도는 숫자로 입력하세요."
+            ) from error
+        if not math.isfinite(percent) or not (
+            STEP_CUSTOM_SPEED_MIN_PERCENT
+            <= percent
+            <= STEP_CUSTOM_SPEED_MAX_PERCENT
+        ):
+            raise ValueError(
+                f"{stage_number}단계 속도는 "
+                f"{STEP_CUSTOM_SPEED_MIN_PERCENT:g}~"
+                f"{STEP_CUSTOM_SPEED_MAX_PERCENT:g}% 범위여야 합니다."
+            )
+        converted.append(percent)
+    return tuple(converted)
+
+
 def adaptive_grasp_max_rotation_degrees(value) -> float:
     """Validate the operator-configured adaptive grasp rotation limit."""
     try:
@@ -1112,6 +1222,19 @@ def servo_angle_degrees(value) -> int:
     if not math.isfinite(degrees) or not 10.0 <= degrees <= 173.0:
         raise ValueError("서보 각도는 10~173° 범위여야 합니다.")
     return int(round(degrees))
+
+
+def step_linear_motor_extend_seconds(value) -> float:
+    """Validate the detailed-step linear motor extension duration."""
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "리니어모터 늘림 시간은 초 단위 숫자로 입력하세요."
+        ) from error
+    if not math.isfinite(seconds) or not 0.0 <= seconds <= 60.0:
+        raise ValueError("리니어모터 늘림 시간은 0~60초 범위여야 합니다.")
+    return seconds
 
 
 def servo_speed_percent(value) -> int:
@@ -3252,11 +3375,12 @@ class HarvestGui(Node):
         self.scene_y = tk.StringVar(value="-0.375")
         self.scene_z = tk.StringVar(value="0.340")
         self.scene_rotation = tk.StringVar(value="45.0")
-        self.speed_bar_percent = tk.StringVar(value="10")
         self.motion_velocity_percent = tk.StringVar(value="20")
         self.motion_acceleration_percent = tk.StringVar(value="20")
         self.linear_motor_wait_sec = tk.StringVar(value="2.0")
-        self.servo10_angle_deg_var = tk.StringVar(value="90")
+        self.servo10_angle_deg_var = tk.StringVar(
+            value=str(SERVO10_CLOSE_ANGLE_DEG)
+        )
         self.servo10_speed_enabled_var = tk.BooleanVar(value=False)
         self.servo10_speed_percent_var = tk.StringVar(
             value=str(SERVO10_DEFAULT_SPEED_PERCENT)
@@ -3266,7 +3390,10 @@ class HarvestGui(Node):
         )
         self.harvest_forward_distance_mm_var = tk.StringVar(value="40")
         self.tcp_wrist_rotation_deg_var = tk.StringVar(value="10")
-        self.step_servo_close_angle_deg_var = tk.StringVar(value="100")
+        self.step_servo_close_angle_deg_var = tk.StringVar(
+            value=str(SERVO10_CLOSE_ANGLE_DEG)
+        )
+        self.step_linear_motor_extend_sec_var = tk.StringVar(value="3.0")
         self.step_forward_wave_enabled_var = tk.BooleanVar(value=False)
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
             value=False
@@ -3279,6 +3406,7 @@ class HarvestGui(Node):
         self.preplan_all_var = tk.BooleanVar(value=False)
         self.step_execution_enabled_var = tk.BooleanVar(value=False)
         self.step_merge_cartesian_var = tk.BooleanVar(value=False)
+        self.step_merge_all_trajectories_var = tk.BooleanVar(value=False)
         self.step_custom_delta_vars = {
             stage_number: {
                 axis_name: tk.StringVar(value=f"{value:g}")
@@ -3289,6 +3417,29 @@ class HarvestGui(Node):
             }
             for stage_number in STEP_CUSTOM_STAGE_DEFAULTS_MM
         }
+        self.step_stage_speed_percent_vars = {
+            stage_number: tk.DoubleVar(
+                value=STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE[stage_number]
+            )
+            for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
+        }
+        self.step_stage_speed_display_vars = {
+            stage_number: tk.StringVar(
+                value=(
+                    f"{STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE[stage_number]:.0f}%"
+                )
+            )
+            for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
+        }
+        self.step_preapproach_final_speed_percent_var = tk.DoubleVar(
+            value=STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT
+        )
+        self.step_preapproach_via_enabled_var = tk.BooleanVar(value=True)
+        self.step_preapproach_final_speed_display_var = tk.StringVar(
+            value=(
+                f"{STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT:.0f}%"
+            )
+        )
         self.step_status = tk.StringVar(
             value="토마토를 선택하고 스텝 Plan을 생성하세요."
         )
@@ -3311,11 +3462,15 @@ class HarvestGui(Node):
         )
         self.motion_velocity_scale = 0.20
         self.motion_acceleration_scale = 0.20
+        self.hardware_speed_bar_applied = False
+        self.hardware_speed_bar_request_pending = False
+        self.hardware_speed_bar_failure_logged = False
         self.status = tk.StringVar(value="MoveIt과 카메라 서비스를 확인해 주세요.")
         self._build_ui()
         self._refresh_lift_node_status()
         self._refresh_linear_motor_node_status()
         self._refresh_gripper_stroke_status()
+        self.root.after(500, self._maintain_hardware_speed_bar)
         self.root.after(50, self._spin_ros)
         self.root.after(50, self._drain_process_queue)
         self.root.after(400, self.read_scene_position)
@@ -4210,7 +4365,7 @@ class HarvestGui(Node):
         step_content = ttk.Frame(frame)
         step_content.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
         step_content.columnconfigure(0, weight=3, minsize=700)
-        step_content.columnconfigure(1, weight=1, minsize=390)
+        step_content.columnconfigure(1, weight=1, minsize=520)
         step_content.rowconfigure(0, weight=1)
 
         stages = ttk.LabelFrame(step_content, text="수확 단계", padding=8)
@@ -4249,54 +4404,144 @@ class HarvestGui(Node):
 
         custom = ttk.LabelFrame(
             step_content,
-            text="위치 이동 단계 tip 로컬 XYZ 커스텀 (mm)",
+            text="단계별 tip 로컬 XYZ (mm) · 실행 속도",
             padding=10,
         )
         custom.grid(row=0, column=1, sticky="nsew", padx=(6, 0))
-        for column in range(4):
+        for column in range(6):
             custom.columnconfigure(column, weight=1)
-        for column, text_value in enumerate(("단계", "X", "Y", "Z")):
+        custom.columnconfigure(4, weight=3)
+        for column, text_value in enumerate(
+            ("단계", "X", "Y", "Z", "속도", "%")
+        ):
             ttk.Label(
                 custom,
                 text=text_value,
                 anchor="center",
             ).grid(row=0, column=column, sticky="ew", padx=3)
         self.step_custom_delta_entries = []
+        self.step_stage_speed_scales = []
+        ttk.Label(
+            custom,
+            text="A→PRE",
+            anchor="center",
+        ).grid(row=1, column=0, sticky="ew", padx=3, pady=4)
+        self.step_preapproach_via_checkbox = ttk.Checkbutton(
+            custom,
+            text="경유점 A 사용 (PICK_READY → A → PRE_APPROACH)",
+            variable=self.step_preapproach_via_enabled_var,
+            command=self._step_preapproach_via_changed,
+        )
+        self.step_preapproach_via_checkbox.grid(
+            row=1,
+            column=1,
+            columnspan=3,
+            sticky="w",
+            padx=3,
+            pady=4,
+        )
+        preapproach_speed_scale = ttk.Scale(
+            custom,
+            from_=STEP_CUSTOM_SPEED_MIN_PERCENT,
+            to=STEP_CUSTOM_SPEED_MAX_PERCENT,
+            orient="horizontal",
+            variable=self.step_preapproach_final_speed_percent_var,
+            command=self._step_preapproach_final_speed_changed,
+        )
+        preapproach_speed_scale.grid(
+            row=1,
+            column=4,
+            sticky="ew",
+            padx=(6, 3),
+            pady=4,
+        )
+        self.step_preapproach_final_speed_scale = (
+            preapproach_speed_scale
+        )
+        self.step_stage_speed_scales.append(preapproach_speed_scale)
+        ttk.Label(
+            custom,
+            textvariable=self.step_preapproach_final_speed_display_var,
+            anchor="e",
+            width=5,
+        ).grid(row=1, column=5, sticky="e", padx=3, pady=4)
         for row, stage_number in enumerate(
-            STEP_CUSTOM_STAGE_DEFAULTS_MM,
-            start=1,
+            STEP_CUSTOM_SPEED_STAGE_NUMBERS,
+            start=2,
         ):
             ttk.Label(
                 custom,
                 text=f"{stage_number}단계",
                 anchor="center",
             ).grid(row=row, column=0, sticky="ew", padx=3, pady=4)
-            for column, axis_name in enumerate(("x", "y", "z"), start=1):
-                entry = ttk.Spinbox(
-                    custom,
-                    textvariable=(
-                        self.step_custom_delta_vars[stage_number][axis_name]
-                    ),
-                    from_=-200,
-                    to=200,
-                    increment=1,
-                    format="%.0f",
-                    width=8,
-                    justify="center",
-                )
-                entry.grid(
-                    row=row,
-                    column=column,
-                    sticky="ew",
-                    padx=3,
-                    pady=4,
-                )
-                self.step_custom_delta_entries.append(entry)
+            if stage_number in self.step_custom_delta_vars:
+                for column, axis_name in enumerate(
+                    ("x", "y", "z"),
+                    start=1,
+                ):
+                    entry = ttk.Spinbox(
+                        custom,
+                        textvariable=(
+                            self.step_custom_delta_vars[stage_number][axis_name]
+                        ),
+                        from_=-200,
+                        to=200,
+                        increment=1,
+                        format="%.0f",
+                        width=7,
+                        justify="center",
+                    )
+                    entry.grid(
+                        row=row,
+                        column=column,
+                        sticky="ew",
+                        padx=3,
+                        pady=4,
+                    )
+                    self.step_custom_delta_entries.append(entry)
+            else:
+                for column in range(1, 4):
+                    ttk.Label(
+                        custom,
+                        text="—",
+                        anchor="center",
+                        foreground="#888888",
+                    ).grid(
+                        row=row,
+                        column=column,
+                        sticky="ew",
+                        padx=3,
+                        pady=4,
+                    )
+            speed_scale = ttk.Scale(
+                custom,
+                from_=STEP_CUSTOM_SPEED_MIN_PERCENT,
+                to=STEP_CUSTOM_SPEED_MAX_PERCENT,
+                orient="horizontal",
+                variable=self.step_stage_speed_percent_vars[stage_number],
+                command=lambda value, number=stage_number: (
+                    self._step_stage_speed_changed(number, value)
+                ),
+            )
+            speed_scale.grid(
+                row=row,
+                column=4,
+                sticky="ew",
+                padx=(6, 3),
+                pady=4,
+            )
+            self.step_stage_speed_scales.append(speed_scale)
+            ttk.Label(
+                custom,
+                textvariable=self.step_stage_speed_display_vars[stage_number],
+                anchor="e",
+                width=5,
+            ).grid(row=row, column=5, sticky="e", padx=3, pady=4)
         ttk.Label(
             custom,
             text="5단계 TCP 회전각",
             anchor="center",
-        ).grid(row=6, column=0, sticky="ew", padx=3, pady=(10, 4))
+        ).grid(row=9, column=0, sticky="ew", padx=3, pady=(10, 4))
         self.tcp_wrist_rotation_spinbox = ttk.Spinbox(
             custom,
             textvariable=self.tcp_wrist_rotation_deg_var,
@@ -4308,16 +4553,16 @@ class HarvestGui(Node):
             justify="center",
         )
         self.tcp_wrist_rotation_spinbox.grid(
-            row=6,
+            row=9,
             column=1,
             sticky="ew",
             padx=3,
             pady=(10, 4),
         )
         ttk.Label(custom, text="° (-X → +X → 원점)").grid(
-            row=6,
+            row=9,
             column=2,
-            columnspan=2,
+            columnspan=4,
             sticky="w",
             padx=3,
             pady=(10, 4),
@@ -4332,9 +4577,9 @@ class HarvestGui(Node):
             command=self._step_wrist_oscillation_changed,
         )
         self.step_tcp_wrist_oscillation_checkbox.grid(
-            row=7,
+            row=10,
             column=0,
-            columnspan=4,
+            columnspan=6,
             sticky="w",
             padx=3,
             pady=(5, 0),
@@ -4343,7 +4588,7 @@ class HarvestGui(Node):
             custom,
             text="서보 닫기 각도",
             anchor="center",
-        ).grid(row=8, column=0, sticky="ew", padx=3, pady=(10, 4))
+        ).grid(row=11, column=0, sticky="ew", padx=3, pady=(10, 4))
         self.step_servo_close_angle_spinbox = ttk.Spinbox(
             custom,
             textvariable=self.step_servo_close_angle_deg_var,
@@ -4355,22 +4600,55 @@ class HarvestGui(Node):
             justify="center",
         )
         self.step_servo_close_angle_spinbox.grid(
-            row=8,
+            row=11,
             column=1,
             sticky="ew",
             padx=3,
             pady=(10, 4),
         )
         ttk.Label(custom, text="° (10~173°)").grid(
-            row=8,
+            row=11,
             column=2,
-            columnspan=2,
+            columnspan=4,
             sticky="w",
             padx=3,
             pady=(10, 4),
         )
         self.step_custom_delta_entries.append(
             self.step_servo_close_angle_spinbox
+        )
+        ttk.Label(
+            custom,
+            text="리니어모터 늘림 시간",
+            anchor="center",
+        ).grid(row=12, column=0, sticky="ew", padx=3, pady=(10, 4))
+        self.step_linear_motor_extend_spinbox = ttk.Spinbox(
+            custom,
+            textvariable=self.step_linear_motor_extend_sec_var,
+            from_=0.0,
+            to=60.0,
+            increment=1.0,
+            format="%.1f",
+            width=8,
+            justify="center",
+        )
+        self.step_linear_motor_extend_spinbox.grid(
+            row=12,
+            column=1,
+            sticky="ew",
+            padx=3,
+            pady=(10, 4),
+        )
+        ttk.Label(custom, text="초 (0~60초)").grid(
+            row=12,
+            column=2,
+            columnspan=4,
+            sticky="w",
+            padx=3,
+            pady=(10, 4),
+        )
+        self.step_custom_delta_entries.append(
+            self.step_linear_motor_extend_spinbox
         )
         self.step_forward_wave_checkbox = ttk.Checkbutton(
             custom,
@@ -4379,9 +4657,9 @@ class HarvestGui(Node):
             command=self._step_forward_wave_changed,
         )
         self.step_forward_wave_checkbox.grid(
-            row=9,
+            row=13,
             column=0,
-            columnspan=4,
+            columnspan=6,
             sticky="w",
             padx=3,
             pady=(8, 0),
@@ -4391,15 +4669,17 @@ class HarvestGui(Node):
             text=(
                 "XYZ 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
                 "입력 범위: 축별 -200~+200 mm (화살표 1회 = 1 mm)\n"
+                "단계별 속도: 기존 계획 궤적 대비 10~100%\n"
                 "서보 닫기 각도: 10~173° (화살표 1회 = 1°)\n"
+                "리니어모터 늘림: 0~60초 (화살표 1회 = 1초)\n"
                 "Plan 생성 후에는 세션 종료까지 잠깁니다."
             ),
             foreground="#666666",
             justify="left",
         ).grid(
-            row=10,
+            row=14,
             column=0,
-            columnspan=4,
+            columnspan=6,
             sticky="w",
             pady=(10, 0),
         )
@@ -4435,13 +4715,27 @@ class HarvestGui(Node):
             controls,
             text="접근 Cartesian 경로 합쳐서 실행",
             variable=self.step_merge_cartesian_var,
-            command=self._update_step_controls,
+            command=lambda: self._step_merge_option_changed("cartesian"),
         )
         self.step_merge_cartesian_checkbox.grid(
             row=1,
             column=0,
             columnspan=3,
             sticky="w",
+            pady=(7, 0),
+        )
+        self.step_merge_all_checkbox = ttk.Checkbutton(
+            controls,
+            text="OMPL 포함 전체경로 합쳐서 실행",
+            variable=self.step_merge_all_trajectories_var,
+            command=lambda: self._step_merge_option_changed("all"),
+        )
+        self.step_merge_all_checkbox.grid(
+            row=1,
+            column=3,
+            columnspan=3,
+            sticky="w",
+            padx=(12, 0),
             pady=(7, 0),
         )
         self.step_stop_button = ttk.Button(
@@ -4460,6 +4754,20 @@ class HarvestGui(Node):
             style="Compact.TButton",
         )
         self.step_close_button.grid(row=0, column=4, padx=6)
+        self.step_preapproach_goal_button = ttk.Button(
+            controls,
+            text="PRE_APPROACH → RViz Goal",
+            command=self.show_preapproach_goal_state,
+            state="disabled",
+            style="Compact.TButton",
+        )
+        self.step_preapproach_goal_button.grid(
+            row=3,
+            column=0,
+            columnspan=2,
+            sticky="w",
+            pady=(7, 0),
+        )
         ttk.Label(
             controls,
             textvariable=self.step_status,
@@ -4468,18 +4776,18 @@ class HarvestGui(Node):
         ttk.Label(
             controls,
             text=(
-                "선택 단계까지 실행할 때 연속 Cartesian 구간을 한 trajectory로 "
-                "사전계획합니다. READY·PRE_APPROACH·TCP 흔들기·대기·복귀는 "
-                "안전 경계로 분리됩니다."
+                "Cartesian 합치기는 연속 Cartesian만 다시 계획합니다. "
+                "OMPL 포함 합치기는 캐시된 OMPL·Cartesian 관절 경로를 "
+                "전체 재타이밍하여 한 trajectory로 실행합니다."
             ),
             foreground="#666666",
             anchor="w",
         ).grid(
-            row=1,
-            column=3,
-            columnspan=3,
+            row=2,
+            column=0,
+            columnspan=6,
             sticky="w",
-            padx=(12, 0),
+            padx=(0, 0),
             pady=(7, 0),
         )
 
@@ -4708,13 +5016,17 @@ class HarvestGui(Node):
 
         speed_frame = ttk.LabelFrame(frame, text="로봇 이동 속도", padding=10)
         speed_frame.grid(row=1, column=0, sticky="ew", pady=(10, 0))
+        ttk.Label(
+            speed_frame,
+            text="RB Speed Bar: 자동 100%",
+            foreground="#1b6e1b",
+        ).grid(row=0, column=0, columnspan=2, sticky="w", padx=(0, 18))
         speed_items = (
-            ("RB Speed Bar", self.speed_bar_percent),
             ("OMPL / Joint 속도", self.motion_velocity_percent),
             ("OMPL / Joint 가속도", self.motion_acceleration_percent),
         )
         for index, (label, variable) in enumerate(speed_items):
-            base = index * 2
+            base = 2 + index * 2
             ttk.Label(speed_frame, text=f"{label} (%)").grid(
                 row=0, column=base, padx=(0 if index == 0 else 18, 5)
             )
@@ -4735,7 +5047,10 @@ class HarvestGui(Node):
         self.apply_speed_button.grid(row=0, column=6, padx=(20, 0))
         ttk.Label(
             speed_frame,
-            text="실제 로봇은 Speed Bar와 OMPL/Joint, 시뮬레이션은 OMPL/Joint에 적용됩니다.",
+            text=(
+                "OMPL/Joint 값은 OMPL 계획에만 적용됩니다. "
+                "Cartesian 스텝은 스텝 실행 탭의 단계별 속도를 사용합니다."
+            ),
             foreground="#666666",
         ).grid(row=1, column=0, columnspan=7, sticky="w", pady=(8, 0))
 
@@ -4883,8 +5198,10 @@ class HarvestGui(Node):
         )
         self.servo10_close_button = ttk.Button(
             frame,
-            text="90° 닫기",
-            command=lambda: self.send_servo10_angle(90),
+            text=f"{SERVO10_CLOSE_ANGLE_DEG}° 닫기",
+            command=lambda: self.send_servo10_angle(
+                SERVO10_CLOSE_ANGLE_DEG
+            ),
             style="Action.TButton",
             width=12,
             state="disabled",
@@ -4898,8 +5215,10 @@ class HarvestGui(Node):
         )
         self.servo10_open_button = ttk.Button(
             frame,
-            text="170° 열기",
-            command=lambda: self.send_servo10_angle(170),
+            text=f"{SERVO10_OPEN_ANGLE_DEG}° 열기",
+            command=lambda: self.send_servo10_angle(
+                SERVO10_OPEN_ANGLE_DEG
+            ),
             style="Action.TButton",
             width=12,
             state="disabled",
@@ -7148,11 +7467,8 @@ class HarvestGui(Node):
         self._update_gripper_stroke_controls()
 
     def apply_motion_speed(self) -> None:
-        """Apply GUI planning scales and request the RB controller speed bar."""
+        """Apply the OMPL planning scales; RB Speed Bar stays automatic."""
         try:
-            speed_bar = self._percent_to_scale(
-                self.speed_bar_percent.get(), "RB Speed Bar"
-            )
             velocity = self._percent_to_scale(
                 self.motion_velocity_percent.get(), "OMPL/Joint 속도"
             )
@@ -7171,67 +7487,65 @@ class HarvestGui(Node):
             f"OMPL/Joint 속도={velocity * 100:.0f}%, "
             f"가속도={acceleration * 100:.0f}% (다음 Plan부터)"
         )
+        if self.hardware_speed_bar_applied:
+            self.status.set(
+                "속도 적용 완료 — RB Speed Bar 자동 100%, "
+                f"OMPL/Joint {velocity * 100:.0f}%"
+            )
+        else:
+            self.status.set(
+                "OMPL/Joint 속도 적용 완료 — 시뮬레이션 또는 "
+                "RB 하드웨어 연결 대기 중"
+            )
 
-        if not self.hardware_speed_client.service_is_ready():
-            if not self.hardware_speed_client.wait_for_service(timeout_sec=0.05):
-                self.status.set(
-                    "시뮬레이션 속도 적용 완료 — OMPL/Joint만 적용, "
-                    "RB Speed Bar·Cartesian은 미적용"
-                )
-                self._append_log(
-                    "[시뮬레이션/하드웨어 미연결] RB Speed Bar 서비스가 "
-                    "없어 Speed Bar 변경을 생략했습니다. "
-                    "시뮬레이션 모드에서는 정상입니다. "
-                    f"서비스={self.hardware_speed_service}"
-                )
-                self._append_log(
-                    "[적용 범위] 이번 설정은 OMPL/Joint 궤적에만 적용됩니다. "
-                    "Cartesian 궤적 속도와 RB Speed Bar에는 적용되지 않았습니다."
-                )
-                return
+    def _maintain_hardware_speed_bar(self) -> None:
+        """Keep a connected RB controller at an operator-independent 100%."""
+        if not rclpy.ok():
+            return
+        service_ready = self.hardware_speed_client.service_is_ready()
+        if not service_ready:
+            self.hardware_speed_bar_applied = False
+        elif (
+            not self.hardware_speed_bar_applied
+            and not self.hardware_speed_bar_request_pending
+        ):
+            request = SetSpeedBar.Request()
+            request.speed = 1.0
+            self.hardware_speed_bar_request_pending = True
+            future = self.hardware_speed_client.call_async(request)
+            future.add_done_callback(self._automatic_speed_bar_applied)
+        self.root.after(2000, self._maintain_hardware_speed_bar)
 
-        request = SetSpeedBar.Request()
-        request.speed = speed_bar
-        self.apply_speed_button.configure(state="disabled")
-        future = self.hardware_speed_client.call_async(request)
-        future.add_done_callback(
-            lambda completed: self._speed_bar_applied(completed, speed_bar)
-        )
-
-    def _speed_bar_applied(self, future, requested_scale: float) -> None:
-        self.apply_speed_button.configure(state="normal")
+    def _automatic_speed_bar_applied(self, future) -> None:
+        self.hardware_speed_bar_request_pending = False
         try:
             response = future.result()
         except Exception as error:
-            self.status.set(
-                "계획 속도만 적용됨 — RB Speed Bar 서비스 호출 실패"
-            )
-            self._append_log(
-                "[부분 적용] OMPL/Joint 계획 속도는 적용됐지만 "
-                f"RB Speed Bar 서비스 호출은 실패했습니다: {error}"
-            )
+            self.hardware_speed_bar_applied = False
+            if not self.hardware_speed_bar_failure_logged:
+                self._append_log(
+                    "[RB Speed Bar 자동 설정 실패] 100% 요청 중 오류: "
+                    f"{error}; 연결 상태를 확인하며 자동 재시도합니다."
+                )
+                self.hardware_speed_bar_failure_logged = True
             return
         if not response.success:
-            self.status.set(
-                "계획 속도만 적용됨 — RB 컨트롤러가 Speed Bar 변경을 거부함"
-            )
-            self._append_log(
-                "[부분 적용] OMPL/Joint 계획 속도는 적용됐지만 "
-                "RB 컨트롤러가 Speed Bar 변경을 거부했습니다: "
-                f"요청={requested_scale * 100:.0f}%"
-            )
+            self.hardware_speed_bar_applied = False
+            if not self.hardware_speed_bar_failure_logged:
+                self._append_log(
+                    "[RB Speed Bar 자동 설정 거부] 컨트롤러가 100% 요청을 "
+                    "거부했습니다. 자동 재시도합니다."
+                )
+                self.hardware_speed_bar_failure_logged = True
             return
-        self.status.set(
-            "실제 로봇 속도 적용 완료 — "
-            f"RB Speed Bar {requested_scale * 100:.0f}%, "
-            f"OMPL/Joint {self.motion_velocity_scale * 100:.0f}%"
-        )
-        self._append_log(
-            "[실제 로봇 적용됨] "
-            f"RB Speed Bar={requested_scale * 100:.0f}%, "
-            f"OMPL/Joint 속도={self.motion_velocity_scale * 100:.0f}%, "
-            f"가속도={self.motion_acceleration_scale * 100:.0f}%"
-        )
+        first_success = not self.hardware_speed_bar_applied
+        self.hardware_speed_bar_applied = True
+        self.hardware_speed_bar_failure_logged = False
+        if first_success:
+            self._append_log(
+                "[실제 로봇 RB Speed Bar] 자동 100% 설정 완료 — "
+                "사용자 조정 없이 유지합니다."
+            )
 
     def _set_sweep_result_detail(self, message: str) -> None:
         self.sweep_result_detail.configure(state="normal")
@@ -7417,6 +7731,60 @@ class HarvestGui(Node):
                 "RViz goal-state 구독자가 없습니다. RViz를 재시작하고 "
                 "MoveIt_Allow_External_Program 설정을 확인하세요."
             )
+
+    def show_preapproach_goal_state(self, *, quiet: bool = False) -> bool:
+        """Publish the planned PRE_APPROACH joint state as the RViz query goal."""
+        stage = next(
+            (
+                item
+                for item in self.step_stages
+                if item.get("key") == "READY_TO_PREAPPROACH"
+            ),
+            None,
+        )
+        joint_positions = (
+            stage.get("expected_end", {}) if stage is not None else {}
+        )
+        if not isinstance(joint_positions, dict) or not joint_positions:
+            if not quiet:
+                messagebox.showinfo(
+                    "PRE_APPROACH 자세 없음",
+                    "먼저 스텝 Plan을 실행해 PRE_APPROACH 자세를 계산하세요.",
+                )
+            return False
+
+        try:
+            names = [str(name) for name in joint_positions]
+            positions = [float(joint_positions[name]) for name in names]
+        except (TypeError, ValueError):
+            if not quiet:
+                messagebox.showerror(
+                    "PRE_APPROACH 자세 오류",
+                    "Plan 결과의 PRE_APPROACH 관절값이 올바르지 않습니다.",
+                )
+            return False
+
+        message = RobotState()
+        message.is_diff = False
+        message.joint_state.header.stamp = self.get_clock().now().to_msg()
+        message.joint_state.name = names
+        message.joint_state.position = positions
+        self.rviz_goal_state_publisher.publish(message)
+
+        self.status.set("PRE_APPROACH 자세를 RViz Query Goal에 표시했습니다.")
+        joints_deg = ", ".join(
+            f"{name}={math.degrees(position):.1f}°"
+            for name, position in zip(names, positions)
+        )
+        self._append_log(
+            "[RViz Query Goal] PRE_APPROACH 관절 자세 발행: " + joints_deg
+        )
+        if self.rviz_goal_state_publisher.get_subscription_count() == 0:
+            self._append_log(
+                "[RViz Query Goal] 구독자가 없습니다. RViz MoveIt 패널의 "
+                "Allow External Program 설정을 확인하세요."
+            )
+        return True
 
     def _read_sweep_inputs(self):
         keys = ("x", "y", "z", "rotation")
@@ -9546,6 +9914,57 @@ class HarvestGui(Node):
         )
         self._update_step_controls()
 
+    def _step_stage_speed_changed(self, stage_number: int, value) -> None:
+        """Keep the detailed-stage speed slider on whole percentages."""
+        number = int(stage_number)
+        if number not in self.step_stage_speed_percent_vars:
+            return
+        try:
+            percent = min(
+                STEP_CUSTOM_SPEED_MAX_PERCENT,
+                max(STEP_CUSTOM_SPEED_MIN_PERCENT, round(float(value))),
+            )
+        except (TypeError, ValueError):
+            return
+        self.step_stage_speed_percent_vars[number].set(percent)
+        self.step_stage_speed_display_vars[number].set(f"{percent:.0f}%")
+
+    def _step_preapproach_final_speed_changed(self, value) -> None:
+        """Round and display the A-to-PRE_APPROACH-only speed."""
+        try:
+            percent = min(
+                STEP_CUSTOM_SPEED_MAX_PERCENT,
+                max(STEP_CUSTOM_SPEED_MIN_PERCENT, round(float(value))),
+            )
+        except (TypeError, ValueError):
+            return
+        self.step_preapproach_final_speed_percent_var.set(percent)
+        self.step_preapproach_final_speed_display_var.set(
+            f"{percent:.0f}%"
+        )
+
+    def _step_preapproach_via_changed(self) -> None:
+        """Refresh controls after selecting via-A or direct approach."""
+        enabled = bool(self.step_preapproach_via_enabled_var.get())
+        self.status.set(
+            "2단계: 경유점 A를 거쳐 PRE_APPROACH로 이동합니다."
+            if enabled
+            else "2단계: 경유점 A 없이 PRE_APPROACH로 직접 이동합니다."
+        )
+        self._append_log(
+            "[스텝 옵션] PRE_APPROACH 진입: "
+            + ("경유점 A 사용" if enabled else "Direct")
+        )
+        self._update_step_controls()
+
+    def _step_merge_option_changed(self, selected: str) -> None:
+        """Keep the two mutually exclusive trajectory merge modes clear."""
+        if selected == "cartesian" and self.step_merge_cartesian_var.get():
+            self.step_merge_all_trajectories_var.set(False)
+        elif selected == "all" and self.step_merge_all_trajectories_var.get():
+            self.step_merge_cartesian_var.set(False)
+        self._update_step_controls()
+
     def _step_forward_wave_changed(self) -> None:
         """Invalidate cached step plans when the stage-4 wave is toggled."""
         self._invalidate_plan()
@@ -9988,6 +10407,16 @@ class HarvestGui(Node):
             return False
         cycle_forward_distance_m = 0.040
         custom_stage_deltas_m = None
+        stage_speed_percents = tuple(
+            STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE[stage_number]
+            for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
+        )
+        preapproach_final_speed_percent = (
+            STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT
+        )
+        preapproach_via_enabled = bool(
+            self.step_preapproach_via_enabled_var.get()
+        )
         try:
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
@@ -10016,6 +10445,11 @@ class HarvestGui(Node):
             servo_close_angle_deg = servo_angle_degrees(
                 self.step_servo_close_angle_deg_var.get()
             )
+            linear_motor_extend_seconds = (
+                step_linear_motor_extend_seconds(
+                    self.step_linear_motor_extend_sec_var.get()
+                )
+            )
             forward_wave_enabled = bool(
                 self.step_forward_wave_enabled_var.get()
             )
@@ -10043,6 +10477,25 @@ class HarvestGui(Node):
                         )
                     }
                 )
+                stage_speed_percents = step_stage_speed_percents(
+                    {
+                        stage_number: variable.get()
+                        for stage_number, variable in (
+                            self.step_stage_speed_percent_vars.items()
+                        )
+                    }
+                )
+                preapproach_final_speed_percent = float(
+                    self.step_preapproach_final_speed_percent_var.get()
+                )
+                if not (
+                    STEP_CUSTOM_SPEED_MIN_PERCENT
+                    <= preapproach_final_speed_percent
+                    <= STEP_CUSTOM_SPEED_MAX_PERCENT
+                ):
+                    raise ValueError(
+                        "A→PRE_APPROACH 속도는 10~100% 범위여야 합니다."
+                    )
         except ValueError as error:
             messagebox.showerror("스텝 Plan 설정 오류", str(error))
             return False
@@ -10067,6 +10520,11 @@ class HarvestGui(Node):
             ),
             tcp_wrist_rotation_deg=tcp_wrist_rotation_deg,
             custom_stage_deltas_m=custom_stage_deltas_m,
+            stage_speed_percents=stage_speed_percents,
+            preapproach_final_speed_percent=(
+                preapproach_final_speed_percent
+            ),
+            preapproach_via_enabled=preapproach_via_enabled,
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
             servo_speed_percent=(
@@ -10075,6 +10533,7 @@ class HarvestGui(Node):
                 else SERVO10_DEFAULT_SPEED_PERCENT
             ),
             servo_close_angle_deg=servo_close_angle_deg,
+            linear_motor_extend_seconds=linear_motor_extend_seconds,
             forward_wave_enabled=forward_wave_enabled,
         )
         environment = os.environ.copy()
@@ -10240,6 +10699,7 @@ class HarvestGui(Node):
                 f"[스텝 Plan 완료] {len(self.step_stages)}단계 캐시됨. "
                 "로봇은 아직 움직이지 않았습니다."
             )
+            self.show_preapproach_goal_state(quiet=True)
         elif event_name == "plan_failed":
             report = event.get("report") or {}
             self.step_status.set(
@@ -10297,16 +10757,22 @@ class HarvestGui(Node):
             )
         elif event_name == "continuous_planning":
             blocks = list(event.get("blocks", []))
+            merge_mode = str(event.get("mode", "cartesian"))
+            mode_label = (
+                "OMPL 포함 전체경로"
+                if merge_mode == "ompl_cartesian"
+                else "연속 Cartesian 경로"
+            )
             if blocks:
                 ranges = ", ".join(
                     f"{int(block['start_index']) + 1}~"
                     f"{int(block['end_index']) + 1}단계"
                     for block in blocks
                 )
-                message = f"연속 Cartesian 경로 사전계획 중: {ranges}"
+                message = f"{mode_label} 결합 중: {ranges}"
             else:
                 message = (
-                    "합칠 수 있는 연속 Cartesian 구간이 없어 "
+                    f"합칠 수 있는 {mode_label} 구간이 없어 "
                     "기존 단계 실행을 사용합니다."
                 )
             self.step_status.set(message)
@@ -10315,6 +10781,12 @@ class HarvestGui(Node):
         elif event_name == "continuous_started":
             start_index = int(event.get("start_index", -1))
             end_index = int(event.get("end_index", start_index))
+            merge_mode = str(event.get("mode", "cartesian"))
+            mode_label = (
+                "OMPL+Cartesian 통합"
+                if merge_mode == "ompl_cartesian"
+                else "연속 Cartesian"
+            )
             self.step_execution_in_progress = True
             for index in event.get(
                 "stage_indices", range(start_index, end_index + 1)
@@ -10326,10 +10798,29 @@ class HarvestGui(Node):
                 self.step_tree.see(str(start_index))
             message = (
                 f"{start_index + 1}~{end_index + 1}단계 "
-                "연속 Cartesian 실행 중"
+                f"{mode_label} 실행 중"
             )
+            if merge_mode == "ompl_cartesian":
+                minimum_speed = event.get(
+                    "requested_speed_min_percent"
+                )
+                maximum_speed = event.get(
+                    "requested_speed_max_percent"
+                )
+                planned_duration = event.get("retimed_duration_sec")
+                if (
+                    minimum_speed is not None
+                    and maximum_speed is not None
+                    and planned_duration is not None
+                ):
+                    message += (
+                        f" — 지정속도 {float(minimum_speed):.0f}~"
+                        f"{float(maximum_speed):.0f}%, "
+                        f"예상 {float(planned_duration):.2f}s"
+                    )
             self.step_status.set(message)
             self.status.set(message)
+            self._append_log(f"[스텝 통합 실행] {message}")
         elif event_name == "continuous_completed":
             start_index = int(event.get("start_index", -1))
             end_index = int(event.get("end_index", start_index))
@@ -10358,11 +10849,17 @@ class HarvestGui(Node):
             start_index = int(event.get("start_index", -1))
             end_index = int(event.get("end_index", start_index))
             reason = str(event.get("reason", "UNKNOWN"))
+            detail = str(event.get("detail", "")).strip()
             start_error = event.get("start_error_deg")
             reason_text = reason
             if start_error is not None:
                 reason_text += f" (시작 오차 {float(start_error):.2f}°)"
-            plan_only_failure = reason == "CONTINUOUS_CARTESIAN_PLAN_FAILED"
+            if detail:
+                reason_text += f" ({detail})"
+            plan_only_failure = reason in {
+                "CONTINUOUS_CARTESIAN_PLAN_FAILED",
+                "OMPL_CARTESIAN_MERGE_FAILED",
+            }
             self.step_execution_in_progress = False
             if not plan_only_failure:
                 self.step_session_failed = True
@@ -10865,13 +11362,21 @@ class HarvestGui(Node):
             )
             return
         merge_cartesian = bool(self.step_merge_cartesian_var.get())
-        if merge_cartesian:
+        merge_all_trajectories = bool(
+            self.step_merge_all_trajectories_var.get()
+        )
+        if merge_all_trajectories:
+            self.step_status.set(
+                "OMPL 포함 전체경로 결합·재타이밍 요청 중..."
+            )
+        elif merge_cartesian:
             self.step_status.set("연속 Cartesian 경로 사전계획 요청 중...")
         self._send_step_command(
             {
                 "command": "execute_through",
                 "stage_index": target,
                 "merge_cartesian": merge_cartesian,
+                "merge_all_trajectories": merge_all_trajectories,
             }
         )
 
@@ -10950,7 +11455,17 @@ class HarvestGui(Node):
         self.step_execute_to_button.configure(
             state="normal" if executable else "disabled"
         )
+        self.step_preapproach_goal_button.configure(
+            state="normal" if planned and manual_active else "disabled"
+        )
         self.step_merge_cartesian_checkbox.configure(
+            state=(
+                "normal"
+                if manual_active and not self.step_execution_in_progress
+                else "disabled"
+            )
+        )
+        self.step_merge_all_checkbox.configure(
             state=(
                 "normal"
                 if manual_active and not self.step_execution_in_progress
@@ -10969,6 +11484,13 @@ class HarvestGui(Node):
         custom_state = "disabled" if active or self.ui_busy else "normal"
         for entry in self.step_custom_delta_entries:
             entry.configure(state=custom_state)
+        for scale in self.step_stage_speed_scales:
+            scale.configure(state=custom_state)
+        self.step_preapproach_via_checkbox.configure(state=custom_state)
+        if not self.step_preapproach_via_enabled_var.get():
+            self.step_preapproach_final_speed_scale.configure(
+                state="disabled"
+            )
         self.step_tcp_wrist_oscillation_checkbox.configure(
             state="disabled" if active or self.ui_busy else "normal"
         )

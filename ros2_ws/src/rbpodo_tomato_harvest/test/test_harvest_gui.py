@@ -79,6 +79,8 @@ from rbpodo_tomato_harvest.harvest_gui import (
     selection_plot_recommend_screen_direction,
     scene_parameters,
     step_custom_stage_deltas_m,
+    step_linear_motor_extend_seconds,
+    step_stage_speed_percents,
     stepper_command,
     sweep_execution_duration_text,
     sweep_stage_detail,
@@ -2586,7 +2588,7 @@ def test_servo_speed_rate_uses_provisional_max_and_100_is_immediate():
     assert servo_speed_degrees_per_second(100) is None
 
 
-@pytest.mark.parametrize("preset_angle", (90, 170))
+@pytest.mark.parametrize("preset_angle", (110, 159))
 def test_servo_preset_button_publishes_requested_angle(preset_angle):
     published = []
     displayed = []
@@ -2620,7 +2622,7 @@ def test_servo_speed_unchecked_uses_default_fifty_percent():
     published = []
     gui = SimpleNamespace(
         servo10_angle_deg_var=SimpleNamespace(
-            get=lambda: "170",
+            get=lambda: "159",
             set=lambda _value: None,
         ),
         servo10_speed_enabled_var=SimpleNamespace(get=lambda: False),
@@ -2639,7 +2641,7 @@ def test_servo_speed_unchecked_uses_default_fifty_percent():
 
     HarvestGui.send_servo10_angle(gui)
 
-    assert published == [[170.0, 50.0]]
+    assert published == [[159.0, 50.0]]
 
 
 def test_stepper_command_enables_detailed_cached_plan():
@@ -2663,7 +2665,8 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "step_cycle_last_stage:=5" in command
     assert "harvest_x_forward:=0.04" in command
     assert "step_servo_speed_percent:=50.0" in command
-    assert "step_servo_close_angle_deg:=100.0" in command
+    assert "step_servo_close_angle_deg:=110.0" in command
+    assert "step_linear_motor_extend_seconds:=3.0" in command
     assert "harvest_forward_wave_enabled:=false" in command
     assert command[-2:] == ["-p", "step_cycle_only:=false"]
 
@@ -2678,6 +2681,25 @@ def test_stepper_command_forwards_servo_close_angle():
     command = stepper_command(3, servo_close_angle_deg=112)
 
     assert "step_servo_close_angle_deg:=112.0" in command
+
+
+def test_stepper_command_forwards_linear_motor_extend_time():
+    command = stepper_command(3, linear_motor_extend_seconds=7)
+
+    assert "step_linear_motor_extend_seconds:=7.0" in command
+
+
+@pytest.mark.parametrize("value", (0, 3.0, "60"))
+def test_step_linear_motor_extend_seconds_accepts_gui_range(value):
+    assert step_linear_motor_extend_seconds(value) == pytest.approx(
+        float(value)
+    )
+
+
+@pytest.mark.parametrize("value", (-0.1, 60.1, "invalid", math.inf))
+def test_step_linear_motor_extend_seconds_rejects_invalid_values(value):
+    with pytest.raises(ValueError, match="리니어모터 늘림 시간"):
+        step_linear_motor_extend_seconds(value)
 
 
 def test_stepper_command_can_enable_stage_four_forward_wave():
@@ -2719,6 +2741,58 @@ def test_stepper_command_forwards_custom_stage_xyz_parameters():
     assert "step_stage_7_x_delta:=0.007" in command
     assert "step_stage_8_z_delta:=-0.01" in command
     assert "harvest_tcp_wrist_rotation_deg:=10.0" in command
+
+
+def test_stepper_command_forwards_motion_stage_speed_parameters():
+    command = stepper_command(
+        1,
+        stage_speed_percents=(30, 40, 50, 60, 70, 80, 35),
+    )
+
+    for stage_number, percent in zip(range(3, 9), range(30, 90, 10)):
+        assert (
+            f"step_stage_{stage_number}_speed_percent:={float(percent)}"
+            in command
+        )
+    assert "step_stage_12_speed_percent:=35.0" in command
+
+
+def test_stepper_command_defaults_cartesian_stages_to_thirty_percent():
+    command = stepper_command(1)
+    expected = {
+        3: 30,
+        4: 30,
+        5: 100,
+        6: 30,
+        7: 30,
+        8: 30,
+        12: 30,
+    }
+
+    for stage_number, percent in expected.items():
+        assert (
+            f"step_stage_{stage_number}_speed_percent:={float(percent)}"
+            in command
+        )
+    assert "step_preapproach_final_speed_percent:=30.0" in command
+
+
+def test_stepper_command_forwards_a_to_preapproach_speed():
+    command = stepper_command(
+        1,
+        preapproach_final_speed_percent=45,
+    )
+
+    assert "step_preapproach_final_speed_percent:=45.0" in command
+
+
+def test_stepper_command_can_disable_preapproach_via_a():
+    command = stepper_command(
+        1,
+        preapproach_via_enabled=False,
+    )
+
+    assert "preapproach_via_enabled:=false" in command
 
 
 def test_stepper_command_can_disable_tcp_wrist_oscillation():
@@ -2798,6 +2872,32 @@ def test_step_custom_stage_deltas_rejects_invalid_or_oversized_values(value):
 
     with pytest.raises(ValueError, match="6단계"):
         step_custom_stage_deltas_m(values)
+
+
+def test_step_stage_speed_percents_validates_motion_stages():
+    actual = step_stage_speed_percents(
+        {
+            **{
+                stage_number: 10 * stage_number
+                for stage_number in range(3, 9)
+            },
+            12: 35,
+        }
+    )
+
+    assert actual == pytest.approx((30, 40, 50, 60, 70, 80, 35))
+
+
+@pytest.mark.parametrize("value", [9.9, 100.1, "invalid"])
+def test_step_stage_speed_percents_rejects_invalid_values(value):
+    values = {
+        stage_number: 100
+        for stage_number in (*range(3, 9), 12)
+    }
+    values[5] = value
+
+    with pytest.raises(ValueError, match="5단계 속도"):
+        step_stage_speed_percents(values)
 
 
 @pytest.mark.parametrize(

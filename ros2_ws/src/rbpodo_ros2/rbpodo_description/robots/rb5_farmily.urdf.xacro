@@ -8,9 +8,9 @@
   <!-- Hide only the mesh in RViz; collision and TCP remain active. -->
   <xacro:arg name="show_tomato_gripper" default="true" />
 
-  <xacro:arg name="d435_mount_x" default="-0.08435" />
-  <xacro:arg name="d435_mount_y" default="0.0859" />
-  <xacro:arg name="d435_mount_z" default="0.0" />
+  <xacro:arg name="d435_mount_x" default="-0.04915" />
+  <xacro:arg name="d435_mount_y" default="0.0415" />
+  <xacro:arg name="d435_mount_z" default="0.0125" />
   <xacro:arg name="d435_mount_roll" default="-1.57" />
   <xacro:arg name="d435_mount_pitch" default="0.0" />
   <xacro:arg name="d435_mount_yaw" default="3.141592" />
@@ -107,7 +107,7 @@
         <geometry>
           <!-- The CAD mesh is authored in millimetres. -->
           <mesh
-            filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_ver2.stl"
+            filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_1.stl"
             scale="0.001 0.001 0.001" />
         </geometry>
         <material name="tomato_gripper_gray">
@@ -118,7 +118,7 @@
     <collision>
       <geometry>
         <mesh
-          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_ver2.stl"
+          filename="package://rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_1.stl"
           scale="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -138,7 +138,7 @@
   <link name="$(arg prefix)tomato_gripper_tip" />
 
   <joint name="$(arg prefix)tomato_gripper_tip_joint" type="fixed">
-    <origin xyz="-0.162 0.020 0" rpy="1.57 3.14 0.0" />
+    <origin xyz="-0.133 0.006 0" rpy="1.57 3.14 0.0" />
     <parent link="$(arg prefix)tomato_gripper" />
     <child link="$(arg prefix)tomato_gripper_tip" />
   </joint>

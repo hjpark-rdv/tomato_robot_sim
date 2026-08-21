@@ -226,52 +226,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        C0:T0:
-          Value: true
-        C0:T1:
-          Value: true
-        C0:T2:
-          Value: true
-        C0:T3:
-          Value: true
-        C0:T4:
-          Value: true
-        C0:T5:
-          Value: true
-        C1:T0:
-          Value: true
-        C1:T1:
-          Value: true
-        C1:T10:
-          Value: true
-        C1:T11:
-          Value: true
-        C1:T2:
-          Value: true
-        C1:T3:
-          Value: true
-        C1:T4:
-          Value: true
-        C1:T5:
-          Value: true
-        C1:T6:
-          Value: true
-        C1:T8:
-          Value: true
-        C1:T9:
-          Value: true
-        C2:T0:
-          Value: true
-        C2:T1:
-          Value: true
-        C2:T2:
-          Value: true
-        C2:T3:
-          Value: true
-        C2:T4:
-          Value: true
-        C2:T5:
-          Value: true
         camera_link:
           Value: true
         d435_bottom_screw_frame:
@@ -349,52 +303,6 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
-          C0:T0:
-            {}
-          C0:T1:
-            {}
-          C0:T2:
-            {}
-          C0:T3:
-            {}
-          C0:T4:
-            {}
-          C0:T5:
-            {}
-          C1:T0:
-            {}
-          C1:T1:
-            {}
-          C1:T10:
-            {}
-          C1:T11:
-            {}
-          C1:T2:
-            {}
-          C1:T3:
-            {}
-          C1:T4:
-            {}
-          C1:T5:
-            {}
-          C1:T6:
-            {}
-          C1:T8:
-            {}
-          C1:T9:
-            {}
-          C2:T0:
-            {}
-          C2:T1:
-            {}
-          C2:T2:
-            {}
-          C2:T3:
-            {}
-          C2:T4:
-            {}
-          C2:T5:
-            {}
           farmily_lift:
             {}
           farmily_lift_platform:
@@ -715,25 +623,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.02934584766626358
+      Distance: 0.05662733316421509
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.17999961972236633
-        Y: 0.018475577235221863
-        Z: 0.7345719933509827
+        X: 0.07314319163560867
+        Y: 0.014245592057704926
+        Z: 0.5921021699905396
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2847953736782074
+      Pitch: 0.5447952747344971
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.148576498031616
+      Yaw: 4.053577899932861
     Saved: ~
 Window Geometry:
   Displays:

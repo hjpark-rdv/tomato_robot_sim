@@ -1491,6 +1491,11 @@ class CartesianHarvestPlanner(Node):
                     f"step_stage_{stage_number}_{axis_name}_delta",
                     value,
                 )
+        for stage_number in (*range(3, 9), 12):
+            self.declare_parameter(
+                f"step_stage_{stage_number}_speed_percent",
+                100.0 if stage_number == 5 else 30.0,
+            )
         self.declare_parameter("max_step", 0.005)
         self.declare_parameter("jump_threshold", 2.0)
         self.declare_parameter(

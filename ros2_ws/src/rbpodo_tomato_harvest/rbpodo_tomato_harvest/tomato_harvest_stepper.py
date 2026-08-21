@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import sys
+import threading
 import time
 from copy import deepcopy
 
@@ -13,6 +14,7 @@ from builtin_interfaces.msg import Duration as DurationMessage
 from moveit_msgs.msg import RobotState
 from rclpy.executors import ExternalShutdownException
 from std_msgs.msg import Bool, Float64MultiArray
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.harvest_planner import (
     CartesianHarvestPlanner,
@@ -22,13 +24,14 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
 CYCLE_LAST_STAGE_INDEX = 6
+SPEED_CONTROLLED_STAGE_NUMBERS = (*range(3, 9), 12)
 SERVO_COMMAND_TOPIC = "/linear_motor/servo10_command"
 LINEAR_MOTOR_PIN8_TOPIC = "/linear_motor/pin8"
 LINEAR_MOTOR_PIN9_TOPIC = "/linear_motor/pin9"
 LINEAR_MOTOR_RUN_SECONDS = 3.0
-SERVO_CLOSE_ANGLE_DEG = 100.0
-SERVO_OPEN_ANGLE_DEG = 170.0
-SERVO_DWELL_SECONDS = 1.0
+SERVO_CLOSE_ANGLE_DEG = 110.0
+SERVO_OPEN_ANGLE_DEG = 159.0
+SERVO_DWELL_SECONDS = 0.7
 
 
 def _emit(event: str, **values) -> None:
@@ -89,6 +92,419 @@ def reverse_trajectory_group(trajectories) -> tuple:
     )
 
 
+def scale_robot_trajectory_speed(trajectory, speed_percent: float):
+    """Return a cached trajectory retimed to 10~100% of planned speed."""
+    percent = float(speed_percent)
+    if not math.isfinite(percent) or not 10.0 <= percent <= 100.0:
+        raise ValueError("stage speed percent must be between 10 and 100")
+    scale = percent / 100.0
+    scaled = deepcopy(trajectory)
+
+    acceleration_scale = scale * scale
+    for point in scaled.joint_trajectory.points:
+        nanoseconds = _duration_nanoseconds(point.time_from_start)
+        point.time_from_start = _duration_message(
+            round(nanoseconds / scale)
+        )
+        if point.velocities:
+            point.velocities = [
+                float(value) * scale for value in point.velocities
+            ]
+        if point.accelerations:
+            point.accelerations = [
+                float(value) * acceleration_scale
+                for value in point.accelerations
+            ]
+    for point in scaled.multi_dof_joint_trajectory.points:
+        nanoseconds = _duration_nanoseconds(point.time_from_start)
+        point.time_from_start = _duration_message(
+            round(nanoseconds / scale)
+        )
+        for twist in point.velocities:
+            for vector in (twist.linear, twist.angular):
+                vector.x *= scale
+                vector.y *= scale
+                vector.z *= scale
+        for twist in point.accelerations:
+            for vector in (twist.linear, twist.angular):
+                vector.x *= acceleration_scale
+                vector.y *= acceleration_scale
+                vector.z *= acceleration_scale
+    return scaled
+
+
+def scale_trajectory_group_speed(trajectories, speed_percent: float) -> tuple:
+    """Retiming helper for one stage containing one or more trajectories."""
+    return tuple(
+        scale_robot_trajectory_speed(trajectory, speed_percent)
+        for trajectory in _trajectory_group(trajectories)
+    )
+
+
+def scale_trajectory_group_speeds(
+    trajectories,
+    speed_percents,
+) -> tuple:
+    """Apply one explicit speed to each cached trajectory in a group."""
+    sequence = _trajectory_group(trajectories)
+    percents = tuple(float(value) for value in speed_percents)
+    if len(sequence) != len(percents):
+        raise ValueError(
+            "trajectory group and speed percentage counts must match"
+        )
+    return tuple(
+        scale_robot_trajectory_speed(trajectory, percent)
+        for trajectory, percent in zip(sequence, percents)
+    )
+
+
+def _continuous_joint_velocities(
+    positions,
+    durations,
+    maximum_velocities,
+):
+    """Estimate conservative C1-continuous velocities at path samples."""
+    point_count = len(positions)
+    joint_count = len(positions[0])
+    velocities = [[0.0] * joint_count for _ in range(point_count)]
+    for point_index in range(1, point_count - 1):
+        previous_dt = durations[point_index - 1]
+        next_dt = durations[point_index]
+        for joint_index in range(joint_count):
+            previous_slope = (
+                positions[point_index][joint_index]
+                - positions[point_index - 1][joint_index]
+            ) / previous_dt
+            next_slope = (
+                positions[point_index + 1][joint_index]
+                - positions[point_index][joint_index]
+            ) / next_dt
+            if previous_slope * next_slope <= 0.0:
+                continue
+            velocity = math.copysign(
+                min(abs(previous_slope), abs(next_slope)),
+                previous_slope,
+            )
+            point_velocity_limit = min(
+                maximum_velocities[point_index - 1],
+                maximum_velocities[point_index],
+            )
+            velocities[point_index][joint_index] = max(
+                -point_velocity_limit,
+                min(point_velocity_limit, velocity),
+            )
+    return velocities
+
+
+def _cubic_segment_limit_ratios(
+    start_positions,
+    end_positions,
+    start_velocities,
+    end_velocities,
+    duration: float,
+    maximum_velocity: float,
+    maximum_acceleration: float,
+) -> tuple[float, float]:
+    """Return peak velocity/acceleration ratios for one Hermite segment."""
+    velocity_ratio = 0.0
+    acceleration_ratio = 0.0
+    for q0, q1, v0, v1 in zip(
+        start_positions,
+        end_positions,
+        start_velocities,
+        end_velocities,
+    ):
+        # Velocity of a cubic Hermite segment is A*s^2+B*s+C, s in [0, 1].
+        coefficient_a = (
+            6.0 * (q0 - q1) + 3.0 * duration * (v0 + v1)
+        ) / duration
+        coefficient_b = (
+            -6.0 * q0
+            + 6.0 * q1
+            - 4.0 * duration * v0
+            - 2.0 * duration * v1
+        ) / duration
+        velocity_candidates = [abs(v0), abs(v1)]
+        if abs(coefficient_a) > 1e-12:
+            critical = -coefficient_b / (2.0 * coefficient_a)
+            if 0.0 < critical < 1.0:
+                critical_velocity = (
+                    coefficient_a * critical * critical
+                    + coefficient_b * critical
+                    + v0
+                )
+                velocity_candidates.append(abs(critical_velocity))
+        velocity_ratio = max(
+            velocity_ratio,
+            max(velocity_candidates) / maximum_velocity,
+        )
+
+        acceleration_start = (
+            6.0 * (q1 - q0) / (duration * duration)
+            - (4.0 * v0 + 2.0 * v1) / duration
+        )
+        acceleration_end = (
+            -6.0 * (q1 - q0) / (duration * duration)
+            + (2.0 * v0 + 4.0 * v1) / duration
+        )
+        acceleration_ratio = max(
+            acceleration_ratio,
+            abs(acceleration_start) / maximum_acceleration,
+            abs(acceleration_end) / maximum_acceleration,
+        )
+    return velocity_ratio, acceleration_ratio
+
+
+def _scalar_profile_candidate(
+    positions,
+    maximum_velocities,
+    maximum_acceleration: float,
+    velocity_factor: float,
+):
+    """Build and validate one density-independent path timing candidate.
+
+    The old retimer accelerated from zero within the very first sampled
+    Cartesian segment.  Consequently, making ``max_step`` smaller added more
+    acceleration ramps and made an otherwise identical path much slower.  A
+    scalar path profile instead accelerates over the cumulative path length,
+    so sampling density does not become an artificial speed limit.
+    """
+    candidate_velocities = [
+        float(limit) * float(velocity_factor)
+        for limit in maximum_velocities
+    ]
+    nominal_lengths = []
+    for index, velocity_limit in enumerate(candidate_velocities):
+        nominal_lengths.append(
+            max(
+                abs(end - start) / velocity_limit
+                for start, end in zip(
+                    positions[index],
+                    positions[index + 1],
+                )
+            )
+        )
+    cumulative_lengths = [0.0]
+    for length in nominal_lengths:
+        cumulative_lengths.append(cumulative_lengths[-1] + length)
+    total_length = cumulative_lengths[-1]
+    if total_length <= 1e-12:
+        raise ValueError("merged trajectory path length is zero")
+
+    # dq/ds never exceeds the largest candidate joint speed.  Limiting the
+    # scalar acceleration by a_max / max(dq/ds) therefore supplies a safe
+    # initial ramp before the exact cubic check below.
+    scalar_acceleration = maximum_acceleration / max(candidate_velocities)
+    profile_speeds = []
+    for path_position in cumulative_lengths:
+        acceleration_speed = math.sqrt(
+            max(0.0, 2.0 * scalar_acceleration * path_position)
+        )
+        deceleration_speed = math.sqrt(
+            max(
+                0.0,
+                2.0
+                * scalar_acceleration
+                * (total_length - path_position),
+            )
+        )
+        profile_speeds.append(
+            min(1.0, acceleration_speed, deceleration_speed)
+        )
+
+    durations = []
+    for index, length in enumerate(nominal_lengths):
+        speed_sum = profile_speeds[index] + profile_speeds[index + 1]
+        if speed_sum <= 1e-9:
+            # A two-point path has no interior sample on which the triangular
+            # profile can expose its peak speed.
+            durations.append(
+                2.0 * math.sqrt(length / scalar_acceleration)
+            )
+        else:
+            durations.append(2.0 * length / speed_sum)
+
+    point_velocities = _continuous_joint_velocities(
+        positions,
+        durations,
+        candidate_velocities,
+    )
+    required_global_scale = 1.0
+    for index, duration in enumerate(durations):
+        velocity_ratio, acceleration_ratio = _cubic_segment_limit_ratios(
+            positions[index],
+            positions[index + 1],
+            point_velocities[index],
+            point_velocities[index + 1],
+            duration,
+            maximum_velocities[index],
+            maximum_acceleration,
+        )
+        required_global_scale = max(
+            required_global_scale,
+            velocity_ratio,
+            math.sqrt(acceleration_ratio),
+        )
+
+    # Uniform scaling preserves the smooth scalar profile.  Scaling isolated
+    # tiny segments was the source of the previous cascading slowdown.
+    required_global_scale *= 1.001
+    durations = [
+        duration * required_global_scale for duration in durations
+    ]
+    point_velocities = _continuous_joint_velocities(
+        positions,
+        durations,
+        maximum_velocities,
+    )
+    return durations, point_velocities
+
+
+def merge_and_retime_robot_trajectories(
+    trajectories,
+    *,
+    maximum_velocity: float = 3.14,
+    maximum_acceleration: float = 4.0,
+    speed_percents=None,
+):
+    """Merge cached paths and retime all boundaries as one smooth trajectory.
+
+    Joint positions are never modified.  Duplicate boundary samples are
+    removed, while timestamps and waypoint velocities are recomputed together
+    so an OMPL/Cartesian boundary is not forced to zero velocity.
+    """
+    sequence = _trajectory_group(trajectories)
+    if not sequence:
+        raise ValueError("at least one trajectory is required")
+    maximum_velocity = float(maximum_velocity)
+    maximum_acceleration = float(maximum_acceleration)
+    if (
+        not math.isfinite(maximum_velocity)
+        or maximum_velocity <= 0.0
+        or not math.isfinite(maximum_acceleration)
+        or maximum_acceleration <= 0.0
+    ):
+        raise ValueError(
+            "positive finite velocity and acceleration are required"
+        )
+    if speed_percents is None:
+        speed_percents = (100.0,) * len(sequence)
+    speed_percents = tuple(float(value) for value in speed_percents)
+    if len(speed_percents) != len(sequence) or any(
+        not math.isfinite(value) or not 10.0 <= value <= 100.0
+        for value in speed_percents
+    ):
+        raise ValueError(
+            "one speed percentage between 10 and 100 is required for "
+            "each trajectory"
+        )
+
+    joint_names = list(sequence[0].joint_trajectory.joint_names)
+    if not joint_names:
+        raise ValueError("trajectory joint names are empty")
+    positions = []
+    segment_speed_scales = []
+    for trajectory, speed_percent in zip(sequence, speed_percents):
+        if trajectory.multi_dof_joint_trajectory.points:
+            raise ValueError("multi-DOF trajectories cannot be merged")
+        source_names = list(trajectory.joint_trajectory.joint_names)
+        if (
+            len(source_names) != len(joint_names)
+            or len(set(source_names)) != len(source_names)
+            or set(source_names) != set(joint_names)
+        ):
+            raise ValueError("trajectory joint names do not match")
+        source_index = {name: index for index, name in enumerate(source_names)}
+        points = list(trajectory.joint_trajectory.points)
+        if not points:
+            continue
+        for point in points:
+            reordered = [
+                float(point.positions[source_index[name]])
+                for name in joint_names
+            ]
+            if len(reordered) != len(joint_names) or not all(
+                math.isfinite(value) for value in reordered
+            ):
+                raise ValueError(
+                    "trajectory point positions are incomplete or non-finite"
+                )
+            if positions and all(
+                abs(left - right) <= 1e-9
+                for left, right in zip(positions[-1], reordered)
+            ):
+                continue
+            if positions:
+                segment_speed_scales.append(speed_percent / 100.0)
+            positions.append(reordered)
+
+    if len(positions) < 2:
+        raise ValueError("merged trajectory needs at least two unique points")
+    maximum_velocities = [
+        maximum_velocity * scale for scale in segment_speed_scales
+    ]
+    # Trying lower cruise speeds is not an arbitrary slowdown.  On a sharply
+    # curved joint path, reaching the requested maximum briefly can require a
+    # longer global acceleration profile than staying below it.  Select the
+    # shortest validated candidate that never exceeds the user's limit.
+    candidates = []
+    for velocity_factor in (
+        1.0,
+        0.9,
+        0.8,
+        0.7,
+        0.6,
+        0.5,
+        0.4,
+        0.3,
+        0.2,
+        0.1,
+    ):
+        candidate = _scalar_profile_candidate(
+            positions,
+            maximum_velocities,
+            maximum_acceleration,
+            velocity_factor,
+        )
+        candidates.append(candidate)
+    durations, velocities = min(
+        candidates,
+        key=lambda candidate: sum(candidate[0]),
+    )
+    for index, duration in enumerate(durations):
+        velocity_ratio, acceleration_ratio = _cubic_segment_limit_ratios(
+            positions[index],
+            positions[index + 1],
+            velocities[index],
+            velocities[index + 1],
+            duration,
+            maximum_velocities[index],
+            maximum_acceleration,
+        )
+        if velocity_ratio > 1.001 or acceleration_ratio > 1.001:
+            raise ValueError(
+                "merged trajectory exceeds velocity or acceleration limits"
+            )
+    merged = deepcopy(sequence[0])
+    merged.joint_trajectory.joint_names = joint_names
+    merged.joint_trajectory.points = []
+    merged.multi_dof_joint_trajectory.points = []
+    elapsed = 0.0
+    for index, (point_positions, point_velocities) in enumerate(
+        zip(positions, velocities)
+    ):
+        if index:
+            elapsed += durations[index - 1]
+        point = JointTrajectoryPoint()
+        point.positions = point_positions
+        point.velocities = point_velocities
+        point.accelerations = []
+        point.effort = []
+        point.time_from_start = _duration_message(round(elapsed * 1e9))
+        merged.joint_trajectory.points.append(point)
+    return merged
+
+
 def step_stage_specs(
     plan: HarvestMotionPlan,
     wait_seconds: float,
@@ -98,7 +514,10 @@ def step_stage_specs(
     ready_state_name: str = "PICK_READY",
     servo_speed_percent: float = 50.0,
     servo_close_angle_deg: float = SERVO_CLOSE_ANGLE_DEG,
+    linear_motor_extend_seconds: float = LINEAR_MOTOR_RUN_SECONDS,
     forward_wave_enabled: bool = False,
+    stage_speed_percents=None,
+    preapproach_final_speed_percent: float = 30.0,
 ) -> list[dict]:
     """Return the ordered, cached execution groups exposed in the GUI."""
     approach = tuple(plan.step_approach_trajectories)
@@ -145,6 +564,71 @@ def step_stage_specs(
         or not 10.0 <= servo_close_angle_deg <= 173.0
     ):
         raise ValueError("servo close angle must be between 10 and 173")
+    linear_motor_extend_seconds = float(linear_motor_extend_seconds)
+    if (
+        not math.isfinite(linear_motor_extend_seconds)
+        or not 0.0 <= linear_motor_extend_seconds <= 60.0
+    ):
+        raise ValueError(
+            "linear motor extend time must be between 0 and 60 seconds"
+        )
+    if stage_speed_percents is None:
+        stage_speed_percents = (
+            30.0,
+            30.0,
+            100.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+        )
+    stage_speed_percents = tuple(
+        float(value) for value in stage_speed_percents
+    )
+    if len(stage_speed_percents) != len(SPEED_CONTROLLED_STAGE_NUMBERS) or any(
+        not math.isfinite(value) or not 10.0 <= value <= 100.0
+        for value in stage_speed_percents
+    ):
+        raise ValueError(
+            "stage speed percentages must contain seven values between "
+            "10 and 100"
+        )
+    speed_by_stage = dict(
+        zip(SPEED_CONTROLLED_STAGE_NUMBERS, stage_speed_percents)
+    )
+    preapproach_final_speed_percent = float(
+        preapproach_final_speed_percent
+    )
+    if not math.isfinite(preapproach_final_speed_percent) or not (
+        10.0 <= preapproach_final_speed_percent <= 100.0
+    ):
+        raise ValueError(
+            "A-to-PRE_APPROACH speed percent must be between 10 and 100"
+        )
+    preapproach_trajectories = _trajectory_group(
+        plan.preapproach_trajectory
+    )
+    preapproach_trajectory_speeds = (100.0,) * len(
+        preapproach_trajectories
+    )
+    preapproach_uses_via = len(preapproach_trajectories) >= 2
+    if preapproach_uses_via:
+        preapproach_trajectory_speeds = (
+            *preapproach_trajectory_speeds[:-1],
+            preapproach_final_speed_percent,
+        )
+    return_trajectories = _trajectory_group(
+        plan.return_pick_ready_trajectory
+    )
+    # `_plan_return_pick_ready_via()` appends the final constrained OMPL
+    # READY trajectory last. Apply the stage-12 slider only to the preceding
+    # current-pose -> clearance-A segment(s), preserving the OMPL scale.
+    return_trajectory_speeds = (100.0,) * len(return_trajectories)
+    if len(return_trajectories) >= 2:
+        return_trajectory_speeds = (
+            *((speed_by_stage[12],) * (len(return_trajectories) - 1)),
+            100.0,
+        )
     wrist_enabled = bool(_trajectory_group(approach[2]))
 
     def delta_detail(stage_index: int) -> str:
@@ -167,15 +651,24 @@ def step_stage_specs(
         {
             "key": "READY_TO_PREAPPROACH",
             "label": f"{ready_state_name} → PRE_APPROACH",
-            "detail": "안전 경유점 A를 거쳐 토마토 외곽 사전 접근",
+            "detail": (
+                "안전 경유점 A를 거쳐 토마토 외곽 사전 접근 / "
+                f"A→PRE 속도 {preapproach_final_speed_percent:g}%"
+                if preapproach_uses_via
+                else "경유점 A 없이 PRE_APPROACH 직접 접근"
+            ),
             "kind": "trajectory",
-            "trajectories": _trajectory_group(plan.preapproach_trajectory),
+            "trajectories": preapproach_trajectories,
+            "trajectory_speed_percents": (
+                preapproach_trajectory_speeds
+            ),
         },
         {
             "key": "PREAPPROACH_TO_TARGET",
             "label": "PRE_APPROACH → 접근 목표",
             "detail": delta_detail(0),
             "kind": "trajectory",
+            "speed_percent": speed_by_stage[3],
             "trajectories": _trajectory_group(approach[0]),
             "cartesian_waypoints": approach_waypoints[0],
         },
@@ -188,6 +681,7 @@ def step_stage_specs(
                 else f"{delta_detail(1)} / 직선 Cartesian"
             ),
             "kind": "trajectory",
+            "speed_percent": speed_by_stage[4],
             "trajectories": _trajectory_group(approach[1]),
             "cartesian_waypoints": approach_waypoints[1],
         },
@@ -201,6 +695,7 @@ def step_stage_specs(
                 else "사용 안 함 (체크 해제)"
             ),
             "kind": "trajectory" if wrist_enabled else "skip",
+            "speed_percent": speed_by_stage[5],
             "trajectories": _trajectory_group(approach[2]),
             "cartesian_waypoints": (),
         },
@@ -209,6 +704,7 @@ def step_stage_specs(
             "label": "위로 1차 이동",
             "detail": f"{delta_detail(2)} / 5→6 곡선 Cartesian",
             "kind": "trajectory",
+            "speed_percent": speed_by_stage[6],
             "trajectories": _trajectory_group(approach[3]),
             "cartesian_waypoints": approach_waypoints[3],
         },
@@ -217,6 +713,7 @@ def step_stage_specs(
             "label": "위로 2차 이동",
             "detail": f"{delta_detail(3)} / 6→7 곡선 Cartesian",
             "kind": "trajectory",
+            "speed_percent": speed_by_stage[7],
             "trajectories": _trajectory_group(approach[4]),
             "cartesian_waypoints": approach_waypoints[4],
         },
@@ -225,6 +722,7 @@ def step_stage_specs(
             "label": "뒤로 1차 이동",
             "detail": delta_detail(4),
             "kind": "trajectory",
+            "speed_percent": speed_by_stage[8],
             "trajectories": _trajectory_group(approach[5]),
             "cartesian_waypoints": approach_waypoints[5],
         },
@@ -241,10 +739,10 @@ def step_stage_specs(
         {
             "key": "LINEAR_MOTOR_EXTEND",
             "label": "리니어모터 늘림",
-            "detail": "3.0초 늘림 → 자동 정지",
+            "detail": f"{linear_motor_extend_seconds:g}초 늘림 → 자동 정지",
             "kind": "linear_motor",
             "linear_motor_command": "extend",
-            "linear_motor_duration_seconds": LINEAR_MOTOR_RUN_SECONDS,
+            "linear_motor_duration_seconds": linear_motor_extend_seconds,
             "trajectories": (),
         },
         {
@@ -253,8 +751,10 @@ def step_stage_specs(
             "detail": (
                 f"{servo_close_angle_deg:g}° 닫기 → "
                 f"{SERVO_DWELL_SECONDS:.1f}초 대기 → "
-                f"리니어모터 {LINEAR_MOTOR_RUN_SECONDS:.1f}초 줄임 → "
-                f"170° 열기 → {SERVO_DWELL_SECONDS:.1f}초 대기 "
+                f"{SERVO_OPEN_ANGLE_DEG:g}° 열기 → "
+                f"{SERVO_DWELL_SECONDS:.1f}초 대기 → "
+                f"리니어모터 {LINEAR_MOTOR_RUN_SECONDS:.1f}초 줄임 "
+                "(백그라운드 자동 정지) "
                 f"(속도 {servo_speed_percent:g}%)"
             ),
             "kind": "servo_sequence",
@@ -268,11 +768,14 @@ def step_stage_specs(
         {
             "key": "RETURN_READY",
             "label": f"현재 자세 → {ready_state_name}",
-            "detail": "안전 경유점 A로 이탈 후 constrained OMPL 복귀",
-            "kind": "trajectory",
-            "trajectories": _trajectory_group(
-                plan.return_pick_ready_trajectory
+            "detail": (
+                "안전 경유점 A로 이탈 후 constrained OMPL 복귀 / "
+                f"현재→A 속도 {speed_by_stage[12]:g}%"
             ),
+            "kind": "trajectory",
+            "speed_percent": speed_by_stage[12],
+            "trajectories": return_trajectories,
+            "trajectory_speed_percents": return_trajectory_speeds,
         },
     ]
 
@@ -314,6 +817,15 @@ def _stage_metadata(stages: list[dict]) -> list[dict]:
             "detail": stage["detail"],
             "kind": stage["kind"],
             "trajectory_count": len(stage.get("trajectories", ())),
+            "speed_percent": float(stage.get("speed_percent", 100.0)),
+            "expected_start": {
+                str(name): float(value)
+                for name, value in stage.get("expected_start", {}).items()
+            },
+            "expected_end": {
+                str(name): float(value)
+                for name, value in stage.get("expected_end", {}).items()
+            },
         }
         for index, stage in enumerate(stages)
     ]
@@ -375,15 +887,165 @@ def continuous_cartesian_stage_blocks(
             break
 
         if movement_count >= 2:
+            movement_speed_percents = [
+                float(stages[index].get("speed_percent", 100.0))
+                for index in stage_indices
+                if stages[index].get("kind") == "trajectory"
+            ]
             blocks.append(
                 {
                     "start_index": block_start,
                     "end_index": block_end,
                     "stage_indices": tuple(stage_indices),
                     "waypoints": tuple(waypoints),
+                    # A merged trajectory cannot change its time scale at the
+                    # original stage boundaries.  Respect every requested
+                    # limit by using the slowest included movement stage.
+                    "speed_percent": min(movement_speed_percents),
                 }
             )
     return blocks
+
+
+def continuous_all_trajectory_stage_blocks(
+    stages: list[dict],
+    start_index: int,
+    target_index: int,
+) -> list[dict]:
+    """Find runs that can be sent as one OMPL+Cartesian trajectory."""
+    blocks = []
+    cursor = max(0, int(start_index))
+    final_index = min(int(target_index), len(stages) - 1)
+    while cursor <= final_index:
+        if stages[cursor].get("kind") not in {"trajectory", "skip"}:
+            cursor += 1
+            continue
+        block_start = cursor
+        stage_indices = []
+        trajectory_count = 0
+        while cursor <= final_index:
+            stage = stages[cursor]
+            if stage.get("kind") not in {"trajectory", "skip"}:
+                break
+            stage_indices.append(cursor)
+            trajectory_count += len(_trajectory_group(stage.get("trajectories")))
+            cursor += 1
+        if trajectory_count >= 2:
+            blocks.append(
+                {
+                    "start_index": block_start,
+                    "end_index": stage_indices[-1],
+                    "stage_indices": tuple(stage_indices),
+                }
+            )
+    return blocks
+
+
+def _prepare_all_trajectory_blocks(
+    planner,
+    stages: list[dict],
+    start_index: int,
+    target_index: int,
+):
+    """Scale each stage, concatenate all paths, and globally retime them."""
+    planned = {}
+    blocks = continuous_all_trajectory_stage_blocks(
+        stages,
+        start_index,
+        target_index,
+    )
+    _emit(
+        "continuous_planning",
+        mode="ompl_cartesian",
+        blocks=[dict(block) for block in blocks],
+    )
+    for block in blocks:
+        trajectories = []
+        trajectory_speed_percents = []
+        ompl_velocity_percent = 100.0 * float(
+            planner.get_parameter("pick_ready_velocity_scale").value
+        )
+        maximum_acceleration = 4.0 * float(
+            planner.get_parameter("pick_ready_acceleration_scale").value
+        )
+        for stage_index in block["stage_indices"]:
+            stage = stages[stage_index]
+            if stage.get("kind") != "trajectory":
+                continue
+            stage_trajectories = _trajectory_group(
+                stage.get("trajectories")
+            )
+            trajectories.extend(stage_trajectories)
+            explicit_speeds = stage.get("trajectory_speed_percents")
+            if explicit_speeds is not None:
+                explicit_speeds = tuple(
+                    float(value) for value in explicit_speeds
+                )
+                if len(explicit_speeds) != len(stage_trajectories):
+                    _emit(
+                        "continuous_failed",
+                        mode="ompl_cartesian",
+                        start_index=block["start_index"],
+                        end_index=block["end_index"],
+                        stage_indices=block["stage_indices"],
+                        reason="TRAJECTORY_SPEED_COUNT_MISMATCH",
+                    )
+                    return None
+                trajectory_speed_percents.extend(explicit_speeds)
+            else:
+                trajectory_speed_percents.extend(
+                    [
+                        float(
+                            stage.get(
+                                "speed_percent",
+                                ompl_velocity_percent,
+                            )
+                        )
+                    ]
+                    * len(stage_trajectories)
+                )
+        try:
+            merged = merge_and_retime_robot_trajectories(
+                trajectories,
+                maximum_acceleration=maximum_acceleration,
+                speed_percents=trajectory_speed_percents,
+            )
+        except (IndexError, TypeError, ValueError) as error:
+            _emit(
+                "continuous_failed",
+                mode="ompl_cartesian",
+                start_index=block["start_index"],
+                end_index=block["end_index"],
+                stage_indices=block["stage_indices"],
+                reason="OMPL_CARTESIAN_MERGE_FAILED",
+                detail=str(error),
+            )
+            return None
+        label = (
+            f"Step {block['start_index'] + 1}-"
+            f"{block['end_index'] + 1} OMPL+Cartesian merged"
+        )
+        merged_points = merged.joint_trajectory.points
+        merged_duration = (
+            _duration_nanoseconds(merged_points[-1].time_from_start) / 1e9
+        )
+        planned[block["start_index"]] = {
+            **block,
+            "trajectory": merged,
+            "label": label,
+            "mode": "ompl_cartesian",
+            "prescaled": True,
+            "requested_speed_min_percent": min(
+                trajectory_speed_percents
+            ),
+            "requested_speed_max_percent": max(
+                trajectory_speed_percents
+            ),
+            "maximum_acceleration": maximum_acceleration,
+            "retimed_point_count": len(merged_points),
+            "retimed_duration_sec": merged_duration,
+        }
+    return planned
 
 
 def _robot_state_from_positions(positions: dict[str, float]) -> RobotState:
@@ -411,12 +1073,14 @@ def _plan_continuous_cartesian_blocks(
     )
     _emit(
         "continuous_planning",
+        mode="cartesian",
         blocks=[
             {
                 "start_index": block["start_index"],
                 "end_index": block["end_index"],
                 "stage_indices": block["stage_indices"],
                 "waypoint_count": len(block["waypoints"]),
+                "speed_percent": block["speed_percent"],
             }
             for block in blocks
         ],
@@ -434,6 +1098,7 @@ def _plan_continuous_cartesian_blocks(
         if trajectory is None:
             _emit(
                 "continuous_failed",
+                mode="cartesian",
                 start_index=first,
                 end_index=last,
                 stage_indices=block["stage_indices"],
@@ -444,6 +1109,8 @@ def _plan_continuous_cartesian_blocks(
             **block,
             "trajectory": trajectory,
             "label": label,
+            "mode": "cartesian",
+            "prescaled": False,
         }
     return planned
 
@@ -459,6 +1126,7 @@ def _execute_continuous_cartesian_block(
     if not math.isfinite(error_deg) or error_deg > 3.0:
         _emit(
             "continuous_failed",
+            mode=block.get("mode", "cartesian"),
             start_index=first,
             end_index=last,
             stage_indices=block["stage_indices"],
@@ -469,20 +1137,44 @@ def _execute_continuous_cartesian_block(
 
     _emit(
         "continuous_started",
+        mode=block.get("mode", "cartesian"),
         start_index=first,
         end_index=last,
         stage_indices=block["stage_indices"],
         label=block["label"],
+        speed_percent=block.get("speed_percent", 100.0),
+        requested_speed_min_percent=block.get(
+            "requested_speed_min_percent"
+        ),
+        requested_speed_max_percent=block.get(
+            "requested_speed_max_percent"
+        ),
+        maximum_acceleration=block.get("maximum_acceleration"),
+        retimed_point_count=block.get("retimed_point_count"),
+        retimed_duration_sec=block.get("retimed_duration_sec"),
     )
     started = time.monotonic()
+    speed_percent = float(block.get("speed_percent", 100.0))
+    execution_trajectory = block["trajectory"]
+    if not block.get("prescaled", False):
+        execution_trajectory = scale_robot_trajectory_speed(
+            execution_trajectory,
+            speed_percent,
+        )
+    speed_suffix = (
+        "전체 재타이밍"
+        if block.get("prescaled", False)
+        else f"속도 {speed_percent:g}%"
+    )
     success = planner._execute_trajectory_group(
-        (block["trajectory"],),
-        block["label"],
+        (execution_trajectory,),
+        f"{block['label']} ({speed_suffix})",
     )
     duration = time.monotonic() - started
     if not success:
         _emit(
             "continuous_failed",
+            mode=block.get("mode", "cartesian"),
             start_index=first,
             end_index=last,
             stage_indices=block["stage_indices"],
@@ -492,6 +1184,7 @@ def _execute_continuous_cartesian_block(
         return False
     _emit(
         "continuous_completed",
+        mode=block.get("mode", "cartesian"),
         start_index=first,
         end_index=last,
         stage_indices=block["stage_indices"],
@@ -515,6 +1208,7 @@ def _execute_linear_motor_action(
     *,
     command: str | None = None,
     duration_seconds: float | None = None,
+    wait_for_completion: bool = True,
 ) -> bool:
     pin8_publisher = stage.get("linear_motor_pin8_publisher")
     pin9_publisher = stage.get("linear_motor_pin9_publisher")
@@ -579,6 +1273,30 @@ def _execute_linear_motor_action(
         f"PIN8={'HIGH' if pin8_high else 'LOW'}, "
         f"PIN9={'HIGH' if pin9_high else 'LOW'}"
     )
+    if not wait_for_completion:
+        def stop_motor() -> None:
+            _linear_motor_publish(stage, False, False)
+            planner.get_logger().info(
+                f"Linear motor {selected_command} background complete; "
+                "PIN8/PIN9 LOW"
+            )
+
+        timer = threading.Timer(duration, stop_motor)
+        # Keep the process alive long enough to publish the safety LOW even if
+        # the step session is closed immediately after starting the actuator.
+        timer.daemon = False
+        pending_timers = getattr(planner, "_linear_motor_stop_timers", None)
+        if pending_timers is None:
+            pending_timers = []
+            setattr(planner, "_linear_motor_stop_timers", pending_timers)
+        pending_timers.append(timer)
+        timer.start()
+        planner.get_logger().info(
+            "Linear motor retract is running in background; continuing to "
+            "the next robot stage without waiting"
+        )
+        return True
+
     try:
         time.sleep(duration)
     finally:
@@ -610,7 +1328,10 @@ def _execute_servo_sequence(planner, stage: dict) -> bool:
 
     speed_percent = float(stage["speed_percent"])
     dwell_seconds = max(0.0, float(stage["dwell_seconds"]))
-    for angle_deg, action in ((float(stage["close_angle_deg"]), "close"),):
+    for angle_deg, action in (
+        (float(stage["close_angle_deg"]), "close"),
+        (float(stage["open_angle_deg"]), "open"),
+    ):
         message = Float64MultiArray()
         message.data = [angle_deg, speed_percent]
         publisher.publish(message)
@@ -629,18 +1350,16 @@ def _execute_servo_sequence(planner, stage: dict) -> bool:
         stage,
         command="retract",
         duration_seconds=retract_duration,
+        wait_for_completion=False,
     ):
         return False
-
-    message = Float64MultiArray()
-    message.data = [float(stage["open_angle_deg"]), speed_percent]
-    publisher.publish(message)
-    planner.get_logger().info(
-        f"Servo open command: angle={float(stage['open_angle_deg']):.0f} deg, "
-        f"speed={speed_percent:g}%, dwell={dwell_seconds:.1f}s"
-    )
-    time.sleep(dwell_seconds)
     return True
+
+
+def _wait_for_background_linear_motor_stops(planner) -> None:
+    """Keep the ROS node alive until every scheduled safety LOW is sent."""
+    for timer in tuple(getattr(planner, "_linear_motor_stop_timers", ())):
+        timer.join()
 
 
 def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bool:
@@ -668,6 +1387,7 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
         key=stage["key"],
         label=label,
         direction=direction,
+        speed_percent=float(stage.get("speed_percent", 100.0)),
     )
     started = time.monotonic()
     failure_reason = "TRAJECTORY_EXECUTION_FAILED"
@@ -687,11 +1407,34 @@ def _execute_cached_stage(planner, stage: dict, index: int, reverse: bool) -> bo
         failure_reason = "SERVO_COMMAND_FAILED"
     else:
         trajectories = stage["trajectories"]
+        trajectory_speed_percents = stage.get(
+            "trajectory_speed_percents"
+        )
         if reverse:
             trajectories = reverse_trajectory_group(trajectories)
+            if trajectory_speed_percents is not None:
+                trajectory_speed_percents = tuple(
+                    reversed(tuple(trajectory_speed_percents))
+                )
+        if trajectory_speed_percents is None:
+            speed_percent = float(stage.get("speed_percent", 100.0))
+            trajectories = scale_trajectory_group_speed(
+                trajectories,
+                speed_percent,
+            )
+            speed_label = f"속도 {speed_percent:g}%"
+        else:
+            trajectories = scale_trajectory_group_speeds(
+                trajectories,
+                trajectory_speed_percents,
+            )
+            speed_label = "구간속도 " + "/".join(
+                f"{float(value):g}%"
+                for value in trajectory_speed_percents
+            )
         success = planner._execute_trajectory_group(
             trajectories,
-            execution_label,
+            f"{execution_label} ({speed_label})",
         )
     duration = time.monotonic() - started
     if not success:
@@ -723,8 +1466,16 @@ def main(args=None) -> None:
     )
     planner.declare_parameter("step_servo_speed_percent", 50.0)
     planner.declare_parameter(
+        "step_preapproach_final_speed_percent",
+        30.0,
+    )
+    planner.declare_parameter(
         "step_servo_close_angle_deg",
         SERVO_CLOSE_ANGLE_DEG,
+    )
+    planner.declare_parameter(
+        "step_linear_motor_extend_seconds",
+        LINEAR_MOTOR_RUN_SECONDS,
     )
     planner.declare_parameter(
         "step_linear_motor_pin8_topic",
@@ -778,8 +1529,26 @@ def main(args=None) -> None:
                     "step_servo_close_angle_deg"
                 ).value
             ),
+            float(
+                planner.get_parameter(
+                    "step_linear_motor_extend_seconds"
+                ).value
+            ),
             bool(
                 planner.get_parameter("harvest_forward_wave_enabled").value
+            ),
+            stage_speed_percents=tuple(
+                float(
+                    planner.get_parameter(
+                        f"step_stage_{stage_number}_speed_percent"
+                    ).value
+                )
+                for stage_number in SPEED_CONTROLLED_STAGE_NUMBERS
+            ),
+            preapproach_final_speed_percent=float(
+                planner.get_parameter(
+                    "step_preapproach_final_speed_percent"
+                ).value
             ),
         )
         servo_topic = str(
@@ -939,10 +1708,26 @@ def main(args=None) -> None:
                 continue
 
             continuous_blocks = {}
-            if (
-                action == "execute_through"
-                and bool(command.get("merge_cartesian", False))
-            ):
+            merge_cartesian = bool(command.get("merge_cartesian", False))
+            merge_all_trajectories = bool(
+                command.get("merge_all_trajectories", False)
+            )
+            if merge_cartesian and merge_all_trajectories:
+                _emit(
+                    "command_error",
+                    message="두 경로 합치기 옵션을 동시에 사용할 수 없습니다.",
+                )
+                continue
+            if action == "execute_through" and merge_all_trajectories:
+                continuous_blocks = _prepare_all_trajectory_blocks(
+                    planner,
+                    stages,
+                    next_index,
+                    target_index,
+                )
+                if continuous_blocks is None:
+                    continue
+            elif action == "execute_through" and merge_cartesian:
                 continuous_blocks = _plan_continuous_cartesian_blocks(
                     planner,
                     stages,
@@ -985,6 +1770,7 @@ def main(args=None) -> None:
     except Exception as error:
         _emit("internal_error", message=repr(error))
     finally:
+        _wait_for_background_linear_motor_stops(planner)
         planner.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
