@@ -109,20 +109,22 @@ VISION_REVIEW_ISSUES = {
 VISION_REVIEW_OPTIONS = tuple(VISION_REVIEW_ISSUES)
 BATCH_HARVEST_STAGE_OPTIONS = ("전체 수확", "3단계까지", "4단계까지")
 STEP_CUSTOM_STAGE_DEFAULTS_MM = {
-    3: (10.0, 0.0, 0.0),
-    4: (40.0, 0.0, 0.0),
-    6: (20.0, 0.0, 20.0),
-    7: (0.0, 0.0, 20.0),
-    8: (-50.0, 0.0, 0.0),
+    4: (10.0, 0.0, 0.0),
+    5: (40.0, 0.0, 0.0),
+    7: (20.0, 0.0, 20.0),
+    8: (0.0, 0.0, 20.0),
+    9: (-50.0, 0.0, 0.0),
 }
-STEP_CUSTOM_SPEED_STAGE_NUMBERS = (*range(3, 9), 12)
+STEP_CUSTOM_SPEED_STAGE_NUMBERS = (*range(4, 10), 13)
 STEP_CUSTOM_SPEED_DEFAULT_PERCENT_BY_STAGE = {
-    stage_number: (100.0 if stage_number == 5 else 30.0)
+    stage_number: (100.0 if stage_number == 6 else 30.0)
     for stage_number in STEP_CUSTOM_SPEED_STAGE_NUMBERS
 }
 STEP_CUSTOM_SPEED_MIN_PERCENT = 10.0
 STEP_CUSTOM_SPEED_MAX_PERCENT = 100.0
 STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT = 30.0
+STEP_REINSPECTION_STAGE_INDEX = 1
+STEP_REINSPECTION_STAGE_KEY = "READY_TO_REINSPECTION_A"
 STEP_CUSTOM_DELTA_LIMIT_MM = 200.0
 SERVO10_CLOSE_ANGLE_DEG = 110
 SERVO10_OPEN_ANGLE_DEG = 159
@@ -891,7 +893,7 @@ def stepper_command(
     harvest_wait_sec: float = 2.0,
     pick_ready_state_name: str = "PICK_READY",
     cycle_only: bool = False,
-    cycle_last_stage: int = 5,
+    cycle_last_stage: int = 6,
     cycle_forward_distance_m: float = 0.040,
     tcp_wrist_oscillation_enabled: bool = True,
     tcp_wrist_rotation_deg: float = 10.0,
@@ -912,8 +914,8 @@ def stepper_command(
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
     cycle_last_stage = int(cycle_last_stage)
-    if not 1 <= cycle_last_stage <= 7:
-        raise ValueError("cycle_last_stage must be between 1 and 7")
+    if not 1 <= cycle_last_stage <= 8:
+        raise ValueError("cycle_last_stage must be between 1 and 8")
     cycle_forward_distance_m = float(cycle_forward_distance_m)
     if not 0.010 <= cycle_forward_distance_m <= 0.070:
         raise ValueError(
@@ -923,7 +925,7 @@ def stepper_command(
         custom_stage_deltas_m = tuple(
             (
                 cycle_forward_distance_m
-                if stage_number == 4 and axis_index == 0
+                if stage_number == 5 and axis_index == 0
                 else STEP_CUSTOM_STAGE_DEFAULTS_MM[stage_number][axis_index]
                 / 1000.0
             )
@@ -1103,8 +1105,8 @@ def stepper_command(
 def repeat_cycle_command(direction: str, last_stage_number: int) -> dict:
     """Build the persistent stepper command for a selected 1↔X range."""
     stage_number = int(last_stage_number)
-    if not 1 <= stage_number <= 7:
-        raise ValueError("repeat last stage must be between 1 and 7")
+    if not 1 <= stage_number <= 8:
+        raise ValueError("repeat last stage must be between 1 and 8")
     actions = {
         "forward": "execute_cycle_forward",
         "reverse": "execute_cycle_reverse",
@@ -1125,8 +1127,8 @@ def repeat_stage_command(
     """Return one cached-stage command, or None when the cycle is complete."""
     stage_number = int(last_stage_number)
     index = int(next_index)
-    if not 1 <= stage_number <= 7:
-        raise ValueError("repeat last stage must be between 1 and 7")
+    if not 1 <= stage_number <= 8:
+        raise ValueError("repeat last stage must be between 1 and 8")
     if direction == "forward":
         if index < 0 or index > stage_number:
             raise ValueError("forward repeat index is outside the cycle")
@@ -1139,13 +1141,13 @@ def repeat_stage_command(
 
 
 def repeat_forward_distance_m(value) -> float:
-    """Validate the operator's stage-four distance and convert mm to m."""
+    """Validate the operator's stage-five distance and convert mm to m."""
     try:
         millimeters = float(value)
     except (TypeError, ValueError) as error:
-        raise ValueError("4단계 진입 길이는 숫자로 입력하세요.") from error
+        raise ValueError("5단계 진입 길이는 숫자로 입력하세요.") from error
     if not math.isfinite(millimeters) or not 10.0 <= millimeters <= 70.0:
-        raise ValueError("4단계 진입 길이는 10~70 mm 범위여야 합니다.")
+        raise ValueError("5단계 진입 길이는 10~70 mm 범위여야 합니다.")
     return millimeters / 1000.0
 
 
@@ -2700,6 +2702,10 @@ class HarvestGui(Node):
             "camera_color_info_topic",
             "/camera/d435/color/camera_info",
         )
+        self.declare_parameter(
+            "step_reinspection_image_topic",
+            "/camera/d435/color/image_raw",
+        )
         self.declare_parameter("default_camera_source", "real")
         self.declare_parameter(
             "detections_topic", "/tomato_detection/detections"
@@ -2900,6 +2906,9 @@ class HarvestGui(Node):
         self.camera_color_info_topic = str(
             self.get_parameter("camera_color_info_topic").value
         )
+        self.step_reinspection_image_topic = str(
+            self.get_parameter("step_reinspection_image_topic").value
+        )
         reliable_image_qos = QoSProfile(
             depth=5,
             reliability=ReliabilityPolicy.RELIABLE,
@@ -2926,6 +2935,12 @@ class HarvestGui(Node):
             CameraInfo,
             self.camera_color_info_topic,
             self._camera_color_info_callback,
+            camera_info_qos,
+        )
+        self.step_reinspection_image_subscription = self.create_subscription(
+            RosImage,
+            self.step_reinspection_image_topic,
+            self._step_reinspection_image_callback,
             camera_info_qos,
         )
         self.scene_get_client = self.create_client(
@@ -3331,6 +3346,10 @@ class HarvestGui(Node):
         self.camera_color_image_photo = None
         self.camera_color_image_render_job = None
         self.latest_camera_color_info = None
+        self.step_reinspection_capture_pending = False
+        self.latest_step_reinspection_image = None
+        self.step_reinspection_image_photo = None
+        self.step_reinspection_image_render_job = None
         self.ui_busy = False
         self.closing = False
 
@@ -3364,6 +3383,9 @@ class HarvestGui(Node):
         )
         self.camera_color_image_status = tk.StringVar(
             value=f"Camera Color 이미지 대기: {self.camera_color_image_topic}"
+        )
+        self.step_reinspection_image_status = tk.StringVar(
+            value="2단계 완료 후 재촬영 이미지가 표시됩니다."
         )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
         self.angle_reference_mode_var = tk.StringVar(
@@ -3444,7 +3466,7 @@ class HarvestGui(Node):
             value="토마토를 선택하고 스텝 Plan을 생성하세요."
         )
         self.repeat_execution_enabled_var = tk.BooleanVar(value=False)
-        self.repeat_last_stage_var = tk.StringVar(value="5")
+        self.repeat_last_stage_var = tk.StringVar(value="6")
         self.repeat_forward_distance_mm_var = tk.StringVar(value="40")
         self.repeat_status = tk.StringVar(
             value="토마토를 선택하고 반복 테스트 Plan을 생성하세요."
@@ -3994,7 +4016,7 @@ class HarvestGui(Node):
             padx=(8, 0),
             pady=(8, 0),
         )
-        ttk.Label(options, text="4단계 진입 길이 (mm)").grid(
+        ttk.Label(options, text="5단계 진입 길이 (mm)").grid(
             row=1,
             column=2,
             sticky="w",
@@ -4411,6 +4433,7 @@ class HarvestGui(Node):
         for column in range(6):
             custom.columnconfigure(column, weight=1)
         custom.columnconfigure(4, weight=3)
+        custom.rowconfigure(14, weight=1)
         for column, text_value in enumerate(
             ("단계", "X", "Y", "Z", "속도", "%")
         ):
@@ -4428,7 +4451,10 @@ class HarvestGui(Node):
         ).grid(row=1, column=0, sticky="ew", padx=3, pady=4)
         self.step_preapproach_via_checkbox = ttk.Checkbutton(
             custom,
-            text="경유점 A 사용 (PICK_READY → A → PRE_APPROACH)",
+            text=(
+                "카메라 재촬영 A 사용 "
+                "(RGB 광축상 토마토 150mm)"
+            ),
             variable=self.step_preapproach_via_enabled_var,
             command=self._step_preapproach_via_changed,
         )
@@ -4652,7 +4678,7 @@ class HarvestGui(Node):
         )
         self.step_forward_wave_checkbox = ttk.Checkbutton(
             custom,
-            text="4단계 Z축 웨이브 사용 (±5mm × 3회)",
+            text="5단계 Z축 웨이브 사용 (±5mm × 3회)",
             variable=self.step_forward_wave_enabled_var,
             command=self._step_forward_wave_changed,
         )
@@ -4679,10 +4705,49 @@ class HarvestGui(Node):
         ).grid(
             row=14,
             column=0,
-            columnspan=6,
-            sticky="w",
+            columnspan=3,
+            sticky="nw",
             pady=(10, 0),
         )
+
+        reinspection_image = ttk.LabelFrame(
+            custom,
+            text="2단계 카메라 재촬영",
+            padding=4,
+        )
+        reinspection_image.grid(
+            row=14,
+            column=3,
+            columnspan=3,
+            sticky="nsew",
+            padx=(8, 0),
+            pady=(8, 0),
+        )
+        reinspection_image.columnconfigure(0, weight=1)
+        reinspection_image.rowconfigure(0, weight=1)
+        self.step_reinspection_image_label = tk.Label(
+            reinspection_image,
+            text="2단계 완료 후\n카메라 프레임 대기",
+            background="#202020",
+            foreground="#dddddd",
+            anchor="center",
+            relief="sunken",
+            borderwidth=1,
+        )
+        self.step_reinspection_image_label.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+        )
+        self.step_reinspection_image_label.bind(
+            "<Configure>",
+            self._schedule_step_reinspection_image_render,
+        )
+        ttk.Label(
+            reinspection_image,
+            textvariable=self.step_reinspection_image_status,
+            anchor="w",
+        ).grid(row=1, column=0, sticky="ew", pady=(3, 0))
 
         controls = ttk.Frame(frame)
         controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
@@ -4820,7 +4885,7 @@ class HarvestGui(Node):
         self.repeat_last_stage_combo = ttk.Combobox(
             setup,
             textvariable=self.repeat_last_stage_var,
-            values=("1", "2", "3", "4", "5", "6", "7"),
+            values=("1", "2", "3", "4", "5", "6", "7", "8"),
             state="readonly",
             width=5,
         )
@@ -4846,7 +4911,7 @@ class HarvestGui(Node):
             command=self._update_step_controls,
         )
         self.repeat_execution_checkbox.grid(row=0, column=5, sticky="e")
-        ttk.Label(setup, text="4단계 진입 길이 (mm)").grid(
+        ttk.Label(setup, text="5단계 진입 길이 (mm)").grid(
             row=1, column=2, sticky="w", pady=(8, 0)
         )
         self.repeat_forward_distance_spinbox = ttk.Spinbox(
@@ -7738,7 +7803,8 @@ class HarvestGui(Node):
             (
                 item
                 for item in self.step_stages
-                if item.get("key") == "READY_TO_PREAPPROACH"
+                if item.get("key")
+                == "REINSPECTION_A_TO_PREAPPROACH"
             ),
             None,
         )
@@ -9018,6 +9084,118 @@ class HarvestGui(Node):
         )
         self._update_detection_image_overlay()
 
+    def _step_reinspection_stage_is_enabled(self) -> bool:
+        """Return whether cached stage 2 is the real camera-A motion."""
+        if len(self.step_stages) <= STEP_REINSPECTION_STAGE_INDEX:
+            return False
+        stage = self.step_stages[STEP_REINSPECTION_STAGE_INDEX]
+        return (
+            str(stage.get("key", "")) == STEP_REINSPECTION_STAGE_KEY
+            and str(stage.get("kind", "")) != "skip"
+        )
+
+    def _arm_step_reinspection_image_capture(self) -> None:
+        """Capture the first raw color frame received after stage 2."""
+        if not self._step_reinspection_stage_is_enabled():
+            return
+        self.step_reinspection_capture_pending = True
+        self.step_reinspection_image_status.set(
+            f"2단계 완료 · 새 프레임 대기: {self.step_reinspection_image_topic}"
+        )
+        self.step_reinspection_image_label.configure(
+            image="",
+            text="2단계 도착 완료\n새 카메라 프레임 수신 대기...",
+        )
+        self.step_reinspection_image_photo = None
+        self._append_log(
+            "[2단계 재촬영] A 도착 완료 — "
+            f"{self.step_reinspection_image_topic}의 다음 프레임을 기다립니다."
+        )
+
+    def _step_reinspection_image_callback(self, message: RosImage) -> None:
+        """Store exactly one post-stage-2 RGB image for the step panel."""
+        if not self.step_reinspection_capture_pending:
+            return
+        try:
+            image = decode_raw_result_image(message)
+        except ValueError as error:
+            self.step_reinspection_capture_pending = False
+            self.step_reinspection_image_status.set("재촬영 이미지 디코딩 실패")
+            self._append_log(f"[2단계 재촬영 이미지 오류] {error}")
+            return
+        self.step_reinspection_capture_pending = False
+        self.latest_step_reinspection_image = image
+        encoding = str(message.encoding or "raw")
+        self.step_reinspection_image_status.set(
+            f"{image.width}×{image.height} · {encoding} · 2단계 완료 후 프레임"
+        )
+        self._schedule_step_reinspection_image_render()
+        self._append_log(
+            f"[2단계 재촬영 이미지] {image.width}×{image.height} "
+            f"{encoding} 프레임 표시 완료"
+        )
+
+    def _schedule_step_reinspection_image_render(self, _event=None) -> None:
+        if self.latest_step_reinspection_image is None or self.closing:
+            return
+        if self.step_reinspection_image_render_job is not None:
+            try:
+                self.root.after_cancel(
+                    self.step_reinspection_image_render_job
+                )
+            except tk.TclError:
+                pass
+        self.step_reinspection_image_render_job = self.root.after(
+            40,
+            self._render_step_reinspection_image,
+        )
+
+    def _render_step_reinspection_image(self) -> None:
+        self.step_reinspection_image_render_job = None
+        if self.latest_step_reinspection_image is None or self.closing:
+            return
+        maximum_width = max(
+            120,
+            self.step_reinspection_image_label.winfo_width() - 8,
+        )
+        maximum_height = max(
+            90,
+            self.step_reinspection_image_label.winfo_height() - 8,
+        )
+        display_image = self.latest_step_reinspection_image.copy()
+        display_image.thumbnail(
+            (maximum_width, maximum_height),
+            Image.Resampling.LANCZOS,
+        )
+        self.step_reinspection_image_photo = ImageTk.PhotoImage(
+            display_image
+        )
+        self.step_reinspection_image_label.configure(
+            image=self.step_reinspection_image_photo,
+            text="",
+        )
+
+    def _clear_step_reinspection_image(self) -> None:
+        """Clear a previous target's reinspection snapshot."""
+        self.step_reinspection_capture_pending = False
+        self.latest_step_reinspection_image = None
+        self.step_reinspection_image_photo = None
+        if self.step_reinspection_image_render_job is not None:
+            try:
+                self.root.after_cancel(
+                    self.step_reinspection_image_render_job
+                )
+            except tk.TclError:
+                pass
+            self.step_reinspection_image_render_job = None
+        self.step_reinspection_image_status.set(
+            "2단계 완료 후 재촬영 이미지가 표시됩니다."
+        )
+        self.step_reinspection_image_label.configure(
+            image="",
+            text="2단계 완료 후\n카메라 프레임 대기",
+        )
+
     def _vision_result_image_callback(self, message: RosImage) -> None:
         try:
             image = decode_raw_result_image(message)
@@ -9947,13 +10125,17 @@ class HarvestGui(Node):
         """Refresh controls after selecting via-A or direct approach."""
         enabled = bool(self.step_preapproach_via_enabled_var.get())
         self.status.set(
-            "2단계: 경유점 A를 거쳐 PRE_APPROACH로 이동합니다."
+            "2단계는 RGB 카메라 재촬영 A까지, "
+            "3단계는 A에서 PRE_APPROACH까지 이동합니다."
             if enabled
-            else "2단계: 경유점 A 없이 PRE_APPROACH로 직접 이동합니다."
+            else (
+                "2단계 재촬영 A는 건너뛰고, "
+                "3단계에서 PRE_APPROACH로 직접 이동합니다."
+            )
         )
         self._append_log(
             "[스텝 옵션] PRE_APPROACH 진입: "
-            + ("경유점 A 사용" if enabled else "Direct")
+            + ("RGB 카메라 재촬영 A 사용" if enabled else "Direct")
         )
         self._update_step_controls()
 
@@ -9966,16 +10148,16 @@ class HarvestGui(Node):
         self._update_step_controls()
 
     def _step_forward_wave_changed(self) -> None:
-        """Invalidate cached step plans when the stage-4 wave is toggled."""
+        """Invalidate cached step plans when the stage-5 wave is toggled."""
         self._invalidate_plan()
         enabled = bool(self.step_forward_wave_enabled_var.get())
         self.status.set(
-            "스텝 4 Z축 웨이브 사용 — 스텝 Plan을 다시 생성하세요."
+            "스텝 5 Z축 웨이브 사용 — 스텝 Plan을 다시 생성하세요."
             if enabled
-            else "스텝 4 직선 Cartesian 사용 — 스텝 Plan을 다시 생성하세요."
+            else "스텝 5 직선 Cartesian 사용 — 스텝 Plan을 다시 생성하세요."
         )
         self._append_log(
-            f"[스텝 옵션] 4단계 Z축 웨이브: "
+            f"[스텝 옵션] 5단계 Z축 웨이브: "
             f"{'사용 (±5mm × 3회)' if enabled else '사용 안 함'}"
         )
         self._update_step_controls()
@@ -10009,11 +10191,11 @@ class HarvestGui(Node):
             return
         self._invalidate_plan()
         self.status.set(
-            f"수확 4단계 진입 길이 {forward_distance_m * 1000.0:g}mm — "
+            f"수확 5단계 진입 길이 {forward_distance_m * 1000.0:g}mm — "
             "Plan-only를 다시 실행하세요."
         )
         self._append_log(
-            "수확 4단계 진입 길이 변경: "
+            "수확 5단계 진입 길이 변경: "
             f"{forward_distance_m * 1000.0:g}mm"
         )
 
@@ -10230,9 +10412,9 @@ class HarvestGui(Node):
         try:
             stage_number = int(self.repeat_last_stage_var.get())
         except (TypeError, ValueError) as error:
-            raise ValueError("반복 마지막 단계는 1~7 중에서 선택하세요.") from error
-        if not 1 <= stage_number <= 7:
-            raise ValueError("반복 마지막 단계는 1~7 중에서 선택하세요.")
+            raise ValueError("반복 마지막 단계는 1~8 중에서 선택하세요.") from error
+        if not 1 <= stage_number <= 8:
+            raise ValueError("반복 마지막 단계는 1~8 중에서 선택하세요.")
         return stage_number
 
     def _repeat_last_stage_changed(self, _event=None) -> None:
@@ -10312,7 +10494,7 @@ class HarvestGui(Node):
         self._append_log(
             f"[전체 접근 반복 시작] 토마토 {tomato_count}개, "
             f"각 토마토 1→{stage_number}→1, "
-            f"4단계 진입={forward_distance_m * 1000.0:.1f} mm"
+            f"5단계 진입={forward_distance_m * 1000.0:.1f} mm"
         )
         self.status.set("전체 토마토 접근 반복 테스트 시작...")
         self._set_busy(True)
@@ -10556,6 +10738,7 @@ class HarvestGui(Node):
             return False
 
         self.step_process = process
+        self._clear_step_reinspection_image()
         self.step_stages = []
         self.step_next_index = 0
         self.step_execution_in_progress = False
@@ -10598,9 +10781,9 @@ class HarvestGui(Node):
             f"토마토 {index}, 시작={pick_ready_state}, "
             f"planner={pipeline}/{planner_id}, preapproach={preapproach_mode}"
             + (
-                f", 4단계 진입={cycle_forward_distance_m * 1000.0:.1f} mm"
+                f", 5단계 진입={cycle_forward_distance_m * 1000.0:.1f} mm"
                 if mode == "repeat"
-                else ", 3/4/6/7/8단계 tip 로컬 XYZ="
+                else ", 4/5/7/8/9단계 tip 로컬 XYZ="
                 + str(
                     [
                         [round(value * 1000.0, 3) for value in stage_delta]
@@ -10755,6 +10938,8 @@ class HarvestGui(Node):
                 f"{'역순 복귀' if reverse else '완료'}] "
                 f"{duration:.2f}s"
             )
+            if index == STEP_REINSPECTION_STAGE_INDEX and not reverse:
+                self._arm_step_reinspection_image_capture()
         elif event_name == "continuous_planning":
             blocks = list(event.get("blocks", []))
             merge_mode = str(event.get("mode", "cartesian"))
@@ -10845,6 +11030,10 @@ class HarvestGui(Node):
                 f"[스텝 연속 실행 완료] {start_index + 1}~"
                 f"{end_index + 1}단계 / {duration:.2f}s"
             )
+            # Only an execution ending at A guarantees that the next image
+            # was captured while the robot remained at the reinspection pose.
+            if end_index == STEP_REINSPECTION_STAGE_INDEX:
+                self._arm_step_reinspection_image_capture()
         elif event_name == "continuous_failed":
             start_index = int(event.get("start_index", -1))
             end_index = int(event.get("end_index", start_index))
@@ -11182,6 +11371,8 @@ class HarvestGui(Node):
                         else f"진입 완료 ({duration:.2f}s)"
                     ),
                 )
+            if index == STEP_REINSPECTION_STAGE_INDEX and not reverse:
+                self._arm_step_reinspection_image_capture()
         elif event_name == "paused":
             self.step_execution_in_progress = False
             self.step_next_index = int(event.get("next_index", 5))
@@ -11301,8 +11492,8 @@ class HarvestGui(Node):
             return False
         if not self.step_execution_confirmed:
             execution_message = (
-                "캐시된 1~6단계 trajectory를 정방향 또는 역방향으로 "
-                "실제 로봇에서 실행합니다.\n\n"
+                "선택한 1~X단계의 캐시 trajectory를 정방향 또는 "
+                "역방향으로 실제 로봇에서 실행합니다.\n\n"
                 if repeat_mode
                 else "캐시된 trajectory를 실제 로봇에서 단계별로 "
                 "실행합니다.\n\n"
@@ -11844,7 +12035,7 @@ class HarvestGui(Node):
             f"선택한 시작/최종 복귀 자세는 {pick_ready_state}입니다.\n"
         )
         transition_message += (
-            "수확 4단계 진입 길이는 "
+            "수확 5단계 진입 길이는 "
             f"{harvest_x_forward_m * 1000.0:g}mm입니다.\n"
         )
         transition_message += (
@@ -11971,7 +12162,7 @@ class HarvestGui(Node):
             f"planner={self.batch_planner[0]}/{self.batch_planner[1]}, "
             f"preapproach={self.batch_planner[2]}, "
             f"리니어모터 대기={self.batch_harvest_wait_sec:.2f}s, "
-            "4단계 진입="
+            "5단계 진입="
             f"{self.batch_harvest_x_forward_m * 1000.0:g}mm, "
             f"5단계 TCP 회전=±{self.batch_tcp_wrist_rotation_deg:g}°, "
             f"연속 arc 전환 모드={self.batch_continuous_mode}, "
@@ -12430,7 +12621,7 @@ class HarvestGui(Node):
             f"max_rotation={adaptive_grasp_max_rotation_deg:g}°, "
             f"시작/복귀 자세={pick_ready_state}, "
             f"리니어모터 대기={harvest_wait_sec:.2f}s, "
-            f"4단계 진입={harvest_x_forward_m * 1000.0:g}mm, "
+            f"5단계 진입={harvest_x_forward_m * 1000.0:g}mm, "
             f"5단계 TCP 회전=±{harvest_tcp_wrist_rotation_deg:g}°, "
             f"종료단계={harvest_stage_limit or '전체'}, "
             f"시작={'현재→바깥 arc→pre-grasp' if continuous_transition else pick_ready_state}, "

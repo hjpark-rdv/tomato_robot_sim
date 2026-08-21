@@ -25,8 +25,8 @@ def test_stage_metadata_keeps_planned_joint_boundaries_for_rviz_goal():
     metadata = _stage_metadata(
         [
             {
-                "key": "READY_TO_PREAPPROACH",
-                "label": "PICK_READY → PRE_APPROACH",
+                "key": "REINSPECTION_A_TO_PREAPPROACH",
+                "label": "재촬영 A → PRE_APPROACH",
                 "detail": "test",
                 "kind": "trajectory",
                 "trajectories": (_trajectory("preapproach"),),
@@ -49,7 +49,7 @@ def test_stage_metadata_keeps_planned_joint_boundaries_for_rviz_goal():
 
 @pytest.mark.parametrize(
     ("requested", "expected"),
-    [(None, 6), (0, 0), (2, 2), (6, 6)],
+    [(None, 7), (0, 0), (2, 2), (7, 7)],
 )
 def test_cycle_last_stage_index_accepts_gui_range(requested, expected):
     command = {}
@@ -59,7 +59,7 @@ def test_cycle_last_stage_index_accepts_gui_range(requested, expected):
     assert cycle_last_stage_index(command, 10) == expected
 
 
-@pytest.mark.parametrize("requested", [-1, 7, "invalid"])
+@pytest.mark.parametrize("requested", [-1, 8, "invalid"])
 def test_cycle_last_stage_index_rejects_out_of_range_value(requested):
     with pytest.raises((TypeError, ValueError)):
         cycle_last_stage_index({"last_stage_index": requested}, 10)
@@ -72,7 +72,10 @@ def _trajectory(name):
 def test_step_stage_specs_exposes_complete_harvest_sequence():
     plan = SimpleNamespace(
         pick_ready_trajectory=_trajectory("ready"),
-        preapproach_trajectory=_trajectory("preapproach"),
+        preapproach_trajectory=(
+            _trajectory("ready_to_a"),
+            _trajectory("a_to_preapproach"),
+        ),
         step_approach_trajectories=tuple(
             (_trajectory(f"approach_{index}"),) for index in range(6)
         ),
@@ -84,7 +87,8 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
 
     assert [stage["key"] for stage in stages] == [
         "MOVE_TO_READY",
-        "READY_TO_PREAPPROACH",
+        "READY_TO_REINSPECTION_A",
+        "REINSPECTION_A_TO_PREAPPROACH",
         "PREAPPROACH_TO_TARGET",
         "FORWARD_X",
         "TCP_WRIST_OSCILLATION",
@@ -96,24 +100,24 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
         "SERVO_CLOSE_OPEN",
         "RETURN_READY",
     ]
-    assert stages[8]["trajectories"][0].name == "after_wait"
-    assert stages[6]["detail"] == (
+    assert stages[9]["trajectories"][0].name == "after_wait"
+    assert stages[7]["detail"] == (
         "tip 로컬 X +0.0 / Y +0.0 / Z +20.0 mm / "
+        "7→8 곡선 Cartesian"
+    )
+    assert stages[6]["detail"] == (
+        "tip 로컬 X +20.0 / Y +0.0 / Z +20.0 mm / "
         "6→7 곡선 Cartesian"
     )
-    assert stages[5]["detail"] == (
-        "tip 로컬 X +20.0 / Y +0.0 / Z +20.0 mm / "
-        "5→6 곡선 Cartesian"
-    )
-    assert stages[9]["kind"] == "linear_motor"
-    assert stages[9]["linear_motor_command"] == "extend"
-    assert stages[9]["linear_motor_duration_seconds"] == pytest.approx(3.0)
-    assert stages[10]["kind"] == "servo_sequence"
-    assert stages[10]["close_angle_deg"] == pytest.approx(110.0)
-    assert stages[10]["open_angle_deg"] == pytest.approx(159.0)
-    assert stages[10]["dwell_seconds"] == pytest.approx(0.7)
-    assert stages[10]["retract_duration_seconds"] == pytest.approx(3.0)
-    assert stages[11]["trajectories"][0].name == "return_ready"
+    assert stages[10]["kind"] == "linear_motor"
+    assert stages[10]["linear_motor_command"] == "extend"
+    assert stages[10]["linear_motor_duration_seconds"] == pytest.approx(3.0)
+    assert stages[11]["kind"] == "servo_sequence"
+    assert stages[11]["close_angle_deg"] == pytest.approx(110.0)
+    assert stages[11]["open_angle_deg"] == pytest.approx(159.0)
+    assert stages[11]["dwell_seconds"] == pytest.approx(0.7)
+    assert stages[11]["retract_duration_seconds"] == pytest.approx(3.0)
+    assert stages[12]["trajectories"][0].name == "return_ready"
 
 
 def test_step_stage_specs_displays_configured_forward_distance():
@@ -129,7 +133,7 @@ def test_step_stage_specs_displays_configured_forward_distance():
 
     stages = step_stage_specs(plan, 2.0, forward_distance_m=0.035)
 
-    assert stages[3]["detail"] == (
+    assert stages[4]["detail"] == (
         "tip 로컬 X +35.0 / Y +0.0 / Z +0.0 mm / "
         "직선 Cartesian"
     )
@@ -148,7 +152,7 @@ def test_step_stage_specs_displays_enabled_forward_wave():
 
     stages = step_stage_specs(plan, 2.0, forward_wave_enabled=True)
 
-    assert "Z축 ±5mm × 3회 웨이브 Cartesian" in stages[3]["detail"]
+    assert "Z축 ±5mm × 3회 웨이브 Cartesian" in stages[4]["detail"]
 
 
 def test_step_stage_specs_assigns_individual_motion_stage_speeds():
@@ -171,7 +175,7 @@ def test_step_stage_specs_assigns_individual_motion_stage_speeds():
         stage_speed_percents=(30, 40, 50, 60, 70, 80, 35),
     )
 
-    assert [stages[index]["speed_percent"] for index in range(2, 8)] == [
+    assert [stages[index]["speed_percent"] for index in range(3, 9)] == [
         30,
         40,
         50,
@@ -179,8 +183,8 @@ def test_step_stage_specs_assigns_individual_motion_stage_speeds():
         70,
         80,
     ]
-    assert stages[11]["speed_percent"] == pytest.approx(35.0)
-    assert stages[11]["trajectory_speed_percents"] == pytest.approx(
+    assert stages[12]["speed_percent"] == pytest.approx(35.0)
+    assert stages[12]["trajectory_speed_percents"] == pytest.approx(
         (35.0, 100.0)
     )
 
@@ -198,7 +202,7 @@ def test_step_stage_specs_defaults_only_cartesian_stages_to_thirty_percent():
 
     stages = step_stage_specs(plan, 2.0)
 
-    assert [stages[index]["speed_percent"] for index in range(2, 8)] == [
+    assert [stages[index]["speed_percent"] for index in range(3, 9)] == [
         30,
         30,
         100,
@@ -206,7 +210,7 @@ def test_step_stage_specs_defaults_only_cartesian_stages_to_thirty_percent():
         30,
         30,
     ]
-    assert stages[11]["trajectory_speed_percents"] == pytest.approx(
+    assert stages[12]["trajectory_speed_percents"] == pytest.approx(
         (100.0,)
     )
 
@@ -231,8 +235,9 @@ def test_step_stage_specs_applies_speed_only_to_a_to_preapproach_segment():
         preapproach_final_speed_percent=45.0,
     )
 
-    assert stages[1]["trajectory_speed_percents"] == (100.0, 45.0)
-    assert "A→PRE 속도 45%" in stages[1]["detail"]
+    assert stages[1]["trajectory_speed_percents"] == (100.0,)
+    assert stages[2]["trajectory_speed_percents"] == (45.0,)
+    assert "속도 45%" in stages[2]["detail"]
 
 
 def test_step_stage_specs_labels_single_segment_as_direct_preapproach():
@@ -248,8 +253,10 @@ def test_step_stage_specs_labels_single_segment_as_direct_preapproach():
 
     stages = step_stage_specs(plan, 2.0)
 
-    assert stages[1]["trajectory_speed_percents"] == (100.0,)
-    assert stages[1]["detail"] == "경유점 A 없이 PRE_APPROACH 직접 접근"
+    assert stages[1]["kind"] == "skip"
+    assert stages[1]["trajectory_speed_percents"] == ()
+    assert stages[2]["trajectory_speed_percents"] == (100.0,)
+    assert stages[2]["detail"] == "Direct PRE_APPROACH 이동"
 
 
 def test_step_stage_specs_uses_configured_servo_close_angle():
@@ -269,8 +276,8 @@ def test_step_stage_specs_uses_configured_servo_close_angle():
         servo_close_angle_deg=112.0,
     )
 
-    assert stages[10]["close_angle_deg"] == pytest.approx(112.0)
-    assert "112° 닫기" in stages[10]["detail"]
+    assert stages[11]["close_angle_deg"] == pytest.approx(112.0)
+    assert "112° 닫기" in stages[11]["detail"]
 
 
 def test_step_stage_specs_uses_configured_linear_motor_extend_time():
@@ -290,8 +297,8 @@ def test_step_stage_specs_uses_configured_linear_motor_extend_time():
         linear_motor_extend_seconds=8.0,
     )
 
-    assert stages[9]["linear_motor_duration_seconds"] == pytest.approx(8.0)
-    assert stages[9]["detail"] == "8초 늘림 → 자동 정지"
+    assert stages[10]["linear_motor_duration_seconds"] == pytest.approx(8.0)
+    assert stages[10]["detail"] == "8초 늘림 → 자동 정지"
 
 
 def test_step_stage_specs_labels_right_ready_for_right_capture():
@@ -312,7 +319,8 @@ def test_step_stage_specs_labels_right_ready_for_right_capture():
     )
 
     assert stages[0]["label"] == "현재 자세 → PICK_READY_RIGHT"
-    assert stages[1]["label"] == "PICK_READY_RIGHT → PRE_APPROACH"
+    assert stages[1]["label"] == "재촬영 A 건너뜀"
+    assert stages[2]["label"] == "PICK_READY_RIGHT → PRE_APPROACH"
     assert stages[-1]["label"] == "현재 자세 → PICK_READY_RIGHT"
 
 
@@ -331,10 +339,10 @@ def test_step_stage_specs_keeps_disabled_wrist_stage_as_skip_slot():
 
     stages = step_stage_specs(plan, 2.0)
 
-    assert stages[4]["key"] == "TCP_WRIST_OSCILLATION"
-    assert stages[4]["kind"] == "skip"
-    assert stages[4]["detail"] == "사용 안 함 (체크 해제)"
-    assert stages[4]["trajectories"] == ()
+    assert stages[5]["key"] == "TCP_WRIST_OSCILLATION"
+    assert stages[5]["kind"] == "skip"
+    assert stages[5]["detail"] == "사용 안 함 (체크 해제)"
+    assert stages[5]["trajectories"] == ()
 
 
 def test_step_stage_specs_exposes_cartesian_waypoints_for_merging():
@@ -357,9 +365,9 @@ def test_step_stage_specs_exposes_cartesian_waypoints_for_merging():
 
     stages = step_stage_specs(plan, 2.0)
 
-    assert stages[2]["cartesian_waypoints"] == ("waypoint_0",)
-    assert stages[4]["cartesian_waypoints"] == ()
-    assert stages[8]["cartesian_waypoints"] == ("waypoint_after_wait",)
+    assert stages[3]["cartesian_waypoints"] == ("waypoint_0",)
+    assert stages[5]["cartesian_waypoints"] == ()
+    assert stages[9]["cartesian_waypoints"] == ("waypoint_after_wait",)
 
 
 def test_continuous_blocks_cross_disabled_wrist_but_not_ready_or_wait():
@@ -585,7 +593,7 @@ def test_execute_linear_motor_action_can_stop_in_background(monkeypatch):
     assert pin9_published == [False, True, False]
 
 
-def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():
+def test_step_stage_specs_displays_custom_xyz_for_stages_four_to_nine():
     plan = SimpleNamespace(
         pick_ready_trajectory=_trajectory("ready"),
         preapproach_trajectory=_trajectory("preapproach"),
@@ -609,10 +617,10 @@ def test_step_stage_specs_displays_custom_xyz_for_stages_three_to_seven():
         custom_stage_deltas_m=deltas,
     )
 
-    assert stages[2]["detail"] == (
+    assert stages[3]["detail"] == (
         "tip 로컬 X +11.0 / Y +2.0 / Z -3.0 mm"
     )
-    assert stages[7]["detail"] == (
+    assert stages[8]["detail"] == (
         "tip 로컬 X -51.0 / Y +9.0 / Z -10.0 mm"
     )
 

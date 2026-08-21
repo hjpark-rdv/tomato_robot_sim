@@ -237,8 +237,9 @@ Vision Result 탭은 `/tomato_vision/result_image_raw`(`sensor_msgs/msg/Image`)�
 최종 접근 형상이 계산되기 전에 실패했다면 Final 화살표는 표시하지 않는다.
 
 `스텝 실행` 탭에서는 토마토와 시작 자세를 선택하고 `스텝 Plan 생성`을 누른다.
-이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, pre-approach,
-접근, 전진·상승·후퇴, 리니어모터 대기와 PICK_READY 복귀까지 총 10개 단계의
+이 시점에는 실제 로봇이 움직이지 않으며, 현재 자세→PICK_READY, 카메라 재촬영,
+pre-approach, 접근, 전진·상승·후퇴, 리니어모터와 서보 동작 및 PICK_READY
+복귀까지 총 13개 단계의
 trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로봇 스텝 실행 허용`을
 체크하고 최초 안전 확인을 통과하면 `다음 단계 실행` 또는 `선택 단계까지 실행`으로
 완료되지 않은 단계를 순서대로 실행할 수 있다. `이전 단계 역순 실행`은 현재
@@ -249,36 +250,50 @@ trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로
 실행을 차단한다. 중간 단계를 건너뛰는 실행은 허용하지 않는다.
 `로봇 즉시 정지`는 MoveIt/controller goal 취소와 RB 정지를 요청하고 캐시를
 폐기하므로, 정지 후에는 스텝 Plan을 다시 생성해야 한다.
-수확 단계 목록 오른쪽의 `3~7단계 tip 로컬 XYZ 커스텀 (mm)` 표에서 각 단계의
-X/Y/Z 이동량을 직접 입력할 수 있다. 기본값은 3단계 `(10, 0, 0)`, 4단계
-`(40, 0, 0)`, 5단계 `(20, 0, 20)`, 6단계 `(0, 0, 20)`, 7단계
+2단계는 `PICK_READY → RGB 카메라 재촬영 A`, 3단계는
+`재촬영 A → PRE_APPROACH`로 서로 분리되어 있다. A에서는 토마토 중심이
+`d435_color_optical_frame`의 광축 정면 150 mm에 오도록 TCP 위치를 계산하며,
+TCP 방향은 최종 PRE_APPROACH와 동일하게 유지한다. 따라서 2단계 실행 후 실제
+재촬영을 수행하고, 3단계 버튼으로 최종 사전 접근을 별도로 확인할 수 있다.
+`카메라 재촬영 A 사용`을 해제하면 2단계는 건너뛰고 3단계가
+`PICK_READY → PRE_APPROACH` 직접 이동이 된다.
+2단계의 정방향 실행이 완료되면 스텝 실행 탭 오른쪽 아래의
+`2단계 카메라 재촬영` 화면이 `/camera/d435/color/image_raw`에서 그 이후
+처음 수신한 RGB 프레임을 표시한다. 따라서 A에 도착하기 전에 수신한 오래된
+프레임은 사용하지 않는다. A를 건너뛰거나 2단계를 역순으로 복귀할 때는 새
+이미지를 캡처하지 않으며, 새 스텝 Plan을 시작하면 이전 재촬영 화면을 비운다.
+
+수확 단계 목록 오른쪽의 `4~9단계 tip 로컬 XYZ 커스텀 (mm)` 표에서 해당
+Cartesian 단계의 X/Y/Z 이동량을 직접 입력할 수 있다. 기본값은 4단계
+`(10, 0, 0)`, 5단계 `(40, 0, 0)`, 7단계 `(20, 0, 20)`, 8단계
+`(0, 0, 20)`, 9단계
 `(-50, 0, 0)` mm로 기존 동작과 같다. 각 축은 `-200~+200 mm` 범위에서
 설정하며 모두 `tomato_gripper_tip` 로컬 좌표다. Plan 생성 시 입력값을 검증하고
 trajectory에 고정하며, 해당 스텝 세션이 끝날 때까지 편집란을 잠근다. 역순 실행은
 커스텀 좌표로 생성해 캐시한 동일 trajectory를 반대로 재생한다.
-4단계에서 5단계, 5단계에서 6단계로 전환할 때는 각 단계의 끝점을 직선으로
+5단계에서 7단계, 7단계에서 8단계로 전환할 때는 각 단계의 끝점을 직선으로
 연결하지 않는다. 바로 전 tip 로컬 진행 방향에서 다음 단계 이동 방향으로 접선이
 변하는 3차 곡선을 구간마다 7개 Cartesian waypoint로 계획한다. 단계별 최종
-좌표는 변경하지 않으며, 6→5와 5→4 역순 실행도 캐시된 각 곡선 trajectory를
+좌표는 변경하지 않으며, 역순 실행도 캐시된 각 곡선 trajectory를
 역재생한다.
 
-`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대 6단계
-tip 로컬 `+Z 20 mm` 2차 상승까지 계획한다. `마지막 단계 X`에서
-1~6 중 하나를
+`접근 반복 테스트` 탭은 전체 수확 중 1단계 현재 자세→PICK_READY부터 최대
+8단계 tip 로컬 `+Z 20 mm` 2차 상승까지 계획한다. `마지막 단계 X`에서
+1~8 중 하나를
 선택하면 `1 → X 연속 진입`은 해당 단계까지 중단 없이 순서대로 실행한다. 이후
 `X → 1 역순 복귀`를 누르면 별도 복귀 경로를
 재계획하지 않고, 캐시된 각 joint trajectory의 구간 순서·point 순서·시간과
 속도 방향을 뒤집어 정확히 같은 관절 경로로 원래 시작 자세까지 복귀한다. 복귀가
 끝나면 같은 두 버튼을 반복해서 사용할 수 있다. 매 구간 직전 실제 관절 시작
 오차가 `3°`를 넘거나 trajectory 실행이 실패하면 캐시를 폐기하고 새 Plan 생성을
-요구한다. `4단계 진입 길이 (mm)`는 기본 `40`이며 `10~70 mm` 범위에서 직접
-설정할 수 있다. 이 값은 4단계 tip 로컬 `+X` trajectory 계획과 화면의 단계
+요구한다. `5단계 진입 길이 (mm)`는 기본 `40`이며 `10~70 mm` 범위에서 직접
+설정할 수 있다. 이 값은 5단계 tip 로컬 `+X` trajectory 계획과 화면의 단계
 설명에 동일하게 적용되며, X가 4보다 작으면 해당 반복에서는 실행되지 않는다.
 `전체 토마토 1 → X → 1`은 검출 순서대로 각 토마토의 Plan을 새로
 계산하고 정방향 진입과 동일 trajectory 역순 복귀를 완료한 뒤 다음 토마토로
 넘어간다. Plan 실패는 결과에 남기고 다음 토마토를 계속 시험하지만, 실제
 trajectory 실행 실패는 로봇의 다음 시작 상태를 보장할 수 없으므로 전체 실행을
-즉시 중단한다. 이 모드는 6단계 이후를 계획하지 않으므로 이후 수확 동작의 성공
+즉시 중단한다. 이 모드는 선택한 단계 이후를 계획하지 않으므로 이후 수확 동작의 성공
 여부와 무관하게 원하는 접근 구간만 독립적으로 시험할 수 있다.
 `일시 정지`는 실행 중인 trajectory를 강제로 끊지 않고 현재 단계가 끝난 직후
 다음 단계를 보류한다. 버튼이 `계속 실행`으로 바뀌며, 다시 누르면 같은 토마토의
@@ -293,16 +308,16 @@ Cartesian 동작이 끝난 뒤 입력한 시간만큼 자세를 유지하고 pos
 테스트에 동일하게 적용된다. Plan-only에서는 궤적만 계산하므로 실제로 기다리지
 않는다.
 
-수확 작업 탭의 `4단계 진입 길이 (mm)`는 기본 `40`이며 `10~70 mm` 범위에서
+수확 작업 탭의 `5단계 진입 길이 (mm)`는 기본 `40`이며 `10~70 mm` 범위에서
 1 mm 단위로 설정한다. 개별 Plan-only·실제 수확과 전체 연속 Plan·수확의
-4단계 tip 로컬 `+X` 이동에 적용된다. 개별 실행에서는 길이가 변경되면 기존
+5단계 tip 로컬 `+X` 이동에 적용된다. 개별 실행에서는 길이가 변경되면 기존
 Plan-only 검증을 폐기하며, 전체 작업에서는 시작 시 선택한 길이를 모든 토마토에
 동일하게 고정한다.
 
 `토마토별 종료 단계`는 처리할 토마토 번호가 아니라 각 토마토에서 실행할 수확
 단계를 제한한다. `3단계까지`는 모든 검출 토마토에서 `현재 자세 → PICK_READY`,
-`PICK_READY → PRE_APPROACH`, `PRE_APPROACH → 접근 목표`까지만 실행한다.
-`4단계까지`는 여기에 `접근 목표 → 앞으로 이동`을 추가한다. 제한 모드에서는
+`PICK_READY → 카메라 재촬영 A`, `재촬영 A → PRE_APPROACH`까지만 실행한다.
+`4단계까지`는 여기에 `PRE_APPROACH → 접근 목표`를 추가한다. 제한 모드에서는
 리니어모터 대기와 이후 수확·후퇴 동작을 실행하지 않는다. Arc를 체크하면 이전
 토마토의 선택 종료 자세에서 식물 바깥 arc를 거쳐 다음 토마토로 이동하고, 전체
 목록의 마지막 토마토가 끝난 뒤 선택된 `PICK_READY` 자세로 복귀한다. 리프트를
@@ -494,7 +509,7 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 관절 상태로 표시할 수 없으므로 fraction이 `0.0`이면 실패 구간의 시작 자세가
 표시된다. RViz 설정의 `MoveIt_Allow_External_Program`은 기본 활성화되어 있다.
 기본 수확 순서는
-`PICK_READY → 안전 경유점 A → Cartesian pre-approach`이다.
+`PICK_READY → RGB 카메라 재촬영 경유점 A → Cartesian pre-approach`이다.
 접근 목표 이후 tip 로컬 수확 동작은 `+X 40 mm → (+Z 20 mm, +X 20 mm)
 → +Z 20 mm → -X 50 mm → -X 10 mm → 리니어모터 대기` 순서다.
 괄호로 묶인 X/Z 변화량은 각각 하나의 Cartesian 대각선 이동으로 동시에 적용한다.
@@ -504,8 +519,9 @@ point를 `/rviz/moveit/update_custom_goal_state`로 보내 MotionPlanning의
 fake hardware 초기 자세가 모두 이 값을 읽으므로 SRDF를 수정한 뒤 두 패키지를
 다시 빌드하고 MoveIt을 재시작해야 한다.
 tip 기준으로 계산한 pre-grasp pose는 고정된 TCP-to-tip transform을 사용해
-TCP 목표 pose로 환산한다. GUI는 먼저 식물에서 떨어진 A에서 최종 TCP 자세를
-정렬하고, A에서 pre-approach까지 짧은 Cartesian 구간으로 진입한다. 별도의 TCP
+TCP 목표 pose로 환산한다. GUI는 A에서 RGB 카메라 광축 +Z 앞 150 mm에
+토마토 중심이 오도록 TCP 위치를 역산한다. A의 TCP 자세는 계산된
+pre-approach와 동일하며, A에서 pre-approach까지 독립 구간으로 진입한다. 별도의 TCP
 제자리 회전 trajectory는 생성하지 않으며 각 구간은
 `Cartesian 우선 + constrained OMPL fallback` 알고리즘으로 고정되어 있다.
 `PICK_READY → A` Cartesian이 실패하면 해당 구간만 constrained OMPL
@@ -587,16 +603,14 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
   기본 `0.0`. 이에 따라 실제 3차원 `토마토→로봇 베이스` 방향을 중심으로
   `±90°`, 전체 180° 진입 영역을 허용한다. deadline 평면 뒤쪽의 진입은 계속
   금지하지만 deadline 안쪽의 추가 안전 여유각은 적용하지 않는다.
-- `preapproach_via_enabled`: `PICK_READY → 안전 경유점 A → pre-approach`와
+- `preapproach_via_enabled`: `PICK_READY → RGB 카메라 재촬영 A → pre-approach`와
   `수확 종료점 → A → PICK_READY` 경로를 사용하며 기본 `true`
-- `preapproach_via_ratio`: `PICK_READY` EE 위치에서 토마토 중심까지의 보간
-  비율이며 기본 `0.5`, 즉 진행 방향의 정확한 중간점이다.
-- `preapproach_via_lateral_ratio`: READY EE와 토마토 중심의 수평거리 대비 A의
-  횡방향 우회 비율이며 기본 `0.38`이다. 보정된 최종 진입축이 아니라 원래
-  Recommend 바깥방향을 READY→토마토 진행축에 직교 투영하여 식물 바깥쪽으로
-  우회한다. 따라서 토마토 위치에 따라 좌우 방향은 자동으로 바뀌고, 큰 접근각
-  보정이 A를 식물 군집 안쪽으로 밀어내지 않는다. A의 자세는 최종 TCP 방향을
-  사용한다.
+- `preapproach_via_camera_frame`: 재촬영 기준 RGB 렌즈 TF이며 기본
+  `d435_color_optical_frame`
+- `preapproach_via_camera_standoff`: A에서 카메라 렌즈와 토마토 중심
+  사이 광축 거리이며 기본 `0.15` m. 토마토의 카메라 좌표가
+  약 `[0, 0, 0.15]`가 되도록 TCP 위치를 계산하고, TCP 자세는 기존
+  pre-approach와 동일하게 유지한다.
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과
 회전 전후 로봇 방향 오차, IK 검사 횟수 및 각 후보 결과가 기록된다.
@@ -834,19 +848,18 @@ robot. In plan-only mode RViz receives the complete trajectory sequence in
 order:
 
 1. Current joint state to `PICK_READY`
-2. Cartesian-first motion to clearance waypoint A, with constrained OMPL
+2. Cartesian-first motion to RGB-camera reinspection waypoint A, with constrained OMPL
    fallback only for this segment
 3. A fresh Cartesian motion from A to the pre-approach TCP pose
 4. Cartesian motion from pre-approach through the tomato harvest sequence
 5. Cartesian post-wait retreat to A, then constrained OMPL return to
    `PICK_READY`
 
-The GUI starts waypoint A at the midpoint between the selected `PICK_READY` EE
-position and the tomato center, then offsets it horizontally toward the plant
-exterior. The clearance is 38% of the READY-to-tomato horizontal distance and
-uses the uncorrected Recommend axis projected perpendicular to the travel
-line. Its orientation is the final pre-approach orientation. The
-A-to-pre-approach segment is then planned independently.
+Waypoint A keeps the final pre-approach TCP orientation and solves only its
+translation so the tomato center is `[0, 0, 0.15]` in
+`d435_color_optical_frame`. This puts the RGB lens 10 cm directly in front of
+the tomato for a close reinspection. The A-to-pre-approach segment is then
+planned independently.
 Entering `PICK_READY` uses OMPL RRTConnect. If any Cartesian segment fails,
 only that segment is retried with constrained OMPL RRTConnect. Multi-waypoint harvest
 segments retain every waypoint and retry them sequentially. The harvest target

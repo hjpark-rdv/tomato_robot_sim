@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 from geometry_msgs.msg import Pose
@@ -325,55 +327,76 @@ def test_tomato_is_between_tip_and_vine_and_tip_is_lower():
     assert np.dot(preapproach - tip, result.outward_axis) > 0.0
 
 
-def test_preapproach_via_pose_moves_outward_and_keeps_orientation():
-    ready = Pose()
-    ready.position.x = 0.10
-    ready.position.y = 0.20
-    ready.position.z = 0.15
+def test_preapproach_via_pose_centers_tomato_on_camera_optical_axis():
     preapproach = Pose()
     preapproach.position.x = 0.40
     preapproach.position.y = -0.20
     preapproach.position.z = 0.35
-    preapproach.orientation.x = 0.1
-    preapproach.orientation.y = 0.2
-    preapproach.orientation.z = 0.3
-    preapproach.orientation.w = 0.9
+    preapproach.orientation.z = math.sqrt(0.5)
+    preapproach.orientation.w = math.sqrt(0.5)
+    crop = np.array([0.50, -0.30, 0.45])
+    planning_to_camera_translation = np.array([0.02, -0.01, 0.03])
+    # Camera optical +Z points along planning-link +X.
+    planning_to_camera_rotation = np.array(
+        [
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+        ]
+    )
 
     via = make_preapproach_via_pose(
-        ready,
-        [0.50, -0.30, 0.45],
+        crop,
         preapproach,
-        [-1.0, -1.0, 0.0],
-        interpolation_ratio=0.5,
-        lateral_ratio=0.25,
+        planning_to_camera_translation,
+        planning_to_camera_rotation,
     )
 
-    # Midpoint is [0.30, -0.05, 0.30].  Recommend's component perpendicular
-    # to the READY->crop chord points toward negative X/Y.
-    assert _position(via) == pytest.approx(
-        [0.175, -0.15, 0.30], abs=1e-9
+    base_to_planning_rotation = np.array(
+        [
+            [0.0, -1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
     )
+    base_to_camera_rotation = (
+        base_to_planning_rotation @ planning_to_camera_rotation
+    )
+    camera_position = (
+        _position(via)
+        + base_to_planning_rotation @ planning_to_camera_translation
+    )
+    tomato_in_camera = base_to_camera_rotation.T @ (
+        crop - camera_position
+    )
+    assert tomato_in_camera == pytest.approx([0.0, 0.0, 0.15], abs=1e-9)
     assert via.orientation == preapproach.orientation
     assert via is not preapproach
 
 
-@pytest.mark.parametrize("ratio", [-0.001, 0.0, 1.0, float("nan")])
-def test_preapproach_via_pose_rejects_invalid_ratio(ratio):
-    with pytest.raises(ValueError, match="interpolation_ratio"):
+@pytest.mark.parametrize("standoff", [-0.001, 0.0, float("nan")])
+def test_preapproach_via_pose_rejects_invalid_camera_standoff(standoff):
+    pose = Pose()
+    pose.orientation.w = 1.0
+    with pytest.raises(ValueError, match="camera_standoff"):
         make_preapproach_via_pose(
-            Pose(), [1.0, 0.0, 0.0], Pose(), [0.0, 1.0, 0.0], ratio
+            [1.0, 0.0, 0.0],
+            pose,
+            [0.0, 0.0, 0.0],
+            np.eye(3),
+            camera_standoff=standoff,
         )
 
 
-@pytest.mark.parametrize("ratio", [-0.001, float("nan")])
-def test_preapproach_via_pose_rejects_invalid_lateral_ratio(ratio):
-    with pytest.raises(ValueError, match="lateral_ratio"):
+def test_preapproach_via_pose_rejects_invalid_camera_transform():
+    pose = Pose()
+    pose.orientation.w = 1.0
+    with pytest.raises(ValueError, match="planning_to_camera_rotation"):
         make_preapproach_via_pose(
-            Pose(),
             [1.0, 0.0, 0.0],
-            Pose(),
-            [0.0, 1.0, 0.0],
-            lateral_ratio=ratio,
+            pose,
+            [0.0, 0.0, 0.0],
+            np.eye(2),
         )
 
 

@@ -2662,7 +2662,7 @@ def test_stepper_command_enables_detailed_cached_plan():
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
     assert "harvest_wait_sec:=1.5" in command
     assert "stepwise_plan:=true" in command
-    assert "step_cycle_last_stage:=5" in command
+    assert "step_cycle_last_stage:=6" in command
     assert "harvest_x_forward:=0.04" in command
     assert "step_servo_speed_percent:=50.0" in command
     assert "step_servo_close_angle_deg:=110.0" in command
@@ -2735,11 +2735,11 @@ def test_stepper_command_forwards_custom_stage_xyz_parameters():
     command = stepper_command(1, custom_stage_deltas_m=custom_deltas)
 
     assert "step_custom_stage_deltas_enabled:=true" in command
-    assert "step_stage_3_x_delta:=0.011" in command
-    assert "step_stage_4_y_delta:=0.004" in command
-    assert "step_stage_6_z_delta:=0.022" in command
-    assert "step_stage_7_x_delta:=0.007" in command
-    assert "step_stage_8_z_delta:=-0.01" in command
+    assert "step_stage_4_x_delta:=0.011" in command
+    assert "step_stage_5_y_delta:=0.004" in command
+    assert "step_stage_7_z_delta:=0.022" in command
+    assert "step_stage_8_x_delta:=0.007" in command
+    assert "step_stage_9_z_delta:=-0.01" in command
     assert "harvest_tcp_wrist_rotation_deg:=10.0" in command
 
 
@@ -2749,24 +2749,24 @@ def test_stepper_command_forwards_motion_stage_speed_parameters():
         stage_speed_percents=(30, 40, 50, 60, 70, 80, 35),
     )
 
-    for stage_number, percent in zip(range(3, 9), range(30, 90, 10)):
+    for stage_number, percent in zip(range(4, 10), range(30, 90, 10)):
         assert (
             f"step_stage_{stage_number}_speed_percent:={float(percent)}"
             in command
         )
-    assert "step_stage_12_speed_percent:=35.0" in command
+    assert "step_stage_13_speed_percent:=35.0" in command
 
 
 def test_stepper_command_defaults_cartesian_stages_to_thirty_percent():
     command = stepper_command(1)
     expected = {
-        3: 30,
         4: 30,
-        5: 100,
-        6: 30,
+        5: 30,
+        6: 100,
         7: 30,
         8: 30,
-        12: 30,
+        9: 30,
+        13: 30,
     }
 
     for stage_number, percent in expected.items():
@@ -2805,8 +2805,8 @@ def test_stepper_command_can_disable_tcp_wrist_oscillation():
 
 
 def test_stepper_command_rejects_invalid_repeat_last_stage():
-    with pytest.raises(ValueError, match="between 1 and 7"):
-        stepper_command(1, cycle_only=True, cycle_last_stage=8)
+    with pytest.raises(ValueError, match="between 1 and 8"):
+        stepper_command(1, cycle_only=True, cycle_last_stage=9)
     with pytest.raises(ValueError, match="between 0.010 and 0.070"):
         stepper_command(1, cycle_forward_distance_m=0.071)
 
@@ -2843,11 +2843,11 @@ def test_repeat_forward_distance_rejects_values_outside_gui_range(value):
 
 def test_step_custom_stage_deltas_converts_xyz_millimetres_to_metres():
     values = {
-        3: {"x": "10", "y": "1", "z": "-2"},
-        4: {"x": "40", "y": "3", "z": "4"},
-        6: {"x": "20", "y": "-5", "z": "20"},
-        7: {"x": "0", "y": "6", "z": "20"},
-        8: {"x": "-50", "y": "7", "z": "0"},
+        4: {"x": "10", "y": "1", "z": "-2"},
+        5: {"x": "40", "y": "3", "z": "4"},
+        7: {"x": "20", "y": "-5", "z": "20"},
+        8: {"x": "0", "y": "6", "z": "20"},
+        9: {"x": "-50", "y": "7", "z": "0"},
     }
 
     actual = step_custom_stage_deltas_m(values)
@@ -2866,11 +2866,11 @@ def test_step_custom_stage_deltas_converts_xyz_millimetres_to_metres():
 def test_step_custom_stage_deltas_rejects_invalid_or_oversized_values(value):
     values = {
         stage: {"x": "0", "y": "0", "z": "0"}
-        for stage in (3, 4, 6, 7, 8)
+        for stage in (4, 5, 7, 8, 9)
     }
-    values[6]["y"] = value
+    values[7]["y"] = value
 
-    with pytest.raises(ValueError, match="6단계"):
+    with pytest.raises(ValueError, match="7단계"):
         step_custom_stage_deltas_m(values)
 
 
@@ -2879,24 +2879,24 @@ def test_step_stage_speed_percents_validates_motion_stages():
         {
             **{
                 stage_number: 10 * stage_number
-                for stage_number in range(3, 9)
+                for stage_number in range(4, 10)
             },
-            12: 35,
+            13: 35,
         }
     )
 
-    assert actual == pytest.approx((30, 40, 50, 60, 70, 80, 35))
+    assert actual == pytest.approx((40, 50, 60, 70, 80, 90, 35))
 
 
 @pytest.mark.parametrize("value", [9.9, 100.1, "invalid"])
 def test_step_stage_speed_percents_rejects_invalid_values(value):
     values = {
         stage_number: 100
-        for stage_number in (*range(3, 9), 12)
+        for stage_number in (*range(4, 10), 13)
     }
-    values[5] = value
+    values[6] = value
 
-    with pytest.raises(ValueError, match="5단계 속도"):
+    with pytest.raises(ValueError, match="6단계 속도"):
         step_stage_speed_percents(values)
 
 
@@ -2921,8 +2921,8 @@ def test_repeat_cycle_command_converts_gui_stage_to_zero_based_index(
 
 
 def test_repeat_cycle_command_rejects_invalid_stage_or_direction():
-    with pytest.raises(ValueError, match="between 1 and 7"):
-        repeat_cycle_command("forward", 8)
+    with pytest.raises(ValueError, match="between 1 and 8"):
+        repeat_cycle_command("forward", 9)
     with pytest.raises(ValueError, match="direction"):
         repeat_cycle_command("sideways", 3)
 
@@ -3740,6 +3740,51 @@ def test_camera_color_image_callback_uses_independent_tab_state():
     assert scheduled == ["overlay"]
     assert values["status"].endswith("16×9 · rgb8")
     assert "log" not in values
+
+
+def test_step_reinspection_stage_requires_enabled_camera_a_motion():
+    gui = SimpleNamespace(
+        step_stages=[
+            {"key": "MOVE_TO_READY", "kind": "trajectory"},
+            {
+                "key": "READY_TO_REINSPECTION_A",
+                "kind": "trajectory",
+            },
+        ]
+    )
+
+    assert HarvestGui._step_reinspection_stage_is_enabled(gui)
+    gui.step_stages[1]["kind"] = "skip"
+    assert not HarvestGui._step_reinspection_stage_is_enabled(gui)
+
+
+def test_step_reinspection_image_callback_captures_only_armed_next_frame():
+    values = {}
+    scheduled = []
+    gui = SimpleNamespace(
+        step_reinspection_capture_pending=False,
+        latest_step_reinspection_image=None,
+        step_reinspection_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        _schedule_step_reinspection_image_render=(
+            lambda: scheduled.append(True)
+        ),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+    message = _raw_test_image(width=20, height=12, encoding="rgb8")
+
+    HarvestGui._step_reinspection_image_callback(gui, message)
+    assert gui.latest_step_reinspection_image is None
+
+    gui.step_reinspection_capture_pending = True
+    HarvestGui._step_reinspection_image_callback(gui, message)
+
+    assert not gui.step_reinspection_capture_pending
+    assert gui.latest_step_reinspection_image.size == (20, 12)
+    assert scheduled == [True]
+    assert values["status"].startswith("20×12 · rgb8")
+    assert "표시 완료" in values["log"]
 
 
 def test_vision_result_image_callback_displays_raw_without_overlay():

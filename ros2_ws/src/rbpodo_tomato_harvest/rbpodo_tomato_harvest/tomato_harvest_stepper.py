@@ -23,8 +23,8 @@ from rbpodo_tomato_harvest.harvest_planner import (
 
 
 EVENT_PREFIX = "__HARVEST_STEPPER_EVENT__"
-CYCLE_LAST_STAGE_INDEX = 6
-SPEED_CONTROLLED_STAGE_NUMBERS = (*range(3, 9), 12)
+CYCLE_LAST_STAGE_INDEX = 7
+SPEED_CONTROLLED_STAGE_NUMBERS = (*range(4, 10), 13)
 SERVO_COMMAND_TOPIC = "/linear_motor/servo10_command"
 LINEAR_MOTOR_PIN8_TOPIC = "/linear_motor/pin8"
 LINEAR_MOTOR_PIN9_TOPIC = "/linear_motor/pin9"
@@ -608,25 +608,32 @@ def step_stage_specs(
     preapproach_trajectories = _trajectory_group(
         plan.preapproach_trajectory
     )
-    preapproach_trajectory_speeds = (100.0,) * len(
-        preapproach_trajectories
-    )
-    preapproach_uses_via = len(preapproach_trajectories) >= 2
-    if preapproach_uses_via:
-        preapproach_trajectory_speeds = (
-            *preapproach_trajectory_speeds[:-1],
-            preapproach_final_speed_percent,
+    preapproach_uses_via = bool(
+        getattr(
+            plan,
+            "preapproach_via_enabled",
+            len(preapproach_trajectories) >= 2,
         )
+    )
+    if preapproach_uses_via:
+        reinspection_trajectories = preapproach_trajectories[:1]
+        final_preapproach_trajectories = preapproach_trajectories[1:]
+    else:
+        reinspection_trajectories = ()
+        final_preapproach_trajectories = preapproach_trajectories
+    final_preapproach_speed = (
+        preapproach_final_speed_percent if preapproach_uses_via else 100.0
+    )
     return_trajectories = _trajectory_group(
         plan.return_pick_ready_trajectory
     )
     # `_plan_return_pick_ready_via()` appends the final constrained OMPL
-    # READY trajectory last. Apply the stage-12 slider only to the preceding
+    # READY trajectory last. Apply the stage-13 slider only to the preceding
     # current-pose -> clearance-A segment(s), preserving the OMPL scale.
     return_trajectory_speeds = (100.0,) * len(return_trajectories)
     if len(return_trajectories) >= 2:
         return_trajectory_speeds = (
-            *((speed_by_stage[12],) * (len(return_trajectories) - 1)),
+            *((speed_by_stage[13],) * (len(return_trajectories) - 1)),
             100.0,
         )
     wrist_enabled = bool(_trajectory_group(approach[2]))
@@ -649,18 +656,43 @@ def step_stage_specs(
             "trajectories": _trajectory_group(plan.pick_ready_trajectory),
         },
         {
-            "key": "READY_TO_PREAPPROACH",
-            "label": f"{ready_state_name} → PRE_APPROACH",
-            "detail": (
-                "안전 경유점 A를 거쳐 토마토 외곽 사전 접근 / "
-                f"A→PRE 속도 {preapproach_final_speed_percent:g}%"
+            "key": "READY_TO_REINSPECTION_A",
+            "label": (
+                f"{ready_state_name} → 재촬영 A"
                 if preapproach_uses_via
-                else "경유점 A 없이 PRE_APPROACH 직접 접근"
+                else "재촬영 A 건너뜀"
             ),
-            "kind": "trajectory",
-            "trajectories": preapproach_trajectories,
+            "detail": (
+                "RGB 광축상 토마토 150mm 재촬영 위치"
+                if preapproach_uses_via
+                else "사용 안 함 (Direct PRE_APPROACH)"
+            ),
+            "kind": "trajectory" if reinspection_trajectories else "skip",
+            "trajectories": reinspection_trajectories,
             "trajectory_speed_percents": (
-                preapproach_trajectory_speeds
+                (100.0,) * len(reinspection_trajectories)
+            ),
+        },
+        {
+            "key": "REINSPECTION_A_TO_PREAPPROACH",
+            "label": (
+                "재촬영 A → PRE_APPROACH"
+                if preapproach_uses_via
+                else f"{ready_state_name} → PRE_APPROACH"
+            ),
+            "detail": (
+                f"최종 진입 자세 이동 / 속도 "
+                f"{preapproach_final_speed_percent:g}%"
+                if preapproach_uses_via
+                else "Direct PRE_APPROACH 이동"
+            ),
+            "kind": (
+                "trajectory" if final_preapproach_trajectories else "skip"
+            ),
+            "trajectories": final_preapproach_trajectories,
+            "trajectory_speed_percents": (
+                (final_preapproach_speed,)
+                * len(final_preapproach_trajectories)
             ),
         },
         {
@@ -668,7 +700,7 @@ def step_stage_specs(
             "label": "PRE_APPROACH → 접근 목표",
             "detail": delta_detail(0),
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[3],
+            "speed_percent": speed_by_stage[4],
             "trajectories": _trajectory_group(approach[0]),
             "cartesian_waypoints": approach_waypoints[0],
         },
@@ -681,7 +713,7 @@ def step_stage_specs(
                 else f"{delta_detail(1)} / 직선 Cartesian"
             ),
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[4],
+            "speed_percent": speed_by_stage[5],
             "trajectories": _trajectory_group(approach[1]),
             "cartesian_waypoints": approach_waypoints[1],
         },
@@ -695,25 +727,25 @@ def step_stage_specs(
                 else "사용 안 함 (체크 해제)"
             ),
             "kind": "trajectory" if wrist_enabled else "skip",
-            "speed_percent": speed_by_stage[5],
+            "speed_percent": speed_by_stage[6],
             "trajectories": _trajectory_group(approach[2]),
             "cartesian_waypoints": (),
         },
         {
             "key": "LIFT_Z20_FORWARD_X20",
             "label": "위로 1차 이동",
-            "detail": f"{delta_detail(2)} / 5→6 곡선 Cartesian",
+            "detail": f"{delta_detail(2)} / 6→7 곡선 Cartesian",
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[6],
+            "speed_percent": speed_by_stage[7],
             "trajectories": _trajectory_group(approach[3]),
             "cartesian_waypoints": approach_waypoints[3],
         },
         {
             "key": "LIFT_Z20_SECOND",
             "label": "위로 2차 이동",
-            "detail": f"{delta_detail(3)} / 6→7 곡선 Cartesian",
+            "detail": f"{delta_detail(3)} / 7→8 곡선 Cartesian",
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[7],
+            "speed_percent": speed_by_stage[8],
             "trajectories": _trajectory_group(approach[4]),
             "cartesian_waypoints": approach_waypoints[4],
         },
@@ -722,7 +754,7 @@ def step_stage_specs(
             "label": "뒤로 1차 이동",
             "detail": delta_detail(4),
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[8],
+            "speed_percent": speed_by_stage[9],
             "trajectories": _trajectory_group(approach[5]),
             "cartesian_waypoints": approach_waypoints[5],
         },
@@ -769,11 +801,11 @@ def step_stage_specs(
             "key": "RETURN_READY",
             "label": f"현재 자세 → {ready_state_name}",
             "detail": (
-                "안전 경유점 A로 이탈 후 constrained OMPL 복귀 / "
-                f"현재→A 속도 {speed_by_stage[12]:g}%"
+                "카메라 재촬영 A로 이탈 후 constrained OMPL 복귀 / "
+                f"현재→A 속도 {speed_by_stage[13]:g}%"
             ),
             "kind": "trajectory",
-            "speed_percent": speed_by_stage[12],
+            "speed_percent": speed_by_stage[13],
             "trajectories": return_trajectories,
             "trajectory_speed_percents": return_trajectory_speeds,
         },
@@ -1506,7 +1538,7 @@ def main(args=None) -> None:
                 )
                 for axis_name in ("x", "y", "z")
             )
-            for stage_number in (3, 4, 6, 7, 8)
+            for stage_number in (4, 5, 7, 8, 9)
         )
         stages = step_stage_specs(
             plan,
