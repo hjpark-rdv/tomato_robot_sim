@@ -11,6 +11,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TomatoDetectionArray.msg"
   "srv/DebugFrame.srv"
   "srv/DetectTomatoes.srv"
+  "srv/RefineTomatoCenter.srv"
   DEPENDENCIES geometry_msgs std_msgs
 )
 
