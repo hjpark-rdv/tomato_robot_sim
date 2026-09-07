@@ -120,6 +120,33 @@ def test_step_stage_specs_exposes_complete_harvest_sequence():
     assert stages[12]["trajectories"][0].name == "return_ready"
 
 
+def test_step_stage_specs_keeps_a_precision_correction_in_stage_two():
+    plan = SimpleNamespace(
+        pick_ready_trajectory=_trajectory("ready"),
+        preapproach_trajectory=(
+            _trajectory("ready_to_a_ompl"),
+            _trajectory("a_precision_cartesian"),
+            _trajectory("a_to_preapproach"),
+        ),
+        preapproach_via_enabled=True,
+        preapproach_via_trajectory_count=2,
+        step_approach_trajectories=tuple(
+            (_trajectory(f"approach_{index}"),) for index in range(6)
+        ),
+        after_wait_trajectory=_trajectory("after_wait"),
+        return_pick_ready_trajectory=_trajectory("return_ready"),
+    )
+
+    stages = step_stage_specs(plan, 2.0)
+
+    assert [
+        trajectory.name for trajectory in stages[1]["trajectories"]
+    ] == ["ready_to_a_ompl", "a_precision_cartesian"]
+    assert [
+        trajectory.name for trajectory in stages[2]["trajectories"]
+    ] == ["a_to_preapproach"]
+
+
 def test_step_stage_specs_displays_configured_forward_distance():
     plan = SimpleNamespace(
         pick_ready_trajectory=_trajectory("ready"),

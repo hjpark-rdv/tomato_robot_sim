@@ -616,8 +616,19 @@ def step_stage_specs(
         )
     )
     if preapproach_uses_via:
-        reinspection_trajectories = preapproach_trajectories[:1]
-        final_preapproach_trajectories = preapproach_trajectories[1:]
+        via_trajectory_count = int(
+            getattr(plan, "preapproach_via_trajectory_count", 1)
+        )
+        via_trajectory_count = max(
+            1,
+            min(via_trajectory_count, len(preapproach_trajectories)),
+        )
+        reinspection_trajectories = preapproach_trajectories[
+            :via_trajectory_count
+        ]
+        final_preapproach_trajectories = preapproach_trajectories[
+            via_trajectory_count:
+        ]
     else:
         reinspection_trajectories = ()
         final_preapproach_trajectories = preapproach_trajectories

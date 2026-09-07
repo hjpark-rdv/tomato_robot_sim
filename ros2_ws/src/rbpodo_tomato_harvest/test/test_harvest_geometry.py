@@ -59,7 +59,11 @@ def test_wrist3_oscillation_keeps_other_joints_fixed_and_returns_to_start():
     assert min(wrist_values) == pytest.approx(1.0 - np.deg2rad(10.0))
     assert max(wrist_values) == pytest.approx(1.0 + np.deg2rad(10.0))
     assert wrist_values[-1] == pytest.approx(1.0)
-    assert all(point.positions[:5] == pytest.approx([0.1, 0.2, -0.3, 0.4, -0.5]) for point in points)
+    expected_fixed_joints = pytest.approx([0.1, 0.2, -0.3, 0.4, -0.5])
+    assert all(
+        point.positions[:5] == expected_fixed_joints
+        for point in points
+    )
     assert len(points) == 21
 
 
@@ -327,13 +331,34 @@ def test_tomato_is_between_tip_and_vine_and_tip_is_lower():
     assert np.dot(preapproach - tip, result.outward_axis) > 0.0
 
 
-def test_preapproach_via_pose_centers_tomato_on_camera_optical_axis():
+def test_preapproach_via_pose_levels_camera_and_centers_tomato():
     preapproach = Pose()
     preapproach.position.x = 0.40
     preapproach.position.y = -0.20
     preapproach.position.z = 0.35
-    preapproach.orientation.z = math.sqrt(0.5)
-    preapproach.orientation.w = math.sqrt(0.5)
+    yaw = math.radians(35.0)
+    pitch = math.radians(-12.0)
+    yaw_rotation = np.array(
+        [
+            [math.cos(yaw), -math.sin(yaw), 0.0],
+            [math.sin(yaw), math.cos(yaw), 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    pitch_rotation = np.array(
+        [
+            [math.cos(pitch), 0.0, math.sin(pitch)],
+            [0.0, 1.0, 0.0],
+            [-math.sin(pitch), 0.0, math.cos(pitch)],
+        ]
+    )
+    preapproach_rotation = yaw_rotation @ pitch_rotation
+    (
+        preapproach.orientation.x,
+        preapproach.orientation.y,
+        preapproach.orientation.z,
+        preapproach.orientation.w,
+    ) = quaternion_from_rotation(preapproach_rotation)
     crop = np.array([0.50, -0.30, 0.45])
     planning_to_camera_translation = np.array([0.02, -0.01, 0.03])
     # Camera optical +Z points along planning-link +X.
@@ -352,13 +377,7 @@ def test_preapproach_via_pose_centers_tomato_on_camera_optical_axis():
         planning_to_camera_rotation,
     )
 
-    base_to_planning_rotation = np.array(
-        [
-            [0.0, -1.0, 0.0],
-            [1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ]
-    )
+    base_to_planning_rotation = _rotation(via)
     base_to_camera_rotation = (
         base_to_planning_rotation @ planning_to_camera_rotation
     )
@@ -370,7 +389,21 @@ def test_preapproach_via_pose_centers_tomato_on_camera_optical_axis():
         crop - camera_position
     )
     assert tomato_in_camera == pytest.approx([0.0, 0.0, 0.15], abs=1e-9)
-    assert via.orientation == preapproach.orientation
+    assert base_to_camera_rotation[:, 1] == pytest.approx(
+        [0.0, 0.0, -1.0],
+        abs=1e-9,
+    )
+    assert base_to_camera_rotation[2, 2] == pytest.approx(0.0, abs=1e-9)
+    expected_forward = (
+        preapproach_rotation @ planning_to_camera_rotation
+    )[:, 2]
+    expected_forward[2] = 0.0
+    expected_forward /= np.linalg.norm(expected_forward)
+    assert base_to_camera_rotation[:, 2] == pytest.approx(
+        expected_forward,
+        abs=1e-9,
+    )
+    assert not np.allclose(_rotation(via), preapproach_rotation)
     assert via is not preapproach
 
 
@@ -397,6 +430,18 @@ def test_preapproach_via_pose_rejects_invalid_camera_transform():
             pose,
             [0.0, 0.0, 0.0],
             np.eye(2),
+        )
+
+
+def test_preapproach_via_pose_rejects_vertical_camera_azimuth():
+    pose = Pose()
+    pose.orientation.w = 1.0
+    with pytest.raises(ValueError, match="horizontal camera optical"):
+        make_preapproach_via_pose(
+            [1.0, 0.0, 0.0],
+            pose,
+            [0.0, 0.0, 0.0],
+            np.eye(3),
         )
 
 

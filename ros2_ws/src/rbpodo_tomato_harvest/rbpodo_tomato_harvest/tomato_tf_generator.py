@@ -281,7 +281,7 @@ class TomatoTfGenerator(Node):
             ANGLE_REFERENCE_CENTER_TO_STEM,
         )
         self.declare_parameter("robot_base_frame", "link0")
-        self.declare_parameter("maximum_detection_age_sec", 2.0)
+        self.declare_parameter("maximum_detection_age_sec", 10.0)
         self.declare_parameter("transform_timeout_sec", 2.0)
         self.declare_parameter("broadcast_rate_hz", 20.0)
         self.declare_parameter(

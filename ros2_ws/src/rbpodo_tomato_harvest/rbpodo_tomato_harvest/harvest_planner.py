@@ -166,6 +166,7 @@ class HarvestMotionPlan:
     return_pick_ready_is_cached_reverse: bool = False
     preapproach_planning_pose: Pose | None = None
     preapproach_via_enabled: bool = False
+    preapproach_via_trajectory_count: int = 0
     outward_axis: tuple = ()
 
 
@@ -176,13 +177,14 @@ def make_preapproach_via_pose(
     planning_to_camera_rotation,
     camera_standoff: float = 0.15,
 ) -> Pose:
-    """Place waypoint A for a close, centered RGB-camera reinspection.
+    """Place waypoint A for a level, centered RGB-camera reinspection.
 
-    The TCP orientation is copied exactly from the calculated PRE_APPROACH.
-    With that fixed orientation, the TCP translation is solved so the tomato
-    center lies on the color optical frame's +Z axis at ``camera_standoff``.
-    In camera coordinates the tomato is therefore approximately
-    ``[0, 0, camera_standoff]``.
+    PRE_APPROACH supplies only the horizontal viewing azimuth.  Camera optical
+    +Z is projected onto the base/world horizontal plane, optical +Y is fixed
+    to world down, and optical +X completes the right-handed frame.  The TCP
+    pose is then solved so the tomato center lies on optical +Z at
+    ``camera_standoff``.  The RB5 lift chain preserves world orientation, so
+    the planner's ``link0`` axes and world axes are parallel.
     """
     target = np.asarray(crop_position, dtype=float)
     planning_to_camera_translation = np.asarray(
@@ -213,15 +215,31 @@ def make_preapproach_via_pose(
     ):
         raise ValueError("camera reinspection geometry must be finite")
 
-    base_to_planning_rotation = rotation_from_pose(preapproach_pose)
-    base_to_camera_rotation = (
-        base_to_planning_rotation @ planning_to_camera_rotation
+    preapproach_planning_rotation = rotation_from_pose(preapproach_pose)
+    preapproach_camera_rotation = (
+        preapproach_planning_rotation @ planning_to_camera_rotation
     )
-    camera_optical_axis = _unit(
-        base_to_camera_rotation[:, 2],
-        "camera optical +Z axis",
+    camera_forward = np.asarray(
+        preapproach_camera_rotation[:, 2],
+        dtype=float,
     )
-    desired_camera_position = target - camera_optical_axis * standoff
+    camera_forward[2] = 0.0
+    camera_forward = _unit(
+        camera_forward,
+        "horizontal camera optical +Z axis",
+    )
+    camera_down = np.array([0.0, 0.0, -1.0], dtype=float)
+    camera_right = _unit(
+        np.cross(camera_down, camera_forward),
+        "level camera optical +X axis",
+    )
+    base_to_camera_rotation = np.column_stack(
+        (camera_right, camera_down, camera_forward)
+    )
+    base_to_planning_rotation = (
+        base_to_camera_rotation @ planning_to_camera_rotation.T
+    )
+    desired_camera_position = target - camera_forward * standoff
     desired_planning_position = (
         desired_camera_position
         - base_to_planning_rotation @ planning_to_camera_translation
@@ -231,6 +249,12 @@ def make_preapproach_via_pose(
     waypoint.position.x = float(desired_planning_position[0])
     waypoint.position.y = float(desired_planning_position[1])
     waypoint.position.z = float(desired_planning_position[2])
+    (
+        waypoint.orientation.x,
+        waypoint.orientation.y,
+        waypoint.orientation.z,
+        waypoint.orientation.w,
+    ) = quaternion_from_rotation(base_to_planning_rotation)
     return waypoint
 
 
@@ -2588,6 +2612,9 @@ class CartesianHarvestPlanner(Node):
             "TCP move to camera reinspection waypoint": (
                 "CARTESIAN_PREAPPROACH_VIA"
             ),
+            "TCP camera reinspection waypoint precision correction": (
+                "CARTESIAN_PREAPPROACH_VIA_PRECISION"
+            ),
             "TCP camera reinspection waypoint to pre-approach": (
                 "CARTESIAN_PREAPPROACH_FINAL"
             ),
@@ -2975,6 +3002,26 @@ class CartesianHarvestPlanner(Node):
             trajectories.append(trajectory)
             waypoint_start = self._trajectory_end_state(trajectory)
 
+            if fallback_stage == "PREAPPROACH_VIA":
+                correction = self._plan_cartesian(
+                    [waypoint],
+                    waypoint_start,
+                    "TCP camera reinspection waypoint precision correction",
+                )
+                if correction is None:
+                    self.get_logger().error(
+                        "재촬영 A OMPL 도착 후 Cartesian 정밀 보정 실패"
+                    )
+                    return None
+                trajectories.append(correction)
+                waypoint_start = self._trajectory_end_state(correction)
+                self.last_plan_report.setdefault(
+                    "preapproach_via", {}
+                )["cartesian_precision_correction"] = True
+                self.get_logger().info(
+                    "재촬영 A Cartesian 정밀 보정 성공"
+                )
+
         fallback_record = {
                 "segment": fallback_stage,
                 "cartesian_stage": cartesian_failure.get("stage", ""),
@@ -2993,12 +3040,14 @@ class CartesianHarvestPlanner(Node):
                 ],
                 "success": True,
             }
+        if fallback_stage == "PREAPPROACH_VIA":
+            fallback_record["cartesian_precision_correction"] = True
         self.last_plan_report.setdefault("cartesian_fallbacks", []).append(
             fallback_record
         )
         self.get_logger().info(
             f"{label} OMPL fallback 성공: "
-            f"{len(trajectories)}개 waypoint"
+            f"{len(waypoint_list)}개 waypoint"
         )
         violations = (
             joint_span_violations(
@@ -3156,7 +3205,7 @@ class CartesianHarvestPlanner(Node):
         preapproach_pose: Pose,
         crop_position,
     ) -> Pose | None:
-        """Build A with the RGB camera centered 10 cm before the tomato."""
+        """Build a level A pose with the RGB camera before the tomato."""
         if not bool(self.get_parameter("preapproach_via_enabled").value):
             return None
         camera_frame = str(
@@ -3232,13 +3281,30 @@ class CartesianHarvestPlanner(Node):
             ],
             dtype=float,
         )
-        base_to_planning_rotation = rotation_from_pose(preapproach_pose)
+        base_to_planning_rotation = rotation_from_pose(via_pose)
         base_to_camera_rotation = (
             base_to_planning_rotation @ planning_to_camera_rotation
         )
         camera_optical_axis = _unit(
             base_to_camera_rotation[:, 2],
             "camera optical +Z axis",
+        )
+        camera_down_axis = _unit(
+            base_to_camera_rotation[:, 1],
+            "camera optical +Y axis",
+        )
+        optical_elevation_deg = math.degrees(
+            math.asin(
+                max(-1.0, min(1.0, float(camera_optical_axis[2])))
+            )
+        )
+        vertical_alignment_error_deg = math.degrees(
+            math.acos(
+                max(
+                    -1.0,
+                    min(1.0, float(np.dot(camera_down_axis, [0, 0, -1]))),
+                )
+            )
         )
         camera_xyz = (
             via_xyz
@@ -3249,12 +3315,19 @@ class CartesianHarvestPlanner(Node):
         )
         self.last_plan_report["preapproach_via"] = {
             "enabled": True,
-            "construction": "CAMERA_OPTICAL_CENTERED_REINSPECTION",
+            "construction": "WORLD_LEVEL_CAMERA_REINSPECTION",
             "camera_frame": camera_frame,
             "camera_standoff_m": standoff,
             "camera_optical_axis": [
                 float(value) for value in camera_optical_axis
             ],
+            "camera_down_axis": [
+                float(value) for value in camera_down_axis
+            ],
+            "optical_elevation_deg": optical_elevation_deg,
+            "vertical_alignment_error_deg": (
+                vertical_alignment_error_deg
+            ),
             "camera_xyz": [float(value) for value in camera_xyz],
             "tomato_in_camera_xyz": [
                 float(value) for value in tomato_in_camera
@@ -3275,6 +3348,8 @@ class CartesianHarvestPlanner(Node):
             "Pre-approach A camera reinspection: "
             f"frame={camera_frame}, "
             f"tomato_in_camera={tomato_in_camera.round(4).tolist()}m, "
+            f"elevation={optical_elevation_deg:.4f}deg, "
+            f"level_error={vertical_alignment_error_deg:.4f}deg, "
             f"A_TCP={via_xyz.round(4).tolist()}"
         )
         return via_pose
@@ -4935,6 +5010,13 @@ class CartesianHarvestPlanner(Node):
         display_start_state = self._complete_display_start_state(
             display_start_state
         )
+        preapproach_via_trajectory_count = 0
+        if via_planning_pose is not None:
+            preapproach_via_trajectory_count = 1
+            if self.last_plan_report.get("preapproach_via", {}).get(
+                "cartesian_precision_correction", False
+            ):
+                preapproach_via_trajectory_count = 2
         plan = HarvestMotionPlan(
             pick_ready_trajectory=pick_ready_trajectory,
             preapproach_trajectory=preapproach_trajectory,
@@ -4954,6 +5036,9 @@ class CartesianHarvestPlanner(Node):
                 preapproach_planning_pose
             ),
             preapproach_via_enabled=(via_planning_pose is not None),
+            preapproach_via_trajectory_count=(
+                preapproach_via_trajectory_count
+            ),
             outward_axis=tuple(
                 float(value) for value in geometry.outward_axis
             ),

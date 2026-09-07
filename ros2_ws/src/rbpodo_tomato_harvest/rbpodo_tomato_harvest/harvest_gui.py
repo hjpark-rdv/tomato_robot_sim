@@ -6,8 +6,10 @@ import os
 import queue
 import random
 import signal
+import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import tkinter as tk
@@ -20,6 +22,7 @@ from tkinter import messagebox, ttk
 import rclpy
 from PIL import Image, ImageDraw, ImageFont, ImageTk, UnidentifiedImageError
 from action_msgs.srv import CancelGoal
+from ament_index_python.packages import get_package_share_directory
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
 from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
 from geometry_msgs.msg import Point
@@ -903,6 +906,7 @@ def stepper_command(
         STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT
     ),
     preapproach_via_enabled: bool = True,
+    preapproach_via_camera_standoff_m: float = 0.15,
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     servo_speed_percent: float = SERVO10_DEFAULT_SPEED_PERCENT,
@@ -996,6 +1000,17 @@ def stepper_command(
         raise ValueError(
             "preapproach_final_speed_percent must be between 10 and 100"
         )
+    preapproach_via_camera_standoff_m = float(
+        preapproach_via_camera_standoff_m
+    )
+    if (
+        not math.isfinite(preapproach_via_camera_standoff_m)
+        or not 0.05 <= preapproach_via_camera_standoff_m <= 0.50
+    ):
+        raise ValueError(
+            "preapproach_via_camera_standoff_m must be between "
+            "0.05 and 0.50"
+        )
     tcp_wrist_rotation_deg = float(tcp_wrist_rotation_deg)
     if (
         not math.isfinite(tcp_wrist_rotation_deg)
@@ -1080,6 +1095,13 @@ def stepper_command(
             "-p",
             "preapproach_via_enabled:="
             f"{'true' if preapproach_via_enabled else 'false'}",
+        ]
+    )
+    command.extend(
+        [
+            "-p",
+            "preapproach_via_camera_standoff:="
+            f"{preapproach_via_camera_standoff_m}",
         ]
     )
     command.extend(["-p", f"step_cycle_last_stage:={cycle_last_stage}"])
@@ -1927,6 +1949,39 @@ def decode_raw_result_image(message: RosImage) -> Image.Image:
     return image.convert("RGB")
 
 
+def laboro_mask_worker_command(
+    python_executable: str,
+    config_path: str,
+    checkpoint_path: str,
+    device: str,
+) -> list[str]:
+    """Build the isolated persistent LaboroTomato worker command."""
+    values = tuple(
+        str(value).strip()
+        for value in (
+            python_executable,
+            config_path,
+            checkpoint_path,
+            device,
+        )
+    )
+    if not all(values):
+        raise ValueError("LaboroTomato worker settings must not be empty")
+    python_path, config, checkpoint, selected_device = values
+    return [
+        python_path,
+        "-u",
+        "-m",
+        "rbpodo_tomato_harvest.laboro_mask_worker",
+        "--config",
+        config,
+        "--checkpoint",
+        checkpoint,
+        "--device",
+        selected_device,
+    ]
+
+
 def camera_xyz_to_image_pixel(
     xyz,
     camera_matrix,
@@ -2706,6 +2761,29 @@ class HarvestGui(Node):
             "step_reinspection_image_topic",
             "/camera/d435/color/image_raw",
         )
+        self.declare_parameter(
+            "step_reinspection_image_save_directory",
+            str(
+                Path.home()
+                / "farmily_tomato"
+                / "step_reinspection_images"
+            ),
+        )
+        self.declare_parameter("laboro_mask_enabled", True)
+        self.declare_parameter(
+            "laboro_mask_python",
+            "/root/farmily_tomato/.venv-laboro/bin/python",
+        )
+        self.declare_parameter("laboro_mask_config", "")
+        self.declare_parameter(
+            "laboro_mask_checkpoint",
+            (
+                "/root/farmily_tomato/models/laboro_tomato/"
+                "laboro_tomato_little_48ep.pth"
+            ),
+        )
+        self.declare_parameter("laboro_mask_device", "cuda:0")
+        self.declare_parameter("laboro_mask_score_threshold", 0.50)
         self.declare_parameter("default_camera_source", "real")
         self.declare_parameter(
             "detections_topic", "/tomato_detection/detections"
@@ -2909,6 +2987,38 @@ class HarvestGui(Node):
         self.step_reinspection_image_topic = str(
             self.get_parameter("step_reinspection_image_topic").value
         )
+        self.step_reinspection_image_save_directory = Path(
+            str(
+                self.get_parameter(
+                    "step_reinspection_image_save_directory"
+                ).value
+            )
+        ).expanduser()
+        self.laboro_mask_enabled = bool(
+            self.get_parameter("laboro_mask_enabled").value
+        )
+        self.laboro_mask_python = str(
+            self.get_parameter("laboro_mask_python").value
+        )
+        configured_laboro_config = str(
+            self.get_parameter("laboro_mask_config").value
+        ).strip()
+        self.laboro_mask_config = configured_laboro_config or str(
+            Path(get_package_share_directory("rbpodo_tomato_harvest"))
+            / "config"
+            / "laboro_tomato_little_mask_rcnn.py"
+        )
+        self.laboro_mask_checkpoint = str(
+            self.get_parameter("laboro_mask_checkpoint").value
+        )
+        self.laboro_mask_device = str(
+            self.get_parameter("laboro_mask_device").value
+        )
+        self.laboro_mask_score_threshold = float(
+            self.get_parameter("laboro_mask_score_threshold").value
+        )
+        if not 0.0 <= self.laboro_mask_score_threshold <= 1.0:
+            raise ValueError("laboro_mask_score_threshold must be 0..1")
         reliable_image_qos = QoSProfile(
             depth=5,
             reliability=ReliabilityPolicy.RELIABLE,
@@ -3348,8 +3458,20 @@ class HarvestGui(Node):
         self.latest_camera_color_info = None
         self.step_reinspection_capture_pending = False
         self.latest_step_reinspection_image = None
+        self.latest_step_reinspection_original_image = None
+        self.step_reinspection_image_captured_at = None
         self.step_reinspection_image_photo = None
         self.step_reinspection_image_render_job = None
+        self.laboro_mask_process = None
+        self.laboro_mask_ready = False
+        self.laboro_mask_request_id = 0
+        self.laboro_mask_display_request_id = None
+        self.laboro_mask_pending_request = None
+        self.laboro_mask_active_request_id = None
+        self.laboro_mask_requests = {}
+        self.laboro_mask_temp_dir = Path(
+            tempfile.mkdtemp(prefix="farmily_laboro_mask_")
+        )
         self.ui_busy = False
         self.closing = False
 
@@ -3457,6 +3579,9 @@ class HarvestGui(Node):
             value=STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT
         )
         self.step_preapproach_via_enabled_var = tk.BooleanVar(value=True)
+        self.step_preapproach_via_distance_mm_var = tk.StringVar(
+            value="150"
+        )
         self.step_preapproach_final_speed_display_var = tk.StringVar(
             value=(
                 f"{STEP_PREAPPROACH_FINAL_SPEED_DEFAULT_PERCENT:.0f}%"
@@ -4451,20 +4576,44 @@ class HarvestGui(Node):
         ).grid(row=1, column=0, sticky="ew", padx=3, pady=4)
         self.step_preapproach_via_checkbox = ttk.Checkbutton(
             custom,
-            text=(
-                "카메라 재촬영 A 사용 "
-                "(RGB 광축상 토마토 150mm)"
-            ),
+            text="카메라 재촬영 A 사용",
             variable=self.step_preapproach_via_enabled_var,
             command=self._step_preapproach_via_changed,
         )
         self.step_preapproach_via_checkbox.grid(
             row=1,
             column=1,
-            columnspan=3,
+            columnspan=2,
             sticky="w",
             padx=3,
             pady=4,
+        )
+        via_distance = ttk.Frame(custom)
+        via_distance.grid(
+            row=1,
+            column=3,
+            sticky="ew",
+            padx=3,
+            pady=4,
+        )
+        self.step_preapproach_via_distance_spinbox = ttk.Spinbox(
+            via_distance,
+            textvariable=self.step_preapproach_via_distance_mm_var,
+            from_=50,
+            to=500,
+            increment=10,
+            format="%.0f",
+            width=6,
+            justify="center",
+        )
+        self.step_preapproach_via_distance_spinbox.pack(
+            side="left",
+            fill="x",
+            expand=True,
+        )
+        ttk.Label(via_distance, text="mm").pack(side="left", padx=(3, 0))
+        self.step_custom_delta_entries.append(
+            self.step_preapproach_via_distance_spinbox
         )
         preapproach_speed_scale = ttk.Scale(
             custom,
@@ -4695,6 +4844,7 @@ class HarvestGui(Node):
             text=(
                 "XYZ 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
                 "입력 범위: 축별 -200~+200 mm (화살표 1회 = 1 mm)\n"
+                "재촬영 거리: 50~500 mm (화살표 1회 = 10 mm)\n"
                 "단계별 속도: 기존 계획 궤적 대비 10~100%\n"
                 "서보 닫기 각도: 10~173° (화살표 1회 = 1°)\n"
                 "리니어모터 늘림: 0~60초 (화살표 1회 = 1초)\n"
@@ -4724,7 +4874,32 @@ class HarvestGui(Node):
             pady=(8, 0),
         )
         reinspection_image.columnconfigure(0, weight=1)
-        reinspection_image.rowconfigure(0, weight=1)
+        reinspection_image.rowconfigure(1, weight=1)
+        reinspection_toolbar = ttk.Frame(reinspection_image)
+        reinspection_toolbar.grid(
+            row=0,
+            column=0,
+            sticky="ew",
+            pady=(0, 4),
+        )
+        reinspection_toolbar.columnconfigure(0, weight=1)
+        ttk.Label(
+            reinspection_toolbar,
+            text="카메라 원본 프레임",
+            foreground="#666666",
+        ).grid(row=0, column=0, sticky="w")
+        self.step_reinspection_save_button = ttk.Button(
+            reinspection_toolbar,
+            text="원본 JPEG 저장",
+            command=self.save_step_reinspection_original_image,
+            state="disabled",
+            style="Compact.TButton",
+        )
+        self.step_reinspection_save_button.grid(
+            row=0,
+            column=1,
+            sticky="e",
+        )
         self.step_reinspection_image_label = tk.Label(
             reinspection_image,
             text="2단계 완료 후\n카메라 프레임 대기",
@@ -4735,7 +4910,7 @@ class HarvestGui(Node):
             borderwidth=1,
         )
         self.step_reinspection_image_label.grid(
-            row=0,
+            row=1,
             column=0,
             sticky="nsew",
         )
@@ -4747,7 +4922,7 @@ class HarvestGui(Node):
             reinspection_image,
             textvariable=self.step_reinspection_image_status,
             anchor="w",
-        ).grid(row=1, column=0, sticky="ew", pady=(3, 0))
+        ).grid(row=2, column=0, sticky="ew", pady=(3, 0))
 
         controls = ttk.Frame(frame)
         controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
@@ -9099,6 +9274,11 @@ class HarvestGui(Node):
         if not self._step_reinspection_stage_is_enabled():
             return
         self.step_reinspection_capture_pending = True
+        self.latest_step_reinspection_image = None
+        self.latest_step_reinspection_original_image = None
+        self.step_reinspection_image_captured_at = None
+        self.laboro_mask_display_request_id = None
+        self.step_reinspection_save_button.configure(state="disabled")
         self.step_reinspection_image_status.set(
             f"2단계 완료 · 새 프레임 대기: {self.step_reinspection_image_topic}"
         )
@@ -9124,16 +9304,302 @@ class HarvestGui(Node):
             self._append_log(f"[2단계 재촬영 이미지 오류] {error}")
             return
         self.step_reinspection_capture_pending = False
-        self.latest_step_reinspection_image = image
+        self.latest_step_reinspection_original_image = image.copy()
+        self.latest_step_reinspection_image = image.copy()
+        self.step_reinspection_image_captured_at = (
+            datetime.now().astimezone()
+        )
+        save_button = getattr(
+            self,
+            "step_reinspection_save_button",
+            None,
+        )
+        if save_button is not None:
+            save_button.configure(state="normal")
         encoding = str(message.encoding or "raw")
         self.step_reinspection_image_status.set(
-            f"{image.width}×{image.height} · {encoding} · 2단계 완료 후 프레임"
+            f"{image.width}×{image.height} · {encoding} · 마스크 추론 준비"
         )
         self._schedule_step_reinspection_image_render()
+        self._request_laboro_mask_inference(image)
         self._append_log(
             f"[2단계 재촬영 이미지] {image.width}×{image.height} "
-            f"{encoding} 프레임 표시 완료"
+            f"{encoding} 원본 수신 · LaboroTomato 마스크 추론 요청"
         )
+
+    def save_step_reinspection_original_image(self) -> None:
+        """Save the unmodified post-stage-2 camera frame as high-quality JPEG."""
+        image = self.latest_step_reinspection_original_image
+        if image is None:
+            messagebox.showwarning(
+                "저장할 재촬영 원본 없음",
+                "2단계를 실행하여 새 카메라 프레임을 먼저 받아주세요.",
+            )
+            return
+        captured_at = (
+            self.step_reinspection_image_captured_at
+            or datetime.now().astimezone()
+        )
+        filename = (
+            captured_at.strftime("%Y%m%d_%H%M%S_%f")[:-3]
+            + "_step2_original.jpg"
+        )
+        directory = self.step_reinspection_image_save_directory
+        path = directory / filename
+        try:
+            directory.mkdir(parents=True, exist_ok=True)
+            image.convert("RGB").save(
+                path,
+                format="JPEG",
+                quality=98,
+                subsampling=0,
+                optimize=True,
+            )
+        except OSError as error:
+            self.step_reinspection_image_status.set("원본 JPEG 저장 실패")
+            self._append_log(f"[2단계 재촬영 원본 저장 실패] {error}")
+            messagebox.showerror("원본 JPEG 저장 실패", str(error))
+            return
+        self.step_reinspection_image_status.set(
+            f"원본 저장 완료 · {path.name}"
+        )
+        self._append_log(
+            f"[2단계 재촬영 원본 저장] {image.width}×{image.height}, "
+            f"JPEG quality=98, subsampling=4:4:4, 파일={path}"
+        )
+
+    def _request_laboro_mask_inference(self, image: Image.Image) -> None:
+        """Queue one reinspection image for persistent Mask R-CNN inference."""
+        if not self.laboro_mask_enabled:
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 비활성화 · 원본 이미지 표시"
+            )
+            return
+        required_paths = (
+            ("Python", self.laboro_mask_python),
+            ("config", self.laboro_mask_config),
+            ("checkpoint", self.laboro_mask_checkpoint),
+        )
+        missing = [
+            name
+            for name, path in required_paths
+            if not Path(path).is_file()
+        ]
+        if missing:
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 설치 필요 · 원본 표시"
+            )
+            self._append_log(
+                "[LaboroTomato 설정 오류] 파일 없음: "
+                + ", ".join(missing)
+                + " · scripts/setup_laboro_tomato.sh를 실행하세요."
+            )
+            return
+
+        self.laboro_mask_request_id += 1
+        request_id = self.laboro_mask_request_id
+        input_path = self.laboro_mask_temp_dir / f"input_{request_id}.png"
+        output_path = self.laboro_mask_temp_dir / f"mask_{request_id}.png"
+        try:
+            image.convert("RGB").save(input_path, format="PNG")
+        except OSError as error:
+            self.step_reinspection_image_status.set("마스크 입력 저장 실패")
+            self._append_log(f"[LaboroTomato 입력 오류] {error}")
+            return
+        request = {
+            "command": "infer",
+            "request_id": request_id,
+            "input_path": str(input_path),
+            "output_path": str(output_path),
+            "score_threshold": self.laboro_mask_score_threshold,
+        }
+        previous_pending = self.laboro_mask_pending_request
+        if previous_pending is not None:
+            self._remove_laboro_request_files(
+                int(previous_pending["request_id"])
+            )
+        self.laboro_mask_requests[request_id] = request
+        self.laboro_mask_display_request_id = request_id
+        self.laboro_mask_pending_request = request
+        self.step_reinspection_image_status.set(
+            "LaboroTomato 방울토마토 모델 준비 중..."
+            if not self.laboro_mask_ready
+            else "LaboroTomato 방울토마토 마스크 추론 중..."
+        )
+        if not self._start_laboro_mask_worker():
+            return
+        self._send_pending_laboro_mask_request()
+
+    def _start_laboro_mask_worker(self) -> bool:
+        process = self.laboro_mask_process
+        if process is not None and process.poll() is None:
+            return True
+        try:
+            command = laboro_mask_worker_command(
+                self.laboro_mask_python,
+                self.laboro_mask_config,
+                self.laboro_mask_checkpoint,
+                self.laboro_mask_device,
+            )
+            environment = os.environ.copy()
+            environment["PYTHONUNBUFFERED"] = "1"
+            process = subprocess.Popen(
+                command,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                env=environment,
+            )
+        except (OSError, ValueError) as error:
+            self.laboro_mask_process = None
+            self.laboro_mask_ready = False
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 시작 실패 · 원본 표시"
+            )
+            self._append_log(f"[LaboroTomato 시작 오류] {error}")
+            return False
+        self.laboro_mask_process = process
+        self.laboro_mask_ready = False
+        threading.Thread(
+            target=self._read_laboro_mask_worker,
+            args=(process,),
+            daemon=True,
+        ).start()
+        self._append_log(
+            "[LaboroTomato] 방울토마토 Mask R-CNN 모델 로딩 시작 "
+            f"({self.laboro_mask_device})"
+        )
+        return True
+
+    def _read_laboro_mask_worker(self, process) -> None:
+        if process.stdout is not None:
+            for line in process.stdout:
+                text_line = line.strip()
+                if not text_line:
+                    continue
+                try:
+                    event = json.loads(text_line)
+                except json.JSONDecodeError:
+                    self.process_queue.put(
+                        ("laboro_mask_log", text_line, process)
+                    )
+                    continue
+                self.process_queue.put(
+                    ("laboro_mask_event", event, process)
+                )
+        return_code = process.wait()
+        self.process_queue.put(
+            ("laboro_mask_done", return_code, process)
+        )
+
+    def _send_pending_laboro_mask_request(self) -> None:
+        if (
+            not self.laboro_mask_ready
+            or self.laboro_mask_active_request_id is not None
+            or self.laboro_mask_pending_request is None
+        ):
+            return
+        process = self.laboro_mask_process
+        request = self.laboro_mask_pending_request
+        if process is None or process.poll() is not None or process.stdin is None:
+            return
+        try:
+            process.stdin.write(json.dumps(request) + "\n")
+            process.stdin.flush()
+        except (BrokenPipeError, OSError) as error:
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 요청 실패 · 원본 표시"
+            )
+            self._append_log(f"[LaboroTomato 요청 오류] {error}")
+            return
+        self.laboro_mask_pending_request = None
+        self.laboro_mask_active_request_id = int(request["request_id"])
+        self.step_reinspection_image_status.set(
+            "LaboroTomato 방울토마토 마스크 추론 중..."
+        )
+
+    def _remove_laboro_request_files(self, request_id: int) -> None:
+        request = self.laboro_mask_requests.pop(int(request_id), None)
+        if not request:
+            return
+        for key in ("input_path", "output_path"):
+            try:
+                Path(request[key]).unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _handle_laboro_mask_event(self, event: dict, process) -> None:
+        if process is not self.laboro_mask_process:
+            return
+        event_name = str(event.get("event", ""))
+        if event_name == "ready":
+            self.laboro_mask_ready = True
+            duration = float(event.get("load_duration_sec", 0.0))
+            self._append_log(
+                f"[LaboroTomato] 모델 준비 완료 ({duration:.2f}s, "
+                f"{event.get('device', self.laboro_mask_device)})"
+            )
+            self._send_pending_laboro_mask_request()
+            return
+        if event_name == "startup_error":
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 모델 로딩 실패 · 원본 표시"
+            )
+            self._append_log(
+                f"[LaboroTomato 모델 오류] {event.get('message', 'UNKNOWN')}"
+            )
+            return
+        if event_name not in {"result", "inference_error"}:
+            return
+
+        request_id = int(event.get("request_id", -1))
+        self.laboro_mask_active_request_id = None
+        display_result = request_id == self.laboro_mask_display_request_id
+        if event_name == "result" and display_result:
+            output_path = Path(str(event.get("output_path", "")))
+            try:
+                with Image.open(output_path) as masked:
+                    self.latest_step_reinspection_image = masked.convert(
+                        "RGB"
+                    ).copy()
+            except (OSError, UnidentifiedImageError) as error:
+                self.step_reinspection_image_status.set(
+                    "마스크 결과 읽기 실패 · 원본 표시"
+                )
+                self._append_log(f"[LaboroTomato 결과 오류] {error}")
+            else:
+                count = int(event.get("count", 0))
+                duration = float(event.get("duration_sec", 0.0))
+                self.step_reinspection_image_status.set(
+                    f"방울토마토 마스크 {count}개 · 추론 {duration:.2f}s"
+                )
+                self._schedule_step_reinspection_image_render()
+                self._append_log(
+                    f"[LaboroTomato 추론 완료] 방울토마토 {count}개, "
+                    f"{duration:.2f}s, class={event.get('class_counts', {})}"
+                )
+        elif event_name == "inference_error" and display_result:
+            self.step_reinspection_image_status.set(
+                "LaboroTomato 추론 실패 · 원본 표시"
+            )
+            self._append_log(
+                f"[LaboroTomato 추론 오류] {event.get('message', 'UNKNOWN')}"
+            )
+        self._remove_laboro_request_files(request_id)
+        self._send_pending_laboro_mask_request()
+
+    def _stop_laboro_mask_worker(self) -> None:
+        process = self.laboro_mask_process
+        self.laboro_mask_process = None
+        self.laboro_mask_ready = False
+        if process is not None and process.poll() is None:
+            process.terminate()
+        try:
+            shutil.rmtree(self.laboro_mask_temp_dir, ignore_errors=True)
+        except OSError:
+            pass
 
     def _schedule_step_reinspection_image_render(self, _event=None) -> None:
         if self.latest_step_reinspection_image is None or self.closing:
@@ -9178,8 +9644,22 @@ class HarvestGui(Node):
     def _clear_step_reinspection_image(self) -> None:
         """Clear a previous target's reinspection snapshot."""
         self.step_reinspection_capture_pending = False
+        self.laboro_mask_display_request_id = None
+        pending = self.laboro_mask_pending_request
+        self.laboro_mask_pending_request = None
+        if pending is not None:
+            self._remove_laboro_request_files(int(pending["request_id"]))
         self.latest_step_reinspection_image = None
+        self.latest_step_reinspection_original_image = None
+        self.step_reinspection_image_captured_at = None
         self.step_reinspection_image_photo = None
+        save_button = getattr(
+            self,
+            "step_reinspection_save_button",
+            None,
+        )
+        if save_button is not None:
+            save_button.configure(state="disabled")
         if self.step_reinspection_image_render_job is not None:
             try:
                 self.root.after_cancel(
@@ -10599,6 +11079,7 @@ class HarvestGui(Node):
         preapproach_via_enabled = bool(
             self.step_preapproach_via_enabled_var.get()
         )
+        preapproach_via_camera_standoff_m = 0.15
         try:
             harvest_wait_sec = self._wait_seconds(
                 self.linear_motor_wait_sec.get()
@@ -10634,6 +11115,19 @@ class HarvestGui(Node):
             )
             forward_wave_enabled = bool(
                 self.step_forward_wave_enabled_var.get()
+            )
+            preapproach_via_distance_mm = float(
+                self.step_preapproach_via_distance_mm_var.get()
+            )
+            if (
+                not math.isfinite(preapproach_via_distance_mm)
+                or not 50.0 <= preapproach_via_distance_mm <= 500.0
+            ):
+                raise ValueError(
+                    "카메라 재촬영 거리는 50~500mm 범위여야 합니다."
+                )
+            preapproach_via_camera_standoff_m = (
+                preapproach_via_distance_mm / 1000.0
             )
             if mode == "repeat":
                 self.repeat_cycle_last_index = (
@@ -10707,6 +11201,9 @@ class HarvestGui(Node):
                 preapproach_final_speed_percent
             ),
             preapproach_via_enabled=preapproach_via_enabled,
+            preapproach_via_camera_standoff_m=(
+                preapproach_via_camera_standoff_m
+            ),
             prefer_robot_direction=prefer_robot_direction,
             adaptive_grasp_max_rotation_deg=adaptive_max_rotation,
             servo_speed_percent=(
@@ -10779,7 +11276,8 @@ class HarvestGui(Node):
         self._append_log(
             f"[{'접근 반복' if mode == 'repeat' else '스텝'} Plan] "
             f"토마토 {index}, 시작={pick_ready_state}, "
-            f"planner={pipeline}/{planner_id}, preapproach={preapproach_mode}"
+            f"planner={pipeline}/{planner_id}, preapproach={preapproach_mode}, "
+            f"재촬영거리={preapproach_via_camera_standoff_m * 1000.0:.0f}mm"
             + (
                 f", 5단계 진입={cycle_forward_distance_m * 1000.0:.1f} mm"
                 if mode == "repeat"
@@ -11680,6 +12178,9 @@ class HarvestGui(Node):
         self.step_preapproach_via_checkbox.configure(state=custom_state)
         if not self.step_preapproach_via_enabled_var.get():
             self.step_preapproach_final_speed_scale.configure(
+                state="disabled"
+            )
+            self.step_preapproach_via_distance_spinbox.configure(
                 state="disabled"
             )
         self.step_tcp_wrist_oscillation_checkbox.configure(
@@ -12709,6 +13210,30 @@ class HarvestGui(Node):
                 self._update_linear_motor_launch_control()
                 self._update_gripper_stroke_controls()
                 continue
+            if item[0] == "laboro_mask_log":
+                _, line, process = item
+                if process is self.laboro_mask_process:
+                    self._append_log(f"[LaboroTomato] {line}")
+                continue
+            if item[0] == "laboro_mask_event":
+                _, event, process = item
+                self._handle_laboro_mask_event(event, process)
+                continue
+            if item[0] == "laboro_mask_done":
+                _, return_code, process = item
+                if process is not self.laboro_mask_process:
+                    continue
+                self.laboro_mask_process = None
+                self.laboro_mask_ready = False
+                self.laboro_mask_active_request_id = None
+                if not self.closing:
+                    self.step_reinspection_image_status.set(
+                        "LaboroTomato 종료 · 다음 재촬영에서 재시작"
+                    )
+                    self._append_log(
+                        f"[LaboroTomato] 워커 종료 코드 {return_code}"
+                    )
+                continue
             if item[0] == "lift_log":
                 _, line, process = item
                 if process is self.lift_launch_process:
@@ -13625,6 +14150,7 @@ class HarvestGui(Node):
                 self.step_process.terminate()
             self._shutdown_sweep_worker(force=True)
         self.closing = True
+        self._stop_laboro_mask_worker()
         self.root.quit()
 
     def _signal_close(self, _signum, _frame) -> None:
@@ -13634,6 +14160,7 @@ class HarvestGui(Node):
             self.step_process.terminate()
         self._shutdown_sweep_worker(force=True)
         self.closing = True
+        self._stop_laboro_mask_worker()
         self.root.quit()
 
     def run(self) -> None:

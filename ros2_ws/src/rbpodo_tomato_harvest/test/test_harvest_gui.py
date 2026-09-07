@@ -64,6 +64,7 @@ from rbpodo_tomato_harvest.harvest_gui import (
     harvest_result_marker,
     harvest_statistics_record,
     is_critical_process_output,
+    laboro_mask_worker_command,
     linear_motor_pin_sequence,
     linear_motor_pin_values,
     servo_angle_degrees,
@@ -1999,7 +2000,7 @@ def test_continuous_arc_failure_reverses_cached_path_to_pick_ready():
             info=lambda message: None,
             warning=lambda message: None,
         ),
-            _plan_preapproach=lambda pose, state, **kwargs: (
+        _plan_preapproach=lambda pose, state, **kwargs: (
             planner.last_plan_report["stages"].append(
                 {"stage": "CARTESIAN_PREAPPROACH", "success": True}
             )
@@ -2793,6 +2794,28 @@ def test_stepper_command_can_disable_preapproach_via_a():
     )
 
     assert "preapproach_via_enabled:=false" in command
+
+
+def test_stepper_command_forwards_reinspection_camera_distance():
+    default_command = stepper_command(1)
+    custom_command = stepper_command(
+        1,
+        preapproach_via_camera_standoff_m=0.23,
+    )
+
+    assert "preapproach_via_camera_standoff:=0.15" in default_command
+    assert "preapproach_via_camera_standoff:=0.23" in custom_command
+
+
+@pytest.mark.parametrize("distance", [0.049, 0.501, float("nan")])
+def test_stepper_command_rejects_invalid_reinspection_camera_distance(
+    distance,
+):
+    with pytest.raises(ValueError, match="between 0.05 and 0.50"):
+        stepper_command(
+            1,
+            preapproach_via_camera_standoff_m=distance,
+        )
 
 
 def test_stepper_command_can_disable_tcp_wrist_oscillation():
@@ -3761,6 +3784,7 @@ def test_step_reinspection_stage_requires_enabled_camera_a_motion():
 def test_step_reinspection_image_callback_captures_only_armed_next_frame():
     values = {}
     scheduled = []
+    inference_requests = []
     gui = SimpleNamespace(
         step_reinspection_capture_pending=False,
         latest_step_reinspection_image=None,
@@ -3769,6 +3793,9 @@ def test_step_reinspection_image_callback_captures_only_armed_next_frame():
         ),
         _schedule_step_reinspection_image_render=(
             lambda: scheduled.append(True)
+        ),
+        _request_laboro_mask_inference=(
+            lambda image: inference_requests.append(image.copy())
         ),
         _append_log=lambda value: values.__setitem__("log", value),
     )
@@ -3782,9 +3809,70 @@ def test_step_reinspection_image_callback_captures_only_armed_next_frame():
 
     assert not gui.step_reinspection_capture_pending
     assert gui.latest_step_reinspection_image.size == (20, 12)
+    assert gui.latest_step_reinspection_original_image.size == (20, 12)
+    assert gui.step_reinspection_image_captured_at is not None
     assert scheduled == [True]
+    assert [image.size for image in inference_requests] == [(20, 12)]
     assert values["status"].startswith("20×12 · rgb8")
-    assert "표시 완료" in values["log"]
+    assert "마스크 추론 요청" in values["log"]
+
+
+def test_save_step_reinspection_original_image_writes_dated_high_quality_jpeg(
+    tmp_path,
+):
+    values = {}
+    captured_at = harvest_gui_module.datetime(
+        2026,
+        8,
+        21,
+        14,
+        30,
+        15,
+        123000,
+    ).astimezone()
+    gui = SimpleNamespace(
+        latest_step_reinspection_original_image=PilImage.new(
+            "RGB",
+            (32, 24),
+            color=(180, 40, 20),
+        ),
+        step_reinspection_image_captured_at=captured_at,
+        step_reinspection_image_save_directory=tmp_path,
+        step_reinspection_image_status=SimpleNamespace(
+            set=lambda value: values.__setitem__("status", value)
+        ),
+        _append_log=lambda value: values.__setitem__("log", value),
+    )
+
+    HarvestGui.save_step_reinspection_original_image(gui)
+
+    path = tmp_path / "20260821_143015_123_step2_original.jpg"
+    assert path.is_file()
+    with PilImage.open(path) as saved:
+        assert saved.format == "JPEG"
+        assert saved.size == (32, 24)
+    assert path.name in values["status"]
+    assert "quality=98" in values["log"]
+
+
+def test_laboro_mask_worker_command_uses_isolated_model_environment():
+    assert laboro_mask_worker_command(
+        "/workspace/.venv/bin/python",
+        "/workspace/config.py",
+        "/workspace/model.pth",
+        "cuda:0",
+    ) == [
+        "/workspace/.venv/bin/python",
+        "-u",
+        "-m",
+        "rbpodo_tomato_harvest.laboro_mask_worker",
+        "--config",
+        "/workspace/config.py",
+        "--checkpoint",
+        "/workspace/model.pth",
+        "--device",
+        "cuda:0",
+    ]
 
 
 def test_vision_result_image_callback_displays_raw_without_overlay():

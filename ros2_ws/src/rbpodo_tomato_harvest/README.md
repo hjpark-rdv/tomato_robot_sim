@@ -253,8 +253,11 @@ trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로
 2단계는 `PICK_READY → RGB 카메라 재촬영 A`, 3단계는
 `재촬영 A → PRE_APPROACH`로 서로 분리되어 있다. A에서는 토마토 중심이
 `d435_color_optical_frame`의 광축 정면 150 mm에 오도록 TCP 위치를 계산하며,
-TCP 방향은 최종 PRE_APPROACH와 동일하게 유지한다. 따라서 2단계 실행 후 실제
-재촬영을 수행하고, 3단계 버튼으로 최종 사전 접근을 별도로 확인할 수 있다.
+최종 PRE_APPROACH에서 계산된 좌우 촬영 방향만 유지한다. 카메라 광축의 고도는
+월드 XY 평면에 0°로 고정하고 카메라 영상의 세로축을 월드 Z축과 정렬하므로,
+토마토 높이에 관계없이 수평 상태로 촬영한다. 3단계에서 수평 촬영 자세로부터
+최종 PRE_APPROACH 수확 자세로 전환한다. 따라서 2단계 실행 후 실제 재촬영을
+수행하고, 3단계 버튼으로 최종 사전 접근을 별도로 확인할 수 있다.
 `카메라 재촬영 A 사용`을 해제하면 2단계는 건너뛰고 3단계가
 `PICK_READY → PRE_APPROACH` 직접 이동이 된다.
 2단계의 정방향 실행이 완료되면 스텝 실행 탭 오른쪽 아래의
@@ -262,6 +265,27 @@ TCP 방향은 최종 PRE_APPROACH와 동일하게 유지한다. 따라서 2단�
 처음 수신한 RGB 프레임을 표시한다. 따라서 A에 도착하기 전에 수신한 오래된
 프레임은 사용하지 않는다. A를 건너뛰거나 2단계를 역순으로 복귀할 때는 새
 이미지를 캡처하지 않으며, 새 스텝 Plan을 시작하면 이전 재촬영 화면을 비운다.
+수신한 프레임은 별도 Python 환경의 LaboroTomato 방울토마토 Mask R-CNN으로
+비동기 추론한다. 모델은 처음 한 번만 GPU 메모리에 로드하고 이후 2단계
+재촬영에서 재사용한다. 추론이 끝나면 숙도별 빨강/주황/초록 반투명 instance
+mask와 외곽선을 원본 위에 합성해 같은 화면에 표시하며, 모델 로딩·추론 중에도
+GUI와 로봇 제어 이벤트 루프는 정지하지 않는다. 설치는 저장소 루트에서 다음과
+같이 한 번 수행한다.
+
+```bash
+./scripts/setup_laboro_tomato.sh
+```
+
+가상환경과 약 335 MB 체크포인트는 Git에서 제외된다. LaboroTomato 모델은
+CC BY-NC-SA 4.0이므로 이 기능은 비상업적 사용만 가능하며 상업 적용에는
+Laboro.AI의 별도 허가가 필요하다. 자세한 출처와 체크섬은 저장소 루트의
+`THIRD_PARTY_NOTICES.md`에 기록되어 있다.
+
+재촬영 화면 바로 위의 `원본 JPEG 저장` 버튼은 Mask R-CNN 합성 결과가 아닌
+카메라 원본 프레임을 저장한다. 기본 저장 경로는
+`~/farmily_tomato/step_reinspection_images`이고 파일명에는 실제 프레임을 받은
+날짜와 시간이 포함된다. JPEG 품질 98, 4:4:4 방식으로 저장하며 경로는
+`step_reinspection_image_save_directory` 파라미터로 변경할 수 있다.
 
 수확 단계 목록 오른쪽의 `4~9단계 tip 로컬 XYZ 커스텀 (mm)` 표에서 해당
 Cartesian 단계의 X/Y/Z 이동량을 직접 입력할 수 있다. 기본값은 4단계
@@ -525,9 +549,13 @@ pre-approach와 동일하며, A에서 pre-approach까지 독립 구간으로 진
 제자리 회전 trajectory는 생성하지 않으며 각 구간은
 `Cartesian 우선 + constrained OMPL fallback` 알고리즘으로 고정되어 있다.
 `PICK_READY → A` Cartesian이 실패하면 해당 구간만 constrained OMPL
-RRTConnect로 재계획하고, 성공한 A 상태에서 `A → pre-approach` Cartesian을
-새로 계산한다. 따라서 첫 구간이 OMPL로 전환되어도 식물 가까운 두 번째 구간까지
-자동으로 OMPL에 합쳐지지 않는다.
+RRTConnect로 A 근처까지 재계획한다. OMPL은 기존 pose 허용오차
+`0.05 rad`를 사용하고, 도착 후 정확한 A pose까지 짧은 Cartesian 정밀
+보정을 추가한다. 두 trajectory는 모두 스텝 실행의 `2단계: 재촬영 A`에
+포함된다. 보정까지 성공한 A 상태에서 `A → pre-approach` Cartesian을
+새로 계산하므로, 첫 구간이 OMPL로 전환되어도 식물 가까운 두 번째
+구간까지 자동으로 OMPL에 합쳐지지 않는다. Cartesian 정밀 보정이
+실패하면 수평 재촬영 자세를 보장할 수 없으므로 계획을 실패 처리한다.
 pre-approach, 수확 및 대기 후 후퇴 중 Cartesian 경로가 실패하면 해당 구간만
 OMPL RRTConnect로 자동 재계획한다. 여러 waypoint가 포함된 수확 구간은 동작을
 생략하지 않고 waypoint별로 OMPL을 순차 적용한다. 모든 OMPL fallback에는 각
@@ -609,7 +637,9 @@ PICK_READY와 관절 이동량이 작은 IK 해를 우선한다. 이 후보 검�
   `d435_color_optical_frame`
 - `preapproach_via_camera_standoff`: A에서 카메라 렌즈와 토마토 중심
   사이 광축 거리이며 기본 `0.15` m. 토마토의 카메라 좌표가
-  약 `[0, 0, 0.15]`가 되도록 TCP 위치를 계산하고, TCP 자세는 기존
+  약 `[0, 0, 0.15]`가 되도록 TCP 위치를 계산한다. 스텝 실행 탭에서는
+  `50~500 mm` 범위의 Spinbox로 변경할 수 있고 화살표 1회당 `10 mm`씩
+  증감한다. TCP 자세는 기존
   pre-approach와 동일하게 유지한다.
 
 Plan 결과의 `adaptive_grasp` 항목과 자동 테스트 CSV/JSONL에는 적용 회전각과

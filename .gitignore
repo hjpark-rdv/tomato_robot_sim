@@ -4,6 +4,10 @@
 /ros2_ws/log/
 /harvest_results/
 /camera_target_records/
+/step_reinspection_images/
+/.venv-laboro/
+/models/laboro_tomato/
+/third_party/LaboroTomato/
 
 # Python generated files
 __pycache__/
