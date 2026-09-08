@@ -1399,6 +1399,7 @@ class CartesianHarvestPlanner(Node):
         self.declare_parameter("tomato_position_offset_x", 0.0)
         self.declare_parameter("tomato_position_offset_y", 0.0)
         self.declare_parameter("tomato_position_offset_z", 0.0)
+        self.declare_parameter("tomato_approach_yaw_correction_deg", 0.0)
         self.declare_parameter("gripper_link", "tomato_gripper")
         self.declare_parameter("tip_link", "tomato_gripper_tip")
         self.declare_parameter("planning_link", "tcp")
@@ -4209,9 +4210,37 @@ class CartesianHarvestPlanner(Node):
         self.last_plan_report["tomato_position_offset_xyz"] = (
             tomato_position_offset.tolist()
         )
-        tomato_rotation = self._rotation_matrix(tomato_tf)
+        raw_tomato_rotation = self._rotation_matrix(tomato_tf)
+        camera_yaw_correction_deg = float(
+            self.get_parameter("tomato_approach_yaw_correction_deg").value
+        )
+        if not math.isfinite(camera_yaw_correction_deg):
+            self._record_plan_stage(
+                "TARGET_GEOMETRY", "configuration", False, 0.0,
+                "INVALID_APPROACH_YAW_CORRECTION",
+            )
+            return None
+        # Apply the vision service's correction using the same signed angle.
+        baseline_rotation_deg = camera_yaw_correction_deg
+        angle = math.radians(baseline_rotation_deg)
+        rotation_z = np.array(
+            [[math.cos(angle), -math.sin(angle), 0.0],
+             [math.sin(angle), math.cos(angle), 0.0],
+             [0.0, 0.0, 1.0]],
+            dtype=float,
+        )
+        tomato_rotation = raw_tomato_rotation @ rotation_z
+        self.last_plan_report["approach_yaw_correction_deg"] = (
+            camera_yaw_correction_deg
+        )
+        self.last_plan_report["robot_approach_yaw_correction_deg"] = (
+            baseline_rotation_deg
+        )
         try:
-            stemward, outward_hint = stemward_and_outward_from_tomato_rotation(
+            stemward, _ = stemward_and_outward_from_tomato_rotation(
+                raw_tomato_rotation
+            )
+            _, outward_hint = stemward_and_outward_from_tomato_rotation(
                 tomato_rotation
             )
         except ValueError as error:
@@ -4314,7 +4343,7 @@ class CartesianHarvestPlanner(Node):
             "approach_axis_tomato_local": [
                 float(value)
                 for value in (
-                    tomato_rotation.T
+                    raw_tomato_rotation.T
                     @ (-approach_direction.outward_axis)
                 )
             ],
@@ -4349,12 +4378,11 @@ class CartesianHarvestPlanner(Node):
             outward_hint=outward_hint,
             tip_rotation_from_gripper=self._rotation_matrix(gripper_to_tip_tf),
         )
-        # The RViz Recommend arrow is the uncorrected camera/TF approach
-        # direction.  Robotward/IK preference belongs to candidate selection,
-        # not to the Recommend reference displayed to the operator.
-        recommend_rotation_deg = 0.0
+        # The reinspection service correction becomes the new Recommend
+        # baseline. Robotward/IK preference is then applied from that baseline.
+        recommend_rotation_deg = baseline_rotation_deg
         recommend_outward = outward_from_tomato_rotation(
-            tomato_rotation,
+            raw_tomato_rotation,
             recommend_rotation_deg,
         )
         recommend_geometry = make_harvest_geometry(
@@ -4412,12 +4440,12 @@ class CartesianHarvestPlanner(Node):
                 float(geometry.preapproach_pose.position.z),
             ],
             "final_rotation_deg": float(
-                approach_direction.applied_rotation_deg
+                baseline_rotation_deg + approach_direction.applied_rotation_deg
             ),
             "preapproach_position": [
                 float(value)
                 for value in (
-                    tomato_rotation.T
+                    raw_tomato_rotation.T
                     @ (preapproach_world - tomato_position)
                 )
             ],

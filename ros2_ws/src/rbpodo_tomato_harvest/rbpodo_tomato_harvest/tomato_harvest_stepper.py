@@ -943,6 +943,7 @@ def _replan_after_refinement(
     planner,
     stages,
     offset_xyz,
+    yaw_correction_deg,
     servo_resources,
 ) -> tuple[list[dict], dict]:
     """Rebuild stage 3 onward while the robot remains at reinspection A."""
@@ -952,6 +953,9 @@ def _replan_after_refinement(
     ):
         raise ValueError("refined offset must contain finite XYZ values")
 
+    yaw_correction_deg = float(yaw_correction_deg)
+    if not math.isfinite(yaw_correction_deg):
+        raise ValueError("refined yaw correction must be finite")
     planner.set_parameters(
         [
             Parameter(
@@ -960,7 +964,11 @@ def _replan_after_refinement(
                 value,
             )
             for axis_name, value in zip(("x", "y", "z"), offset_xyz)
-        ]
+        ] + [Parameter(
+            "tomato_approach_yaw_correction_deg",
+            Parameter.Type.DOUBLE,
+            yaw_correction_deg,
+        )]
     )
     current_state = _current_robot_state(planner)
     refined_plan = _plan_with_retries(
@@ -1810,12 +1818,14 @@ def main(args=None) -> None:
                     "refinement_replanning",
                     next_index=next_index,
                     offset_xyz=command.get("offset_xyz", ()),
+                    yaw_correction_deg=command.get("yaw_correction_deg", 0.0),
                 )
                 try:
                     stages, report = _replan_after_refinement(
                         planner,
                         stages,
                         command.get("offset_xyz", ()),
+                        command.get("yaw_correction_deg", 0.0),
                         (
                             servo_topic,
                             servo_publisher,

@@ -2325,6 +2325,16 @@ def test_harvest_command_forwards_refined_center_offset():
     assert "tomato_position_offset_z:=0.004" in command
 
 
+def test_harvest_command_forwards_refined_approach_yaw():
+    command = harvest_command(
+        1,
+        False,
+        tomato_approach_yaw_correction_deg=-5.0,
+    )
+
+    assert "tomato_approach_yaw_correction_deg:=-5.0" in command
+
+
 def test_refined_center_delta_uses_one_common_coordinate_frame():
     delta = refined_center_delta_xyz(
         (0.500, -0.200, 0.800),

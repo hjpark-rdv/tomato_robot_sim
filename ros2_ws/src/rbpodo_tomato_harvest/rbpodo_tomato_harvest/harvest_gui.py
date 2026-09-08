@@ -643,6 +643,7 @@ def harvest_command(
     adaptive_grasp_max_rotation_deg: float = 45.0,
     tomato_frame: str | None = None,
     tomato_position_offset_xyz=(0.0, 0.0, 0.0),
+    tomato_approach_yaw_correction_deg: float = 0.0,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -719,6 +720,11 @@ def harvest_command(
         raise ValueError(
             "tomato_position_offset_xyz must contain finite XYZ"
         )
+    tomato_approach_yaw_correction_deg = float(
+        tomato_approach_yaw_correction_deg
+    )
+    if not math.isfinite(tomato_approach_yaw_correction_deg):
+        raise ValueError("tomato_approach_yaw_correction_deg must be finite")
     command = [
         executable,
         "-m",
@@ -768,6 +774,9 @@ def harvest_command(
         "-p",
         "adaptive_grasp_max_rotation_deg:="
         f"{adaptive_grasp_max_rotation_deg}",
+        "-p",
+        "tomato_approach_yaw_correction_deg:="
+        f"{tomato_approach_yaw_correction_deg}",
     ]
     for axis_name, value in zip(("x", "y", "z"), target_offset):
         command.extend(
@@ -938,6 +947,7 @@ def stepper_command(
     forward_wave_enabled: bool = False,
     tomato_frame: str | None = None,
     tomato_position_offset_xyz=(0.0, 0.0, 0.0),
+    tomato_approach_yaw_correction_deg: float = 0.0,
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
@@ -1076,6 +1086,9 @@ def stepper_command(
             adaptive_grasp_max_rotation_deg
         ),
         tomato_position_offset_xyz=tomato_position_offset_xyz,
+        tomato_approach_yaw_correction_deg=(
+            tomato_approach_yaw_correction_deg
+        ),
         python_executable=python_executable,
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
@@ -3414,6 +3427,7 @@ class HarvestGui(Node):
         self.detected_tomato_record_angle_origins = {}
         self.detected_tomato_record_angle_targets = {}
         self.refined_tomato_position_offsets = {}
+        self.refined_tomato_yaw_corrections = {}
         self.current_detection_stamp_ns = 0
         self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
@@ -3538,6 +3552,7 @@ class HarvestGui(Node):
         self.step_refinement_request_id = 0
         self.step_refinement_pending_command = None
         self.step_planned_tomato_position_offset = (0.0, 0.0, 0.0)
+        self.step_planned_tomato_yaw_correction_deg = 0.0
         self.latest_step_reinspection_image = None
         self.latest_step_reinspection_original_image = None
         self.step_reinspection_image_captured_at = None
@@ -3592,6 +3607,8 @@ class HarvestGui(Node):
             value="2단계 완료 후 재촬영 이미지가 표시됩니다."
         )
         self.step_refine_apply_var = tk.BooleanVar(value=False)
+        self.step_refine_yaw_apply_var = tk.BooleanVar(value=False)
+        self.step_refine_yaw_scale_var = tk.StringVar(value="1.0")
         self.step_refine_status_var = tk.StringVar(
             value="중심 미세조정 대기"
         )
@@ -3631,7 +3648,7 @@ class HarvestGui(Node):
         self.step_tcp_wrist_oscillation_enabled_var = tk.BooleanVar(
             value=False
         )
-        self.prefer_robot_direction_var = tk.BooleanVar(value=True)
+        self.prefer_robot_direction_var = tk.BooleanVar(value=False)
         self.adaptive_grasp_max_rotation_var = tk.StringVar(value="5.0")
         self.continuous_harvest_var = tk.BooleanVar(value=False)
         self.batch_harvest_stage_var = tk.StringVar(value="전체 수확")
@@ -5016,6 +5033,32 @@ class HarvestGui(Node):
             variable=self.step_refine_apply_var,
         )
         self.step_refine_apply_checkbox.grid(row=0, column=0, sticky="w")
+        self.step_refine_yaw_apply_checkbox = ttk.Checkbutton(
+            refine_controls,
+            text="보정각도 반영",
+            variable=self.step_refine_yaw_apply_var,
+        )
+        self.step_refine_yaw_apply_checkbox.grid(
+            row=1, column=0, sticky="w", pady=(3, 0)
+        )
+        ttk.Label(refine_controls, text="배율").grid(
+            row=1, column=1, sticky="e", padx=(12, 4), pady=(3, 0)
+        )
+        self.step_refine_yaw_scale_spinbox = ttk.Spinbox(
+            refine_controls,
+            textvariable=self.step_refine_yaw_scale_var,
+            from_=0.0,
+            to=5.0,
+            increment=0.1,
+            format="%.1f",
+            width=5,
+        )
+        self.step_refine_yaw_scale_spinbox.grid(
+            row=1, column=2, sticky="w", pady=(3, 0)
+        )
+        ttk.Label(refine_controls, text="배").grid(
+            row=1, column=3, sticky="w", padx=(3, 0), pady=(3, 0)
+        )
         ttk.Label(
             reinspection_info,
             textvariable=self.step_refine_status_var,
@@ -9125,6 +9168,7 @@ class HarvestGui(Node):
         self._clear_active_camera_target()
         self.latest_detection_message = message
         self.refined_tomato_position_offsets.clear()
+        self.refined_tomato_yaw_corrections.clear()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = message.header.frame_id
         self.detection_signature = signature
@@ -9603,6 +9647,17 @@ class HarvestGui(Node):
             delta_mm = tuple(value * 1000.0 for value in delta)
             distance_mm = math.sqrt(sum(value * value for value in delta_mm))
             applied = bool(self.step_refine_apply_var.get())
+            vision_yaw_correction_deg = float(
+                response.approach_yaw_correction_deg
+            )
+            if not math.isfinite(vision_yaw_correction_deg):
+                raise ValueError("응답 보정각도가 유한한 값이 아닙니다.")
+            yaw_scale = float(self.step_refine_yaw_scale_var.get())
+            if not math.isfinite(yaw_scale) or not 0.0 <= yaw_scale <= 5.0:
+                raise ValueError("보정각도 배율은 0.0~5.0 범위여야 합니다.")
+            yaw_correction_deg = vision_yaw_correction_deg * yaw_scale
+            yaw_applied = bool(self.step_refine_yaw_apply_var.get())
+            robot_yaw_correction_deg = yaw_correction_deg
             planned_offset = tuple(
                 float(value)
                 for value in self.step_planned_tomato_position_offset
@@ -9619,14 +9674,31 @@ class HarvestGui(Node):
             requires_replan = applied and (
                 offset_change_m > replan_tolerance_m
             )
+            planned_yaw_deg = float(
+                self.step_planned_tomato_yaw_correction_deg
+            )
+            yaw_requires_replan = yaw_applied and (
+                abs(yaw_correction_deg - planned_yaw_deg) > 0.01
+            )
+            requires_replan = requires_replan or yaw_requires_replan
             if applied:
                 self.refined_tomato_position_offsets[int(index)] = delta
             else:
                 self.refined_tomato_position_offsets.pop(int(index), None)
+            if yaw_applied:
+                self.refined_tomato_yaw_corrections[int(index)] = (
+                    yaw_correction_deg
+                )
+            else:
+                self.refined_tomato_yaw_corrections.pop(int(index), None)
             action = "반영" if applied else "미반영"
+            yaw_action = "반영" if yaw_applied else "미반영"
             self.step_refine_status_var.set(
                 f"ΔX {delta_mm[0]:+.1f} / Y {delta_mm[1]:+.1f} / "
                 f"Z {delta_mm[2]:+.1f} mm · {distance_mm:.1f} mm · {action}"
+                f" · 각도 비전 {vision_yaw_correction_deg:+.1f}° × "
+                f"{yaw_scale:.1f} → "
+                f"로봇 {robot_yaw_correction_deg:+.1f}° {yaw_action}"
             )
             original_mm = tuple(value * 1000.0 for value in original_xyz)
             refined_mm = tuple(value * 1000.0 for value in refined_xyz)
@@ -9641,6 +9713,9 @@ class HarvestGui(Node):
                 f"{refined_mm[1]:.1f}, {refined_mm[2]:.1f}) mm · "
                 f"Δ=({delta_mm[0]:+.1f}, {delta_mm[1]:+.1f}, "
                 f"{delta_mm[2]:+.1f}) mm\n"
+                f"접근 yaw 보정: 비전={vision_yaw_correction_deg:+.1f}° × "
+                f"{yaw_scale:.1f} → "
+                f"로봇={robot_yaw_correction_deg:+.1f}° · {yaw_action}\n"
                 f"서비스: {response.message or '(메시지 없음)'}"
             )
             self._append_log(
@@ -9655,6 +9730,9 @@ class HarvestGui(Node):
                 f"변화량=({delta_mm[0]:+.1f}, {delta_mm[1]:+.1f}, "
                 f"{delta_mm[2]:+.1f}) mm, 거리={distance_mm:.1f} mm, "
                 f"accepted_frames={int(response.accepted_frame_count)}, "
+                f"yaw=비전 {vision_yaw_correction_deg:+.1f}° × "
+                f"{yaw_scale:.1f} → "
+                f"로봇 {robot_yaw_correction_deg:+.1f}°({yaw_action}), "
                 f"replan={'필요' if requires_replan else '불필요'}"
             )
             if requires_replan:
@@ -9668,7 +9746,12 @@ class HarvestGui(Node):
                 self._send_step_command(
                     {
                         "command": "replan_after_refinement",
-                        "offset_xyz": list(delta),
+                        "offset_xyz": list(
+                            delta if applied else (0.0, 0.0, 0.0)
+                        ),
+                        "yaw_correction_deg": (
+                            yaw_correction_deg if yaw_applied else 0.0
+                        ),
                         "resume_command": pending_command,
                     }
                 )
@@ -11613,10 +11696,18 @@ class HarvestGui(Node):
             if self.step_refine_apply_var.get()
             else (0.0, 0.0, 0.0)
         )
+        planned_yaw_correction_deg = (
+            float(self.refined_tomato_yaw_corrections.get(index, 0.0))
+            if self.step_refine_yaw_apply_var.get()
+            else 0.0
+        )
         command = stepper_command(
             index,
             tomato_frame=self._tomato_frame(index),
             tomato_position_offset_xyz=planned_target_offset,
+            tomato_approach_yaw_correction_deg=(
+                planned_yaw_correction_deg
+            ),
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
@@ -11680,6 +11771,9 @@ class HarvestGui(Node):
         self.step_session_mode = mode
         self.step_planned_tomato_position_offset = tuple(
             planned_target_offset
+        )
+        self.step_planned_tomato_yaw_correction_deg = (
+            planned_yaw_correction_deg
         )
         self.step_session_verification = (
             self.detection_generation,
@@ -11863,6 +11957,12 @@ class HarvestGui(Node):
                 for value in report.get(
                     "tomato_position_offset_xyz",
                     self.step_planned_tomato_position_offset,
+                )
+            )
+            self.step_planned_tomato_yaw_correction_deg = float(
+                report.get(
+                    "approach_yaw_correction_deg",
+                    self.step_planned_tomato_yaw_correction_deg,
                 )
             )
             for stage in self.step_stages[self.step_next_index:]:
@@ -12369,6 +12469,12 @@ class HarvestGui(Node):
                 for value in report.get(
                     "tomato_position_offset_xyz",
                     self.step_planned_tomato_position_offset,
+                )
+            )
+            self.step_planned_tomato_yaw_correction_deg = float(
+                report.get(
+                    "approach_yaw_correction_deg",
+                    self.step_planned_tomato_yaw_correction_deg,
                 )
             )
             self.repeat_status.set(
