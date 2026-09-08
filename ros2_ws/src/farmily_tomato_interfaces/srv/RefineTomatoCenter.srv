@@ -1,0 +1,11 @@
+---
+uint8 SUCCESS=0
+uint8 NO_TOMATO=1
+uint8 DETECTION_FAILED=2
+uint8 ERROR=3
+
+uint8 result_code
+string message
+std_msgs/Header header
+geometry_msgs/Point center
+uint8 accepted_frame_count
