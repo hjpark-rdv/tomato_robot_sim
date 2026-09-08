@@ -7,6 +7,7 @@ from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from rbpodo_tomato_harvest.tomato_harvest_stepper import (
+    _plan_with_retries,
     _stage_metadata,
     _execute_linear_motor_action,
     _execute_servo_sequence,
@@ -19,6 +20,53 @@ from rbpodo_tomato_harvest.tomato_harvest_stepper import (
     scale_robot_trajectory_speed,
     step_stage_specs,
 )
+
+
+def test_plan_with_retries_allows_three_retries_after_initial_failure(
+    monkeypatch,
+):
+    events = []
+    expected_plan = object()
+    planner = SimpleNamespace(
+        outcomes=[None, None, None, expected_plan],
+        last_plan_report={"failure_stage": "TEST"},
+    )
+
+    def plan(*, start_state_override=None):
+        assert start_state_override == "start"
+        return planner.outcomes.pop(0)
+
+    planner.plan = plan
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper._emit",
+        lambda event, **values: events.append((event, values)),
+    )
+
+    result = _plan_with_retries(
+        planner,
+        context="initial_step_plan",
+        start_state_override="start",
+    )
+
+    assert result is expected_plan
+    assert len(events) == 3
+    assert [event[1]["next_attempt"] for event in events] == [2, 3, 4]
+
+
+def test_plan_with_retries_returns_none_after_four_failures(monkeypatch):
+    events = []
+    planner = SimpleNamespace(
+        outcomes=[None, None, None, None],
+        last_plan_report={"failure_stage": "TEST"},
+    )
+    planner.plan = lambda *, start_state_override=None: planner.outcomes.pop(0)
+    monkeypatch.setattr(
+        "rbpodo_tomato_harvest.tomato_harvest_stepper._emit",
+        lambda event, **values: events.append((event, values)),
+    )
+
+    assert _plan_with_retries(planner, context="test") is None
+    assert len(events) == 3
 
 
 def test_stage_metadata_keeps_planned_joint_boundaries_for_rviz_goal():

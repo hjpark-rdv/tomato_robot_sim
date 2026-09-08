@@ -284,24 +284,12 @@ trajectory를 한 번 계산해 같은 프로세스에 보관한다. `실제 로
 Plan 버튼을 다시 누를 필요는 없다. 현재 Plan의 보정값과 새 서비스 결과 차이가
 기본 1mm 이내라면 재계획 없이 기존 경로를 계속 사용한다
 (`refine_center_replan_tolerance_m`).
-수신한 프레임은 별도 Python 환경의 LaboroTomato 방울토마토 Mask R-CNN으로
-비동기 추론한다. 모델은 처음 한 번만 GPU 메모리에 로드하고 이후 2단계
-재촬영에서 재사용한다. 추론이 끝나면 숙도별 빨강/주황/초록 반투명 instance
-mask와 외곽선을 원본 위에 합성해 같은 화면에 표시하며, 모델 로딩·추론 중에도
-GUI와 로봇 제어 이벤트 루프는 정지하지 않는다. 설치는 저장소 루트에서 다음과
-같이 한 번 수행한다.
+최초 스텝 Plan과 중심 보정 후 경로 재계획은 각각 최초 1회가 실패하면 최대
+3회 더 시도한다(총 4회). 재촬영 프리뷰는 비전 노드가 발행한 이미지만 표시하며
+GUI에서 LaboroTomato 검출이나 마스크 추론을 추가로 수행하지 않는다.
 
-```bash
-./scripts/setup_laboro_tomato.sh
-```
-
-가상환경과 약 335 MB 체크포인트는 Git에서 제외된다. LaboroTomato 모델은
-CC BY-NC-SA 4.0이므로 이 기능은 비상업적 사용만 가능하며 상업 적용에는
-Laboro.AI의 별도 허가가 필요하다. 자세한 출처와 체크섬은 저장소 루트의
-`THIRD_PARTY_NOTICES.md`에 기록되어 있다.
-
-재촬영 화면 바로 위의 `현재 이미지 JPEG 저장` 버튼은 Mask R-CNN 합성 결과가
-아닌 `/tomato_vision/refine_preview` 수신 프레임을 저장한다. 기본 저장 경로는
+재촬영 화면 바로 위의 `현재 이미지 JPEG 저장` 버튼은
+`/tomato_vision/refine_preview` 수신 프레임을 저장한다. 기본 저장 경로는
 `~/farmily_tomato/step_reinspection_images`이고 파일명에는 실제 프레임을 받은
 날짜와 시간이 포함된다. JPEG 품질 98, 4:4:4 방식으로 저장하며 경로는
 `step_reinspection_image_save_directory` 파라미터로 변경할 수 있다.

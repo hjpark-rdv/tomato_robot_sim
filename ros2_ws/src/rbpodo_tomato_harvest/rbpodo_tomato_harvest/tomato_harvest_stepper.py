@@ -33,6 +33,7 @@ LINEAR_MOTOR_RUN_SECONDS = 3.0
 SERVO_CLOSE_ANGLE_DEG = 110.0
 SERVO_OPEN_ANGLE_DEG = 159.0
 SERVO_DWELL_SECONDS = 0.7
+PLAN_ATTEMPT_COUNT = 4
 
 
 def _emit(event: str, **values) -> None:
@@ -913,6 +914,31 @@ def _set_expected_states(stages, first_index, initial_positions) -> None:
         stage["expected_end"] = dict(expected)
 
 
+def _plan_with_retries(
+    planner,
+    *,
+    context: str,
+    start_state_override=None,
+    maximum_attempts: int = PLAN_ATTEMPT_COUNT,
+):
+    """Retry a complete step plan without moving the robot."""
+    maximum_attempts = max(1, int(maximum_attempts))
+    for attempt in range(1, maximum_attempts + 1):
+        plan = planner.plan(start_state_override=start_state_override)
+        if plan is not None:
+            return plan
+        if attempt < maximum_attempts:
+            _emit(
+                "plan_retry",
+                context=context,
+                failed_attempt=attempt,
+                next_attempt=attempt + 1,
+                maximum_attempts=maximum_attempts,
+                report=planner.last_plan_report,
+            )
+    return None
+
+
 def _replan_after_refinement(
     planner,
     stages,
@@ -937,9 +963,15 @@ def _replan_after_refinement(
         ]
     )
     current_state = _current_robot_state(planner)
-    refined_plan = planner.plan(start_state_override=current_state)
+    refined_plan = _plan_with_retries(
+        planner,
+        context="refinement",
+        start_state_override=current_state,
+    )
     if refined_plan is None:
-        raise RuntimeError("REFINED_TARGET_PLAN_FAILED")
+        raise RuntimeError(
+            f"REFINED_TARGET_PLAN_FAILED_AFTER_{PLAN_ATTEMPT_COUNT}_ATTEMPTS"
+        )
     refined_via_pose = getattr(refined_plan, "preapproach_via_pose", None)
     if refined_via_pose is None:
         raise RuntimeError("REFINED_REINSPECTION_POSE_UNAVAILABLE")
@@ -948,14 +980,30 @@ def _replan_after_refinement(
     # already at the old A, so replace that unused segment with a direct,
     # collision-checked old-A -> corrected-A bridge.  Stage 3 then continues
     # with the freshly planned corrected-A -> PRE_APPROACH trajectory.
-    corrected_a_bridge = planner._plan_cartesian_with_ompl_fallback(
-        [refined_via_pose],
-        current_state,
-        "Refined center: current A to corrected camera waypoint",
-        pregrasp=True,
-    )
+    corrected_a_bridge = None
+    for attempt in range(1, PLAN_ATTEMPT_COUNT + 1):
+        corrected_a_bridge = planner._plan_cartesian_with_ompl_fallback(
+            [refined_via_pose],
+            current_state,
+            "Refined center: current A to corrected camera waypoint",
+            pregrasp=True,
+        )
+        if corrected_a_bridge is not None:
+            break
+        if attempt < PLAN_ATTEMPT_COUNT:
+            _emit(
+                "plan_retry",
+                context="refinement_bridge",
+                failed_attempt=attempt,
+                next_attempt=attempt + 1,
+                maximum_attempts=PLAN_ATTEMPT_COUNT,
+                report=planner.last_plan_report,
+            )
     if corrected_a_bridge is None:
-        raise RuntimeError("REFINED_REINSPECTION_BRIDGE_FAILED")
+        raise RuntimeError(
+            "REFINED_REINSPECTION_BRIDGE_FAILED_AFTER_"
+            f"{PLAN_ATTEMPT_COUNT}_ATTEMPTS"
+        )
 
     refined_stages = _build_step_stages(planner, refined_plan)
     first_replanned_index = 2
@@ -1694,7 +1742,7 @@ def main(args=None) -> None:
     )
     exit_code = 1
     try:
-        plan = planner.plan()
+        plan = _plan_with_retries(planner, context="initial_step_plan")
         report = planner.last_plan_report
         if plan is None:
             _emit("plan_failed", report=report)

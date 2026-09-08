@@ -3833,7 +3833,6 @@ def test_step_reinspection_stage_requires_enabled_camera_a_motion():
 def test_step_reinspection_image_callback_captures_only_armed_next_frame():
     values = {}
     scheduled = []
-    inference_requests = []
     gui = SimpleNamespace(
         step_reinspection_capture_pending=False,
         latest_step_reinspection_image=None,
@@ -3842,9 +3841,6 @@ def test_step_reinspection_image_callback_captures_only_armed_next_frame():
         ),
         _schedule_step_reinspection_image_render=(
             lambda: scheduled.append(True)
-        ),
-        _request_laboro_mask_inference=(
-            lambda image: inference_requests.append(image.copy())
         ),
         _append_log=lambda value: values.__setitem__("log", value),
     )
@@ -3861,9 +3857,8 @@ def test_step_reinspection_image_callback_captures_only_armed_next_frame():
     assert gui.latest_step_reinspection_original_image.size == (20, 12)
     assert gui.step_reinspection_image_captured_at is not None
     assert scheduled == [True]
-    assert [image.size for image in inference_requests] == [(20, 12)]
     assert values["status"].startswith("20×12 · rgb8")
-    assert "마스크 추론 요청" in values["log"]
+    assert "추가 토마토 검출은 수행하지 않음" in values["log"]
 
 
 def test_save_step_reinspection_original_image_writes_dated_high_quality_jpeg(

@@ -9730,13 +9730,12 @@ class HarvestGui(Node):
             save_button.configure(state="normal")
         encoding = str(message.encoding or "raw")
         self.step_reinspection_image_status.set(
-            f"{image.width}×{image.height} · {encoding} · 마스크 추론 준비"
+            f"{image.width}×{image.height} · {encoding} · 프리뷰 수신"
         )
         self._schedule_step_reinspection_image_render()
-        self._request_laboro_mask_inference(image)
         self._append_log(
             f"[2단계 재촬영 이미지] {image.width}×{image.height} "
-            f"{encoding} 원본 수신 · LaboroTomato 마스크 추론 요청"
+            f"{encoding} 프리뷰 수신 · 추가 토마토 검출은 수행하지 않음"
         )
 
     def save_step_reinspection_original_image(self) -> None:
@@ -11821,6 +11820,23 @@ class HarvestGui(Node):
                 "로봇은 아직 움직이지 않았습니다."
             )
             self.show_preapproach_goal_state(quiet=True)
+        elif event_name == "plan_retry":
+            failed_attempt = int(event.get("failed_attempt", 1))
+            next_attempt = int(event.get("next_attempt", failed_attempt + 1))
+            maximum_attempts = int(event.get("maximum_attempts", 4))
+            context = str(event.get("context", "planning"))
+            context_label = {
+                "initial_step_plan": "스텝 Plan",
+                "refinement": "중심 보정 경로",
+                "refinement_bridge": "보정 A 연결 경로",
+            }.get(context, context)
+            message = (
+                f"{context_label} {failed_attempt}회 실패 — "
+                f"{next_attempt}/{maximum_attempts}회 재시도 중"
+            )
+            self.step_status.set(message)
+            self.status.set(message)
+            self._append_log(f"[스텝 Plan 재시도] {message}")
         elif event_name == "refinement_replanning":
             offset_mm = tuple(
                 float(value) * 1000.0
@@ -12319,6 +12335,23 @@ class HarvestGui(Node):
                 self.repeat_batch_current_outcome = "planned"
                 self.repeat_run_direction = "forward"
                 self.root.after(50, self._continue_repeat_automation)
+        elif event_name == "plan_retry":
+            failed_attempt = int(event.get("failed_attempt", 1))
+            next_attempt = int(event.get("next_attempt", failed_attempt + 1))
+            maximum_attempts = int(event.get("maximum_attempts", 4))
+            context = str(event.get("context", "planning"))
+            context_label = {
+                "initial_step_plan": "반복 스텝 Plan",
+                "refinement": "중심 보정 경로",
+                "refinement_bridge": "보정 A 연결 경로",
+            }.get(context, context)
+            message = (
+                f"{context_label} {failed_attempt}회 실패 — "
+                f"{next_attempt}/{maximum_attempts}회 재시도 중"
+            )
+            self.repeat_status.set(message)
+            self.status.set(message)
+            self._append_log(f"[접근 반복 Plan 재시도] {message}")
         elif event_name == "refinement_replanning":
             self.step_execution_in_progress = True
             self.repeat_status.set(
