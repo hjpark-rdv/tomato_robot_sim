@@ -24,7 +24,11 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk, UnidentifiedImageError
 from action_msgs.srv import CancelGoal
 from ament_index_python.packages import get_package_share_directory
 from farmily_tomato_interfaces.msg import TomatoDetectionArray
-from farmily_tomato_interfaces.srv import DebugFrame, DetectTomatoes
+from farmily_tomato_interfaces.srv import (
+    DebugFrame,
+    DetectTomatoes,
+    RefineTomatoCenter,
+)
 from geometry_msgs.msg import Point
 from moveit_msgs.msg import RobotState
 from rbpodo_msgs.srv import Eval, SetSpeedBar, TaskStop
@@ -638,6 +642,7 @@ def harvest_command(
     prefer_robot_direction: bool = False,
     adaptive_grasp_max_rotation_deg: float = 45.0,
     tomato_frame: str | None = None,
+    tomato_position_offset_xyz=(0.0, 0.0, 0.0),
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the isolated harvest planner command used by the GUI."""
@@ -700,6 +705,20 @@ def harvest_command(
     ).strip()
     if not tomato_frame:
         raise ValueError("tomato_frame must not be empty")
+    try:
+        target_offset = tuple(
+            float(value) for value in tomato_position_offset_xyz
+        )
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "tomato_position_offset_xyz must contain finite XYZ"
+        ) from error
+    if len(target_offset) != 3 or not all(
+        math.isfinite(value) for value in target_offset
+    ):
+        raise ValueError(
+            "tomato_position_offset_xyz must contain finite XYZ"
+        )
     command = [
         executable,
         "-m",
@@ -750,6 +769,10 @@ def harvest_command(
         "adaptive_grasp_max_rotation_deg:="
         f"{adaptive_grasp_max_rotation_deg}",
     ]
+    for axis_name, value in zip(("x", "y", "z"), target_offset):
+        command.extend(
+            ["-p", f"tomato_position_offset_{axis_name}:={value}"]
+        )
     if harvest_stage_limit is not None:
         command.extend(
             [
@@ -914,6 +937,7 @@ def stepper_command(
     linear_motor_extend_seconds: float = 3.0,
     forward_wave_enabled: bool = False,
     tomato_frame: str | None = None,
+    tomato_position_offset_xyz=(0.0, 0.0, 0.0),
     python_executable: str | None = None,
 ) -> list[str]:
     """Build the persistent detailed-step planner command."""
@@ -1051,6 +1075,7 @@ def stepper_command(
         adaptive_grasp_max_rotation_deg=(
             adaptive_grasp_max_rotation_deg
         ),
+        tomato_position_offset_xyz=tomato_position_offset_xyz,
         python_executable=python_executable,
     )
     command[2] = "rbpodo_tomato_harvest.tomato_harvest_stepper"
@@ -1329,6 +1354,41 @@ def transformed_point_xyz(point, transform) -> tuple[float, float, float]:
         + 2 * (qy * qz + qx * qw) * y
         + (1 - 2 * (qx * qx + qy * qy)) * z,
     )
+
+
+def rotated_vector_xyz(vector, transform) -> tuple[float, float, float]:
+    """Rotate a vector without applying the transform translation."""
+    x, y, z = (float(value) for value in vector)
+    rotation = transform.transform.rotation
+    qx = float(rotation.x)
+    qy = float(rotation.y)
+    qz = float(rotation.z)
+    qw = float(rotation.w)
+    return (
+        (1 - 2 * (qy * qy + qz * qz)) * x
+        + 2 * (qx * qy - qz * qw) * y
+        + 2 * (qx * qz + qy * qw) * z,
+        2 * (qx * qy + qz * qw) * x
+        + (1 - 2 * (qx * qx + qz * qz)) * y
+        + 2 * (qy * qz - qx * qw) * z,
+        2 * (qx * qz - qy * qw) * x
+        + 2 * (qy * qz + qx * qw) * y
+        + (1 - 2 * (qx * qx + qy * qy)) * z,
+    )
+
+
+def refined_center_delta_xyz(
+    original_xyz,
+    refined_xyz,
+) -> tuple[float, float, float]:
+    """Return a finite refined-minus-original translation in one frame."""
+    original = tuple(float(value) for value in original_xyz)
+    refined = tuple(float(value) for value in refined_xyz)
+    if len(original) != 3 or len(refined) != 3:
+        raise ValueError("tomato center coordinates must contain XYZ")
+    if not all(math.isfinite(value) for value in (*original, *refined)):
+        raise ValueError("tomato center coordinates must be finite")
+    return tuple(new - old for old, new in zip(original, refined))
 
 
 def detection_message_sorted_by_height(
@@ -2742,6 +2802,11 @@ class HarvestGui(Node):
         self.declare_parameter("capture_camera_service", "/capture_camera")
         self.declare_parameter("debug_frame_service", "/debug_frame")
         self.declare_parameter(
+            "refine_tomato_center_service",
+            "/refine_tomato_center",
+        )
+        self.declare_parameter("refine_center_replan_tolerance_m", 0.001)
+        self.declare_parameter(
             "result_image_topic",
             "/tomato_vision/result_image",
         )
@@ -2759,8 +2824,9 @@ class HarvestGui(Node):
         )
         self.declare_parameter(
             "step_reinspection_image_topic",
-            "/camera/d435/color/image_raw",
+            "/tomato_vision/refine_preview",
         )
+        self.declare_parameter("step_reinspection_image_timeout_sec", 3.0)
         self.declare_parameter(
             "step_reinspection_image_save_directory",
             str(
@@ -2972,6 +3038,13 @@ class HarvestGui(Node):
             DebugFrame,
             self.debug_frame_service,
         )
+        self.refine_tomato_center_service = str(
+            self.get_parameter("refine_tomato_center_service").value
+        )
+        self.refine_tomato_center_client = self.create_client(
+            RefineTomatoCenter,
+            self.refine_tomato_center_service,
+        )
         self.result_image_topic = str(
             self.get_parameter("result_image_topic").value
         )
@@ -2986,6 +3059,9 @@ class HarvestGui(Node):
         )
         self.step_reinspection_image_topic = str(
             self.get_parameter("step_reinspection_image_topic").value
+        )
+        self.step_reinspection_image_timeout_sec = float(
+            self.get_parameter("step_reinspection_image_timeout_sec").value
         )
         self.step_reinspection_image_save_directory = Path(
             str(
@@ -3051,7 +3127,7 @@ class HarvestGui(Node):
             RosImage,
             self.step_reinspection_image_topic,
             self._step_reinspection_image_callback,
-            camera_info_qos,
+            reliable_image_qos,
         )
         self.scene_get_client = self.create_client(
             GetParameters, f"{scene_node}/get_parameters"
@@ -3337,6 +3413,7 @@ class HarvestGui(Node):
         self.detected_tomato_record_calyx_positions = {}
         self.detected_tomato_record_angle_origins = {}
         self.detected_tomato_record_angle_targets = {}
+        self.refined_tomato_position_offsets = {}
         self.current_detection_stamp_ns = 0
         self.detected_tf_ready_stamp_ns = 0
         self.detection_signature = None
@@ -3457,11 +3534,16 @@ class HarvestGui(Node):
         self.camera_color_image_render_job = None
         self.latest_camera_color_info = None
         self.step_reinspection_capture_pending = False
+        self.step_refinement_in_progress = False
+        self.step_refinement_request_id = 0
+        self.step_refinement_pending_command = None
+        self.step_planned_tomato_position_offset = (0.0, 0.0, 0.0)
         self.latest_step_reinspection_image = None
         self.latest_step_reinspection_original_image = None
         self.step_reinspection_image_captured_at = None
         self.step_reinspection_image_photo = None
         self.step_reinspection_image_render_job = None
+        self.step_reinspection_image_timeout_job = None
         self.laboro_mask_process = None
         self.laboro_mask_ready = False
         self.laboro_mask_request_id = 0
@@ -3508,6 +3590,13 @@ class HarvestGui(Node):
         )
         self.step_reinspection_image_status = tk.StringVar(
             value="2단계 완료 후 재촬영 이미지가 표시됩니다."
+        )
+        self.step_refine_apply_var = tk.BooleanVar(value=False)
+        self.step_refine_status_var = tk.StringVar(
+            value="중심 미세조정 대기"
+        )
+        self.step_refine_debug_var = tk.StringVar(
+            value="보정 계산 상세가 여기에 표시됩니다."
         )
         self.show_detection_markers_var = tk.BooleanVar(value=True)
         self.angle_reference_mode_var = tk.StringVar(
@@ -4511,12 +4600,30 @@ class HarvestGui(Node):
 
         step_content = ttk.Frame(frame)
         step_content.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
-        step_content.columnconfigure(0, weight=3, minsize=700)
-        step_content.columnconfigure(1, weight=1, minsize=520)
+        # Keep both halves exactly equal.  Without a shared uniform group,
+        # Tk adds each child's requested width before distributing spare room,
+        # so long status/image text makes the stage table grow and shrink.
+        step_content.columnconfigure(
+            0,
+            weight=1,
+            minsize=600,
+            uniform="step_content_half",
+        )
+        step_content.columnconfigure(
+            1,
+            weight=1,
+            minsize=600,
+            uniform="step_content_half",
+        )
         step_content.rowconfigure(0, weight=1)
 
-        stages = ttk.LabelFrame(step_content, text="수확 단계", padding=8)
-        stages.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
+        left_panel = ttk.Frame(step_content)
+        left_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
+        left_panel.columnconfigure(0, weight=1)
+        left_panel.rowconfigure(0, weight=1)
+
+        stages = ttk.LabelFrame(left_panel, text="수확 단계", padding=8)
+        stages.grid(row=0, column=0, sticky="nsew")
         stages.columnconfigure(0, weight=1)
         stages.rowconfigure(0, weight=1)
         columns = ("number", "motion", "detail", "status")
@@ -4840,7 +4947,7 @@ class HarvestGui(Node):
             pady=(8, 0),
         )
         ttk.Label(
-            custom,
+            left_panel,
             text=(
                 "XYZ 값은 tomato_gripper_tip 로컬 이동량입니다.\n"
                 "입력 범위: 축별 -200~+200 mm (화살표 1회 = 1 mm)\n"
@@ -4853,11 +4960,10 @@ class HarvestGui(Node):
             foreground="#666666",
             justify="left",
         ).grid(
-            row=14,
+            row=2,
             column=0,
-            columnspan=3,
-            sticky="nw",
-            pady=(10, 0),
+            sticky="ew",
+            pady=(6, 0),
         )
 
         reinspection_image = ttk.LabelFrame(
@@ -4867,15 +4973,76 @@ class HarvestGui(Node):
         )
         reinspection_image.grid(
             row=14,
-            column=3,
-            columnspan=3,
+            column=0,
+            columnspan=6,
             sticky="nsew",
-            padx=(8, 0),
+            padx=0,
             pady=(8, 0),
         )
-        reinspection_image.columnconfigure(0, weight=1)
-        reinspection_image.rowconfigure(1, weight=1)
-        reinspection_toolbar = ttk.Frame(reinspection_image)
+        reinspection_image.columnconfigure(
+            0,
+            weight=2,
+            minsize=260,
+            uniform="reinspection_columns",
+        )
+        reinspection_image.columnconfigure(
+            1,
+            weight=3,
+            minsize=360,
+            uniform="reinspection_columns",
+        )
+        reinspection_image.rowconfigure(0, weight=1)
+
+        reinspection_info = ttk.Frame(reinspection_image)
+        reinspection_info.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=(0, 6),
+        )
+        reinspection_info.columnconfigure(0, weight=1)
+        ttk.Label(
+            reinspection_info,
+            textvariable=self.step_reinspection_image_status,
+            anchor="w",
+            justify="left",
+            wraplength=340,
+        ).grid(row=0, column=0, sticky="ew")
+        refine_controls = ttk.Frame(reinspection_info)
+        refine_controls.grid(row=1, column=0, sticky="ew", pady=(6, 0))
+        self.step_refine_apply_checkbox = ttk.Checkbutton(
+            refine_controls,
+            text="재촬영 중심 보정값 반영",
+            variable=self.step_refine_apply_var,
+        )
+        self.step_refine_apply_checkbox.grid(row=0, column=0, sticky="w")
+        ttk.Label(
+            reinspection_info,
+            textvariable=self.step_refine_status_var,
+            anchor="w",
+            justify="left",
+            wraplength=340,
+        ).grid(row=2, column=0, sticky="ew", pady=(6, 0))
+        ttk.Label(
+            reinspection_info,
+            textvariable=self.step_refine_debug_var,
+            anchor="nw",
+            justify="left",
+            foreground="#555555",
+            wraplength=340,
+        ).grid(row=3, column=0, sticky="nsew", pady=(6, 0))
+        reinspection_info.rowconfigure(3, weight=1)
+
+        reinspection_preview = ttk.Frame(reinspection_image)
+        reinspection_preview.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=(6, 0),
+        )
+        reinspection_preview.columnconfigure(0, weight=1)
+        reinspection_preview.rowconfigure(1, weight=1)
+        reinspection_toolbar = ttk.Frame(reinspection_preview)
         reinspection_toolbar.grid(
             row=0,
             column=0,
@@ -4885,12 +5052,12 @@ class HarvestGui(Node):
         reinspection_toolbar.columnconfigure(0, weight=1)
         ttk.Label(
             reinspection_toolbar,
-            text="카메라 원본 프레임",
+            text="재촬영 보정 프리뷰",
             foreground="#666666",
         ).grid(row=0, column=0, sticky="w")
         self.step_reinspection_save_button = ttk.Button(
             reinspection_toolbar,
-            text="원본 JPEG 저장",
+            text="현재 이미지 JPEG 저장",
             command=self.save_step_reinspection_original_image,
             state="disabled",
             style="Compact.TButton",
@@ -4901,7 +5068,7 @@ class HarvestGui(Node):
             sticky="e",
         )
         self.step_reinspection_image_label = tk.Label(
-            reinspection_image,
+            reinspection_preview,
             text="2단계 완료 후\n카메라 프레임 대기",
             background="#202020",
             foreground="#dddddd",
@@ -4918,14 +5085,9 @@ class HarvestGui(Node):
             "<Configure>",
             self._schedule_step_reinspection_image_render,
         )
-        ttk.Label(
-            reinspection_image,
-            textvariable=self.step_reinspection_image_status,
-            anchor="w",
-        ).grid(row=2, column=0, sticky="ew", pady=(3, 0))
 
-        controls = ttk.Frame(frame)
-        controls.grid(row=2, column=0, sticky="ew", pady=(10, 0))
+        controls = ttk.Frame(left_panel)
+        controls.grid(row=1, column=0, sticky="ew", pady=(8, 0))
         controls.columnconfigure(6, weight=1)
         self.step_previous_button = ttk.Button(
             controls,
@@ -8962,6 +9124,7 @@ class HarvestGui(Node):
             )
         self._clear_active_camera_target()
         self.latest_detection_message = message
+        self.refined_tomato_position_offsets.clear()
         self.result_arrow_lengths.clear()
         self.result_detection_frame = message.header.frame_id
         self.detection_signature = signature
@@ -9287,10 +9450,247 @@ class HarvestGui(Node):
             text="2단계 도착 완료\n새 카메라 프레임 수신 대기...",
         )
         self.step_reinspection_image_photo = None
+        if getattr(
+            self,
+            "step_reinspection_image_timeout_job",
+            None,
+        ) is not None:
+            try:
+                self.root.after_cancel(
+                    self.step_reinspection_image_timeout_job
+                )
+            except tk.TclError:
+                pass
+        self.step_reinspection_image_timeout_job = self.root.after(
+            max(1, round(self.step_reinspection_image_timeout_sec * 1000.0)),
+            self._step_reinspection_image_timed_out,
+        )
         self._append_log(
             "[2단계 재촬영] A 도착 완료 — "
             f"{self.step_reinspection_image_topic}의 다음 프레임을 기다립니다."
         )
+
+    def _step_reinspection_image_timed_out(self) -> None:
+        """Explain when refine succeeded but its camera frame was not sent."""
+        self.step_reinspection_image_timeout_job = None
+        if not self.step_reinspection_capture_pending:
+            return
+        self.step_reinspection_capture_pending = False
+        self.step_reinspection_image_status.set(
+            "재촬영 서비스 프레임 미발행"
+        )
+        self.step_reinspection_image_label.configure(
+            image="",
+            text=(
+                "재촬영 서비스는 호출되었지만\n"
+                f"{self.step_reinspection_image_topic}\n"
+                "새 이미지가 발행되지 않았습니다."
+            ),
+        )
+        self._append_log(
+            "[2단계 재촬영 이미지 없음] 비전 노드가 refine에 사용한 "
+            f"프레임을 {self.step_reinspection_image_topic}에 "
+            "발행해야 합니다."
+        )
+
+    def _request_refined_tomato_center(self) -> None:
+        """Request the close-range center after arriving at camera pose A."""
+        index = self.active_camera_target_index
+        if index is None:
+            index = self._selected_index()
+        if index is None or index not in self.detected_tomato_record_positions:
+            self.step_refine_status_var.set("원본 중심 좌표 없음")
+            self._append_log("[재촬영 중심 보정 실패] Plan 대상 좌표가 없습니다.")
+            return
+        if getattr(self, "step_refinement_in_progress", False):
+            return
+        if not self.refine_tomato_center_client.service_is_ready() and not (
+            self.refine_tomato_center_client.wait_for_service(timeout_sec=0.1)
+        ):
+            self.step_refine_status_var.set("미세조정 서비스 연결 안 됨")
+            self._append_log(
+                "[재촬영 중심 보정 실패] 서비스 연결 안 됨: "
+                f"{self.refine_tomato_center_service}"
+            )
+            return
+        self.step_refinement_in_progress = True
+        self.step_refinement_request_id += 1
+        request_id = self.step_refinement_request_id
+        self.step_refine_status_var.set("중심 미세조정 요청 중...")
+        self._update_step_controls()
+        self._append_log(
+            f"[재촬영 중심 보정] 대상={self._tomato_frame(index)}, "
+            f"서비스={self.refine_tomato_center_service}"
+        )
+        future = self.refine_tomato_center_client.call_async(
+            RefineTomatoCenter.Request()
+        )
+        future.add_done_callback(
+            lambda completed, rid=request_id, target=index: self.root.after(
+                0,
+                self._refined_tomato_center_done,
+                completed,
+                rid,
+                target,
+            )
+        )
+
+    def _refined_tomato_center_done(
+        self,
+        future,
+        request_id: int,
+        index: int,
+    ) -> None:
+        """Transform, display and optionally retain one refined center."""
+        if request_id != self.step_refinement_request_id or self.closing:
+            return
+        self.step_refinement_in_progress = False
+        try:
+            response = future.result()
+            if int(response.result_code) != int(RefineTomatoCenter.Response.SUCCESS):
+                raise RuntimeError(
+                    response.message
+                    or f"result_code={int(response.result_code)}"
+                )
+            source_frame = str(response.header.frame_id).strip()
+            if not source_frame:
+                raise ValueError("응답 header.frame_id가 비어 있습니다.")
+            target_frame = str(
+                self.get_parameter("camera_target_record_robot_frame").value
+            )
+            raw_xyz = (
+                float(response.center.x),
+                float(response.center.y),
+                float(response.center.z),
+            )
+            # RefineTomatoCenter is RGB-only lateral refinement.  Its X/Y are
+            # optical-frame offsets from the nominal image centre and Z is the
+            # fixed standoff used for pixel-to-metre scaling, not a new depth
+            # measurement.  Rotate only the lateral vector: applying camera
+            # translation would incorrectly mix A-pose execution error into
+            # the tomato correction.
+            camera_lateral_delta = (raw_xyz[0], raw_xyz[1], 0.0)
+            if source_frame == target_frame:
+                delta = camera_lateral_delta
+            else:
+                stamp = response.header.stamp
+                lookup_time = (
+                    Time.from_msg(stamp)
+                    if int(stamp.sec) != 0 or int(stamp.nanosec) != 0
+                    else Time()
+                )
+                try:
+                    transform = self.tf_buffer.lookup_transform(
+                        target_frame,
+                        source_frame,
+                        lookup_time,
+                    )
+                except TransformException:
+                    transform = self.tf_buffer.lookup_transform(
+                        target_frame,
+                        source_frame,
+                        Time(),
+                    )
+                delta = rotated_vector_xyz(
+                    camera_lateral_delta,
+                    transform,
+                )
+            original_xyz = self.detected_tomato_record_positions[int(index)]
+            refined_xyz = tuple(
+                original + correction
+                for original, correction in zip(original_xyz, delta)
+            )
+            delta_mm = tuple(value * 1000.0 for value in delta)
+            distance_mm = math.sqrt(sum(value * value for value in delta_mm))
+            applied = bool(self.step_refine_apply_var.get())
+            planned_offset = tuple(
+                float(value)
+                for value in self.step_planned_tomato_position_offset
+            )
+            offset_change_m = math.sqrt(
+                sum(
+                    (new - planned) ** 2
+                    for new, planned in zip(delta, planned_offset)
+                )
+            )
+            replan_tolerance_m = float(
+                self.get_parameter("refine_center_replan_tolerance_m").value
+            )
+            requires_replan = applied and (
+                offset_change_m > replan_tolerance_m
+            )
+            if applied:
+                self.refined_tomato_position_offsets[int(index)] = delta
+            else:
+                self.refined_tomato_position_offsets.pop(int(index), None)
+            action = "반영" if applied else "미반영"
+            self.step_refine_status_var.set(
+                f"ΔX {delta_mm[0]:+.1f} / Y {delta_mm[1]:+.1f} / "
+                f"Z {delta_mm[2]:+.1f} mm · {distance_mm:.1f} mm · {action}"
+            )
+            original_mm = tuple(value * 1000.0 for value in original_xyz)
+            refined_mm = tuple(value * 1000.0 for value in refined_xyz)
+            self.step_refine_debug_var.set(
+                f"대상={self._tomato_frame(index)} · 기준={target_frame}\n"
+                f"최초 검출 중심[{target_frame}]=({original_mm[0]:.1f}, "
+                f"{original_mm[1]:.1f}, {original_mm[2]:.1f}) mm\n"
+                f"서비스 횡보정[{source_frame}]=({raw_xyz[0] * 1000.0:+.1f}, "
+                f"{raw_xyz[1] * 1000.0:+.1f}) mm · "
+                f"Z={raw_xyz[2] * 1000.0:.1f}mm는 고정 촬영거리로 미반영\n"
+                f"보정 중심[{target_frame}]=({refined_mm[0]:.1f}, "
+                f"{refined_mm[1]:.1f}, {refined_mm[2]:.1f}) mm · "
+                f"Δ=({delta_mm[0]:+.1f}, {delta_mm[1]:+.1f}, "
+                f"{delta_mm[2]:+.1f}) mm\n"
+                f"서비스: {response.message or '(메시지 없음)'}"
+            )
+            self._append_log(
+                f"[재촬영 중심 보정 {action}] "
+                f"대상={self._tomato_frame(index)}, frame={target_frame}, "
+                f"원본=({original_xyz[0]:.4f}, {original_xyz[1]:.4f}, "
+                f"{original_xyz[2]:.4f}) m, "
+                f"서비스[{source_frame}]=({raw_xyz[0]:.4f}, "
+                f"{raw_xyz[1]:.4f}, {raw_xyz[2]:.4f}) m, "
+                f"보정=({refined_xyz[0]:.4f}, {refined_xyz[1]:.4f}, "
+                f"{refined_xyz[2]:.4f}) m, "
+                f"변화량=({delta_mm[0]:+.1f}, {delta_mm[1]:+.1f}, "
+                f"{delta_mm[2]:+.1f}) mm, 거리={distance_mm:.1f} mm, "
+                f"accepted_frames={int(response.accepted_frame_count)}, "
+                f"replan={'필요' if requires_replan else '불필요'}"
+            )
+            if requires_replan:
+                pending_command = self.step_refinement_pending_command
+                self.step_refinement_pending_command = None
+                self.step_status.set(
+                    "중심 보정값 반영 완료 — 재촬영 A 이후 경로 자동 "
+                    "재계획 중..."
+                )
+                self.status.set(self.step_status.get())
+                self._send_step_command(
+                    {
+                        "command": "replan_after_refinement",
+                        "offset_xyz": list(delta),
+                        "resume_command": pending_command,
+                    }
+                )
+            else:
+                pending_command = self.step_refinement_pending_command
+                self.step_refinement_pending_command = None
+                if pending_command is not None:
+                    self.root.after(
+                        20,
+                        self._send_step_command,
+                        pending_command,
+                    )
+                elif self.step_session_mode == "repeat":
+                    self.root.after(20, self._continue_repeat_automation)
+        except Exception as error:
+            self.step_refinement_pending_command = None
+            self.step_refine_status_var.set(f"중심 미세조정 실패: {error}")
+            self.step_refine_debug_var.set(
+                f"대상={self._tomato_frame(index)} · 계산 실패: {error}"
+            )
+            self._append_log(f"[재촬영 중심 보정 실패] {error}")
+        self._update_step_controls()
 
     def _step_reinspection_image_callback(self, message: RosImage) -> None:
         """Store exactly one post-stage-2 RGB image for the step panel."""
@@ -9304,6 +9704,18 @@ class HarvestGui(Node):
             self._append_log(f"[2단계 재촬영 이미지 오류] {error}")
             return
         self.step_reinspection_capture_pending = False
+        if getattr(
+            self,
+            "step_reinspection_image_timeout_job",
+            None,
+        ) is not None:
+            try:
+                self.root.after_cancel(
+                    self.step_reinspection_image_timeout_job
+                )
+            except tk.TclError:
+                pass
+            self.step_reinspection_image_timeout_job = None
         self.latest_step_reinspection_original_image = image.copy()
         self.latest_step_reinspection_image = image.copy()
         self.step_reinspection_image_captured_at = (
@@ -9644,6 +10056,18 @@ class HarvestGui(Node):
     def _clear_step_reinspection_image(self) -> None:
         """Clear a previous target's reinspection snapshot."""
         self.step_reinspection_capture_pending = False
+        if getattr(
+            self,
+            "step_reinspection_image_timeout_job",
+            None,
+        ) is not None:
+            try:
+                self.root.after_cancel(
+                    self.step_reinspection_image_timeout_job
+                )
+            except tk.TclError:
+                pass
+            self.step_reinspection_image_timeout_job = None
         self.laboro_mask_display_request_id = None
         pending = self.laboro_mask_pending_request
         self.laboro_mask_pending_request = None
@@ -9670,6 +10094,10 @@ class HarvestGui(Node):
             self.step_reinspection_image_render_job = None
         self.step_reinspection_image_status.set(
             "2단계 완료 후 재촬영 이미지가 표시됩니다."
+        )
+        self.step_refine_status_var.set("중심 미세조정 대기")
+        self.step_refine_debug_var.set(
+            "보정 계산 상세가 여기에 표시됩니다."
         )
         self.step_reinspection_image_label.configure(
             image="",
@@ -11178,9 +11606,18 @@ class HarvestGui(Node):
         pipeline, planner_id, preapproach_mode = (
             self._selected_planner_config()
         )
+        planned_target_offset = (
+            self.refined_tomato_position_offsets.get(
+                index,
+                (0.0, 0.0, 0.0),
+            )
+            if self.step_refine_apply_var.get()
+            else (0.0, 0.0, 0.0)
+        )
         command = stepper_command(
             index,
             tomato_frame=self._tomato_frame(index),
+            tomato_position_offset_xyz=planned_target_offset,
             planning_pipeline_id=pipeline,
             planner_id=planner_id,
             preapproach_mode=preapproach_mode,
@@ -11242,6 +11679,9 @@ class HarvestGui(Node):
         self.step_execution_confirmed = self.repeat_batch_active
         self.step_session_failed = False
         self.step_session_mode = mode
+        self.step_planned_tomato_position_offset = tuple(
+            planned_target_offset
+        )
         self.step_session_verification = (
             self.detection_generation,
             index,
@@ -11381,6 +11821,65 @@ class HarvestGui(Node):
                 "로봇은 아직 움직이지 않았습니다."
             )
             self.show_preapproach_goal_state(quiet=True)
+        elif event_name == "refinement_replanning":
+            offset_mm = tuple(
+                float(value) * 1000.0
+                for value in event.get("offset_xyz", (0.0, 0.0, 0.0))
+            )
+            self.step_execution_in_progress = True
+            self.step_status.set(
+                "보정 중심 기준 3단계 이후 경로 재계획 중..."
+            )
+            self.status.set(self.step_status.get())
+            self._append_log(
+                "[재촬영 중심 자동 재계획 시작] "
+                f"Δ=({offset_mm[0]:+.1f}, {offset_mm[1]:+.1f}, "
+                f"{offset_mm[2]:+.1f}) mm"
+            )
+        elif event_name == "refinement_replanned":
+            self.step_execution_in_progress = False
+            self.step_stages = list(event.get("stages", self.step_stages))
+            self.step_next_index = int(event.get("next_index", 2))
+            report = event.get("report") or {}
+            self.harvest_plan_report = report
+            self.step_planned_tomato_position_offset = tuple(
+                float(value)
+                for value in report.get(
+                    "tomato_position_offset_xyz",
+                    self.step_planned_tomato_position_offset,
+                )
+            )
+            for stage in self.step_stages[self.step_next_index:]:
+                index = int(stage["index"])
+                item = str(index)
+                if self.step_tree.exists(item):
+                    self.step_tree.item(
+                        item,
+                        values=(
+                            index + 1,
+                            stage.get("label", ""),
+                            stage.get("detail", ""),
+                            "보정 경로 실행 대기",
+                        ),
+                    )
+            self.step_status.set(
+                "중심 보정 자동 재계획 완료 — 3단계부터 보정 경로 사용"
+            )
+            self.status.set(self.step_status.get())
+            self._append_log(
+                "[재촬영 중심 자동 재계획 완료] 현재 A→보정 A→"
+                "PRE_APPROACH 및 이후 전 경로를 교체했습니다."
+            )
+        elif event_name == "replan_failed":
+            self.step_execution_in_progress = False
+            self.step_session_failed = True
+            reason = str(event.get("reason", "UNKNOWN"))
+            self.step_status.set(f"중심 보정 경로 재계획 실패: {reason}")
+            self.status.set(self.step_status.get())
+            self._append_log(
+                "[재촬영 중심 자동 재계획 실패] "
+                f"{reason}. 기존 좌표의 경로는 안전상 실행하지 않습니다."
+            )
         elif event_name == "plan_failed":
             report = event.get("report") or {}
             self.step_status.set(
@@ -11438,6 +11937,7 @@ class HarvestGui(Node):
             )
             if index == STEP_REINSPECTION_STAGE_INDEX and not reverse:
                 self._arm_step_reinspection_image_capture()
+                self._request_refined_tomato_center()
         elif event_name == "continuous_planning":
             blocks = list(event.get("blocks", []))
             merge_mode = str(event.get("mode", "cartesian"))
@@ -11673,6 +12173,10 @@ class HarvestGui(Node):
             return
         if self.step_execution_in_progress:
             return
+        if getattr(self, "step_refinement_in_progress", False):
+            self.repeat_status.set("재촬영 중심 미세조정 응답 대기 중...")
+            self._update_step_controls()
+            return
         if self.repeat_pause_requested:
             self.repeat_paused = True
             arrow = (
@@ -11815,6 +12319,43 @@ class HarvestGui(Node):
                 self.repeat_batch_current_outcome = "planned"
                 self.repeat_run_direction = "forward"
                 self.root.after(50, self._continue_repeat_automation)
+        elif event_name == "refinement_replanning":
+            self.step_execution_in_progress = True
+            self.repeat_status.set(
+                "보정 중심 기준 3단계 이후 경로 재계획 중..."
+            )
+            self.status.set(self.repeat_status.get())
+        elif event_name == "refinement_replanned":
+            self.step_execution_in_progress = False
+            self.step_stages = list(event.get("stages", self.step_stages))
+            self.step_next_index = int(event.get("next_index", 2))
+            report = event.get("report") or {}
+            self.harvest_plan_report = report
+            self.step_planned_tomato_position_offset = tuple(
+                float(value)
+                for value in report.get(
+                    "tomato_position_offset_xyz",
+                    self.step_planned_tomato_position_offset,
+                )
+            )
+            self.repeat_status.set(
+                "중심 보정 자동 재계획 완료 — 3단계 실행 준비"
+            )
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                "[접근 반복 중심 보정] 3단계 이후 경로를 자동 교체했습니다."
+            )
+        elif event_name == "replan_failed":
+            self.step_execution_in_progress = False
+            self.step_session_failed = True
+            reason = str(event.get("reason", "UNKNOWN"))
+            self.repeat_status.set(f"중심 보정 경로 재계획 실패: {reason}")
+            self.status.set(self.repeat_status.get())
+            self._append_log(
+                f"[접근 반복 중심 보정 실패] {reason}"
+            )
+            if self.repeat_batch_active:
+                self.repeat_batch_current_outcome = "plan_failed"
         elif event_name == "plan_failed":
             report = event.get("report") or {}
             self.repeat_status.set(
@@ -11871,6 +12412,7 @@ class HarvestGui(Node):
                 )
             if index == STEP_REINSPECTION_STAGE_INDEX and not reverse:
                 self._arm_step_reinspection_image_capture()
+                self._request_refined_tomato_center()
         elif event_name == "paused":
             self.step_execution_in_progress = False
             self.step_next_index = int(event.get("next_index", 5))
@@ -12060,14 +12602,31 @@ class HarvestGui(Node):
             )
         elif merge_cartesian:
             self.step_status.set("연속 Cartesian 경로 사전계획 요청 중...")
-        self._send_step_command(
-            {
-                "command": "execute_through",
-                "stage_index": target,
-                "merge_cartesian": merge_cartesian,
-                "merge_all_trajectories": merge_all_trajectories,
-            }
-        )
+        command = {
+            "command": "execute_through",
+            "stage_index": target,
+            "merge_cartesian": merge_cartesian,
+            "merge_all_trajectories": merge_all_trajectories,
+        }
+        # The close-range service must observe the robot at stage 2.  Split a
+        # longer request at that barrier; the callback resumes only when the
+        # operator chose not to replace the cached target coordinates.
+        if (
+            self.step_next_index <= STEP_REINSPECTION_STAGE_INDEX
+            and target > STEP_REINSPECTION_STAGE_INDEX
+            and self._step_reinspection_stage_is_enabled()
+        ):
+            self.step_refinement_pending_command = command
+            barrier_command = dict(command)
+            barrier_command["stage_index"] = STEP_REINSPECTION_STAGE_INDEX
+            barrier_command["merge_cartesian"] = False
+            barrier_command["merge_all_trajectories"] = False
+            self._append_log(
+                "[재촬영 중심 보정] 선택단계 연속 실행을 2단계에서 "
+                "일시 분리합니다."
+            )
+            command = barrier_command
+        self._send_step_command(command)
 
     def close_step_session(self) -> None:
         process = self.step_process
@@ -12118,6 +12677,7 @@ class HarvestGui(Node):
             and not self.step_session_failed
             and self.step_execution_enabled_var.get()
             and not self.step_execution_in_progress
+            and not self.step_refinement_in_progress
             and self.step_next_index < len(self.step_stages)
         )
         reverse_executable = (

@@ -12,6 +12,7 @@ from copy import deepcopy
 import rclpy
 from builtin_interfaces.msg import Duration as DurationMessage
 from moveit_msgs.msg import RobotState
+from rclpy.parameter import Parameter
 from rclpy.executors import ExternalShutdownException
 from std_msgs.msg import Bool, Float64MultiArray
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -823,6 +824,169 @@ def step_stage_specs(
     ]
 
 
+def _build_step_stages(planner, plan: HarvestMotionPlan) -> list[dict]:
+    """Build the GUI stage cache from the planner's current parameters."""
+    return step_stage_specs(
+        plan,
+        float(planner.get_parameter("harvest_wait_sec").value),
+        float(planner.get_parameter("harvest_x_forward").value),
+        tuple(
+            tuple(
+                float(
+                    planner.get_parameter(
+                        f"step_stage_{stage_number}_{axis_name}_delta"
+                    ).value
+                )
+                for axis_name in ("x", "y", "z")
+            )
+            for stage_number in (4, 5, 7, 8, 9)
+        ),
+        float(
+            planner.get_parameter("harvest_tcp_wrist_rotation_deg").value
+        ),
+        str(planner.get_parameter("pick_ready_state_name").value),
+        float(planner.get_parameter("step_servo_speed_percent").value),
+        float(planner.get_parameter("step_servo_close_angle_deg").value),
+        float(
+            planner.get_parameter("step_linear_motor_extend_seconds").value
+        ),
+        bool(planner.get_parameter("harvest_forward_wave_enabled").value),
+        stage_speed_percents=tuple(
+            float(
+                planner.get_parameter(
+                    f"step_stage_{stage_number}_speed_percent"
+                ).value
+            )
+            for stage_number in SPEED_CONTROLLED_STAGE_NUMBERS
+        ),
+        preapproach_final_speed_percent=float(
+            planner.get_parameter(
+                "step_preapproach_final_speed_percent"
+            ).value
+        ),
+    )
+
+
+def _current_robot_state(planner) -> RobotState:
+    positions = planner._wait_for_current_joint_positions(timeout_sec=2.0)
+    required_names = [
+        str(name)
+        for name in planner.get_parameter("pick_ready_joint_names").value
+    ]
+    if any(name not in positions for name in required_names):
+        raise RuntimeError("CURRENT_JOINT_STATE_UNAVAILABLE")
+    state = RobotState()
+    state.is_diff = False
+    state.joint_state.name = required_names
+    state.joint_state.position = [positions[name] for name in required_names]
+    return state
+
+
+def _bind_stage_publishers(
+    stages,
+    servo_topic,
+    servo_publisher,
+    pin8_topic,
+    pin9_topic,
+    pin8_publisher,
+    pin9_publisher,
+) -> None:
+    for stage in stages:
+        if stage["kind"] == "servo_sequence":
+            stage["servo_topic"] = servo_topic
+            stage["servo_publisher"] = servo_publisher
+        if stage["kind"] in {"linear_motor", "servo_sequence"}:
+            stage["linear_motor_pin8_topic"] = pin8_topic
+            stage["linear_motor_pin9_topic"] = pin9_topic
+            stage["linear_motor_pin8_publisher"] = pin8_publisher
+            stage["linear_motor_pin9_publisher"] = pin9_publisher
+
+
+def _set_expected_states(stages, first_index, initial_positions) -> None:
+    expected = {
+        str(name): float(value)
+        for name, value in initial_positions.items()
+    }
+    for stage in stages[first_index:]:
+        stage["expected_start"] = dict(expected)
+        expected = _end_positions(stage.get("trajectories", ()), expected)
+        stage["expected_end"] = dict(expected)
+
+
+def _replan_after_refinement(
+    planner,
+    stages,
+    offset_xyz,
+    servo_resources,
+) -> tuple[list[dict], dict]:
+    """Rebuild stage 3 onward while the robot remains at reinspection A."""
+    offset_xyz = tuple(float(value) for value in offset_xyz)
+    if len(offset_xyz) != 3 or any(
+        not math.isfinite(value) for value in offset_xyz
+    ):
+        raise ValueError("refined offset must contain finite XYZ values")
+
+    planner.set_parameters(
+        [
+            Parameter(
+                f"tomato_position_offset_{axis_name}",
+                Parameter.Type.DOUBLE,
+                value,
+            )
+            for axis_name, value in zip(("x", "y", "z"), offset_xyz)
+        ]
+    )
+    current_state = _current_robot_state(planner)
+    refined_plan = planner.plan(start_state_override=current_state)
+    if refined_plan is None:
+        raise RuntimeError("REFINED_TARGET_PLAN_FAILED")
+    refined_via_pose = getattr(refined_plan, "preapproach_via_pose", None)
+    if refined_via_pose is None:
+        raise RuntimeError("REFINED_REINSPECTION_POSE_UNAVAILABLE")
+
+    # The full refined plan contains READY -> corrected A.  The robot is
+    # already at the old A, so replace that unused segment with a direct,
+    # collision-checked old-A -> corrected-A bridge.  Stage 3 then continues
+    # with the freshly planned corrected-A -> PRE_APPROACH trajectory.
+    corrected_a_bridge = planner._plan_cartesian_with_ompl_fallback(
+        [refined_via_pose],
+        current_state,
+        "Refined center: current A to corrected camera waypoint",
+        pregrasp=True,
+    )
+    if corrected_a_bridge is None:
+        raise RuntimeError("REFINED_REINSPECTION_BRIDGE_FAILED")
+
+    refined_stages = _build_step_stages(planner, refined_plan)
+    first_replanned_index = 2
+    refined_stage = refined_stages[first_replanned_index]
+    refined_stage["trajectories"] = (
+        *tuple(corrected_a_bridge),
+        *tuple(refined_stage.get("trajectories", ())),
+    )
+    stage_speed = float(
+        planner.get_parameter("step_preapproach_final_speed_percent").value
+    )
+    refined_stage["trajectory_speed_percents"] = (
+        (stage_speed,) * len(refined_stage["trajectories"])
+    )
+
+    updated_stages = [*stages[:first_replanned_index], *refined_stages[2:]]
+    _bind_stage_publishers(updated_stages, *servo_resources)
+    current_positions = dict(
+        zip(
+            current_state.joint_state.name,
+            current_state.joint_state.position,
+        )
+    )
+    _set_expected_states(
+        updated_stages,
+        first_replanned_index,
+        current_positions,
+    )
+    return updated_stages, planner.last_plan_report
+
+
 def _end_positions(trajectories, previous: dict[str, float]) -> dict[str, float]:
     group = _trajectory_group(trajectories)
     if not group:
@@ -1536,64 +1700,7 @@ def main(args=None) -> None:
             _emit("plan_failed", report=report)
             raise SystemExit(1)
 
-        wait_seconds = float(planner.get_parameter("harvest_wait_sec").value)
-        forward_distance_m = float(
-            planner.get_parameter("harvest_x_forward").value
-        )
-        custom_stage_deltas_m = tuple(
-            tuple(
-                float(
-                    planner.get_parameter(
-                        f"step_stage_{stage_number}_{axis_name}_delta"
-                    ).value
-                )
-                for axis_name in ("x", "y", "z")
-            )
-            for stage_number in (4, 5, 7, 8, 9)
-        )
-        stages = step_stage_specs(
-            plan,
-            wait_seconds,
-            forward_distance_m,
-            custom_stage_deltas_m,
-            float(
-                planner.get_parameter(
-                    "harvest_tcp_wrist_rotation_deg"
-                ).value
-            ),
-            str(
-                planner.get_parameter("pick_ready_state_name").value
-            ),
-            float(
-                planner.get_parameter("step_servo_speed_percent").value
-            ),
-            float(
-                planner.get_parameter(
-                    "step_servo_close_angle_deg"
-                ).value
-            ),
-            float(
-                planner.get_parameter(
-                    "step_linear_motor_extend_seconds"
-                ).value
-            ),
-            bool(
-                planner.get_parameter("harvest_forward_wave_enabled").value
-            ),
-            stage_speed_percents=tuple(
-                float(
-                    planner.get_parameter(
-                        f"step_stage_{stage_number}_speed_percent"
-                    ).value
-                )
-                for stage_number in SPEED_CONTROLLED_STAGE_NUMBERS
-            ),
-            preapproach_final_speed_percent=float(
-                planner.get_parameter(
-                    "step_preapproach_final_speed_percent"
-                ).value
-            ),
-        )
+        stages = _build_step_stages(planner, plan)
         servo_topic = str(
             planner.get_parameter("step_servo_command_topic").value
         )
@@ -1610,23 +1717,20 @@ def main(args=None) -> None:
         )
         pin8_publisher = planner.create_publisher(Bool, pin8_topic, 10)
         pin9_publisher = planner.create_publisher(Bool, pin9_topic, 10)
-        for stage in stages:
-            if stage["kind"] == "servo_sequence":
-                stage["servo_topic"] = servo_topic
-                stage["servo_publisher"] = servo_publisher
-            if stage["kind"] in {"linear_motor", "servo_sequence"}:
-                stage["linear_motor_pin8_topic"] = pin8_topic
-                stage["linear_motor_pin9_topic"] = pin9_topic
-                stage["linear_motor_pin8_publisher"] = pin8_publisher
-                stage["linear_motor_pin9_publisher"] = pin9_publisher
+        _bind_stage_publishers(
+            stages,
+            servo_topic,
+            servo_publisher,
+            pin8_topic,
+            pin9_topic,
+            pin8_publisher,
+            pin9_publisher,
+        )
         expected = {
             str(name): float(value)
             for name, value in report.get("start_joint_positions", {}).items()
         }
-        for stage in stages:
-            stage["expected_start"] = dict(expected)
-            expected = _end_positions(stage.get("trajectories", ()), expected)
-            stage["expected_end"] = dict(expected)
+        _set_expected_states(stages, 0, expected)
         _emit(
             "planned",
             stages=_stage_metadata(stages),
@@ -1646,6 +1750,53 @@ def main(args=None) -> None:
                 exit_code = 0
                 _emit("closed", next_index=next_index)
                 break
+            if action == "replan_after_refinement":
+                if next_index != 2:
+                    _emit(
+                        "replan_failed",
+                        reason="ROBOT_NOT_AT_REINSPECTION_A",
+                        next_index=next_index,
+                    )
+                    continue
+                _emit(
+                    "refinement_replanning",
+                    next_index=next_index,
+                    offset_xyz=command.get("offset_xyz", ()),
+                )
+                try:
+                    stages, report = _replan_after_refinement(
+                        planner,
+                        stages,
+                        command.get("offset_xyz", ()),
+                        (
+                            servo_topic,
+                            servo_publisher,
+                            pin8_topic,
+                            pin9_topic,
+                            pin8_publisher,
+                            pin9_publisher,
+                        ),
+                    )
+                except Exception as error:
+                    _emit(
+                        "replan_failed",
+                        reason=str(error),
+                        report=planner.last_plan_report,
+                        next_index=next_index,
+                    )
+                    continue
+                _emit(
+                    "refinement_replanned",
+                    stages=_stage_metadata(stages),
+                    report=report,
+                    next_index=next_index,
+                )
+                resume_command = command.get("resume_command")
+                if not isinstance(resume_command, dict):
+                    _emit("paused", next_index=next_index, direction="forward")
+                    continue
+                command = resume_command
+                action = str(command.get("command", ""))
             if failed:
                 _emit("command_error", message="실패한 스텝 세션입니다.")
                 continue

@@ -36,6 +36,11 @@ def generate_launch_description():
                 description="CameraInfo used to project detection XYZ onto the raw image",
             ),
             DeclareLaunchArgument(
+                "step_reinspection_image_topic",
+                default_value="/tomato_vision/refine_preview",
+                description="Reliable refined-center preview shown at reinspection",
+            ),
+            DeclareLaunchArgument(
                 "detections_topic",
                 default_value="/tomato_detection/detections",
             ),
@@ -65,6 +70,9 @@ def generate_launch_description():
                         ),
                         "camera_color_info_topic": LaunchConfiguration(
                             "camera_color_info_topic"
+                        ),
+                        "step_reinspection_image_topic": LaunchConfiguration(
+                            "step_reinspection_image_topic"
                         ),
                         "detections_topic": LaunchConfiguration("detections_topic"),
                         "scene_node": LaunchConfiguration("scene_node"),

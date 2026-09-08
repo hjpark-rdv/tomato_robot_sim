@@ -76,6 +76,8 @@ from rbpodo_tomato_harvest.harvest_gui import (
     repeat_cycle_command,
     repeat_forward_distance_m,
     repeat_stage_command,
+    refined_center_delta_xyz,
+    rotated_vector_xyz,
     result_arrow_length_for_report,
     selection_plot_recommend_screen_direction,
     scene_parameters,
@@ -2309,6 +2311,53 @@ def test_harvest_command_builds_plan_only_command():
     assert "pick_ready_state_name:=PICK_READY_RIGHT" in command
     assert "adaptive_grasp_prefer_robot_direction:=true" in command
     assert "adaptive_grasp_max_rotation_deg:=35.0" in command
+
+
+def test_harvest_command_forwards_refined_center_offset():
+    command = harvest_command(
+        1,
+        False,
+        tomato_position_offset_xyz=(0.012, -0.003, 0.004),
+    )
+
+    assert "tomato_position_offset_x:=0.012" in command
+    assert "tomato_position_offset_y:=-0.003" in command
+    assert "tomato_position_offset_z:=0.004" in command
+
+
+def test_refined_center_delta_uses_one_common_coordinate_frame():
+    delta = refined_center_delta_xyz(
+        (0.500, -0.200, 0.800),
+        (0.512, -0.203, 0.804),
+    )
+
+    assert delta == pytest.approx((0.012, -0.003, 0.004))
+
+
+def test_refine_lateral_offset_rotates_without_camera_translation():
+    transform = TransformStamped()
+    transform.transform.translation.x = 9.0
+    transform.transform.translation.y = 8.0
+    transform.transform.translation.z = 7.0
+    # +90 degrees around Z: camera +X becomes link0 +Y.
+    transform.transform.rotation.z = math.sin(math.pi / 4.0)
+    transform.transform.rotation.w = math.cos(math.pi / 4.0)
+
+    delta = rotated_vector_xyz((0.006, 0.008, 0.0), transform)
+
+    assert delta == pytest.approx((-0.008, 0.006, 0.0))
+    assert math.sqrt(sum(value * value for value in delta)) == pytest.approx(
+        0.010
+    )
+
+
+@pytest.mark.parametrize(
+    "value",
+    ((1.0, 2.0), (1.0, 2.0, math.inf)),
+)
+def test_refined_center_delta_rejects_invalid_coordinates(value):
+    with pytest.raises(ValueError):
+        refined_center_delta_xyz((0.0, 0.0, 0.0), value)
 
 
 def test_preplanned_batch_command_selects_worker_and_arc_mode():

@@ -165,6 +165,7 @@ class HarvestMotionPlan:
     after_wait_waypoints: tuple = ()
     return_pick_ready_is_cached_reverse: bool = False
     preapproach_planning_pose: Pose | None = None
+    preapproach_via_pose: Pose | None = None
     preapproach_via_enabled: bool = False
     preapproach_via_trajectory_count: int = 0
     outward_axis: tuple = ()
@@ -1395,6 +1396,9 @@ class CartesianHarvestPlanner(Node):
         super().__init__("tomato_cartesian_harvest_test")
         self.declare_parameter("base_frame", "link0")
         self.declare_parameter("tomato_frame", "detected_tomato_3_tf")
+        self.declare_parameter("tomato_position_offset_x", 0.0)
+        self.declare_parameter("tomato_position_offset_y", 0.0)
+        self.declare_parameter("tomato_position_offset_z", 0.0)
         self.declare_parameter("gripper_link", "tomato_gripper")
         self.declare_parameter("tip_link", "tomato_gripper_tip")
         self.declare_parameter("planning_link", "tcp")
@@ -4184,6 +4188,27 @@ class CartesianHarvestPlanner(Node):
             )
             return None
         tomato_position = self._translation(tomato_tf)
+        tomato_position_offset = np.array(
+            [
+                float(self.get_parameter("tomato_position_offset_x").value),
+                float(self.get_parameter("tomato_position_offset_y").value),
+                float(self.get_parameter("tomato_position_offset_z").value),
+            ],
+            dtype=float,
+        )
+        if not np.all(np.isfinite(tomato_position_offset)):
+            self._record_plan_stage(
+                "TARGET_GEOMETRY",
+                "configuration",
+                False,
+                0.0,
+                "INVALID_TOMATO_POSITION_OFFSET",
+            )
+            return None
+        tomato_position = tomato_position + tomato_position_offset
+        self.last_plan_report["tomato_position_offset_xyz"] = (
+            tomato_position_offset.tolist()
+        )
         tomato_rotation = self._rotation_matrix(tomato_tf)
         try:
             stemward, outward_hint = stemward_and_outward_from_tomato_rotation(
@@ -5035,6 +5060,7 @@ class CartesianHarvestPlanner(Node):
             preapproach_planning_pose=copy.deepcopy(
                 preapproach_planning_pose
             ),
+            preapproach_via_pose=copy.deepcopy(via_planning_pose),
             preapproach_via_enabled=(via_planning_pose is not None),
             preapproach_via_trajectory_count=(
                 preapproach_via_trajectory_count
