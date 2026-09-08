@@ -9,3 +9,5 @@ string message
 std_msgs/Header header
 geometry_msgs/Point center
 uint8 accepted_frame_count
+# Relative yaw for avoiding a calyx: + is image-right, - is image-left.
+float32 approach_yaw_correction_deg
