@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="rb5_farmily">
+  <link name="link0">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link0.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link0.stl" />
+      </geometry>
+    </collision>
+  <inertial><origin xyz="0.0 0.0 0.08" rpy="0 0 0" /><mass value="3.5" /><inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" /></inertial></link>
+  <link name="link1">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link1.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link1.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000057 -0.005795 -0.034516" />
+      <mass value="4.147" />
+      <inertia ixx="0.008787118" ixy="-8.564e-06" ixz="-8.047e-06" iyy="0.008888636" iyz="0.000893025" izz="0.007845924" />
+    </inertial>
+  </link>
+  <link name="link2">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link2.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000037 -0.121603 0.212933" />
+      <mass value="9.633" />
+      <inertia ixx="0.392214367" ixy="-1.4684e-05" ixz="-5.721e-05" iyy="0.388914548" iyz="0.000255706" izz="0.021949397" />
+    </inertial>
+  </link>
+  <link name="link3">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link3.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link3.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000021 -0.015845 0.202568" />
+      <mass value="3.915" />
+      <inertia ixx="0.112039835" ixy="-1.006e-06" ixz="1.4848e-05" iyy="0.111790094" iyz="0.002092668" izz="0.007569107" />
+    </inertial>
+  </link>
+  <link name="link4">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link4.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link4.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000057 -0.106332 0.025881" />
+      <mass value="1.452" />
+      <inertia ixx="0.001629031" ixy="3.99e-07" ixz="2.37e-07" iyy="0.001558024" iyz="0.000127282" izz="0.001224887" />
+    </inertial>
+  </link>
+  <link name="link5">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link5.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link5.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000028 -0.025911 -0.004363" />
+      <mass value="1.454" />
+      <inertia ixx="0.001631445" ixy="1.764e-06" ixz="2.2e-07" iyy="0.001226962" iyz="0.000127473" izz="0.001560416" />
+    </inertial>
+  </link>
+  <link name="link6">
+    <visual>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/visual/link6.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/rb5_850e/collision/link6.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000002 -0.079964 -0.000494" />
+      <mass value="0.243" />
+      <inertia ixx="0.000147823" ixy="2.46e-07" ixz="6.43e-07" iyy="0.000243703" iyz="-5.54e-07" izz="0.000142339" />
+    </inertial>
+  </link>
+  <link name="tcp" />
+  <joint name="base" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0.1692" />
+    <parent link="link0" />
+    <child link="link1" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.14" />
+  </joint>
+  <joint name="shoulder" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="link1" />
+    <child link="link2" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.14" />
+  </joint>
+  <joint name="elbow" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0.425" />
+    <parent link="link2" />
+    <child link="link3" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" lower="-2.8797932657906435" upper="2.8797932657906435" velocity="3.14" />
+  </joint>
+  <joint name="wrist1" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0.392" />
+    <parent link="link3" />
+    <child link="link4" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.14" />
+  </joint>
+  <joint name="wrist2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.1107 0.1107" />
+    <parent link="link4" />
+    <child link="link5" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.14" />
+  </joint>
+  <joint name="wrist3" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="link5" />
+    <child link="link6" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" lower="-6.283185307179586" upper="6.283185307179586" velocity="3.14" />
+  </joint>
+  <joint name="tcp_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 -0.0967 0" />
+    <parent link="link6" />
+    <child link="tcp" />
+  </joint>
+  <ros2_control name="RBPodoHardwareInterface" type="system">
+    <hardware>
+      <plugin>rbpodo_hardware/RBPodoHardwareInterface</plugin>
+      <param name="cb_simulation">True</param>
+      <param name="robot_ip">10.0.2.7</param>
+    </hardware>
+    <joint name="base">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="shoulder">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="elbow">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="wrist1">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="wrist2">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="wrist3">
+      <param name="torque_constant">1</param>
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="position" />
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="effort">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+  </ros2_control>
+  
+  <link name="world" />
+  
+  <link name="farmily_lift">
+    <visual>
+      <geometry>
+        
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/farmily_lift/assy_lift.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="farmily_lift_gray">
+        <color rgba="0.32 0.34 0.38 1.0" />
+      </material>
+    </visual>
+  <inertial><origin xyz="0.0 0.0 0.4" rpy="0 0 0" /><mass value="25.0" /><inertia ixx="1.5" ixy="0.0" ixz="0.0" iyy="1.5" iyz="0.0" izz="0.5" /></inertial></link>
+  <joint name="farmily_lift_fixed_joint" type="fixed">
+    <origin rpy="1.57 0.0 -1.57" xyz="0.0 0.6 -0.35" />
+    <parent link="world" />
+    <child link="farmily_lift" />
+  </joint>
+  <link name="farmily_lift_platform">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.30 0" />
+      <geometry>
+        <box size="0.30 0.95 0.025" />
+      </geometry>
+      <material name="farmily_lift_platform_green">
+        <color rgba="0.12 0.68 0.06 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.30 0" />
+      <geometry>
+        <box size="0.30 0.95 0.025" />
+      </geometry>
+    </collision>
+  <inertial><origin xyz="0.0 0.3 0.0" rpy="0 0 0" /><mass value="15.0" /><inertia ixx="1.2" ixy="0.0" ixz="0.0" iyy="0.2" iyz="0.0" izz="1.2" /></inertial></link>
+  
+  <joint name="farmily_lift_height_joint" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 0 -0.0125" />
+    <parent link="world" />
+    <child link="farmily_lift_platform" />
+    <axis xyz="0 0 1" />
+    <limit effort="2000.0" lower="0.0" upper="0.75" velocity="0.25" />
+  </joint>
+  <joint name="farmily_lift_robot_mount_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.0125" />
+    <parent link="farmily_lift_platform" />
+    <child link="link0" />
+  </joint>
+  <link name="tomato_gripper">
+    <visual>
+      <geometry>
+        
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_1.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="tomato_gripper_gray">
+        <color rgba="0.25 0.25 0.28 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_3_1.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  <inertial><origin xyz="-0.08 0.01 0.0" rpy="0 0 0" /><mass value="1.2" /><inertia ixx="0.005" ixy="0.0" ixz="0.0" iyy="0.005" iyz="0.0" izz="0.003" /></inertial></link>
+  <joint name="tomato_gripper_joint" type="fixed">
+    <origin rpy="3.14 0 0" xyz="0 0.01 0" />
+    <parent link="tcp" />
+    <child link="tomato_gripper" />
+  </joint>
+  
+  <link name="tomato_gripper_tip" />
+  <joint name="tomato_gripper_tip_joint" type="fixed">
+    <origin rpy="1.57 3.14 0.0" xyz="-0.133 0.006 0" />
+    <parent link="tomato_gripper" />
+    <child link="tomato_gripper_tip" />
+  </joint>
+  
+  <joint name="d435_joint" type="fixed">
+    <origin rpy="-1.57 0.0 3.141592" xyz="-0.04915 0.0415 0.0125" />
+    <parent link="tomato_gripper" />
+    <child link="d435_bottom_screw_frame" />
+  </joint>
+  <link name="d435_bottom_screw_frame" />
+  <joint name="d435_link_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.010600000000000002 0.0175 0.0125" />
+    <parent link="d435_bottom_screw_frame" />
+    <child link="d435_link" />
+  </joint>
+  <link name="d435_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0043 -0.0175 0" />
+      <geometry>
+        <mesh filename="/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/realsense_d435/d435.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.0175 0" />
+      <geometry>
+        <box size="0.02505 0.09 0.025" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.072" />
+      <origin rpy="0 0 0" xyz="0 -0.0175 0" />
+      <inertia ixx="0.00005313" ixy="0" ixz="0" iyy="0.00000493" iyz="0" izz="0.00005313" />
+    </inertial>
+  </link>
+  
+  <joint name="d435_depth_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="d435_link" />
+    <child link="d435_depth_frame" />
+  </joint>
+  <link name="d435_depth_frame" />
+  <joint name="d435_depth_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0" />
+    <parent link="d435_depth_frame" />
+    <child link="d435_depth_optical_frame" />
+  </joint>
+  <link name="d435_depth_optical_frame" />
+  <joint name="d435_infra1_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="d435_link" />
+    <child link="d435_infra1_frame" />
+  </joint>
+  <link name="d435_infra1_frame" />
+  <joint name="d435_infra1_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0" />
+    <parent link="d435_infra1_frame" />
+    <child link="d435_infra1_optical_frame" />
+  </joint>
+  <link name="d435_infra1_optical_frame" />
+  <joint name="d435_infra2_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 -0.050 0" />
+    <parent link="d435_link" />
+    <child link="d435_infra2_frame" />
+  </joint>
+  <link name="d435_infra2_frame" />
+  <joint name="d435_infra2_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0" />
+    <parent link="d435_infra2_frame" />
+    <child link="d435_infra2_optical_frame" />
+  </joint>
+  <link name="d435_infra2_optical_frame" />
+  <joint name="d435_color_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0.015 0" />
+    <parent link="d435_link" />
+    <child link="d435_color_frame" />
+  </joint>
+  <link name="d435_color_frame" />
+  <joint name="d435_color_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0" />
+    <parent link="d435_color_frame" />
+    <child link="d435_color_optical_frame" />
+  </joint>
+  <link name="d435_color_optical_frame" />
+</robot>
