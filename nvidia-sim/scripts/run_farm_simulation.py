@@ -130,12 +130,15 @@ def main():
     # Joint trajectories for demonstration (Harvesting Cycle)
     # DOFs: [farmily_lift_height_joint, base, shoulder, elbow, wrist1, wrist2, wrist3]
     postures = {
-        "READY": np.array([0.10, 0.0, -0.30, 1.20, -0.90, 1.57, 0.0]),
-        "LIFT_HIGH": np.array([0.45, 0.0, -0.30, 1.20, -0.90, 1.57, 0.0]),
-        "APPROACH_TOMATO": np.array([0.45, 0.35, -0.15, 1.40, -1.25, 1.57, 0.2]),
-        "GRASP_SIM": np.array([0.45, 0.38, -0.10, 1.45, -1.35, 1.57, 0.2]),
-        "RETRACT": np.array([0.45, 0.0, -0.35, 1.10, -0.75, 1.57, 0.0]),
-        "LIFT_LOW": np.array([0.05, 0.0, -0.30, 1.20, -0.90, 1.57, 0.0]),
+        # wrist3 is aligned with the real-robot ROS 2 PICK_READY state
+        # (1.541930975 rad). The previous zero value made the fixed gripper
+        # look like it was mounted roughly 90 degrees off in Isaac Sim.
+        "READY": np.array([0.10, 0.0, -0.30, 1.20, -0.90, 1.57, 1.541930975]),
+        "LIFT_HIGH": np.array([0.45, 0.0, -0.30, 1.20, -0.90, 1.57, 1.541930975]),
+        "APPROACH_TOMATO": np.array([0.45, 0.35, -0.15, 1.40, -1.25, 1.57, 1.741930975]),
+        "GRASP_SIM": np.array([0.45, 0.38, -0.10, 1.45, -1.35, 1.57, 1.741930975]),
+        "RETRACT": np.array([0.45, 0.0, -0.35, 1.10, -0.75, 1.57, 1.541930975]),
+        "LIFT_LOW": np.array([0.05, 0.0, -0.30, 1.20, -0.90, 1.57, 1.541930975]),
     }
 
     current_target = postures["READY"].copy()
