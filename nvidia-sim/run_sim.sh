@@ -36,6 +36,11 @@ usage() {
   echo "  --no-ros2-camera    Disable D435 RGB-D ROS 2 topic publishers"
   echo "  --camera-width N    Camera image width (default: 640)"
   echo "  --camera-height N   Camera image height (default: 480)"
+  echo "  --spawn-stem [X Y Z] Dynamically spawn harvestable tomato stem at (X Y Z)"
+  echo "  --no-spawn-stem     Disable automatic spawning of harvestable tomato stem"
+  echo "  --stem-pos X Y Z    Specify exact (x y z) position to spawn stem"
+  echo "  --stem-scale S      Scale factor for harvestable stem (default: 0.5)"
+  echo "  --stem-yaw DEG      Yaw rotation in degrees for stem (default: 0.0)"
   echo "  --rebuild           Re-generate robot URDF/USD and composite greenhouse stage"
   echo "  -h, --help          Show this help message"
   echo
@@ -48,6 +53,10 @@ scale=""
 ros2_camera="enabled"
 camera_width=""
 camera_height=""
+spawn_stem="true"
+stem_pos=()
+stem_scale=""
+stem_yaw=""
 
 while (( $# > 0 )); do
   case "$1" in
@@ -65,6 +74,32 @@ while (( $# > 0 )); do
       ;;
     --scale)
       scale="${2:-0.5}"
+      shift 2
+      ;;
+    --no-spawn-stem)
+      spawn_stem="false"
+      shift
+      ;;
+    --spawn-stem)
+      spawn_stem="true"
+      if [[ $# -ge 4 && "$2" =~ ^-?[0-9] && "$3" =~ ^-?[0-9] && "$4" =~ ^-?[0-9] ]]; then
+        stem_pos=("$2" "$3" "$4")
+        shift 4
+      else
+        shift 1
+      fi
+      ;;
+    --stem-pos)
+      spawn_stem="true"
+      stem_pos=("$2" "$3" "$4")
+      shift 4
+      ;;
+    --stem-scale)
+      stem_scale="${2:-0.5}"
+      shift 2
+      ;;
+    --stem-yaw)
+      stem_yaw="${2:-0.0}"
       shift 2
       ;;
     --steps)
@@ -156,6 +191,22 @@ fi
 
 if [[ -n "${camera_height}" ]]; then
   cmd+=(--camera-height "${camera_height}")
+fi
+
+if [[ "${spawn_stem}" == "true" ]]; then
+  cmd+=(--spawn-stem)
+fi
+
+if [[ ${#stem_pos[@]} -eq 3 ]]; then
+  cmd+=(--stem-pos "${stem_pos[@]}")
+fi
+
+if [[ -n "${stem_scale}" ]]; then
+  cmd+=(--stem-scale "${stem_scale}")
+fi
+
+if [[ -n "${stem_yaw}" ]]; then
+  cmd+=(--stem-yaw "${stem_yaw}")
 fi
 
 echo "=== Starting Smart Farm Robot Simulation ==="
