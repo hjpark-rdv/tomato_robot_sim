@@ -76,16 +76,48 @@ cd /root/farmily_tomato/nvidia-sim
 ./run_sim.sh
 ```
 
-#### 2. Headless Simulation
+#### 2. Greenhouse Scale Options (1배 원본 vs 0.5배 축소)
+스케일 옵션(`--scale`)을 사용하여 언제든지 온실 크기를 1배(원본 100%) 또는 0.5배(50%)로 즉시 전환하여 실행할 수 있습니다:
+```bash
+# 1배 (100% 원본 온실 스케일)로 실행
+./run_sim.sh --scale 1.0
+
+# 0.5배 (50% 축소 온실 스케일)로 실행
+./run_sim.sh --scale 0.5
+```
+*스케일 변경 시 레일 위치, 로봇 안착 높이, 카메라 시점 좌표가 온실 크기에 맞추어 자동으로 계산 및 갱신됩니다.*
+
+#### 3. Headless Simulation
 Runs the simulation in headless mode for benchmarking, training, or headless CI:
 ```bash
 ./run_sim.sh --headless --steps 500
 ```
 
-#### 3. Automated Physics Verification Suite
+The D435 eye-in-hand camera publishes ROS 2 data by default in both GUI and
+headless modes:
+
+- `/camera/d435/color/image_raw` (`sensor_msgs/Image`)
+- `/camera/d435/color/camera_info` (`sensor_msgs/CameraInfo`)
+- `/camera/d435/depth/image_raw` (`sensor_msgs/Image`, `32FC1` meters)
+- `/camera/d435/depth/camera_info` (`sensor_msgs/CameraInfo`)
+- `/camera/d435/depth/points` (`sensor_msgs/PointCloud2`)
+- `/clock` (`rosgraph_msgs/Clock`)
+
+Use `--camera-width` and `--camera-height` to change the default `640x480`
+resolution, or `--no-ros2-camera` when rendering and ROS publishing are not
+needed.
+
+```bash
+./run_sim.sh --headless --camera-width 640 --camera-height 480
+ros2 topic hz /camera/d435/color/image_raw
+```
+
+#### 4. Automated Physics Verification Suite
 Runs automated sanity checks verifying stage loading, 54 plant prims, 7 DOFs, numerical stability (zero NaNs), and active joint PD tracking:
 ```bash
 ./run_sim.sh --test
+# 또는 1배 스케일로 테스트
+./run_sim.sh --scale 1.0 --test
 ```
 
 #### 4. Screen Capture / Snapshot
@@ -149,4 +181,3 @@ To connect this environment to reinforcement learning algorithms (PPO, SAC, etc.
    - Distance between gripper TCP and tomato stem detachment node.
    - Alignment of gripper approach vector with tomato pedicel normal.
    - Penalties for collisions with support wires and plant main stems.
-

@@ -17,10 +17,13 @@ def create_composite_scene(
     output_usd_path: str,
     greenhouse_usd_path: str,
     robot_usd_path: str,
-    robot_pos: tuple = (0.00, 1.00, 0.075),
+    robot_pos: tuple = None,
     robot_yaw_deg: float = 180.0,
     greenhouse_scale: float = 0.5,
 ):
+    scale_factor = greenhouse_scale / 0.5
+    if robot_pos is None:
+        robot_pos = (0.00, 1.00 * scale_factor, 0.075 * scale_factor)
     print(f"Creating composite stage at: {output_usd_path} (greenhouse_scale={greenhouse_scale})")
     os.makedirs(os.path.dirname(os.path.abspath(output_usd_path)), exist_ok=True)
 
@@ -98,8 +101,8 @@ def create_composite_scene(
     cam_path = Sdf.Path("/World/OverviewCamera")
     cam_prim = UsdGeom.Camera.Define(stage, cam_path)
     # Camera positioned in the aisle looking towards robot and scaled crop
-    eye = Gf.Vec3d(0.30, -0.65, 1.35)
-    target = Gf.Vec3d(0.00, 0.90, 0.55)
+    eye = Gf.Vec3d(0.30 * scale_factor, -0.65 * scale_factor, 1.35 * scale_factor)
+    target = Gf.Vec3d(0.00, 0.90 * scale_factor, 0.55 * scale_factor)
     up = Gf.Vec3d(0.0, 0.0, 1.0)
     view_mat = Gf.Matrix4d().SetLookAt(eye, target, up)
     cam_xform = view_mat.GetInverse()
@@ -126,7 +129,7 @@ def main():
     parser.add_argument(
         "--greenhouse-usd",
         type=str,
-        default="/root/farmily_tomato/nvidia-sim/env_usd/tomato_greenhouse_upgraded_with_stems_and_clusters_v2_isaac.usd",
+        default="/root/farmily_tomato/nvidia-sim/env_usd/tomato_greenhouse_ver_3_half_density_Yonly_v8stem_isaac_SAFE.usd",
         help="Path to greenhouse USD",
     )
     parser.add_argument(
@@ -145,7 +148,7 @@ def main():
         "--robot-pos",
         nargs=3,
         type=float,
-        default=[0.00, 1.00, 0.075],
+        default=None,
         help="Robot spawn position (x y z)",
     )
     parser.add_argument(
@@ -160,7 +163,7 @@ def main():
         output_usd_path=args.output,
         greenhouse_usd_path=args.greenhouse_usd,
         robot_usd_path=args.robot_usd,
-        robot_pos=tuple(args.robot_pos),
+        robot_pos=tuple(args.robot_pos) if args.robot_pos else None,
         robot_yaw_deg=args.robot_yaw,
         greenhouse_scale=args.greenhouse_scale,
     )
