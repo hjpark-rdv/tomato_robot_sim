@@ -117,8 +117,12 @@ def tune_usd_physics(usd_path: str):
 from isaacsim import SimulationApp
 app = SimulationApp({{"headless": True}})
 from pxr import Usd
+import os
 
-stage = Usd.Stage.Open("{usd_path}")
+physics_usd_path = os.path.join(
+    os.path.dirname("{usd_path}"), "configuration", "rb5_farmily_physics.usd"
+)
+stage = Usd.Stage.Open(physics_usd_path)
 for prim in stage.Traverse():
     name = prim.GetName()
     if name == "farmily_lift_height_joint":
@@ -144,6 +148,68 @@ app.close()
     subprocess.run([sys.executable, "-c", code], check=True)
 
 
+def fix_usd_references(usd_path: str):
+    """Make imported geometry visible through the robot's physics payload.
+
+    Isaac Sim 5.1 imports visual geometry as internal references to sibling root
+    prims. Those sibling prims are outside the default prim used by the physics
+    payload, so they disappear in the final robot asset. Flattening the base layer
+    resolves that geometry below each robot link. Physics-layer collision
+    references are then made explicit against the flattened base layer.
+    """
+    code = f"""
+from isaacsim import SimulationApp
+app = SimulationApp({{"headless": True}})
+
+from pxr import Sdf, Usd
+import os
+
+config_dir = os.path.join(os.path.dirname("{usd_path}"), "configuration")
+base_usd = os.path.join(config_dir, "rb5_farmily_base.usd")
+physics_usd = os.path.join(config_dir, "rb5_farmily_physics.usd")
+
+base_stage = Usd.Stage.Open(base_usd, load=Usd.Stage.LoadAll)
+if not base_stage:
+    raise RuntimeError(f"Could not open base robot USD: {{base_usd}}")
+for prim in list(base_stage.TraverseAll()):
+    if prim.IsInstance():
+        prim.SetInstanceable(False)
+flattened_base = base_stage.Flatten()
+if not flattened_base.Export(base_usd):
+    raise RuntimeError(f"Could not export flattened base robot USD: {{base_usd}}")
+print(f"[OK] Flattened robot visual geometry into {{os.path.basename(base_usd)}}")
+
+def patch_physics_references(layer_path):
+    layer = Sdf.Layer.FindOrOpen(layer_path)
+    if not layer:
+        return
+    count = 0
+    def patch_prim(prim_spec):
+        nonlocal count
+        new_refs = []
+        for ref in prim_spec.referenceList.prependedItems:
+            if ref.assetPath == '':
+                new_refs.append(Sdf.Reference('./rb5_farmily_base.usd', ref.primPath))
+                count += 1
+            else:
+                new_refs.append(ref)
+        if new_refs:
+            prim_spec.referenceList.prependedItems.clear()
+            for r in new_refs:
+                prim_spec.referenceList.prependedItems.append(r)
+        for child in prim_spec.nameChildren:
+            patch_prim(child)
+    for root in layer.rootPrims:
+        patch_prim(root)
+    layer.Save()
+    print(f"[OK] Patched {{count}} reference paths in {{os.path.basename(layer_path)}}")
+
+patch_physics_references(physics_usd)
+app.close()
+"""
+    subprocess.run([sys.executable, "-c", code], check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate rb5_farmily USD asset for Isaac Sim")
     parser.add_argument(
@@ -162,6 +228,7 @@ def main():
 
     generate_urdf(args.urdf_out)
     convert_urdf_to_usd(args.urdf_out, args.usd_out)
+    fix_usd_references(args.usd_out)
     tune_usd_physics(args.usd_out)
 
 

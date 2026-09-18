@@ -23,7 +23,7 @@ The environment seamlessly combines the high-fidelity smart farm greenhouse USD 
    - Kept at **1:1 original physical scale** (RB5-850e 850 mm reach, linear lift 0.0 ~ 0.75 m).
    - **Base & Linear Lift**: Prismatic elevator column with 0.0 to 0.75 m vertical travel range (`farmily_lift_height_joint`). Tuned with heavy-duty PhysX linear drive ($K_p = 50,000\text{ N/m}$, $K_d = 2,500\text{ Ns/m}$, $F_{\max} = 10,000\text{ N}$) to smoothly hoist the 42 kg manipulator payload against gravity.
    - **Manipulator**: Rainbow Robotics RB5-850e 6-DOF industrial collaborative robot arm (`base`, `shoulder`, `elbow`, `wrist1`, `wrist2`, `wrist3`).
-   - **End-Effector**: Custom 3D-printed tomato harvest gripper (`assy_gripper_ver_3_1`).
+   - **End-Effector**: Custom 3D-printed tomato harvest gripper (`assy_gripper_ver_6`).
    - **Vision**: Intel RealSense D435 RGB-D eye-in-hand camera mount attached to the tool flange.
    - Rigid-body physics inertia tensors and mass profiles are fully calculated and integrated.
 
