@@ -1,0 +1,129 @@
+{
+  "scene": "greenhouse",
+  "scope": "Original greenhouse and complete 11-fruit cluster at original placement; one CPU environment, approach curriculum. Policy has not learned successful harvesting.",
+  "training": {
+    "scene": "greenhouse",
+    "episodes": 29,
+    "successes": 0,
+    "invalid_breaks": 14,
+    "model_timesteps": 8192
+  },
+  "evaluation": {
+    "scene": "greenhouse",
+    "episodes": 1,
+    "successes": 0,
+    "invalid_breaks": 0,
+    "recent_episodes": [
+      {
+        "env": 0,
+        "success": false,
+        "invalid_break": false,
+        "wrong_fruit_break": false,
+        "steps": 359
+      }
+    ]
+  },
+  "provenance": {
+    "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+    "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+    "target": "Tomato_08",
+    "stem_position": [
+      -0.75,
+      1.2,
+      0.32
+    ],
+    "stem_yaw": 0.0,
+    "stem_scale": 0.5,
+    "fruit_count": 11,
+    "static_plant_colliders": 239,
+    "fruit_centers_world": [
+      [
+        -0.7080453089000001,
+        1.7472302391749999,
+        1.0513228969000001
+      ],
+      [
+        -0.7186777572999999,
+        1.71683087729,
+        1.02998609535
+      ],
+      [
+        -0.7212738395,
+        1.74591804521,
+        0.9954029235
+      ],
+      [
+        -0.72025504585,
+        1.714675819225,
+        0.9755419342
+      ],
+      [
+        -0.7222060478,
+        1.74674025605,
+        0.9621396391500001
+      ],
+      [
+        -0.7231353279,
+        1.718851329955,
+        0.93900932345
+      ],
+      [
+        -0.7231016563,
+        1.74607825337,
+        0.9287109635
+      ],
+      [
+        -0.7184750945999999,
+        1.7122093548950001,
+        0.9144371661
+      ],
+      [
+        -0.716738912,
+        1.744586847535,
+        0.89878075425
+      ],
+      [
+        -0.719806206,
+        1.7191882399349998,
+        0.8842654749
+      ],
+      [
+        -0.708033811665,
+        1.75168192399,
+        0.8613266598000001
+      ]
+    ],
+    "break_force": 3.0,
+    "break_torque": 0.07999999821186066,
+    "start_position_error_m": 0.0007550048176199198,
+    "start_orientation_error_rad": 0.0,
+    "start_joint_positions": [
+      0.46318066120147705,
+      -0.5997281074523926,
+      1.3637350797653198,
+      0.15770947933197021,
+      -0.4042365252971649,
+      5.150940418243408,
+      2.117672920227051
+    ],
+    "start_twist_degrees": -30
+  },
+  "checkpoint_scene_mismatch_exit_code": 2,
+  "unreachable_start_exit_code": 1,
+  "snapshot": "greenhouse_overview.png",
+  "unsupported_fixture_starts": "Hook diagnostic caused immediate neighboring-fruit breaks in all 240 trials; hook/inserted and fixture scripted actions are therefore disabled in greenhouse mode.",
+  "resume_check": {
+    "scene": "greenhouse",
+    "episodes": 0,
+    "successes": 0,
+    "invalid_breaks": 0,
+    "model_timesteps": 8448
+  },
+  "successful_process_exit_codes": {
+    "train": 0,
+    "play": 0,
+    "resume": 0,
+    "physics_test": 0,
+    "snapshot_inspect": 0
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "issue": "GUI joint recreation woke kinematic attachment bodies",
+  "fix": "Build the complete joint in an in-memory stage and publish with Sdf.CopySpec; retain fixed attachment USD poses.",
+  "before": {
+    "mode": "GUI inspect, 400 steps",
+    "wake_up_errors": 44
+  },
+  "gui_inspect_after": {
+    "steps": 20,
+    "exit_code": 0,
+    "wake_up_errors": 0
+  },
+  "gui_physics_after": {
+    "exit_code": 0,
+    "wake_up_errors": 0,
+    "result": {
+      "scene": "greenhouse",
+      "original_fruits": 11,
+      "wrong_fruit_failure_verified": true,
+      "placement_drift_m": 3.5762786865234375e-07,
+      "force_break_reset_cycles": 3,
+      "observations": [
+        1,
+        36
+      ],
+      "harvest_policy_validated": false
+    }
+  },
+  "fixture_regression": {
+    "exit_code": 0,
+    "wake_up_errors": 0,
+    "result": {
+      "scene": "fixture",
+      "physics_cycles": [
+        {
+          "cycle": 1,
+          "native_breaks": 4,
+          "reattachment_stable": true
+        },
+        {
+          "cycle": 2,
+          "native_breaks": 4,
+          "reattachment_stable": true
+        },
+        {
+          "cycle": 3,
+          "native_breaks": 4,
+          "reattachment_stable": true
+        }
+      ],
+      "observations": [
+        4,
+        36
+      ],
+      "aperture_clear": true,
+      "arc_solid": true,
+      "independent_reset": true,
+      "scripted_valid_harvests": 12
+    }
+  }
+}

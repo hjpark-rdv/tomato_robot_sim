@@ -1,0 +1,12 @@
+{
+  "scene": "greenhouse",
+  "original_fruits": 11,
+  "wrong_fruit_failure_verified": true,
+  "placement_drift_m": 3.5762786865234375e-07,
+  "force_break_reset_cycles": 3,
+  "observations": [
+    1,
+    36
+  ],
+  "harvest_policy_validated": false
+}

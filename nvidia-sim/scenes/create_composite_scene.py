@@ -113,7 +113,7 @@ def create_composite_scene(
     cam_prim.CreateClippingRangeAttr().Set(Gf.Vec2f(0.1, 100.0))
     print(f"[OK] Added OverviewCamera at eye={eye} looking at robot {target}")
 
-    # 9. Save Stage
+    # 10. Save Stage
     stage.GetRootLayer().Save()
     print(f"[SUCCESS] Composite stage saved to: {output_usd_path}")
 
@@ -129,7 +129,7 @@ def main():
     parser.add_argument(
         "--greenhouse-usd",
         type=str,
-        default="/root/farmily_tomato/nvidia-sim/env_usd/tomato_greenhouse_ver_3_half_density_Yonly_v8stem_isaac_SAFE.usd",
+        default="/root/farmily_tomato/nvidia-sim/env_usd/tomato_greenhouse_upgraded_2_window_removed_visual.usd",
         help="Path to greenhouse USD",
     )
     parser.add_argument(

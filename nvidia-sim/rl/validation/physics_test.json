@@ -1,0 +1,28 @@
+{
+  "physics_cycles": [
+    {
+      "cycle": 1,
+      "native_breaks": 4,
+      "reattachment_stable": true
+    },
+    {
+      "cycle": 2,
+      "native_breaks": 4,
+      "reattachment_stable": true
+    },
+    {
+      "cycle": 3,
+      "native_breaks": 4,
+      "reattachment_stable": true
+    }
+  ],
+  "observations": [
+    4,
+    36
+  ],
+  "aperture_clear": true,
+  "arc_solid": true,
+  "independent_reset": true,
+  "scripted_valid_harvests": 12,
+  "scene": "fixture"
+}

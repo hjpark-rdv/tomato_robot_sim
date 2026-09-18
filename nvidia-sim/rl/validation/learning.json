@@ -1,0 +1,26 @@
+{
+  "training": {
+    "episodes": 537,
+    "successes": 535,
+    "invalid_breaks": 2,
+    "model_timesteps": 8192
+  },
+  "evaluation": {
+    "episodes": 881,
+    "successes": 881,
+    "invalid_breaks": 0
+  },
+  "training_seed": 42,
+  "evaluation_seed": 43,
+  "curriculum": "hook",
+  "position_jitter_m": 0.001,
+  "break_threshold_randomization_fraction": 0.1,
+  "checkpoint": "runs/smoke_ppo/policy.zip",
+  "scope": "Local hooking and detachment only; insertion from outside the ring has not been trained.",
+  "runner_exit_checks": {
+    "checkpoint_replay": 0,
+    "additional_1024_step_training": 0,
+    "intentionally_missing_checkpoint": 1
+  },
+  "scene": "fixture"
+}

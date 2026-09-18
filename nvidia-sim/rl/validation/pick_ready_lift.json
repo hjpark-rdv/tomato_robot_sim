@@ -1,0 +1,169 @@
+{
+  "policy_schema": "greenhouse-pick-ready-lift-v1",
+  "height_convention": "Mean world Z of the 11 fruit centres minus 0.4 m, measured at the robot mounting surface (link0).",
+  "headless_physics": {
+    "scene": "greenhouse",
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "height_reference": "mount",
+    "measured_start_offset_m": 0.39999992930841555,
+    "lift_raised_m": 0.020038247108459473,
+    "lift_lowered_m": 0.020076245069503784,
+    "arm_ik_preserves_lift_motion": true,
+    "original_fruits": 11,
+    "wrong_fruit_failure_verified": true,
+    "placement_drift_m": 3.5762786865234375e-07,
+    "force_break_reset_cycles": 3,
+    "observations": [
+      1,
+      39
+    ],
+    "harvest_policy_validated": false
+  },
+  "gui_physics": {
+    "scene": "greenhouse",
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "height_reference": "mount",
+    "measured_start_offset_m": 0.39999992930841555,
+    "lift_raised_m": 0.020038247108459473,
+    "lift_lowered_m": 0.020076245069503784,
+    "arm_ik_preserves_lift_motion": true,
+    "original_fruits": 11,
+    "wrong_fruit_failure_verified": true,
+    "placement_drift_m": 3.5762786865234375e-07,
+    "force_break_reset_cycles": 3,
+    "observations": [
+      1,
+      39
+    ],
+    "harvest_policy_validated": false
+  },
+  "provenance": {
+    "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+    "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+    "target": "Tomato_08",
+    "stem_position": [
+      -0.75,
+      0.55,
+      0.32
+    ],
+    "stem_yaw": 0.0,
+    "stem_scale": 0.5,
+    "fruit_count": 11,
+    "static_plant_colliders": 239,
+    "fruit_centers_world": [
+      [
+        -0.7080453089000001,
+        1.097230239175,
+        1.0513228969000001
+      ],
+      [
+        -0.7186777572999999,
+        1.0668308772900001,
+        1.02998609535
+      ],
+      [
+        -0.7212738395,
+        1.0959180452100001,
+        0.9954029235
+      ],
+      [
+        -0.72025504585,
+        1.064675819225,
+        0.9755419342
+      ],
+      [
+        -0.7222060478,
+        1.0967402560500001,
+        0.9621396391500001
+      ],
+      [
+        -0.7231353279,
+        1.068851329955,
+        0.93900932345
+      ],
+      [
+        -0.7231016563,
+        1.0960782533700002,
+        0.9287109635
+      ],
+      [
+        -0.7184750945999999,
+        1.0622093548950002,
+        0.9144371661
+      ],
+      [
+        -0.716738912,
+        1.094586847535,
+        0.89878075425
+      ],
+      [
+        -0.719806206,
+        1.069188239935,
+        0.8842654749
+      ],
+      [
+        -0.708033811665,
+        1.10168192399,
+        0.8613266598000001
+      ]
+    ],
+    "break_force": 3.0,
+    "break_torque": 0.07999999821186066,
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+    "ready_arm_joints": {
+      "base": 3.178088167843159,
+      "shoulder": 1.1618733317547,
+      "elbow": -2.0636375722523,
+      "wrist1": -0.631089061676,
+      "wrist2": -1.5903726200182706,
+      "wrist3": 1.54193097526451
+    },
+    "height_reference": "mount",
+    "cluster_center_height_m": 0.9491748937363635,
+    "initial_reference_height_m": 0.5491748937363635,
+    "lift_start_below_m": 0.4,
+    "initial_lift_joint_m": 0.47417475664568054,
+    "lift_joint_limits_m": [
+      0.0,
+      0.75
+    ],
+    "lift_speed_m_s": 0.1,
+    "start_joint_positions": [
+      0.47417476773262024,
+      3.1780881881713867,
+      1.1618733406066895,
+      -2.0636374950408936,
+      -0.6310890913009644,
+      -1.5903725624084473,
+      1.5419310331344604
+    ],
+    "action_size": 7,
+    "observation_size": 39
+  },
+  "training": {
+    "scene": "greenhouse",
+    "episodes": 1,
+    "successes": 0,
+    "invalid_breaks": 0,
+    "model_timesteps": 2048
+  },
+  "replay": {
+    "scene": "greenhouse",
+    "episodes": 0,
+    "successes": 0,
+    "invalid_breaks": 0,
+    "recent_episodes": []
+  },
+  "old_policy_schema_rejected_exit_code": 2,
+  "process_exit_codes": {
+    "gui_physics": 0,
+    "train": 0,
+    "replay": 0
+  },
+  "gui_physx_errors": 0,
+  "scope": "Start state, lift control, native joint reset and PPO pipeline validated. Harvest success policy not achieved."
+}

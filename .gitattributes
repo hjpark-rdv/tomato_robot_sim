@@ -1,2 +1,4 @@
 nvidia-sim/env_usd/tomato_greenhouse_ver_3_half_density_Yonly_v8stem_isaac_SAFE.usd filter=lfs diff=lfs merge=lfs -text
 nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd filter=lfs diff=lfs merge=lfs -text
+nvidia-sim/env_usd/tomato_greenhouse_upgraded_2_window_removed_visual.usd filter=lfs diff=lfs merge=lfs -text
+nvidia-sim/env_usd/tomato_greenhouse_ver_2_half_density_Yonly_v7_isaac_SAFE.usd filter=lfs diff=lfs merge=lfs -text

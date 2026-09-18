@@ -17,7 +17,7 @@ The environment seamlessly combines the high-fidelity smart farm greenhouse USD 
      - Cultivation row positions: $X \approx -0.75\text{ m}$ (Left) and $X \approx +0.75\text{ m}$ (Right) with a 1.5 m central aisle.
      - Hydroponic bed height: $0.32\text{ m}$.
      - Plant canopy height: $1.26\text{ m}$ (total height from ground $\approx 1.58\text{ m}$).
-     - The original USD (`env_usd/tomato_greenhouse_upgraded_with_stems_and_clusters_v2_isaac.usd`) remains completely untouched in 1:1 scale.
+     - The environment USD (`env_usd/tomato_greenhouse_upgraded_2_window_removed_visual.usd`) is referenced in 1:1 or 0.5x scale.
 
 2. **Harvesting Robot (`robot_usd/rb5_farmily.usd`)**:
    - Kept at **1:1 original physical scale** (RB5-850e 850 mm reach, linear lift 0.0 ~ 0.75 m).
@@ -45,7 +45,7 @@ nvidia-sim/
 ├── README.md                      # This documentation
 ├── run_sim.sh                     # Master one-click launcher script
 ├── env_usd/
-│   └── tomato_greenhouse_upgraded_with_stems_and_clusters_v2_isaac.usd  # Greenhouse environment
+│   └── tomato_greenhouse_upgraded_2_window_removed_visual.usd  # Greenhouse environment
 ├── robot_usd/
 │   ├── rb5_farmily.urdf           # Standalone URDF with absolute meshes & mass tensors
 │   ├── rb5_farmily.usd            # Converted PhysX Articulation robot USD
@@ -85,9 +85,37 @@ cd /root/farmily_tomato/nvidia-sim
 # 0.5배 (50% 축소 온실 스케일)로 실행
 ./run_sim.sh --scale 0.5
 ```
-*스케일 변경 시 레일 위치, 로봇 안착 높이, 카메라 시점 좌표가 온실 크기에 맞추어 자동으로 계산 및 갱신됩니다.*
+#### 3. Harvestable Tomato Stem Real-time Live Control (실시간 토마토 줄기/열매 동적 이동)
+시뮬레이션을 **재시작(runsim)할 필요 없이**, 시뮬레이션이 돌아가고 있는 상태에서 언제든지 실시간으로 줄기/열매를 원하는 좌표로 즉각 이동시킬 수 있습니다.
 
-#### 3. Headless Simulation
+- **기본 실행**: `./run_sim.sh` 실행 시 기본 위치(`x=-0.75, y=1.20, z=0.32`)에 수확용 토마토 줄기가 자동 배치됩니다.
+- **실시간 좌표 변경 방법 (3가지 지원)**:
+  1. **[방법 1] 터미널 콘솔 실시간 입력**:
+     시뮬레이션이 켜져 있는 터미널에서 새 좌표를 입력하고 Enter를 누르면 그 즉시 이동합니다:
+     ```text
+     -0.75 1.5 0.32          # X, Y, Z 입력
+     -0.75 1.5 0.32 90       # X, Y, Z, Yaw(회전각) 입력
+     ```
+  2. **[방법 2] 별도 터미널에서 명령어 한 줄 실행 (`move_stem.sh`)**:
+     시뮬레이션이 켜져 있는 상태에서 다른 터미널 창을 열고 아래 스크립트를 실행하면 즉시 해당 위치로 줄기가 이동합니다:
+     ```bash
+     ./nvidia-sim/move_stem.sh -0.75 1.60 0.45       # X Y Z
+     ./nvidia-sim/move_stem.sh -0.75 1.80 0.50 45    # X Y Z Yaw
+     ```
+  3. **[방법 3] Isaac Sim GUI 패널 (화면 UI 조작)**:
+     GUI 모드 실행 시 화면 우측 상단에 **`Tomato Stem Spawner`** 미니 팝업창이 표시됩니다.
+     - X, Y, Z, Yaw 슬라이더를 마우스로 드래그하거나 숫자를 입력
+     - **[Move Stem (실시간 이동)]** 버튼을 클릭하면 즉각 씬의 줄기가 이동합니다.
+
+- **시작 시 초기 좌표 지정 옵션**:
+  ```bash
+  # 특정 좌표로 시작
+  ./run_sim.sh --stem-pos -0.75 1.50 0.40 --stem-yaw 45.0
+  # 줄기 자동 스폰 끄기
+  ./run_sim.sh --no-spawn-stem
+  ```
+
+#### 4. Headless Simulation
 Runs the simulation in headless mode for benchmarking, training, or headless CI:
 ```bash
 ./run_sim.sh --headless --steps 500
@@ -168,7 +196,25 @@ world.step(render=True)
 
 ---
 
-## 5. Next Steps for Reinforcement Learning (IsaacLab)
+## 5. State-based ring harvesting in the original greenhouse
+
+The implemented Isaac Lab task references this greenhouse and the complete 11-fruit harvestable stem USD.
+It uses simulator state without vision, native joint break events, and restores the original cluster after each episode.
+The arm starts at the ROS GUI's left `PICK_READY` pose, with the robot mounting surface 0.40 m below
+cluster centre. The policy controls six arm/tool deltas plus an independent lift command.
+The learning task's default stem spawn is `(-0.75, 0.55, 0.32)` m.
+
+```bash
+./nvidia-sim/run_ring_rl.sh --mode inspect
+./nvidia-sim/run_ring_rl.sh --headless --mode test
+./nvidia-sim/run_ring_rl.sh --headless --mode train --timesteps 100000 \
+  --run-dir nvidia-sim/rl/runs/greenhouse_train
+```
+
+See [rl/README.md](rl/README.md) for the source scene, target selection, physics assumptions, and validation scope.
+The older simplified single-fruit fixture requires `--scene fixture`; its policy scores are not greenhouse results.
+
+### Further extensions
 
 To connect this environment to reinforcement learning algorithms (PPO, SAC, etc.):
 1. **Observation Space**:
