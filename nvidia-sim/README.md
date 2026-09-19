@@ -198,6 +198,11 @@ world.step(render=True)
 
 ## 5. State-based ring harvesting in the original greenhouse
 
+For the verified **approach from below → insert → rise → hook → contact stop** motion on a red tomato,
+run `./nvidia-sim/run_hook_harvest.sh`. See [the contact-motion guide](rl/HOOKING.md)
+for videos, repeat checks, native detachment tests, and the research rationale.
+This controller is separate from the PPO policy below.
+
 The implemented Isaac Lab task references this greenhouse and the complete 11-fruit harvestable stem USD.
 It uses simulator state without vision, native joint break events, and restores the original cluster after each episode.
 The arm starts at the ROS GUI's left `PICK_READY` pose, with the robot mounting surface 0.40 m below

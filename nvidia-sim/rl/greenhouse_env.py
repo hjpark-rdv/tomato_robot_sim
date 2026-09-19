@@ -142,7 +142,9 @@ class GreenhouseHarvestEnv(HarvestEnv):
         axis = quat_apply_inverse(quat, axis_w)
         radius = self.target_spec['radius']
         clear = (torch.linalg.vector_norm(local[:, [0, 2]], dim=1)+radius < RING_RADIUS-WIRE_RADIUS+0.001) & (local[:, 0] < -0.003)
-        inside = clear & (local[:, 1].abs() < radius+0.002) & (axis[:, 1] > 0.7)
+        # The ROS GUI uses a downward ring normal. Either normal describes the
+        # same physical aperture; requiring +Y rejects the GUI's valid pose.
+        inside = clear & (local[:, 1].abs() < radius+0.002) & (axis[:, 1].abs() > 0.7)
         lip = torch.tensor([-RING_RADIUS+WIRE_RADIUS+0.0015, 0, 0], device=self.device)
         insert = torch.tensor([-0.012, 0, 0], device=self.device)
         return local, neck, axis, inside, torch.linalg.vector_norm(neck-lip, dim=1), torch.linalg.vector_norm(local-insert, dim=1)
@@ -151,6 +153,8 @@ class GreenhouseHarvestEnv(HarvestEnv):
         if event.type == int(SimulationEvent.JOINT_BREAK):
             path = str(PhysicsSchemaTools.decodeSdfPath(*event.payload['jointPath']))
             if path in self.cluster_joint_paths:
+                if hasattr(self, 'contact_diagnostics'):
+                    self.contact_diagnostics.append(dict(event='break',path=path,step=getattr(self,'contact_diagnostic_step',None)))
                 if path == self.joint_paths[0]:
                     self._broken[0] = True
                 else:
@@ -168,6 +172,9 @@ class GreenhouseHarvestEnv(HarvestEnv):
             pair = a+' '+b
             impulse = sum(np.linalg.norm(tuple(data[j].impulse)) for j in range(header.contact_data_offset, header.contact_data_offset+header.num_contact_data))
             force = float(impulse/self.physics_dt)
+            if hasattr(self, 'contact_diagnostics') and force > .01:
+                self.contact_diagnostics.append(dict(event='contact',a=a,b=b,force=force,step=getattr(self,'contact_diagnostic_step',None),
+                    positions=[list(data[j].position) for j in range(header.contact_data_offset,header.contact_data_offset+header.num_contact_data)]))
             self._peak_force[0] = max(self._peak_force[0], force)
             if '/RingCollision/' in pair and self.target_spec['path']+'/PedicelCollider' in pair and force > .005:
                 self._stem_contact[0] = True

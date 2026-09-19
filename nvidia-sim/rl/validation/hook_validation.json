@@ -1,0 +1,884 @@
+{
+  "schema": "farmily-hook-validation-v1",
+  "date_utc": "2026-09-19T00:02:18.536014+00:00",
+  "method": "Object-relative motion parameter search and guarded contact control; no newly trained neural policy",
+  "original_scene": {
+    "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+    "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+    "target": "Tomato_01",
+    "stem_position": [
+      -0.75,
+      0.55,
+      0.32
+    ],
+    "stem_yaw": 0.0,
+    "stem_scale": 0.5,
+    "fruit_count": 11,
+    "static_plant_colliders": 239,
+    "fruit_centers_world": [
+      [
+        -0.7080453089000001,
+        1.097230239175,
+        1.0513228969000001
+      ],
+      [
+        -0.7186777572999999,
+        1.0668308772900001,
+        1.02998609535
+      ],
+      [
+        -0.7212738395,
+        1.0959180452100001,
+        0.9954029235
+      ],
+      [
+        -0.72025504585,
+        1.064675819225,
+        0.9755419342
+      ],
+      [
+        -0.7222060478,
+        1.0967402560500001,
+        0.9621396391500001
+      ],
+      [
+        -0.7231353279,
+        1.068851329955,
+        0.93900932345
+      ],
+      [
+        -0.7231016563,
+        1.0960782533700002,
+        0.9287109635
+      ],
+      [
+        -0.7184750945999999,
+        1.0622093548950002,
+        0.9144371661
+      ],
+      [
+        -0.716738912,
+        1.094586847535,
+        0.89878075425
+      ],
+      [
+        -0.719806206,
+        1.069188239935,
+        0.8842654749
+      ],
+      [
+        -0.708033811665,
+        1.10168192399,
+        0.8613266598000001
+      ]
+    ],
+    "break_force": 3.0,
+    "break_torque": 0.07999999821186066,
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+    "ready_arm_joints": {
+      "base": 3.178088167843159,
+      "shoulder": 1.1618733317547,
+      "elbow": -2.0636375722523,
+      "wrist1": -0.631089061676,
+      "wrist2": -1.5903726200182706,
+      "wrist3": 1.54193097526451
+    },
+    "height_reference": "mount",
+    "cluster_center_height_m": 0.9491748937363635,
+    "initial_reference_height_m": 0.5491748937363635,
+    "lift_start_below_m": 0.4,
+    "initial_lift_joint_m": 0.47417475664568054,
+    "lift_joint_limits_m": [
+      0.0,
+      0.75
+    ],
+    "lift_speed_m_s": 0.1,
+    "start_joint_positions": [
+      0.47417476773262024,
+      3.1780881881713867,
+      1.1618733406066895,
+      -2.0636374950408936,
+      -0.6310890913009644,
+      -1.5903725624084473,
+      1.5419310331344604
+    ],
+    "action_size": 7,
+    "observation_size": 39
+  },
+  "engage_repeat": {
+    "method": "parameterized contact-motion evaluation",
+    "attempts": 5,
+    "successes": 5,
+    "wrong_fruit_breaks": 0,
+    "best": {
+      "trial": 0,
+      "target": "Tomato_01",
+      "goal": "engage",
+      "params": {
+        "target_fruit": "Tomato_01",
+        "yaw_deg": 0,
+        "below_m": 0.02,
+        "pitch_deg": 0,
+        "neck_height_offset_m": 0.003,
+        "lateral_m": 0.0135,
+        "insertion_m": 0.004,
+        "align_stem": false,
+        "contact_speed_m_s": 0.002
+      },
+      "phase": "contact_hold",
+      "success": true,
+      "target_center": [
+        -0.708045244216919,
+        1.0972301959991455,
+        1.0513229370117188
+      ],
+      "target_neck": [
+        -0.698891282081604,
+        1.09796142578125,
+        1.0619832277297974
+      ],
+      "target_axis": [
+        0.6505901217460632,
+        0.051970645785331726,
+        0.7576487064361572
+      ],
+      "inserted": true,
+      "hooked": true,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "max_force": 2.7097904682159424,
+      "contact_steps": 4,
+      "steps": 2151,
+      "break_step": null,
+      "max_fruit_contact_N": 0.0,
+      "final_pedicel_gap_m": 0.00026402207552251884,
+      "contact_hold_s": 5.0,
+      "max_non_pedicel_contact_N": 2.7097904144242313,
+      "post_break_observation_s": 0.0,
+      "score": 1069.7290209531784
+    },
+    "scene": {
+      "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+      "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+      "target": "Tomato_01",
+      "stem_position": [
+        -0.75,
+        0.55,
+        0.32
+      ],
+      "stem_yaw": 0.0,
+      "stem_scale": 0.5,
+      "fruit_count": 11,
+      "static_plant_colliders": 239,
+      "fruit_centers_world": [
+        [
+          -0.7080453089000001,
+          1.097230239175,
+          1.0513228969000001
+        ],
+        [
+          -0.7186777572999999,
+          1.0668308772900001,
+          1.02998609535
+        ],
+        [
+          -0.7212738395,
+          1.0959180452100001,
+          0.9954029235
+        ],
+        [
+          -0.72025504585,
+          1.064675819225,
+          0.9755419342
+        ],
+        [
+          -0.7222060478,
+          1.0967402560500001,
+          0.9621396391500001
+        ],
+        [
+          -0.7231353279,
+          1.068851329955,
+          0.93900932345
+        ],
+        [
+          -0.7231016563,
+          1.0960782533700002,
+          0.9287109635
+        ],
+        [
+          -0.7184750945999999,
+          1.0622093548950002,
+          0.9144371661
+        ],
+        [
+          -0.716738912,
+          1.094586847535,
+          0.89878075425
+        ],
+        [
+          -0.719806206,
+          1.069188239935,
+          0.8842654749
+        ],
+        [
+          -0.708033811665,
+          1.10168192399,
+          0.8613266598000001
+        ]
+      ],
+      "break_force": 3.0,
+      "break_torque": 0.07999999821186066,
+      "policy_schema": "greenhouse-pick-ready-lift-v1",
+      "ready_state": "PICK_READY",
+      "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+      "ready_arm_joints": {
+        "base": 3.178088167843159,
+        "shoulder": 1.1618733317547,
+        "elbow": -2.0636375722523,
+        "wrist1": -0.631089061676,
+        "wrist2": -1.5903726200182706,
+        "wrist3": 1.54193097526451
+      },
+      "height_reference": "mount",
+      "cluster_center_height_m": 0.9491748937363635,
+      "initial_reference_height_m": 0.5491748937363635,
+      "lift_start_below_m": 0.4,
+      "initial_lift_joint_m": 0.47417475664568054,
+      "lift_joint_limits_m": [
+        0.0,
+        0.75
+      ],
+      "lift_speed_m_s": 0.1,
+      "start_joint_positions": [
+        0.47417476773262024,
+        3.1780881881713867,
+        1.1618733406066895,
+        -2.0636374950408936,
+        -0.6310890913009644,
+        -1.5903725624084473,
+        1.5419310331344604
+      ],
+      "action_size": 7,
+      "observation_size": 39
+    }
+  },
+  "engage_gui": {
+    "method": "parameterized contact-motion evaluation",
+    "attempts": 1,
+    "successes": 1,
+    "wrong_fruit_breaks": 0,
+    "best": {
+      "trial": 0,
+      "target": "Tomato_01",
+      "goal": "engage",
+      "params": {
+        "target_fruit": "Tomato_01",
+        "yaw_deg": 0,
+        "below_m": 0.02,
+        "pitch_deg": 0,
+        "neck_height_offset_m": 0.003,
+        "lateral_m": 0.0135,
+        "insertion_m": 0.004,
+        "align_stem": false,
+        "contact_speed_m_s": 0.002
+      },
+      "phase": "contact_hold",
+      "success": true,
+      "target_center": [
+        -0.708045244216919,
+        1.0972301959991455,
+        1.0513229370117188
+      ],
+      "target_neck": [
+        -0.698891282081604,
+        1.09796142578125,
+        1.0619832277297974
+      ],
+      "target_axis": [
+        0.6505901217460632,
+        0.051970645785331726,
+        0.7576487064361572
+      ],
+      "inserted": true,
+      "hooked": true,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "max_force": 2.7097904682159424,
+      "contact_steps": 4,
+      "steps": 2151,
+      "break_step": null,
+      "max_fruit_contact_N": 0.0,
+      "valid_detachment_at_break": false,
+      "max_target_pedicel_contact_N": 1.3972657452504154,
+      "final_pedicel_gap_m": 0.00026402207552251884,
+      "contact_hold_s": 5.0,
+      "max_non_pedicel_contact_N": 2.7097904144242313,
+      "post_break_observation_s": 0.0,
+      "score": 1069.7290209531784
+    },
+    "scene": {
+      "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+      "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+      "target": "Tomato_01",
+      "stem_position": [
+        -0.75,
+        0.55,
+        0.32
+      ],
+      "stem_yaw": 0.0,
+      "stem_scale": 0.5,
+      "fruit_count": 11,
+      "static_plant_colliders": 239,
+      "fruit_centers_world": [
+        [
+          -0.7080453089000001,
+          1.097230239175,
+          1.0513228969000001
+        ],
+        [
+          -0.7186777572999999,
+          1.0668308772900001,
+          1.02998609535
+        ],
+        [
+          -0.7212738395,
+          1.0959180452100001,
+          0.9954029235
+        ],
+        [
+          -0.72025504585,
+          1.064675819225,
+          0.9755419342
+        ],
+        [
+          -0.7222060478,
+          1.0967402560500001,
+          0.9621396391500001
+        ],
+        [
+          -0.7231353279,
+          1.068851329955,
+          0.93900932345
+        ],
+        [
+          -0.7231016563,
+          1.0960782533700002,
+          0.9287109635
+        ],
+        [
+          -0.7184750945999999,
+          1.0622093548950002,
+          0.9144371661
+        ],
+        [
+          -0.716738912,
+          1.094586847535,
+          0.89878075425
+        ],
+        [
+          -0.719806206,
+          1.069188239935,
+          0.8842654749
+        ],
+        [
+          -0.708033811665,
+          1.10168192399,
+          0.8613266598000001
+        ]
+      ],
+      "break_force": 3.0,
+      "break_torque": 0.07999999821186066,
+      "policy_schema": "greenhouse-pick-ready-lift-v1",
+      "ready_state": "PICK_READY",
+      "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+      "ready_arm_joints": {
+        "base": 3.178088167843159,
+        "shoulder": 1.1618733317547,
+        "elbow": -2.0636375722523,
+        "wrist1": -0.631089061676,
+        "wrist2": -1.5903726200182706,
+        "wrist3": 1.54193097526451
+      },
+      "height_reference": "mount",
+      "cluster_center_height_m": 0.9491748937363635,
+      "initial_reference_height_m": 0.5491748937363635,
+      "lift_start_below_m": 0.4,
+      "initial_lift_joint_m": 0.47417475664568054,
+      "lift_joint_limits_m": [
+        0.0,
+        0.75
+      ],
+      "lift_speed_m_s": 0.1,
+      "start_joint_positions": [
+        0.47417476773262024,
+        3.1780881881713867,
+        1.1618733406066895,
+        -2.0636374950408936,
+        -0.6310890913009644,
+        -1.5903725624084473,
+        1.5419310331344604
+      ],
+      "action_size": 7,
+      "observation_size": 39
+    }
+  },
+  "detach_lowest": {
+    "method": "parameterized contact-motion evaluation",
+    "attempts": 3,
+    "successes": 3,
+    "wrong_fruit_breaks": 0,
+    "best": {
+      "trial": 0,
+      "target": "Tomato_11",
+      "goal": "detach",
+      "params": {
+        "target_fruit": "Tomato_11",
+        "yaw_deg": 0,
+        "below_m": 0.04,
+        "pitch_deg": 0,
+        "neck_height_offset_m": 0.002,
+        "lateral_m": -0.006,
+        "insertion_m": 0.01,
+        "align_stem": false,
+        "contact_speed_m_s": 0.008
+      },
+      "phase": "release_observation",
+      "success": true,
+      "target_center": [
+        -0.7080338001251221,
+        1.1016819477081299,
+        0.8613266944885254
+      ],
+      "target_neck": [
+        -0.7065463066101074,
+        1.1043437719345093,
+        0.8735046982765198
+      ],
+      "target_axis": [
+        0.11848857253789902,
+        0.21203270554542542,
+        0.9700528979301453
+      ],
+      "inserted": true,
+      "hooked": true,
+      "broken": true,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "max_force": 22.53792953491211,
+      "contact_steps": 1,
+      "steps": 912,
+      "break_step": 851,
+      "max_fruit_contact_N": 0.0,
+      "valid_detachment_at_break": true,
+      "max_target_pedicel_contact_N": 6.369003573818063,
+      "final_pedicel_gap_m": 0.8632339237742109,
+      "contact_hold_s": 0.0,
+      "max_non_pedicel_contact_N": 22.53792963937906,
+      "post_break_observation_s": 1.0,
+      "score": 1067.7462070465087
+    },
+    "scene": {
+      "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+      "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+      "target": "Tomato_11",
+      "stem_position": [
+        -0.75,
+        0.55,
+        0.32
+      ],
+      "stem_yaw": 0.0,
+      "stem_scale": 0.5,
+      "fruit_count": 11,
+      "static_plant_colliders": 239,
+      "fruit_centers_world": [
+        [
+          -0.7080453089000001,
+          1.097230239175,
+          1.0513228969000001
+        ],
+        [
+          -0.7186777572999999,
+          1.0668308772900001,
+          1.02998609535
+        ],
+        [
+          -0.7212738395,
+          1.0959180452100001,
+          0.9954029235
+        ],
+        [
+          -0.72025504585,
+          1.064675819225,
+          0.9755419342
+        ],
+        [
+          -0.7222060478,
+          1.0967402560500001,
+          0.9621396391500001
+        ],
+        [
+          -0.7231353279,
+          1.068851329955,
+          0.93900932345
+        ],
+        [
+          -0.7231016563,
+          1.0960782533700002,
+          0.9287109635
+        ],
+        [
+          -0.7184750945999999,
+          1.0622093548950002,
+          0.9144371661
+        ],
+        [
+          -0.716738912,
+          1.094586847535,
+          0.89878075425
+        ],
+        [
+          -0.719806206,
+          1.069188239935,
+          0.8842654749
+        ],
+        [
+          -0.708033811665,
+          1.10168192399,
+          0.8613266598000001
+        ]
+      ],
+      "break_force": 3.0,
+      "break_torque": 0.07999999821186066,
+      "policy_schema": "greenhouse-pick-ready-lift-v1",
+      "ready_state": "PICK_READY",
+      "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+      "ready_arm_joints": {
+        "base": 3.178088167843159,
+        "shoulder": 1.1618733317547,
+        "elbow": -2.0636375722523,
+        "wrist1": -0.631089061676,
+        "wrist2": -1.5903726200182706,
+        "wrist3": 1.54193097526451
+      },
+      "height_reference": "mount",
+      "cluster_center_height_m": 0.9491748937363635,
+      "initial_reference_height_m": 0.5491748937363635,
+      "lift_start_below_m": 0.4,
+      "initial_lift_joint_m": 0.47417475664568054,
+      "lift_joint_limits_m": [
+        0.0,
+        0.75
+      ],
+      "lift_speed_m_s": 0.1,
+      "start_joint_positions": [
+        0.47417476773262024,
+        3.1780881881713867,
+        1.1618733406066895,
+        -2.0636374950408936,
+        -0.6310890913009644,
+        -1.5903725624084473,
+        1.5419310331344604
+      ],
+      "action_size": 7,
+      "observation_size": 39
+    }
+  },
+  "search_smoke": {
+    "method": "CEM geometry screening and PhysX shooting",
+    "attempts": 2,
+    "successes": 1,
+    "wrong_fruit_breaks": 0,
+    "best": {
+      "trial": 0,
+      "target": "Tomato_01",
+      "goal": "engage",
+      "params": {
+        "target_fruit": "Tomato_01",
+        "yaw_deg": 0,
+        "below_m": 0.02,
+        "pitch_deg": 0,
+        "neck_height_offset_m": 0.003,
+        "lateral_m": 0.0135,
+        "insertion_m": 0.004,
+        "align_stem": false,
+        "contact_speed_m_s": 0.002
+      },
+      "phase": "contact_hold",
+      "success": true,
+      "target_center": [
+        -0.708045244216919,
+        1.0972301959991455,
+        1.0513229370117188
+      ],
+      "target_neck": [
+        -0.698891282081604,
+        1.09796142578125,
+        1.0619832277297974
+      ],
+      "target_axis": [
+        0.6505901217460632,
+        0.051970645785331726,
+        0.7576487064361572
+      ],
+      "inserted": true,
+      "hooked": true,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "max_force": 2.7097904682159424,
+      "contact_steps": 4,
+      "steps": 2151,
+      "break_step": null,
+      "max_fruit_contact_N": 0.0,
+      "valid_detachment_at_break": false,
+      "max_target_pedicel_contact_N": 1.3972657452504154,
+      "final_pedicel_gap_m": 0.00026402207552251884,
+      "contact_hold_s": 5.0,
+      "max_non_pedicel_contact_N": 2.7097904144242313,
+      "post_break_observation_s": 0.0,
+      "score": 1069.7290209531784
+    },
+    "scene": {
+      "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+      "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+      "target": "Tomato_01",
+      "stem_position": [
+        -0.75,
+        0.55,
+        0.32
+      ],
+      "stem_yaw": 0.0,
+      "stem_scale": 0.5,
+      "fruit_count": 11,
+      "static_plant_colliders": 239,
+      "fruit_centers_world": [
+        [
+          -0.7080453089000001,
+          1.097230239175,
+          1.0513228969000001
+        ],
+        [
+          -0.7186777572999999,
+          1.0668308772900001,
+          1.02998609535
+        ],
+        [
+          -0.7212738395,
+          1.0959180452100001,
+          0.9954029235
+        ],
+        [
+          -0.72025504585,
+          1.064675819225,
+          0.9755419342
+        ],
+        [
+          -0.7222060478,
+          1.0967402560500001,
+          0.9621396391500001
+        ],
+        [
+          -0.7231353279,
+          1.068851329955,
+          0.93900932345
+        ],
+        [
+          -0.7231016563,
+          1.0960782533700002,
+          0.9287109635
+        ],
+        [
+          -0.7184750945999999,
+          1.0622093548950002,
+          0.9144371661
+        ],
+        [
+          -0.716738912,
+          1.094586847535,
+          0.89878075425
+        ],
+        [
+          -0.719806206,
+          1.069188239935,
+          0.8842654749
+        ],
+        [
+          -0.708033811665,
+          1.10168192399,
+          0.8613266598000001
+        ]
+      ],
+      "break_force": 3.0,
+      "break_torque": 0.07999999821186066,
+      "policy_schema": "greenhouse-pick-ready-lift-v1",
+      "ready_state": "PICK_READY",
+      "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+      "ready_arm_joints": {
+        "base": 3.178088167843159,
+        "shoulder": 1.1618733317547,
+        "elbow": -2.0636375722523,
+        "wrist1": -0.631089061676,
+        "wrist2": -1.5903726200182706,
+        "wrist3": 1.54193097526451
+      },
+      "height_reference": "mount",
+      "cluster_center_height_m": 0.9491748937363635,
+      "initial_reference_height_m": 0.5491748937363635,
+      "lift_start_below_m": 0.4,
+      "initial_lift_joint_m": 0.47417475664568054,
+      "lift_joint_limits_m": [
+        0.0,
+        0.75
+      ],
+      "lift_speed_m_s": 0.1,
+      "start_joint_positions": [
+        0.47417476773262024,
+        3.1780881881713867,
+        1.1618733406066895,
+        -2.0636374950408936,
+        -0.6310890913009644,
+        -1.5903725624084473,
+        1.5419310331344604
+      ],
+      "action_size": 7,
+      "observation_size": 39
+    }
+  },
+  "physics_regression": {
+    "scene": "greenhouse",
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "height_reference": "mount",
+    "measured_start_offset_m": 0.39999992930841555,
+    "lift_raised_m": 0.020038247108459473,
+    "lift_lowered_m": 0.020076245069503784,
+    "arm_ik_preserves_lift_motion": true,
+    "original_fruits": 11,
+    "wrong_fruit_failure_verified": true,
+    "placement_drift_m": 3.5762786865234375e-07,
+    "force_break_reset_cycles": 3,
+    "observations": [
+      1,
+      39
+    ],
+    "harvest_policy_validated": false
+  },
+  "geometry_unit_tests": {
+    "passed": 9,
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl /root/isaaclab_env/bin/python -m pytest -q nvidia-sim/rl/test_contact_planner.py"
+  },
+  "log_error_counts": {
+    "repeat": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    },
+    "gui_final": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    },
+    "physics_regression": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    },
+    "detach_validation": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    },
+    "search_validation": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    },
+    "gui_shutdown_verified": {
+      "[Error]": 0,
+      "wakeUp: Body must be non-kinematic": 0,
+      "Traceback": 0
+    }
+  },
+  "red_detachment_counterexample": {
+    "trial": 0,
+    "target": "Tomato_01",
+    "params": {
+      "target_fruit": "Tomato_01",
+      "yaw_deg": 0,
+      "below_m": 0.02,
+      "pitch_deg": 0,
+      "neck_height_offset_m": 0.003,
+      "lateral_m": 0.0135,
+      "insertion_m": 0.004,
+      "align_stem": false,
+      "contact_speed_m_s": 0.008
+    },
+    "phase": "release_observation",
+    "success": false,
+    "target_center": [
+      -0.708045244216919,
+      1.0972301959991455,
+      1.0513229370117188
+    ],
+    "target_neck": [
+      -0.698891282081604,
+      1.09796142578125,
+      1.0619832277297974
+    ],
+    "target_axis": [
+      0.6505901217460632,
+      0.051970645785331726,
+      0.7576487064361572
+    ],
+    "inserted": true,
+    "hooked": true,
+    "broken": true,
+    "other_broken": true,
+    "aborted": false,
+    "abort_reason": null,
+    "max_force": 16.650888442993164,
+    "contact_steps": 1,
+    "steps": 899,
+    "break_step": 893,
+    "max_fruit_contact_N": 0.0,
+    "max_non_pedicel_contact_N": 16.650888531948873,
+    "post_break_observation_s": 0.08333333333333333,
+    "score": -231.6650888442993
+  },
+  "limitations": [
+    "Repeat tests use one fixed placement, not a randomized success benchmark.",
+    "Tomato_11 detachment is a green-fruit physics diagnostic, not a ripeness decision.",
+    "Tomato_01 detachment can hit lower fruit after release; capture/retention is not implemented.",
+    "Pedicel capsule and fixed break joint do not model plant bending or fruit bruising.",
+    "Contact stop relies on ideal robot gravity compensation already present in the environment."
+  ],
+  "source_sha256": {
+    "nvidia-sim/scenes/farmily_greenhouse_robot.usd": "3397fe237e6e76b6f95497e3d798d37adaed592e9a86f278e0440ae5d01138c5",
+    "nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd": "fb0800e12d792cd7f451c3b518720b90cbfcee89365c0598cb376994f8ffdb1f",
+    "nvidia-sim/robot_usd/rb5_farmily.urdf": "f9479dcfdddff94c9d22b021ab6f9a142c59090389d228bcca74917bbdd2ea6d"
+  },
+  "artifact_sources": {
+    "hook_contact.png": "runs/hook_gui_final/video_000/final_close.png",
+    "hook_close.mp4": "runs/hook_gui_final/video_000/close.mp4 (H.264 recompressed)",
+    "hook_overview.mp4": "runs/hook_gui_final/video_000/overview.mp4 (H.264 recompressed)",
+    "hook_contacts.json": "runs/hook_gui_final/hook_contacts_000.json",
+    "hook_trajectory.npz": "runs/hook_gui_final/successful_motion.json (compressed arrays)",
+    "hook_contact_reverse.png": "runs/hook_gui_final/video_000/contact_view_135.png"
+  },
+  "gui_shutdown": {
+    "exit_code": 0,
+    "recording_enabled": true,
+    "display": ":0",
+    "run_directory": "runs/hook_gui_shutdown_verified",
+    "replicator_wait": false
+  }
+}

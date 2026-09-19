@@ -1,0 +1,11 @@
+{
+  "target_fruit": "Tomato_11",
+  "yaw_deg": 0,
+  "below_m": 0.04,
+  "pitch_deg": 0,
+  "neck_height_offset_m": 0.002,
+  "lateral_m": -0.006,
+  "insertion_m": 0.01,
+  "align_stem": false,
+  "contact_speed_m_s": 0.008
+}

@@ -9,7 +9,13 @@ from isaaclab.app import AppLauncher
 from ready_pose import POLICY_SCHEMA
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect"], default="inspect")
+parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook"], default="inspect")
+parser.add_argument("--hook-config", type=Path, help="Object-relative contact motion parameters")
+parser.add_argument("--hook-trials", type=int, default=1)
+parser.add_argument("--hook-search", action="store_true", help="Screen contact-motion candidates with CEM, then rank full PhysX rollouts")
+parser.add_argument("--hook-goal", choices=['engage','detach'], default='engage', help="Stop on first pedicel contact, or continue to native detachment")
+parser.add_argument("--hook-hold-seconds", type=float, default=5., help="Observe the guarded contact pose for this many seconds")
+parser.add_argument("--record", action="store_true", help="Record contact motion camera views")
 parser.add_argument("--scene", choices=["greenhouse", "fixture"], default="greenhouse")
 parser.add_argument("--target-fruit", default=None)
 parser.add_argument("--stem-position", type=float, nargs=3, default=None)
@@ -33,6 +39,17 @@ parser.add_argument("--rebuild", action="store_true")
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device="cpu")
 args = parser.parse_args()
+args.target_fruit_override=args.target_fruit
+hook_target=None
+if args.mode=='hook':
+    if args.hook_config is None and not args.hook_search:
+        preset='tomato01_engage.json' if args.hook_goal=='engage' else 'tomato11_detach.json'
+        args.hook_config=Path(__file__).parent/'configs'/preset
+    if args.hook_config:
+        hook_data=json.loads(args.hook_config.read_text())
+        first=hook_data[0] if isinstance(hook_data,list) and hook_data else hook_data
+        if isinstance(first,dict):
+            hook_target=first.get('target_fruit')
 checkpoint_config = {}
 if args.checkpoint is not None:
     metadata_path = args.checkpoint.parent / "config.json"
@@ -48,9 +65,15 @@ if args.scene == "greenhouse" and checkpoint_config and checkpoint_config.get("p
 args.lift_start_below = args.lift_start_below if args.lift_start_below is not None else checkpoint_config.get("lift_start_below", .4)
 args.lift_height_reference = args.lift_height_reference or checkpoint_config.get("lift_height_reference", "mount")
 args.lift_speed = args.lift_speed if args.lift_speed is not None else checkpoint_config.get("lift_speed", .1)
+if args.hook_trials < 1:
+    parser.error("hook-trials must be positive")
+if not math.isfinite(args.hook_hold_seconds) or args.hook_hold_seconds<=0:
+    parser.error("hook-hold-seconds must be finite and positive")
+if (args.record or args.hook_search or args.hook_config) and args.mode != 'hook':
+    parser.error("record, hook-search and hook-config require --mode hook")
 if not math.isfinite(args.lift_start_below) or args.lift_start_below < 0 or not math.isfinite(args.lift_speed) or not 0 < args.lift_speed <= .25:
     parser.error("lift-start-below must be nonnegative and lift-speed must be in (0, 0.25] m/s")
-args.target_fruit = args.target_fruit or checkpoint_config.get("target_fruit", "Tomato_08")
+args.target_fruit = args.target_fruit or checkpoint_config.get("target_fruit", hook_target or "Tomato_08")
 args.stem_position = args.stem_position if args.stem_position is not None else checkpoint_config.get("stem_position", (-.75, .55, .32))
 args.stem_yaw = args.stem_yaw if args.stem_yaw is not None else checkpoint_config.get("stem_yaw", 0.)
 args.stem_scale = args.stem_scale if args.stem_scale is not None else checkpoint_config.get("stem_scale", .5)
@@ -79,7 +102,7 @@ if (not 0 <= args.position_jitter <= 0.01 or
     parser.error("position-jitter must be 0..0.01 m and break thresholds must be positive")
 if args.mode == "play" and args.checkpoint is None:
     parser.error("--mode play requires --checkpoint")
-if args.snapshot:
+if args.snapshot or args.record:
     args.enable_cameras = True
 launcher = AppLauncher(args)  # Isaac Sim's default fast shutdown avoids ML-library unload conflicts.
 app = launcher.app
@@ -339,7 +362,12 @@ def main():
             rgb.detach(product)
             product.destroy()
             print(f"[SNAPSHOT] {args.snapshot}", flush=True)
-        if args.mode == "test":
+        if args.mode == "hook":
+            if args.scene != "greenhouse":
+                raise ValueError("hook uses the original greenhouse")
+            from hook_motion import run_hook
+            run_hook(env, args, app)
+        elif args.mode == "test":
             result = greenhouse_test(env) if args.scene == "greenhouse" else physics_test(env)
             (args.run_dir / "physics_test.json").write_text(json.dumps(result, indent=2) + "\n")
         elif args.mode == "train":
@@ -414,5 +442,8 @@ if __name__ == "__main__":
         import omni.kit.app
         # Preserve failures even when Kit's fast shutdown exits the process directly.
         omni.kit.app.get_app().post_quit(code)
-        app.close()
+        # Cameras are read synchronously and video writers have been closed.
+        # Waiting for a Replicator workflow after its render products were
+        # destroyed can leave the GUI in an indefinite shutdown wait.
+        app.close(wait_for_replicator=False)
     sys.exit(code)
