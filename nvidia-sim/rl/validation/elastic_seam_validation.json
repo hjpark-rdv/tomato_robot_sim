@@ -1,0 +1,582 @@
+{
+  "schema": "farmily-elastic-seam-validation-v2",
+  "date_utc": "2026-09-19T02:47:55.807837+00:00",
+  "problem": "Fruit was physically moving, but reset replaced its transform stack after PhysX initialization, leaving GUI transforms stale. Source cut surfaces also had coincident centers but different planes/radii, and distance-only skinning added a smaller dynamic mismatch. Previous native-origin-only validation missed these visible openings.",
+  "original_scene": {
+    "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+    "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+    "target": "Tomato_06",
+    "stem_position": [
+      -0.75,
+      0.55,
+      0.32
+    ],
+    "stem_yaw": 0.0,
+    "stem_scale": 0.5,
+    "fruit_count": 11,
+    "static_plant_colliders": 195,
+    "fruit_centers_world": [
+      [
+        -0.7080453089000001,
+        1.097230239175,
+        1.0513228969000001
+      ],
+      [
+        -0.7186777572999999,
+        1.0668308772900001,
+        1.02998609535
+      ],
+      [
+        -0.7212738395,
+        1.0959180452100001,
+        0.9954029235
+      ],
+      [
+        -0.72025504585,
+        1.064675819225,
+        0.9755419342
+      ],
+      [
+        -0.7222060478,
+        1.0967402560500001,
+        0.9621396391500001
+      ],
+      [
+        -0.7231353279,
+        1.068851329955,
+        0.93900932345
+      ],
+      [
+        -0.7231016563,
+        1.0960782533700002,
+        0.9287109635
+      ],
+      [
+        -0.7184750945999999,
+        1.0622093548950002,
+        0.9144371661
+      ],
+      [
+        -0.716738912,
+        1.094586847535,
+        0.89878075425
+      ],
+      [
+        -0.719806206,
+        1.069188239935,
+        0.8842654749
+      ],
+      [
+        -0.708033811665,
+        1.10168192399,
+        0.8613266598000001
+      ]
+    ],
+    "break_force": 3.0,
+    "break_torque": 0.07999999821186066,
+    "plant_model": "elastic",
+    "elasticity": {
+      "model": "spring-linked-original-truss-v2",
+      "stiffness_scale": 1.0,
+      "rod_density_kg_m3": 1000.0,
+      "minimum_rod_mass_kg": 0.0005,
+      "peduncle_stiffness_Nm_rad": 25.0,
+      "rachis_stiffness_Nm_rad": 2.0,
+      "pedicel_stiffness_Nm_rad": 0.25,
+      "calibrated_to_real_plant": false,
+      "joint_armature_kg_m2": 1e-05,
+      "peduncle_damping_Nms_rad": 1.0,
+      "rachis_damping_Nms_rad": 0.15,
+      "pedicel_damping_Nms_rad": 0.02,
+      "physics_dt_s": 0.0010416666666666667,
+      "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+      "seam_rest_repair": "match proximal end ring to distal ring; taper over six source rings",
+      "authored_seam_surface_gap_m": {
+        "Tomato_01": 0.000663500109623811,
+        "Tomato_02": 0.0007023166768431737,
+        "Tomato_03": 0.0006763809043106892,
+        "Tomato_04": 0.0006991797163546581,
+        "Tomato_05": 0.0006882316405656969,
+        "Tomato_06": 0.0006875752855532151,
+        "Tomato_07": 0.0006622734705903367,
+        "Tomato_08": 0.0006828736082050407,
+        "Tomato_09": 0.0006793258719721289,
+        "Tomato_10": 0.0007235709646239501,
+        "Tomato_11": 0.0006950893549673069
+      },
+      "dynamic_rods": 52,
+      "elastic_joints": 63,
+      "original_visual_meshes": 44,
+      "collision_model": "source-radius capsules; trichomes visual only",
+      "fruit_plant_contact": true,
+      "maximum_preload_angle_deg": 2.9534056186676025
+    },
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+    "ready_arm_joints": {
+      "base": 3.178088167843159,
+      "shoulder": 1.1618733317547,
+      "elbow": -2.0636375722523,
+      "wrist1": -0.631089061676,
+      "wrist2": -1.5903726200182706,
+      "wrist3": 1.54193097526451
+    },
+    "height_reference": "mount",
+    "cluster_center_height_m": 0.9491748937363635,
+    "initial_reference_height_m": 0.5491748937363635,
+    "lift_start_below_m": 0.4,
+    "initial_lift_joint_m": 0.47417475664568054,
+    "lift_joint_limits_m": [
+      0.0,
+      0.75
+    ],
+    "lift_speed_m_s": 0.1,
+    "start_joint_positions": [
+      0.47417476773262024,
+      3.1780881881713867,
+      1.1618733406066895,
+      -2.0636374950408936,
+      -0.6310890913009644,
+      -1.5903725624084473,
+      1.5419310331344604
+    ],
+    "action_size": 7,
+    "observation_size": 39
+  },
+  "authored_geometry_audit": [
+    {
+      "target": "Tomato_01",
+      "authored_surface_gap_m": 0.0006635001096238039,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0007149704113448756
+    },
+    {
+      "target": "Tomato_02",
+      "authored_surface_gap_m": 0.0007023166768431642,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0007528052348317136
+    },
+    {
+      "target": "Tomato_03",
+      "authored_surface_gap_m": 0.000676380904310662,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.000676380904310662
+    },
+    {
+      "target": "Tomato_04",
+      "authored_surface_gap_m": 0.0006991797163546673,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0006991797163546673
+    },
+    {
+      "target": "Tomato_05",
+      "authored_surface_gap_m": 0.0006882316405656896,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0007350195778235582
+    },
+    {
+      "target": "Tomato_06",
+      "authored_surface_gap_m": 0.0006875752855530835,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0006886020472256387
+    },
+    {
+      "target": "Tomato_07",
+      "authored_surface_gap_m": 0.0006622734705903618,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0007201326668145728
+    },
+    {
+      "target": "Tomato_08",
+      "authored_surface_gap_m": 0.0006828736082049759,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0006868558383513695
+    },
+    {
+      "target": "Tomato_09",
+      "authored_surface_gap_m": 0.0006793258719721206,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.000687463958665516
+    },
+    {
+      "target": "Tomato_10",
+      "authored_surface_gap_m": 0.0007235709646238091,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0007359881101728919
+    },
+    {
+      "target": "Tomato_11",
+      "authored_surface_gap_m": 0.0006950893549673481,
+      "repaired_surface_gap_m": 0.0,
+      "maximum_rest_mesh_change_m": 0.0006950893549673481
+    }
+  ],
+  "failed_gui_before_transform_stack_fix": {
+    "source_run": "elastic_seam_weld_gui",
+    "process_exit_code": 1,
+    "result": {
+      "target": "Tomato_06",
+      "action": "guarded ring push and retract",
+      "physical_target_contact": true,
+      "max_target_contact_N": 0.5315340182861715,
+      "loaded_max_rod_displacement_m": 0.003334933891892433,
+      "recovery_max_rod_error_m": 0.0001528451539343223,
+      "loaded_fruit_displacement_m": 0.0024815944489091635,
+      "recovery_fruit_error_m": 8.464248094242066e-05,
+      "max_fruit_contact_N": 0.11202111291982021,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "model": {
+        "model": "spring-linked-original-truss-v2",
+        "stiffness_scale": 1.0,
+        "rod_density_kg_m3": 1000.0,
+        "minimum_rod_mass_kg": 0.0005,
+        "peduncle_stiffness_Nm_rad": 25.0,
+        "rachis_stiffness_Nm_rad": 2.0,
+        "pedicel_stiffness_Nm_rad": 0.25,
+        "calibrated_to_real_plant": false,
+        "joint_armature_kg_m2": 1e-05,
+        "peduncle_damping_Nms_rad": 1.0,
+        "rachis_damping_Nms_rad": 0.15,
+        "pedicel_damping_Nms_rad": 0.02,
+        "physics_dt_s": 0.0010416666666666667,
+        "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+        "seam_rest_repair": "match proximal end ring to distal ring; taper over six source rings",
+        "authored_seam_surface_gap_m": {
+          "Tomato_01": 0.000663500109623811,
+          "Tomato_02": 0.0007023166768431737,
+          "Tomato_03": 0.0006763809043106892,
+          "Tomato_04": 0.0006991797163546581,
+          "Tomato_05": 0.0006882316405656969,
+          "Tomato_06": 0.0006875752855532151,
+          "Tomato_07": 0.0006622734705903367,
+          "Tomato_08": 0.0006828736082050407,
+          "Tomato_09": 0.0006793258719721289,
+          "Tomato_10": 0.0007235709646239501,
+          "Tomato_11": 0.0006950893549673069
+        },
+        "dynamic_rods": 52,
+        "elastic_joints": 63,
+        "original_visual_meshes": 44,
+        "collision_model": "source-radius capsules; trichomes visual only",
+        "fruit_plant_contact": true,
+        "maximum_preload_angle_deg": 2.9534056186676025
+      },
+      "steps_before_retract": 943,
+      "max_attachment_gap_m": 4.624644589057425e-06,
+      "max_visual_attachment_error_m": 4.622251900573815e-06,
+      "loaded_rendered_seam": {
+        "max_rendered_seam_center_gap_m": 0.002105444141740907,
+        "target_rendered_seam_center_gap_m": 0.002105444141740907,
+        "max_rendered_seam_surface_gap_m": 0.0021203730479884314,
+        "target_rendered_seam_surface_gap_m": 0.0021203730479884314
+      },
+      "passed": false
+    }
+  },
+  "before": {
+    "source_run": "elastic_seam_before",
+    "fruit_displacement_during_ring_push_m": 0.0018258336545565184,
+    "max_dynamic_skinning_error_m": 1.4499640253687915e-05,
+    "physics_result": {
+      "target": "Tomato_06",
+      "action": "guarded ring push and retract",
+      "physical_target_contact": true,
+      "max_target_contact_N": 0.5177610811526097,
+      "loaded_max_rod_displacement_m": 0.002460438059642911,
+      "recovery_max_rod_error_m": 0.00016116951883304864,
+      "max_fruit_contact_N": 0.0,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "model": {
+        "model": "spring-linked-original-truss-v1",
+        "stiffness_scale": 1.0,
+        "rod_density_kg_m3": 1000.0,
+        "minimum_rod_mass_kg": 0.0005,
+        "peduncle_stiffness_Nm_rad": 25.0,
+        "rachis_stiffness_Nm_rad": 2.0,
+        "pedicel_stiffness_Nm_rad": 0.25,
+        "calibrated_to_real_plant": false,
+        "joint_armature_kg_m2": 1e-05,
+        "peduncle_damping_Nms_rad": 1.0,
+        "rachis_damping_Nms_rad": 0.15,
+        "pedicel_damping_Nms_rad": 0.02,
+        "physics_dt_s": 0.0010416666666666667,
+        "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+        "dynamic_rods": 52,
+        "elastic_joints": 63,
+        "original_visual_meshes": 44,
+        "collision_model": "source-radius capsules; trichomes visual only",
+        "fruit_plant_contact": true,
+        "maximum_preload_angle_deg": 2.9534056186676025
+      },
+      "steps_before_retract": 926,
+      "max_attachment_gap_m": 4.2653778109524865e-06,
+      "passed": true
+    }
+  },
+  "corrected_ring_push_gui": {
+    "source_run": "elastic_seam_final_gui",
+    "process_exit_code": 0,
+    "display": ":0",
+    "result": {
+      "target": "Tomato_06",
+      "action": "guarded ring push and retract",
+      "physical_target_contact": true,
+      "max_target_contact_N": 0.5315340182861715,
+      "loaded_max_rod_displacement_m": 0.003334933891892433,
+      "recovery_max_rod_error_m": 0.0001528451539343223,
+      "loaded_fruit_displacement_m": 0.0024815944489091635,
+      "recovery_fruit_error_m": 8.464248094242066e-05,
+      "max_fruit_contact_N": 0.11202111291982021,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "model": {
+        "model": "spring-linked-original-truss-v2",
+        "stiffness_scale": 1.0,
+        "rod_density_kg_m3": 1000.0,
+        "minimum_rod_mass_kg": 0.0005,
+        "peduncle_stiffness_Nm_rad": 25.0,
+        "rachis_stiffness_Nm_rad": 2.0,
+        "pedicel_stiffness_Nm_rad": 0.25,
+        "calibrated_to_real_plant": false,
+        "joint_armature_kg_m2": 1e-05,
+        "peduncle_damping_Nms_rad": 1.0,
+        "rachis_damping_Nms_rad": 0.15,
+        "pedicel_damping_Nms_rad": 0.02,
+        "physics_dt_s": 0.0010416666666666667,
+        "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+        "seam_rest_repair": "match proximal end ring to distal ring; taper over six source rings",
+        "authored_seam_surface_gap_m": {
+          "Tomato_01": 0.000663500109623811,
+          "Tomato_02": 0.0007023166768431737,
+          "Tomato_03": 0.0006763809043106892,
+          "Tomato_04": 0.0006991797163546581,
+          "Tomato_05": 0.0006882316405656969,
+          "Tomato_06": 0.0006875752855532151,
+          "Tomato_07": 0.0006622734705903367,
+          "Tomato_08": 0.0006828736082050407,
+          "Tomato_09": 0.0006793258719721289,
+          "Tomato_10": 0.0007235709646239501,
+          "Tomato_11": 0.0006950893549673069
+        },
+        "dynamic_rods": 52,
+        "elastic_joints": 63,
+        "original_visual_meshes": 44,
+        "collision_model": "source-radius capsules; trichomes visual only",
+        "fruit_plant_contact": true,
+        "maximum_preload_angle_deg": 2.9534056186676025
+      },
+      "steps_before_retract": 943,
+      "max_attachment_gap_m": 4.624644589057425e-06,
+      "max_visual_attachment_error_m": 4.622251900573815e-06,
+      "loaded_rendered_seam": {
+        "max_rendered_seam_center_gap_m": 2.7514377424265636e-06,
+        "target_rendered_seam_center_gap_m": 1.826267211560052e-06,
+        "max_rendered_seam_surface_gap_m": 2.7721410108970774e-06,
+        "target_rendered_seam_surface_gap_m": 1.8529234737039356e-06,
+        "max_usd_fruit_pose_error_m": 1.3902072649692947e-08
+      },
+      "passed": true
+    }
+  },
+  "corrected_default_mechanics": {
+    "source_run": "elastic_render_sync_probe",
+    "process_exit_code": 0,
+    "display": ":0",
+    "result": {
+      "target": "Tomato_06",
+      "model": {
+        "model": "spring-linked-original-truss-v2",
+        "stiffness_scale": 1.0,
+        "rod_density_kg_m3": 1000.0,
+        "minimum_rod_mass_kg": 0.0005,
+        "peduncle_stiffness_Nm_rad": 25.0,
+        "rachis_stiffness_Nm_rad": 2.0,
+        "pedicel_stiffness_Nm_rad": 0.25,
+        "calibrated_to_real_plant": false,
+        "joint_armature_kg_m2": 1e-05,
+        "peduncle_damping_Nms_rad": 1.0,
+        "rachis_damping_Nms_rad": 0.15,
+        "pedicel_damping_Nms_rad": 0.02,
+        "physics_dt_s": 0.0010416666666666667,
+        "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+        "seam_rest_repair": "match proximal end ring to distal ring; taper over six source rings",
+        "authored_seam_surface_gap_m": {
+          "Tomato_01": 0.000663500109623811,
+          "Tomato_02": 0.0007023166768431737,
+          "Tomato_03": 0.0006763809043106892,
+          "Tomato_04": 0.0006991797163546581,
+          "Tomato_05": 0.0006882316405656969,
+          "Tomato_06": 0.0006875752855532151,
+          "Tomato_07": 0.0006622734705903367,
+          "Tomato_08": 0.0006828736082050407,
+          "Tomato_09": 0.0006793258719721289,
+          "Tomato_10": 0.0007235709646239501,
+          "Tomato_11": 0.0006950893549673069
+        },
+        "dynamic_rods": 52,
+        "elastic_joints": 63,
+        "original_visual_meshes": 44,
+        "collision_model": "source-radius capsules; trichomes visual only",
+        "fruit_plant_contact": true,
+        "maximum_preload_angle_deg": 2.9534056186676025
+      },
+      "loaded_displacement_m": 0.006992140405008257,
+      "recovery_error_m": 0.00010697969434181925,
+      "broken": false,
+      "other_broken": false,
+      "finite": true,
+      "max_joint_gap_m": 9.926602914608756e-08,
+      "max_attachment_gap_m": 4.624644589057425e-06,
+      "max_visual_attachment_error_m": 4.622251900573815e-06,
+      "rendered_seams": {
+        "settle": {
+          "max_rendered_seam_center_gap_m": 6.875864702371306e-07,
+          "target_rendered_seam_center_gap_m": 3.2866837190467074e-07,
+          "max_rendered_seam_surface_gap_m": 7.130156489686493e-07,
+          "target_rendered_seam_surface_gap_m": 3.643325993680167e-07,
+          "max_usd_fruit_pose_error_m": 1.3902072649692947e-08
+        },
+        "load": {
+          "max_rendered_seam_center_gap_m": 2.8105840611453965e-06,
+          "target_rendered_seam_center_gap_m": 1.1957528876447322e-06,
+          "max_rendered_seam_surface_gap_m": 2.841388459309319e-06,
+          "target_rendered_seam_surface_gap_m": 1.2096438191088957e-06,
+          "max_usd_fruit_pose_error_m": 1.3902072649692947e-08
+        },
+        "recover": {
+          "max_rendered_seam_center_gap_m": 9.82046384029262e-07,
+          "target_rendered_seam_center_gap_m": 9.82046384029262e-07,
+          "max_rendered_seam_surface_gap_m": 1.00416933169661e-06,
+          "target_rendered_seam_surface_gap_m": 1.00416933169661e-06,
+          "max_usd_fruit_pose_error_m": 1.3902072649692947e-08
+        }
+      },
+      "elasticity_passed": true,
+      "native_overload_break": true,
+      "other_break_during_overload": false,
+      "reset_reattachment_stable": true,
+      "reset_position_error_m": 0.0,
+      "passed": true
+    }
+  },
+  "corrected_half_stiffness_mechanics": {
+    "source_run": "elastic_seam_weld_soft",
+    "process_exit_code": 0,
+    "result": {
+      "target": "Tomato_06",
+      "model": {
+        "model": "spring-linked-original-truss-v2",
+        "stiffness_scale": 0.5,
+        "rod_density_kg_m3": 1000.0,
+        "minimum_rod_mass_kg": 0.0005,
+        "peduncle_stiffness_Nm_rad": 12.5,
+        "rachis_stiffness_Nm_rad": 1.0,
+        "pedicel_stiffness_Nm_rad": 0.125,
+        "calibrated_to_real_plant": false,
+        "joint_armature_kg_m2": 1e-05,
+        "peduncle_damping_Nms_rad": 0.7071067811865476,
+        "rachis_damping_Nms_rad": 0.10606601717798213,
+        "pedicel_damping_Nms_rad": 0.014142135623730952,
+        "physics_dt_s": 0.0010416666666666667,
+        "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+        "seam_rest_repair": "match proximal end ring to distal ring; taper over six source rings",
+        "authored_seam_surface_gap_m": {
+          "Tomato_01": 0.000663500109623811,
+          "Tomato_02": 0.0007023166768431737,
+          "Tomato_03": 0.0006763809043106892,
+          "Tomato_04": 0.0006991797163546581,
+          "Tomato_05": 0.0006882316405656969,
+          "Tomato_06": 0.0006875752855532151,
+          "Tomato_07": 0.0006622734705903367,
+          "Tomato_08": 0.0006828736082050407,
+          "Tomato_09": 0.0006793258719721289,
+          "Tomato_10": 0.0007235709646239501,
+          "Tomato_11": 0.0006950893549673069
+        },
+        "dynamic_rods": 52,
+        "elastic_joints": 63,
+        "original_visual_meshes": 44,
+        "collision_model": "source-radius capsules; trichomes visual only",
+        "fruit_plant_contact": true,
+        "maximum_preload_angle_deg": 5.906811237335205
+      },
+      "loaded_displacement_m": 0.01083219848034294,
+      "recovery_error_m": 0.00021477747010293204,
+      "broken": false,
+      "other_broken": false,
+      "finite": true,
+      "max_joint_gap_m": 9.342148670500763e-08,
+      "max_attachment_gap_m": 4.524067207967164e-06,
+      "max_visual_attachment_error_m": 4.5219366817296675e-06,
+      "elasticity_passed": true,
+      "native_overload_break": true,
+      "other_break_during_overload": false,
+      "reset_reattachment_stable": true,
+      "reset_position_error_m": 0.0,
+      "passed": true
+    },
+    "note": "This headless run preceded the reset-transform-stack fix. It checks material response and native attachment. Final GUI default mechanics and push runs separately verify the display-transform fix and actual USD mesh boundaries."
+  },
+  "unit_tests": {
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 /root/isaaclab_env/bin/python -m pytest -q nvidia-sim/rl/test_contact_planner.py nvidia-sim/rl/test_elastic_geometry.py",
+    "passed": 18,
+    "failed": 0
+  },
+  "artifact_sources": {
+    "elastic_attachment_before.png": "runs/elastic_seam_weld_gui/elastic_video/loaded_attachment.png",
+    "elastic_attachment_rest_fixed.png": "runs/elastic_seam_final_gui/elastic_video/preapproach_attachment.png",
+    "elastic_attachment_fixed.png": "runs/elastic_seam_final_gui/elastic_video/loaded_attachment.png",
+    "elastic_attachment_recovered.png": "runs/elastic_seam_final_gui/elastic_video/recovered_attachment.png",
+    "elastic_seam_fixed_contacts.json": "runs/elastic_seam_final_gui/elastic_push_contacts.json",
+    "elastic_seam_break_events.json": "runs/elastic_render_sync_probe/elastic_events.json",
+    "elastic_attachment_fixed.mp4": "runs/elastic_seam_final_gui/elastic_video/attachment.mp4 (H.264 recompressed)",
+    "elastic_seam_fixed_close.mp4": "runs/elastic_seam_final_gui/elastic_video/close.mp4 (H.264 recompressed)",
+    "elastic_seam_fixed_trajectory.npz": "runs/elastic_seam_final_gui/elastic_push_trace.json (compressed arrays)"
+  },
+  "limitations": [
+    "No real-plant material calibration.",
+    "No successful gap traversal, hook insertion, detachment or collection is claimed for this ring push.",
+    "The corrected pivot changes the physical trajectory slightly; target fruit contact up to 0.112 N occurs on withdrawal. No bruising model exists.",
+    "Only the final cut surface is welded in the runtime rest mesh; collision remains a capsule approximation.",
+    "Older validation/elastic_close.mp4 and elastic_validation.json are v1 historical evidence and do not validate seam closure."
+  ],
+  "source_sha256": {
+    "nvidia-sim/scenes/farmily_greenhouse_robot.usd": "3397fe237e6e76b6f95497e3d798d37adaed592e9a86f278e0440ae5d01138c5",
+    "nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd": "fb0800e12d792cd7f451c3b518720b90cbfcee89365c0598cb376994f8ffdb1f",
+    "nvidia-sim/robot_usd/rb5_farmily.urdf": "f9479dcfdddff94c9d22b021ab6f9a142c59090389d228bcca74917bbdd2ea6d"
+  },
+  "source_files_unchanged": true,
+  "log_checks": {
+    "seam_final_gui": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    },
+    "render_sync_probe": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    },
+    "seam_weld_soft": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    }
+  },
+  "video_decode_checks": {
+    "elastic_attachment_fixed.mp4": "ffmpeg full decode passed",
+    "elastic_seam_fixed_close.mp4": "ffmpeg full decode passed"
+  }
+}

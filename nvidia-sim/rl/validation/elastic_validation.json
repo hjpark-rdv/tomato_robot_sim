@@ -1,0 +1,577 @@
+{
+  "schema": "farmily-elastic-validation-v1",
+  "date_utc": "2026-09-19T02:11:09.700204+00:00",
+  "scope": "Original greenhouse, middle Tomato_06. Elastic contact/recovery and separate overload/reset validation; not gap traversal or harvesting.",
+  "original_scene": {
+    "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+    "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+    "target": "Tomato_06",
+    "stem_position": [
+      -0.75,
+      0.55,
+      0.32
+    ],
+    "stem_yaw": 0.0,
+    "stem_scale": 0.5,
+    "fruit_count": 11,
+    "static_plant_colliders": 195,
+    "fruit_centers_world": [
+      [
+        -0.7080453089000001,
+        1.097230239175,
+        1.0513228969000001
+      ],
+      [
+        -0.7186777572999999,
+        1.0668308772900001,
+        1.02998609535
+      ],
+      [
+        -0.7212738395,
+        1.0959180452100001,
+        0.9954029235
+      ],
+      [
+        -0.72025504585,
+        1.064675819225,
+        0.9755419342
+      ],
+      [
+        -0.7222060478,
+        1.0967402560500001,
+        0.9621396391500001
+      ],
+      [
+        -0.7231353279,
+        1.068851329955,
+        0.93900932345
+      ],
+      [
+        -0.7231016563,
+        1.0960782533700002,
+        0.9287109635
+      ],
+      [
+        -0.7184750945999999,
+        1.0622093548950002,
+        0.9144371661
+      ],
+      [
+        -0.716738912,
+        1.094586847535,
+        0.89878075425
+      ],
+      [
+        -0.719806206,
+        1.069188239935,
+        0.8842654749
+      ],
+      [
+        -0.708033811665,
+        1.10168192399,
+        0.8613266598000001
+      ]
+    ],
+    "break_force": 3.0,
+    "break_torque": 0.07999999821186066,
+    "plant_model": "elastic",
+    "elasticity": {
+      "model": "spring-linked-original-truss-v1",
+      "stiffness_scale": 1.0,
+      "rod_density_kg_m3": 1000.0,
+      "minimum_rod_mass_kg": 0.0005,
+      "peduncle_stiffness_Nm_rad": 25.0,
+      "rachis_stiffness_Nm_rad": 2.0,
+      "pedicel_stiffness_Nm_rad": 0.25,
+      "calibrated_to_real_plant": false,
+      "joint_armature_kg_m2": 1e-05,
+      "peduncle_damping_Nms_rad": 1.0,
+      "rachis_damping_Nms_rad": 0.15,
+      "pedicel_damping_Nms_rad": 0.02,
+      "physics_dt_s": 0.0010416666666666667,
+      "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+      "dynamic_rods": 52,
+      "elastic_joints": 63,
+      "original_visual_meshes": 44,
+      "collision_model": "source-radius capsules; trichomes visual only",
+      "fruit_plant_contact": true,
+      "maximum_preload_angle_deg": 2.9534056186676025
+    },
+    "policy_schema": "greenhouse-pick-ready-lift-v1",
+    "ready_state": "PICK_READY",
+    "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+    "ready_arm_joints": {
+      "base": 3.178088167843159,
+      "shoulder": 1.1618733317547,
+      "elbow": -2.0636375722523,
+      "wrist1": -0.631089061676,
+      "wrist2": -1.5903726200182706,
+      "wrist3": 1.54193097526451
+    },
+    "height_reference": "mount",
+    "cluster_center_height_m": 0.9491748937363635,
+    "initial_reference_height_m": 0.5491748937363635,
+    "lift_start_below_m": 0.4,
+    "initial_lift_joint_m": 0.47417475664568054,
+    "lift_joint_limits_m": [
+      0.0,
+      0.75
+    ],
+    "lift_speed_m_s": 0.1,
+    "start_joint_positions": [
+      0.47417476773262024,
+      3.1780881881713867,
+      1.1618733406066895,
+      -2.0636374950408936,
+      -0.6310890913009644,
+      -1.5903725624084473,
+      1.5419310331344604
+    ],
+    "action_size": 7,
+    "observation_size": 39
+  },
+  "runs": {
+    "ring_push_headless_final": {
+      "source_run": "elastic_push_final",
+      "process_exit_code": 0,
+      "result": {
+        "target": "Tomato_06",
+        "action": "guarded ring push and retract",
+        "physical_target_contact": true,
+        "max_target_contact_N": 0.5177610811526097,
+        "loaded_max_rod_displacement_m": 0.002460438059642911,
+        "recovery_max_rod_error_m": 0.00016116951883304864,
+        "max_fruit_contact_N": 0.0,
+        "broken": false,
+        "other_broken": false,
+        "aborted": false,
+        "abort_reason": null,
+        "model": {
+          "model": "spring-linked-original-truss-v1",
+          "stiffness_scale": 1.0,
+          "rod_density_kg_m3": 1000.0,
+          "minimum_rod_mass_kg": 0.0005,
+          "peduncle_stiffness_Nm_rad": 25.0,
+          "rachis_stiffness_Nm_rad": 2.0,
+          "pedicel_stiffness_Nm_rad": 0.25,
+          "calibrated_to_real_plant": false,
+          "joint_armature_kg_m2": 1e-05,
+          "peduncle_damping_Nms_rad": 1.0,
+          "rachis_damping_Nms_rad": 0.15,
+          "pedicel_damping_Nms_rad": 0.02,
+          "physics_dt_s": 0.0010416666666666667,
+          "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+          "dynamic_rods": 52,
+          "elastic_joints": 63,
+          "original_visual_meshes": 44,
+          "collision_model": "source-radius capsules; trichomes visual only",
+          "fruit_plant_contact": true,
+          "maximum_preload_angle_deg": 2.9534056186676025
+        },
+        "steps_before_retract": 926,
+        "max_attachment_gap_m": 4.2653778109524865e-06,
+        "passed": true
+      }
+    },
+    "ring_push_gui": {
+      "source_run": "elastic_push_gui",
+      "process_exit_code": 143,
+      "result": {
+        "target": "Tomato_06",
+        "action": "guarded ring push and retract",
+        "physical_target_contact": true,
+        "max_target_contact_N": 0.5177610811526097,
+        "loaded_max_rod_displacement_m": 0.002460438059642911,
+        "recovery_max_rod_error_m": 0.00016116951883304864,
+        "broken": false,
+        "other_broken": false,
+        "aborted": false,
+        "abort_reason": null,
+        "model": {
+          "model": "spring-linked-original-truss-v1",
+          "stiffness_scale": 1.0,
+          "rod_density_kg_m3": 1000.0,
+          "minimum_rod_mass_kg": 0.0005,
+          "peduncle_stiffness_Nm_rad": 25.0,
+          "rachis_stiffness_Nm_rad": 2.0,
+          "pedicel_stiffness_Nm_rad": 0.25,
+          "calibrated_to_real_plant": false,
+          "joint_armature_kg_m2": 1e-05,
+          "peduncle_damping_Nms_rad": 1.0,
+          "rachis_damping_Nms_rad": 0.15,
+          "pedicel_damping_Nms_rad": 0.02,
+          "physics_dt_s": 0.0010416666666666667,
+          "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+          "dynamic_rods": 52,
+          "elastic_joints": 63,
+          "original_visual_meshes": 44,
+          "collision_model": "source-radius capsules; trichomes visual only",
+          "fruit_plant_contact": true,
+          "maximum_preload_angle_deg": 2.9534056186676025
+        },
+        "steps_before_retract": 926,
+        "passed": true
+      },
+      "shutdown_note": "Recording and physical test completed; process returned 143 after Kit shutdown message. Cause not established. Later mechanics GUI recording exited 0."
+    },
+    "mechanics_default_final": {
+      "source_run": "elastic_final_validation",
+      "process_exit_code": 0,
+      "result": {
+        "target": "Tomato_06",
+        "model": {
+          "model": "spring-linked-original-truss-v1",
+          "stiffness_scale": 1.0,
+          "rod_density_kg_m3": 1000.0,
+          "minimum_rod_mass_kg": 0.0005,
+          "peduncle_stiffness_Nm_rad": 25.0,
+          "rachis_stiffness_Nm_rad": 2.0,
+          "pedicel_stiffness_Nm_rad": 0.25,
+          "calibrated_to_real_plant": false,
+          "joint_armature_kg_m2": 1e-05,
+          "peduncle_damping_Nms_rad": 1.0,
+          "rachis_damping_Nms_rad": 0.15,
+          "pedicel_damping_Nms_rad": 0.02,
+          "physics_dt_s": 0.0010416666666666667,
+          "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+          "dynamic_rods": 52,
+          "elastic_joints": 63,
+          "original_visual_meshes": 44,
+          "collision_model": "source-radius capsules; trichomes visual only",
+          "fruit_plant_contact": true,
+          "maximum_preload_angle_deg": 2.9534056186676025
+        },
+        "loaded_displacement_m": 0.006988966296189523,
+        "recovery_error_m": 0.00010732896685409639,
+        "broken": false,
+        "other_broken": false,
+        "finite": true,
+        "max_joint_gap_m": 9.371314459925509e-08,
+        "max_attachment_gap_m": 4.2653778109524865e-06,
+        "elasticity_passed": true,
+        "native_overload_break": true,
+        "other_break_during_overload": false,
+        "reset_reattachment_stable": true,
+        "reset_position_error_m": 0.0,
+        "passed": true
+      }
+    },
+    "mechanics_gui": {
+      "source_run": "elastic_mechanics_gui",
+      "process_exit_code": 0,
+      "result": {
+        "target": "Tomato_06",
+        "model": {
+          "model": "spring-linked-original-truss-v1",
+          "stiffness_scale": 1.0,
+          "rod_density_kg_m3": 1000.0,
+          "minimum_rod_mass_kg": 0.0005,
+          "peduncle_stiffness_Nm_rad": 25.0,
+          "rachis_stiffness_Nm_rad": 2.0,
+          "pedicel_stiffness_Nm_rad": 0.25,
+          "calibrated_to_real_plant": false,
+          "joint_armature_kg_m2": 1e-05,
+          "peduncle_damping_Nms_rad": 1.0,
+          "rachis_damping_Nms_rad": 0.15,
+          "pedicel_damping_Nms_rad": 0.02,
+          "physics_dt_s": 0.0010416666666666667,
+          "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+          "dynamic_rods": 52,
+          "elastic_joints": 63,
+          "original_visual_meshes": 44,
+          "collision_model": "source-radius capsules; trichomes visual only",
+          "fruit_plant_contact": true,
+          "maximum_preload_angle_deg": 2.9534056186676025
+        },
+        "loaded_displacement_m": 0.006988966296189523,
+        "recovery_error_m": 0.00010732896685409639,
+        "broken": false,
+        "other_broken": false,
+        "finite": true,
+        "max_joint_gap_m": 9.371314459925509e-08,
+        "elasticity_passed": true,
+        "native_overload_break": true,
+        "other_break_during_overload": false,
+        "reset_reattachment_stable": true,
+        "reset_position_error_m": 0.0,
+        "passed": true
+      },
+      "validation_version_note": "Recorded before attachment-gap metric was added; final headless validation includes it."
+    },
+    "mechanics_soft_half": {
+      "source_run": "elastic_stiffness05",
+      "process_exit_code": 0,
+      "result": {
+        "target": "Tomato_06",
+        "model": {
+          "model": "spring-linked-original-truss-v1",
+          "stiffness_scale": 0.5,
+          "rod_density_kg_m3": 1000.0,
+          "minimum_rod_mass_kg": 0.0005,
+          "peduncle_stiffness_Nm_rad": 12.5,
+          "rachis_stiffness_Nm_rad": 1.0,
+          "pedicel_stiffness_Nm_rad": 0.125,
+          "calibrated_to_real_plant": false,
+          "joint_armature_kg_m2": 1e-05,
+          "peduncle_damping_Nms_rad": 0.7071067811865476,
+          "rachis_damping_Nms_rad": 0.10606601717798213,
+          "pedicel_damping_Nms_rad": 0.014142135623730952,
+          "physics_dt_s": 0.0010416666666666667,
+          "rest_shape": "gravity-preloaded from authored geometry and original fruit masses",
+          "dynamic_rods": 52,
+          "elastic_joints": 63,
+          "original_visual_meshes": 44,
+          "collision_model": "source-radius capsules; trichomes visual only",
+          "fruit_plant_contact": true,
+          "maximum_preload_angle_deg": 5.906811237335205
+        },
+        "loaded_displacement_m": 0.01085177510524498,
+        "recovery_error_m": 0.00023392526094693705,
+        "broken": false,
+        "other_broken": false,
+        "finite": true,
+        "max_joint_gap_m": 9.110717362352762e-08,
+        "elasticity_passed": true,
+        "native_overload_break": true,
+        "other_break_during_overload": false,
+        "reset_reattachment_stable": true,
+        "passed": true
+      },
+      "validation_version_note": "Recorded before attachment-gap and reset-position-error metrics were added."
+    }
+  },
+  "invalid_stiffness_probe": {
+    "stiffness_scale": 2.0,
+    "passed": false,
+    "reason": "Fruit joints broke during initial settling; not a valid material response or overload trial. Do not use this setting without resolving and revalidating stability."
+  },
+  "rigid_original_regression": {
+    "method": "parameterized contact-motion evaluation",
+    "attempts": 1,
+    "successes": 1,
+    "wrong_fruit_breaks": 0,
+    "best": {
+      "trial": 0,
+      "target": "Tomato_01",
+      "goal": "engage",
+      "params": {
+        "target_fruit": "Tomato_01",
+        "yaw_deg": 0,
+        "below_m": 0.02,
+        "pitch_deg": 0,
+        "neck_height_offset_m": 0.003,
+        "lateral_m": 0.0135,
+        "insertion_m": 0.004,
+        "align_stem": false,
+        "contact_speed_m_s": 0.002
+      },
+      "phase": "contact_hold",
+      "success": true,
+      "target_center": [
+        -0.708045244216919,
+        1.0972301959991455,
+        1.0513229370117188
+      ],
+      "target_neck": [
+        -0.698891282081604,
+        1.09796142578125,
+        1.0619832277297974
+      ],
+      "target_axis": [
+        0.6505901217460632,
+        0.051970645785331726,
+        0.7576487064361572
+      ],
+      "inserted": true,
+      "hooked": true,
+      "broken": false,
+      "other_broken": false,
+      "aborted": false,
+      "abort_reason": null,
+      "max_force": 2.7097904682159424,
+      "contact_steps": 4,
+      "steps": 2151,
+      "break_step": null,
+      "max_fruit_contact_N": 0.0,
+      "valid_detachment_at_break": false,
+      "max_target_pedicel_contact_N": 1.3972657452504154,
+      "final_pedicel_gap_m": 0.00026402207552251884,
+      "contact_hold_s": 5.0,
+      "max_non_pedicel_contact_N": 2.7097904144242313,
+      "post_break_observation_s": 0.0,
+      "score": 1069.7290209531784
+    },
+    "scene": {
+      "scene": "/root/farmily_tomato/nvidia-sim/scenes/farmily_greenhouse_robot.usd",
+      "stem": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd",
+      "target": "Tomato_01",
+      "stem_position": [
+        -0.75,
+        0.55,
+        0.32
+      ],
+      "stem_yaw": 0.0,
+      "stem_scale": 0.5,
+      "fruit_count": 11,
+      "static_plant_colliders": 239,
+      "fruit_centers_world": [
+        [
+          -0.7080453089000001,
+          1.097230239175,
+          1.0513228969000001
+        ],
+        [
+          -0.7186777572999999,
+          1.0668308772900001,
+          1.02998609535
+        ],
+        [
+          -0.7212738395,
+          1.0959180452100001,
+          0.9954029235
+        ],
+        [
+          -0.72025504585,
+          1.064675819225,
+          0.9755419342
+        ],
+        [
+          -0.7222060478,
+          1.0967402560500001,
+          0.9621396391500001
+        ],
+        [
+          -0.7231353279,
+          1.068851329955,
+          0.93900932345
+        ],
+        [
+          -0.7231016563,
+          1.0960782533700002,
+          0.9287109635
+        ],
+        [
+          -0.7184750945999999,
+          1.0622093548950002,
+          0.9144371661
+        ],
+        [
+          -0.716738912,
+          1.094586847535,
+          0.89878075425
+        ],
+        [
+          -0.719806206,
+          1.069188239935,
+          0.8842654749
+        ],
+        [
+          -0.708033811665,
+          1.10168192399,
+          0.8613266598000001
+        ]
+      ],
+      "break_force": 3.0,
+      "break_torque": 0.07999999821186066,
+      "policy_schema": "greenhouse-pick-ready-lift-v1",
+      "ready_state": "PICK_READY",
+      "ready_srdf": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_moveit_config/config/rbpodo.srdf",
+      "ready_arm_joints": {
+        "base": 3.178088167843159,
+        "shoulder": 1.1618733317547,
+        "elbow": -2.0636375722523,
+        "wrist1": -0.631089061676,
+        "wrist2": -1.5903726200182706,
+        "wrist3": 1.54193097526451
+      },
+      "height_reference": "mount",
+      "cluster_center_height_m": 0.9491748937363635,
+      "initial_reference_height_m": 0.5491748937363635,
+      "lift_start_below_m": 0.4,
+      "initial_lift_joint_m": 0.47417475664568054,
+      "lift_joint_limits_m": [
+        0.0,
+        0.75
+      ],
+      "lift_speed_m_s": 0.1,
+      "start_joint_positions": [
+        0.47417476773262024,
+        3.1780881881713867,
+        1.1618733406066895,
+        -2.0636374950408936,
+        -0.6310890913009644,
+        -1.5903725624084473,
+        1.5419310331344604
+      ],
+      "action_size": 7,
+      "observation_size": 39
+    }
+  },
+  "unit_tests": {
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 /root/isaaclab_env/bin/python -m pytest -q nvidia-sim/rl/test_contact_planner.py nvidia-sim/rl/test_elastic_geometry.py",
+    "passed": 14,
+    "failed": 0,
+    "note": "Disable unrelated ROS pytest plugin autoload; its launch_testing dependency lark is unavailable in Isaac Python."
+  },
+  "source_sha256": {
+    "nvidia-sim/scenes/farmily_greenhouse_robot.usd": "3397fe237e6e76b6f95497e3d798d37adaed592e9a86f278e0440ae5d01138c5",
+    "nvidia-sim/env_usd/tomato_stem_v8_with_rotated90_cluster_harvestable_FIXED.usd": "fb0800e12d792cd7f451c3b518720b90cbfcee89365c0598cb376994f8ffdb1f",
+    "nvidia-sim/robot_usd/rb5_farmily.urdf": "f9479dcfdddff94c9d22b021ab6f9a142c59090389d228bcca74917bbdd2ea6d"
+  },
+  "original_sources_unchanged_from_hook_validation": true,
+  "log_checks": {
+    "ring_push_headless_final": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    },
+    "mechanics_default_final": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    },
+    "mechanics_gui": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    },
+    "mechanics_soft_half": {
+      "[Error]": 0,
+      "PxRigidDynamic::wakeUp": 0,
+      "Traceback": 0,
+      "disjointed": 0
+    }
+  },
+  "fruit_rachis_capsule_gap_m": {
+    "settle": 0.0010357067889058998,
+    "recover": 0.0009877643380719787
+  },
+  "limitations": [
+    "No successful narrow-gap traversal, hook insertion or harvest is claimed for Tomato_06.",
+    "Observed fruit-to-rachis gap is about 1 mm; ring wire is 2 mm. This push is not proof that sufficient clearance opens.",
+    "Material stiffness, damping, mass floor, armature and gravity preload are simulation approximations, not measurements of real tomato plants.",
+    "Only the fruit truss bends; the long main plant stem remains fixed.",
+    "Capsule contact approximation; calyx leaves and trichomes do not have independent elastic contact models.",
+    "No fruit bruising, plastic deformation, fatigue or tissue tearing model.",
+    "Validated stiffness scales are 1.0 and 0.5; scale 2.0 failed initial stability.",
+    "Robot motion is a guarded scripted push, not a trained RL policy."
+  ],
+  "artifact_sources": {
+    "elastic_close.mp4": "runs/elastic_push_gui/elastic_video/close.mp4 (H.264 recompressed)",
+    "elastic_overview.mp4": "runs/elastic_push_gui/elastic_video/overview.mp4 (H.264 recompressed)",
+    "elastic_contact.png": "runs/elastic_push_gui/elastic_video/loaded_close.png",
+    "elastic_recovered.png": "runs/elastic_push_gui/elastic_video/recovered_close.png",
+    "elastic_contacts.json": "runs/elastic_push_gui/elastic_push_contacts.json",
+    "elastic_trajectory.npz": "runs/elastic_push_gui/elastic_push_trace.json (compressed arrays)",
+    "elastic_response.png": "Direct-force default/half-stiffness load/recovery traces and actual-ring GUI force/rod displacement.",
+    "elastic_mechanics_traces.npz": "Final default and half-stiffness direct-force traces, compressed arrays.",
+    "elastic_break_events.json": "runs/elastic_final_validation/elastic_events.json"
+  },
+  "video_decode_checks": {
+    "elastic_close.mp4": "ffmpeg full decode passed",
+    "elastic_overview.mp4": "ffmpeg full decode passed"
+  }
+}

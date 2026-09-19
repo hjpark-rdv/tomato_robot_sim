@@ -9,7 +9,10 @@ from isaaclab.app import AppLauncher
 from ready_pose import POLICY_SCHEMA
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook"], default="inspect")
+parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook", "elastic"], default="inspect")
+parser.add_argument("--plant-model", choices=['rigid','elastic'], default='rigid')
+parser.add_argument("--elastic-stiffness-scale", type=float, default=1.)
+parser.add_argument("--elastic-action", choices=['validate','push'], default='validate')
 parser.add_argument("--hook-config", type=Path, help="Object-relative contact motion parameters")
 parser.add_argument("--hook-trials", type=int, default=1)
 parser.add_argument("--hook-search", action="store_true", help="Screen contact-motion candidates with CEM, then rank full PhysX rollouts")
@@ -39,6 +42,13 @@ parser.add_argument("--rebuild", action="store_true")
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device="cpu")
 args = parser.parse_args()
+if args.mode == 'elastic':
+    args.plant_model = 'elastic'
+    args.target_fruit = args.target_fruit or 'Tomato_06'
+if not math.isfinite(args.elastic_stiffness_scale) or args.elastic_stiffness_scale <= 0:
+    parser.error('elastic-stiffness-scale must be finite and positive')
+if args.plant_model == 'elastic' and args.scene != 'greenhouse':
+    parser.error('The elastic plant uses the original greenhouse')
 args.target_fruit_override=args.target_fruit
 hook_target=None
 if args.mode=='hook':
@@ -62,6 +72,10 @@ if args.checkpoint is not None:
         parser.error("Checkpoint requires adjacent config.json to identify its training scene.")
 if args.scene == "greenhouse" and checkpoint_config and checkpoint_config.get("policy_schema") != POLICY_SCHEMA:
     parser.error("This checkpoint uses the old fixed-lift policy. PICK_READY with a movable lift requires a new 7-action/39-observation policy.")
+if checkpoint_config and checkpoint_config.get('plant_model','rigid') != args.plant_model:
+    parser.error('Checkpoint plant model differs from --plant-model; use a matching checkpoint or train a new policy.')
+if args.plant_model == 'elastic' and checkpoint_config and checkpoint_config.get('elastic_stiffness_scale',1.) != args.elastic_stiffness_scale:
+    parser.error('Checkpoint elasticity differs from --elastic-stiffness-scale.')
 args.lift_start_below = args.lift_start_below if args.lift_start_below is not None else checkpoint_config.get("lift_start_below", .4)
 args.lift_height_reference = args.lift_height_reference or checkpoint_config.get("lift_height_reference", "mount")
 args.lift_speed = args.lift_speed if args.lift_speed is not None else checkpoint_config.get("lift_speed", .1)
@@ -69,8 +83,10 @@ if args.hook_trials < 1:
     parser.error("hook-trials must be positive")
 if not math.isfinite(args.hook_hold_seconds) or args.hook_hold_seconds<=0:
     parser.error("hook-hold-seconds must be finite and positive")
-if (args.record or args.hook_search or args.hook_config) and args.mode != 'hook':
-    parser.error("record, hook-search and hook-config require --mode hook")
+if (args.hook_search or args.hook_config) and args.mode != 'hook':
+    parser.error("hook-search and hook-config require --mode hook")
+if args.record and args.mode not in ('hook','elastic'):
+    parser.error('record requires --mode hook or elastic')
 if not math.isfinite(args.lift_start_below) or args.lift_start_below < 0 or not math.isfinite(args.lift_speed) or not 0 < args.lift_speed <= .25:
     parser.error("lift-start-below must be nonnegative and lift-speed must be in (0, 0.25] m/s")
 args.target_fruit = args.target_fruit or checkpoint_config.get("target_fruit", hook_target or "Tomato_08")
@@ -300,6 +316,14 @@ def main():
     cfg.lift_start_below = args.lift_start_below
     cfg.lift_height_reference = args.lift_height_reference
     cfg.lift_speed = args.lift_speed
+    cfg.plant_model = args.plant_model
+    cfg.elastic_stiffness_scale = args.elastic_stiffness_scale
+    if args.plant_model == 'elastic':
+        cfg.sim.dt = 1/960
+        cfg.decimation = 16
+        cfg.sim.render_interval = 16
+        cfg.sim.physx.min_position_iteration_count = 64
+        cfg.sim.physx.enable_external_forces_every_iteration = True
     if args.scene == "greenhouse":
         from greenhouse_env import GreenhouseHarvestEnv
         env_class = GreenhouseHarvestEnv
@@ -362,7 +386,10 @@ def main():
             rgb.detach(product)
             product.destroy()
             print(f"[SNAPSHOT] {args.snapshot}", flush=True)
-        if args.mode == "hook":
+        if args.mode == 'elastic':
+            from elastic_demo import run_elastic
+            run_elastic(env, args, app)
+        elif args.mode == "hook":
             if args.scene != "greenhouse":
                 raise ValueError("hook uses the original greenhouse")
             from hook_motion import run_hook
@@ -383,6 +410,7 @@ def main():
                             policy_kwargs={"net_arch": [128, 128]}, device="cpu", seed=args.seed, verbose=1)
             (args.run_dir / "config.json").write_text(json.dumps({
                 "policy_schema": POLICY_SCHEMA if args.scene == "greenhouse" else "fixture-v1",
+                "plant_model": cfg.plant_model, "elastic_stiffness_scale": cfg.elastic_stiffness_scale,
                 "lift_start_below": cfg.lift_start_below, "lift_height_reference": cfg.lift_height_reference,
                 "lift_speed": cfg.lift_speed, "action_space": cfg.action_space, "observation_space": cfg.observation_space,
                 "scene": args.scene, "target_fruit": args.target_fruit, "curriculum": cfg.curriculum, "num_envs": env.num_envs, "seed": args.seed,

@@ -31,6 +31,7 @@ class MotionTrial:
         self.goal=goal
         self.contact_stopped=False
         self.app=app
+        self.stop_force = None
 
     def step(self, target):
         if self.app is not None and not self.app.is_running():
@@ -48,8 +49,10 @@ class MotionTrial:
             env.scene.write_data_to_sim()
             env.sim.step(render=False)
             env.scene.update(env.physics_dt)
-            if self.goal=='engage' and env._stem_contact[0] and not env._broken[0]:
-                # Guard inside the 240 Hz physics loop, not after a 60 Hz action:
+            guarded = ((self.goal=='engage' and env._stem_contact[0]) or
+                       (self.stop_force is not None and env._peak_force[0] >= self.stop_force))
+            if guarded and not env._broken[0]:
+                # Guard inside the physics loop, not after a 60 Hz action:
                 # the next substep can already exceed the native break threshold.
                 self.contact_stopped=True
                 env.targets[:]=env.robot.data.joint_pos
@@ -83,7 +86,9 @@ class MotionTrial:
         if row['non_pedicel_force']>self.force_limit:
             self.aborted=True
             self.abort_reason='non_pedicel_force_limit'
-        if env.sim.has_gui() and len(self.trace)%2 == 0:
+        if env.sim.has_gui() and len(self.trace)%2 == 0 and self.recorder is None:
+            if hasattr(env, 'elastic'):
+                env.elastic.sync_visuals()
             env.sim.render()
         return not (row['broken'] or row['other_broken'] or self.aborted or self.contact_stopped)
 
@@ -136,7 +141,7 @@ class MotionTrial:
         for _ in range(20):
             if not self.step(q):
                 return False
-        print('[HOOK PHASE] '+json.dumps(self.trace[-1]),flush=True)
+        print('[HOOK PHASE] '+json.dumps({k:v for k,v in self.trace[-1].items() if k!='rod_positions'}),flush=True)
         if np.linalg.norm(np.asarray(self.trace[-1]['ring'])-position)>.006:
             self.aborted=True
             self.abort_reason='tracking_error'
@@ -157,8 +162,12 @@ class MotionRecorder:
         self.center=center
         self.views=[]
         close_eye,close_target=close_camera_view(center)
-        for name,eye,target,focal in [('close',close_eye,close_target,55.),
-                                      ('overview',center+np.array([.9,-1.2,.65]),center+np.array([.30,0,.02]),24.)]:
+        views=[('close',close_eye,close_target,55.),
+               ('overview',center+np.array([.9,-1.2,.65]),center+np.array([.30,0,.02]),24.)]
+        if hasattr(env,'elastic'):
+            attachment=np.asarray(env.target_spec['pose'][:3])
+            views.append(('attachment',attachment+np.array([.055,-.060,.025]),attachment,65.))
+        for name,eye,target,focal in views:
             cam=UsdGeom.Camera.Define(env.stage,'/World/HookCamera_'+name)
             if name=='close':
                 self.close_camera=cam
@@ -175,6 +184,8 @@ class MotionRecorder:
 
     def frame(self):
         from omni.physx import get_physx_interface
+        if hasattr(self.env, 'elastic'):
+            self.env.elastic.sync_visuals()
         self.env.sim.physics_sim_view.update_articulations_kinematic()
         get_physx_interface().update_transformations(False,True,True)
         self.env.sim.render()

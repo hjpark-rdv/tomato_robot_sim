@@ -2,7 +2,7 @@
 import numpy as np
 import torch
 from pxr import Gf, Usd, UsdGeom, UsdPhysics, PhysxSchema, PhysicsSchemaTools
-from omni.physx import get_physx_simulation_interface
+from omni.physx import get_physx_simulation_interface, get_physx_interface
 from omni.physx.bindings._physx import SimulationEvent
 from isaaclab.assets import Articulation, RigidObject, RigidObjectCfg
 from isaaclab.utils.math import quat_apply, quat_apply_inverse
@@ -77,11 +77,16 @@ class GreenhouseHarvestEnv(HarvestEnv):
             anchor = UsdGeom.Xform.Define(self.stage, anchor_path)
             anchor.AddTranslateOp().Set(Gf.Vec3d(*pose[:3]))
             anchor.AddOrientOp().Set(Gf.Quatf(pose[3], Gf.Vec3f(*pose[4:])))
-            UsdPhysics.RigidBodyAPI.Apply(anchor.GetPrim()).CreateKinematicEnabledAttr(True)
-            UsdPhysics.MassAPI.Apply(anchor.GetPrim()).CreateMassAttr(1.0)
-            anchor_object = RigidObject(RigidObjectCfg(prim_path=anchor_path, spawn=None))
-            self.anchors.append(anchor_object)
-            self.scene.rigid_objects[f'anchor_{index}'] = anchor_object
+            elastic = getattr(self.cfg, 'plant_model', 'rigid') == 'elastic'
+            UsdPhysics.RigidBodyAPI.Apply(anchor.GetPrim()).CreateKinematicEnabledAttr(not elastic)
+            mass = UsdPhysics.MassAPI.Apply(anchor.GetPrim())
+            mass.CreateMassAttr(.0005 if elastic else 1.0)
+            if elastic:
+                mass.CreateDiagonalInertiaAttr(Gf.Vec3f(1e-9))
+            if not elastic:
+                anchor_object = RigidObject(RigidObjectCfg(prim_path=anchor_path, spawn=None))
+                self.anchors.append(anchor_object)
+                self.scene.rigid_objects[f'anchor_{index}'] = anchor_object
             self.fruit_specs.append(dict(name=prim.GetName(), path=path, anchor=anchor_path, pose=pose,
                 local_matrix=UsdGeom.Xformable(prim).GetLocalTransformation(),
                 center=np.array(center_local)*self.cfg.stem_scale,
@@ -101,12 +106,18 @@ class GreenhouseHarvestEnv(HarvestEnv):
         static_paths = []
         for prim in Usd.PrimRange(static):
             if prim.IsA(UsdGeom.Mesh):
+                if elastic and prim.GetName().startswith('TRUSS_'):
+                    continue
                 collision(prim)
                 UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr('none')
                 self.static_colliders += 1
                 static_paths.append(prim.GetPath())
-        for spec in self.fruit_specs:
-            UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(spec['path'])).CreateFilteredPairsRel().SetTargets(static_paths)
+        if elastic:
+            from elastic_plant import ElasticPlant
+            self.elastic = ElasticPlant(self, static)
+        else:
+            for spec in self.fruit_specs:
+                UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(spec['path'])).CreateFilteredPairsRel().SetTargets(static_paths)
         names = [s['name'] for s in self.fruit_specs]
         if self.cfg.target_fruit not in names:
             raise ValueError(f'Unknown target {self.cfg.target_fruit}; available: {names}')
@@ -124,6 +135,8 @@ class GreenhouseHarvestEnv(HarvestEnv):
             fruit_count=len(self.fruits), static_plant_colliders=self.static_colliders,
             fruit_centers_world=[(np.array(s['pose'][:3])+Rotation.from_quat(s['pose'][4:]+[s['pose'][3]]).apply(s['center'])).tolist() for s in self.fruit_specs],
             break_force=self.target_spec['force'], break_torque=self.target_spec['torque'])
+        if elastic:
+            self.provenance.update(plant_model='elastic', elasticity=self.elastic.model)
 
     def _target_geometry(self):
         spec = self.target_spec
@@ -165,6 +178,11 @@ class GreenhouseHarvestEnv(HarvestEnv):
             if not header.num_contact_data:
                 continue
             a, b = [str(PhysicsSchemaTools.intToSdfPath(p)) for p in (header.collider0, header.collider1)]
+            if hasattr(self, 'elastic'):
+                impulse = sum(np.linalg.norm(tuple(data[j].impulse)) for j in range(header.contact_data_offset, header.contact_data_offset+header.num_contact_data))
+                if impulse/self.physics_dt > .01:
+                    self.elastic.contact_records.append(dict(a=a,b=b,force_N=float(impulse/self.physics_dt),
+                        step=getattr(self,'contact_diagnostic_step',None)))
             if '/Robot/' not in a and '/Robot/' not in b:
                 continue
             if '/Robot/' in a and '/Robot/' in b:
@@ -188,6 +206,12 @@ class GreenhouseHarvestEnv(HarvestEnv):
             self.invalid_break[:] = True
             done[:] = True
         return done, timeout
+
+    def step(self, actions):
+        result = super().step(actions)
+        if hasattr(self, 'elastic') and self.sim.has_gui():
+            self.elastic.sync_visuals()
+        return result
 
     def _control_pose(self):
         # Arm deltas are relative to the moving lift, so holding the arm steady
@@ -264,10 +288,16 @@ class GreenhouseHarvestEnv(HarvestEnv):
         # Skip the fixture's reset which relocates its procedural fruit.
         from isaaclab.envs import DirectRLEnv
         DirectRLEnv._reset_idx(self, env_ids)
+        if hasattr(self, 'elastic'):
+            self.elastic.reset()
         poses = []
         for fruit, spec in zip(self.fruits, self.fruit_specs):
             prim = self.stage.GetPrimAtPath(spec['path'])
-            UsdGeom.Xformable(prim).MakeMatrixXform().Set(spec['local_matrix'])
+            if not hasattr(self, 'elastic'):
+                UsdGeom.Xformable(prim).MakeMatrixXform().Set(spec['local_matrix'])
+            # Keep the elastic fruit's transform stack intact. Replacing it
+            # after PhysX initialized its USD writeback leaves the renderer
+            # reading an old matrix while native body poses continue moving.
             UsdPhysics.RigidBodyAPI(prim).CreateVelocityAttr(Gf.Vec3f(0))
             UsdPhysics.RigidBodyAPI(prim).CreateAngularVelocityAttr(Gf.Vec3f(0))
             pose = torch.tensor([spec['pose']], dtype=torch.float32, device=self.device)
@@ -289,6 +319,12 @@ class GreenhouseHarvestEnv(HarvestEnv):
         self.robot.write_joint_state_to_sim(q, torch.zeros_like(q))
         self.targets[:] = q
         self.robot.set_joint_position_target(q)
+        if hasattr(self, 'elastic'):
+            # With fabric disabled, sim.forward() does not synchronize link FK.
+            # The native break-joint parser must see the reset anchor frames,
+            # including in GUI sessions where USD held the preceding frame.
+            self.sim.physics_sim_view.update_articulations_kinematic()
+            get_physx_interface().update_transformations(False, True, True)
         self.joint_generation[0] += 1
         for index, (fruit, spec, pose) in enumerate(zip(self.fruits, self.fruit_specs, poses)):
             path = f'/World/envs/env_0/HarvestJoint_{index:02d}_{self.joint_generation[0]}'

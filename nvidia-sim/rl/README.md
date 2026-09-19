@@ -1,5 +1,8 @@
 # 원본 온실·송이에서 PICK_READY + 리프트 수확 학습
 
+**중간 열매의 줄기·꼭지 탄성 및 고리 밀기 시험은 [탄성 모델 안내](ELASTIC.md)를 참고하세요.**
+`./nvidia-sim/run_elastic_stem.sh`는 `DISPLAY=:0`에서 원본 송이의 `Tomato_06`을 대상으로 실행합니다.
+
 **고리를 꼭지에 걸고 멈추는 동작은 [접촉 동작 실행 안내](HOOKING.md)를 참고하세요.**
 `./nvidia-sim/run_hook_harvest.sh`로 원본 송이의 붉은 열매에 아래쪽에서 접근하는
 검증된 동작을 실행할 수 있습니다. 이 기능은 PPO 정책과 별도의 접촉 제어기입니다.
