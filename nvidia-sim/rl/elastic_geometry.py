@@ -2,6 +2,22 @@
 import numpy as np
 
 
+def mesh_components(face_counts, face_indices, vertex_count):
+    """Separate disconnected leaflets before convex collision approximation."""
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    edges=[]; start=0
+    for count in face_counts:
+        face=np.asarray(face_indices[start:start+count]); start+=count
+        edges.extend(zip(face,np.roll(face,-1)))
+    if not edges:
+        return [np.array([i]) for i in range(vertex_count)]
+    edges=np.asarray(edges,dtype=int)
+    graph=coo_matrix((np.ones(len(edges)),(edges[:,0],edges[:,1])),shape=(vertex_count,vertex_count))
+    count,labels=connected_components(graph,directed=False)
+    return [np.flatnonzero(labels==i) for i in range(count)]
+
+
 def tube_centerline(vertices, sides):
     """Recover ordered rings from the source's split-normal tube vertices."""
     vertices = np.asarray(vertices, dtype=float)

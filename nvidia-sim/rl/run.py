@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook", "elastic"], default="inspect")
 parser.add_argument("--plant-model", choices=['rigid','elastic'], default='rigid')
 parser.add_argument("--elastic-stiffness-scale", type=float, default=1.)
-parser.add_argument("--elastic-action", choices=['validate','push'], default='validate')
+parser.add_argument("--elastic-action", choices=['validate','push','main-push'], default='validate')
 parser.add_argument("--hook-config", type=Path, help="Object-relative contact motion parameters")
 parser.add_argument("--hook-trials", type=int, default=1)
 parser.add_argument("--hook-search", action="store_true", help="Screen contact-motion candidates with CEM, then rank full PhysX rollouts")
@@ -74,6 +74,8 @@ if args.scene == "greenhouse" and checkpoint_config and checkpoint_config.get("p
     parser.error("This checkpoint uses the old fixed-lift policy. PICK_READY with a movable lift requires a new 7-action/39-observation policy.")
 if checkpoint_config and checkpoint_config.get('plant_model','rigid') != args.plant_model:
     parser.error('Checkpoint plant model differs from --plant-model; use a matching checkpoint or train a new policy.')
+if args.plant_model == 'elastic' and checkpoint_config and checkpoint_config.get('elastic_model_version') != 'spring-linked-main-stem-v3':
+    parser.error('Elastic checkpoint predates the flexible main stem; train a new policy for this model.')
 if args.plant_model == 'elastic' and checkpoint_config and checkpoint_config.get('elastic_stiffness_scale',1.) != args.elastic_stiffness_scale:
     parser.error('Checkpoint elasticity differs from --elastic-stiffness-scale.')
 args.lift_start_below = args.lift_start_below if args.lift_start_below is not None else checkpoint_config.get("lift_start_below", .4)
@@ -411,6 +413,7 @@ def main():
             (args.run_dir / "config.json").write_text(json.dumps({
                 "policy_schema": POLICY_SCHEMA if args.scene == "greenhouse" else "fixture-v1",
                 "plant_model": cfg.plant_model, "elastic_stiffness_scale": cfg.elastic_stiffness_scale,
+                "elastic_model_version": env.elastic.model["model"] if hasattr(env, "elastic") else None,
                 "lift_start_below": cfg.lift_start_below, "lift_height_reference": cfg.lift_height_reference,
                 "lift_speed": cfg.lift_speed, "action_space": cfg.action_space, "observation_space": cfg.observation_space,
                 "scene": args.scene, "target_fruit": args.target_fruit, "curriculum": cfg.curriculum, "num_envs": env.num_envs, "seed": args.seed,

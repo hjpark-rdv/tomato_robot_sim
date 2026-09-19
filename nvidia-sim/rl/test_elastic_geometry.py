@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from elastic_geometry import (tube_centerline, resample_rod, point_segment_distances,
-                              bind_terminal_frame, skin_points, weld_tube_end, vertex_normals)
+                              bind_terminal_frame, skin_points, weld_tube_end, vertex_normals, mesh_components)
 
 
 def test_original_style_split_vertices_recover_centerline():
@@ -84,3 +84,11 @@ def test_normals_follow_repaired_surface():
     points=np.array([[0.,0.,0.],[1.,0.,0.],[1.,1.,1.],[0.,1.,1.]])
     normals=vertex_normals(points,[4],[0,1,2,3])
     np.testing.assert_allclose(normals,np.tile([0,-1/np.sqrt(2),1/np.sqrt(2)],(4,1)))
+
+
+def test_disconnected_leaflets_do_not_share_a_convex_proxy():
+    # Two quads, each triangulated; shared vertices join triangles only within
+    # the same leaflet. Isolated hair vertices must not bridge empty space.
+    result=mesh_components([3]*4,[0,1,2,0,2,3,4,5,6,4,6,7],9)
+    assert [x.tolist() for x in result]==[[0,1,2,3],[4,5,6,7],[8]]
+    assert len(mesh_components([],[],2))==2

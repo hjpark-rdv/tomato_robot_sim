@@ -1,9 +1,10 @@
-"""Native PhysX elastic truss over the user's original plant meshes.
+"""Native PhysX elastic main stem and truss over the original plant meshes.
 
 Spring-linked rigid rods approximate bending; this is not a calibrated continuum
 plant model. Original fruit masses and break joints are retained. Visual skinning
 reads simulated body transforms and never moves a physics body.
 """
+import re
 import numpy as np
 import torch
 from scipy.spatial.transform import Rotation
@@ -11,9 +12,9 @@ from scipy.spatial import cKDTree
 from pxr import Gf, UsdGeom, UsdPhysics, PhysxSchema, Vt
 from isaaclab.assets import Articulation, ArticulationCfg
 from isaaclab.actuators import ImplicitActuatorCfg
-from assets import capsule
+from assets import capsule, collision
 from elastic_geometry import (tube_centerline, resample_rod, point_segment_distances,
-                              bind_terminal_frame, skin_points, weld_tube_end, vertex_normals)
+                              bind_terminal_frame, skin_points, weld_tube_end, vertex_normals, mesh_components)
 
 
 class ElasticPlant:
@@ -22,12 +23,15 @@ class ElasticPlant:
         self.root = '/World/envs/env_0/ElasticPlant'
         self.bodies, self.rest, self.paths = [], [], []
         self.skin = []
+        self.rigid_visuals = []
         self.seams = []
         self.chains = {}
         self.endpoints = {}
+        self.starts = {}
+        self.start_parents = {}
+        self.sides = {}
         self.joints = []
         self.joint_specs = []
-        self.spring_stiffness = {}
         self.rod_masses = []
         self.rod_shapes = []
         self.contact_records = []
@@ -38,15 +42,19 @@ class ElasticPlant:
         UsdPhysics.ArticulationRootAPI.Apply(root_prim)
         articulation_api = PhysxSchema.PhysxArticulationAPI.Apply(root_prim)
         articulation_api.CreateEnabledSelfCollisionsAttr(True)
+        # Link-level sleep thresholds do not control the whole articulation.
+        # Keep slow elastic recovery active instead of freezing a bent pose.
+        articulation_api.CreateSleepThresholdAttr(0.)
+        articulation_api.CreateStabilizationThresholdAttr(0.)
         articulation_api.CreateSolverPositionIterationCountAttr(64)
         articulation_api.CreateSolverVelocityIterationCountAttr(4)
-        self.model = dict(model='spring-linked-original-truss-v2',
+        self.model = dict(model='spring-linked-main-stem-v3',
                           stiffness_scale=self.scale, rod_density_kg_m3=1000.,
                           minimum_rod_mass_kg=.0005,
                           peduncle_stiffness_Nm_rad=25.*self.scale,
                           rachis_stiffness_Nm_rad=2.*self.scale,
                           pedicel_stiffness_Nm_rad=.25*self.scale,
-                          calibrated_to_real_plant=False)
+                          calibrated_to_real_plant=False, sleep_threshold=0., stabilization_threshold=0.)
         self.armature=1e-5
         self.model.update(joint_armature_kg_m2=self.armature,
                           peduncle_damping_Nms_rad=1.*np.sqrt(self.scale),
@@ -54,13 +62,17 @@ class ElasticPlant:
                           pedicel_damping_Nms_rad=.02*np.sqrt(self.scale),
                           physics_dt_s=env.cfg.sim.dt,
                           rest_shape='gravity-preloaded from authored geometry and original fruit masses')
-        # Source meshes have ordered 14-sided rachis/peduncle and 12-sided pedicels.
-        peduncle = self._tube('TRUSS_Truss_01_Peduncle', 14, 5, None, 25., 1.)
-        # The peduncle grows out of the fixed main stem/stub: these connected
-        # surfaces overlap in the original asset, so do not collide at the root.
-        root_neighbors = [p.GetPath() for p in static.GetChildren()
-                          if p.GetName() == 'STEM_MainStem' or p.GetName().startswith('STEM_Removed_Truss_')]
-        UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(self.paths[peduncle[0]])).CreateFilteredPairsRel().SetTargets(root_neighbors)
+        # Only the basal segment is fixed to the world. The complete truss is a
+        # child of the flexible main stem, so accidental contact moves its targets.
+        main = self._tube('STEM_MainStem', 24, 16, None, 100., 3.)
+        self.model.update(main_stem_segments=len(main), main_stem_stiffness_Nm_rad=100.*self.scale,
+                          main_stem_damping_Nms_rad=3.*np.sqrt(self.scale),
+                          fixed_support='first basal main-stem segment only')
+        branch_start = self._source_tube('TRUSS_Truss_01_Peduncle',14)[0][0]
+        self.truss_parent = min(main,key=lambda i:np.linalg.norm(self.rest[i][:3]-branch_start))
+        peduncle = self._tube('TRUSS_Truss_01_Peduncle', 14, 5, self.truss_parent, 25., 1.)
+        connected = [self.paths[i] for i in main if abs(i-self.truss_parent)<=1]
+        UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(self.paths[peduncle[0]])).CreateFilteredPairsRel().SetTargets(connected)
         rachis = self._tube('TRUSS_Rachis', 14, 14, peduncle[-1], 2., .15)
         for index, spec in enumerate(env.fruit_specs):
             name = 'TRUSS_Pedicel_proximal_' + spec['name'][-2:]
@@ -98,14 +110,25 @@ class ElasticPlant:
             self.rest_repairs[name] = (original,repaired)
         self.model.update(seam_rest_repair='match proximal end ring to distal ring; taper over six source rings',
                           authored_seam_surface_gap_m=authored_gaps)
-        # Transfer every original TRUSS mesh to its corresponding dynamic chain.
+        self.main_visual_parents = self._main_appendages(main)
+        # Transfer the original plant meshes to the physically moving skeleton.
         for prim in static.GetChildren():
             name = prim.GetName()
-            if not name.startswith('TRUSS_') or not prim.IsA(UsdGeom.Mesh):
+            if not name.startswith(('TRUSS_','STEM_')) or not prim.IsA(UsdGeom.Mesh):
                 continue
             stem_name = name.removesuffix('_Trichomes')
-            chain = self.chains.get(stem_name, rachis)
-            self._bind_visual(prim, chain)
+            if name in self.main_visual_parents:
+                chain = [self.main_visual_parents[name]]
+            else:
+                chain = self.chains.get(stem_name, rachis)
+            if name in self.main_visual_parents:
+                matrix=self.cache.GetLocalToWorldTransform(prim)
+                parent_inverse=self.cache.GetLocalToWorldTransform(prim.GetParent()).GetInverse()
+                op=UsdGeom.Xformable(prim).MakeMatrixXform()
+                op.Set(matrix*parent_inverse)
+                self.rigid_visuals.append((op,np.asarray(matrix),np.asarray(parent_inverse),chain[0]))
+            else:
+                self._bind_visual(prim, chain)
             UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(False)
         for spec in env.fruit_specs:
             name = 'TRUSS_Pedicel_proximal_' + spec['name'][-2:]
@@ -118,7 +141,7 @@ class ElasticPlant:
             distal_cap_ids = np.sort(unique_indices)[:12]
             self.seams.append((spec, skin, cap_ids, distal, distal_cap_ids))
         self.model.update(dynamic_rods=len(self.bodies), elastic_joints=len(self.joints),
-                          original_visual_meshes=len(self.skin),
+                          original_visual_meshes=len(self.skin)+len(self.rigid_visuals),
                           collision_model='source-radius capsules; trichomes visual only',
                           fruit_plant_contact=True)
         cfg = ArticulationCfg(prim_path=self.root,spawn=None,
@@ -145,6 +168,7 @@ class ElasticPlant:
     def _tube(self, name, sides, segments, parent, stiffness, damping):
         points, radii = self._source_tube(name, sides)
         nodes, radii = resample_rod(points, radii, segments)
+        self.starts[name], self.start_parents[name], self.sides[name] = nodes[0], parent, sides
         chain = []
         for j, (a, b) in enumerate(zip(nodes[:-1], nodes[1:])):
             radius = float(max(radii[j:j+2]))
@@ -155,7 +179,13 @@ class ElasticPlant:
             x.AddOrientOp().Set(Gf.Quatf(1.))
             UsdPhysics.RigidBodyAPI.Apply(x.GetPrim())
             mass = max(.0005, 1000.*np.pi*radius**2*np.linalg.norm(b-a))
-            UsdPhysics.MassAPI.Apply(x.GetPrim()).CreateMassAttr(float(mass))
+            mass_api=UsdPhysics.MassAPI.Apply(x.GetPrim())
+            mass_api.CreateMassAttr(float(mass))
+            mass_api.CreateCenterOfMassAttr(Gf.Vec3f(0.))
+            length=float(np.linalg.norm(b-a))
+            mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(mass*(3*radius**2+length**2)/12,
+                mass*(3*radius**2+length**2)/12,mass*radius**2/2))
+            mass_api.CreatePrincipalAxesAttr(Gf.Quatf(Gf.Rotation(Gf.Vec3d(0,0,1),Gf.Vec3d(*(b-a))).GetQuat()))
             phys = PhysxSchema.PhysxRigidBodyAPI.Apply(x.GetPrim())
             phys.CreateSolverPositionIterationCountAttr(64)
             phys.CreateSolverVelocityIterationCountAttr(16)
@@ -177,6 +207,64 @@ class ElasticPlant:
         self.chains[name] = chain
         self.endpoints[name] = nodes[-1]
         return chain
+
+    def _main_appendages(self, main):
+        """Carry original leaves/stubs with their main-stem attachment segment.
+
+        Their collision meshes become convex compound shapes on that body, not
+        fixed world obstacles or kinematic followers. Leaf flex is not modeled.
+        """
+        groups = {}
+        for prim in self.static.GetChildren():
+            name = prim.GetName()
+            if not name.startswith('STEM_') or name=='STEM_MainStem' or not prim.IsA(UsdGeom.Mesh):
+                continue
+            match = re.match(r'(STEM_(?:CompoundLeaf|Pruned_Branch|Apical_Young_Leaf)_\d+)',name)
+            group = match.group(1) if match else ('STEM_Removed_Truss' if name.startswith('STEM_Removed_Truss') else name.removesuffix('_Trichomes'))
+            groups.setdefault(group,[]).append(prim)
+        parents = {}; proxies=0; appendage_paths=[]
+        centers=np.asarray(self.rest)[main,:3]
+        for prims in groups.values():
+            vertices = [self._world_points(p)[0] for p in prims]
+            all_points=np.concatenate(vertices)
+            nearest = np.linalg.norm(all_points[:,None]-centers,axis=2).min(axis=0)
+            parent=main[int(nearest.argmin())]
+            for prim,points in zip(prims,vertices):
+                name=prim.GetName(); parents[name]=parent
+                if 'Trichomes' in name or 'Cut_Fibers' in name:
+                    continue
+                mesh=UsdGeom.Mesh(prim)
+                counts=np.asarray(mesh.GetFaceVertexCountsAttr().Get(),dtype=int)
+                indices=np.asarray(mesh.GetFaceVertexIndicesAttr().Get(),dtype=int)
+                components=mesh_components(counts,indices,len(points))
+                # Fine veins and hairs are decoration; convexifying their whole
+                # disconnected mesh would incorrectly fill gaps between leaves.
+                if len(components)>20:
+                    continue
+                offsets=np.r_[0,np.cumsum(counts)]
+                for part,ids in enumerate(components):
+                    if len(ids)<4:
+                        continue
+                    mapping=np.full(len(points),-1,dtype=int); mapping[ids]=np.arange(len(ids))
+                    selected=mapping[indices[offsets[:-1]]]>=0
+                    faces=np.concatenate([indices[offsets[i]:offsets[i+1]] for i in np.flatnonzero(selected)])
+                    proxy=UsdGeom.Mesh.Define(self.stage,self.paths[parent]+f'/Appendage_{name}_{part}')
+                    proxy.CreatePointsAttr(Vt.Vec3fArray.FromNumpy((points[ids]-self.rest[parent][:3]).astype(np.float32)))
+                    proxy.CreateFaceVertexCountsAttr(Vt.IntArray(counts[selected].tolist()))
+                    proxy.CreateFaceVertexIndicesAttr(Vt.IntArray(mapping[faces].tolist()))
+                    collision(proxy.GetPrim())
+                    UsdPhysics.MeshCollisionAPI.Apply(proxy.GetPrim()).CreateApproximationAttr('convexHull')
+                    proxy.MakeInvisible(); proxies+=1
+                    appendage_paths.append(proxy.GetPath())
+        # Authored leaves overlap. They previously belonged to static geometry
+        # and never collided with one another. Keep that exclusion, while all
+        # robot, fruit and stem contacts remain enabled.
+        for index,path in enumerate(appendage_paths):
+            UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(path)).CreateFilteredPairsRel().SetTargets(appendage_paths[index+1:])
+        self.model.update(main_appendage_collision_shapes=proxies,
+                          appendage_self_collision=False,
+                          main_appendages='separate convex leaflets/stubs attached to main stem; hairs/fine veins visual only; rod masses retained')
+        return parents
 
     def _joint(self, name, parent, child_path, child_pose, point, stiffness, damping):
         joint_type = UsdPhysics.FixedJoint if parent is None else UsdPhysics.Joint
@@ -217,7 +305,6 @@ class ElasticPlant:
         self.joints.append(str(joint.GetPath()))
         self.joint_specs.append((parent, child_path, np.array(joint.GetLocalPos0Attr().Get()),
                                  np.array(joint.GetLocalPos1Attr().Get())))
-        self.spring_stiffness[name] = stiffness*self.scale
 
     def _bind_visual(self, prim, chain):
         points, matrix = self._world_points(prim)
@@ -248,6 +335,14 @@ class ElasticPlant:
                 cap_ids = np.flatnonzero(np.isin(inverse_ids,final_ring))
             ids, weights = bind_terminal_frame(points, ids, weights, centers[-1],
                 self.endpoints[stem_name], self.terminal_frames[stem_name], cap_ids)
+        parent = chain[0] if stem_name=='STEM_MainStem' else self.start_parents.get(stem_name)
+        if parent is not None:
+            cap_ids=()
+            if prim.GetName()==stem_name:
+                _,first,inverse_ids=np.unique(np.round(points,7),axis=0,return_index=True,return_inverse=True)
+                first_ring=np.argsort(first)[:self.sides[stem_name]]
+                cap_ids=np.flatnonzero(np.isin(inverse_ids,first_ring))
+            ids,weights=bind_terminal_frame(points,ids,weights,centers[0],self.starts[stem_name],parent,cap_ids)
         mesh=UsdGeom.Mesh(prim)
         normals=np.asarray(mesh.GetNormalsAttr().Get(),dtype=float)
         if mesh.GetNormalsInterpolation() != 'vertex' or normals.shape != points.shape:
@@ -271,44 +366,47 @@ class ElasticPlant:
                   'stiffness',self.articulation.data.joint_stiffness[0,:9].tolist(),
                   'limits',self.articulation.data.joint_effort_limits[0,:9].tolist(),flush=True)
             self.preload = self._gravity_preload()
-        self.articulation.set_joint_position_target(self.preload)
+        # Apply the preload as constant generalized torque: tau = -K*q - D*qdot
+        # + tau_rest. Nonzero spherical position targets drifted in this runtime;
+        # zero spring targets plus the fixed preload preserve the authored pose.
+        self.articulation.set_joint_position_target(torch.zeros_like(self.preload))
+        self.articulation.set_joint_effort_target(self.preload*self.articulation.data.joint_stiffness)
+        self.articulation.write_data_to_sim()
 
     def _gravity_preload(self):
-        """Infer stress-free angles so the supplied loaded pose balances gravity.
+        """Infer an equivalent fixed spring preload from the authored loaded pose.
 
         This is a static preload, not a feedback force that cancels plant motion.
         It remains fixed during contact, loading, release and joint breakage.
         """
-        children = {p:[] for p in self.paths}
-        mass_points = {p:[(m,pose[:3])] for p,m,pose in zip(self.paths,self.rod_masses,self.rest)}
-        for spec in self.env.fruit_specs:
-            pose = np.asarray(spec['pose'])
-            center = pose[:3]+Rotation.from_quat(pose[[4,5,6,3]]).apply(spec['center'])
-            mass = UsdPhysics.MassAPI(self.stage.GetPrimAtPath(spec['path'])).GetMassAttr().Get()
-            mass_points[spec['anchor']] = [(.0005,pose[:3]),(float(mass),center)]
-            children[spec['anchor']] = []
-        for parent,child,_,_ in self.joint_specs:
-            if parent is not None:
-                children[self.paths[parent]].append(child)
-        def subtree(path):
-            return mass_points[path] + [pair for child in children[path] for pair in subtree(child)]
-        targets = {}
-        for path,(parent,child,p0,_) in zip(self.joints,self.joint_specs):
-            if parent is None:
+        # Project the authored pose's fixed gravitational load through PhysX's
+        # DOF axes, including the fruit mass carried by each attachment frame.
+        jac=self.articulation.root_physx_view.get_jacobians()[0].cpu().numpy()
+        torque=np.zeros(self.articulation.num_joints)
+        for index,mass in zip(self.body_ids,self.rod_masses):
+            if index==0:
                 continue
-            point = self.rest[parent][:3]+p0
-            torque = sum((np.cross(center-point,[0.,0.,-9.81*mass]) for mass,center in subtree(child)),start=np.zeros(3))
-            name = path.rsplit('/',1)[-1]
-            targets[name] = -torque/self.spring_stiffness[name]
-        q = torch.zeros_like(self.articulation.data.joint_pos)
-        for i,name in enumerate(self.articulation.joint_names):
-            stem,axis = name.rsplit(':',1)
-            q[0,i] = float(targets[stem][int(axis)])
+            torque += jac[index-1,:3].T @ np.array([0.,0.,-9.81*mass])
+        for spec,fruit in zip(self.env.fruit_specs,self.env.fruits):
+            index=self.anchor_ids[spec['anchor']]
+            offset=Rotation.from_quat(np.asarray(spec['pose'])[[4,5,6,3]]).apply(spec['center'])
+            mass=float(fruit.root_physx_view.get_masses()[0,0])
+            force=np.array([0.,0.,-9.81*mass])
+            torque += jac[index-1,:3].T @ (force+np.array([0.,0.,-9.81*.0005]))
+            torque += jac[index-1,3:].T @ np.cross(offset,force)
+        stiffness=self.articulation.data.joint_stiffness[0].cpu().numpy()
+        q=torch.as_tensor((-torque/stiffness)[None],dtype=torch.float32,device=self.env.device)
+        self.model['preload_application']='fixed generalized joint torque; zero spherical drive position target'
         self.model['maximum_preload_angle_deg'] = float(torch.rad2deg(q.abs()).max())
         return q
 
     def poses(self):
         return self.articulation.data.body_state_w[0,self.body_ids,:7].cpu().numpy()
+
+    def fruit_centers(self):
+        return np.asarray([f.data.root_pos_w[0].cpu().numpy()+
+            Rotation.from_quat(f.data.root_quat_w[0].cpu().numpy()[[1,2,3,0]]).apply(s['center'])
+            for s,f in zip(self.env.fruit_specs,self.env.fruits)])
 
     def _visual_transforms(self):
         ids = self.body_ids + [self.anchor_ids[s['anchor']] for s in self.env.fruit_specs]
@@ -319,6 +417,11 @@ class ElasticPlant:
 
     def sync_visuals(self):
         poses, rotations = self._visual_transforms()
+        for op,matrix,parent_inverse,index in self.rigid_visuals:
+            delta=np.eye(4)
+            delta[:3,:3]=rotations[index].T
+            delta[3,:3]=poses[index,:3]-self.visual_rest[index,:3] @ delta[:3,:3]
+            op.Set(Gf.Matrix4d(*(matrix @ delta @ parent_inverse).flatten()))
         for mesh, points, inverse, ids, weights, normals, normal_inverse in self.skin:
             world = skin_points(points,self.visual_rest[:,:3],rotations,poses[:,:3],ids,weights)
             local = world @ inverse[:3,:3] + inverse[3,:3]
@@ -394,7 +497,10 @@ class ElasticPlant:
         gap = (point_segment_distances(center[None],a,b)[0]-radii-self.env.target_spec['radius']).min()
         attachment_gaps = [np.linalg.norm(body_poses[s['anchor']][:3]-f.data.root_pos_w[0].cpu().numpy())
                            for s,f in zip(self.env.fruit_specs,self.env.fruits)]
+        main_ids = self.chains['STEM_MainStem']
         return dict(max_rod_displacement_m=float(np.linalg.norm(poses[:,:3]-np.asarray(self.rest)[:,:3],axis=1).max()),
+                    main_stem_max_displacement_m=float(np.linalg.norm(poses[main_ids,:3]-np.asarray(self.rest)[main_ids,:3],axis=1).max()),
+                    cluster_centroid=self.fruit_centers().mean(axis=0).tolist(),
                     max_rod_rotation_deg=float(np.rad2deg(Rotation.from_quat(poses[:,[4,5,6,3]]).magnitude()).max()),
                     max_joint_gap_m=float(max(gaps)),worst_joint=self.joints[int(np.argmax(gaps))],
                     target_fruit_rachis_gap_m=float(gap),max_attachment_gap_m=float(max(attachment_gaps)),

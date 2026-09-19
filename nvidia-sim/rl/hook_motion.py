@@ -152,7 +152,7 @@ class MotionTrial:
 
 
 class MotionRecorder:
-    def __init__(self,env,directory):
+    def __init__(self,env,directory,main_stem=False):
         import omni.replicator.core as rep
         import imageio.v2 as imageio
         from pxr import UsdGeom,Gf
@@ -167,6 +167,9 @@ class MotionRecorder:
         if hasattr(env,'elastic'):
             attachment=np.asarray(env.target_spec['pose'][:3])
             views.append(('attachment',attachment+np.array([.055,-.060,.025]),attachment,65.))
+        if main_stem:
+            focus=center+np.array([-.04,0,-.08])
+            views=[('main_stem',focus+np.array([.65,-.85,.25]),focus,40.),views[1]]
         for name,eye,target,focal in views:
             cam=UsdGeom.Camera.Define(env.stage,'/World/HookCamera_'+name)
             if name=='close':

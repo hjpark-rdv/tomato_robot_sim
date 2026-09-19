@@ -82,6 +82,11 @@ class GreenhouseHarvestEnv(HarvestEnv):
             mass = UsdPhysics.MassAPI.Apply(anchor.GetPrim())
             mass.CreateMassAttr(.0005 if elastic else 1.0)
             if elastic:
+                # Keep every connected fruit active while measuring slow
+                # elastic recovery.
+                fruit_phys=PhysxSchema.PhysxRigidBodyAPI.Apply(prim)
+                fruit_phys.CreateSleepThresholdAttr(0.)
+                fruit_phys.CreateStabilizationThresholdAttr(0.)
                 mass.CreateDiagonalInertiaAttr(Gf.Vec3f(1e-9))
             if not elastic:
                 anchor_object = RigidObject(RigidObjectCfg(prim_path=anchor_path, spawn=None))
@@ -106,7 +111,7 @@ class GreenhouseHarvestEnv(HarvestEnv):
         static_paths = []
         for prim in Usd.PrimRange(static):
             if prim.IsA(UsdGeom.Mesh):
-                if elastic and prim.GetName().startswith('TRUSS_'):
+                if elastic and prim.GetName().startswith(('TRUSS_', 'STEM_')):
                     continue
                 collision(prim)
                 UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr('none')
@@ -129,6 +134,8 @@ class GreenhouseHarvestEnv(HarvestEnv):
         self.scene.filter_collisions(global_prim_paths=[])
         self.cluster_joint_paths = []
         self._other_broken = False
+        self._main_stem_hit = False
+        self._main_stem_penalized = False
         self._start_q = None
         self.provenance = dict(scene=str(SCENE_SOURCE), stem=str(STEM_SOURCE), target=self.cfg.target_fruit,
             stem_position=self.cfg.stem_position, stem_yaw=self.cfg.stem_yaw, stem_scale=self.cfg.stem_scale,
@@ -193,6 +200,9 @@ class GreenhouseHarvestEnv(HarvestEnv):
             if hasattr(self, 'contact_diagnostics') and force > .01:
                 self.contact_diagnostics.append(dict(event='contact',a=a,b=b,force=force,step=getattr(self,'contact_diagnostic_step',None),
                     positions=[list(data[j].position) for j in range(header.contact_data_offset,header.contact_data_offset+header.num_contact_data)]))
+            if force > .1 and any('/ElasticPlant/STEM_MainStem_' in path and
+                                    path.endswith('/StemCollider') for path in (a,b)):
+                self._main_stem_hit = True
             self._peak_force[0] = max(self._peak_force[0], force)
             if '/RingCollision/' in pair and self.target_spec['path']+'/PedicelCollider' in pair and force > .005:
                 self._stem_contact[0] = True
@@ -205,7 +215,19 @@ class GreenhouseHarvestEnv(HarvestEnv):
             self.success[:] = False
             self.invalid_break[:] = True
             done[:] = True
+        if getattr(self, '_main_stem_hit', False):
+            self.success[:] = False
+            self.invalid_break[:] = bool(self._broken[0]) or self._other_broken
+            done[:] = True
+        self.extras['log']['main_stem_collision'] = float(getattr(self, '_main_stem_hit', False))
         return done, timeout
+
+    def _get_rewards(self):
+        reward = super()._get_rewards()
+        if getattr(self, '_main_stem_hit', False) and not self._main_stem_penalized:
+            reward -= 10.
+            self._main_stem_penalized = True
+        return reward
 
     def step(self, actions):
         result = super().step(actions)
@@ -276,7 +298,7 @@ class GreenhouseHarvestEnv(HarvestEnv):
         if env_ids is not None and len(env_ids) == 0:
             return
         if self.episode_length_buf[0] > 0:
-            record = dict(env=0, success=bool(self.success[0]), invalid_break=bool(self.invalid_break[0]), wrong_fruit_break=self._other_broken, steps=int(self.episode_length_buf[0]))
+            record = dict(env=0, success=bool(self.success[0]), invalid_break=bool(self.invalid_break[0]), wrong_fruit_break=self._other_broken, main_stem_collision=getattr(self, '_main_stem_hit', False), steps=int(self.episode_length_buf[0]))
             self.last_episode = (self.last_episode+[record])[-100:]
             self.total_successes += int(record['success'])
             self.total_invalid_breaks += int(record['invalid_break'])
@@ -339,6 +361,8 @@ class GreenhouseHarvestEnv(HarvestEnv):
             anchor.write_root_pose_to_sim(pose)
         self._broken.fill(False)
         self._other_broken = False
+        self._main_stem_hit = False
+        self._main_stem_penalized = False
         self._stem_contact.fill(False)
         self._bad_contact.fill(False)
         self._peak_force.fill(0)
