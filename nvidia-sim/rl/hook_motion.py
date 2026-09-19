@@ -32,6 +32,9 @@ class MotionTrial:
         self.contact_stopped=False
         self.app=app
         self.stop_force = None
+        self.initial_target_center = env._target_geometry()[0][0].cpu().numpy().copy()
+        if hasattr(env, 'elastic'):
+            self.initial_rods = env.elastic.poses()[:, :3].copy()
 
     def step(self, target):
         if self.app is not None and not self.app.is_running():
@@ -77,6 +80,15 @@ class MotionTrial:
         row['pedicel_force']=max((c['force'] for c in contacts if intended(c)),default=0.)
         row['fruit_force']=max((c['force'] for c in contacts if '/FruitCollider' in c['a']+' '+c['b']),default=0.)
         row['target_center']=env._target_geometry()[0][0].tolist()
+        row['target_displacement_m']=float(np.linalg.norm(np.asarray(row['target_center'])-self.initial_target_center))
+        row['main_stem_collision']=bool(getattr(env, '_main_stem_hit', False))
+        row['main_stem_force']=max((c['force'] for c in contacts if any(
+            '/ElasticPlant/STEM_MainStem_' in c[k] and c[k].endswith('/StemCollider')
+            for k in ('a','b'))),default=0.)
+        if hasattr(env, 'elastic'):
+            ids=env.elastic.chains['STEM_MainStem']
+            row['main_stem_displacement_m']=float(np.linalg.norm(
+                env.elastic.poses()[ids,:3]-self.initial_rods[ids],axis=1).max())
         self.max_force = max(self.max_force, row['force'])
         self.trace.append(row)
         if self.recorder and len(self.trace)%4==0:
@@ -347,12 +359,19 @@ def run_hook(env, args, app):
         task_success=(bool(env.inserted[0]) and bool(env.hooked[0]) and trial.contact_stopped and not env._broken[0] and not env._other_broken) if args.hook_goal=='engage' else bool(env.success[0])
         if args.hook_goal=='engage':
             task_success=task_success and gap<.0015 and sum(r['phase']=='contact_hold' for r in trial.trace)>=hold_steps
+        engagement_conditions_met=bool(task_success and not trial.aborted)
+        main_stem_collision=bool(getattr(env, '_main_stem_hit', False))
+        task_success=task_success and not main_stem_collision
         result=dict(trial=index,target=target,goal=args.hook_goal,params=params,phase=trial.phase,success=task_success and not trial.aborted,
+                    engagement_conditions_met=engagement_conditions_met,main_stem_collision=main_stem_collision,
                     target_center=center.tolist(),target_neck=neck.tolist(),target_axis=axis.tolist(),
                     inserted=bool(env.inserted[0]),hooked=bool(env.hooked[0]),
                     broken=bool(env._broken[0]),other_broken=env._other_broken,
                     aborted=trial.aborted,abort_reason=trial.abort_reason,max_force=trial.max_force,contact_steps=len(trial.contacts),steps=len(trial.trace))
         result.update(break_step=break_step,max_fruit_contact_N=max((r['fruit_force'] for r in trial.trace),default=0.),
+                      max_main_stem_contact_N=max((r['main_stem_force'] for r in trial.trace),default=0.),
+                      max_main_stem_displacement_m=max((r.get('main_stem_displacement_m',0.) for r in trial.trace),default=0.),
+                      max_target_displacement_m=max((r['target_displacement_m'] for r in trial.trace),default=0.),
                       valid_detachment_at_break=valid_detachment_at_break,
                       max_target_pedicel_contact_N=max((r['pedicel_force'] for r in trial.trace),default=0.),
                       final_pedicel_gap_m=gap,contact_hold_s=sum(r['phase']=='contact_hold' for r in trial.trace)*env.step_dt,
