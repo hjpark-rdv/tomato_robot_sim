@@ -8,9 +8,10 @@ parser.add_argument('--run-dir',type=Path,required=True)
 parser.add_argument('--rebuild',action='store_true')
 parser.add_argument('--profile',action='store_true',help='Write Python CPU profile before simulator shutdown')
 parser.add_argument('--benchmark-candidates',type=int,default=0)
+parser.add_argument('--app-threads',type=int,default=32,help='Kit startup thread cap; physics threads are configured separately')
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device='cpu')
-args=parser.parse_args();launcher=AppLauncher(args);app=launcher.app
+args=parser.parse_args();launcher=AppLauncher(args,limit_cpu_threads=args.app_threads);app=launcher.app
 
 import copy
 import csv
@@ -130,8 +131,11 @@ def run(root):
     if provenance_file.exists() and json.loads(provenance_file.read_text())!=fingerprints:
         raise RuntimeError('Source changed since this dataset started; choose a new run directory')
     write_json(provenance_file,fingerprints)
-    build_robot()  # Generated override only; always include repaired straight wires.
+    # Workers own their overrides so concurrent runs cannot truncate/reload a
+    # USD that another simulator has open.
+    robot_asset=build_robot(root/'generated/rb5_ring.usda')
     cfg=HarvestEnvCfg();cfg.sim.device='cpu';cfg.scene.num_envs=1;cfg.curriculum='approach'
+    cfg.robot.spawn.usd_path=str(robot_asset)
     cfg.sim.dt=1/960;cfg.decimation=16;cfg.sim.render_interval=16
     cfg.sim.physx.min_position_iteration_count=64;cfg.sim.physx.enable_external_forces_every_iteration=True
     cfg.position_jitter=0.;cfg.break_randomization=0.;cfg.plant_model='elastic';cfg.elastic_stiffness_scale=1.

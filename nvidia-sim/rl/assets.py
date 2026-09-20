@@ -34,12 +34,13 @@ def capsule(stage, path, a, b, radius, color=(0.2, 0.6, 0.2)):
     return shape
 
 
-def build_robot():
+def build_robot(output_path=None):
     """Author an override, leaving the source USD and ROS model untouched."""
     import trimesh
 
-    ROBOT_ASSET.parent.mkdir(parents=True, exist_ok=True)
-    stage = Usd.Stage.CreateNew(str(ROBOT_ASSET))
+    output_path = Path(output_path) if output_path is not None else ROBOT_ASSET
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    stage = Usd.Stage.CreateNew(str(output_path))
     root = stage.DefinePrim("/Robot", "Xform")
     root.GetReferences().AddReference(str(ROBOT_SOURCE))
     stage.SetDefaultPrim(root)
@@ -95,8 +96,8 @@ def build_robot():
         if prim.HasAPI(UsdPhysics.RigidBodyAPI):
             PhysxSchema.PhysxContactReportAPI.Apply(prim).CreateThresholdAttr(0.0)
     stage.GetRootLayer().Save()
-    print(f"[ASSET] {ROBOT_ASSET}: {restored} restored colliders, {len(points)-1} ring segments", flush=True)
-    return ROBOT_ASSET
+    print(f"[ASSET] {output_path}: {restored} restored colliders, {len(points)-1} ring segments", flush=True)
+    return output_path
 
 
 def make_joint(stage, path, fruit_path, position, quaternion, local_anchor, break_force, break_torque, anchor_path=None):

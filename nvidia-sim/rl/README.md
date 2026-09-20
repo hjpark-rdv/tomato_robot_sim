@@ -3,6 +3,11 @@
 **진입 전 전체/크롭 RGB-D와 연속 후보의 물리 결과를 모으려면 [데이터 생성기 안내](CANDIDATE_DATASET.md)를 참고하세요.**
 `./nvidia-sim/run_candidate_dataset.sh --num-envs 4 --candidates 8`로 시작합니다. RL/학습 API를 사용하지 않습니다.
 
+물리 설정을 유지하면서 독립 프로세스로 병렬 처리하려면 [병렬 데이터 생성기](CANDIDATE_DATASET_POOL.md)를 사용합니다.
+`./nvidia-sim/run_candidate_dataset_pool.sh --workers 4 --num-envs 1 --candidates 1000`
+
+CPU/GPU 물리 비교의 실행 방법과 검증 실패 결과는 [최소 GPU 시험](GPU_PROBE.md)에 기록했습니다.
+
 **고정 장면에서 Tomato_05 접근 자세를 탐색하는 실험은 [pose search 안내](POSE_SEARCH.md)를 참고하세요.**
 `./nvidia-sim/run_pose_search.sh`는 GT 기반 후보 생성·물리 판정·RGB-D 데이터 저장을 수행하며 RL/환경 randomization을 사용하지 않습니다.
 

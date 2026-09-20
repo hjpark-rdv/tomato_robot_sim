@@ -54,28 +54,30 @@ class Slot(GreenhouseHarvestEnv):
         ring = self.stage.GetPrimAtPath(self.root+'/Robot/link6/tcp/tomato_gripper/ring_center')
         tf = cache.GetLocalToWorldTransform(ring)*cache.GetLocalToWorldTransform(link).GetInverse()
         q = tf.ExtractRotationQuat()
-        self.offset_pos = torch.tensor([list(tf.ExtractTranslation())], dtype=torch.float32)
-        self.offset_quat = torch.tensor([[q.GetReal(),*q.GetImaginary()]], dtype=torch.float32)
+        self.offset_pos = torch.tensor([list(tf.ExtractTranslation())], dtype=torch.float32, device=self.device)
+        self.offset_quat = torch.tensor([[q.GetReal(),*q.GetImaginary()]], dtype=torch.float32, device=self.device)
         self.targets = self.robot.data.default_joint_pos.clone()
         self.reset_slot()
         self.pose_search_kin = RobotKinematics(self)
 
     def reset_slot(self):
-        for path in self.cluster_joint_paths:
-            self.stage.RemovePrim(path)
-        self.cluster_joint_paths = []
+        reuse = getattr(self.cfg, 'probe_preserve_joints', False)
+        if not reuse:
+            for path in self.cluster_joint_paths:
+                self.stage.RemovePrim(path)
+            self.cluster_joint_paths = []
         get_physx_simulation_interface().flush_changes()
         self.robot.reset(); self.elastic.articulation.reset()
         self.elastic.reset()
         for fruit, spec in zip(self.fruits,self.fruit_specs):
             fruit.reset()
-            pose = torch.tensor([spec['pose']], dtype=torch.float32)
+            pose = torch.tensor([spec['pose']], dtype=torch.float32, device=self.device)
             fruit.write_root_pose_to_sim(pose)
-            fruit.write_root_velocity_to_sim(torch.zeros(1,6))
+            fruit.write_root_velocity_to_sim(torch.zeros(1,6,device=self.device))
             # reset() already clears the wrench. Setting a zero permanent wrench
             # activates 11 redundant force uploads per slot and physics step.
             if getattr(self.cfg,'dataset_physics_sync','legacy')=='legacy':
-                fruit.set_external_force_and_torque(torch.zeros(1,1,3), torch.zeros(1,1,3))
+                fruit.set_external_force_and_torque(torch.zeros(1,1,3,device=self.device), torch.zeros(1,1,3,device=self.device))
         self.sim.forward(); self.scene.update(self.physics_dt)
         self.command_dirty = True
         if self.start_q is None:
@@ -87,17 +89,21 @@ class Slot(GreenhouseHarvestEnv):
         self.robot.write_joint_damping_to_sim(self.robot.data.default_joint_damping)
         self.sim.physics_sim_view.update_articulations_kinematic()
         get_physx_interface().update_transformations(False,True,True)
+        if not reuse:
+            self.create_harvest_joints()
+        self.joint_paths[0] = self.cluster_joint_paths[self.target_index]
+        get_physx_simulation_interface().flush_changes()
+        self._broken.fill(False); self._other_broken = False
+        self.contact_diagnostics = []; self.contact_diagnostic_step = 0
+        self.sim.forward(); self.scene.update(self.physics_dt)
+
+    def create_harvest_joints(self):
         self.generation += 1
         for i, spec in enumerate(self.fruit_specs):
             path = self.root+f'/HarvestJoint_{i:02d}_{self.generation}'
             make_joint(self.stage,path,spec['path'],spec['pose'][:3],spec['pose'][3:],(0,0,0),
                        spec['force'],spec['torque'],anchor_path=spec['anchor'])
             self.cluster_joint_paths.append(path)
-        self.joint_paths[0] = self.cluster_joint_paths[self.target_index]
-        get_physx_simulation_interface().flush_changes()
-        self._broken.fill(False); self._other_broken = False
-        self.contact_diagnostics = []; self.contact_diagnostic_step = 0
-        self.sim.forward(); self.scene.update(self.physics_dt)
 
     def reset(self, **kwargs):
         self.reset_slot()
@@ -106,6 +112,12 @@ class Slot(GreenhouseHarvestEnv):
 class DatasetScene:
     def __init__(self,cfg,num_envs):
         self.sim = SimulationContext(cfg.sim)
+        # Opt-in probe only: GPU solver with CPU readback, preserving existing
+        # USD joint reset/contact APIs. The production dataset remains CPU.
+        if getattr(cfg,'probe_gpu_dynamics',False):
+            context=self.sim.get_physics_context()
+            context.enable_gpu_dynamics(True)
+            context.set_broadphase_type('GPU')
         self.scene = InteractiveScene(InteractiveSceneCfg(num_envs=1,env_spacing=20.,replicate_physics=False))
         cfg.robot.prim_path = '/World/envs/env_0/Robot'
         first = Slot(cfg,self.sim,self.scene)
@@ -124,8 +136,8 @@ class DatasetScene:
                                     positions=self.origins,replicate_physics=False,copy_from_source=True)
             self.scene.env_prim_paths = paths
             self.scene.cfg.num_envs = num_envs
-            self.scene._default_env_origins = torch.tensor(self.origins)
-            self.scene._ALL_INDICES = torch.arange(num_envs)
+            self.scene._default_env_origins = torch.tensor(self.origins,device=self.sim.device)
+            self.scene._ALL_INDICES = torch.arange(num_envs,device=self.sim.device)
             self.scene.filter_collisions(global_prim_paths=[])
         for index in range(1,num_envs):
             UsdGeom.Imageable(self.scene.stage.GetPrimAtPath(paths[index])).MakeInvisible()
@@ -171,6 +183,9 @@ class DatasetScene:
             self.slots.append(slot)
         self._contact_sub = get_physx_simulation_interface().subscribe_contact_report_events(self.on_contacts)
         self._event_sub = get_physx_interface().get_simulation_event_stream_v2().create_subscription_to_pop(self.on_event)
+        if getattr(cfg, 'probe_preserve_joints', False):
+            for slot in self.slots:
+                slot.create_harvest_joints()
         self.sim.reset(); self.scene.update(cfg.sim.dt)
         for slot in self.slots:
             slot.initialize()

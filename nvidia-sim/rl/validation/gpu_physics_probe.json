@@ -1,0 +1,407 @@
+{
+  "run_dir": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe",
+  "experiment": "minimal GPU solver with CPU tensor readback; original house/plant/robot and saved candidate_00003 trajectory",
+  "production_gpu_validated": false,
+  "speedup_demonstrated": false,
+  "tested_num_envs": 1,
+  "tests": {
+    "cpu": {
+      "backend": {
+        "gpu_dynamics": false,
+        "broadphase": "MBP",
+        "ccd": true,
+        "suppress_readback": false,
+        "physics_dt_s": 0.0010416666666666667,
+        "solver_position_iterations": 64,
+        "articulation_count": 2,
+        "rigid_object_count": 11
+      },
+      "motion_wall_s": 26.225832401774824,
+      "physics_steps": 4144,
+      "control_steps": 259,
+      "abort_reason": "excessive_displacement",
+      "result": "excessive_displacement",
+      "target_broken": false,
+      "other_broken": false,
+      "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+      "motion_joint_break_count": 0,
+      "reset_after_contact_passed": true,
+      "native_joint_break_probe": {
+        "target_break_event": true,
+        "physics_steps": 1,
+        "diagnostic_break_force": 1e-08,
+        "diagnostic_break_torque": 1e-08,
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_4",
+            "step": 0
+          }
+        ]
+      },
+      "native_scene_statistics": null
+    },
+    "cpu-no-ccd": {
+      "backend": {
+        "gpu_dynamics": false,
+        "broadphase": "MBP",
+        "ccd": false,
+        "suppress_readback": false,
+        "physics_dt_s": 0.0010416666666666667,
+        "solver_position_iterations": 64,
+        "articulation_count": 2,
+        "rigid_object_count": 11
+      },
+      "motion_wall_s": 25.592256979085505,
+      "physics_steps": 4144,
+      "control_steps": 259,
+      "abort_reason": "excessive_displacement",
+      "result": "excessive_displacement",
+      "target_broken": false,
+      "other_broken": false,
+      "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+      "motion_joint_break_count": 0,
+      "reset_after_contact_passed": true,
+      "native_joint_break_probe": {
+        "target_break_event": true,
+        "physics_steps": 1,
+        "diagnostic_break_force": 1e-08,
+        "diagnostic_break_torque": 1e-08,
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_4",
+            "step": 0
+          }
+        ]
+      },
+      "native_scene_statistics": null
+    },
+    "gpu": {
+      "backend": {
+        "gpu_dynamics": true,
+        "broadphase": "GPU",
+        "ccd": false,
+        "suppress_readback": false,
+        "physics_dt_s": 0.0010416666666666667,
+        "solver_position_iterations": 64,
+        "articulation_count": 2,
+        "rigid_object_count": 11
+      },
+      "motion_wall_s": 0.858407661318779,
+      "physics_steps": 16,
+      "control_steps": 1,
+      "abort_reason": "joint_break",
+      "result": "miss",
+      "target_broken": true,
+      "other_broken": true,
+      "first_contact_object": null,
+      "motion_joint_break_count": 11,
+      "reset_after_contact_passed": true,
+      "native_joint_break_probe": {
+        "target_break_event": true,
+        "physics_steps": 1,
+        "diagnostic_break_force": 1e-08,
+        "diagnostic_break_torque": 1e-08,
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_10_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_09_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_08_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_07_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_06_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_05_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_03_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_02_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_01_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_00_4",
+            "step": 0
+          }
+        ]
+      },
+      "native_scene_statistics": null
+    },
+    "gpu-forces-once": {
+      "backend": {
+        "gpu_dynamics": true,
+        "broadphase": "GPU",
+        "ccd": false,
+        "suppress_readback": false,
+        "physics_dt_s": 0.0010416666666666667,
+        "solver_position_iterations": 64,
+        "external_forces_every_iteration": false,
+        "articulation_count": 2,
+        "rigid_object_count": 11
+      },
+      "motion_wall_s": 0.7423636391758919,
+      "physics_steps": 16,
+      "control_steps": 1,
+      "abort_reason": "joint_break",
+      "result": "miss",
+      "target_broken": true,
+      "other_broken": true,
+      "first_contact_object": null,
+      "motion_joint_break_count": 11,
+      "reset_after_contact_passed": true,
+      "native_joint_break_probe": {
+        "target_break_event": true,
+        "physics_steps": 1,
+        "diagnostic_break_force": 1e-08,
+        "diagnostic_break_torque": 1e-08,
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_10_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_09_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_08_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_07_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_06_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_05_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_03_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_02_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_01_4",
+            "step": 0
+          },
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_00_4",
+            "step": 0
+          }
+        ]
+      },
+      "native_scene_statistics": {
+        "available": true,
+        "nb_articulations": 2,
+        "nb_active_constraints": 0,
+        "gpu_mem_heap": 1543503872,
+        "gpu_mem_heap_articulation": 13768,
+        "gpu_mem_rigid_contact_count": 4
+      }
+    }
+  },
+  "comparisons": {
+    "cpu-no-ccd": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu-no-ccd",
+      "comparable": true,
+      "speedup": 1.0247565278516502,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      }
+    },
+    "gpu": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/gpu",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 1,
+          "same_outcome": {
+            "abort_reason": false,
+            "target_broken": false,
+            "other_broken": false,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": false
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.001222263052996284,
+            "main_stem_displacement_m": 0.006743314976120018,
+            "gap_m": 0.0020956156626643074
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "gpu-forces-once": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/gpu-forces-once",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 1,
+          "same_outcome": {
+            "abort_reason": false,
+            "target_broken": false,
+            "other_broken": false,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": false
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.00130016218183907,
+            "main_stem_displacement_m": 0.007164718417698168,
+            "gap_m": 0.002210272930651458
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    }
+  },
+  "interpretation": "CPU CCD on/off traces match exactly. GPU variants terminate before robot contact because all eleven harvest joints break at the first control step. GPU early abort is not a speedup. Root cause and full CUDA vectorized throughput remain unmeasured."
+}

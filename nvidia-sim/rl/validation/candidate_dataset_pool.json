@@ -1,0 +1,75 @@
+{
+  "run_dir": "nvidia-sim/rl/runs/20260920_173734_candidate_dataset_pool",
+  "summary": {
+    "requested_candidates": 4,
+    "recorded_candidates": 4,
+    "pending_candidates": 0,
+    "counts": {
+      "excessive_displacement": 2,
+      "miss": 1,
+      "non_target_contact": 1
+    },
+    "workers": {
+      "0": "complete",
+      "1": "complete",
+      "2": "complete",
+      "3": "complete"
+    },
+    "elapsed_wall_s": 169.56239285040647,
+    "execution_complete": true,
+    "dataset_complete": true,
+    "physics": "CPU, unchanged 960 Hz / TGS / 64 iterations; GPU renders RGB-D",
+    "parallelism": "persistent independent simulator processes"
+  },
+  "candidate_checks": [
+    {
+      "candidate_id": "candidate_00000",
+      "parameters_match": true,
+      "result": "excessive_displacement",
+      "prior_result": "excessive_displacement",
+      "result_matches_prior_4clone": true,
+      "steps": 746,
+      "prior_steps": 746,
+      "reset_passed": true
+    },
+    {
+      "candidate_id": "candidate_00001",
+      "parameters_match": true,
+      "result": "miss",
+      "prior_result": "miss",
+      "result_matches_prior_4clone": true,
+      "steps": 1163,
+      "prior_steps": 1163,
+      "reset_passed": true
+    },
+    {
+      "candidate_id": "candidate_00002",
+      "parameters_match": true,
+      "result": "non_target_contact",
+      "prior_result": "non_target_contact",
+      "result_matches_prior_4clone": true,
+      "steps": 849,
+      "prior_steps": 849,
+      "reset_passed": true
+    },
+    {
+      "candidate_id": "candidate_00003",
+      "parameters_match": true,
+      "result": "excessive_displacement",
+      "prior_result": "excessive_displacement",
+      "result_matches_prior_4clone": true,
+      "steps": 260,
+      "prior_steps": 260,
+      "reset_passed": true
+    }
+  ],
+  "worker_sources_identical": true,
+  "observation_start_joints_max_abs_error": 0.0,
+  "depth_arrays_identical": true,
+  "observed_gpu_memory_mib": 12295,
+  "gpu_memory_measurement": "sample while four workers were active, not a sampled peak guarantee",
+  "physics_unchanged": true,
+  "gpu_physics_enabled": false,
+  "goal_1000_candidates_per_hour_achieved": false,
+  "scope": "4 complete candidates with RGB-D, independent workers; prior four-clone labels compared, not an identical-code full-run speed benchmark"
+}

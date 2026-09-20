@@ -1,0 +1,575 @@
+{
+  "run_dir": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel",
+  "production_gpu_validated": false,
+  "stationary": {
+    "cpu-live": {
+      "steps": 960,
+      "wall_s": 5.373953531496227,
+      "break_count": 0
+    },
+    "gpu-cold": {
+      "steps": 1,
+      "wall_s": 0.06302611622959375,
+      "break_count": 7
+    },
+    "gpu-cuda-pgs": {
+      "steps": 240,
+      "wall_s": 11.7706516738981,
+      "break_count": 0
+    },
+    "gpu-cuda-tgs": {
+      "steps": 1,
+      "wall_s": 0.06540038622915745,
+      "break_count": 11
+    },
+    "gpu-live": {
+      "steps": 1,
+      "wall_s": 0.06411404255777597,
+      "break_count": 11
+    },
+    "gpu-no-contacts": {
+      "steps": 1,
+      "wall_s": 0.06544087454676628,
+      "break_count": 11
+    },
+    "gpu-pgs": {
+      "steps": 960,
+      "wall_s": 47.212281751446426,
+      "break_count": 0
+    },
+    "gpu-vel0": {
+      "steps": 1,
+      "wall_s": 0.061402793042361736,
+      "break_count": 11
+    },
+    "gpu-zero-all": {
+      "steps": 960,
+      "wall_s": 59.783168382011354,
+      "break_count": 0
+    },
+    "gpu-zero-load": {
+      "steps": 1,
+      "wall_s": 0.06446023657917976,
+      "break_count": 11
+    }
+  },
+  "motion_comparisons": {
+    "cpu-parallel-0": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-parallel-0",
+      "comparable": true,
+      "speedup": 1.029780077278363,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "wall_s": 25.467410936020315,
+      "control_steps": 259
+    },
+    "cpu-parallel-1": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-parallel-1",
+      "comparable": true,
+      "speedup": 0.9859651813750975,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "wall_s": 26.59914659988135,
+      "control_steps": 259
+    },
+    "cpu-parallel-2": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-parallel-2",
+      "comparable": true,
+      "speedup": 0.98723283263975,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "wall_s": 26.564992101863027,
+      "control_steps": 259
+    },
+    "cpu-parallel-3": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-parallel-3",
+      "comparable": true,
+      "speedup": 1.0041179068067245,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "wall_s": 26.118279759772122,
+      "control_steps": 259
+    },
+    "cpu-pgs-motion": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-pgs-motion",
+      "comparable": true,
+      "speedup": 1.334214097749854,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 259,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0003554821014404297,
+            "target_displacement_m": 0.0005117988345299355,
+            "main_stem_displacement_m": 0.0007680803537368774,
+            "gap_m": 0.0004871649625849961
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "wall_s": 19.656389814801514,
+      "control_steps": 259
+    },
+    "cpu-pgs8": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-pgs8",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0003554821014404297,
+            "target_displacement_m": 0.013742031929329743,
+            "main_stem_displacement_m": 0.03009596755146049,
+            "gap_m": 0.00937355222929978
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld",
+      "wall_s": 3.536958985030651,
+      "control_steps": 105
+    },
+    "cpu-tgs32": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-tgs32",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 258,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0003437995910644531,
+            "target_displacement_m": 0.0005251255586418146,
+            "main_stem_displacement_m": 0.0022255554795265198,
+            "gap_m": 0.0006259337433695833
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld",
+      "wall_s": 16.686828142032027,
+      "control_steps": 258
+    },
+    "cpu-tgs8": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/cpu-tgs8",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 1,
+          "same_outcome": {
+            "abort_reason": false,
+            "target_broken": true,
+            "other_broken": false,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": false
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 7.569789886474609e-06,
+            "target_displacement_m": 5.9241116670874273e-05,
+            "main_stem_displacement_m": 9.157184285868425e-05,
+            "gap_m": 1.4216739548711388e-05
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld",
+      "wall_s": 0.04223335813730955,
+      "control_steps": 1
+    },
+    "gpu-cuda-fabric-pgs": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/gpu-cuda-fabric-pgs",
+      "comparable": false,
+      "speedup": null,
+      "reason": "native collider contact reports unavailable with suppressed CPU readback; labels are not comparable",
+      "wall_s": 209.24493916053325,
+      "control_steps": 260
+    },
+    "gpu-pgs8": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/gpu-pgs8",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 127,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0003554821014404297,
+            "target_displacement_m": 0.014072283176232638,
+            "main_stem_displacement_m": 0.030125620862236246,
+            "gap_m": 0.008820435422645878
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld",
+      "wall_s": 25.61192010436207,
+      "control_steps": 127
+    },
+    "gpu-tgs8": {
+      "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+      "trial": "nvidia-sim/rl/runs/20260920_174044_gpu_isolation_and_parallel/gpu-tgs8",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 259,
+          "trial_control_steps": 1,
+          "same_outcome": {
+            "abort_reason": false,
+            "target_broken": false,
+            "other_broken": false,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": false
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 7.569789886474609e-06,
+            "target_displacement_m": 0.0007852470730339168,
+            "main_stem_displacement_m": 0.008857241200530552,
+            "gap_m": 0.0024353409450373897
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld",
+      "wall_s": 0.23059831466525793,
+      "control_steps": 1
+    }
+  },
+  "parallel": {
+    "workers": 4,
+    "serial_reference_motion_s": 104.9033296070993,
+    "parallel_motion_span_s": 27.431655883789062,
+    "throughput_gain": 3.8241705149521317,
+    "scope": "same saved candidate x4, excludes initialization/camera/IK; not a comparison to the four-clone dataset runner",
+    "contact_logs_exactly_equal": [
+      true,
+      true,
+      true,
+      true
+    ]
+  }
+}
