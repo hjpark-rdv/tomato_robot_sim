@@ -1,0 +1,29 @@
+{
+  "audit_directory": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_135530_tomato_connection_audit",
+  "report": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_135530_tomato_connection_audit/REPORT.md",
+  "physics_modified": false,
+  "target": "Tomato_05",
+  "candidate_count": 31,
+  "plant_connections_checked": 11,
+  "recording_sample_hz": 15,
+  "missing_gripper_rails": 2,
+  "missing_rail_length_mm": 28.40287,
+  "affected_candidates": [
+    {
+      "candidate": "coarse_0011",
+      "min_gap_mm": -1.3714361754123687,
+      "time_s": 25.733333333333334,
+      "plant_shape": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_00/StemCollider",
+      "rail": 1
+    },
+    {
+      "candidate": "coarse_0027",
+      "min_gap_mm": -1.6428200518757217,
+      "time_s": 21.0,
+      "plant_shape": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_00/StemCollider",
+      "rail": 1
+    }
+  ],
+  "plant_connection_gap_found": false,
+  "scope": "All 11 fruit connections in rest state and 15 Hz recorded physics states of all 31 Tomato_05 candidates; not 11 separate target approach trials"
+}

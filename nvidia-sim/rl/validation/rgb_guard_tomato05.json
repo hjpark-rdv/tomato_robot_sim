@@ -1,0 +1,39 @@
+{
+  "run_directory": "/root/farmily_tomato/nvidia-sim/rl/runs/20260919_225748_rgb_camera_guard_tomato05",
+  "baseline": "compare_v2",
+  "closed_loop": "guard_final",
+  "first_contact_step": 409,
+  "stop_step": 416,
+  "first_contact_to_stop_s": 0.11666666666666667,
+  "target_displacement_at_stop_mm": 3.104546994625496,
+  "baseline_max_target_mm": 26.22301242764476,
+  "guard_max_target_mm": 9.119842770094763,
+  "baseline_max_main_stem_mm": 42.59547218680382,
+  "guard_max_main_stem_mm": 15.255087055265903,
+  "guard_final_target_mm": 1.6289268010279612,
+  "pre_stop_max_joint_difference": 0.0,
+  "pre_stop_max_target_difference_m": 0.0,
+  "stop_reason": "motion_or_model_mismatch",
+  "retreat_completed": true,
+  "target_broken": false,
+  "other_broken": false,
+  "harvest_success": null,
+  "controller_inputs": [
+    "RGB",
+    "joint positions",
+    "camera calibration",
+    "fixed prerecorded joint reference"
+  ],
+  "evaluation_only": [
+    "plant displacement",
+    "contact identity and forces",
+    "joint break flags"
+  ],
+  "reference_caveat": "Initial approach is frozen from an earlier geometry-planned simulation trajectory.",
+  "scope": "One Tomato_05 fixture; not full harvesting, RL, or a sim-to-real success rate.",
+  "video": "baseline_vs_guard_2x.mp4; left baseline last frame is held after its run ends",
+  "target_identity_valid": false,
+  "actual_tracked_fruit": "Tomato_06",
+  "correction": "Motion target was Tomato_05 but manual visual ROI tracked Tomato_06. Motion-reduction measurements remain historical; target-specific detection claim is invalid.",
+  "identity_audit": "/root/farmily_tomato/nvidia-sim/rl/runs/20260919_235104_rgb_target_identity_fix/identity_audit.json"
+}

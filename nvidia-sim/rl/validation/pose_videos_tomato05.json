@@ -1,0 +1,27 @@
+{
+  "run_directory": "nvidia-sim/rl/runs/20260920_125819_tomato05_31cases_video_2x",
+  "complete": true,
+  "total_videos": 31,
+  "render_backend_counts": {
+    "cpu": 23,
+    "gpu": 8
+  },
+  "width": 1280,
+  "height": 612,
+  "fps": 30,
+  "playback_speed": 2,
+  "final_still_seconds_per_clip": 1,
+  "total_video_duration_s": 307.8,
+  "all_frame_counts_verified": true,
+  "all_initial_states_and_complete_control_traces_match_original": true,
+  "source_experiment": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_113624_tomato05_pose_physics_validation",
+  "appearance": "Original USD meshes and material colours, Blender studio shading",
+  "native_rtx_camera_recording": false,
+  "gpu_device": "NVIDIA GeForce RTX 3090 Ti",
+  "retained_hook_candidates": [
+    "coarse_0006",
+    "coarse_0008",
+    "coarse_0011"
+  ],
+  "tests_passed": 39
+}

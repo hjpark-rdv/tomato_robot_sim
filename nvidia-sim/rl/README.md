@@ -1,5 +1,12 @@
 # 원본 온실·송이에서 PICK_READY + 리프트 수확 학습
 
+**고정 장면에서 Tomato_05 접근 자세를 탐색하는 실험은 [pose search 안내](POSE_SEARCH.md)를 참고하세요.**
+`./nvidia-sim/run_pose_search.sh`는 GT 기반 후보 생성·물리 판정·RGB-D 데이터 저장을 수행하며 RL/환경 randomization을 사용하지 않습니다.
+
+**RGB + 관절만 사용하는 Tomato_05 근접 감시/후퇴 실험은 [RGB 안내](RGB_GUARD.md)를 참고하세요.**
+`./nvidia-sim/run_rgb_guard.sh`로 실행하며 2x 영상을 날짜·시간 폴더에 저장합니다.
+아래의 기존 RL 정책과는 별도 실험입니다.
+
 **중간 열매의 줄기·꼭지 탄성 및 고리 밀기 시험은 [탄성 모델 안내](ELASTIC.md)를 참고하세요.**
 `./nvidia-sim/run_elastic_stem.sh`는 `DISPLAY=:0`에서 원본 송이의 `Tomato_06`을 대상으로 실행합니다.
 

@@ -1,0 +1,24 @@
+{
+  "source_run": "20260919_143144_elastic_hook_11_tomatoes",
+  "source_trial": 4,
+  "target": "Tomato_05",
+  "joint_names": [
+    "farmily_lift_height_joint",
+    "base",
+    "shoulder",
+    "elbow",
+    "wrist1",
+    "wrist2",
+    "wrist3"
+  ],
+  "step_dt": 0.016666666666666666,
+  "steps": 557,
+  "seed_frame_step": 196,
+  "stem_position": [
+    -0.75,
+    0.55,
+    0.32
+  ],
+  "stem_scale": 0.5,
+  "description": "Fixed joint reference for a near-approach RGB guard experiment. Offline path originally planned with simulator geometry; NOT a vision-generated approach or complete RGB harvesting policy. No object pose/contact arrays in NPZ."
+}

@@ -3,13 +3,25 @@
 import argparse
 import json
 import math
+from datetime import datetime
 from pathlib import Path
 
 from isaaclab.app import AppLauncher
 from ready_pose import POLICY_SCHEMA
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook", "elastic"], default="inspect")
+parser.add_argument("--mode", choices=["build", "test", "train", "play", "scripted", "inspect", "hook", "elastic", "rgb", "pose", "pose-video", "connection-audit"], default="inspect")
+parser.add_argument('--pose-video-source', type=Path, help='Completed pose-search run whose exact candidate is being recorded')
+parser.add_argument('--pose-video-model-update', action='store_true', help='Rerun after assets.py collision repair; require identical initial state and planned commands, but allow changed physics outcomes')
+parser.add_argument('--pose-video-export', type=Path, help='Export original visible USD geometry and visual bindings for CPU rendering')
+parser.add_argument('--pose-candidate', type=Path, help='One pose-only candidate JSON; omitted = structure/reset/RGB-D audit')
+parser.add_argument('--pose-reference-state', type=Path, help='Reference initial_state.npz from the experiment audit')
+parser.add_argument('--pose-physics-only', action='store_true', help='Explicit incomplete validation run without RGB-D (e.g. unavailable GPU)')
+parser.add_argument('--rgb-action', choices=['compare','baseline','guard'], default='compare')
+parser.add_argument('--rgb-camera', choices=['left','right'], default='left')
+parser.add_argument('--rgb-roi', type=int, nargs=4, help='Operator-selected target ROI x y width height at the seed frame')
+parser.add_argument('--rgb-replay-rate', type=float, default=1., help='Reference playback rate, <= 1; preserves physics dt')
+parser.add_argument('--rgb-analysis', action='store_true', help='Save lossless RGB and exact feature diagnostics for explanation videos')
 parser.add_argument("--plant-model", choices=['rigid','elastic'], default='rigid')
 parser.add_argument("--elastic-stiffness-scale", type=float, default=1.)
 parser.add_argument("--elastic-action", choices=['validate','push','main-push'], default='validate')
@@ -42,6 +54,24 @@ parser.add_argument("--rebuild", action="store_true")
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device="cpu")
 args = parser.parse_args()
+if args.mode in ('pose', 'pose-video', 'connection-audit'):
+    args.plant_model = 'elastic'
+    args.target_fruit = 'Tomato_05'
+    if args.mode in ('pose-video', 'connection-audit'):
+        args.pose_physics_only = True
+    args.enable_cameras = not args.pose_physics_only
+    if args.scene != 'greenhouse':
+        parser.error('pose uses the existing greenhouse')
+if args.mode == 'rgb':
+    args.plant_model = 'elastic'
+    args.target_fruit = 'Tomato_05'
+    args.enable_cameras = True
+    if args.scene != 'greenhouse' or not 0 < args.rgb_replay_rate <= 1:
+        parser.error('rgb requires greenhouse and a replay rate in (0, 1]')
+    if args.rgb_action != 'compare' and args.rgb_roi is None:
+        parser.error('rgb baseline/guard requires an operator-selected --rgb-roi')
+    if args.run_dir.name == 'default':
+        args.run_dir = args.run_dir.parent/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_rgb_'+args.rgb_action)
 if args.mode == 'elastic':
     args.plant_model = 'elastic'
     args.target_fruit = args.target_fruit or 'Tomato_06'
@@ -87,8 +117,8 @@ if not math.isfinite(args.hook_hold_seconds) or args.hook_hold_seconds<=0:
     parser.error("hook-hold-seconds must be finite and positive")
 if (args.hook_search or args.hook_config) and args.mode != 'hook':
     parser.error("hook-search and hook-config require --mode hook")
-if args.record and args.mode not in ('hook','elastic'):
-    parser.error('record requires --mode hook or elastic')
+if args.record and args.mode not in ('hook','elastic','rgb'):
+    parser.error('record requires --mode hook, elastic or rgb')
 if not math.isfinite(args.lift_start_below) or args.lift_start_below < 0 or not math.isfinite(args.lift_speed) or not 0 < args.lift_speed <= .25:
     parser.error("lift-start-below must be nonnegative and lift-speed must be in (0, 0.25] m/s")
 args.target_fruit = args.target_fruit or checkpoint_config.get("target_fruit", hook_target or "Tomato_08")
@@ -361,6 +391,10 @@ def main():
     if args.scene == "greenhouse":
         (args.run_dir / "scene_provenance.json").write_text(json.dumps(env.provenance, indent=2) + "\n")
     try:
+        if args.mode == 'connection-audit':
+            from connection_audit import export_connections
+            export_connections(env,args.run_dir)
+            return
         if args.snapshot:
             if args.scene != "greenhouse":
                 raise ValueError("--snapshot currently supports the original greenhouse scene")
@@ -388,7 +422,17 @@ def main():
             rgb.detach(product)
             product.destroy()
             print(f"[SNAPSHOT] {args.snapshot}", flush=True)
-        if args.mode == 'elastic':
+        if args.mode == 'pose-video':
+            from pose_video_capture import run_capture
+            run_capture(env, args, app)
+            return
+        if args.mode == 'pose':
+            from pose_worker import run_pose
+            run_pose(env, args, app)
+        elif args.mode == 'rgb':
+            from rgb_experiment import run_rgb
+            run_rgb(env, args, app)
+        elif args.mode == 'elastic':
             from elastic_demo import run_elastic
             run_elastic(env, args, app)
         elif args.mode == "hook":

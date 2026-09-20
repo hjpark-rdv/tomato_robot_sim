@@ -1,0 +1,176 @@
+{
+  "run_directory": "nvidia-sim/rl/runs/20260920_113624_tomato05_pose_physics_validation",
+  "summary": {
+    "total_candidates": 31,
+    "valid_candidates": 31,
+    "success_count": 0,
+    "success_rate_all": 0.0,
+    "success_rate_valid": 0.0,
+    "primary_category_counts": {
+      "success_target_hook": 0,
+      "non_target_contact": 10,
+      "miss": 0,
+      "excessive_displacement": 21,
+      "ik_or_planning_failure": 0
+    },
+    "event_counts": {
+      "success_target_hook": 0,
+      "non_target_contact": 31,
+      "miss": 31,
+      "excessive_displacement": 21,
+      "ik_or_planning_failure": 0
+    },
+    "best_successful_candidates": [],
+    "successful_pose_ranges": null,
+    "successful_ranges_note": "observed extrema only, not a proven continuous feasible volume",
+    "tolerance_test_results": [],
+    "tolerance_status": "not_run_no_successful_coarse_candidate",
+    "candidate_execution_complete": true,
+    "experiment_complete": false,
+    "coarse_count": 31,
+    "tolerance_count": 0,
+    "dataset_complete": false,
+    "missing_requirements": [
+      "RGB-D capture unavailable in explicit physics-only run"
+    ]
+  },
+  "validation": {
+    "validated_rows": 31,
+    "rgbd_captures": 0,
+    "dataset_complete": false,
+    "maximum_initial_state_difference": 0.0,
+    "source_matches": {
+      "pose_candidates.py": true,
+      "pose_collision.py": true,
+      "pose_worker.py": true,
+      "greenhouse_env.py": true,
+      "elastic_plant.py": true
+    },
+    "mechanically_retained_target_hook_count": 3,
+    "mechanically_retained_candidates": [
+      {
+        "candidate_id": "coarse_0006",
+        "strict_result": "non_target_contact",
+        "first_contact_object": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider",
+        "target_max_displacement_mm": 18.669114091094787,
+        "main_stem_max_displacement_mm": 29.39283475279808,
+        "hold_contact_ticks": 44,
+        "hold_ticks": 60
+      },
+      {
+        "candidate_id": "coarse_0008",
+        "strict_result": "non_target_contact",
+        "first_contact_object": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider",
+        "target_max_displacement_mm": 13.443924869288102,
+        "main_stem_max_displacement_mm": 18.20286177098751,
+        "hold_contact_ticks": 32,
+        "hold_ticks": 60
+      },
+      {
+        "candidate_id": "coarse_0011",
+        "strict_result": "non_target_contact",
+        "first_contact_object": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_00/StemCollider",
+        "target_max_displacement_mm": 11.329147786864537,
+        "main_stem_max_displacement_mm": 18.06195266544819,
+        "hold_contact_ticks": 53,
+        "hold_ticks": 60
+      }
+    ],
+    "first_contact_object_counts": {
+      "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider": 17,
+      "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_0": 1,
+      "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2": 1,
+      "/World/envs/env_0/HarvestableStem/Harvestables/Tomato_07/PedicelCollider": 3,
+      "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider": 3,
+      "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_00/StemCollider": 1,
+      "/World/envs/env_0/HarvestableStem/Harvestables/Tomato_05/FruitCollider": 3,
+      "/World/envs/env_0/HarvestableStem/Harvestables/Tomato_07/FruitCollider": 2
+    },
+    "unreachable_negative_control_passed": true
+  },
+  "retained_parameters": [
+    {
+      "candidate_id": "coarse_0006",
+      "parameters": {
+        "azimuth_deg": 30.0,
+        "elevation_deg": 0.0,
+        "roll_deg": 0.0,
+        "pitch_deg": 0.0,
+        "offset_xyz_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pre_hook_distance_m": 0.166,
+        "orientation_delta_rpy_deg": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_id": "coarse_0006",
+        "stage": "coarse",
+        "parent_id": null
+      },
+      "result": "non_target_contact"
+    },
+    {
+      "candidate_id": "coarse_0008",
+      "parameters": {
+        "azimuth_deg": 60.0,
+        "elevation_deg": 0.0,
+        "roll_deg": 0.0,
+        "pitch_deg": 0.0,
+        "offset_xyz_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pre_hook_distance_m": 0.166,
+        "orientation_delta_rpy_deg": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_id": "coarse_0008",
+        "stage": "coarse",
+        "parent_id": null
+      },
+      "result": "non_target_contact"
+    },
+    {
+      "candidate_id": "coarse_0011",
+      "parameters": {
+        "azimuth_deg": 0.0,
+        "elevation_deg": 0.0,
+        "roll_deg": -15.0,
+        "pitch_deg": 0.0,
+        "offset_xyz_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pre_hook_distance_m": 0.166,
+        "orientation_delta_rpy_deg": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_id": "coarse_0011",
+        "stage": "coarse",
+        "parent_id": null
+      },
+      "result": "non_target_contact"
+    }
+  ],
+  "tests_passed": 39,
+  "infrastructure": {
+    "nvidia_smi_exit": 255,
+    "nvidia_smi_output": "Failed to initialize NVML: Unknown Error",
+    "rgbd_capture_verified": false
+  },
+  "limitations": [
+    "CPU physics validation only; RGB-D capture blocked by GPU access",
+    "No strict successful candidates; physical tolerance tests were not run",
+    "Maximum displacement measured at 60 Hz control ticks"
+  ]
+}

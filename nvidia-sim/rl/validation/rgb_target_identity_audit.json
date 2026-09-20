@@ -1,0 +1,104 @@
+{
+  "motion_target": "Tomato_05",
+  "previous_roi_tracked": "Tomato_06",
+  "previous_roi": [
+    102,
+    284,
+    88,
+    89
+  ],
+  "corrected_roi": [
+    194,
+    197,
+    80,
+    86
+  ],
+  "seed_step": 196,
+  "source": "/root/farmily_tomato/nvidia-sim/rl/runs/20260919_233244_rgb_decision_visualization",
+  "world_from_robot_base": [
+    [
+      -1.0,
+      -1.2246467991473532e-16,
+      0.0,
+      0.0
+    ],
+    [
+      1.2246467991473532e-16,
+      -1.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.075
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "robot_transform_source": "scenes/farmily_greenhouse_robot.usd:/World/Robot",
+  "fruit_order_source": "20260919_143144_elastic_hook_11_tomatoes/hook_probe.json",
+  "projected_centers": {
+    "Tomato_01": [
+      221.0665224987456,
+      -66.44193081862645
+    ],
+    "Tomato_02": [
+      105.15121879902915,
+      13.245891187257477
+    ],
+    "Tomato_03": [
+      217.94422310216856,
+      140.90476381532162
+    ],
+    "Tomato_04": [
+      120.98849588953057,
+      214.2803214532467
+    ],
+    "Tomato_05": [
+      229.12303161245904,
+      247.7705283716141
+    ],
+    "Tomato_06": [
+      147.60328297946165,
+      330.5888103561719
+    ],
+    "Tomato_07": [
+      235.20460247600826,
+      347.3593045267116
+    ],
+    "Tomato_08": [
+      139.58642832028588,
+      413.47785021429394
+    ],
+    "Tomato_09": [
+      245.90838573052372,
+      437.49114208505915
+    ],
+    "Tomato_10": [
+      171.63139761420263,
+      493.8133415923823
+    ],
+    "Tomato_11": [
+      284.3038599628812,
+      540.2667573077075
+    ]
+  },
+  "audit_only": "Ground-truth centers projected only to audit manual selection at stationary seed frame; no control input.",
+  "validity": "Previous results do not validate Tomato_05 tracking. Corrected ROI still needs tracking validation.",
+  "corrected_run": {
+    "directory": "/root/farmily_tomato/nvidia-sim/rl/runs/20260919_235104_rgb_target_identity_fix/corrected_target",
+    "stop_step": 288,
+    "reason": "tracking_lost",
+    "tracks": 7,
+    "minimum_tracks": 8,
+    "contact_events": 0,
+    "retreat_completed": true,
+    "target_motion_detection_validated": false
+  }
+}

@@ -1,0 +1,2 @@
+# Additional dependency for USD-shape self-collision screening.
+python-fcl==0.7.0.11

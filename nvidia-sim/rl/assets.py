@@ -70,6 +70,13 @@ def build_robot():
     for i, (a, b) in enumerate(zip(points[:-1], points[1:])):
         shape = capsule(stage, f"{tool_path}/RingCollision/segment_{i:02d}", a, b, WIRE_RADIUS)
         shape.MakeInvisible()
+    # CAD has two straight wires between the half-ring ends and the proximal
+    # assembly. Keep the aperture open, but make these visible wires physical.
+    # Separate paths preserve the existing rear-arc hook/contact definition.
+    for i, a in enumerate((points[0], points[-1])):
+        b = (-0.078, a[1], a[2])
+        shape = capsule(stage, f"{tool_path}/RailCollision/rail_{i:02d}", a, b, WIRE_RADIUS)
+        shape.MakeInvisible()
     # Convex approximation of the proximal assembly only, clear of the aperture.
     mesh_path = SIM_DIR.parent / "ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_6.stl"
     mesh = trimesh.load(mesh_path, force="mesh")

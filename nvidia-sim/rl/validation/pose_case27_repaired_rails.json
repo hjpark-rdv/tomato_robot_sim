@@ -1,0 +1,9 @@
+{
+  "run_dir": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_141926_tomato05_case27_repaired_rails_2x",
+  "video": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_141926_tomato05_case27_repaired_rails_2x/videos/coarse_0027_repaired_rails_2x.mp4",
+  "result": "non_target_contact",
+  "abort_reason": "dangerous_non_target_contact",
+  "hook_success": false,
+  "video_validation": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_141926_tomato05_case27_repaired_rails_2x/video_validation.json",
+  "comparison": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_141926_tomato05_case27_repaired_rails_2x/comparison.json"
+}
