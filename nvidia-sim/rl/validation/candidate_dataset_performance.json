@@ -1,0 +1,100 @@
+{
+  "reference_run": "/tmp/farmily_perf_baseline",
+  "optimized_run": "/tmp/farmily_perf_optimized",
+  "control_steps_per_candidate": 120,
+  "candidates": 4,
+  "physics_hz": 960,
+  "solver_position_iterations": 64,
+  "reference_timing": {
+    "worker_wall_s": 85.58527446910739,
+    "shared_physics_step_wall_s": 56.603490157,
+    "steps": 1936
+  },
+  "optimized_timing": {
+    "worker_wall_s": 72.3042463324964,
+    "shared_physics_step_wall_s": 43.675821686000006,
+    "steps": 1936
+  },
+  "step_time_reduction_fraction": 0.2283899532545215,
+  "worker_time_reduction_fraction": 0.15517889285270525,
+  "trace_max_abs_errors": {
+    "0": {
+      "joints": 0.0,
+      "command": 0.0,
+      "target_displacement_m": 0.0,
+      "main_stem_displacement_m": 0.0,
+      "gap_m": 0.0
+    },
+    "1": {
+      "joints": 0.0,
+      "command": 0.0,
+      "target_displacement_m": 0.0,
+      "main_stem_displacement_m": 0.0,
+      "gap_m": 0.0
+    },
+    "2": {
+      "joints": 0.0,
+      "command": 0.0,
+      "target_displacement_m": 0.0,
+      "main_stem_displacement_m": 0.0,
+      "gap_m": 0.0
+    },
+    "3": {
+      "joints": 0.0,
+      "command": 0.0,
+      "target_displacement_m": 0.0,
+      "main_stem_displacement_m": 0.0,
+      "gap_m": 0.0
+    }
+  },
+  "observation_arrays_identical": {
+    "rgb.png": false,
+    "local_rgb.png": false,
+    "depth.npy": true,
+    "local_depth.npy": true
+  },
+  "unit_tests_passed": 48,
+  "full_contact_regression_pending": false,
+  "thousand_candidates_in_one_hour_demonstrated": false,
+  "experiments_not_promoted": {
+    "physics_240_hz_32_iterations": {
+      "candidate": "candidate_00003",
+      "max_main_displacement_trace_difference_m": 0.0038593988865613937,
+      "reason": "changes physics results"
+    },
+    "sixteen_clones_sixteen_threads": {
+      "reason": "clone 5 dynamic equivalence failed; validation rejected run"
+    },
+    "single_physics_thread": {
+      "reason": "initialization stalled; test process stopped"
+    },
+    "fabric": {
+      "reason": "no meaningful physics speedup; retained original USD pipeline"
+    }
+  },
+  "rgb_difference_8bit": {
+    "rgb.png": {
+      "mean_absolute": 0.05509789737654321,
+      "maximum_absolute": 12.0
+    },
+    "local_rgb.png": {
+      "mean_absolute": 0.03512815743791405,
+      "maximum_absolute": 1.0
+    }
+  },
+  "full_contact_regression": {
+    "reference": "nvidia-sim/rl/runs/20260920_160125_tomato_05_candidate_dataset/results/candidate_00003",
+    "optimized": "/tmp/farmily_perf_contact_regression/results/candidate_00003",
+    "executed_steps": 260,
+    "reference_result": "excessive_displacement",
+    "optimized_result": "excessive_displacement",
+    "trace_max_abs_errors": {
+      "joints": 0.0,
+      "command": 0.0,
+      "target_displacement_m": 0.0,
+      "main_stem_displacement_m": 0.0,
+      "gap_m": 0.0
+    },
+    "native_contacts_identical_after_canonicalizing_env_id": true
+  }
+}
