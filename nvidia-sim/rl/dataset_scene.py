@@ -122,6 +122,8 @@ class DatasetScene:
         cfg.robot.prim_path = '/World/envs/env_0/Robot'
         first = Slot(cfg,self.sim,self.scene)
         GreenhouseHarvestEnv._setup_scene(first)
+        from contact_policy import apply as apply_contact_policy
+        self.contact_policy=apply_contact_policy(self.scene.stage,first.root,getattr(cfg,'contact_policy','legacy'))
         self.slots = [first]
         self.step_timings = dict(steps=0,write_s=0.,physics_s=0.,read_s=0.)
         self.routing_faults = []

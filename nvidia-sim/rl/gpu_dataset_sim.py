@@ -91,22 +91,26 @@ def export(root,rows,elapsed):
     with (root/'candidates.jsonl').open('w') as f:
         for row in ordered:f.write(json.dumps(row,allow_nan=False)+'\n')
     fields=['candidate_id','target_id','observation_id','result','hook_success','executed','env_index',
+            'physics_valid','max_tool_penetration_mm','exclude_from_valid_trajectory_analysis',
             'azimuth_deg','elevation_deg','roll_deg','pitch_deg','offset_x_m','offset_y_m','offset_z_m',
             'pre_hook_distance_m','insertion_distance_m','lift_offset_m','target_max_displacement_mm',
             'main_stem_max_displacement_mm','first_contact_object','first_contact_time_s','episode_duration_s']
-    with (root/'candidates.csv').open('w',newline='') as f:
+    fields+=['approach_azimuth_deg','entry_clearance_m','lateral_offset_m','lift_forward_angle_deg','lift_distance_m',
+             'entry_reached','center_entry_achieved','center_entry_safe','center_entry_time_s','center_entry_duration_s','lift_completed','highest_stage']
+    with (root/'candidates.csv').open('w',newline='',encoding='utf-8-sig') as f:
         writer=csv.DictWriter(f,fieldnames=fields);writer.writeheader()
         for row in ordered:
             values={k:row.get(k) for k in fields};p=row['parameters']
             values.update({k:p[k] for k in fields if k in p})
-            values.update({f'offset_{a}_m':v for a,v in zip('xyz',p['offset_xyz_m'])})
+            values.update({f'offset_{a}_m':v for a,v in zip('xyz',p.get('offset_xyz_m',[]))})
             writer.writerow(values)
     counts={label:sum(r['result']==label for r in rows) for label in
-            ('success_target_hook','miss','non_target_contact','excessive_displacement','ik_failure','planning_failure','incomplete')}
-    executed=sum(r['executed'] for r in rows);complete=sum(r['executed'] and r['result']!='incomplete' for r in rows)
+            ('success_target_hook','miss','non_target_contact','excessive_displacement','ik_failure','planning_failure','incomplete','invalid_physics')}
+    executed=sum(r['executed'] for r in rows);complete=sum(r['executed'] and r['result'] not in ('incomplete','invalid_physics') for r in rows)
     summary=dict(total_candidates=len(rows),executed_candidates=executed,completed_physics_candidates=complete,
                  counts=counts,success_rate_of_completed_physics=counts['success_target_hook']/complete if complete else None,
-                 success_rate_of_all_candidates=counts['success_target_hook']/len(rows) if rows and not counts['incomplete'] else None,
+                 success_rate_of_all_candidates=counts['success_target_hook']/len(rows) if rows and not counts['incomplete'] and not counts['invalid_physics'] else None,
+                 invalid_physics_candidates=counts['invalid_physics'],
                  non_target_contact_event_count=sum('non_target_contact' in r['events'] for r in rows),
                  elapsed_wall_s=elapsed,candidates_per_second=len(rows)/elapsed if elapsed else None)
     summary.update(physics_device='gpu',tensor_device='cpu',solver='PGS',experimental=True)
@@ -130,7 +134,8 @@ def run(root):
              'pose_candidates.py','pose_collision.py','hook_motion.py','contact_planner.py','rgb_camera.py',
              'dataset_design.py','dataset_scene.py','dataset_motion.py','dataset_camera.py','gpu_dataset_sim.py',
              'gpu_dataset_scene.py','gpu_batch_views.py','gpu_validation.py','gpu_prim_lookup.py','gpu_replication.py','gpu_physics_errors.py','gpu_initialization.py','gpu_grid_view.py',
-             'gpu_planning.py','gpu_planning_worker.py']
+             'gpu_planning.py','gpu_planning_worker.py','trajectory_search.py','trajectory_report.py',
+             'tool_contact_audit.py','connection_audit.py','contact_policy.py']
     fingerprints={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest() for name in sources}
     from assets import SIM_DIR, ROBOT_SOURCE
     from greenhouse_env import SCENE_SOURCE, STEM_SOURCE
@@ -164,11 +169,13 @@ def run(root):
     cfg.sim.physx.enable_ccd=False
     position_iterations=config.get('position_iterations',64)
     cfg.sim.physx.max_position_iteration_count=position_iterations
-    cfg.sim.physx.min_velocity_iteration_count=4
-    cfg.sim.physx.max_velocity_iteration_count=4
+    velocity_iterations=config.get('velocity_iterations',4)
+    cfg.sim.physx.min_velocity_iteration_count=velocity_iterations
+    cfg.sim.physx.max_velocity_iteration_count=velocity_iterations
     cfg.sim.physx.min_position_iteration_count=position_iterations;cfg.sim.physx.enable_external_forces_every_iteration=True
     cfg.position_jitter=0.;cfg.break_randomization=0.;cfg.plant_model='elastic';cfg.elastic_stiffness_scale=1.
     cfg.elastic_joint_armature=config.get('elastic_joint_armature',1e-5)
+    cfg.contact_policy=config.get('contact_policy','legacy')
     cfg.target_fruit=config['target'];cfg.stem_position=(-.75,.55,.32);cfg.stem_yaw=0.;cfg.stem_scale=.5
     cfg.lift_start_below=.4;cfg.lift_height_reference='mount';cfg.lift_speed=.1
     cfg.override_break_force=False;cfg.override_break_torque=False
@@ -187,7 +194,9 @@ def run(root):
                      physics_hz=physics_hz,control_hz=60,
                      elastic_joint_armature_kg_m2=cfg.elastic_joint_armature,
                      command_uploads=config.get('command_uploads','batched'),
-                     velocity_iterations=4,gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
+                     velocity_iterations=velocity_iterations,contact_policy=world.contact_policy,
+                     tool_penetration_guard=True,tool_penetration_tolerance_m=.0005,
+                     gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
                      suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
                      experimental=True,cpu_tgs_equivalence_guaranteed=False,
@@ -206,6 +215,8 @@ def run(root):
         write_json(root/('observation_backend.json' if args.observation_only else 'backend.json'),backend)
         print('[DATASET GPU]',backend,flush=True)
         validation=verify_resets(world);write_json(validation_path,validation)
+        from tool_contact_audit import initialize_world_audits
+        initialize_world_audits(world,root/'collision_model')
         first=world.slots[0]
         checker=SelfCollisionCheck(first,first.pose_search_kin)
         write_json(root/'self_collision_model.json',checker.manifest)
@@ -333,7 +344,7 @@ def run(root):
         def prepare(slot,param,reset_check):
             p=dict(param,goal=config['goal'])
             target_center,target_neck,_=[v[0].cpu().numpy() for v in slot._target_geometry()]
-            desired_rotation,desired_waypoints,desired_direction=design_waypoints(target_center,target_neck,p)
+            desired_rotation,desired_waypoints,desired_direction=design_waypoints(target_center,target_neck,p,slot.target_spec['radius'])
             desired_position=desired_waypoints[0][1]
             desired_quaternion=desired_rotation.as_quat().tolist()
             plan_started=time.monotonic()
@@ -360,6 +371,7 @@ def run(root):
                 approach_direction=desired_direction.tolist(),
                 target_frame_definition='origin at initial fruit centre, axes aligned with world; GT centre for generation only',
                 physical_inputs=dict(physics_dt=slot.physics_dt,control_dt=slot.step_dt,
+                    target_collision_radius_m=slot.target_spec['radius'],
                     backend=backend,
                     solver_position_iterations=cfg.sim.physx.min_position_iteration_count,
                     approach_speed_m_s=.035,rise_speed_m_s=cfg.dataset_rise_speed,
@@ -426,8 +438,12 @@ def run(root):
                             row.update(first_contact_time_s=(first_contact['step']+1)*slot.step_dt if first_contact else None,
                                 target_max_displacement_mm=metrics['target_max_displacement_m']*1000,
                                 main_stem_max_displacement_mm=metrics['main_stem_max_displacement_m']*1000,
-                                episode_duration_s=len(trace)*slot.step_dt,hooked_target=metrics['retained_hook'])
+                                episode_duration_s=metrics.get('executed_physics_steps',len(trace)*cfg.decimation)*slot.physics_dt,
+                                hooked_target=metrics['retained_hook'])
                             write_json(folder/'trace.json',trace);write_json(folder/'contacts.json',slot.contact_diagnostics)
+                            if 'physical_audit' in metrics:
+                                write_json(folder/'physical_audit.json',metrics['physical_audit'])
+                                write_json(folder/'tool_contact_trace.json',slot.tool_audit.rows)
                             write_json(folder/'candidate.json',row);rows.append(row);del active[index]
                             print('[DATASET RESULT]',row['candidate_id'],row['result'],metrics['abort_reason'],flush=True)
                             if viewer:viewer.set_status(index,row['candidate_id']+' / '+row['result'])
@@ -451,7 +467,7 @@ def run(root):
         summary.update(progress_summary())
         summary['benchmark_only']=bool(args.benchmark_candidates)
         summary['execution_complete']=True
-        summary['dataset_complete']=len(rows)==len(params) and not summary['counts']['incomplete']
+        summary['dataset_complete']=len(rows)==len(params) and not summary['counts']['incomplete'] and not summary['counts']['invalid_physics']
         summary['num_envs']=config['num_envs'];summary['target']=config['target']
         summary['reset_and_camera_validation_passed']=True
         if planning_service:
@@ -459,15 +475,8 @@ def run(root):
             summary['cpu_planning']=json.loads((planning_service.folder/'summary.json').read_text())
         write_json(root/'summary.json',summary)
         try:
-            import matplotlib;matplotlib.use('Agg')
-            import matplotlib.pyplot as plt
-            fig,ax=plt.subplots(figsize=(7,5))
-            for label in sorted({r['result'] for r in rows}):
-                selected=[r for r in rows if r['result']==label]
-                ax.scatter([r['parameters']['azimuth_deg'] for r in selected],
-                           [r['parameters']['elevation_deg'] for r in selected],label=label,s=18)
-            ax.set(xlabel='Approach azimuth (deg)',ylabel='Approach elevation (deg)');ax.legend()
-            fig.tight_layout();fig.savefig(root/'candidate_results.png',dpi=150);plt.close(fig)
+            from trajectory_report import plot_results
+            plot_results(root,rows)
         except ImportError:pass
         print('[DATASET COMPLETE]',root,flush=True)
     finally:

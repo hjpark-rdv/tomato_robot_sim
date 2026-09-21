@@ -93,6 +93,7 @@ def main():
     parser.add_argument('--candidates', type=int, default=100)
     parser.add_argument('--candidate-indices',default='',help='Optional comma-separated Sobol candidate indices, e.g. 0,3,27; no resampling')
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--trajectory-mode',choices=['legacy','staged6d'],default='legacy',help='staged6d: remote start, entry/insert/lift search and partial-progress metrics')
     parser.add_argument('--run-dir', type=Path)
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--prepare-only', action='store_true', help='Write configuration and Sobol candidates without launching Isaac')
@@ -108,10 +109,12 @@ def main():
     parser.add_argument('--profile', action='store_true', help='Save CPU profile for throughput diagnosis')
     parser.add_argument('--benchmark-candidates', type=int, default=0, help='Execute only this many pending full candidates, estimate total runtime; resume without this flag')
     parser.add_argument('--physics-threads', type=int, default=4, help='CPU PhysX worker threads; benchmark before scaling environments')
-    parser.add_argument('--physics-preset',choices=list(PRESETS),default='practical60',help='Physical model (default practical60); reference960 restores old physics; practical presets change transient response')
+    parser.add_argument('--physics-preset',choices=list(PRESETS),default='contact120',help='Default contact120 fixes the reproduced thin-stem crossing; practical60 and reference960 remain explicit comparison models')
     parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],help='Override preset rate; robot control remains 60 Hz')
     parser.add_argument('--elastic-joint-armature',type=float,help='Override preset joint inertia in kg m^2; changes physical response')
     parser.add_argument('--position-iterations',type=int,help='Override preset solver position iterations (1..255); lower values require contact validation')
+    parser.add_argument('--velocity-iterations',type=int,default=4,help='Solver velocity iterations (0..255)')
+    parser.add_argument('--contact-policy',choices=['legacy','speculative','offset1','speculative_offset1','offset2'],default='legacy',help='Contact-generation experiment; saved with dataset configuration')
     parser.add_argument('--planning-workers',type=int,default=8,help='CPU-only path workers; 0 uses original synchronous planning; capped at pending candidate count')
     parser.add_argument('--torch-threads', type=int, default=1, help='Small CPU tensors usually benefit from one Torch thread')
     parser.add_argument('--physics-sync', choices=['optimized','legacy'], default='optimized', help='Retain implicit drive targets between control updates; legacy is for equivalence checks')
@@ -123,9 +126,18 @@ def main():
     parser.add_argument('--view-fps', type=float, default=5., help='Maximum display refreshes per wall-clock second; physics timestep unchanged')
     parser.add_argument('--keep-open', action='store_true', help='Keep the live display open after completion until the window is closed')
     parser.add_argument('--rebuild', action='store_true')
+    parser.add_argument('--representative-videos',action='store_true',help='After completion, replay and render representative staged6d cases at 2x')
+    parser.add_argument('--video-limit',type=int,default=4)
+    parser.add_argument('--video-display',default=':0',help='NVIDIA display for offline video rendering')
     args = parser.parse_args()
     resolve_physics(args)
+    if not 1<=args.video_limit<=12:parser.error('video-limit must be 1..12')
+    if args.representative_videos and (args.trajectory_mode!='staged6d' or args.target!='Tomato_05' or args.validate_only):
+        parser.error('Representative video replay requires Tomato_05 staged6d')
+    if args.trajectory_mode=='staged6d' and args.goal!='rise':
+        parser.error('staged6d pilot evaluates entry/insert/lift only; pull is not implemented')
     if not 1<=args.position_iterations<=255:parser.error('position-iterations must be 1..255')
+    if not 0<=args.velocity_iterations<=255:parser.error('velocity-iterations must be 0..255')
     if args.view_grid:args.gui=True
     if not 1 <= args.view_fps <= 30:parser.error('view-fps must be 1..30')
     if args.keep_open and not args.view_grid:parser.error('keep-open requires view-grid')
@@ -153,11 +165,15 @@ def main():
     root.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy(); config.pop('run_dir'); config.pop('resume'); config.pop('prepare_only'); config.pop('rebuild')
     config.pop('benchmark_candidates');config.pop('profile')
+    for key in ('representative_videos','video_limit','video_display'):config.pop(key)
     config.update(schema_version=1, sampling='scrambled_sobol_plus_nominal', bounds=BOUNDS,
                   domain_randomization=False, learning=False, physics_device='gpu', tensor_device='cpu', solver='PGS',
                   experimental=True, cpu_tgs_equivalence_guaranteed=False, gpu_max_num_partitions=1,native_physics_replication=True,
                   parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback',
                   observation_mode='isolated_single_environment' if args.num_envs>128 and not args.gui else 'in_process')
+    if args.trajectory_mode=='staged6d':
+        from trajectory_search import BOUNDS as staged_bounds
+        config.update(sampling='scrambled_sobol_6d',bounds=staged_bounds)
     path = root/'config.json'
     if path.exists():
         if not args.resume:
@@ -166,7 +182,11 @@ def main():
             parser.error('Resume configuration differs; choose a new output directory')
     else:
         path.write_text(json.dumps(config, indent=2)+'\n')
-        proposals=candidates(args.candidates,args.seed)
+        if args.trajectory_mode=='staged6d':
+            from trajectory_search import candidates as staged_candidates
+            proposals=staged_candidates(args.candidates,args.seed)
+        else:
+            proposals=candidates(args.candidates,args.seed)
         if indices is not None:proposals=[proposals[i] for i in indices]
         (root/'candidates.json').write_text(json.dumps(proposals,indent=2)+'\n')
     print('[DATASET]',root,flush=True)
@@ -192,6 +212,9 @@ def main():
         raise SystemExit(f'Isaac process exited {status}; inspect {root / "run.log"}')
     if not args.validate_only and not json.loads(completion.read_text()).get('execution_complete'):
         raise SystemExit(f'Isaac stopped before this invocation finished; inspect {root / "run.log"}')
+    if args.representative_videos:
+        subprocess.run([sys.executable,str(HERE/'dataset_videos.py'),'--run-dir',str(root),
+            '--max-videos',str(args.video_limit),'--display',args.video_display],check=True)
 
 
 if __name__ == '__main__':

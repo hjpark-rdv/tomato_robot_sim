@@ -54,7 +54,10 @@ def candidates(count, seed=42):
     return result
 
 
-def waypoints(center, neck, params):
+def waypoints(center, neck, params, radius=None):
+    if params.get('trajectory_mode') == 'staged6d':
+        from trajectory_search import waypoints as staged_waypoints
+        return staged_waypoints(center, neck, params, radius)
     rotation, poses, direction = candidate_waypoints(center, neck, params)
     outward = -direction
     insertion = params['insertion_distance_m'] - .004
@@ -107,6 +110,9 @@ def classify_result(metrics, limits):
         reason = failure.get('reason', '')
         label = 'ik_failure' if 'ik' in reason else 'planning_failure'
         return dict(result=label, events=[label], hook_success=False, executed=False)
+    if metrics.get('physics_valid') is False or metrics.get('abort_reason')=='invalid_penetration':
+        return dict(result='invalid_physics',events=['invalid_penetration'],hook_success=False,
+                    executed=True,physics_valid=False,exclude_from_valid_trajectory_analysis=True)
     if metrics.get('non_target_contact_count', 0):
         events.append('non_target_contact')
     if (metrics['target_max_displacement_m'] > limits['target_displacement_m'] or

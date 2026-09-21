@@ -59,7 +59,7 @@ def run_behavior(world, output, app, video=None):
         write_json(output/'behavior.json',report);write_json(output/'behavior_trace.json',trace)
         write_json(output/'behavior_contacts.json',events)
     if video:
-        video.begin('elastic_recovery', '60 Hz | elastic bending and recovery',
+        video.begin('elastic_recovery', f'{round(1/dt)} Hz | elastic bending and recovery',
             'Applied force test: 0.2 N on fruit, then release. Robot stays at pick-ready.')
     idle=run_phase('idle',5.)
     report['checks']['idle']=dict(passed=len(idle)==round(5./dt) and max(max(r['target_displacement_m'],r['main_displacement_m']) for r in idle)<.003,
@@ -125,7 +125,7 @@ def run_behavior(world, output, app, video=None):
             x=r.apply([1.,0.,0.]);start=mid+x*(RING_RADIUS-WIRE_RADIUS-radius-.003)
             pose(start,r,True);world.sim.forward();samples=[];event_start=len(events)
             if video:
-                video.begin(f'ring_hold_{int(angle):03d}', f'60 Hz | hook retention | fixture roll {angle:g} deg',
+                video.begin(f'ring_hold_{int(angle):03d}', f'{round(1/dt)} Hz | hook retention | fixture roll {angle:g} deg',
                     'Preinserted kinematic half-ring + rails; NOT robot insertion or harvest success.', (path, view))
             for label,seconds,d0,d1 in [('ring_approach',.8,0.,.008),('ring_hold',1.,.008,.008),
                                         ('ring_release',1.,.008,-.004),('ring_recover',2.,-.004,-.004)]:

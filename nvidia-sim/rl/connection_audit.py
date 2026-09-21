@@ -86,18 +86,20 @@ def analyze(directory,recordings):
 
 
 
-def export_connections(env, directory):
+def export_connections(env, directory, reset=True):
     from pxr import Usd, UsdGeom, UsdPhysics, PhysxSchema
     from omni.physx import get_physx_interface
     from pose_video_capture import body_poses
-    env.reset()
+    if reset: env.reset()
     env.elastic.sync_visuals()
     env.sim.physics_sim_view.update_articulations_kinematic()
     get_physx_interface().update_transformations(False,True,True)
     paths=list(env.robot.root_physx_view.link_paths[0])+[s['path'] for s in env.fruit_specs]+env.elastic.paths+[s['anchor'] for s in env.fruit_specs]
     poses=body_poses(env); rotations=Rotation.from_quat(poses[:,[4,5,6,3]]).as_matrix()
     cache=UsdGeom.XformCache(); shapes=[]; filters=[];joints=[]
-    for prim in Usd.PrimRange.Stage(env.stage,Usd.TraverseInstanceProxies()):
+    # This export describes one clone. Traversing the entire stage here made
+    # the new per-run audit setup needlessly scan every replicated robot.
+    for prim in Usd.PrimRange(env.stage.GetPrimAtPath(env.root),Usd.TraverseInstanceProxies()):
         path=str(prim.GetPath())
         if prim.HasAPI(UsdPhysics.FilteredPairsAPI):
             filters.append(dict(path=path,targets=[str(p) for p in UsdPhysics.FilteredPairsAPI(prim).GetFilteredPairsRel().GetTargets()]))

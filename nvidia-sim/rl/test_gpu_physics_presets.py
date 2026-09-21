@@ -11,7 +11,7 @@ def test_reference_preserves_original_defaults(tmp_path):
 
 
 def test_practical_preset_is_saved_and_resume_cannot_mix_models(tmp_path):
-    r=prepare(tmp_path)
+    r=prepare(tmp_path,'--physics-preset','practical60')
     assert r.returncode==0,r.stderr
     c=json.loads((tmp_path/'config.json').read_text())
     assert c['physics_hz']==60 and c['elastic_joint_armature']>1e-5
@@ -31,3 +31,12 @@ def test_explicit_overrides_are_recorded_not_disguised_as_preset(tmp_path):
 def test_invalid_iteration_count_rejected(tmp_path):
     for v in ('0','256'):
         assert prepare(tmp_path/v,'--position-iterations',v).returncode!=0
+
+
+def test_contact_default_keeps_inertia_but_halves_step(tmp_path):
+    r=prepare(tmp_path)
+    assert r.returncode==0,r.stderr
+    c=json.loads((tmp_path/'config.json').read_text())
+    assert (c['physics_preset'],c['physics_hz'],c['elastic_joint_armature'],c['position_iterations'])==('contact120',120,.0005,64)
+    assert c['velocity_iterations']==4 and c['contact_policy']=='legacy'
+    assert prepare(tmp_path,'--resume','--velocity-iterations','16').returncode!=0

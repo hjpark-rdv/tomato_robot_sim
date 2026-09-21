@@ -4,7 +4,91 @@
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
 
-## 최신 후속 작업: 실용 60Hz (이 절을 먼저 읽기)
+## 최신 수정: candidate_00049 접촉 관통 대응
+
+- GPU dataset 기본값은 `contact120`: 120Hz 물리 / 60Hz 제어 / PGS 64/4 /
+  armature 5e-4. 이전 practical60과 동일한 형상/물성/로봇 명령에서 timestep만 절반.
+- 49번 동일 명령의 매 물리 스텝 겹침: 60Hz 최대 1.793mm → 120Hz 0.196mm.
+  수정 후 줄기가 밀려 목표 변위 20mm 중단. 수확 성공으로 바꾼 것이 아니다.
+- contact offset/CCD만 조정, 드라이브 강성 감소, velocity iteration 증가만으로는
+  관통이 남았다. TGS 60Hz는 초기 파손. 120Hz 32/4도 0.5mm 선별 기준 미달.
+- 새 dataset은 실제 USD/native pose의 고리 arc/rail 대 식물 capsule/sphere 겹침을
+  매 스텝 검사한다. 0.5mm 초과면 `invalid_physics`로 중단/별도 저장/대표 영상 제외.
+  mesh와 스텝 사이 연속 swept 검사까지 보장하는 것은 아니다.
+- `physical_audit.json`, `tool_contact_trace.json`, CSV 물리 유효성 필드를 저장한다.
+  오류를 숨기거나 고리/식물 pose를 인위적으로 보정하지 않는다.
+- 문서: [CONTACT_PENETRATION_FIX.md](nvidia-sim/rl/CONTACT_PENETRATION_FIX.md).
+  진단 원본: `nvidia-sim/rl/runs/20260921_contact_fix/`.
+  기존 원본 데이터/영상은 변경하지 않고 새 결과와 구분한다. 실행 원본과 영상은
+  git 제외 대상인 `runs/`에 로컬 보관하고 코드·문서·검증 요약을 커밋한다.
+- 4환경에서 0·1·5·49 완료: 관통 선별 기준 초과 0개, 과도 변위 2개/miss 2개.
+  5번 중심 진입 부분 성공 0.833초 유지, 완전 걸림 0. 모든 관절 명령은 원본과 동일.
+  정지/탄성·복원/파손/리셋 및 미리 끼운 고리 네 방향 접촉 유지 fixture 통과.
+- 49번 단독 측정: 60Hz guard 45.17초 / sim16.183초,
+  120Hz 84.65초 / sim16.583초. sim 시간당 비용 약 1.83배, 초기화/렌더 제외.
+  전체 64환경 처리량은 아직 재측정하지 않았다.
+- 수정 전후 2배속 영상:
+  `nvidia-sim/rl/runs/20260921_200605_candidate49_contact_fix_2x/index.html`.
+  검증 요약 `validation/contact_penetration_fix.json`, 관련 자동 테스트 37개 통과.
+
+## 이전 진단: candidate_00049 물리 관통 확인
+
+- 사용자 영상 지적으로 저장된 native pose/접촉을 재검사했다. 49번 고리 segment_22가
+  TRUSS_Rachis_08을 삽입 중 16.6~16.9초에 관통했다. 최대 겹침 1.793mm.
+- 재실행 비교 통과와 물리적 유효성은 다르다. 이전의 49번 "정상 비목표 접촉 사례"
+  해석을 정정하고 영상 모음에서 물리 오류로 분리했다. 대표 2개/진단 2개로 변경.
+- 원본 CSV/판정은 보존하고 candidate_00049/physical_audit.json을 추가했다.
+  당시에는 자동 제외 필터가 없었다. 후속 수정으로 새 dataset에 제외 검사를 추가했다.
+- 근거: `nvidia-sim/rl/runs/20260921_candidate49_collision_audit/README.md`,
+  `validation/candidate49_penetration.json`. 이 변경의 영상 분류 테스트 6개 통과.
+- 다른 영상의 rachis 겹침 선별: 05 최대 0.266mm, 01 없음, 00 최대 0.701mm.
+  전체 64개/모든 충돌체 검증은 아니다. 이 최초 진단 때는 물리 설정을 변경하지 않았다.
+
+## 최신 후속 작업: 64환경 실측과 대표 영상 자동화
+
+- 64환경/64개 서로 다른 staged6d 후보, CPU 경로 16 workers, PhysX CPU threads 8.
+  practical60 물리/로봇 속도/중단 기준 유지. 실제 전체 실행 **814.70초 (13분 35초)**.
+- rollout 740.32초: physics 481.42초, 실행/판정 192.93초, 명령 쓰기 38.61초.
+  CPU 경로 작업 전체 10.59초. 명령 FK를 미리 계산하고 동일 tick 조회를 재사용했다.
+- 이전 4환경/8후보 대비 후보당 관측 처리량 2.64배. 풀 크기/조기 중단 비율이 달라
+  순수 코드 최적화 효과로 해석하면 안 된다. 64/64는 마지막 빈 슬롯 손실이 크다
+  (active env-step fraction 0.414). 대량 실행은 continuous 재충전을 사용한다.
+- CPU 초기화 최대 2801%, 경로 계산 시 최대 약 1892%, rollout 중앙값 117%.
+  GPU 메모리 최대 6191MiB, 샘플 GPU 사용률 중앙값 25%. CPU 직렬 판정과
+  physics 동기화 병목이 남아 있다. 전체 자원을 최대 활용하는 최적 설정을 찾았다는 뜻은 아니다.
+- 54개 과도 변위, 8개 miss, 2개 비목표 접촉, 완전 걸림 0.
+  candidate_00005만 안전 기준 내 중심 진입 1.22초 달성, 최종 miss.
+- 이전 8개와 새 관절 명령 파일은 전부 수치적으로 동일. 최종 범주/부분 진입 여부도 일치.
+  GPU 환경 수 차이로 과실 최대 변위 수치는 최대 0.294mm 차이가 있었다.
+- 원본: `nvidia-sim/rl/runs/20260921_175044_staged6d_64env_videos/`.
+  `performance_report.json`, `resource_samples.json`, `dataset/summary.json` 참고.
+- `--representative-videos`로 완료 후 대표 사례 선정→저장 명령 재실행→원본 trace 비교→
+  두 외부 시점 2배속 MP4/HTML 생성. 부분 성공을 완전 걸림으로 바꾸지 않는다.
+  자세한 설명: [DATASET_REPRESENTATIVE_VIDEOS.md](nvidia-sim/rl/DATASET_REPRESENTATIVE_VIDEOS.md).
+- 관련 자동 테스트 35개 통과. `representative_videos_2x/index.html` 영상 생성 완료:
+  00005 부분 진입, 00001 과도 변위, 00049 비목표 접촉은 원본 비교 통과.
+  00000은 최종 miss는 같지만 중간 주줄기 변위가 최대 15.29mm 달라 별도 진단 영상으로 분리.
+  두 시점 2배속, 1280x612/30fps, 네 MP4 전체 디코드와 프레임 수 검사 통과.
+  영상 후처리 추가 시간은 843.39초(약 14분). `validation/trajectory_64env.json`에 검증 요약.
+  재실행이 원본 병렬 실행과 항상 같지는 않으므로 모든 원본 영상이 필요하면 본 실행에서
+  물리 pose를 저장하는 방식으로 확장해야 한다. 현재 코드는 차이를 숨기지 않고 표시한다.
+
+## 이전 작업: 떨어진 위치부터 접근하는 6D 소규모 시험
+
+- 기준 커밋 `973806b` 이후 작업. [TRAJECTORY_PILOT.md](nvidia-sim/rl/TRAJECTORY_PILOT.md) 참고.
+- `--trajectory-mode staged6d` 선택 시 170mm 떨어진 준비 위치→진입→수평 삽입→상승→1초 유지.
+  기존 legacy 기본 동작은 그대로다. 새 모드는 접촉만으로 상승을 조기 종료하지 않는다.
+- 실제 로봇 4환경·8개 Sobol 후보: 한 번의 완료 실행 269.06초, rollout 234.25초.
+  6개 과도 변위, 2개 끝까지 실행 후 miss. candidate_00005는 GT 중심 진입 1.87초를
+  달성했지만 꼭지 걸림은 아님. 이 새 후보의 영상 검증은 아직 하지 않았다.
+- 동일 4환경/실패 비율 단순 예상: 64개 약 32분, 128개 약 63분, 2,048개 약 16시간 40분.
+  영상 제외, 8개 표본의 제한이 있다. 새 경로의 16/32/64환경 처리량은 미측정이다.
+- 완료 원본은 `runs/20260921_170634_staged6d_timing_pilot/env4_n8_final/`.
+  앞선 두 폴더는 대화 중단으로 종료된 불완전 실행이다. 마지막 그래프 변수명 오류는
+  물리 8개가 모두 저장된 뒤 발생했고 오프라인 후처리로 복구했다. 원래 오류 기록 보존.
+- 관련 테스트 30개 통과. 새 source fingerprint 및 두 parameter schema의 plot 지원 추가.
+
+## 이전 작업: 실용 60Hz
 
 사용자가 960Hz와 완전히 같은 결과보다 밀림·걸림·휘어짐·복원을 유지하는 실용적
 처리량을 우선하도록 기준을 변경했다. 따라서 아래의 이전 "960Hz 유지" 작업 지침은

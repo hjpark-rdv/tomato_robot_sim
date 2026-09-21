@@ -45,11 +45,15 @@ parser.add_argument('--clone-diagnostic',action='store_true',help='Record unit-a
 parser.add_argument('--diagnostic-grid-spacing',type=float,default=0.,help='Diagnostic physical grid offset; not used by dataset runner')
 parser.add_argument('--contact-view-diagnostic',action='store_true',help='Inspect collider-level CUDA contact view support')
 parser.add_argument('--position-iterations',type=int,default=64,help='Diagnostic solver accuracy; clamp both scene limits')
+parser.add_argument('--contact-policy',choices=['legacy','speculative','offset1','speculative_offset1','offset2'],default='legacy')
+parser.add_argument('--audit-tool-contacts',action='store_true',help='Record exact live capsule overlap after each physics step')
+parser.add_argument('--guard-tool-contacts',action='store_true',help='Stop and invalidate penetrated candidates, as in the dataset runner')
+parser.add_argument('--arm-drive-stiffness',type=float,default=800.,help='Diagnostic arm position servo stiffness; original 800')
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device='cpu')
 args=parser.parse_args()
-if args.record_physics_video and (args.num_envs!=1 or args.stationary_steps or args.neighbor_reset_interval or args.physics_hz!=60):
-    parser.error('Video capture supports one 60 Hz behavior/motion environment without diagnostic resets')
+if args.record_physics_video and (args.num_envs!=1 or args.stationary_steps or args.neighbor_reset_interval):
+    parser.error('Video capture requires one behavior/motion environment without diagnostic resets')
 if not 1<=args.position_iterations<=255 or not 0<=args.velocity_iterations<=255:
     parser.error('Solver iteration count is out of range')
 if args.stationary_steps<0 or args.max_control_steps<0 or args.num_envs<1:
@@ -140,6 +144,8 @@ def run():
     if args.zero_load or args.no_gravity:cfg.sim.gravity=(0.,0.,0.)
     install_diagnostic_preload(args.preload_mode)
     cfg.elastic_joint_armature=args.joint_armature
+    cfg.contact_policy=args.contact_policy
+    cfg.arm_drive_stiffness=args.arm_drive_stiffness
     cfg.sim.physx.enable_external_forces_every_iteration=not args.external_forces_once
     cfg.sim.physx.enable_ccd=args.mode=='cpu'
     cfg.probe_gpu_dynamics=args.mode=='gpu'
@@ -206,6 +212,16 @@ def run():
         report['repeated_reset']=[state_comparison(a,b) for a,b in zip(first,second)]
         if not all(v['passed'] for v in report['repeated_reset']):raise RuntimeError('Repeated reset mismatch')
         np.savez(args.output/'initial_state.npz',**second[0])
+        audit=None
+        if args.guard_tool_contacts:
+            from tool_contact_audit import initialize_world_audits
+            initialize_world_audits(world,args.output/'guard_model')
+        if args.audit_tool_contacts:
+            from connection_audit import export_connections
+            from tool_contact_audit import ToolContactAudit
+            from pose_video_capture import body_poses
+            export_connections(world.slots[0],args.output,reset=False)
+            audit=ToolContactAudit(json.loads((args.output/'live_connections.json').read_text()))
         if profiler:
             faulthandler.cancel_dump_traceback_later()
             profiler.disable();profiler.dump_stats(str(args.output/'initialization.pstats'))
@@ -303,11 +319,18 @@ def run():
             np.savez(args.output/'final_state.npz',**state(world.slots[0]))
             report['complete']=True;checkpoint('complete');return
         checkpoint('executing_same_commands')
+        staged_fixture=fixture.get('parameters',{}).get('trajectory_mode')=='staged6d'
         if video:
-            video.begin('robot_push', '60 Hz | actual robot approach | candidate_00003',
-                'Saved robot commands: pushes a leaf attached to the main stem; aborts on displacement (not hook success).')
+            if staged_fixture:
+                video.begin(fixture['candidate_id'], str(args.physics_hz)+' Hz | actual robot | '+fixture['candidate_id'],
+                    'Saved dataset commands | source: '+fixture['result']+' | partial centre entry is separate from hook success')
+            else:
+                video.begin('robot_push', '60 Hz | actual robot approach | '+fixture['candidate_id'],
+                    'Saved robot commands: replay of a measured trial, not a preinserted ring fixture.')
         world.step_timings=dict(steps=0,write_s=0.,physics_s=0.,read_s=0.)
-        active={slot.index:execute_steps(slot,dict(commands=commands,phases=phases),identity(slot),app,DEFAULT_LIMITS.copy()) for slot in world.slots}
+        command_positions=np.stack([world.slots[0].pose_search_kin.fk(command)[0] for command in commands])
+        active={slot.index:execute_steps(slot,dict(commands=commands,command_positions=command_positions,phases=phases,
+            trajectory_mode=fixture.get('parameters',{}).get('trajectory_mode','legacy')),identity(slot),app,DEFAULT_LIMITS.copy()) for slot in world.slots}
         if args.profile_motion:
             from gpu_step_profile import NativeStepProfile
             native_profile=NativeStepProfile(context);native_profile.start()
@@ -327,10 +350,13 @@ def run():
                     np.savez(args.output/f'final_state_{index}.npz',**state(world.slots[index]))
                     if video:
                         video.finish(row['classification']['result'],trace=trace,
-                            retained_hook=bool(metrics.get('retained_hook',False)),first_contact=metrics.get('first_contact'))
+                            retained_hook=bool(metrics.get('retained_hook',False)),first_contact=metrics.get('first_contact'),
+                            extra_metadata=dict(parameters=fixture.get('parameters',{}),progress_metrics=metrics,
+                                source_result=fixture.get('result'),source_candidate_file=str(args.fixture/'candidate.json')))
                     del active[index]
             if active:
                 world.step()
+                if audit:audit.sample(body_poses(world.slots[0]),world.step_timings['steps']*cfg.sim.dt)
                 if video: video.sample()
                 if args.neighbor_reset_interval and world.step_timings['steps'] % args.neighbor_reset_interval == 0:
                     before=[state(s) for s in world.slots[1:]]
@@ -343,6 +369,9 @@ def run():
             if time.perf_counter()-last>15:
                 print('[GPU PROBE PROGRESS]',args.mode,world.step_timings,flush=True);last=time.perf_counter()
         elapsed=time.perf_counter()-began
+        if audit:
+            report['tool_contact_audit']=audit.report()
+            write_json(args.output/'tool_contact_trace.json',audit.rows)
         report['motion_process_cpu_s']=time.process_time()-motion_cpu_started
         if args.neighbor_reset_interval:report['neighbor_resets']=neighbor_resets
         if native_profile:

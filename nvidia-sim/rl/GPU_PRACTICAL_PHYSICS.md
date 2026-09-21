@@ -8,11 +8,15 @@
 **접촉에 따른 변형, 고리의 접촉 유지, 복원, 원래 임계값에서의 파손**을 검사한다.
 정확한 식물 물성 재현이나 실물 성공률 검증을 완료했다는 뜻은 아니다.
 
-GPU dataset 기본 preset은 이제 **`practical60`**이다.
+GPU dataset 기본 preset은 **`contact120`**이다. 후속 candidate_00049에서
+60Hz의 얇은 줄기 관통을 확인해 시간 간격을 절반으로 줄였다.
+아래 60Hz 기능 시험은 과거 기록이며 모든 접근 경로의 접촉 정확도를 보장하지 않는다.
+새 진단 및 적용 범위는 [CONTACT_PENETRATION_FIX.md](CONTACT_PENETRATION_FIX.md)를 참고한다.
 
 | preset | 물리 | 제어 | plant armature | position/velocity iterations |
 |---|---:|---:|---:|---:|
-| `practical60` (기본) | 60Hz | 60Hz | 5e-4 kg·m² | 64 / 4 |
+| `contact120` (기본) | 120Hz | 60Hz | 5e-4 kg·m² | 64 / 4 |
+| `practical60` (과거 비교용) | 60Hz | 60Hz | 5e-4 kg·m² | 64 / 4 |
 | `practical120` | 120Hz | 60Hz | 3e-4 kg·m² | 64 / 4 |
 | `reference960` | 960Hz | 60Hz | 1e-5 kg·m² | 64 / 4 |
 
@@ -28,7 +32,7 @@ PGS / GPU dynamics / native collider readback / GPU partition 1은 유지한다.
 ```bash
 # 선택값을 명시하는 권장 명령. 4대가 총 8개 후보를 나눠 실행한다.
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --physics-preset practical60 --num-envs 4 --candidates 8 --schedule continuous
+  --physics-preset contact120 --num-envs 4 --candidates 8 --schedule continuous
 
 # 중간 주파수
 ./nvidia-sim/run_gpu_candidate_dataset.sh \

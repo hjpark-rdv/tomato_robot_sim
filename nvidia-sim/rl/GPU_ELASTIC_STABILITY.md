@@ -2,7 +2,8 @@
 
 > 후속 변경: 사용자가 960Hz와의 정밀 일치보다 실용적인 접촉·걸림·탄성 동작을
 > 우선하도록 기준을 변경했다. 기능 검사를 거쳐 GPU dataset 기본값을 60Hz preset으로
-> 변경했다. 최신 설정/범위는 [GPU_PRACTICAL_PHYSICS.md](GPU_PRACTICAL_PHYSICS.md)를 읽는다.
+> 변경했다. 이후 49번의 가는 줄기 관통을 확인하여 contact120으로 다시 변경했다.
+> 최신 설정/범위는 [CONTACT_PENETRATION_FIX.md](CONTACT_PENETRATION_FIX.md)를 읽는다.
 > 아래는 이전의 엄격한 동등성 검사 기록으로 보존한다.
 
 기존 주파수·CPU 병렬화 작업은 `1305651`에 커밋했다. 아래는 후속 안정성 실험이다.

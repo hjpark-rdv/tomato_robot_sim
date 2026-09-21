@@ -1,0 +1,242 @@
+{
+  "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_170634_staged6d_timing_pilot/env4_n8_final",
+  "scope": "8-candidate trajectory/timing pilot; not production completion",
+  "actual": {
+    "num_envs": 4,
+    "candidates": 8,
+    "end_to_end_wall_s": 269.05671883001924,
+    "rollout_including_planning_and_reset_s": 234.2489637332037,
+    "cold_start_and_shutdown_s": 34.80775509681553,
+    "internal_scene_initialization_s": 17.55352373700589,
+    "cpu_planning_elapsed_s": 4.878641144372523,
+    "phase_timings": {
+      "batch_reset_s": 0.2096287915483117,
+      "planning_s": 3.335911282338202,
+      "execution_and_label_s": 66.1836688220501,
+      "result_save_s": 1.1187208499759436
+    },
+    "rollout_step_timings": {
+      "steps": 3199,
+      "write_s": 8.11216665059328,
+      "physics_s": 153.60721317585558,
+      "read_s": 1.5337409684434533
+    },
+    "active_env_step_fraction": 0.7912628946545796
+  },
+  "counts": {
+    "success_target_hook": 0,
+    "miss": 2,
+    "non_target_contact": 0,
+    "excessive_displacement": 6,
+    "ik_failure": 0,
+    "planning_failure": 0,
+    "incomplete": 0
+  },
+  "progress_counts": {
+    "entry_reached": 8,
+    "under_center_alignment": 1,
+    "center_entry_achieved": 1,
+    "center_entry_safe": 1,
+    "lift_completed": 2,
+    "hook_success": 0
+  },
+  "target_collision_radius_m": 0.0105249617,
+  "rows": [
+    {
+      "candidate_id": "candidate_00000",
+      "result": "miss",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": true,
+      "hook_success": false,
+      "final_phase": "hold",
+      "planned_sim_s": 44.71666666666667,
+      "executed_sim_s": 44.71666666666667,
+      "target_displacement_mm": 15.354924138882419,
+      "main_stem_displacement_mm": 20.980229601264,
+      "first_contact_object": "/World/envs/env_0/HarvestableStem/Harvestables/Tomato_07/PedicelCollider"
+    },
+    {
+      "candidate_id": "candidate_00001",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "insert",
+      "planned_sim_s": 40.38333333333333,
+      "executed_sim_s": 16.166666666666668,
+      "target_displacement_mm": 20.554967561903492,
+      "main_stem_displacement_mm": 25.291861966252327,
+      "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+    },
+    {
+      "candidate_id": "candidate_00002",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "insert",
+      "planned_sim_s": 30.516666666666666,
+      "executed_sim_s": 13.116666666666667,
+      "target_displacement_mm": 20.32840861834199,
+      "main_stem_displacement_mm": 25.567200034856796,
+      "first_contact_object": "/World/envs/env_2/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider"
+    },
+    {
+      "candidate_id": "candidate_00003",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "insert",
+      "planned_sim_s": 38.11666666666667,
+      "executed_sim_s": 9.583333333333334,
+      "target_displacement_mm": 17.614089156647385,
+      "main_stem_displacement_mm": 30.19898757338524,
+      "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+    },
+    {
+      "candidate_id": "candidate_00004",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "insert",
+      "planned_sim_s": 46.1,
+      "executed_sim_s": 10.366666666666667,
+      "target_displacement_mm": 20.321886791631815,
+      "main_stem_displacement_mm": 25.761699303984642,
+      "first_contact_object": "/World/envs/env_3/HarvestableStem/Harvestables/Tomato_06/FruitCollider"
+    },
+    {
+      "candidate_id": "candidate_00005",
+      "result": "miss",
+      "highest_stage": "center_entry",
+      "entry_reached": true,
+      "under_center_alignment": true,
+      "center_entry_achieved": true,
+      "center_entry_safe": true,
+      "center_entry_duration_s": 1.866666666666665,
+      "lift_completed": true,
+      "hook_success": false,
+      "final_phase": "hold",
+      "planned_sim_s": 40.2,
+      "executed_sim_s": 40.2,
+      "target_displacement_mm": 19.809469472197584,
+      "main_stem_displacement_mm": 24.019740521907806,
+      "first_contact_object": "/World/envs/env_2/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider"
+    },
+    {
+      "candidate_id": "candidate_00006",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "insert",
+      "planned_sim_s": 35.266666666666666,
+      "executed_sim_s": 15.25,
+      "target_displacement_mm": 20.335816457143046,
+      "main_stem_displacement_mm": 25.340430438518524,
+      "first_contact_object": "/World/envs/env_1/HarvestableStem/Harvestables/Tomato_07/PedicelCollider"
+    },
+    {
+      "candidate_id": "candidate_00007",
+      "result": "excessive_displacement",
+      "highest_stage": "entry_reached",
+      "entry_reached": true,
+      "under_center_alignment": false,
+      "center_entry_achieved": false,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "lift_completed": false,
+      "hook_success": false,
+      "final_phase": "rise",
+      "planned_sim_s": 40.86666666666667,
+      "executed_sim_s": 19.35,
+      "target_displacement_mm": 20.037409906093306,
+      "main_stem_displacement_mm": 25.322023779153824,
+      "first_contact_object": "/World/envs/env_3/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider"
+    }
+  ],
+  "estimates_same_four_envs": [
+    {
+      "candidates": 32,
+      "minutes": 16.196726833827174
+    },
+    {
+      "candidates": 64,
+      "minutes": 31.813324416040754
+    },
+    {
+      "candidates": 128,
+      "minutes": 63.046519580467915
+    },
+    {
+      "candidates": 256,
+      "minutes": 125.51290990932223
+    },
+    {
+      "candidates": 2048,
+      "minutes": 1000.0423745132828
+    }
+  ],
+  "estimate_assumptions": [
+    "Same distribution of trajectory lengths and early aborts as these eight samples",
+    "Same four environments, 60 Hz, speeds and thresholds; no extrapolation to 16/32/64 environments",
+    "Includes one startup/shutdown, excludes video export; small sample and tail idle time limit accuracy",
+    "Interrupted invocations excluded; this invocation completed all eight from initial reset"
+  ],
+  "validation": {
+    "no_time_limit": true,
+    "physics_preset": "practical60",
+    "native_gpu_physics": true,
+    "all_plans_valid": true,
+    "note": "under_center_alignment means projected cross-section aligns below ring plane, not actual centre entry or hooking"
+  },
+  "postprocess_recovery": {
+    "passed": true,
+    "original_error": {
+      "type": "KeyError",
+      "message": "'azimuth_deg'",
+      "dataset_complete": false
+    },
+    "physics_candidates_complete": 8,
+    "physics_rerun": false,
+    "repair": "Use staged6d azimuth/insertion axes in result plot",
+    "plot_wall_s": 0.4158945381641388
+  },
+  "original_controller_exit_code": 1,
+  "physics_completed": true,
+  "postprocessing_completed": true,
+  "source_snapshot_sha256": "27bd94827207a4130bc36a74c3ea1adbe6a52ad627d44178e643dfcddd5e35eb",
+  "measured_wall_time_note": "269.06 s through original process exit, including a plotting-only failure after all physics results were saved; repaired graph generated offline in the separately reported plot_wall_s. Interrupted attempts excluded."
+}

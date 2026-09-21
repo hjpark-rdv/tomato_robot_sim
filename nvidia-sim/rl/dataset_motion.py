@@ -37,7 +37,7 @@ def non_target_seated(env, path):
 
 def plan(env,kin,checker,params):
     center,neck,_=[v[0].cpu().numpy() for v in env._target_geometry()]
-    rotation,waypoints,direction=make_waypoints(center,neck,params)
+    rotation,waypoints,direction=make_waypoints(center,neck,params,getattr(env,'target_spec',{}).get('radius'))
     if params.get('goal', 'rise') == 'rise':
         waypoints = [w for w in waypoints if w[0] != 'pull']
     start=env.robot.data.joint_pos[0].cpu().numpy().copy();q=start.copy();position,orientation=kin.fk(q)
@@ -80,7 +80,10 @@ def plan(env,kin,checker,params):
             collision=checker.check(previous+(q-previous)*u);checked+=1
             if collision: return None,dict(reason='self_collision',step=step,phase=phases[step],pair=collision)
         previous=q
-    return dict(commands=commands,phases=phases,waypoints=diagnostics,direction=direction,
+    # Move command FK out of the serial physics loop into CPU planning workers.
+    command_positions=np.stack([kin.fk(command)[0] for command in commands])
+    return dict(commands=commands,command_positions=command_positions,phases=phases,waypoints=diagnostics,direction=direction,
+                trajectory_mode=params.get('trajectory_mode','legacy'),
                 orientation=rotation,prehook=waypoints[0][1],target_center=center,target_neck=neck),dict(passed=True,samples=checked,max_arm_sample_rad=.015,max_lift_sample_m=.001)
 
 
@@ -103,15 +106,26 @@ def retained_geometry(env):
 
 
 def execute_steps(env,planned,identity,app,limits):
+    audit=getattr(env,'tool_audit',None)
+    if audit:
+        from pose_video_capture import body_poses
+        audit.reset()
+    audit_ticks=0
+    staged=planned.get('trajectory_mode')=='staged6d'
+    if staged:
+        from trajectory_search import center_region
+        initial_local=env._geometry()[0][0].cpu().numpy()
+        initially_outside=not center_region(initial_local,env.target_spec['radius'])
+    center_entered=False;center_safe=False;center_time=None;center_duration=0.;entry_reached=False;lift_completed=False
     start_centers=env.elastic.fruit_centers().copy();start_rods=env.elastic.poses()[:,:3].copy()
     main_ids=env.elastic.chains['STEM_MainStem'];trace=[];env.contact_diagnostics=[]
     accepted=set(identity['accepted_hook_pedicels']);rear=set(identity['intended_ring_colliders'])
     intended_family=set(identity['target_proximal_pedicels'])|{identity['target_distal_pedicel']}
     first_contact=None;first_non_target=False;max_non=0.;inserted=False;guarded=False;hold=0;hold_ticks=int(round(limits['hold_seconds']/env.step_dt))
-    stiffness=torch.full_like(env.targets,800.);stiffness[:,env.lift_id]=50000.
+    stiffness=torch.full_like(env.targets,getattr(env.cfg,'arm_drive_stiffness',800.));stiffness[:,env.lift_id]=50000.
     damping=torch.full_like(env.targets,40.);damping[:,env.lift_id]=2500.
     env.robot.write_joint_stiffness_to_sim(stiffness);env.robot.write_joint_damping_to_sim(damping)
-    hold_command=None;abort=None;index=0; forced_hold=False; non_target_count=0; hooked_non_target=False
+    hold_command=None;hold_position=None;abort=None;index=0; forced_hold=False; non_target_count=0; hooked_non_target=False
     while index<len(planned['commands']) or (guarded and hold<hold_ticks):
         if not app.is_running(): raise RuntimeError('Simulation closed before candidate finished')
         if not guarded and index >= len(planned['commands']):
@@ -129,6 +143,11 @@ def execute_steps(env,planned,identity,app,limits):
         for _ in range(env.cfg.decimation):
             subcursor=len(env.contact_diagnostics)
             yield None  # The shared runner advances ALL slots exactly once.
+            if audit:
+                audit_ticks+=1
+                if audit.sample(body_poses(env),audit_ticks*env.physics_dt)['invalid_penetration']:
+                    abort='invalid_penetration'
+                    break
             if not guarded and phase in ('insert','rise','pull'):
                 hit=any(c['event']=='contact' and
                     ((c['a'] in rear and c['b'] in accepted) or (c['b'] in rear and c['a'] in accepted))
@@ -138,7 +157,7 @@ def execute_steps(env,planned,identity,app,limits):
                     ((c['a'] in rear and c['b'] in seated_paths) or (c['b'] in rear and c['a'] in seated_paths))
                     for c in env.contact_diagnostics[subcursor:]) if hit else False
                 if hit: inserted |= bool(env._geometry()[3][0])
-                if inner_hit and inserted:
+                if inner_hit and inserted and not staged:
                     guarded=True;hold_command=env.robot.data.joint_pos[0].cpu().numpy().copy()
                     env.targets[:]=torch.as_tensor(hold_command,device=env.device,dtype=torch.float32)
                     env.robot.set_joint_position_target(env.targets)
@@ -147,7 +166,7 @@ def execute_steps(env,planned,identity,app,limits):
                     damping[:]=5.;damping[:,env.lift_id]=500.
                     env.robot.write_joint_stiffness_to_sim(stiffness);env.robot.write_joint_damping_to_sim(damping)
         contacts=[c for c in env.contact_diagnostics[cursor:] if c['event']=='contact']
-        exact=[]
+        exact=[];wrong_hook_cache={}
         for c in contacts:
             robot,other=(c['a'],c['b']) if '/Robot/' in c['a'] else (c['b'],c['a'])
             target_pedicel=other in intended_family
@@ -157,19 +176,40 @@ def execute_steps(env,planned,identity,app,limits):
             if not target_pedicel and other != env.target_spec['path']+'/FruitCollider':
                 non_target_count += 1
                 if robot in rear and 'Pedicel' in other:
-                    hooked_non_target |= non_target_seated(env,other)
+                    if other not in wrong_hook_cache:wrong_hook_cache[other]=non_target_seated(env,other)
+                    hooked_non_target |= wrong_hook_cache[other]
             if robot in rear and other in accepted: exact.append(c)
-        inserted |= bool(env._geometry()[3][0])
+        geometry=env._geometry()
+        inserted |= bool(geometry[3][0])
         gap,seated,relative,seated_paths=retained_geometry(env)
         exact=[c for c in exact if c['a'] in seated_paths or c['b'] in seated_paths]
         centers=env.elastic.fruit_centers();rods=env.elastic.poses()[:,:3]
         displacement=float(np.linalg.norm(centers[env.target_index]-start_centers[env.target_index]))
         main_displacement=float(np.linalg.norm(rods[main_ids]-start_rods[main_ids],axis=1).max())
-        tracking_error=float(np.linalg.norm(env.pose_search_kin.fk(command)[0]-env.ring_pose()[0][0].cpu().numpy()))
+        if phase=='hold':
+            if hold_position is None:hold_position=env.pose_search_kin.fk(command)[0]
+            desired_position=hold_position
+        else:
+            desired_position=planned['command_positions'][index] if 'command_positions' in planned else env.pose_search_kin.fk(command)[0]
+        tracking_error=float(np.linalg.norm(desired_position-env.ring_pose()[0][0].cpu().numpy()))
         trace.append(dict(step=step,phase=phase,target_displacement_m=displacement,
             main_stem_displacement_m=main_displacement,cluster_centroid_displacement_m=float(np.linalg.norm(centers.mean(axis=0)-start_centers.mean(axis=0))),
             intended_contact=bool(exact),gap_m=gap,seated=seated,seated_pedicels=seated_paths,relative_anchor=relative.tolist(),
             inserted_ever=inserted,tracking_error_m=tracking_error,joints=env.robot.data.joint_pos[0].tolist(),command=np.asarray(command).tolist()))
+        if staged:
+            local=geometry[0][0].cpu().numpy()
+            crossed=initially_outside and center_region(local,env.target_spec['radius']) and phase in ('insert','rise','hold')
+            if crossed:
+                center_entered=True;center_duration+=env.step_dt
+                center_safe |= (displacement<=limits['target_displacement_m'] and main_displacement<=limits['main_displacement_m']
+                    and max_non<=limits['dangerous_non_target_force_N'] and not (env._broken[0] or env._other_broken)
+                    and not hooked_non_target and tracking_error<=.003)
+                if center_time is None:center_time=(step+1)*env.step_dt
+            entry_reached |= phase=='entry' and index+1<len(planned['phases']) and planned['phases'][index+1]!='entry' and tracking_error<=.003
+            lift_completed |= phase=='rise' and index==len(planned['commands'])-1 and tracking_error<=.003
+            trace[-1].update(fruit_center_in_hook_region=bool(crossed),center_entry_ever=center_entered,
+                            fruit_center_hook_xyz=local.tolist(),entry_reached=entry_reached,lift_completed=lift_completed)
+        if abort=='invalid_penetration':break
         if env.cfg.dataset_max_steps and len(trace) >= env.cfg.dataset_max_steps:
             abort='debug_step_limit';break
         if env._broken[0] or env._other_broken: abort='joint_break';break
@@ -187,6 +227,7 @@ def execute_steps(env,planned,identity,app,limits):
     stable=float(np.max(np.linalg.norm(np.asarray([r['relative_anchor'] for r in tail])-np.asarray(tail[-1]['relative_anchor']),axis=1))) if tail else None
     retained=(len(held)>=hold_ticks and all(r['seated'] for r in held) and
               sum(r['intended_contact'] for r in held)>=3 and stable<=limits['stable_relative_motion_m'])
+    if staged: retained=retained and lift_completed
     metrics=dict(non_target_contact_count=non_target_count,hooked_non_target=hooked_non_target,retained_hook=bool(retained),inserted=inserted,guarded_target_contact=guarded and not forced_hold,
         first_contact_object=first_contact['object'] if first_contact else None,first_contact=first_contact,
         first_contact_non_target=first_non_target,max_non_target_force_N=max_non,
@@ -198,4 +239,17 @@ def execute_steps(env,planned,identity,app,limits):
         max_tracking_error_m=max((r['tracking_error_m'] for r in trace),default=0.),
         hold_ticks=len(held),hold_contact_ticks=sum(r['intended_contact'] for r in held),
         stable_relative_motion_m=stable,abort_reason=abort,executed_steps=len(trace))
+    if audit:
+        metrics.update(physical_audit=audit.report(),physics_valid=audit.report()['passed'],
+            executed_physics_steps=audit_ticks,
+            max_tool_penetration_mm=max(0.,-audit.worst['gap_m']*1000) if audit.worst else 0.)
+        if not metrics['physics_valid']:
+            metrics['retained_hook']=False
+            retained=False;center_safe=False
+    if staged:
+        metrics.update(trajectory_mode='staged6d',entry_reached=entry_reached,
+            center_entry_achieved=center_entered,center_entry_time_s=center_time,
+            center_entry_safe=bool(center_safe),
+            center_entry_duration_s=center_duration,lift_completed=lift_completed,
+            highest_stage=('hook_retained' if retained else 'center_entry' if center_entered else 'entry_reached' if entry_reached else 'approaching'))
     return metrics,trace

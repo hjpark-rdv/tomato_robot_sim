@@ -1,0 +1,576 @@
+{
+  "num_envs": 64,
+  "candidates": 64,
+  "wall": {
+    "exit_code": 0,
+    "end_to_end_wall_s": 814.7020866535604
+  },
+  "counts": {
+    "excessive_displacement": 54,
+    "miss": 8,
+    "non_target_contact": 2
+  },
+  "center_entry_safe_count": 1,
+  "gpu_memory_peak_mib": 6191.0,
+  "rss_sum_peak_mib": 33045.53125,
+  "cpu_peak_percent": 2801.073844232142,
+  "cpu_rollout_median_percent": 116.64126463227093,
+  "gpu_util_rollout_median_percent": 25.0,
+  "seconds_per_candidate": 12.729720103961881,
+  "previous_4env_8candidate_seconds_per_candidate": 33.6320875,
+  "observed_case_throughput_ratio": 2.6420131177536774,
+  "comparison_caveat": "Different pool sizes and early-abort mixture; not an isolated optimization speedup. 64-case run has no refill; larger runs can amortize the tail.",
+  "memory_caveat": "Sum of process RSS double-counts shared memory. GPU memory includes display and other processes.",
+  "first_eight_comparison": [
+    {
+      "candidate_id": "candidate_00000",
+      "identical_joint_commands": true,
+      "original_result": "miss",
+      "result": "miss",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.00023718692323052015
+    },
+    {
+      "candidate_id": "candidate_00001",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.014687501587746371
+    },
+    {
+      "candidate_id": "candidate_00002",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.00026768651300440593
+    },
+    {
+      "candidate_id": "candidate_00003",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.0011550949009196676
+    },
+    {
+      "candidate_id": "candidate_00004",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.005825485881984921
+    },
+    {
+      "candidate_id": "candidate_00005",
+      "identical_joint_commands": true,
+      "original_result": "miss",
+      "result": "miss",
+      "original_center_entry_safe": true,
+      "center_entry_safe": true,
+      "target_displacement_difference_mm": 0.0038070947167082037
+    },
+    {
+      "candidate_id": "candidate_00006",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": -0.002611332435800695
+    },
+    {
+      "candidate_id": "candidate_00007",
+      "identical_joint_commands": true,
+      "original_result": "excessive_displacement",
+      "result": "excessive_displacement",
+      "original_center_entry_safe": false,
+      "center_entry_safe": false,
+      "target_displacement_difference_mm": 0.29404421263577385
+    }
+  ],
+  "run_dir": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_175044_staged6d_64env_videos",
+  "physics": {
+    "preset": "practical60",
+    "hz": 60,
+    "armature": 0.0005,
+    "solver": "PGS",
+    "position_iterations": 64,
+    "velocity_iterations": 4
+  },
+  "planning_workers": 16,
+  "physics_threads": 8,
+  "tests_passed": 35,
+  "video_status": "complete",
+  "video_gallery": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_175044_staged6d_64env_videos/representative_videos_2x/index.html",
+  "representative_videos": 2,
+  "diagnostic_videos": 2,
+  "video_postprocessing_wall_s": 843.3948744023219,
+  "video_replay_comparisons": {
+    "candidate_00005": {
+      "passed": true,
+      "scope": "Outcome and aggregate metrics within declared tolerances; not bitwise trajectory equality",
+      "checks": {
+        "result": {
+          "source": "miss",
+          "replay": "miss",
+          "passed": true
+        },
+        "hook_success": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "retained_hook": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_achieved": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "center_entry_safe": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "lift_completed": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "target_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "other_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "abort_reason": {
+          "source": null,
+          "replay": null,
+          "passed": true
+        },
+        "first_contact_object": {
+          "source": "/World/envs/env_N/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider",
+          "replay": "/World/envs/env_N/ElasticPlant/TRUSS_Pedicel_proximal_07_02/StemCollider",
+          "passed": true
+        },
+        "target_max_displacement_m": {
+          "source": 0.01981327656691429,
+          "replay": 0.019807424832448867,
+          "absolute_difference": 5.851734465423669e-06,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "main_stem_max_displacement_m": {
+          "source": 0.024027317762374878,
+          "replay": 0.02401873655617237,
+          "absolute_difference": 8.581206202507019e-06,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "executed_steps": {
+          "source": 2412,
+          "replay": 2412,
+          "tolerance": 6,
+          "passed": true
+        }
+      },
+      "command_sha256": "c8664a340e5246075a6e98a9f22655e2b452451279262fbd6e42206083868a33",
+      "trace": {
+        "passed": true,
+        "checks": {
+          "length": {
+            "passed": true,
+            "source": 2412,
+            "replay": 2412,
+            "tolerance_steps": 6
+          },
+          "joints": {
+            "max_absolute_difference": 5.173683166503906e-05,
+            "tolerance": 0.02,
+            "passed": true
+          },
+          "lift": {
+            "max_absolute_difference_m": 9.5367431640625e-07,
+            "tolerance_m": 0.002,
+            "passed": true
+          },
+          "target_displacement_m": {
+            "max_absolute_difference": 0.0006861719372214413,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "main_stem_displacement_m": {
+            "max_absolute_difference": 0.0011685816571116447,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "phases": {
+            "passed": true
+          }
+        },
+        "scope": "Aligned control steps; arm joint tolerance 0.02 rad, lift/displacement tolerance 2 mm"
+      }
+    },
+    "candidate_00000": {
+      "passed": false,
+      "scope": "Outcome and aggregate metrics within declared tolerances; not bitwise trajectory equality",
+      "checks": {
+        "result": {
+          "source": "miss",
+          "replay": "miss",
+          "passed": true
+        },
+        "hook_success": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "retained_hook": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_achieved": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_safe": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "lift_completed": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "target_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "other_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "abort_reason": {
+          "source": null,
+          "replay": null,
+          "passed": true
+        },
+        "first_contact_object": {
+          "source": "/World/envs/env_N/HarvestableStem/Harvestables/Tomato_07/PedicelCollider",
+          "replay": "/World/envs/env_N/HarvestableStem/Harvestables/Tomato_07/PedicelCollider",
+          "passed": true
+        },
+        "target_max_displacement_m": {
+          "source": 0.015354686951959188,
+          "replay": 0.018473891883962906,
+          "absolute_difference": 0.0031192049320037177,
+          "tolerance": 0.002,
+          "passed": false
+        },
+        "main_stem_max_displacement_m": {
+          "source": 0.020976873114705086,
+          "replay": 0.02067733183503151,
+          "absolute_difference": 0.00029954127967357635,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "executed_steps": {
+          "source": 2683,
+          "replay": 2683,
+          "tolerance": 6,
+          "passed": true
+        }
+      },
+      "command_sha256": "a00fc22258cdff5a3aec7282c5d9383d1f7668da50bd9a5f88ee552bffc22159",
+      "trace": {
+        "passed": false,
+        "checks": {
+          "length": {
+            "passed": true,
+            "source": 2683,
+            "replay": 2683,
+            "tolerance_steps": 6
+          },
+          "joints": {
+            "max_absolute_difference": 0.0007581710815429688,
+            "tolerance": 0.02,
+            "passed": true
+          },
+          "lift": {
+            "max_absolute_difference_m": 1.901388168334961e-05,
+            "tolerance_m": 0.002,
+            "passed": true
+          },
+          "target_displacement_m": {
+            "max_absolute_difference": 0.010061593731621934,
+            "tolerance": 0.002,
+            "passed": false
+          },
+          "main_stem_displacement_m": {
+            "max_absolute_difference": 0.015291632153093815,
+            "tolerance": 0.002,
+            "passed": false
+          },
+          "phases": {
+            "passed": true
+          }
+        },
+        "scope": "Aligned control steps; arm joint tolerance 0.02 rad, lift/displacement tolerance 2 mm"
+      }
+    },
+    "candidate_00001": {
+      "passed": true,
+      "scope": "Outcome and aggregate metrics within declared tolerances; not bitwise trajectory equality",
+      "checks": {
+        "result": {
+          "source": "excessive_displacement",
+          "replay": "excessive_displacement",
+          "passed": true
+        },
+        "hook_success": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "retained_hook": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_achieved": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_safe": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "lift_completed": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "target_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "other_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "abort_reason": {
+          "source": "excessive_displacement",
+          "replay": "excessive_displacement",
+          "passed": true
+        },
+        "first_contact_object": {
+          "source": "/World/envs/env_N/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "replay": "/World/envs/env_N/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "passed": true
+        },
+        "target_max_displacement_m": {
+          "source": 0.020540280060315746,
+          "replay": 0.02055584191799916,
+          "absolute_difference": 1.5561857683414615e-05,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "main_stem_max_displacement_m": {
+          "source": 0.025271547958254814,
+          "replay": 0.0252925343811512,
+          "absolute_difference": 2.0986422896385193e-05,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "executed_steps": {
+          "source": 970,
+          "replay": 970,
+          "tolerance": 6,
+          "passed": true
+        }
+      },
+      "command_sha256": "527a1ccb79587a7dcf98851eb55dc8cc4a1d622991defa01fa8f0ee123141d9d",
+      "trace": {
+        "passed": true,
+        "checks": {
+          "length": {
+            "passed": true,
+            "source": 970,
+            "replay": 970,
+            "tolerance_steps": 6
+          },
+          "joints": {
+            "max_absolute_difference": 1.5497207641601562e-06,
+            "tolerance": 0.02,
+            "passed": true
+          },
+          "lift": {
+            "max_absolute_difference_m": 2.9802322387695312e-08,
+            "tolerance_m": 0.002,
+            "passed": true
+          },
+          "target_displacement_m": {
+            "max_absolute_difference": 1.5561857683414615e-05,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "main_stem_displacement_m": {
+            "max_absolute_difference": 2.0986422896385193e-05,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "phases": {
+            "passed": true
+          }
+        },
+        "scope": "Aligned control steps; arm joint tolerance 0.02 rad, lift/displacement tolerance 2 mm"
+      }
+    },
+    "candidate_00049": {
+      "passed": true,
+      "scope": "Outcome and aggregate metrics within declared tolerances; not bitwise trajectory equality",
+      "checks": {
+        "result": {
+          "source": "non_target_contact",
+          "replay": "non_target_contact",
+          "passed": true
+        },
+        "hook_success": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "retained_hook": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "center_entry_achieved": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "center_entry_safe": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "lift_completed": {
+          "source": true,
+          "replay": true,
+          "passed": true
+        },
+        "target_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "other_broken": {
+          "source": false,
+          "replay": false,
+          "passed": true
+        },
+        "abort_reason": {
+          "source": null,
+          "replay": null,
+          "passed": true
+        },
+        "first_contact_object": {
+          "source": "/World/envs/env_N/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "replay": "/World/envs/env_N/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "passed": true
+        },
+        "target_max_displacement_m": {
+          "source": 0.01568990328393538,
+          "replay": 0.015413330559979904,
+          "absolute_difference": 0.0002765727239554764,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "main_stem_max_displacement_m": {
+          "source": 0.017934124916791916,
+          "replay": 0.017947843298316002,
+          "absolute_difference": 1.3718381524085999e-05,
+          "tolerance": 0.002,
+          "passed": true
+        },
+        "executed_steps": {
+          "source": 2298,
+          "replay": 2298,
+          "tolerance": 6,
+          "passed": true
+        }
+      },
+      "command_sha256": "95014824a2349aef1af28eed638c74b4a6b93efeaf0928b23ff7febf38bd3998",
+      "trace": {
+        "passed": true,
+        "checks": {
+          "length": {
+            "passed": true,
+            "source": 2298,
+            "replay": 2298,
+            "tolerance_steps": 6
+          },
+          "joints": {
+            "max_absolute_difference": 0.00017138570547103882,
+            "tolerance": 0.02,
+            "passed": true
+          },
+          "lift": {
+            "max_absolute_difference_m": 2.2351741790771484e-06,
+            "tolerance_m": 0.002,
+            "passed": true
+          },
+          "target_displacement_m": {
+            "max_absolute_difference": 0.0005368258454696204,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "main_stem_displacement_m": {
+            "max_absolute_difference": 0.000724265817552805,
+            "tolerance": 0.002,
+            "passed": true
+          },
+          "phases": {
+            "passed": true
+          }
+        },
+        "scope": "Aligned control steps; arm joint tolerance 0.02 rad, lift/displacement tolerance 2 mm"
+      }
+    }
+  },
+  "physical_audit_corrections": {
+    "candidate_00049": {
+      "passed": false,
+      "reason": "고리와 송이 줄기 관통 확인: 삽입 중 최대 1.79mm 겹침 후 반대편 통과",
+      "classification": "invalid_penetration",
+      "evidence_file": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_candidate49_collision_audit/report.json",
+      "evidence_plot": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_candidate49_collision_audit/penetration_evidence.png",
+      "scope": "Recorded single-env replay; original batched body trajectory was not recorded",
+      "exclude_from_valid_trajectory_analysis": true
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "candidate_id": "candidate_00049",
+  "physical_validity": "invalid_penetration",
+  "source": "saved 15 Hz native body poses of verified single-env replay",
+  "target": "Tomato_05",
+  "penetrating_pair": [
+    "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_22",
+    "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider"
+  ],
+  "phase": "insert",
+  "maximum_sampled_penetration_mm": 1.7928186962978134,
+  "wire_diameter_mm": 2.0,
+  "stem_diameter_mm": 1.8129823946893644,
+  "normal_direction_min_adjacent_dot": 0.9996845545433656,
+  "crossing_samples": [
+    {
+      "time_s": 16.53333333333333,
+      "surface_gap_mm": 1.0945695373894981,
+      "signed_axis_separation_mm": 3.0010607347341813,
+      "closest_tool_parameter": 0.31073966962209765,
+      "closest_stem_parameter": 0.9212239402223243
+    },
+    {
+      "time_s": 16.6,
+      "surface_gap_mm": -1.1038741128729979,
+      "signed_axis_separation_mm": 0.8026170844716852,
+      "closest_tool_parameter": 0.3925741912616156,
+      "closest_stem_parameter": 0.9645527309820813
+    },
+    {
+      "time_s": 16.666666666666668,
+      "surface_gap_mm": -1.2266366102720596,
+      "signed_axis_separation_mm": 0.6798545870726234,
+      "closest_tool_parameter": 0.5318289849343942,
+      "closest_stem_parameter": 0.909485069237909
+    },
+    {
+      "time_s": 16.733333333333334,
+      "surface_gap_mm": -1.7928186962978134,
+      "signed_axis_separation_mm": 0.11367250104686892,
+      "closest_tool_parameter": 0.4542103327112859,
+      "closest_stem_parameter": 0.86420922557906
+    },
+    {
+      "time_s": 16.8,
+      "surface_gap_mm": -0.10246143241762025,
+      "signed_axis_separation_mm": -1.8040297649270625,
+      "closest_tool_parameter": 0.39276630371321475,
+      "closest_stem_parameter": 0.8458288562705065
+    },
+    {
+      "time_s": 16.866666666666667,
+      "surface_gap_mm": 2.4658518799301197,
+      "signed_axis_separation_mm": -4.372343077274802,
+      "closest_tool_parameter": 0.5603524819615061,
+      "closest_stem_parameter": 0.9098912953784358
+    }
+  ],
+  "notes": [
+    "Contacts exist; collision is not disabled for this pair.",
+    "Positive-to-negative separation across the same segment interiors, with deep capsule overlap.",
+    "This is not proof that 60 Hz alone is the cause.",
+    "The screenshot is later than the confirmed crossing.",
+    "Original batched metrics match this replay within declared tolerances; full batched body poses were not saved.",
+    "Do not treat the existing non_target_contact label as evidence of a physically valid trajectory."
+  ],
+  "physical_audit": {
+    "passed": false,
+    "reason": "고리와 송이 줄기 관통 확인: 삽입 중 최대 1.79mm 겹침 후 반대편 통과",
+    "classification": "invalid_penetration",
+    "evidence_file": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_candidate49_collision_audit/report.json",
+    "evidence_plot": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_candidate49_collision_audit/penetration_evidence.png",
+    "scope": "Recorded single-env replay; original batched body trajectory was not recorded",
+    "exclude_from_valid_trajectory_analysis": true
+  },
+  "other_replay_screening": {
+    "candidate_00005": {
+      "arc": {
+        "min_surface_gap_mm": -0.26611630988834856,
+        "time_s": 25.6,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_29",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "final_min_gap_mm": -0.2262201648910708,
+        "samples_deeper_than_0_5mm": 0
+      },
+      "rails": {
+        "min_surface_gap_mm": 2.1424372653805976,
+        "time_s": 36.666666666666664,
+        "tool": "RailCollision/rail_01",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_07/StemCollider",
+        "final_min_gap_mm": 2.1951137155137577,
+        "samples_deeper_than_0_5mm": 0
+      }
+    },
+    "candidate_00001": {
+      "arc": {
+        "min_surface_gap_mm": 3.4068138096801985,
+        "time_s": 16.166666666666668,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_17",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "final_min_gap_mm": 3.4068138096801985,
+        "samples_deeper_than_0_5mm": 0
+      },
+      "rails": {
+        "min_surface_gap_mm": 35.235947477348354,
+        "time_s": 15.666666666666666,
+        "tool": "RailCollision/rail_01",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "final_min_gap_mm": 37.257759398179715,
+        "samples_deeper_than_0_5mm": 0
+      }
+    },
+    "candidate_00000": {
+      "arc": {
+        "min_surface_gap_mm": -0.7005403606756256,
+        "time_s": 32.46666666666667,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_30",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_07/StemCollider",
+        "final_min_gap_mm": -0.1879104458690034,
+        "samples_deeper_than_0_5mm": 84
+      },
+      "rails": {
+        "min_surface_gap_mm": 2.377220947243266,
+        "time_s": 30.599999999999998,
+        "tool": "RailCollision/rail_01",
+        "stem": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "final_min_gap_mm": 15.894240225122179,
+        "samples_deeper_than_0_5mm": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,1400 @@
+{
+  "scope": "Tomato_05 candidate_00049 contact correction; small representative regression, not all 64 candidates or real-world calibration",
+  "default_preset": "contact120",
+  "physics_hz": 120,
+  "control_hz": 60,
+  "solver": "PGS",
+  "position_iterations": 64,
+  "velocity_iterations": 4,
+  "armature_kg_m2": 0.0005,
+  "tool_overlap_tolerance_m": 0.0005,
+  "unchanged": [
+    "geometry",
+    "collision shape size",
+    "mass",
+    "stiffness",
+    "damping",
+    "friction",
+    "break thresholds",
+    "joint command sequence"
+  ],
+  "candidate49_original_deepest_overlap_mm": 1.7928173807579553,
+  "candidate49_fixed_audit": {
+    "passed": true,
+    "sample_count": 1990,
+    "tolerance_m": 0.0005,
+    "worst": {
+      "time_s": 16.466666666666665,
+      "gap_m": -0.00019599475717615804,
+      "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+      "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+      "invalid_penetration": false
+    },
+    "violating_steps": 0,
+    "scope": "Every sampled physics step; tool arc and rails vs plant capsule/sphere shapes; not mesh/proximal housing collision certification"
+  },
+  "candidate49_fixed_result": {
+    "result": "excessive_displacement",
+    "events": [
+      "non_target_contact",
+      "excessive_displacement",
+      "miss"
+    ],
+    "hook_success": false,
+    "executed": true
+  },
+  "baseline_guard_result": {
+    "result": "invalid_physics",
+    "events": [
+      "invalid_penetration"
+    ],
+    "hook_success": false,
+    "executed": true,
+    "physics_valid": false,
+    "exclude_from_valid_trajectory_analysis": true
+  },
+  "comparisons": [
+    {
+      "experiment": "spec_offset1_60",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "speculative_offset1",
+      "worst": {
+        "time_s": 16.433333333333334,
+        "gap_m": -0.001590704457282354,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 22,
+      "sample_count": 1150,
+      "result": "incomplete",
+      "abort_reason": "debug_step_limit",
+      "sim_seconds": 19.166666666666668,
+      "wall_s": 96.8477283436805
+    },
+    {
+      "experiment": "pgs60_128_offset2",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 128,
+      "velocity_iterations": 16,
+      "contact_policy": "offset2",
+      "worst": {
+        "time_s": 16.566666666666666,
+        "gap_m": -0.00042953163194471696,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": false
+      },
+      "passed": true,
+      "violating_steps": 0,
+      "sample_count": 994,
+      "result": "excessive_displacement",
+      "abort_reason": "excessive_displacement",
+      "sim_seconds": 16.566666666666666,
+      "wall_s": 168.11946528684348
+    },
+    {
+      "experiment": "baseline49_guard",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.183333333333334,
+        "gap_m": -0.0005255647857435094,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_22",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 1,
+      "sample_count": 971,
+      "result": "invalid_physics",
+      "abort_reason": "invalid_penetration",
+      "sim_seconds": 16.183333333333334,
+      "wall_s": 45.166910180822015
+    },
+    {
+      "experiment": "pgs60_soft200",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 17.0,
+        "gap_m": -0.0018972316168520142,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_23",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 21,
+      "sample_count": 1150,
+      "result": "incomplete",
+      "abort_reason": "debug_step_limit",
+      "sim_seconds": 19.166666666666668,
+      "wall_s": 115.8702299920842
+    },
+    {
+      "experiment": "pgs120",
+      "complete": true,
+      "physics_hz": 120,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.466666666666665,
+        "gap_m": -0.00019599475717615804,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": false
+      },
+      "passed": true,
+      "violating_steps": 0,
+      "sample_count": 1990,
+      "result": "excessive_displacement",
+      "abort_reason": "excessive_displacement",
+      "sim_seconds": 16.583333333333332,
+      "wall_s": 133.30759528186172
+    },
+    {
+      "experiment": "pgs60_v16",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 16,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.416666666666668,
+        "gap_m": -0.0015170364387854514,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 21,
+      "sample_count": 1150,
+      "result": "incomplete",
+      "abort_reason": "debug_step_limit",
+      "sim_seconds": 19.166666666666668,
+      "wall_s": 97.33717141393572
+    },
+    {
+      "experiment": "baseline60",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.733333333333334,
+        "gap_m": -0.0017928173807579553,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_22",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Rachis_08/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 33,
+      "sample_count": 1150,
+      "result": "incomplete",
+      "abort_reason": "debug_step_limit",
+      "sim_seconds": 19.166666666666668,
+      "wall_s": 96.98245858307928
+    },
+    {
+      "experiment": "fixed49_video",
+      "complete": true,
+      "physics_hz": 120,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.466666666666665,
+        "gap_m": -0.00019599475717615804,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": false
+      },
+      "passed": true,
+      "violating_steps": 0,
+      "sample_count": 1990,
+      "result": "excessive_displacement",
+      "abort_reason": "excessive_displacement",
+      "sim_seconds": 16.583333333333332,
+      "wall_s": 84.6532318815589
+    },
+    {
+      "experiment": "tgs60",
+      "complete": true,
+      "physics_hz": 60,
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": null,
+      "passed": true,
+      "violating_steps": 0,
+      "sample_count": 1,
+      "result": "miss",
+      "abort_reason": "joint_break",
+      "sim_seconds": 0.016666666666666666,
+      "wall_s": 0.07263543456792831
+    },
+    {
+      "experiment": "pgs120_32_video",
+      "complete": true,
+      "physics_hz": 120,
+      "position_iterations": 32,
+      "velocity_iterations": 4,
+      "contact_policy": "legacy",
+      "worst": {
+        "time_s": 16.55,
+        "gap_m": -0.0005835685599822006,
+        "tool": "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_21",
+        "plant": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_07_01/StemCollider",
+        "invalid_penetration": true
+      },
+      "passed": false,
+      "violating_steps": 25,
+      "sample_count": 1986,
+      "result": "excessive_displacement",
+      "abort_reason": "excessive_displacement",
+      "sim_seconds": 16.55,
+      "wall_s": 117.98690299224108
+    }
+  ],
+  "timing": {
+    "before_wall_s": 45.166910180822015,
+    "before_sim_s": 16.183333333333334,
+    "after_wall_s": 84.6532318815589,
+    "after_sim_s": 16.583333333333332,
+    "scope": "sequential single env, pose capture and per-step audit enabled, excludes initialization/render; termination differs"
+  },
+  "video_index": "runs/20260921_200605_candidate49_contact_fix_2x/index.html",
+  "regression4_complete": true,
+  "mechanics_complete": true,
+  "mechanics": {
+    "scope": "mechanics fixture only; no robot approach/IK or harvest success claim",
+    "tolerances": {
+      "idle_drift_m": 0.003,
+      "attachment_gap_m": 0.0005,
+      "recovery_fraction": 0.25,
+      "ring_penetration_m": 0.001
+    },
+    "checks": {
+      "idle": {
+        "passed": true,
+        "last": {
+          "phase": "idle",
+          "time_s": 5.0,
+          "target_displacement_m": 7.653170867607665e-05,
+          "target_position_xyz": [
+            -0.7221521815755361,
+            1.0966895015713858,
+            0.9621592712174475
+          ],
+          "main_displacement_m": 0.0002090352825343946,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true,
+          "attachment_gap_m": 1.940733091032598e-05
+        }
+      },
+      "bending_recovery": {
+        "passed": true,
+        "peak_m": 0.01809816032229386,
+        "residual_m": 0.0003265052806566176,
+        "max_attachment_gap_m": 2.961007339763455e-05
+      },
+      "native_break": {
+        "passed": true,
+        "last": {
+          "phase": "overload",
+          "time_s": 10.008333333333333,
+          "target_displacement_m": 0.0025647119282508814,
+          "target_position_xyz": [
+            -0.7196829292880252,
+            1.0969675741282312,
+            0.9617396004076636
+          ],
+          "main_displacement_m": 0.00033371028543606555,
+          "target_broken": true,
+          "other_broken": false,
+          "finite": true
+        },
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_5",
+            "step": 1200
+          }
+        ],
+        "force_N": 6.0
+      },
+      "reset": {
+        "passed": true,
+        "last": {
+          "phase": "reset_recovery",
+          "time_s": 12.008333333333333,
+          "target_displacement_m": 7.889581412161318e-05,
+          "target_position_xyz": [
+            -0.7221504162660909,
+            1.0966882007044967,
+            0.9621602788223406
+          ],
+          "main_displacement_m": 0.00021356392321588073,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true
+        }
+      },
+      "ring_retention": {
+        "passed": true,
+        "scope": "preinserted ring fixture; not an approach solution or guarantee for all orientations"
+      }
+    },
+    "wall_s": 271.2795087993145,
+    "ring_fixture": {
+      "target": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider",
+      "robot_controlled": false,
+      "starts_preinserted": true,
+      "geometry": "original 32 half-ring capsules and two rails; no proximal assembly",
+      "trials": [
+        {
+          "angle_deg": 0.0,
+          "target_contact_count": 530,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 1.8871481118144838e-06,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.005317966450476527,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 90.0,
+          "target_contact_count": 510,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 3.470905948280904e-06,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.006194654690082917,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 180.0,
+          "target_contact_count": 534,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 5.719061910227112e-07,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.005330278686936939,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 270.0,
+          "target_contact_count": 506,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 4.433098230244878e-06,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.006328113923445915,
+          "broken": false,
+          "retention_passed": true
+        }
+      ]
+    },
+    "passed": true
+  },
+  "unit_test_count": 37,
+  "audit_setup4_smoke": {
+    "complete": true,
+    "same_live_shape_count": 124,
+    "endpoint_delta_m": 0.0,
+    "outcomes": [
+      {
+        "env_index": 0,
+        "classification": {
+          "result": "incomplete",
+          "events": [
+            "incomplete"
+          ],
+          "hook_success": false,
+          "executed": true
+        },
+        "audit": {
+          "passed": true,
+          "sample_count": 4,
+          "tolerance_m": 0.0005,
+          "worst": null,
+          "violating_steps": 0,
+          "scope": "Every sampled physics step; tool arc and rails vs plant capsule/sphere shapes; not mesh/proximal housing collision certification"
+        }
+      },
+      {
+        "env_index": 1,
+        "classification": {
+          "result": "incomplete",
+          "events": [
+            "incomplete"
+          ],
+          "hook_success": false,
+          "executed": true
+        },
+        "audit": {
+          "passed": true,
+          "sample_count": 4,
+          "tolerance_m": 0.0005,
+          "worst": null,
+          "violating_steps": 0,
+          "scope": "Every sampled physics step; tool arc and rails vs plant capsule/sphere shapes; not mesh/proximal housing collision certification"
+        }
+      },
+      {
+        "env_index": 2,
+        "classification": {
+          "result": "incomplete",
+          "events": [
+            "incomplete"
+          ],
+          "hook_success": false,
+          "executed": true
+        },
+        "audit": {
+          "passed": true,
+          "sample_count": 4,
+          "tolerance_m": 0.0005,
+          "worst": null,
+          "violating_steps": 0,
+          "scope": "Every sampled physics step; tool arc and rails vs plant capsule/sphere shapes; not mesh/proximal housing collision certification"
+        }
+      },
+      {
+        "env_index": 3,
+        "classification": {
+          "result": "incomplete",
+          "events": [
+            "incomplete"
+          ],
+          "hook_success": false,
+          "executed": true
+        },
+        "audit": {
+          "passed": true,
+          "sample_count": 4,
+          "tolerance_m": 0.0005,
+          "worst": null,
+          "violating_steps": 0,
+          "scope": "Every sampled physics step; tool arc and rails vs plant capsule/sphere shapes; not mesh/proximal housing collision certification"
+        }
+      }
+    ]
+  },
+  "regression4_summary": {
+    "total_candidates": 4,
+    "executed_candidates": 4,
+    "completed_physics_candidates": 4,
+    "counts": {
+      "success_target_hook": 0,
+      "miss": 2,
+      "non_target_contact": 0,
+      "excessive_displacement": 2,
+      "ik_failure": 0,
+      "planning_failure": 0,
+      "incomplete": 0,
+      "invalid_physics": 0
+    },
+    "success_rate_of_completed_physics": 0.0,
+    "success_rate_of_all_candidates": 0.0,
+    "invalid_physics_candidates": 0,
+    "non_target_contact_event_count": 4,
+    "elapsed_wall_s": 433.04266977030784,
+    "candidates_per_second": 0.009236965036543993,
+    "physics_device": "gpu",
+    "tensor_device": "cpu",
+    "solver": "PGS",
+    "experimental": true,
+    "requested_candidates": 4,
+    "completed_candidates": 4,
+    "pending_candidates": 0,
+    "session_completed_candidates": 4,
+    "initialization_wall_s": 19.655089349485934,
+    "rollout_wall_s": 413.4006243245676,
+    "estimated_remaining_minutes": 0.0,
+    "estimated_total_minutes": 7.217595227900892,
+    "estimate_basis": "measured full candidate throughput including planning/reset; candidate lengths vary",
+    "physics_step_timings": {
+      "steps": 5368,
+      "write_s": 6.390073446556926,
+      "physics_s": 340.0899938205257,
+      "read_s": 2.5039161490276456
+    },
+    "rollout_step_timings": {
+      "steps": 5366,
+      "write_s": 6.3881495809182525,
+      "physics_s": 339.91464772541076,
+      "read_s": 2.5030669486150146
+    },
+    "phase_timings": {
+      "batch_reset_s": 0.06841540336608887,
+      "planning_s": 3.7021194584667683,
+      "execution_and_label_s": 59.669598968699574,
+      "result_save_s": 1.0331586617976427
+    },
+    "schedule": "continuous",
+    "planning_workers": 4,
+    "planning_timing_basis": "main-thread wait for CPU preplanning",
+    "cpu_planning_progress": {
+      "completed": 4,
+      "total": 4,
+      "workers": 4,
+      "worker_pids": [
+        29326,
+        29329,
+        29330,
+        29331
+      ],
+      "elapsed_wall_s": 3.6473425943404436,
+      "sum_worker_planning_s": 7.685963841155171
+    },
+    "active_env_step_fraction": 0.6576593365635482,
+    "benchmark_only": false,
+    "execution_complete": true,
+    "dataset_complete": true,
+    "num_envs": 4,
+    "target": "Tomato_05",
+    "reset_and_camera_validation_passed": true,
+    "cpu_planning": {
+      "completed": 4,
+      "total": 4,
+      "workers": 4,
+      "worker_pids": [
+        29326,
+        29329,
+        29330,
+        29331
+      ],
+      "elapsed_wall_s": 4.1138667380437255,
+      "sum_worker_planning_s": 7.685963841155171,
+      "complete": true
+    }
+  },
+  "regression4_results": [
+    {
+      "candidate_id": "candidate_00000",
+      "result": "miss",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.2474750381928712,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "episode_duration_s": 44.71666666666667,
+      "same_saved_commands": true
+    },
+    {
+      "candidate_id": "candidate_00001",
+      "result": "excessive_displacement",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.29592414650422055,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "episode_duration_s": 16.133333333333333,
+      "same_saved_commands": true
+    },
+    {
+      "candidate_id": "candidate_00005",
+      "result": "miss",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.3482726526525485,
+      "center_entry_safe": true,
+      "center_entry_duration_s": 0.8333333333333343,
+      "episode_duration_s": 40.2,
+      "same_saved_commands": true
+    },
+    {
+      "candidate_id": "candidate_00049",
+      "result": "excessive_displacement",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.19599837757504301,
+      "center_entry_safe": false,
+      "center_entry_duration_s": 0.0,
+      "episode_duration_s": 16.583333333333332,
+      "same_saved_commands": true
+    }
+  ],
+  "regression4_reset": {
+    "repeated_reset": [
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      }
+    ],
+    "independent_reset": [
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      }
+    ],
+    "perturbed_slot_restored": {
+      "passed": true,
+      "max_abs_by_field": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "tolerance": 1e-06
+    },
+    "clone_equivalence": [
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true,
+        "tolerance": 0.0001
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true,
+        "tolerance": 0.0001
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true,
+        "tolerance": 0.0001
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true,
+        "tolerance": 0.0001
+      }
+    ],
+    "contact_routing_faults": [],
+    "observation_pose_resets": {
+      "repeated_reset": [
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        },
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        },
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        },
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        }
+      ],
+      "independent_reset": [
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        },
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        },
+        {
+          "passed": true,
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "tolerance": 1e-06
+        }
+      ],
+      "perturbed_slot_restored": {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      "clone_equivalence": [
+        {
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "passed": true,
+          "tolerance": 0.0001
+        },
+        {
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "passed": true,
+          "tolerance": 0.0001
+        },
+        {
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "passed": true,
+          "tolerance": 0.0001
+        },
+        {
+          "max_abs_by_field": {
+            "robot_q": 0.0,
+            "robot_dq": 0.0,
+            "robot_root": 0.0,
+            "elastic_q": 0.0,
+            "elastic_dq": 0.0,
+            "elastic_bodies": 0.0,
+            "fruits": 0.0,
+            "preload": 0.0,
+            "stiffness": 0.0,
+            "damping": 0.0
+          },
+          "passed": true,
+          "tolerance": 0.0001
+        }
+      ],
+      "contact_routing_faults": []
+    },
+    "render_preserves_state": [
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      }
+    ],
+    "legacy_mixed_unit_clone_check": [
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true
+      },
+      {
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "passed": true
+      }
+    ],
+    "identical_command_clone_check": [
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      }
+    ],
+    "clone_physical_deltas": [
+      {
+        "env_index": 0,
+        "max_body_position_delta_m": 0.0,
+        "max_fruit_position_delta_m": 0.0,
+        "max_plant_joint_position_delta_rad": 0.0,
+        "max_plant_joint_velocity_delta_rad_s": 0.0,
+        "target_broken": false,
+        "other_broken": false,
+        "break_events": []
+      },
+      {
+        "env_index": 1,
+        "max_body_position_delta_m": 0.0,
+        "max_fruit_position_delta_m": 0.0,
+        "max_plant_joint_position_delta_rad": 0.0,
+        "max_plant_joint_velocity_delta_rad_s": 0.0,
+        "target_broken": false,
+        "other_broken": false,
+        "break_events": []
+      },
+      {
+        "env_index": 2,
+        "max_body_position_delta_m": 0.0,
+        "max_fruit_position_delta_m": 0.0,
+        "max_plant_joint_position_delta_rad": 0.0,
+        "max_plant_joint_velocity_delta_rad_s": 0.0,
+        "target_broken": false,
+        "other_broken": false,
+        "break_events": []
+      },
+      {
+        "env_index": 3,
+        "max_body_position_delta_m": 0.0,
+        "max_fruit_position_delta_m": 0.0,
+        "max_plant_joint_position_delta_rad": 0.0,
+        "max_plant_joint_velocity_delta_rad_s": 0.0,
+        "target_broken": false,
+        "other_broken": false,
+        "break_events": []
+      }
+    ],
+    "after_step_reset": [
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      },
+      {
+        "passed": true,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.0,
+          "elastic_dq": 0.0,
+          "elastic_bodies": 0.0,
+          "fruits": 0.0,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      }
+    ]
+  }
+}

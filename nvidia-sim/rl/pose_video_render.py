@@ -211,7 +211,13 @@ def main():
             repair_label = ' | repaired wire colliders' if model_update.get('enabled') else ''
             if 'title' in record:
                 draw.text((14,8), record['title']+f' | Tomato_05 | {speed:g}x',font=font,fill='white')
-                draw.text((14,35), record['subtitle'],font=small,fill=(195,205,218))
+                subtitle=record['subtitle']
+                p=record.get('parameters',{})
+                if p.get('trajectory_mode')=='staged6d':
+                    subtitle=(f"az {p['approach_azimuth_deg']:+.1f} deg | below {p['entry_clearance_m']*1000:.1f} mm | "
+                        f"side {p['lateral_offset_m']*1000:+.1f} | insert {p['insertion_distance_m']*1000:.1f} | "
+                        f"lift angle {p['lift_forward_angle_deg']:+.1f} deg | lift {p['lift_distance_m']*1000:.1f} mm")
+                draw.text((14,35),subtitle,font=small,fill=(195,205,218))
             else:
                 p = record['parameters']
                 draw.text((14,8), f"{record['candidate_id']} | Tomato_05 | {speed:g}x | PhysX / {'GPU' if args.gpu else 'CPU'} visual replay{repair_label}", font=font, fill='white')
@@ -254,6 +260,8 @@ def main():
                 footer = f"Applied force: {0.2 if current['phase']=='fruit_load' else 0.:g} N (world X) | Original break thresholds | final: {record['result']}"
             else:
                 footer = f"First contact: {name} | final: {record['result']} | retained hook: {record['retained_hook']}"
+            if record.get('parameters',{}).get('trajectory_mode')=='staged6d':
+                footer=f"Centre entry (GT): {current.get('center_entry_ever',False)} | lift complete: {current.get('lift_completed',False)} | final: {record['result']} | hook: {record['retained_hook']}"
             draw.text((14,578),footer,font=small,fill=(255,185,95))
             if args.preview:
                 suffix = f'_t{time_s:.3f}.png' if args.preview_times else ('_initial.png' if local_frame==0 else '_final.png')
@@ -284,6 +292,7 @@ def main():
             render_backend='gpu' if args.gpu else 'cpu',
             reexecution_matches_original=record['validation'].get('reexecution', {}).get('passed'),
             recorded_physics=record['validation'].get('recorded_physics'),
+            dataset_replay=record['validation'].get('dataset_replay'),
             camera_views=[dict(v,eye=v['eye'].tolist(),target=v['target'].tolist()) for v in views],
             collision_model_update=model_update,
             result=record['result'],retained_hook=record['retained_hook'])

@@ -21,15 +21,16 @@ def planning_inputs(slot):
                 start=slot.robot.data.joint_pos[0].cpu().numpy().copy(),
                 step_dt=slot.step_dt, lift_id=slot.lift_id,
                 rise_speed=getattr(slot.cfg,'dataset_rise_speed',.002),
-                pull_speed=getattr(slot.cfg,'dataset_pull_speed',.004))
+                pull_speed=getattr(slot.cfg,'dataset_pull_speed',.004),
+                target_radius=getattr(slot,'target_spec',{}).get('radius'))
 
 
 def validate_inputs(reference, actual):
     for key in ('geometry','start'):
         if not np.allclose(reference[key],actual[key],rtol=0,atol=1e-6):
             raise RuntimeError('Preplanned path inputs differ from reset slot: '+key)
-    for key in ('step_dt','lift_id','rise_speed','pull_speed'):
-        if reference[key]!=actual[key]:raise RuntimeError('Preplanned path setting differs: '+key)
+    for key in ('step_dt','lift_id','rise_speed','pull_speed','target_radius'):
+        if reference.get(key)!=actual.get(key):raise RuntimeError('Preplanned path setting differs: '+key)
 
 
 def export_model(slot, checker):
@@ -48,6 +49,7 @@ def restore_model(model):
         cfg=SimpleNamespace(dataset_rise_speed=data['rise_speed'],dataset_pull_speed=data['pull_speed']))
     geometry=[torch.from_numpy(v[None]) for v in data['geometry']]
     env._target_geometry=lambda:geometry
+    env.target_spec=dict(radius=data.get('target_radius'))
     kin=RobotKinematics.__new__(RobotKinematics)
     for key,value in model['kinematics'].items():setattr(kin,key,value)
     return env,kin,SelfCollisionCheck.from_model(model['collision'])

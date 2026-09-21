@@ -48,7 +48,7 @@ class PhysicsVideoCapture:
             self.times.append(self.ticks * self.slot.physics_dt)
             self.poses.append(self.read())
 
-    def finish(self, result, trace=None, retained_hook=False, first_contact=None):
+    def finish(self, result, trace=None, retained_hook=False, first_contact=None, extra_metadata=None):
         if not self.active:
             return
         duration = self.ticks * self.slot.physics_dt
@@ -60,7 +60,9 @@ class PhysicsVideoCapture:
             raise RuntimeError('Invalid physics recording')
         np.savez_compressed(self.output / 'motion.npz', poses=poses, times_s=np.asarray(self.times))
         rows = self.trace if trace is None else trace
-        if len(rows) != self.ticks:
+        control_dt=self.slot.physics_dt if trace is None else self.slot.step_dt
+        expected=int(np.ceil(self.ticks/(control_dt/self.slot.physics_dt)))
+        if len(rows) != expected:
             raise RuntimeError(f'Trace/physics mismatch: {len(rows)} vs {self.ticks}')
         write_json(self.output / 'trace.json', rows)
         write_json(self.output / 'recording.json', dict(
@@ -68,11 +70,11 @@ class PhysicsVideoCapture:
             result=result, retained_hook=retained_hook,
             first_contact=first_contact,
             first_contact_object=(first_contact or {}).get('object'),
-            control_dt=self.slot.physics_dt, simulated_duration_s=duration,
+            control_dt=control_dt, physics_dt=self.slot.physics_dt, simulated_duration_s=duration,
             capture_fps=15, output_fps=30, playback_speed=2,
             validation=dict(recorded_physics=dict(passed=True, finite=True,
                 physics_steps=self.ticks, pose_samples=len(poses),
                 scope='Actual native poses; no animation interpolation or additional dynamics')),
-            extra_body=self.extra_body[0] if self.extra_body else None))
+            extra_body=self.extra_body[0] if self.extra_body else None, **(extra_metadata or {})))
         self.active = False
         print('[PHYSICS VIDEO CAPTURE]', self.output, duration, flush=True)
