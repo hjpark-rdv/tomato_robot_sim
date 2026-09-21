@@ -1,0 +1,87 @@
+{
+  "physical_grid_probe": {
+    "run": "runs/20260921_grid_display_diagnosis",
+    "num_envs": 16,
+    "spacing_m": 2.5,
+    "physics_steps": 16,
+    "passed_environments": 2,
+    "all_passed": false,
+    "max_metrics": {
+      "robot_q_max_abs": 0.0,
+      "robot_dq_max_abs": 0.0,
+      "robot_root_max_abs": 5.960464477539062e-07,
+      "preload_max_abs": 2.2873282432556152e-06,
+      "stiffness_max_abs": 0.0,
+      "damping_max_abs": 0.0,
+      "elastic_q_max_abs_rad": 1.70757994055748e-05,
+      "elastic_dq_max_abs_rad_s": 0.0071877846494317055,
+      "body_position_m": 2.5636927089222155e-06,
+      "body_orientation_rad": 7.775211729284812e-05,
+      "body_linear_velocity_m_s": 0.0005360515369427952,
+      "body_angular_velocity_rad_s": 0.031149534695636076
+    },
+    "choice": "Use geometry-only display grid to preserve co-located physics"
+  },
+  "display_smoke": {
+    "run": "runs/20260921_grid_view_smoke",
+    "num_envs": 16,
+    "physical_state_preserved": true,
+    "visual_inspection": "4x4 robots/plants visible; overview camera framing improved for subsequent motion run"
+  },
+  "tests_passed": 35,
+  "motion_test": {
+    "run": "runs/20260921_grid_view_motion_v2",
+    "status": "passed",
+    "max_control_steps": 64,
+    "goal": "Verify 16 different candidates can move simultaneously with live display; truncated trials are incomplete, not harvest labels",
+    "execution_complete": true,
+    "dataset_complete": false,
+    "counts": {
+      "success_target_hook": 0,
+      "miss": 0,
+      "non_target_contact": 0,
+      "excessive_displacement": 0,
+      "ik_failure": 0,
+      "planning_failure": 0,
+      "incomplete": 16
+    },
+    "physical_state_preserved": true,
+    "trace_count": 16,
+    "control_steps_per_trace": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ],
+    "distinct_final_joint_states": 16,
+    "initialization_wall_s": 111.7725119702518,
+    "rollout_wall_s": 421.331470919773,
+    "physics_step_timings": {
+      "steps": 1040,
+      "write_s": 1.0958217848092318,
+      "physics_s": 205.19386626128107,
+      "read_s": 1.2014449499547482
+    },
+    "screenshots": [
+      "runs/20260921_grid_view_motion_v2/grid_20260921_103408_787874.png",
+      "runs/20260921_grid_view_motion_v2/grid_20260921_104112_979771.png"
+    ],
+    "limitations": [
+      "This is a truncated approach-motion display check, not a harvest-success test",
+      "Live GUI is slower than headless; no real-time playback guarantee",
+      "1000-environment GUI and pagination beyond 16 were not integration tested"
+    ]
+  }
+}

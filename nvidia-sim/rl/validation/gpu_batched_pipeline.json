@@ -1,0 +1,973 @@
+{
+  "single_gpu": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_222446_gpu_pgs_batch1",
+  "batch_gpu": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_222901_gpu_pgs_batch16",
+  "single_gpu_motion_wall_s": 209.9460477065295,
+  "batch_gpu_motion_wall_s": 288.3375037331134,
+  "num_envs": 16,
+  "gpu_batch_vs_serial_gpu_throughput_ratio": 11.650016802579055,
+  "cpu_tgs_comparison": {
+    "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+    "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_222446_gpu_pgs_batch1",
+    "comparable": false,
+    "speedup": null,
+    "initial_state_max_abs_errors": {
+      "robot_q": 0.0,
+      "robot_dq": 0.0,
+      "robot_root": 0.0,
+      "elastic_q": 0.0,
+      "elastic_dq": 0.0,
+      "elastic_bodies": 0.0,
+      "fruits": 0.0,
+      "preload": 0.0,
+      "stiffness": 0.0,
+      "damping": 0.0
+    },
+    "trajectory_checks": [
+      {
+        "env": 0,
+        "reference_control_steps": 259,
+        "trial_control_steps": 260,
+        "same_outcome": {
+          "abort_reason": true,
+          "target_broken": true,
+          "other_broken": true,
+          "retained_hook": true,
+          "inserted": true,
+          "first_contact_object": true,
+          "result": true
+        },
+        "common_prefix_max_abs_errors": {
+          "joints": 0.0003554821014404297,
+          "target_displacement_m": 0.000637513476512655,
+          "main_stem_displacement_m": 0.0010924842208623886,
+          "gap_m": 0.0004932506416542581
+        },
+        "passed": false
+      }
+    ],
+    "screening_tolerances": {
+      "position_m": 0.001,
+      "joint_rad": 0.005,
+      "control_step_count": 1,
+      "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+    },
+    "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+  },
+  "clone_checks": [
+    {
+      "env": 0,
+      "errors": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      }
+    },
+    {
+      "env": 1,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 2,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 3,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 4,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 5,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 6,
+      "errors": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      }
+    },
+    {
+      "env": 7,
+      "errors": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      }
+    },
+    {
+      "env": 8,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 9,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 10,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 11,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 12,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 13,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 14,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    },
+    {
+      "env": 15,
+      "errors": {
+        "joints": 8.373381569981575e-05,
+        "target_displacement_m": 0.0007477583811554469,
+        "main_stem_displacement_m": 0.0008943062275648117,
+        "gap_m": 0.001433845815903917
+      }
+    }
+  ],
+  "backend": {
+    "gpu_dynamics": true,
+    "broadphase": "GPU",
+    "ccd": false,
+    "suppress_readback": false,
+    "physics_dt_s": 0.0010416666666666667,
+    "solver_position_iterations": 64,
+    "solver": "pgs",
+    "solver_velocity_iterations": 4,
+    "fabric": true,
+    "external_forces_every_iteration": true,
+    "articulation_count": 32,
+    "rigid_object_count": 176
+  },
+  "native_statistics": {
+    "available": true,
+    "nb_articulations": 32,
+    "nb_active_constraints": 176,
+    "gpu_mem_heap": 1543503872,
+    "gpu_mem_heap_articulation": 267656,
+    "gpu_mem_rigid_contact_count": 250
+  },
+  "reset_and_break_checks_passed": true,
+  "scope": "same saved candidate replay, excludes RGB-D and planning; not a speedup over CPU process pool",
+  "joint_authoring_diagnostics": {
+    "reverse-fixed": {
+      "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_223445_gpu_tgs_reverse_joint",
+      "steps": 1,
+      "break_events": 11
+    },
+    "locked-d6": {
+      "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_223542_gpu_tgs_locked_d6",
+      "steps": 1,
+      "break_events": 11
+    }
+  },
+  "full_dataset_smoke": {
+    "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_223828_gpu_rgbd_candidate3",
+    "summary": {
+      "total_candidates": 1,
+      "executed_candidates": 1,
+      "completed_physics_candidates": 1,
+      "counts": {
+        "success_target_hook": 0,
+        "miss": 0,
+        "non_target_contact": 0,
+        "excessive_displacement": 1,
+        "ik_failure": 0,
+        "planning_failure": 0,
+        "incomplete": 0
+      },
+      "success_rate_of_completed_physics": 0.0,
+      "success_rate_of_all_candidates": 0.0,
+      "non_target_contact_event_count": 1,
+      "elapsed_wall_s": 228.8973902175203,
+      "candidates_per_second": 0.004368769775180503,
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "experimental": true,
+      "requested_candidates": 1,
+      "completed_candidates": 1,
+      "pending_candidates": 0,
+      "session_completed_candidates": 1,
+      "initialization_wall_s": 16.968944251537323,
+      "rollout_wall_s": 211.94149579666555,
+      "estimated_remaining_minutes": 0.0,
+      "estimated_total_minutes": 3.815174000803381,
+      "estimate_basis": "measured full candidate throughput including planning/reset; candidate lengths vary",
+      "physics_step_timings": {
+        "steps": 4176,
+        "write_s": 0.6354382056742907,
+        "physics_s": 207.86596989352256,
+        "read_s": 0.8369377888739109
+      },
+      "benchmark_only": false,
+      "execution_complete": true,
+      "dataset_complete": true,
+      "num_envs": 1,
+      "target": "Tomato_05",
+      "reset_and_camera_validation_passed": true
+    },
+    "backend": {
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "ccd": false,
+      "native_collider_reports": true,
+      "gpu_dynamics": true,
+      "broadphase": "GPU",
+      "suppress_readback": false,
+      "experimental": true,
+      "cpu_tgs_equivalence_guaranteed": false
+    },
+    "camera_comparison": {
+      "rgb.png": {
+        "shape": [
+          720,
+          960,
+          3
+        ],
+        "max_pixel_delta": 49.0,
+        "mean_pixel_delta": 0.06195119598765432
+      },
+      "local_rgb.png": {
+        "shape": [
+          388,
+          388,
+          3
+        ],
+        "max_pixel_delta": 2.0,
+        "mean_pixel_delta": 0.04615040563999008
+      },
+      "depth.npy": {
+        "same_valid_mask": true,
+        "max_depth_delta_m": 0.0
+      },
+      "local_depth.npy": {
+        "same_valid_mask": true,
+        "max_depth_delta_m": 0.0
+      }
+    },
+    "candidate_id": "candidate_00003",
+    "result": "excessive_displacement",
+    "executed_steps": 260,
+    "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+    "commands_exactly_match_cpu_fixture": true
+  },
+  "existing_cpu_source_fingerprints_unchanged": true,
+  "validation_64": {
+    "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_224247_gpu_64env_validation",
+    "candidate_rollouts_executed": 0,
+    "passed": false,
+    "error": {
+      "type": "RuntimeError",
+      "message": "Clones diverge during identical no-action step; see reset_validation.json",
+      "dataset_complete": false
+    },
+    "repeated_reset_passed": true,
+    "independent_reset_passed": true,
+    "render_preserves_state": true,
+    "max_raw_delta_by_field": {
+      "robot_q": 0.0,
+      "robot_dq": 0.0,
+      "robot_root": 0.0,
+      "elastic_q": 0.004764752462506294,
+      "elastic_dq": 0.6830054521560669,
+      "elastic_bodies": 2.7164204120635986,
+      "fruits": 2.9654479026794434,
+      "preload": 0.0,
+      "stiffness": 0.0,
+      "damping": 0.0
+    }
+  },
+  "unit_aware_startup_reanalysis_16": {
+    "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_225112_gpu_16env_rgbd_validation",
+    "checks": [
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0,
+          "elastic_dq_max_abs_rad_s": 0.0,
+          "body_position_m": 0.0,
+          "body_orientation_rad": 5.16191365590357e-08,
+          "body_linear_velocity_m_s": 0.0,
+          "body_angular_velocity_rad_s": 0.0
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      },
+      {
+        "passed": true,
+        "metrics": {
+          "robot_q_max_abs": 0.0,
+          "robot_dq_max_abs": 0.0,
+          "robot_root_max_abs": 0.0,
+          "preload_max_abs": 0.0,
+          "stiffness_max_abs": 0.0,
+          "damping_max_abs": 0.0,
+          "elastic_q_max_abs_rad": 0.0001292583765462041,
+          "elastic_dq_max_abs_rad_s": 0.0028699934482574463,
+          "body_position_m": 7.684146103612576e-06,
+          "body_orientation_rad": 0.00045748344332749734,
+          "body_linear_velocity_m_s": 0.00024818646896928296,
+          "body_angular_velocity_rad_s": 0.012513758804632416
+        },
+        "limits": {
+          "robot_q_max_abs": 1e-06,
+          "robot_dq_max_abs": 1e-06,
+          "robot_root_max_abs": 1e-06,
+          "elastic_q_max_abs_rad": 0.001,
+          "elastic_dq_max_abs_rad_s": 0.01,
+          "body_position_m": 0.0001,
+          "body_orientation_rad": 0.001,
+          "body_linear_velocity_m_s": 0.001,
+          "body_angular_velocity_rad_s": 0.02,
+          "preload_max_abs": 1e-06,
+          "stiffness_max_abs": 1e-06,
+          "damping_max_abs": 1e-06
+        },
+        "failures": [],
+        "scope": "GPU no-action startup screen; initial reset equality and CPU replay equivalence are separate"
+      }
+    ],
+    "scope": "Reanalysis of saved states, original run stopped on mixed-unit threshold; fresh end-to-end run separately recorded"
+  },
+  "full_dataset_16_environment_smoke": {
+    "run": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_225424_gpu_16env_dataset_smoke",
+    "num_environments": 16,
+    "executed_candidates": 1,
+    "scope": "One full candidate with RGB-D in a 16-environment GPU scene; separate replay trial executed same commands in all 16 slots",
+    "summary": {
+      "total_candidates": 1,
+      "executed_candidates": 1,
+      "completed_physics_candidates": 1,
+      "counts": {
+        "success_target_hook": 0,
+        "miss": 0,
+        "non_target_contact": 0,
+        "excessive_displacement": 1,
+        "ik_failure": 0,
+        "planning_failure": 0,
+        "incomplete": 0
+      },
+      "success_rate_of_completed_physics": 0.0,
+      "success_rate_of_all_candidates": 0.0,
+      "non_target_contact_event_count": 1,
+      "elapsed_wall_s": 302.6534635340795,
+      "candidates_per_second": 0.003304108891809849,
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "experimental": true,
+      "requested_candidates": 1,
+      "completed_candidates": 1,
+      "pending_candidates": 0,
+      "session_completed_candidates": 1,
+      "initialization_wall_s": 41.522422335110605,
+      "rollout_wall_s": 261.14412426855415,
+      "estimated_remaining_minutes": 0.0,
+      "estimated_total_minutes": 5.044442443394413,
+      "estimate_basis": "measured full candidate throughput including planning/reset; candidate lengths vary",
+      "physics_step_timings": {
+        "steps": 4176,
+        "write_s": 2.025582271628082,
+        "physics_s": 250.25211498513818,
+        "read_s": 5.789514358155429
+      },
+      "benchmark_only": false,
+      "execution_complete": true,
+      "dataset_complete": true,
+      "num_envs": 16,
+      "target": "Tomato_05",
+      "reset_and_camera_validation_passed": true
+    },
+    "backend": {
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "ccd": false,
+      "native_collider_reports": true,
+      "gpu_dynamics": true,
+      "broadphase": "GPU",
+      "suppress_readback": false,
+      "experimental": true,
+      "cpu_tgs_equivalence_guaranteed": false
+    },
+    "all_reset_checks_passed": true,
+    "unit_aware_startup_checks_passed": true,
+    "result": "excessive_displacement",
+    "executed_steps": 260,
+    "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+  },
+  "unit_tests": {
+    "passed": 22,
+    "modules": [
+      "test_gpu_batch_views",
+      "test_gpu_dataset_runner",
+      "test_gpu_validation",
+      "test_gpu_probe",
+      "test_dataset_pool"
+    ]
+  },
+  "followup_scaling_validation": "gpu_scaling.json",
+  "followup_note": "Historical partition-8 measurements above; current partition-1/native-environment-ID scaling checks are recorded separately."
+}

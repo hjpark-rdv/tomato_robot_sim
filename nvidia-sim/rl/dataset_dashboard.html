@@ -17,7 +17,7 @@ const $=id=>document.getElementById(id), esc=s=>String(s??'—').replace(/[&<>"'
 const n=(v,k=1)=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toFixed(k),color=r=>colors[r]||'#a3adba',name=r=>names[r]||r;
 let selected=all[0]?.candidate_id,filtered=[];
 const counts={};all.forEach(r=>counts[r.result]=(counts[r.result]||0)+1);
-$('subtitle').textContent=data.run+' · 저장된 결과 스냅샷';
+$('subtitle').textContent=data.run+' · 저장된 결과 스냅샷'+(data.backend?.physics_device==='gpu'?' · GPU PhysX / PGS 실험용 · CPU 동등성 미검증':'');
 $('footer').textContent='생성 시각: '+data.generated+' · CSV 목록 + 후보별 JSON 상세 기록 · 외부 서버 연결 없이 열리는 HTML · 실험 재개 후에는 다시 생성하세요.';
 $('cards').innerHTML=[['완료 / 요청',all.length+' / '+data.summary.requested_candidates],['남은 후보',data.summary.pending_candidates],['성공',counts.success_target_hook||0],['허용 변위 초과',counts.excessive_displacement||0],['비타겟 접촉',counts.non_target_contact||0],['걸기 실패',counts.miss||0]].map(([a,b])=>'<div class="card"><span>'+a+'</span><strong>'+b+'</strong></div>').join('');
 Object.keys(counts).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=name(k)+' ('+counts[k]+')';$('result').append(o)});

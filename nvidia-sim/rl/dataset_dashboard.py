@@ -13,9 +13,10 @@ def build(root):
         index = list(csv.DictReader(stream))
     records, pictures = [], {}
     for row in index:
-        record = json.loads((root / row['candidate_record_path']).read_text())
-        record['record_path'] = row['candidate_record_path']
-        worker = row['worker_dataset_root']
+        record_path = row.get('candidate_record_path') or f"results/{row['candidate_id']}/candidate.json"
+        record = json.loads((root / record_path).read_text())
+        record['record_path'] = record_path
+        worker = row.get('worker_dataset_root') or ''
         observation = root / worker / record['observation_path']
         key = str(observation.parent.relative_to(root))
         record['picture_key'] = key
@@ -26,7 +27,9 @@ def build(root):
                 if path.exists():
                     pictures[key][name] = 'data:image/png;base64,' + base64.b64encode(path.read_bytes()).decode()
         records.append(record)
-    payload = {'records': records, 'pictures': pictures,
+    backend_path = root / 'backend.json'
+    backend = json.loads(backend_path.read_text()) if backend_path.exists() else None
+    payload = {'backend': backend, 'records': records, 'pictures': pictures,
                'summary': json.loads((root / 'summary.json').read_text()),
                'run': root.name, 'generated': datetime.datetime.now().astimezone().isoformat(timespec='seconds')}
     template = Path(__file__).with_suffix('.html').read_text()

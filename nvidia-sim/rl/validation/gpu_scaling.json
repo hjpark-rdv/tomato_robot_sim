@@ -1,0 +1,233 @@
+{
+  "date": "2026-09-21",
+  "scope": "GPU clone scaling; not harvest success, CPU equivalence, or 1000-candidate throughput certification",
+  "settings": {
+    "gpu_dynamics": true,
+    "gpu_broadphase": true,
+    "tensor_device": "cpu",
+    "solver": "PGS",
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "physics_hz": 960,
+    "gpu_max_num_partitions": 1,
+    "native_replication": true,
+    "env_id_bits": "max(4, ceil(log2(num_envs+1)))",
+    "num_envs_cli_limit": 1024,
+    "large_batch_rgbd": "single-env capture exits before N-env physics starts"
+  },
+  "fixes": [
+    "Single constraint partition avoids measured cross-clone divergence",
+    "Native environment IDs reject cross-environment broadphase pairs before buffer allocation",
+    "Direct lookup for exact USD paths",
+    "Reuse identical calibration and preload calculations",
+    "Bulk reset minimizes global refreshes",
+    "Suspend Isaac asset deletion notices only while removing standalone harvest joints; PhysX USD listener stays enabled",
+    "Isolated sequential RGB-D capture for headless num_envs > 128",
+    "Native physics errors invalidate and stop runs"
+  ],
+  "tests": {
+    "passed": 33,
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl /root/isaaclab_env/bin/python -m pytest -q nvidia-sim/rl/test_gpu_replication.py nvidia-sim/rl/test_gpu_scale_validation.py nvidia-sim/rl/test_gpu_prim_lookup.py nvidia-sim/rl/test_gpu_initialization.py nvidia-sim/rl/test_gpu_batch_views.py nvidia-sim/rl/test_gpu_dataset_runner.py nvidia-sim/rl/test_gpu_validation.py nvidia-sim/rl/test_gpu_probe.py nvidia-sim/rl/test_dataset_pool.py"
+  },
+  "idle_clone_checks": [
+    {
+      "num_envs": 64,
+      "physics_steps": 960,
+      "all_sampled_steps_passed": true,
+      "final_metrics": {
+        "robot_q_max_abs": 0.0,
+        "robot_dq_max_abs": 0.0,
+        "robot_root_max_abs": 0.0,
+        "preload_max_abs": 0.0,
+        "stiffness_max_abs": 0.0,
+        "damping_max_abs": 0.0,
+        "elastic_q_max_abs_rad": 0.0,
+        "elastic_dq_max_abs_rad_s": 0.0,
+        "body_position_m": 0.0,
+        "body_orientation_rad": 5.16191365590357e-08,
+        "body_linear_velocity_m_s": 0.0,
+        "body_angular_velocity_rad_s": 0.0
+      },
+      "break_events": [],
+      "evidence": "runs/20260920_gpu_scale_diagnosis/partitions1_64/clone_history.json"
+    },
+    {
+      "num_envs": 128,
+      "physics_steps": 960,
+      "all_sampled_steps_passed": true,
+      "final_metrics": {
+        "robot_q_max_abs": 0.0,
+        "robot_dq_max_abs": 0.0,
+        "robot_root_max_abs": 0.0,
+        "preload_max_abs": 0.0,
+        "stiffness_max_abs": 0.0,
+        "damping_max_abs": 0.0,
+        "elastic_q_max_abs_rad": 0.0,
+        "elastic_dq_max_abs_rad_s": 0.0,
+        "body_position_m": 0.0,
+        "body_orientation_rad": 5.16191365590357e-08,
+        "body_linear_velocity_m_s": 0.0,
+        "body_angular_velocity_rad_s": 0.0
+      },
+      "break_events": [],
+      "evidence": "runs/20260920_gpu_scale_diagnosis/partitions1_128/clone_history.json"
+    }
+  ],
+  "motion_clone_checks": [
+    {
+      "passed": true,
+      "num_envs": 64,
+      "control_steps": 260,
+      "candidate_index": 3,
+      "outcome": "excessive_displacement",
+      "max_error_by_metric": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0,
+        "elastic_bodies_position_m": 0.0,
+        "fruits_position_m": 0.0
+      },
+      "evidence": "runs/20260920_gpu_scale_diagnosis/replay_1_vs_64.json"
+    },
+    {
+      "passed": true,
+      "num_envs": 64,
+      "control_steps": 260,
+      "candidate_index": 3,
+      "outcome": "excessive_displacement",
+      "max_error_by_metric": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0,
+        "elastic_bodies_position_m": 0.0,
+        "fruits_position_m": 0.0
+      },
+      "evidence": "runs/20260920_gpu_scale_diagnosis/replay_1_vs_native64.json"
+    }
+  ],
+  "dataset_startup_checks": [
+    {
+      "path": "runs/20260920_gpu_scale_diagnosis/dataset64_native_validation_v2",
+      "passed": true,
+      "candidate_rollouts_executed": 0
+    },
+    {
+      "path": "runs/20260920_gpu_scale_diagnosis/dataset128_final_validation",
+      "passed": true,
+      "candidate_rollouts_executed": 0
+    },
+    {
+      "path": "runs/20260920_gpu_scale_diagnosis/dataset129_staged_camera",
+      "passed": true,
+      "candidate_rollouts_executed": 0
+    }
+  ],
+  "limitations": [
+    "1000 distinct full candidate motions not tested",
+    "GPU PGS differs from CPU TGS beyond 1 mm on measured main-stem displacement",
+    "No guaranteed speedup or candidates per hour",
+    "Same-action clone reproducibility does not validate all contact boundary outcomes",
+    "PGS partition count 1 is a measured workaround, not a proof of PhysX internals root cause"
+  ],
+  "cpu_equivalence": {
+    "reference": "nvidia-sim/rl/runs/20260920_165852_gpu_physics_probe/cpu",
+    "trial": "nvidia-sim/rl/runs/20260920_gpu_scale_diagnosis/replay_p1_1",
+    "comparable": false,
+    "speedup": null,
+    "initial_state_max_abs_errors": {
+      "robot_q": 0.0,
+      "robot_dq": 0.0,
+      "robot_root": 0.0,
+      "elastic_q": 0.0,
+      "elastic_dq": 0.0,
+      "elastic_bodies": 0.0,
+      "fruits": 0.0,
+      "preload": 0.0,
+      "stiffness": 0.0,
+      "damping": 0.0
+    },
+    "trajectory_checks": [
+      {
+        "env": 0,
+        "reference_control_steps": 259,
+        "trial_control_steps": 260,
+        "same_outcome": {
+          "abort_reason": true,
+          "target_broken": true,
+          "other_broken": true,
+          "retained_hook": true,
+          "inserted": true,
+          "first_contact_object": true,
+          "result": true
+        },
+        "common_prefix_max_abs_errors": {
+          "joints": 0.0003554821014404297,
+          "target_displacement_m": 0.0009043537756593754,
+          "main_stem_displacement_m": 0.0013016890734434128,
+          "gap_m": 0.0005037980989326674
+        },
+        "passed": false
+      }
+    ],
+    "screening_tolerances": {
+      "position_m": 0.001,
+      "joint_rad": 0.005,
+      "control_step_count": 1,
+      "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+    },
+    "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+  },
+  "final_reset_break_check": {
+    "path": "runs/20260920_gpu_scale_diagnosis/native16_reset_break_check/report.json",
+    "api_checks_passed": true
+  },
+  "startup_1000": {
+    "status": "passed",
+    "path": "runs/20260921_0002_gpu_1000_validation",
+    "completion": {
+      "passed": true,
+      "candidate_rollouts_executed": 0
+    },
+    "backend": {
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "position_iterations": 64,
+      "velocity_iterations": 4,
+      "gpu_max_num_partitions": 1,
+      "ccd": false,
+      "native_collider_reports": true,
+      "gpu_dynamics": true,
+      "broadphase": "GPU",
+      "suppress_readback": false,
+      "experimental": true,
+      "cpu_tgs_equivalence_guaranteed": false,
+      "native_physics_replication": true,
+      "environment_id_bounds_bits": 10
+    },
+    "elapsed_config_to_completion_wall_s": 575.7092742919922,
+    "repeated_resets_passed": true,
+    "independent_neighbors_checked": 999,
+    "independent_reset_passed": true,
+    "isolated_rgbd_state_match_passed": true,
+    "physics_steps": 16,
+    "dynamic_clone_checks_passed": true,
+    "after_step_resets_passed": true,
+    "max_clone_deltas": {
+      "max_body_position_delta_m": 0.0,
+      "max_fruit_position_delta_m": 0.0,
+      "max_plant_joint_position_delta_rad": 0.0,
+      "max_plant_joint_velocity_delta_rad_s": 0.0
+    },
+    "any_broken": false,
+    "contact_routing_faults": [],
+    "native_error_file_exists": false,
+    "observation_and_physics_sources_matched": true,
+    "observed_gpu_memory_total_mib_during_initialization": 4930,
+    "observed_gpu_memory_total_mib_after_exit": 1699,
+    "memory_numbers_are_samples_not_peak_measurements": true,
+    "owned_simulator_processes_remaining": 0
+  }
+}

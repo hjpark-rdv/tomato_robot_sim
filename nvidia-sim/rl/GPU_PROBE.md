@@ -98,3 +98,9 @@ GPU 고속화를 계속하려면 안정된 솔버/관절 모델과 collider 단�
 관련 엔진 자료: [Omni Physics limitations](https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/dev_guide/guides/current_limitations.html),
 [NVIDIA contact readback discussion](https://forums.developer.nvidia.com/t/contact-report-does-not-make-sense-when-enabling-gpu-pipeline-contact-sensor-ant-example/266782).
 문서는 진단의 근거이며 이 프로젝트의 TGS 파단 버그 원인을 확정하는 증거는 아니다.
+
+추가된 [GPU 데이터 생성기](GPU_CANDIDATE_DATASET.md)는 PGS와 native CPU contact readback을 사용하는 실험용 경로다. 기존 CPU 실행기의 기본 설정을 바꾸지 않는다.
+
+2026-09-21: partition 1 및 native 환경 ID를 적용한 64환경 동일 명령 재생과
+64·128환경 무동작 일치 검증 결과는 [대규모 GPU 검증 기록](validation/gpu_scaling.json)에 있습니다.
+기존 partition 8 측정치와 구분하며 CPU 동등성/처리량 검증을 의미하지 않습니다.

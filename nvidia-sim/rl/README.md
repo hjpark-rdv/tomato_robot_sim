@@ -6,6 +6,8 @@
 물리 설정을 유지하면서 독립 프로세스로 병렬 처리하려면 [병렬 데이터 생성기](CANDIDATE_DATASET_POOL.md)를 사용합니다.
 `./nvidia-sim/run_candidate_dataset_pool.sh --workers 4 --num-envs 1 --candidates 1000`
 
+GPU 물리의 단일 세션 병렬 실행은 [GPU 데이터 생성기 (실험용)](GPU_CANDIDATE_DATASET.md)를 참고하세요.
+
 CPU/GPU 물리 비교의 실행 방법과 검증 실패 결과는 [최소 GPU 시험](GPU_PROBE.md)에 기록했습니다.
 
 **고정 장면에서 Tomato_05 접근 자세를 탐색하는 실험은 [pose search 안내](POSE_SEARCH.md)를 참고하세요.**
@@ -134,3 +136,5 @@ kinematic 고정부를 `wakeUp()` 하던 오류를 방지합니다.
 리프트 약 2cm 상승/하강, 팔 유지, 원본 송이 파손·복원 3회, GUI PhysX 오류 0건을 확인했습니다.
 새 형식의 PPO 2,048 스텝 학습과 저장 모델 재생도 확인했습니다. 수확 성공은 아직 0회입니다.
 이 초기 모델은 `runs/pick_ready_smoke/policy.zip`에 있으며 새 형식으로 이어 학습할 수 있습니다.
+
+16개 동시 실험을 4×4 화면으로 보려면 `DISPLAY=:0 ./nvidia-sim/view_gpu_candidates.sh`를 실행하세요. 자세한 조작은 [GPU 화면 사용법](GPU_CANDIDATE_DATASET.md#실시간-44-화면)에 있습니다.

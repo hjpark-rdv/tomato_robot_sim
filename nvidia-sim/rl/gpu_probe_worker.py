@@ -23,6 +23,15 @@ parser.add_argument('--zero-load',action='store_true',help='Diagnostic only: dis
 parser.add_argument('--no-contacts',action='store_true',help='Diagnostic only: disable all collision shapes')
 parser.add_argument('--cuda-tensors',action='store_true',help='Diagnostic: use CUDA tensor API as well as GPU physics')
 parser.add_argument('--fabric',action='store_true',help='Diagnostic: avoid per-step USD physics writeback')
+parser.add_argument('--joint-variant',choices=['original','reverse-fixed','locked-d6'],default='original',help='Diagnostic equivalent joint authoring, unchanged break thresholds')
+parser.add_argument('--batched-io',action='store_true',help='GPU physics with batched efforts and native collider readback')
+parser.add_argument('--native-replication',action='store_true',help='Native clone/environment IDs for early GPU broadphase filtering')
+parser.add_argument('--profile-init',action='store_true',help='Save cProfile of scene initialization and reset')
+parser.add_argument('--legacy-reset',action='store_true',help='Use original per-slot global flushes for controlled comparison')
+parser.add_argument('--gpu-partitions',type=int,default=8,choices=[1,2,4,8,16,32])
+parser.add_argument('--clone-diagnostic',action='store_true',help='Record unit-aware per-step clone spread and compare batched reads with original native views')
+parser.add_argument('--diagnostic-grid-spacing',type=float,default=0.,help='Diagnostic physical grid offset; not used by dataset runner')
+parser.add_argument('--contact-view-diagnostic',action='store_true',help='Inspect collider-level CUDA contact view support')
 parser.add_argument('--position-iterations',type=int,default=64,help='Diagnostic solver accuracy; clamp both scene limits')
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device='cpu')
@@ -31,9 +40,9 @@ if not 1<=args.position_iterations<=255 or not 0<=args.velocity_iterations<=255:
     parser.error('Solver iteration count is out of range')
 if args.stationary_steps<0 or args.max_control_steps<0 or args.num_envs<1:
     parser.error('Invalid step/environment count')
-if (args.zero_load or args.no_contacts or args.preserve_joints) and not args.stationary_steps:
+if (args.zero_load or args.no_contacts or args.preserve_joints or args.joint_variant!='original') and not args.stationary_steps:
     parser.error('Physical isolation switches require --stationary-steps')
-launcher=AppLauncher(args);app=launcher.app
+launcher=AppLauncher(args,limit_cpu_threads=8);app=launcher.app
 
 import hashlib
 import time
@@ -84,6 +93,9 @@ def run():
     cfg.sim.physx.min_velocity_iteration_count=args.velocity_iterations
     cfg.sim.physx.max_velocity_iteration_count=args.velocity_iterations
     cfg.probe_preserve_joints=args.preserve_joints
+    cfg.gpu_legacy_reset=args.legacy_reset
+    cfg.gpu_native_replication=args.native_replication
+    cfg.sim.physx.gpu_max_num_partitions=args.gpu_partitions
     cfg.sim.physx.solver_type=1 if args.solver=='tgs' else 0
     if args.zero_load:cfg.sim.gravity=(0.,0.,0.)
     cfg.sim.physx.enable_external_forces_every_iteration=not args.external_forces_once
@@ -104,12 +116,30 @@ def run():
         commands_sha256=hashlib.sha256((args.fixture/'planned_commands.npy').read_bytes()).hexdigest(),
         initial_joints=fixture['robot_joint_positions_at_start'],planned_steps=len(commands))
     cfg.robot.spawn.usd_path=str(build_robot(args.output/'generated/rb5_ring.usda'))
+    if args.joint_variant!='original':
+        from gpu_joint_variants import install_joint_variant
+        install_joint_variant(args.joint_variant)
+    import cProfile
+    profiler=cProfile.Profile() if args.profile_init else None
+    if profiler:
+        profiler.enable()
+        import faulthandler
+        faulthandler.dump_traceback_later(60,repeat=True)
     started=time.perf_counter();world=None
     try:
-        world=DatasetScene(cfg,args.num_envs)
+        if args.batched_io:
+            cfg.gpu_diagnostic_grid_spacing=args.diagnostic_grid_spacing
+            if args.mode!='gpu' or args.cuda_tensors:
+                raise ValueError('Batched native-readback path requires GPU mode and CPU tensors')
+            from gpu_dataset_scene import GpuDatasetScene
+            world=GpuDatasetScene(cfg,args.num_envs)
+            report['batched_io']=True
+        else:
+            world=DatasetScene(cfg,args.num_envs)
         context=world.sim.get_physics_context()
         report['backend']=dict(gpu_dynamics=context.is_gpu_dynamics_enabled(),
             broadphase=context.get_broadphase_type(),ccd=context.is_ccd_enabled(),
+            gpu_max_num_partitions=context.get_gpu_max_num_partitions(),
             suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
             physics_dt_s=cfg.sim.dt,solver_position_iterations=args.position_iterations,
             solver=args.solver,solver_velocity_iterations=args.velocity_iterations,fabric=args.fabric,
@@ -119,12 +149,25 @@ def run():
             raise RuntimeError('Requested physics backend not active')
         for slot in world.slots:
             slot.start_q=torch.tensor([fixture['robot_joint_positions_at_start']],dtype=torch.float32,device=slot.device)
+        if args.contact_view_diagnostic:
+            from gpu_contacts import inspect_contact_views
+            report['contact_views'] = inspect_contact_views(world)
+            checkpoint('contact_views_created')
         checkpoint('reset_validation')
         world.reset_all();first=[state(s) for s in world.slots]
         world.reset_all();second=[state(s) for s in world.slots]
         report['repeated_reset']=[state_comparison(a,b) for a,b in zip(first,second)]
         if not all(v['passed'] for v in report['repeated_reset']):raise RuntimeError('Repeated reset mismatch')
         np.savez(args.output/'initial_state.npz',**second[0])
+        if profiler:
+            faulthandler.cancel_dump_traceback_later()
+            profiler.disable();profiler.dump_stats(str(args.output/'initialization.pstats'))
+        if args.clone_diagnostic:
+            report['clone_properties']={}
+            for kind,get_asset in [('robot',lambda s:s.robot),('plant',lambda s:s.elastic.articulation)]:
+                for getter in ('get_masses','get_inertias','get_coms','get_dof_stiffnesses','get_dof_dampings','get_dof_armatures'):
+                    ref=getattr(get_asset(world.slots[0]).root_physx_view,getter)()
+                    report['clone_properties'][kind+':'+getter]=max(float(torch.max(torch.abs(getattr(get_asset(s).root_physx_view,getter)()-ref))) for s in world.slots)
         report['initialization_wall_s']=time.perf_counter()-started
         if args.stationary_steps:
             checkpoint('stationary_diagnostic')
@@ -141,12 +184,37 @@ def run():
                         UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Set(False)
                 get_physx_simulation_interface().flush_changes()
             initial=state(world.slots[0]);began=time.perf_counter()
+            clone_history=[]
+            from gpu_validation import check_clone
             for tick in range(args.stationary_steps):
                 world.step()
+                if args.clone_diagnostic and (tick < 16 or tick % 240 == 239):
+                    states=[state(slot) for slot in world.slots]
+                    checks=[check_clone(states[0],value,broken=bool(slot._broken[0] or slot._other_broken)) for slot,value in zip(world.slots,states)]
+                    metrics={key:max(c.get('metrics',{}).get(key,0.) for c in checks) for key in checks[0].get('metrics',{})}
+                    original_read_error={}
+                    for slot in world.slots:
+                        for name,asset in [('robot',slot.robot),('plant',slot.elastic.articulation)]:
+                            view=asset.root_physx_view
+                            if hasattr(view,'original'):
+                                for getter in sorted(view.cache.GETTERS):
+                                    delta=float(torch.max(torch.abs(getattr(view,getter)()-getattr(view.original,getter)())))
+                                    key=name+':'+getter
+                                    original_read_error[key]=max(original_read_error.get(key,0.),delta)
+                    clone_history.append(dict(step=tick+1,passed=all(c['passed'] for c in checks),max_metrics=metrics,
+                                              original_read_error=original_read_error))
+                    write_json(args.output/'clone_history.json',clone_history)
+                    if tick==15:
+                        np.savez_compressed(args.output/'clones_step16.npz',**{key:np.stack([s[key] for s in states]) for key in states[0]})
                 if tick % 240 == 239:
                     print('[GPU STATIONARY]',tick+1,'wall_s',time.perf_counter()-began,flush=True)
                 if any(s._broken[0] or s._other_broken for s in world.slots):break
+            if args.clone_diagnostic:
+                report['clone_validation']=dict(passed=all(c['passed'] for c in clone_history) and tick+1==args.stationary_steps,
+                    sampled_steps=[c['step'] for c in clone_history],requested_steps=args.stationary_steps,
+                    scope='identical idle commands, original contact/drive/break settings unless explicitly disabled by diagnostic arguments')
             report['stationary']=dict(steps=tick+1,wall_s=time.perf_counter()-began,
+                broken_envs=[s.index for s in world.slots if s._broken[0] or s._other_broken],
                 events=world.slots[0].contact_diagnostics,
                 state_change=state_comparison(initial,state(world.slots[0])))
             np.savez(args.output/'final_state.npz',**state(world.slots[0]))

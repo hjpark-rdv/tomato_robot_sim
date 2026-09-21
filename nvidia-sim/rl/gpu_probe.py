@@ -60,10 +60,13 @@ def main():
     parser.add_argument('--suite',choices=['motion','isolation'],default='motion',help='Isolation holds robot still and varies one diagnostic condition')
     parser.add_argument('--gpu-solver',choices=['tgs','pgs'],default='tgs')
     parser.add_argument('--gpu-position-iterations',type=int,default=64)
+    parser.add_argument('--batched-io',action='store_true',help='GPU dynamics with batched efforts/state and native collider readback')
     parser.add_argument('--cuda-tensors',action='store_true')
+    parser.add_argument('--gpu-partitions',type=int,default=1,choices=[1,2,4,8,16,32],help='1 avoids branched-plant multi-partition divergence; use 8 to reproduce the old baseline')
     parser.add_argument('--fabric',action='store_true')
     parser.add_argument('--stationary-steps',type=int,default=240)
     args=parser.parse_args()
+    if args.batched_io and args.cuda_tensors:parser.error("batched-io preserves native CPU contact readback; omit cuda-tensors")
     if args.timeout_seconds<=0 or args.stationary_steps<=0:parser.error('timeout and stationary-steps must be positive')
     if not 1<=args.gpu_position_iterations<=255:parser.error('gpu-position-iterations must be 1..255')
     root=(args.run_dir or HERE/'runs'/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_gpu_physics_probe')).resolve()
@@ -81,7 +84,7 @@ def main():
         primary_modes=['cpu','cpu-no-ccd','gpu'],physics_hz=960,control_hz=60,solver_position_iterations=64,
         gpu_method='GPU dynamics and GPU broadphase, CPU tensor readback; not a batched CUDA port',
         source_geometry_randomization=False,suite=args.suite,gpu_solver=args.gpu_solver,
-        gpu_position_iterations=args.gpu_position_iterations,cuda_tensors=args.cuda_tensors,fabric=args.fabric),indent=2)+'\n')
+        gpu_position_iterations=args.gpu_position_iterations,gpu_max_num_partitions=args.gpu_partitions,cuda_tensors=args.cuda_tensors,fabric=args.fabric),indent=2)+'\n')
     variants=[('cpu','cpu',[]),('cpu-no-ccd','cpu-no-ccd',[]),
         ('gpu','gpu',['--solver',args.gpu_solver])]
     if args.diagnose_external_forces:
@@ -102,8 +105,9 @@ def main():
             '--fixture',str(root/'fixture'),'--mode',mode,
             '--num-envs',str(args.num_envs),'--headless',*extra]
         if args.suite=='isolation':command+=['--stationary-steps',str(args.stationary_steps)]
+        if args.batched_io and mode=='gpu':command.append('--batched-io')
         if args.cuda_tensors and mode=='gpu':command.append('--cuda-tensors')
-        if mode=='gpu':command+=['--position-iterations',str(args.gpu_position_iterations)]
+        if mode=='gpu':command+=['--position-iterations',str(args.gpu_position_iterations),'--gpu-partitions',str(args.gpu_partitions)]
         if args.fabric:command.append('--fabric')
         write_path=folder/'command.json'
         write_path.write_text(json.dumps(command,indent=2)+'\n')
