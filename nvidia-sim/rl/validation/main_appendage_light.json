@@ -1,0 +1,238 @@
+{
+  "scope": "Tomato_05; original full unchanged; light default now ignores only main-stem leaves/stubs; not full-model or real-world equivalence",
+  "run_root": "nvidia-sim/rl/runs/20260921_main_appendages_comparison",
+  "benchmark_scope": "4 environments, same 4 candidates, 600 control steps / 10 simulated seconds each; one sequential measurement per model; incomplete benchmark rows excluded from training",
+  "benchmark": {
+    "full": {
+      "initialization_s": 17.75687535200268,
+      "rollout_s": 76.03116464335471,
+      "physics_s": 45.88121834117919,
+      "physics_steps": 1200,
+      "plant_dofs": 234,
+      "collision_inventory": {
+        "enabled_total": 376,
+        "by_category": {
+          "elastic_rod": 68,
+          "main_appendage": 286,
+          "fruit": 11,
+          "fruit_pedicel": 11
+        },
+        "by_shape_type": {
+          "elastic_rod:Capsule": 68,
+          "main_appendage:Mesh": 286,
+          "fruit:Sphere": 11,
+          "fruit_pedicel:Capsule": 11
+        }
+      },
+      "rod_geometry_mass_sha256": "4dfec0d1171e6632c9ea0417e69ec769bcf1c76bcf5ec39c10cc25f649f19389"
+    },
+    "light_keep": {
+      "initialization_s": 17.6712506711483,
+      "rollout_s": 68.55412022490054,
+      "physics_s": 38.240678443573415,
+      "physics_steps": 1200,
+      "plant_dofs": 165,
+      "collision_inventory": {
+        "enabled_total": 376,
+        "by_category": {
+          "elastic_rod": 68,
+          "main_appendage": 286,
+          "fruit": 11,
+          "fruit_pedicel": 11
+        },
+        "by_shape_type": {
+          "elastic_rod:Capsule": 68,
+          "main_appendage:Mesh": 286,
+          "fruit:Sphere": 11,
+          "fruit_pedicel:Capsule": 11
+        }
+      },
+      "rod_geometry_mass_sha256": "4dfec0d1171e6632c9ea0417e69ec769bcf1c76bcf5ec39c10cc25f649f19389"
+    },
+    "light_ignore": {
+      "initialization_s": 9.851528873667121,
+      "rollout_s": 66.07791039999574,
+      "physics_s": 36.190938690677285,
+      "physics_steps": 1200,
+      "plant_dofs": 165,
+      "collision_inventory": {
+        "enabled_total": 90,
+        "by_category": {
+          "elastic_rod": 68,
+          "fruit": 11,
+          "fruit_pedicel": 11
+        },
+        "by_shape_type": {
+          "elastic_rod:Capsule": 68,
+          "fruit:Sphere": 11,
+          "fruit_pedicel:Capsule": 11
+        }
+      },
+      "rod_geometry_mass_sha256": "4dfec0d1171e6632c9ea0417e69ec769bcf1c76bcf5ec39c10cc25f649f19389"
+    }
+  },
+  "integrity_checks": {
+    "rod_geometry_mass_exact": true,
+    "native_mass_exact": true,
+    "joint_layout_exact": true,
+    "capsule_sphere_shapes_exact": true,
+    "remaining_filters_exact": true,
+    "depth_exact": true,
+    "rgb_mean_abs_difference": 0.05735050154320988,
+    "rgb_max_abs_difference": 7,
+    "full_trace_exact": {
+      "candidate_00001": true,
+      "candidate_00000": true,
+      "candidate_00005": true,
+      "candidate_00049": true
+    }
+  },
+  "contact_trials": [
+    {
+      "candidate_id": "candidate_00005",
+      "result": "excessive_displacement",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.222246394369617,
+      "ignored_appendage_contact_count": 0
+    },
+    {
+      "candidate_id": "candidate_00049",
+      "result": "excessive_displacement",
+      "physics_valid": true,
+      "max_tool_penetration_mm": 0.31727729505115226,
+      "ignored_appendage_contact_count": 0
+    }
+  ],
+  "mechanics": {
+    "scope": "mechanics fixture only; no robot approach/IK or harvest success claim",
+    "tolerances": {
+      "idle_drift_m": 0.003,
+      "attachment_gap_m": 0.0005,
+      "recovery_fraction": 0.25,
+      "ring_penetration_m": 0.001
+    },
+    "checks": {
+      "idle": {
+        "passed": true,
+        "last": {
+          "phase": "idle",
+          "time_s": 5,
+          "target_displacement_m": 0.00002954157756357567,
+          "target_position_xyz": [
+            -0.7222340571264206,
+            1.0967397715999643,
+            0.9621489610756131
+          ],
+          "main_displacement_m": 0.000025848990915973076,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true,
+          "attachment_gap_m": 0.000011334446753608063
+        }
+      },
+      "bending_recovery": {
+        "passed": true,
+        "peak_m": 0.024666213854508134,
+        "residual_m": 0.0015073414853556267,
+        "max_attachment_gap_m": 0.000021747528080595657
+      },
+      "native_break": {
+        "passed": true,
+        "last": {
+          "phase": "overload",
+          "time_s": 10.008333333333333,
+          "target_displacement_m": 0.0023461275905484686,
+          "target_position_xyz": [
+            -0.7199006422098684,
+            1.0969127443007762,
+            0.9617399557892599
+          ],
+          "main_displacement_m": 0.0002608976604188138,
+          "target_broken": true,
+          "other_broken": false,
+          "finite": true
+        },
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_5",
+            "step": 1200
+          }
+        ],
+        "force_N": 6
+      },
+      "reset": {
+        "passed": true,
+        "last": {
+          "phase": "reset_recovery",
+          "time_s": 12.008333333333333,
+          "target_displacement_m": 0.00003327886676042106,
+          "target_position_xyz": [
+            -0.7222377958101976,
+            1.0967398230607315,
+            0.9621495466014933
+          ],
+          "main_displacement_m": 0.000024957442623026357,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true
+        }
+      },
+      "ring_retention": {
+        "passed": true,
+        "scope": "preinserted ring fixture; not an approach solution or guarantee for all orientations"
+      }
+    },
+    "wall_s": 126.37914258055389,
+    "ring_fixture": {
+      "target": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider",
+      "robot_controlled": false,
+      "starts_preinserted": true,
+      "geometry": "original 32 half-ring capsules and two rails; no proximal assembly",
+      "trials": [
+        {
+          "angle_deg": 0,
+          "target_contact_count": 542,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 0.000004501515968232512,
+          "hold_seated_fraction": 1,
+          "peak_target_displacement_m": 0.005349841640085433,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 90,
+          "target_contact_count": 514,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 4.059279667894362e-7,
+          "hold_seated_fraction": 1,
+          "peak_target_displacement_m": 0.005959161256682477,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 180,
+          "target_contact_count": 540,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 0.000004215309796808228,
+          "hold_seated_fraction": 1,
+          "peak_target_displacement_m": 0.005353399361999482,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 270,
+          "target_contact_count": 507,
+          "hold_target_contact_count": 240,
+          "minimum_gap_m": 0.000008367749533155929,
+          "hold_seated_fraction": 1,
+          "peak_target_displacement_m": 0.00618181768866232,
+          "broken": false,
+          "retention_passed": true
+        }
+      ]
+    },
+    "passed": true
+  },
+  "unit_tests_passed": 39
+}

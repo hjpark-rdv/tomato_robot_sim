@@ -13,6 +13,7 @@ from datetime import datetime
 from dataset_design import BOUNDS, candidates
 from gpu_physics_errors import invalid_physics_message
 from gpu_physics_presets import PRESETS, resolve as resolve_physics
+from plant_resolution import appendage_policy
 
 HERE = Path(__file__).resolve().parent
 
@@ -110,6 +111,8 @@ def main():
     parser.add_argument('--benchmark-candidates', type=int, default=0, help='Execute only this many pending full candidates, estimate total runtime; resume without this flag')
     parser.add_argument('--physics-threads', type=int, default=4, help='CPU PhysX worker threads; benchmark before scaling environments')
     parser.add_argument('--physics-preset',choices=list(PRESETS),default='contact120',help='Default contact120 fixes the reproduced thin-stem crossing; practical60 and reference960 remain explicit comparison models')
+    parser.add_argument('--plant-resolution',choices=['full','light'],default='full',help='full keeps the original plant; light reduces distant hinges and ignores main-stem leaf/stub collisions by default; fruit, stem and break joints retained')
+    parser.add_argument('--main-appendage-collisions',choices=['keep','ignore'],help='Default: full=keep, light=ignore. keep reproduces the earlier light model with leaf/stub collisions')
     parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],help='Override preset rate; robot control remains 60 Hz')
     parser.add_argument('--elastic-joint-armature',type=float,help='Override preset joint inertia in kg m^2; changes physical response')
     parser.add_argument('--position-iterations',type=int,help='Override preset solver position iterations (1..255); lower values require contact validation')
@@ -130,6 +133,8 @@ def main():
     parser.add_argument('--video-limit',type=int,default=4)
     parser.add_argument('--video-display',default=':0',help='NVIDIA display for offline video rendering')
     args = parser.parse_args()
+    try:args.main_appendage_collisions=appendage_policy(args.plant_resolution,args.main_appendage_collisions)
+    except ValueError as error:parser.error(str(error))
     resolve_physics(args)
     if not 1<=args.video_limit<=12:parser.error('video-limit must be 1..12')
     if args.representative_videos and (args.trajectory_mode!='staged6d' or args.target!='Tomato_05' or args.validate_only):
@@ -161,7 +166,8 @@ def main():
         parser.error('candidate-indices must be comma-separated integers')
     if indices is not None and (len(set(indices))!=len(indices) or any(i<0 or i>=args.candidates for i in indices)):
         parser.error('candidate-indices must be unique and within the candidate pool')
-    root = (args.run_dir or HERE/'runs'/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_'+args.target.lower()+'_gpu_candidate_dataset')).resolve()
+    model_suffix='_light' if args.plant_resolution=='light' else ''
+    root = (args.run_dir or HERE/'runs'/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_'+args.target.lower()+'_gpu_candidate_dataset'+model_suffix)).resolve()
     root.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy(); config.pop('run_dir'); config.pop('resume'); config.pop('prepare_only'); config.pop('rebuild')
     config.pop('benchmark_candidates');config.pop('profile')
@@ -178,7 +184,10 @@ def main():
     if path.exists():
         if not args.resume:
             parser.error('Output exists; use --resume with the same configuration or a new directory')
-        if json.loads(path.read_text()) != json.loads(json.dumps(config)):
+        previous_config=json.loads(path.read_text())
+        previous_config.setdefault('plant_resolution','full')
+        previous_config.setdefault('main_appendage_collisions','keep')
+        if previous_config != json.loads(json.dumps(config)):
             parser.error('Resume configuration differs; choose a new output directory')
     else:
         path.write_text(json.dumps(config, indent=2)+'\n')
@@ -191,6 +200,8 @@ def main():
         (root/'candidates.json').write_text(json.dumps(proposals,indent=2)+'\n')
     print('[DATASET]',root,flush=True)
     print('[DATASET PHYSICS CONFIG]',json.dumps({k:config[k] for k in ('physics_preset','physics_hz','elastic_joint_armature','position_iterations')}),flush=True)
+    print('[DATASET 식물 모델]', '원본 유지' if args.plant_resolution=='full' else '별도 경량 모델: 목표 주변 관절·주줄기·송이 충돌 유지',flush=True)
+    print('[DATASET 잎·잘린 가지 충돌]', '유지' if args.main_appendage_collisions=='keep' else '무시; 화면 표시는 유지',flush=True)
     if args.prepare_only:
         print('Prepared candidates only. Launch the same command with --resume and without --prepare-only.'); return
     command = [sys.executable, '-u', str(HERE/'gpu_dataset_sim.py'), '--run-dir', str(root),'--app-threads','8']

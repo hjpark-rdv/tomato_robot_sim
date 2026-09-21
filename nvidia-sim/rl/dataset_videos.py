@@ -59,6 +59,14 @@ def compare(source, replay):
     """Outcome + trajectory metrics, NOT a claim of bitwise repeatability."""
     classification=replay['classification']
     checks={}
+    def model(row):
+        return row.get('plant_resolution',row.get('physical_inputs',{}).get('backend',{}).get('plant_resolution','full'))
+    a,b=model(source),model(replay)
+    checks['plant_resolution']=dict(source=a,replay=b,passed=a==b)
+    def appendages(row):
+        return row.get('main_appendage_collisions',row.get('physical_inputs',{}).get('backend',{}).get('main_appendage_collisions','keep'))
+    a,b=appendages(source),appendages(replay)
+    checks['main_appendage_collisions']=dict(source=a,replay=b,passed=a==b)
     for key in ('result','hook_success'):
         checks[key] = dict(source=source.get(key), replay=classification.get(key), passed=source.get(key)==classification.get(key))
     for key in ('retained_hook','center_entry_achieved','center_entry_safe','lift_completed','target_broken','other_broken','abort_reason'):
@@ -119,9 +127,11 @@ def gallery(root, manifest):
     counts=e(json.dumps(manifest['counts'],ensure_ascii=False))
     missing='' if manifest['counts'].get('success_target_hook',0) else '<p><b>이번 시험에는 완전 걸림 성공이 없습니다. 열매 중심 진입은 별도의 부분 성공입니다.</b></p>'
     diagnostic_section=('<h1>추가 진단: 재실행 불일치 또는 물리 오류</h1>'+''.join(diagnostics)) if diagnostics else ''
+    plant_label='경량 식물 모델' if manifest.get('plant_resolution','full')=='light' else '원본 식물 모델'
+    if manifest.get('main_appendage_collisions','keep')=='ignore':plant_label+=' · 주줄기 잎/잘린 가지 충돌 무시'
     (root/'index.html').write_text(f'''<!doctype html><html lang="ko"><meta charset="utf-8"><title>고리 경로 대표 영상</title>
 <style>body{{background:#151a21;color:#eee;font:16px sans-serif;max-width:1320px;margin:30px auto;padding:20px}}video{{width:100%}}section{{background:#202833;padding:20px;margin:24px 0}}a{{color:#86c8ff}}</style>
-<h1>고리 경로 시험 · 대표 영상 (2배속)</h1><p>원본 후보 {manifest['total_candidates']}개 · {counts}</p>{missing}
+<h1>고리 경로 시험 · 대표 영상 (2배속)</h1><p>{plant_label} · 원본 후보 {manifest['total_candidates']}개 · {counts}</p>{missing}
 <p>대표 영상: {len(cards)}개 / 별도 진단: {len(diagnostics)}개.</p>
 <p>저장된 로봇 관절 명령을 원본의 물리 설정으로 재실행해 실제 물리 상태를 녹화했습니다. 원본과 재실행이 같다는 것만으로 관통 등 물리 오류가 없다는 뜻은 아닙니다. 영상은 외부 관찰용이며 학습용 RGB-D와 다릅니다.</p>
 {''.join(cards)}{diagnostic_section}<a href="manifest.json">전체 메타데이터</a></html>''')
@@ -147,6 +157,8 @@ def main():
     root.mkdir(parents=True,exist_ok=True)
     rows=[read(p) for p in sorted((dataset/'results').glob('*/candidate.json'))]
     manifest=dict(schema_version=1,dataset=str(dataset),created=datetime.now().isoformat(),total_candidates=len(rows),
+        plant_resolution=cfg.get('plant_resolution','full'),
+        main_appendage_collisions=cfg.get('main_appendage_collisions','keep'),
         counts=dict(Counter(r['result'] for r in rows)),center_entry_safe_count=sum(bool(r.get('center_entry_safe')) for r in rows),
         selection=select(rows,args.max_videos),videos=[],complete=False)
     save(root/'manifest.json',manifest)
@@ -167,9 +179,13 @@ def main():
                 '--record-physics-video','--fixture',fixture,'--output',replay_dir]
             command+=['--contact-policy',cfg.get('contact_policy','legacy')]
             command+=['--velocity-iterations',str(cfg.get('velocity_iterations',4))]
+            command+=['--plant-resolution',cfg.get('plant_resolution','full')]
+            command+=['--main-appendage-collisions',cfg.get('main_appendage_collisions','keep')]
             if 'physical_audit' in source:command+=['--guard-tool-contacts']
             run(command,replay_dir/'run.log')
         report=read(replay_dir/'report.json');replay=report['motion']['outcomes'][0]
+        replay['plant_resolution']=report['backend'].get('plant_resolution','full')
+        replay['main_appendage_collisions']=report['backend'].get('main_appendage_collisions','keep')
         if not report.get('complete') or report['fixture']['commands_sha256']!=command_hash:
             raise RuntimeError('Incomplete replay or different saved joint commands')
         comparison=compare(source,replay);comparison['command_sha256']=command_hash

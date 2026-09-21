@@ -35,6 +35,21 @@ def test_middle_of_replay_divergence_is_not_hidden_by_same_final_result():
     replay=copy.deepcopy(trace);replay[1]['joints'][0]=.005
     assert not compare_trace(trace,replay)['passed']
 
+
+def test_same_result_from_different_plant_models_is_not_a_matching_replay():
+    source=dict(result='miss',hook_success=False,center_entry_safe=False,first_contact=None,
+                target_max_displacement_m=0.,main_stem_max_displacement_m=0.,executed_steps=20,
+                plant_resolution='light')
+    replay=dict(source,plant_resolution='full',classification=dict(result='miss',hook_success=False))
+    assert not compare(source,replay)['passed']
+    assert not compare(source,replay)['checks']['plant_resolution']['passed']
+    replay['plant_resolution']='light'
+    assert compare(source,replay)['passed']
+    source['main_appendage_collisions']='ignore'
+    assert not compare(source,replay)['passed']
+    replay['main_appendage_collisions']='ignore'
+    assert compare(source,replay)['passed']
+
 def test_mismatched_replay_is_separate_from_representative_gallery(tmp_path):
     from dataset_videos import gallery
     manifest=dict(total_candidates=1,counts={'miss':1},videos=[dict(title='실패',candidate_id='candidate_00000',

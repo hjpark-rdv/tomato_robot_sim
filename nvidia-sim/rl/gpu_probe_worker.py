@@ -25,6 +25,8 @@ parser.add_argument('--no-gravity',action='store_true',help='Stationary diagnosi
 parser.add_argument('--no-preload',action='store_true',help='Stationary diagnosis only; retain gravity but remove preload')
 parser.add_argument('--preload-mode',choices=['effort','drive','velocity'],default='effort',help='Experimental spring rest-load representation')
 parser.add_argument('--joint-armature',type=float,default=1e-5,help='Diagnostic virtual joint inertia; original 1e-5 kg m^2')
+parser.add_argument('--plant-resolution',choices=['full','light'],default='full')
+parser.add_argument('--main-appendage-collisions',choices=['keep','ignore'])
 parser.add_argument('--pulse-force',type=float,default=0.,help='Stationary diagnosis: fixed joint torques equivalent to this world-X force at the target stem in its rest pose, on 0.5..1.5 s')
 parser.add_argument('--behavior-probe',action='store_true',help='Original plant qualitative mechanics and preinserted CAD ring fixture, not a harvest trial')
 parser.add_argument('--record-physics-video',action='store_true',help='Save actual poses and original geometry for offline video (one environment)')
@@ -144,6 +146,9 @@ def run():
     if args.zero_load or args.no_gravity:cfg.sim.gravity=(0.,0.,0.)
     install_diagnostic_preload(args.preload_mode)
     cfg.elastic_joint_armature=args.joint_armature
+    cfg.plant_resolution=args.plant_resolution
+    from plant_resolution import appendage_policy
+    cfg.main_appendage_collisions=appendage_policy(args.plant_resolution,args.main_appendage_collisions)
     cfg.contact_policy=args.contact_policy
     cfg.arm_drive_stiffness=args.arm_drive_stiffness
     cfg.sim.physx.enable_external_forces_every_iteration=not args.external_forces_once
@@ -186,6 +191,8 @@ def run():
             world=DatasetScene(cfg,args.num_envs)
         context=world.sim.get_physics_context()
         report['backend']=dict(gpu_dynamics=context.is_gpu_dynamics_enabled(),
+            plant_resolution=args.plant_resolution,plant_dofs=world.slots[0].elastic.articulation.num_joints,
+            main_appendage_collisions=cfg.main_appendage_collisions,
             command_uploads=('legacy' if args.legacy_command_uploads else 'batched') if args.batched_io else 'per_asset',
             broadphase=context.get_broadphase_type(),ccd=context.is_ccd_enabled(),
             gpu_max_num_partitions=context.get_gpu_max_num_partitions(),
@@ -194,6 +201,7 @@ def run():
             solver=args.solver,solver_velocity_iterations=args.velocity_iterations,fabric=args.fabric,
             external_forces_every_iteration=cfg.sim.physx.enable_external_forces_every_iteration,
             articulation_count=len(world.scene.articulations),rigid_object_count=len(world.scene.rigid_objects))
+        report['plant_model']=world.slots[0].elastic.model
         if bool(report['backend']['gpu_dynamics'])!=(args.mode=='gpu'):
             raise RuntimeError('Requested physics backend not active')
         armatures=world.slots[0].elastic.articulation.root_physx_view.get_dof_armatures()

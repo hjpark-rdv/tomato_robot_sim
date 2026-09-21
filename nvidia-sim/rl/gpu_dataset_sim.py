@@ -90,7 +90,7 @@ def export(root,rows,elapsed):
     ordered=sorted(rows,key=lambda r:r['candidate_id'])
     with (root/'candidates.jsonl').open('w') as f:
         for row in ordered:f.write(json.dumps(row,allow_nan=False)+'\n')
-    fields=['candidate_id','target_id','observation_id','result','hook_success','executed','env_index',
+    fields=['candidate_id','target_id','plant_resolution','main_appendage_collisions','observation_id','result','hook_success','executed','env_index',
             'physics_valid','max_tool_penetration_mm','exclude_from_valid_trajectory_analysis',
             'azimuth_deg','elevation_deg','roll_deg','pitch_deg','offset_x_m','offset_y_m','offset_z_m',
             'pre_hook_distance_m','insertion_distance_m','lift_offset_m','target_max_displacement_mm',
@@ -135,7 +135,7 @@ def run(root):
              'dataset_design.py','dataset_scene.py','dataset_motion.py','dataset_camera.py','gpu_dataset_sim.py',
              'gpu_dataset_scene.py','gpu_batch_views.py','gpu_validation.py','gpu_prim_lookup.py','gpu_replication.py','gpu_physics_errors.py','gpu_initialization.py','gpu_grid_view.py',
              'gpu_planning.py','gpu_planning_worker.py','trajectory_search.py','trajectory_report.py',
-             'tool_contact_audit.py','connection_audit.py','contact_policy.py','display_skin.py']
+             'tool_contact_audit.py','connection_audit.py','contact_policy.py','display_skin.py','plant_resolution.py']
     fingerprints={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest() for name in sources}
     from assets import SIM_DIR, ROBOT_SOURCE
     from greenhouse_env import SCENE_SOURCE, STEM_SOURCE
@@ -175,6 +175,8 @@ def run(root):
     cfg.sim.physx.min_position_iteration_count=position_iterations;cfg.sim.physx.enable_external_forces_every_iteration=True
     cfg.position_jitter=0.;cfg.break_randomization=0.;cfg.plant_model='elastic';cfg.elastic_stiffness_scale=1.
     cfg.elastic_joint_armature=config.get('elastic_joint_armature',1e-5)
+    cfg.plant_resolution=config.get('plant_resolution','full')
+    cfg.main_appendage_collisions=config.get('main_appendage_collisions','keep')
     cfg.contact_policy=config.get('contact_policy','legacy')
     cfg.target_fruit=config['target'];cfg.stem_position=(-.75,.55,.32);cfg.stem_yaw=0.;cfg.stem_scale=.5
     cfg.lift_start_below=.4;cfg.lift_height_reference='mount';cfg.lift_speed=.1
@@ -190,6 +192,10 @@ def run(root):
         context=world.sim.get_physics_context()
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
         backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=position_iterations,
+                     plant_resolution=cfg.plant_resolution,
+                     main_appendage_collisions=cfg.main_appendage_collisions,
+                     plant_dofs=world.slots[0].elastic.articulation.num_joints,
+                     compliant_rod_joints=world.slots[0].elastic.model['compliant_rod_joints'],
                      physics_preset=config.get('physics_preset','reference960'),
                      physics_hz=physics_hz,control_hz=60,
                      elastic_joint_armature_kg_m2=cfg.elastic_joint_armature,
@@ -213,6 +219,7 @@ def run(root):
             if backend['environment_id_bounds_bits']!=environment_id_bits(config['num_envs']):
                 raise RuntimeError('Native environment-ID broadphase filtering not configured')
         write_json(root/('observation_backend.json' if args.observation_only else 'backend.json'),backend)
+        write_json(root/'plant_model.json',world.slots[0].elastic.model)
         print('[DATASET GPU]',backend,flush=True)
         validation=verify_resets(world);write_json(validation_path,validation)
         from tool_contact_audit import initialize_world_audits
@@ -366,6 +373,8 @@ def run(root):
             phase_timings['planning_s']+=time.monotonic()-plan_started
             folder=root/'results'/p['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
             row=dict(scene_id='scene_0001',target_id=config['target'],candidate_id=p['candidate_id'],
+                plant_resolution=cfg.plant_resolution,
+                main_appendage_collisions=cfg.main_appendage_collisions,
                 observation_id='observation_0001',observation_path='scene_0001/observation_0001/observation.json',
                 parameters=p,env_index=slot.index,env_origin_world=slot.dataset_origin.tolist(),
                 robot_joint_positions_at_start=slot.robot.data.joint_pos[0].tolist(),
@@ -475,6 +484,8 @@ def run(root):
         summary['execution_complete']=True
         summary['dataset_complete']=len(rows)==len(params) and not summary['counts']['incomplete'] and not summary['counts']['invalid_physics']
         summary['num_envs']=config['num_envs'];summary['target']=config['target']
+        summary['plant_resolution']=cfg.plant_resolution
+        summary['main_appendage_collisions']=cfg.main_appendage_collisions
         summary['reset_and_camera_validation_passed']=True
         if planning_service:
             if planning_service.process.wait(timeout=30)!=0:raise RuntimeError('CPU planning service failed during shutdown')

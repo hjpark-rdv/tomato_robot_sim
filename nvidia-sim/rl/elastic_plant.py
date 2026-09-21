@@ -5,6 +5,7 @@ plant model. Original fruit masses and break joints are retained. Visual skinnin
 reads simulated body transforms and never moves a physics body.
 """
 import re
+import hashlib
 import numpy as np
 import torch
 from scipy.spatial.transform import Rotation
@@ -13,6 +14,7 @@ from pxr import Gf, UsdGeom, UsdPhysics, PhysxSchema, Vt
 from isaaclab.assets import Articulation, ArticulationCfg
 from isaaclab.actuators import ImplicitActuatorCfg
 from assets import capsule, collision
+from plant_resolution import joint_layout, PROTECTED_RADIUS_M, appendage_policy, collision_inventory
 from elastic_geometry import (tube_centerline, resample_rod, point_segment_distances,
                               bind_terminal_frame, skin_points, weld_tube_end, vertex_normals, mesh_components)
 
@@ -35,6 +37,12 @@ class ElasticPlant:
         self.rod_masses = []
         self.rod_shapes = []
         self.contact_records = []
+        self.resolution=getattr(env.cfg,'plant_resolution','full')
+        self.appendage_collisions=appendage_policy(self.resolution,getattr(env.cfg,'main_appendage_collisions',None))
+        target=next(s for s in env.fruit_specs if s['name']==env.cfg.target_fruit)
+        target_pose=np.asarray(target['pose'])
+        self.resolution_target=target_pose[:3]+Rotation.from_quat(target_pose[[4,5,6,3]]).apply(target['center'])
+        self.resolution_chains={}
         self.scale = env.cfg.elastic_stiffness_scale
         self.cache = UsdGeom.XformCache()
         self.static = static
@@ -147,6 +155,23 @@ class ElasticPlant:
                           original_visual_meshes=len(self.skin)+len(self.rigid_visuals),
                           collision_model='source-radius capsules; trichomes visual only',
                           fruit_plant_contact=True)
+        inventory=collision_inventory(self.stage,self.root.rsplit('/',1)[0])
+        if self.appendage_collisions=='ignore' and inventory['by_category'].get('main_appendage',0):
+            raise RuntimeError('Ignored main-stem appendages still have enabled collision shapes')
+        self.model.update(main_appendage_collisions=self.appendage_collisions,collision_inventory=inventory)
+        self.model.update(plant_resolution=self.resolution,
+                          resolution_schema='fixed-distant-hinges-v1',
+                          protected_radius_m=PROTECTED_RADIUS_M,
+                          resolution_target=env.cfg.target_fruit,
+                          resolution_chains=self.resolution_chains,
+                          rod_collision_geometry_preserved=True,
+                          rod_mass_and_inertia_preserved=True,
+                          compliant_rod_joints=sum(len(v['free_indices']) for v in self.resolution_chains.values()),
+                          rod_mass_kg=float(sum(self.rod_masses)),
+                          rod_geometry_mass_sha256=hashlib.sha256(np.asarray([
+                              [*pose,*a,*b,radius,mass] for pose,(a,b,radius),mass in
+                              zip(self.rest,self.rod_shapes,self.rod_masses)],dtype=np.float64).tobytes()).hexdigest(),
+                          approximation='none; original skeleton' if self.resolution=='full' else 'distant serial hinge reduction; near-target springs unchanged; dynamic equivalence not assumed')
         cfg = ArticulationCfg(prim_path=self.root,spawn=None,
                 init_state=ArticulationCfg.InitialStateCfg(pos=tuple(self.rest[0][:3]),joint_pos={'.*':0.}),
                 actuators={'springs':ImplicitActuatorCfg(joint_names_expr=['.*'],stiffness=None,damping=None,armature=self.armature)})
@@ -171,6 +196,11 @@ class ElasticPlant:
     def _tube(self, name, sides, segments, parent, stiffness, damping):
         points, radii = self._source_tube(name, sides)
         nodes, radii = resample_rod(points, radii, segments)
+        layout=joint_layout(self.resolution,name,nodes,self.resolution_target,self.env.cfg.target_fruit,parent is None)
+        self.resolution_chains[name]=dict(original_segments=segments,
+            free_indices=np.flatnonzero(layout['free']).tolist(),
+            protected_indices=np.flatnonzero(layout['protected']).tolist(),
+            spring_scale=layout['spring_scale'].tolist())
         self.starts[name], self.start_parents[name], self.sides[name] = nodes[0], parent, sides
         chain = []
         for j, (a, b) in enumerate(zip(nodes[:-1], nodes[1:])):
@@ -198,7 +228,9 @@ class ElasticPlant:
             shape = capsule(self.stage, path+'/StemCollider', a-center, b-center, radius)
             shape.MakeInvisible()
             pose = np.r_[center, 1., 0., 0., 0.]
-            self._joint(f'{name}_{j:02d}', parent, path, pose, a, stiffness, damping)
+            spring_scale=layout['spring_scale'][j]
+            self._joint(f'{name}_{j:02d}', parent, path, pose, a,
+                        stiffness*spring_scale, damping*spring_scale, fixed=not layout['free'][j])
             index = len(self.bodies)
             self.bodies.append(path)
             self.rod_masses.append(mass)
@@ -214,8 +246,8 @@ class ElasticPlant:
     def _main_appendages(self, main):
         """Carry original leaves/stubs with their main-stem attachment segment.
 
-        Their collision meshes become convex compound shapes on that body, not
-        fixed world obstacles or kinematic followers. Leaf flex is not modeled.
+        With policy keep, convex collision shapes belong to that body. Policy
+        ignore retains only the visual bindings. Leaf flex is not modeled.
         """
         groups = {}
         for prim in self.static.GetChildren():
@@ -234,7 +266,7 @@ class ElasticPlant:
             parent=main[int(nearest.argmin())]
             for prim,points in zip(prims,vertices):
                 name=prim.GetName(); parents[name]=parent
-                if 'Trichomes' in name or 'Cut_Fibers' in name:
+                if self.appendage_collisions=='ignore' or 'Trichomes' in name or 'Cut_Fibers' in name:
                     continue
                 mesh=UsdGeom.Mesh(prim)
                 counts=np.asarray(mesh.GetFaceVertexCountsAttr().Get(),dtype=int)
@@ -266,11 +298,11 @@ class ElasticPlant:
             UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(path)).CreateFilteredPairsRel().SetTargets(appendage_paths[index+1:])
         self.model.update(main_appendage_collision_shapes=proxies,
                           appendage_self_collision=False,
-                          main_appendages='separate convex leaflets/stubs attached to main stem; hairs/fine veins visual only; rod masses retained')
+                          main_appendages='visual-only leaves/stubs follow main stem; no appendage collision proxies' if self.appendage_collisions=='ignore' else 'separate convex leaflets/stubs attached to main stem; hairs/fine veins visual only; rod masses retained')
         return parents
 
-    def _joint(self, name, parent, child_path, child_pose, point, stiffness, damping):
-        joint_type = UsdPhysics.FixedJoint if parent is None else UsdPhysics.Joint
+    def _joint(self, name, parent, child_path, child_pose, point, stiffness, damping, fixed=False):
+        joint_type = UsdPhysics.FixedJoint if parent is None or fixed else UsdPhysics.Joint
         joint = joint_type.Define(self.stage, self.root+'/Joints/'+name)
         joint.CreateBody1Rel().SetTargets([child_path])
         for slot, pose in [(0, np.r_[0.,0.,0.,1.,0.,0.,0.] if parent is None else self.rest[parent]),
@@ -284,7 +316,7 @@ class ElasticPlant:
             joint.CreateBody0Rel().SetTargets([self.paths[parent]])
         joint.CreateExcludeFromArticulationAttr(False)
         joint.CreateCollisionEnabledAttr(False)
-        if parent is None:
+        if parent is None or fixed:
             self.joints.append(str(joint.GetPath()))
             self.joint_specs.append((parent, child_path, np.array(joint.GetLocalPos0Attr().Get()),
                                      np.array(joint.GetLocalPos1Attr().Get())))
@@ -362,6 +394,12 @@ class ElasticPlant:
         q = torch.zeros_like(self.articulation.data.joint_pos)
         self.articulation.write_joint_state_to_sim(q,q)
         if self.body_ids is None:
+            expected=3*(self.model['compliant_rod_joints']+len(self.env.fruit_specs))
+            if self.articulation.num_joints!=expected:
+                raise RuntimeError(f'Plant joint layout mismatch: expected {expected}, got {self.articulation.num_joints}')
+            self.model.update(native_dofs=self.articulation.num_joints,
+                              native_body_count=self.articulation.num_bodies,
+                              native_articulation_mass_kg=float(self.articulation.root_physx_view.get_masses().sum()))
             self.body_ids = [self.articulation.body_names.index(p.rsplit('/',1)[-1]) for p in self.paths]
             self.anchor_ids = {s['anchor']:self.articulation.body_names.index(s['anchor'].rsplit('/',1)[-1])
                                for s in self.env.fruit_specs}

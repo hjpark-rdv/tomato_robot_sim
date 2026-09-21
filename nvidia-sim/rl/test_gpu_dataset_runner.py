@@ -36,6 +36,36 @@ def test_reject_duplicate_or_out_of_range_indices(tmp_path):
     assert not (tmp_path/'outside'/'config.json').exists()
 
 
+def test_light_model_is_opt_in_and_cannot_be_mixed_on_resume(tmp_path):
+    full=tmp_path/'full';light=tmp_path/'light'
+    assert prepare(full).returncode==0
+    assert prepare(light,'--plant-resolution','light').returncode==0
+    assert json.loads((full/'config.json').read_text())['plant_resolution']=='full'
+    assert json.loads((light/'config.json').read_text())['plant_resolution']=='light'
+    assert (full/'candidates.json').read_text()==(light/'candidates.json').read_text()
+    assert prepare(light,'--plant-resolution','full','--resume').returncode!=0
+    assert prepare(light,'--plant-resolution','light','--resume').returncode==0
+    # Existing datasets predate this optional model; omission means original.
+    old=json.loads((full/'config.json').read_text());old.pop('plant_resolution')
+    (full/'config.json').write_text(json.dumps(old))
+    assert prepare(full,'--resume').returncode==0
+    assert prepare(full,'--plant-resolution','light','--resume').returncode!=0
+
+
+def test_leaf_collision_policy_is_explicit_and_preserves_full(tmp_path):
+    full=tmp_path/'full';light=tmp_path/'light'
+    assert prepare(full).returncode==0
+    assert prepare(light,'--plant-resolution','light').returncode==0
+    assert json.loads((full/'config.json').read_text())['main_appendage_collisions']=='keep'
+    assert json.loads((light/'config.json').read_text())['main_appendage_collisions']=='ignore'
+    assert prepare(tmp_path/'bad','--main-appendage-collisions','ignore').returncode!=0
+    assert prepare(light,'--plant-resolution','light','--main-appendage-collisions','keep','--resume').returncode!=0
+    assert prepare(light,'--plant-resolution','light','--resume').returncode==0
+    old=json.loads((full/'config.json').read_text());old.pop('plant_resolution');old.pop('main_appendage_collisions')
+    (full/'config.json').write_text(json.dumps(old))
+    assert prepare(full,'--resume').returncode==0
+
+
 def test_scheduling_mode_is_recorded_and_cannot_change_on_resume(tmp_path):
     result=prepare(tmp_path,'--schedule','continuous')
     assert result.returncode==0,result.stderr
