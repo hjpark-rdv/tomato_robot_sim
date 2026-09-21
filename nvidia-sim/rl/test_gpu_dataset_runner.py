@@ -160,3 +160,16 @@ def test_timestep_and_planning_options_are_recorded_and_resume_protected(tmp_pat
 
 def test_invalid_planning_workers_rejected(tmp_path):
     assert prepare(tmp_path,'--planning-workers','-1').returncode!=0
+
+
+def test_armature_is_explicit_and_resume_protected(tmp_path):
+    result=prepare(tmp_path,'--physics-hz','240','--elastic-joint-armature','0.0001')
+    assert result.returncode==0,result.stderr
+    cfg=json.loads((tmp_path/'config.json').read_text())
+    assert cfg['elastic_joint_armature']==.0001
+    assert prepare(tmp_path,'--resume','--physics-hz','240').returncode!=0
+
+
+def test_nonfinite_or_negative_armature_is_rejected(tmp_path):
+    for v in ('nan','inf','-0.01'):
+        assert prepare(tmp_path/v,'--elastic-joint-armature',v).returncode!=0

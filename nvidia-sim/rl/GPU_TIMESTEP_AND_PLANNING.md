@@ -132,3 +132,6 @@ waypoint, 방향, quaternion과 preflight 판정이 순차 방식과 정확히 �
 원본 보고서·명령·접촉/상태 기록:
 `runs/20260921_143244_gpu_timestep/env{1,4}_hz{60,120,240,480,720,960}/`.
 관련 자동 테스트 52개 통과.
+
+후속 저주파 안정성 및 보조 관성 실험: [GPU_ELASTIC_STABILITY.md](GPU_ELASTIC_STABILITY.md).
+정지 안정성은 개선했으나 접촉 응답과 파손 결과가 달라져 물리 기본값은 유지했다.

@@ -47,3 +47,21 @@ def test_missing_native_contact_readback_cannot_validate_matching_misses(tmp_pat
     result=compare(a,b)
     assert not result['comparable'] and result['speedup'] is None
     assert 'contact reports' in result['reason']
+
+
+def test_changed_numerical_inertia_is_not_same_model_even_if_traces_match(tmp_path):
+    a,b=tmp_path/'reference',tmp_path/'regularized'
+    fixture(a,260,26.);fixture(b,260,13.)
+    p=b/'report.json';r=json.loads(p.read_text());r['arguments']={'joint_armature':.0001};p.write_text(json.dumps(r))
+    result=compare(a,b)
+    assert not result['same_physical_model']
+    assert not result['comparable'] and result['speedup'] is None
+
+
+def test_failed_native_api_checks_cannot_validate_matching_motion(tmp_path):
+    a,b=tmp_path/'reference',tmp_path/'trial'
+    fixture(a,260,26.);fixture(b,260,13.)
+    p=b/'report.json';r=json.loads(p.read_text());r['api_checks_passed']=False;p.write_text(json.dumps(r))
+    result=compare(a,b)
+    assert not result['comparable'] and result['speedup'] is None
+    assert 'checks failed' in result['reason']

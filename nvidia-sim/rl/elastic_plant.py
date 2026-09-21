@@ -55,8 +55,11 @@ class ElasticPlant:
                           rachis_stiffness_Nm_rad=2.*self.scale,
                           pedicel_stiffness_Nm_rad=.25*self.scale,
                           calibrated_to_real_plant=False, sleep_threshold=0., stabilization_threshold=0.)
-        self.armature=1e-5
+        self.armature=getattr(env.cfg,'elastic_joint_armature',1e-5)
+        if not np.isfinite(self.armature) or not 0<=self.armature<=.01:
+            raise ValueError('Elastic joint armature must be finite and in 0..0.01 kg m^2')
         self.model.update(joint_armature_kg_m2=self.armature,
+                          armature_definition='numerical joint inertia, not measured plant tissue inertia',
                           peduncle_damping_Nms_rad=1.*np.sqrt(self.scale),
                           rachis_damping_Nms_rad=.15*np.sqrt(self.scale),
                           pedicel_damping_Nms_rad=.02*np.sqrt(self.scale),

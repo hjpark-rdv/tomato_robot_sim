@@ -18,10 +18,15 @@ def compare(reference,trial):
     a=json.loads((reference/'report.json').read_text())
     b=json.loads((trial/'report.json').read_text())
     result=dict(reference=str(reference),trial=str(trial),comparable=False,speedup=None)
+    physical_keys={'joint_armature':1e-5,'preload_mode':'effort'}
+    result['same_physical_model']=all(a.get('arguments',{}).get(k,default)==b.get('arguments',{}).get(k,default)
+                                      for k,default in physical_keys.items())
     if not a.get('complete') or not b.get('complete'):
         return dict(result,reason='experiment did not finish')
     if any(r.get('backend',{}).get('suppress_readback') for r in (a,b)):
         return dict(result,reason='native collider contact reports unavailable with suppressed CPU readback; labels are not comparable')
+    if any(r.get('api_checks_passed') is False for r in (a,b)):
+        return dict(result,reason='native contact/reset/break checks failed; speedup withheld')
     if a['num_envs']!=b['num_envs'] or a['fixture']['commands_sha256']!=b['fixture']['commands_sha256']:
         return dict(result,reason='different environment count or commanded trajectory')
     initial_a=np.load(reference/'initial_state.npz');initial_b=np.load(trial/'initial_state.npz')
@@ -43,10 +48,10 @@ def compare(reference,trial):
     result['trajectory_checks']=checks
     result['screening_tolerances']=dict(position_m=.001,joint_rad=.005,control_step_count=1,
         scope='small regression screen, not physical calibration or a no-tunnelling certificate')
-    result['comparable']=bool(all(c['passed'] for c in checks) and max(result['initial_state_max_abs_errors'].values())<=1e-6)
+    result['comparable']=bool(result['same_physical_model'] and all(c['passed'] for c in checks) and max(result['initial_state_max_abs_errors'].values())<=1e-6)
     if result['comparable']:
         result['speedup']=a['motion']['wall_s']/b['motion']['wall_s']
-    else:result['reason']='different initial state, physical trajectory or outcome; speedup withheld'
+    else:result['reason']='different physical model, initial state, physical trajectory or outcome; speedup withheld'
     return result
 
 

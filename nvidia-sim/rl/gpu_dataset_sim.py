@@ -167,6 +167,7 @@ def run(root):
     cfg.sim.physx.max_velocity_iteration_count=4
     cfg.sim.physx.min_position_iteration_count=64;cfg.sim.physx.enable_external_forces_every_iteration=True
     cfg.position_jitter=0.;cfg.break_randomization=0.;cfg.plant_model='elastic';cfg.elastic_stiffness_scale=1.
+    cfg.elastic_joint_armature=config.get('elastic_joint_armature',1e-5)
     cfg.target_fruit=config['target'];cfg.stem_position=(-.75,.55,.32);cfg.stem_yaw=0.;cfg.stem_scale=.5
     cfg.lift_start_below=.4;cfg.lift_height_reference='mount';cfg.lift_speed=.1
     cfg.override_break_force=False;cfg.override_break_torque=False
@@ -182,6 +183,7 @@ def run(root):
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
         backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=64,
                      physics_hz=physics_hz,control_hz=60,
+                     elastic_joint_armature_kg_m2=cfg.elastic_joint_armature,
                      command_uploads=config.get('command_uploads','batched'),
                      velocity_iterations=4,gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
@@ -191,6 +193,10 @@ def run(root):
                      environment_id_bounds_bits=env_id_attr.Get() if env_id_attr else None)
         if not backend['gpu_dynamics'] or backend['broadphase']!='GPU' or backend['suppress_readback'] or backend['gpu_max_num_partitions']!=1:
             raise RuntimeError('GPU physics / native collider readback backend assertion failed')
+        for slot in world.slots:
+            actual=slot.elastic.articulation.root_physx_view.get_dof_armatures()
+            if not torch.equal(actual,torch.full_like(actual,cfg.elastic_joint_armature)):
+                raise RuntimeError('Native elastic joint armature differs from requested configuration')
         if config['num_envs']>1:
             from gpu_replication import environment_id_bits
             if backend['environment_id_bounds_bits']!=environment_id_bits(config['num_envs']):

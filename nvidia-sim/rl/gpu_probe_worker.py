@@ -21,6 +21,11 @@ parser.add_argument('--preserve-joints',action='store_true',help='Diagnostic: au
 parser.add_argument('--velocity-iterations',type=int,default=4,help='Diagnostic solver setting; production uses 4')
 parser.add_argument('--solver',choices=['tgs','pgs'],default='tgs')
 parser.add_argument('--zero-load',action='store_true',help='Diagnostic only: disable gravity and preload')
+parser.add_argument('--no-gravity',action='store_true',help='Stationary diagnosis only; retain preload but remove gravity')
+parser.add_argument('--no-preload',action='store_true',help='Stationary diagnosis only; retain gravity but remove preload')
+parser.add_argument('--preload-mode',choices=['effort','drive','velocity'],default='effort',help='Experimental spring rest-load representation')
+parser.add_argument('--joint-armature',type=float,default=1e-5,help='Diagnostic virtual joint inertia; original 1e-5 kg m^2')
+parser.add_argument('--pulse-force',type=float,default=0.,help='Stationary diagnosis: fixed joint torques equivalent to this world-X force at the target stem in its rest pose, on 0.5..1.5 s')
 parser.add_argument('--no-contacts',action='store_true',help='Diagnostic only: disable all collision shapes')
 parser.add_argument('--cuda-tensors',action='store_true',help='Diagnostic: use CUDA tensor API as well as GPU physics')
 parser.add_argument('--fabric',action='store_true',help='Diagnostic: avoid per-step USD physics writeback')
@@ -45,9 +50,13 @@ if not 1<=args.position_iterations<=255 or not 0<=args.velocity_iterations<=255:
     parser.error('Solver iteration count is out of range')
 if args.stationary_steps<0 or args.max_control_steps<0 or args.num_envs<1:
     parser.error('Invalid step/environment count')
+if not 0<=args.joint_armature<=.01 or not 0<=args.pulse_force<=1:
+    parser.error('Invalid armature or diagnostic pulse')
+if args.pulse_force and (not args.stationary_steps or args.zero_load or args.no_preload or args.no_gravity or args.no_contacts):
+    parser.error('Pulse requires a stationary test with original loads and contacts')
 if args.neighbor_reset_interval and (args.neighbor_reset_interval<1 or args.num_envs<2 or not args.batched_io or args.stationary_steps):
     parser.error('neighbor-reset-interval requires batched motion with at least two environments')
-if (args.zero_load or args.no_contacts or args.preserve_joints or args.joint_variant!='original') and not args.stationary_steps:
+if (args.zero_load or args.no_gravity or args.no_preload or args.no_contacts or args.preserve_joints or args.joint_variant!='original') and not args.stationary_steps:
     parser.error('Physical isolation switches require --stationary-steps')
 launcher=AppLauncher(args,limit_cpu_threads=8);app=launcher.app
 
@@ -66,6 +75,21 @@ from dataset_motion import execute_steps
 from dataset_design import write_json,classify_result
 from pose_candidates import DEFAULT_LIMITS
 from pose_worker import state,state_comparison
+
+
+def install_diagnostic_preload(mode):
+    """Keep rejected drive variants out of the production plant reset path."""
+    if mode=='effort':return
+    from elastic_plant import ElasticPlant
+    original=ElasticPlant.reset
+    def reset(plant):
+        original(plant)
+        a=plant.articulation;zero=torch.zeros_like(plant.preload)
+        a.set_joint_position_target(plant.preload if mode=='drive' else zero)
+        a.set_joint_velocity_target(plant.preload*a.data.joint_stiffness/a.data.joint_damping if mode=='velocity' else zero)
+        a.set_joint_effort_target(zero);a.write_data_to_sim()
+        plant.model['diagnostic_preload_mode']=mode
+    ElasticPlant.reset=reset
 
 
 def identity(slot):
@@ -105,7 +129,9 @@ def run():
     cfg.gpu_batched_joint_commands=not args.legacy_command_uploads
     cfg.sim.physx.gpu_max_num_partitions=args.gpu_partitions
     cfg.sim.physx.solver_type=1 if args.solver=='tgs' else 0
-    if args.zero_load:cfg.sim.gravity=(0.,0.,0.)
+    if args.zero_load or args.no_gravity:cfg.sim.gravity=(0.,0.,0.)
+    install_diagnostic_preload(args.preload_mode)
+    cfg.elastic_joint_armature=args.joint_armature
     cfg.sim.physx.enable_external_forces_every_iteration=not args.external_forces_once
     cfg.sim.physx.enable_ccd=args.mode=='cpu'
     cfg.probe_gpu_dynamics=args.mode=='gpu'
@@ -156,6 +182,10 @@ def run():
             articulation_count=len(world.scene.articulations),rigid_object_count=len(world.scene.rigid_objects))
         if bool(report['backend']['gpu_dynamics'])!=(args.mode=='gpu'):
             raise RuntimeError('Requested physics backend not active')
+        armatures=world.slots[0].elastic.articulation.root_physx_view.get_dof_armatures()
+        report['backend']['elastic_joint_armature_kg_m2']=[float(armatures.min()),float(armatures.max())]
+        if not torch.equal(armatures,torch.full_like(armatures,args.joint_armature)):
+            raise RuntimeError('Requested joint armature not active')
         for slot in world.slots:
             slot.start_q=torch.tensor([fixture['robot_joint_positions_at_start']],dtype=torch.float32,device=slot.device)
         if args.contact_view_diagnostic:
@@ -183,8 +213,10 @@ def run():
             report['diagnostic']=dict(preserve_joints=args.preserve_joints,
                 velocity_iterations=args.velocity_iterations,requested_steps=args.stationary_steps,
                 solver=args.solver,zero_load=args.zero_load,no_contacts=args.no_contacts)
-            if args.zero_load:
+            if args.zero_load or args.no_preload:
                 for s in world.slots:
+                    s.elastic.articulation.set_joint_position_target(torch.zeros_like(s.elastic.preload))
+                    s.elastic.articulation.set_joint_velocity_target(torch.zeros_like(s.elastic.preload))
                     s.elastic.articulation.set_joint_effort_target(torch.zeros_like(s.elastic.preload))
                 world.scene.write_data_to_sim()
             if args.no_contacts:
@@ -193,10 +225,35 @@ def run():
                         UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Set(False)
                 get_physx_simulation_interface().flush_changes()
             initial=state(world.slots[0]);began=time.perf_counter()
-            clone_history=[]
+            clone_history=[];stationary_history=[]
+            pulse_torques=[];base_efforts=[];pulse_active=False
+            if args.pulse_force:
+                for slot in world.slots:
+                    index=slot.elastic.chains['TRUSS_Pedicel_proximal_'+slot.target_spec['name'][-2:]][-1]
+                    body=slot.elastic.body_ids[index]
+                    jac=slot.elastic.articulation.root_physx_view.get_jacobians()[0,body-1,:3]
+                    pulse_torques.append((jac.T@torch.tensor([args.pulse_force,0.,0.],device=jac.device,dtype=jac.dtype))[None])
+                    base_efforts.append(slot.elastic.articulation.data.joint_effort_target.clone())
+                report['pulse']=dict(force_at_rest_N=args.pulse_force,axis='world X',on_s=.5,off_s=1.5,
+                    applied='constant generalized joint torque using rest-pose Jacobian; not a moving-point force',
+                    torque_Nm=pulse_torques[0].tolist())
             from gpu_validation import check_clone
             for tick in range(args.stationary_steps):
+                if args.pulse_force:
+                    on=.5<=tick/args.physics_hz<1.5
+                    if on!=pulse_active:
+                        for slot,base,pulse in zip(world.slots,base_efforts,pulse_torques):
+                            slot.elastic.articulation.set_joint_effort_target(base+pulse if on else base)
+                            slot.command_dirty=True
+                        pulse_active=on
                 world.step()
+                if tick==0 or (tick+1)%max(1,args.physics_hz//10)==0:
+                    current=state(world.slots[0])
+                    stationary_history.append(dict(time_s=(tick+1)/args.physics_hz,
+                        max_rod_displacement_m=float(np.max(np.linalg.norm(current['elastic_bodies'][...,:3]-initial['elastic_bodies'][...,:3],axis=-1))),
+                        max_fruit_displacement_m=float(np.max(np.linalg.norm(current['fruits'][...,:3]-initial['fruits'][...,:3],axis=-1))),
+                        target_displacement_m=float(np.linalg.norm(current['fruits'][world.slots[0].target_index,...,:3]-initial['fruits'][world.slots[0].target_index,...,:3])),
+                        max_joint_speed=float(np.max(np.abs(current['elastic_dq'])))))
                 if args.clone_diagnostic and (tick < 16 or tick % 240 == 239):
                     states=[state(slot) for slot in world.slots]
                     checks=[check_clone(states[0],value,broken=bool(slot._broken[0] or slot._other_broken)) for slot,value in zip(world.slots,states)]
@@ -223,6 +280,7 @@ def run():
                     sampled_steps=[c['step'] for c in clone_history],requested_steps=args.stationary_steps,
                     scope='identical idle commands, original contact/drive/break settings unless explicitly disabled by diagnostic arguments')
             report['stationary']=dict(steps=tick+1,wall_s=time.perf_counter()-began,
+                history=stationary_history,preload_mode=args.preload_mode,
                 broken_envs=[s.index for s in world.slots if s._broken[0] or s._other_broken],
                 events=world.slots[0].contact_diagnostics,
                 state_change=state_comparison(initial,state(world.slots[0])))
@@ -322,4 +380,5 @@ def run():
 try:run()
 except BaseException:
     traceback.print_exc()
+    raise
 finally:app.close()

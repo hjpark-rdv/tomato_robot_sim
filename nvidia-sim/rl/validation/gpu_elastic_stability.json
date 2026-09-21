@@ -1,0 +1,969 @@
+{
+  "date": "2026-09-21",
+  "base_commit": "1305651",
+  "status": "experimental only; no lower-Hz replacement adopted",
+  "defaults": {
+    "physics_hz": 960,
+    "elastic_joint_armature": 1e-05
+  },
+  "scope": "Tomato_05, 1 and 4 clones, original geometry and material/drive/break constants; armature changes dynamic response",
+  "isolation": {
+    "armature0.0001_hz240": {
+      "report": "runs/20260921_150500_elastic_diagnosis/armature0.0001_hz240/report.json",
+      "physics_hz": 240,
+      "armature": 0.0001,
+      "steps": 480,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.0004324532055761665,
+        "max_fruit_displacement_m": 0.0002008930896408856,
+        "max_joint_speed": 0.0008285033982247114
+      },
+      "max_sampled_rod_displacement_m": 0.0005003074184060097
+    },
+    "armature0.0001_hz60": {
+      "report": "runs/20260921_150500_elastic_diagnosis/armature0.0001_hz60/report.json",
+      "physics_hz": 60,
+      "armature": 0.0001,
+      "steps": 120,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.03728961572051048,
+        "max_fruit_displacement_m": 0.020991384983062744,
+        "max_joint_speed": 0.01445707120001316
+      },
+      "max_sampled_rod_displacement_m": 0.03728961572051048
+    },
+    "armature0.001_hz240": {
+      "report": "runs/20260921_150500_elastic_diagnosis/armature0.001_hz240/report.json",
+      "physics_hz": 240,
+      "armature": 0.001,
+      "steps": 480,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.00010088805720442906,
+        "max_fruit_displacement_m": 9.518385923001915e-05,
+        "max_joint_speed": 9.397462417837232e-05
+      },
+      "max_sampled_rod_displacement_m": 0.00013734940148424357
+    },
+    "armature0.001_hz60": {
+      "report": "runs/20260921_150500_elastic_diagnosis/armature0.001_hz60/report.json",
+      "physics_hz": 60,
+      "armature": 0.001,
+      "steps": 120,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.000501533504575491,
+        "max_fruit_displacement_m": 0.0002835449995473027,
+        "max_joint_speed": 0.001564065576530993
+      },
+      "max_sampled_rod_displacement_m": 0.000619225378613919
+    },
+    "drive": {
+      "report": "runs/20260921_150500_elastic_diagnosis/drive/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 171,
+      "broken_envs": [
+        0
+      ],
+      "last_sample": {
+        "time_s": 0.7,
+        "max_rod_displacement_m": 0.9355971813201904,
+        "max_fruit_displacement_m": 0.5902072191238403,
+        "max_joint_speed": 2.681703567504883
+      },
+      "max_sampled_rod_displacement_m": 0.9355971813201904
+    },
+    "drive_no_contacts": {
+      "report": "runs/20260921_150500_elastic_diagnosis/drive_no_contacts/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 219,
+      "broken_envs": [
+        0
+      ],
+      "last_sample": {
+        "time_s": 0.9,
+        "max_rod_displacement_m": 1.4024301767349243,
+        "max_fruit_displacement_m": 0.8575979471206665,
+        "max_joint_speed": 2.3493361473083496
+      },
+      "max_sampled_rod_displacement_m": 1.4024301767349243
+    },
+    "no_contacts": {
+      "report": "runs/20260921_150500_elastic_diagnosis/no_contacts/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 480,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.03241957724094391,
+        "max_fruit_displacement_m": 0.018504949286580086,
+        "max_joint_speed": 0.020790571346879005
+      },
+      "max_sampled_rod_displacement_m": 0.03241957724094391
+    },
+    "no_preload": {
+      "report": "runs/20260921_150500_elastic_diagnosis/no_preload/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 147,
+      "broken_envs": [
+        0
+      ],
+      "last_sample": {
+        "time_s": 0.6,
+        "max_rod_displacement_m": 0.9131293892860413,
+        "max_fruit_displacement_m": 0.5938912034034729,
+        "max_joint_speed": 1.9521090984344482
+      },
+      "max_sampled_rod_displacement_m": 0.9131293892860413
+    },
+    "original": {
+      "report": "runs/20260921_150500_elastic_diagnosis/original/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 480,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.058516036719083786,
+        "max_fruit_displacement_m": 0.03281087428331375,
+        "max_joint_speed": 0.03503252565860748
+      },
+      "max_sampled_rod_displacement_m": 0.058516036719083786
+    },
+    "velocity_hz240": {
+      "report": "runs/20260921_150500_elastic_diagnosis/velocity_hz240/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 192,
+      "broken_envs": [
+        0
+      ],
+      "last_sample": {
+        "time_s": 0.8,
+        "max_rod_displacement_m": 1.139135718345642,
+        "max_fruit_displacement_m": 0.7116386890411377,
+        "max_joint_speed": 26.373483657836914
+      },
+      "max_sampled_rod_displacement_m": 1.139135718345642
+    },
+    "velocity_hz60": {
+      "report": "runs/20260921_150500_elastic_diagnosis/velocity_hz60/report.json",
+      "physics_hz": 60,
+      "armature": 1e-05,
+      "steps": 11,
+      "broken_envs": [
+        0
+      ],
+      "last_sample": {
+        "time_s": 0.1,
+        "max_rod_displacement_m": 0.08459604531526566,
+        "max_fruit_displacement_m": 0.04874395951628685,
+        "max_joint_speed": 0.6489123702049255
+      },
+      "max_sampled_rod_displacement_m": 0.08459604531526566
+    },
+    "velocity_hz960": {
+      "report": "runs/20260921_150500_elastic_diagnosis/velocity_hz960/report.json",
+      "physics_hz": 960,
+      "armature": 1e-05,
+      "steps": 1920,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 0.07827723771333694,
+        "max_fruit_displacement_m": 0.04835067316889763,
+        "max_joint_speed": 0.013542159460484982
+      },
+      "max_sampled_rod_displacement_m": 0.10695015639066696
+    },
+    "zero_load": {
+      "report": "runs/20260921_150500_elastic_diagnosis/zero_load/report.json",
+      "physics_hz": 240,
+      "armature": 1e-05,
+      "steps": 480,
+      "broken_envs": [],
+      "last_sample": {
+        "time_s": 2.0,
+        "max_rod_displacement_m": 7.233342330437154e-05,
+        "max_fruit_displacement_m": 8.546168828615919e-05,
+        "max_joint_speed": 0.0032028548885136843
+      },
+      "max_sampled_rod_displacement_m": 7.249691407196224e-05
+    }
+  },
+  "motion": {
+    "motion_240_1": {
+      "report": "runs/20260921_151000_elastic_validation/motion_240_1/report.json",
+      "physics_hz": 240,
+      "armature": 0.0001,
+      "num_envs": 1,
+      "wall_s": 40.82873435784131,
+      "sim_s": 4.383333333333333,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 263,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01940237710979328,
+          "main_stem_max_displacement_m": 0.03073069080710411,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    },
+    "motion_240_4": {
+      "report": "runs/20260921_151000_elastic_validation/motion_240_4/report.json",
+      "physics_hz": 240,
+      "armature": 0.0001,
+      "num_envs": 4,
+      "wall_s": 47.89800783060491,
+      "sim_s": 4.383333333333333,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 263,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01940237710979328,
+          "main_stem_max_displacement_m": 0.03073069080710411,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 263,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01940237710979328,
+          "main_stem_max_displacement_m": 0.03073069080710411,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 263,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01940237710979328,
+          "main_stem_max_displacement_m": 0.03073069080710411,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 263,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01940237710979328,
+          "main_stem_max_displacement_m": 0.03073069080710411,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ],
+      "clone_traces_identical": true
+    },
+    "motion_240_stronger_1": {
+      "report": "runs/20260921_151000_elastic_validation/motion_240_stronger_1/report.json",
+      "physics_hz": 240,
+      "armature": 0.001,
+      "num_envs": 1,
+      "wall_s": 40.179560468532145,
+      "sim_s": 4.316666666666666,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 259,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019075389639652395,
+          "main_stem_max_displacement_m": 0.030376747250556946,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    },
+    "motion_240_stronger_4": {
+      "report": "runs/20260921_151000_elastic_validation/motion_240_stronger_4/report.json",
+      "physics_hz": 240,
+      "armature": 0.001,
+      "num_envs": 4,
+      "wall_s": 46.89823167771101,
+      "sim_s": 4.316666666666666,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 259,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019075389639652395,
+          "main_stem_max_displacement_m": 0.030376747250556946,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 259,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019075389639652395,
+          "main_stem_max_displacement_m": 0.030376747250556946,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 259,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019075389639652395,
+          "main_stem_max_displacement_m": 0.030376747250556946,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 259,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019075389639652395,
+          "main_stem_max_displacement_m": 0.030376747250556946,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ],
+      "clone_traces_identical": true
+    },
+    "motion_480_1": {
+      "report": "runs/20260921_151000_elastic_validation/motion_480_1/report.json",
+      "physics_hz": 480,
+      "armature": 0.0001,
+      "num_envs": 1,
+      "wall_s": 79.54441926628351,
+      "sim_s": 4.35,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019539711062399566,
+          "main_stem_max_displacement_m": 0.03042355552315712,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    },
+    "motion_480_4": {
+      "report": "runs/20260921_151000_elastic_validation/motion_480_4/report.json",
+      "physics_hz": 480,
+      "armature": 0.0001,
+      "num_envs": 4,
+      "wall_s": 88.31022388115525,
+      "sim_s": 4.35,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019539711062399566,
+          "main_stem_max_displacement_m": 0.03042355552315712,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019539711062399566,
+          "main_stem_max_displacement_m": 0.03042355552315712,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019539711062399566,
+          "main_stem_max_displacement_m": 0.03042355552315712,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.019539711062399566,
+          "main_stem_max_displacement_m": 0.03042355552315712,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ],
+      "clone_traces_identical": true
+    },
+    "motion_60_1": {
+      "report": "runs/20260921_151000_elastic_validation/motion_60_1/report.json",
+      "physics_hz": 60,
+      "armature": 0.001,
+      "num_envs": 1,
+      "wall_s": 11.743061256594956,
+      "sim_s": 4.35,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.01844981226755585,
+          "main_stem_max_displacement_m": 0.030032888054847717,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    },
+    "motion_60_4": {
+      "report": "runs/20260921_151000_elastic_validation/motion_60_4/report.json",
+      "physics_hz": 60,
+      "armature": 0.001,
+      "num_envs": 4,
+      "wall_s": 17.319884032942355,
+      "sim_s": 4.35,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.018449702274549434,
+          "main_stem_max_displacement_m": 0.03003259375691414,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.018449797836956258,
+          "main_stem_max_displacement_m": 0.03003285638988018,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.018449797836956258,
+          "main_stem_max_displacement_m": 0.03003285638988018,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        },
+        {
+          "executed_steps": 261,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.018449850052421172,
+          "main_stem_max_displacement_m": 0.030032992362976074,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ],
+      "clone_traces_identical": false
+    },
+    "reference_240_model_960": {
+      "report": "runs/20260921_151000_elastic_validation/reference_240_model_960/report.json",
+      "physics_hz": 960,
+      "armature": 0.0001,
+      "num_envs": 1,
+      "wall_s": 156.41594549827278,
+      "sim_s": 4.333333333333333,
+      "api_checks_passed": true,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 260,
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "target_broken": false,
+          "other_broken": false,
+          "target_max_displacement_m": 0.020005482022661055,
+          "main_stem_max_displacement_m": 0.030928805470466614,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    },
+    "reference_60_model_960": {
+      "report": "runs/20260921_151000_elastic_validation/reference_60_model_960/report.json",
+      "physics_hz": 960,
+      "armature": 0.001,
+      "num_envs": 1,
+      "wall_s": 0.6261252984404564,
+      "sim_s": 0.016666666666666666,
+      "api_checks_passed": false,
+      "accepted_speedup": null,
+      "outcomes": [
+        {
+          "executed_steps": 1,
+          "abort_reason": "joint_break",
+          "first_contact_object": null,
+          "target_broken": false,
+          "other_broken": true,
+          "target_max_displacement_m": 0.00011366692888419964,
+          "main_stem_max_displacement_m": 7.113379251677543e-05,
+          "classification": {
+            "result": "miss",
+            "events": [
+              "joint_break",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          }
+        }
+      ]
+    }
+  },
+  "pulse": {
+    "pulse_240": {
+      "report": "runs/20260921_151000_elastic_validation/pulse_240/report.json",
+      "physics_hz": 240,
+      "armature": 0.0001,
+      "pulse": "constant generalized joint torque using rest-pose Jacobian; not a moving-point force",
+      "max_sampled_target_displacement_m": 0.0213920958340168,
+      "last_sample": {
+        "time_s": 4.0,
+        "max_rod_displacement_m": 0.0045052459463477135,
+        "max_fruit_displacement_m": 0.0036103022284805775,
+        "target_displacement_m": 0.0030835319776088,
+        "max_joint_speed": 0.0010331723606213927
+      },
+      "broken_envs": []
+    },
+    "pulse_240_stronger": {
+      "report": "runs/20260921_151000_elastic_validation/pulse_240_stronger/report.json",
+      "physics_hz": 240,
+      "armature": 0.001,
+      "pulse": "constant generalized joint torque using rest-pose Jacobian; not a moving-point force",
+      "max_sampled_target_displacement_m": 0.015410872176289558,
+      "last_sample": {
+        "time_s": 4.0,
+        "max_rod_displacement_m": 0.0004557994834613055,
+        "max_fruit_displacement_m": 0.0004538129724096507,
+        "target_displacement_m": 0.00032677920535206795,
+        "max_joint_speed": 0.004532459191977978
+      },
+      "broken_envs": []
+    },
+    "pulse_60": {
+      "report": "runs/20260921_151000_elastic_validation/pulse_60/report.json",
+      "physics_hz": 60,
+      "armature": 0.001,
+      "pulse": "constant generalized joint torque using rest-pose Jacobian; not a moving-point force",
+      "max_sampled_target_displacement_m": 0.0165614765137434,
+      "last_sample": {
+        "time_s": 4.0,
+        "max_rod_displacement_m": 0.001095347572118044,
+        "max_fruit_displacement_m": 0.0007107761921361089,
+        "target_displacement_m": 0.0006608692929148674,
+        "max_joint_speed": 0.0038342101033777
+      },
+      "broken_envs": []
+    },
+    "pulse_960": {
+      "report": "runs/20260921_151000_elastic_validation/pulse_960/report.json",
+      "physics_hz": 960,
+      "armature": 1e-05,
+      "pulse": "constant generalized joint torque using rest-pose Jacobian; not a moving-point force",
+      "max_sampled_target_displacement_m": 0.03764379397034645,
+      "last_sample": {
+        "time_s": 4.0,
+        "max_rod_displacement_m": 0.018896855413913727,
+        "max_fruit_displacement_m": 0.012778094038367271,
+        "target_displacement_m": 0.011798028834164143,
+        "max_joint_speed": 0.003025533864274621
+      },
+      "broken_envs": []
+    }
+  },
+  "convergence": {
+    "240": {
+      "reference": "runs/20260921_151000_elastic_validation/reference_240_model_960",
+      "trial": "runs/20260921_151000_elastic_validation/motion_240_1",
+      "comparable": false,
+      "speedup": null,
+      "same_physical_model": true,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 263,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0005309581756591797,
+            "target_displacement_m": 0.0020698879250172983,
+            "main_stem_displacement_m": 0.002667015418410301,
+            "gap_m": 0.003833832741443416
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different physical model, initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "480": {
+      "reference": "runs/20260921_151000_elastic_validation/reference_240_model_960",
+      "trial": "runs/20260921_151000_elastic_validation/motion_480_1",
+      "comparable": false,
+      "speedup": null,
+      "same_physical_model": true,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 261,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00022867415100336075,
+            "target_displacement_m": 0.0009874733681415546,
+            "main_stem_displacement_m": 0.001368628814816475,
+            "gap_m": 0.001964161538522219
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different physical model, initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "60": {
+      "reference": "runs/20260921_151000_elastic_validation/reference_60_model_960",
+      "trial": "runs/20260921_151000_elastic_validation/motion_60_1",
+      "comparable": false,
+      "speedup": null,
+      "same_physical_model": true,
+      "reason": "native contact/reset/break checks failed; speedup withheld"
+    }
+  },
+  "integration": {
+    "dataset_240": {
+      "report": "runs/20260921_151000_elastic_validation/dataset_240/summary.json",
+      "num_envs": 4,
+      "candidates": 8,
+      "max_control_steps": 16,
+      "counts": {
+        "success_target_hook": 0,
+        "miss": 0,
+        "non_target_contact": 0,
+        "excessive_displacement": 0,
+        "ik_failure": 0,
+        "planning_failure": 0,
+        "incomplete": 8
+      },
+      "execution_complete": true,
+      "dataset_complete": false,
+      "reset_checks_passed": true,
+      "candidate_resets_passed": true,
+      "native_armature": 0.0001,
+      "elapsed_wall_s": 26.90267838910222
+    },
+    "dataset_60": {
+      "report": "runs/20260921_151000_elastic_validation/dataset_60/summary.json",
+      "num_envs": 4,
+      "candidates": 8,
+      "max_control_steps": 16,
+      "counts": {
+        "success_target_hook": 0,
+        "miss": 0,
+        "non_target_contact": 0,
+        "excessive_displacement": 0,
+        "ik_failure": 0,
+        "planning_failure": 0,
+        "incomplete": 8
+      },
+      "execution_complete": true,
+      "dataset_complete": false,
+      "reset_checks_passed": true,
+      "candidate_resets_passed": true,
+      "native_armature": 0.001,
+      "elapsed_wall_s": 23.490785245783627
+    }
+  },
+  "limitations": [
+    "No successful hooking trajectory tested in this probe; contact replay stops on excessive displacement.",
+    "Inertia adjustments change response; speedups relative to original model are not accepted.",
+    "1e-3 inertia breaks non-target HarvestJoint_05_4 in first control step at 960Hz before robot contact.",
+    "4-env motion uses identical commands, not four distinct poses; dataset integration uses eight distinct candidates but truncates before contact.",
+    "Integration records remain incomplete and must not be used as success/failure labels.",
+    "No real-plant calibration or sim-to-real validation."
+  ]
+}
