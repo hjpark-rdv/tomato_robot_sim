@@ -147,3 +147,16 @@ def test_live_grid_enables_gui_and_keeps_candidate_and_physics_configuration(tmp
 
 def test_keep_open_without_grid_is_rejected(tmp_path):
     assert prepare(tmp_path,'--keep-open').returncode!=0
+
+
+def test_timestep_and_planning_options_are_recorded_and_resume_protected(tmp_path):
+    result=prepare(tmp_path,'--physics-hz','240','--planning-workers','4')
+    assert result.returncode==0,result.stderr
+    config=json.loads((tmp_path/'config.json').read_text())
+    assert config['physics_hz']==240 and config['planning_workers']==4
+    result=prepare(tmp_path,'--resume','--physics-hz','60','--planning-workers','4')
+    assert result.returncode!=0 and 'configuration differs' in result.stderr
+
+
+def test_invalid_planning_workers_rejected(tmp_path):
+    assert prepare(tmp_path,'--planning-workers','-1').returncode!=0

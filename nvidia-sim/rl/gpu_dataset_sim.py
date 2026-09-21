@@ -129,7 +129,8 @@ def run(root):
     sources=['assets.py','geometry.py','harvest_env.py','greenhouse_env.py','elastic_plant.py','pose_worker.py',
              'pose_candidates.py','pose_collision.py','hook_motion.py','contact_planner.py','rgb_camera.py',
              'dataset_design.py','dataset_scene.py','dataset_motion.py','dataset_camera.py','gpu_dataset_sim.py',
-             'gpu_dataset_scene.py','gpu_batch_views.py','gpu_validation.py','gpu_prim_lookup.py','gpu_replication.py','gpu_physics_errors.py','gpu_initialization.py','gpu_grid_view.py']
+             'gpu_dataset_scene.py','gpu_batch_views.py','gpu_validation.py','gpu_prim_lookup.py','gpu_replication.py','gpu_physics_errors.py','gpu_initialization.py','gpu_grid_view.py',
+             'gpu_planning.py','gpu_planning_worker.py']
     fingerprints={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest() for name in sources}
     from assets import SIM_DIR, ROBOT_SOURCE
     from greenhouse_env import SCENE_SOURCE, STEM_SOURCE
@@ -149,7 +150,8 @@ def run(root):
     robot_asset=build_robot(root/'generated/rb5_ring.usda')
     cfg=HarvestEnvCfg();cfg.sim.device='cpu';cfg.scene.num_envs=1;cfg.curriculum='approach'
     cfg.robot.spawn.usd_path=str(robot_asset)
-    cfg.sim.dt=1/960;cfg.decimation=16;cfg.sim.render_interval=16
+    physics_hz=config.get('physics_hz',960)
+    cfg.sim.dt=1/physics_hz;cfg.decimation=physics_hz//60;cfg.sim.render_interval=cfg.decimation
     # FCL initialization and source-mesh RGB-D currently read USD transforms.
     # Keep their readback current; GPU dynamics is independent of Fabric.
     cfg.sim.use_fabric=False
@@ -174,11 +176,12 @@ def run(root):
     cfg.dataset_physics_sync=config.get('physics_sync','legacy')
     cfg.gpu_native_replication=True
     world=DatasetScene(cfg,config['num_envs'])
-    viewer=None
+    viewer=None;planning_service=None
     try:
         context=world.sim.get_physics_context()
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
         backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=64,
+                     physics_hz=physics_hz,control_hz=60,
                      command_uploads=config.get('command_uploads','batched'),
                      velocity_iterations=4,gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
@@ -239,7 +242,7 @@ def run(root):
                 raise RuntimeError('Single-env camera state differs from batch initial state')
         print('[DATASET CAMERA] saved; checking dynamic clone equivalence',flush=True)
         # Exercise all clones briefly; no training/rollout labels are generated.
-        for _ in range(16):world.step()
+        for _ in range(cfg.decimation):world.step()
         canonical=[snapshot(s,True) for s in world.slots]
         dynamic=[]
         for value in canonical:
@@ -289,6 +292,15 @@ def run(root):
         if args.benchmark_candidates:pending=pending[:args.benchmark_candidates]
         rollout_started=time.monotonic();initial_rows=len(rows);last_progress=rollout_started
         phase_timings=dict(batch_reset_s=0.,planning_s=0.,execution_and_label_s=0.,result_save_s=0.)
+        workers=min(config.get('planning_workers',0),len(pending))
+        # A single task cannot benefit from multiprocessing startup.
+        if workers>1:
+            from gpu_planning import PlanningService,export_model
+            model=export_model(world.slots[0],checker)
+            from datetime import datetime
+            folder=root/('planning_'+datetime.now().strftime('%Y%m%d_%H%M%S_%f'))
+            planning_service=PlanningService(folder,model,[dict(p,goal=config['goal']) for p in pending],workers)
+            print('[DATASET PLANNING]',workers,'CPU workers; precomputing',len(pending),'paths',flush=True)
         rollout_step_start=world.step_timings.copy()
         active_env_steps=0
         def progress_summary():
@@ -300,6 +312,10 @@ def run(root):
             result['rollout_step_timings']={k:world.step_timings[k]-rollout_step_start[k] for k in world.step_timings}
             result['phase_timings']=phase_timings.copy()
             result['schedule']=config.get('schedule','batch')
+            result['planning_workers']=workers if planning_service else 0
+            result['planning_timing_basis']='main-thread wait for CPU preplanning' if planning_service else 'synchronous CPU calculation'
+            if planning_service and (planning_service.folder/'progress.json').exists():
+                result['cpu_planning_progress']=json.loads((planning_service.folder/'progress.json').read_text())
             allocated_steps=result['rollout_step_timings']['steps']*config['num_envs']
             result['active_env_step_fraction']=active_env_steps/allocated_steps if allocated_steps else None
             return result
@@ -315,7 +331,13 @@ def run(root):
             plan_started=time.monotonic()
             # All clones share canonical geometry/joints. Use this freshly
             # reset slot; env_0 may still be executing another candidate.
-            planned,preflight=plan(slot,slot.pose_search_kin,checker,p)
+            if planning_service:
+                prepared,wait_s=planning_service.take(p['candidate_id'],slot)
+                planned,preflight=prepared['planned'],prepared['preflight']
+                compute_s=prepared['compute_wall_s']
+            else:
+                planned,preflight=plan(slot,slot.pose_search_kin,checker,p)
+                compute_s=time.monotonic()-plan_started;wait_s=compute_s
             phase_timings['planning_s']+=time.monotonic()-plan_started
             folder=root/'results'/p['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
             row=dict(scene_id='scene_0001',target_id=config['target'],candidate_id=p['candidate_id'],
@@ -323,6 +345,7 @@ def run(root):
                 parameters=p,env_index=slot.index,env_origin_world=slot.dataset_origin.tolist(),
                 robot_joint_positions_at_start=slot.robot.data.joint_pos[0].tolist(),
                 preflight=preflight,reset_validation=reset_check,planning_wall_s=time.monotonic()-plan_started,
+                planning_compute_s=compute_s,planning_wait_s=wait_s,
                 candidate_pose_target_frame=dict(position_xyz=(desired_position-target_center).tolist(),orientation_xyzw=desired_quaternion),
                 candidate_position_xyz=desired_position.tolist(),candidate_orientation_quaternion=desired_quaternion,
                 quaternion_order='xyzw',candidate_world_frame='canonical env_0; add env_origin_world for executed clone',
@@ -347,7 +370,7 @@ def run(root):
             slot.contact_diagnostics=[]
             active[slot.index]=execute_steps(slot,planned,identity(slot),app,DEFAULT_LIMITS.copy())
             contexts[slot.index]=(row,folder)
-            print('[DATASET START]',p['candidate_id'],'env',slot.index,flush=True)
+            print('[DATASET READY]',p['candidate_id'],'env',slot.index,'path prepared; awaiting physics step',flush=True)
             if viewer:viewer.set_status(slot.index,p['candidate_id']+' / running');viewer.pump()
             return True
 
@@ -380,6 +403,7 @@ def run(root):
                 for slot,param in zip(world.slots,pending[batch_start:batch_start+config['num_envs']]):
                     prepare(slot,param,resets[slot.index])
             ticks=0
+            print('[DATASET PHYSICS]',len(active),'active environments; beginning shared physics steps',flush=True)
             while active:
                 for index in list(active):
                     while index in active:
@@ -422,6 +446,9 @@ def run(root):
         summary['dataset_complete']=len(rows)==len(params) and not summary['counts']['incomplete']
         summary['num_envs']=config['num_envs'];summary['target']=config['target']
         summary['reset_and_camera_validation_passed']=True
+        if planning_service:
+            if planning_service.process.wait(timeout=30)!=0:raise RuntimeError('CPU planning service failed during shutdown')
+            summary['cpu_planning']=json.loads((planning_service.folder/'summary.json').read_text())
         write_json(root/'summary.json',summary)
         try:
             import matplotlib;matplotlib.use('Agg')
@@ -436,6 +463,7 @@ def run(root):
         except ImportError:pass
         print('[DATASET COMPLETE]',root,flush=True)
     finally:
+        if planning_service:planning_service.close()
         if viewer:
             import sys
             if sys.exc_info()[0] is None:

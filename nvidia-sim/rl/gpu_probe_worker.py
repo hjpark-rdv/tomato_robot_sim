@@ -13,6 +13,7 @@ parser.add_argument('--output',type=Path,required=True)
 parser.add_argument('--fixture',type=Path,required=True)
 parser.add_argument('--mode',choices=['cpu','cpu-no-ccd','gpu'],required=True)
 parser.add_argument('--num-envs',type=int,default=1)
+parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],default=960,help='Timestep experiment; command rate remains 60 Hz')
 parser.add_argument('--max-control-steps',type=int,default=0)
 parser.add_argument('--external-forces-once',action='store_true',help='Diagnostic only: change TGS external force integration')
 parser.add_argument('--stationary-steps',type=int,default=0,help='Diagnostic: hold robot and stop at first break')
@@ -93,7 +94,7 @@ def run():
     if args.cuda_tensors and args.mode!='gpu':raise ValueError('CUDA tensors require GPU physics')
     report['tensor_device']=cfg.sim.device
     cfg.sim.use_fabric=args.fabric
-    cfg.sim.dt=1/960;cfg.decimation=16;cfg.sim.render_interval=16
+    cfg.sim.dt=1/args.physics_hz;cfg.decimation=args.physics_hz//60;cfg.sim.render_interval=cfg.decimation
     cfg.sim.physx.min_position_iteration_count=args.position_iterations
     cfg.sim.physx.max_position_iteration_count=args.position_iterations
     cfg.sim.physx.min_velocity_iteration_count=args.velocity_iterations

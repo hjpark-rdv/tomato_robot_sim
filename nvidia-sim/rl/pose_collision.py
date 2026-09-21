@@ -66,17 +66,20 @@ class SelfCollisionCheck:
                 hull=trimesh.convex.convex_hull(v)
                 faces=np.column_stack((np.full(len(hull.faces),3),hull.faces)).reshape(-1)
                 geometry=fcl.Convex(hull.vertices,len(hull.faces),faces)
+                descriptor=dict(kind='convex',vertices=hull.vertices.copy(),faces=faces.copy(),num_faces=len(hull.faces))
                 bounds=hull.bounds
             elif prim.IsA(UsdGeom.Cube):
                 half=float(UsdGeom.Cube(prim).GetSizeAttr().Get())/2
                 v=np.array([[x,y,z] for x in [-half,half] for y in [-half,half] for z in [-half,half]])
                 v=v@relative[:3,:3].T+relative[:3,3];hull=trimesh.convex.convex_hull(v)
                 geometry=fcl.Convex(hull.vertices,len(hull.faces),np.column_stack((np.full(len(hull.faces),3),hull.faces)).reshape(-1));bounds=hull.bounds
+                descriptor=dict(kind='convex',vertices=hull.vertices.copy(),faces=np.column_stack((np.full(len(hull.faces),3),hull.faces)).reshape(-1),num_faces=len(hull.faces))
             elif prim.IsA(UsdGeom.Capsule):
                 cap=UsdGeom.Capsule(prim);scale=np.linalg.norm(relative[:3,:3],axis=0)
                 if not np.allclose(scale,scale[0]): raise ValueError('Nonuniform capsule scale')
                 radius=float(cap.GetRadiusAttr().Get())*scale[0];height=float(cap.GetHeightAttr().Get())*scale[0]
                 geometry=fcl.Capsule(radius,height);local=relative.copy();local[:3,:3]/=scale
+                descriptor=dict(kind='capsule',radius=radius,height=height)
                 axis=str(cap.GetAxisAttr().Get())
                 align=Rotation.from_euler('y',90,degrees=True).as_matrix() if axis=='X' else Rotation.from_euler('x',-90,degrees=True).as_matrix() if axis=='Y' else np.eye(3)
                 local[:3,:3]=local[:3,:3]@align
@@ -84,7 +87,7 @@ class SelfCollisionCheck:
             else: raise ValueError('Unsupported robot collider: '+str(prim.GetPath()))
             corners=np.array([[x,y,z] for x in bounds[:,0] for y in bounds[:,1] for z in bounds[:,2]])
             self.shapes.append(dict(path=str(prim.GetPath()),link=link,group=group(link),local=local,
-                object=fcl.CollisionObject(geometry),corners=corners))
+                object=fcl.CollisionObject(geometry),corners=corners,geometry=descriptor))
         self.pairs=np.array([(i,j) for i,a in enumerate(self.shapes) for j,b in enumerate(self.shapes[:i])
             if a['group']!=b['group'] and frozenset((a['group'],b['group'])) not in adjacent
             and frozenset((a['link'],b['link'])) not in excluded],dtype=int)
@@ -103,6 +106,26 @@ class SelfCollisionCheck:
         self.manifest['initial_fk_usd_transform_max_abs_errors']=errors
         if not errors or max(errors.values())>.001:
             raise ValueError('URDF self-collision FK differs from initial USD transforms: '+str(errors))
+
+    def export_model(self):
+        """Plain CPU geometry; no USD, CUDA, or live FCL objects cross processes."""
+        return dict(world=self.world, joints=self.joints, root=self.root, pairs=self.pairs,
+                    manifest=self.manifest,
+                    shapes=[{k:v for k,v in s.items() if k!='object'} for s in self.shapes])
+
+    @classmethod
+    def from_model(cls, model):
+        import fcl
+        obj=cls.__new__(cls);obj.fcl=fcl
+        for key in ('world','joints','root','pairs','manifest'):setattr(obj,key,model[key])
+        obj.shapes=[]
+        for source in model['shapes']:
+            shape=dict(source);g=shape['geometry']
+            if g['kind']=='convex':geometry=fcl.Convex(g['vertices'],g['num_faces'],g['faces'])
+            elif g['kind']=='capsule':geometry=fcl.Capsule(g['radius'],g['height'])
+            else:raise ValueError('Unknown serialized collision geometry')
+            shape['object']=fcl.CollisionObject(geometry);obj.shapes.append(shape)
+        return obj
 
     def transforms(self,q):
         poses={self.root:self.world.copy()};pending=list(self.joints)

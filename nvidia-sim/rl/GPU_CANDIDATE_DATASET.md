@@ -251,3 +251,12 @@ python nvidia-sim/rl/dataset_dashboard.py <GPU 실행 폴더>
 ```
 
 HTML에는 GPU/PGS 실험용이라는 표시가 포함된다. 원본 CSV/JSON/사진은 수정하지 않는다.
+
+## CPU 경로 병렬화와 물리 주파수 실험
+
+이제 경로 계산은 기본 최대 8개 CPU worker에서 미리 수행한다.
+`--planning-workers 0`으로 기존 순차 방식을 선택할 수 있다.
+`DATASET READY`는 후보 경로 준비 완료이며 spawn 로그가 아니다.
+물리 기본값은 960Hz를 유지한다. `--physics-hz`는 실험용 비교 옵션이며,
+낮은 주파수에서는 탄성/접촉 결과가 달라질 수 있다.
+자세한 명령과 검증 범위는 [물리 주기·경로 병렬화](GPU_TIMESTEP_AND_PLANNING.md)를 참고한다.

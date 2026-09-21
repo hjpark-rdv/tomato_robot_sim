@@ -1,0 +1,2027 @@
+{
+  "date": "2026-09-21",
+  "physics_default_hz": 960,
+  "planning_default_workers": 8,
+  "scope": "Fixed original Tomato_05 scene. Same saved candidate_00003 commands, PGS 64/4, unchanged material and break parameters; no RL/DR. Limited timestep regression, not validation of all approach poses or real physics.",
+  "fixture": {
+    "candidate_id": "candidate_00003",
+    "path": "/root/farmily_tomato/nvidia-sim/rl/runs/20260920_160125_tomato_05_candidate_dataset/results/candidate_00003",
+    "commands_sha256": "cd300bcd280159339580dcba375ed759459f458eb8e84d03da730701aa5d2ad2",
+    "initial_joints": [
+      0.5036084651947021,
+      3.2516109943389893,
+      0.11466650664806366,
+      -1.6495298147201538,
+      -0.1797478199005127,
+      -1.3975167274475098,
+      0.6881676912307739
+    ],
+    "planned_steps": 2028
+  },
+  "timestep_runs": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep",
+  "planning_runs": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_144300_planning_validation",
+  "timestep": [
+    {
+      "envs": 1,
+      "hz": 960,
+      "control_hz": 60,
+      "initialization_wall_s": 9.019998108968139,
+      "motion_wall_s": 156.24611614271998,
+      "simulated_seconds": 4.333333333333333,
+      "control_steps": [
+        260
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.030659865587949753,
+      "regression_passed": true,
+      "accepted_speedup": 1.0,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.0,
+        "fruits": 0.0
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 1,
+      "hz": 720,
+      "control_hz": 60,
+      "initialization_wall_s": 9.109776491299272,
+      "motion_wall_s": 117.84254712797701,
+      "simulated_seconds": 4.333333333333334,
+      "control_steps": [
+        260
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.03017898090183735,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00010594865307211876,
+        "target_displacement_m": 0.0009547369823944794,
+        "main_stem_displacement_m": 0.0013325810432434082,
+        "gap_m": 0.0014873007678131711
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.0023104515857994556,
+        "fruits": 0.002082184888422489
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 1,
+      "hz": 480,
+      "control_hz": 60,
+      "initialization_wall_s": 9.063232684507966,
+      "motion_wall_s": 79.18243593070656,
+      "simulated_seconds": 4.333333333333333,
+      "control_steps": [
+        260
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.030932703986763954,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00017893314361572266,
+        "target_displacement_m": 0.002128991091953282,
+        "main_stem_displacement_m": 0.0025185253471136093,
+        "gap_m": 0.002740451859836346
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.00365054770372808,
+        "fruits": 0.0035171101335436106
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 1,
+      "hz": 240,
+      "control_hz": 60,
+      "initialization_wall_s": 8.966763976030052,
+      "motion_wall_s": 16.28359976876527,
+      "simulated_seconds": 1.75,
+      "control_steps": [
+        105
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null
+      ],
+      "max_main_stem_displacement_m": 0.030996274203062057,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.0002980232238769531,
+        "target_displacement_m": 0.016017986595501438,
+        "main_stem_displacement_m": 0.030790385615546256,
+        "gap_m": 0.007541610113131203
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.01712799072265625,
+        "fruits": 0.013444360345602036
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 1,
+      "hz": 120,
+      "control_hz": 60,
+      "initialization_wall_s": 9.167574592866004,
+      "motion_wall_s": 4.923130000010133,
+      "simulated_seconds": 1.0166666666666666,
+      "control_steps": [
+        61
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null
+      ],
+      "max_main_stem_displacement_m": 0.030535798519849777,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00041556358337402344,
+        "target_displacement_m": 0.015977276820425962,
+        "main_stem_displacement_m": 0.030328887965879403,
+        "gap_m": 0.006503675543340137
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.04442699998617172,
+        "fruits": 0.026050524786114693
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 1,
+      "hz": 60,
+      "control_hz": 60,
+      "initialization_wall_s": 8.988031415268779,
+      "motion_wall_s": 0.194145861081779,
+      "simulated_seconds": 0.06666666666666667,
+      "control_steps": [
+        4
+      ],
+      "classification": [
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null
+      ],
+      "max_main_stem_displacement_m": 0.19758710265159607,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 1.2755393981933594e-05,
+        "target_displacement_m": 0.009118594307002138,
+        "main_stem_displacement_m": 0.19735997822135687,
+        "gap_m": 0.004225396742361942
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.20944750308990479,
+        "fruits": 0.04702629894018173
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 960,
+      "control_hz": 60,
+      "initialization_wall_s": 9.622807965613902,
+      "motion_wall_s": 168.6895253295079,
+      "simulated_seconds": 4.333333333333333,
+      "control_steps": [
+        260,
+        260,
+        260,
+        260
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.030659865587949753,
+      "regression_passed": true,
+      "accepted_speedup": 1.0,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.0,
+        "fruits": 0.0
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 720,
+      "control_hz": 60,
+      "initialization_wall_s": 9.86993567366153,
+      "motion_wall_s": 128.39186238031834,
+      "simulated_seconds": 4.333333333333334,
+      "control_steps": [
+        260,
+        260,
+        260,
+        260
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.03017898090183735,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00010594865307211876,
+        "target_displacement_m": 0.0009547369823944794,
+        "main_stem_displacement_m": 0.0013325810432434082,
+        "gap_m": 0.0014873007678131711
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.0023104515857994556,
+        "fruits": 0.002082184888422489
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 480,
+      "control_hz": 60,
+      "initialization_wall_s": 9.997705451212823,
+      "motion_wall_s": 87.50095811579376,
+      "simulated_seconds": 4.333333333333333,
+      "control_steps": [
+        260,
+        260,
+        260,
+        260
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+        "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2"
+      ],
+      "max_main_stem_displacement_m": 0.030932703986763954,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00017893314361572266,
+        "target_displacement_m": 0.002128991091953282,
+        "main_stem_displacement_m": 0.0025185253471136093,
+        "gap_m": 0.002740451859836346
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.00365054770372808,
+        "fruits": 0.0035171101335436106
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 240,
+      "control_hz": 60,
+      "initialization_wall_s": 10.120281661860645,
+      "motion_wall_s": 18.616926288232207,
+      "simulated_seconds": 1.75,
+      "control_steps": [
+        105,
+        105,
+        105,
+        105
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "max_main_stem_displacement_m": 0.030996274203062057,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.0002980232238769531,
+        "target_displacement_m": 0.016017986595501438,
+        "main_stem_displacement_m": 0.030790385615546256,
+        "gap_m": 0.007541610113131203
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.01712799072265625,
+        "fruits": 0.013444360345602036
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 120,
+      "control_hz": 60,
+      "initialization_wall_s": 9.702046683058143,
+      "motion_wall_s": 6.200207846239209,
+      "simulated_seconds": 1.0166666666666666,
+      "control_steps": [
+        61,
+        61,
+        61,
+        61
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "max_main_stem_displacement_m": 0.030535798519849777,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 0.00041556358337402344,
+        "target_displacement_m": 0.015977276820425962,
+        "main_stem_displacement_m": 0.030328887965879403,
+        "gap_m": 0.006503675543340137
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.04442699998617172,
+        "fruits": 0.026050524786114693
+      },
+      "native_physics_errors": 0
+    },
+    {
+      "envs": 4,
+      "hz": 60,
+      "control_hz": 60,
+      "initialization_wall_s": 9.926924898289144,
+      "motion_wall_s": 0.2396129071712494,
+      "simulated_seconds": 0.06666666666666667,
+      "control_steps": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "classification": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "first_contact_object": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "max_main_stem_displacement_m": 0.19763405621051788,
+      "regression_passed": false,
+      "accepted_speedup": null,
+      "common_prefix_max_abs_errors": {
+        "joints": 1.2755393981933594e-05,
+        "target_displacement_m": 0.009118599248810163,
+        "main_stem_displacement_m": 0.19734816160053015,
+        "gap_m": 0.004225384688581357
+      },
+      "final_body_position_errors_m": {
+        "elastic_bodies": 0.2096773386001587,
+        "fruits": 0.04702623188495636
+      },
+      "native_physics_errors": 0
+    }
+  ],
+  "comparisons": {
+    "env1_hz960": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "comparable": true,
+      "speedup": 1.0,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      }
+    },
+    "env1_hz720": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz720",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00010594865307211876,
+            "target_displacement_m": 0.0009547369823944794,
+            "main_stem_displacement_m": 0.0013325810432434082,
+            "gap_m": 0.0014873007678131711
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env1_hz480": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz480",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00017893314361572266,
+            "target_displacement_m": 0.002128991091953282,
+            "main_stem_displacement_m": 0.0025185253471136093,
+            "gap_m": 0.002740451859836346
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env1_hz240": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz240",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0002980232238769531,
+            "target_displacement_m": 0.016017986595501438,
+            "main_stem_displacement_m": 0.030790385615546256,
+            "gap_m": 0.007541610113131203
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env1_hz120": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz120",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 61,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00041556358337402344,
+            "target_displacement_m": 0.015977276820425962,
+            "main_stem_displacement_m": 0.030328887965879403,
+            "gap_m": 0.006503675543340137
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env1_hz60": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env1_hz60",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 4,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 1.2755393981933594e-05,
+            "target_displacement_m": 0.009118594307002138,
+            "main_stem_displacement_m": 0.19735997822135687,
+            "gap_m": 0.004225396742361942
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env4_hz960": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "comparable": true,
+      "speedup": 1.0,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0,
+            "target_displacement_m": 0.0,
+            "main_stem_displacement_m": 0.0,
+            "gap_m": 0.0
+          },
+          "passed": true
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      }
+    },
+    "env4_hz720": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz720",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00010594865307211876,
+            "target_displacement_m": 0.0009547369823944794,
+            "main_stem_displacement_m": 0.0013325810432434082,
+            "gap_m": 0.0014873007678131711
+          },
+          "passed": false
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00010594865307211876,
+            "target_displacement_m": 0.0009547369823944794,
+            "main_stem_displacement_m": 0.0013325810432434082,
+            "gap_m": 0.0014873007678131711
+          },
+          "passed": false
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00010594865307211876,
+            "target_displacement_m": 0.0009547369823944794,
+            "main_stem_displacement_m": 0.0013325810432434082,
+            "gap_m": 0.0014873007678131711
+          },
+          "passed": false
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00010594865307211876,
+            "target_displacement_m": 0.0009547369823944794,
+            "main_stem_displacement_m": 0.0013325810432434082,
+            "gap_m": 0.0014873007678131711
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env4_hz480": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz480",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00017893314361572266,
+            "target_displacement_m": 0.002128991091953282,
+            "main_stem_displacement_m": 0.0025185253471136093,
+            "gap_m": 0.002740451859836346
+          },
+          "passed": false
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00017893314361572266,
+            "target_displacement_m": 0.002128991091953282,
+            "main_stem_displacement_m": 0.0025185253471136093,
+            "gap_m": 0.002740451859836346
+          },
+          "passed": false
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00017893314361572266,
+            "target_displacement_m": 0.002128991091953282,
+            "main_stem_displacement_m": 0.0025185253471136093,
+            "gap_m": 0.002740451859836346
+          },
+          "passed": false
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 260,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": true,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00017893314361572266,
+            "target_displacement_m": 0.002128991091953282,
+            "main_stem_displacement_m": 0.0025185253471136093,
+            "gap_m": 0.002740451859836346
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env4_hz240": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz240",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0002980232238769531,
+            "target_displacement_m": 0.016017986595501438,
+            "main_stem_displacement_m": 0.030790385615546256,
+            "gap_m": 0.007541610113131203
+          },
+          "passed": false
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0002980232238769531,
+            "target_displacement_m": 0.016017986595501438,
+            "main_stem_displacement_m": 0.030790385615546256,
+            "gap_m": 0.007541610113131203
+          },
+          "passed": false
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0002980232238769531,
+            "target_displacement_m": 0.016017986595501438,
+            "main_stem_displacement_m": 0.030790385615546256,
+            "gap_m": 0.007541610113131203
+          },
+          "passed": false
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 105,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.0002980232238769531,
+            "target_displacement_m": 0.016017986595501438,
+            "main_stem_displacement_m": 0.030790385615546256,
+            "gap_m": 0.007541610113131203
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env4_hz120": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz120",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 61,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00041556358337402344,
+            "target_displacement_m": 0.015977276820425962,
+            "main_stem_displacement_m": 0.030328887965879403,
+            "gap_m": 0.006503675543340137
+          },
+          "passed": false
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 61,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00041556358337402344,
+            "target_displacement_m": 0.015977276820425962,
+            "main_stem_displacement_m": 0.030328887965879403,
+            "gap_m": 0.006503675543340137
+          },
+          "passed": false
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 61,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00041556358337402344,
+            "target_displacement_m": 0.015977276820425962,
+            "main_stem_displacement_m": 0.030328887965879403,
+            "gap_m": 0.006503675543340137
+          },
+          "passed": false
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 61,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 0.00041556358337402344,
+            "target_displacement_m": 0.015977276820425962,
+            "main_stem_displacement_m": 0.030328887965879403,
+            "gap_m": 0.006503675543340137
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    },
+    "env4_hz60": {
+      "reference": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz960",
+      "trial": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_143244_gpu_timestep/env4_hz60",
+      "comparable": false,
+      "speedup": null,
+      "initial_state_max_abs_errors": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "trajectory_checks": [
+        {
+          "env": 0,
+          "reference_control_steps": 260,
+          "trial_control_steps": 4,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 1.2755393981933594e-05,
+            "target_displacement_m": 0.009118599248810163,
+            "main_stem_displacement_m": 0.19734816160053015,
+            "gap_m": 0.004225384688581357
+          },
+          "passed": false
+        },
+        {
+          "env": 1,
+          "reference_control_steps": 260,
+          "trial_control_steps": 4,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 1.2755393981933594e-05,
+            "target_displacement_m": 0.009117059311411187,
+            "main_stem_displacement_m": 0.19736416544765234,
+            "gap_m": 0.004222280221360952
+          },
+          "passed": false
+        },
+        {
+          "env": 2,
+          "reference_control_steps": 260,
+          "trial_control_steps": 4,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 1.2755393981933594e-05,
+            "target_displacement_m": 0.009117059311411187,
+            "main_stem_displacement_m": 0.19736416544765234,
+            "gap_m": 0.004222280221360952
+          },
+          "passed": false
+        },
+        {
+          "env": 3,
+          "reference_control_steps": 260,
+          "trial_control_steps": 4,
+          "same_outcome": {
+            "abort_reason": true,
+            "target_broken": true,
+            "other_broken": true,
+            "retained_hook": true,
+            "inserted": true,
+            "first_contact_object": false,
+            "result": true
+          },
+          "common_prefix_max_abs_errors": {
+            "joints": 1.2755393981933594e-05,
+            "target_displacement_m": 0.009118427411227769,
+            "main_stem_displacement_m": 0.19740693178027868,
+            "gap_m": 0.004225125030975163
+          },
+          "passed": false
+        }
+      ],
+      "screening_tolerances": {
+        "position_m": 0.001,
+        "joint_rad": 0.005,
+        "control_step_count": 1,
+        "scope": "small regression screen, not physical calibration or a no-tunnelling certificate"
+      },
+      "reason": "different initial state, physical trajectory or outcome; speedup withheld"
+    }
+  },
+  "cpu_planning": {
+    "candidates": 64,
+    "serial_wall_s": 86.13568664342165,
+    "model": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_144300_planning_validation/dataset_workers4/planning_20260921_144504_666959/model.pkl",
+    "results": [
+      {
+        "workers": 4,
+        "wall_s": 23.85601918399334,
+        "passed": true,
+        "speedup": 3.6106479450358617,
+        "checks": [
+          {
+            "candidate_id": "candidate_00000",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00001",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00002",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00003",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00004",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00005",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00006",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00007",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00008",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00009",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00010",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00011",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00012",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00013",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00014",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00015",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00016",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00017",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00018",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00019",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00020",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00021",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00022",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00023",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00024",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00025",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00026",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00027",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00028",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00029",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00030",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00031",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00032",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00033",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00034",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00035",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00036",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00037",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00038",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00039",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00040",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00041",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00042",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00043",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00044",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00045",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00046",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00047",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00048",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00049",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00050",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00051",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00052",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00053",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00054",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00055",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00056",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00057",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00058",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00059",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00060",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00061",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00062",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00063",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "workers": 8,
+        "wall_s": 13.571276020258665,
+        "passed": true,
+        "speedup": 6.3469114116345215,
+        "checks": [
+          {
+            "candidate_id": "candidate_00000",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00001",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00002",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00003",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00004",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00005",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00006",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00007",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00008",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00009",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00010",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00011",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00012",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00013",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00014",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00015",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00016",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00017",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00018",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00019",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00020",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00021",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00022",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00023",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00024",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00025",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00026",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00027",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00028",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00029",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00030",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00031",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00032",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00033",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00034",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00035",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00036",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00037",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00038",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00039",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00040",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00041",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00042",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00043",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00044",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00045",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00046",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00047",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00048",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00049",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00050",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00051",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00052",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00053",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00054",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00055",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00056",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00057",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00058",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00059",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00060",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00061",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00062",
+            "passed": true
+          },
+          {
+            "candidate_id": "candidate_00063",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  "integration": {
+    "passed": true,
+    "scope": "8 distinct candidates, 4 environments, 8 control steps per candidate; incomplete labels retained, not a success-rate test",
+    "checks": [
+      {
+        "candidate_id": "candidate_00000",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00001",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00002",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00003",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00004",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00005",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00006",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      },
+      {
+        "candidate_id": "candidate_00007",
+        "commands_exact": true,
+        "preflight_exact": true,
+        "trace_exact": true,
+        "contacts_exact": true,
+        "resets_passed": true,
+        "result_exact": true,
+        "control_steps": 8
+      }
+    ]
+  },
+  "unit_tests_passed": 52
+}

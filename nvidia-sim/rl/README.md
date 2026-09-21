@@ -142,3 +142,5 @@ kinematic 고정부를 `wakeUp()` 하던 오류를 방지합니다.
 GPU 병렬 환경 수를 실제 후보 처리량으로 비교하려면 [32/64/128환경 벤치마크](GPU_THROUGHPUT.md)를 참고하세요.
 
 현재 장면의 1/32환경 처리량과 CUDA 커널 병목 실측은 [GPU 병목 진단](GPU_BOTTLENECK.md)에 정리했습니다.
+
+물리 주파수 비교와 CPU 경로 병렬화는 [검증 기록 및 실행 방법](GPU_TIMESTEP_AND_PLANNING.md)을 참고하세요.

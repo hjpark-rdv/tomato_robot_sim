@@ -107,6 +107,8 @@ def main():
     parser.add_argument('--profile', action='store_true', help='Save CPU profile for throughput diagnosis')
     parser.add_argument('--benchmark-candidates', type=int, default=0, help='Execute only this many pending full candidates, estimate total runtime; resume without this flag')
     parser.add_argument('--physics-threads', type=int, default=4, help='CPU PhysX worker threads; benchmark before scaling environments')
+    parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],default=960,help='Experimental physics rate; robot control remains 60 Hz; default preserves validated baseline')
+    parser.add_argument('--planning-workers',type=int,default=8,help='CPU-only path workers; 0 uses original synchronous planning; capped at pending candidate count')
     parser.add_argument('--torch-threads', type=int, default=1, help='Small CPU tensors usually benefit from one Torch thread')
     parser.add_argument('--physics-sync', choices=['optimized','legacy'], default='optimized', help='Retain implicit drive targets between control updates; legacy is for equivalence checks')
     parser.add_argument('--max-control-steps', type=int, default=0, help='Debug only; truncated candidates are labelled incomplete, never failure training data')
@@ -127,6 +129,7 @@ def main():
         parser.error('Invalid camera depth/distance/crop settings')
     if args.max_control_steps < 0:
         parser.error('max-control-steps must be nonnegative')
+    if not 0<=args.planning_workers<=48:parser.error('planning-workers must be 0..48')
     if not 0 < args.rise_speed <= .02 or not 0 < args.pull_speed <= .02:
         parser.error('rise-speed and pull-speed must be > 0 and <= .02 m/s')
     if not 2 <= args.physics_threads <= 48 or not 1 <= args.torch_threads <= 48:

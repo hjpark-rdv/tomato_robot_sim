@@ -1,13 +1,14 @@
 """Object-relative, physics-validated contact motion in the original greenhouse."""
 import json
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import numpy as np
 from scipy.spatial.transform import Rotation
 from scipy.optimize import least_squares
 import torch
 
-from assets import SIM_DIR
+SIM_DIR = Path(__file__).resolve().parents[1]
 from geometry import RING_CENTER
 from contact_planner import motion_waypoints, propose_candidates, validate_parameters, pedicel_gap
 
