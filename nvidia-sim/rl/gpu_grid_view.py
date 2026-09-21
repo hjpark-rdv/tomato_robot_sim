@@ -1,4 +1,4 @@
-"""Read-only display of co-located GPU environments as a physical-free grid.
+"""Native single-environment view or physics-free grid of co-located clones.
 
 Only geometry/materials are copied. USD physics schemas, joints, cameras and
 colliders are never referenced into the display tree. Elastic meshes are skinned
@@ -14,17 +14,37 @@ def grid_offsets(count, spacing=2.2):
     return np.array([(i % columns * spacing, i // columns * spacing, 0.) for i in range(count)])
 
 
+class DisplayCadence:
+    """Wall-clock refresh ceiling and measured display budget; never sleeps physics."""
+    def __init__(self, fps, budget=.2):
+        if fps<=0 or not 0<budget<=1:raise ValueError('Invalid display cadence')
+        self.period=1./fps;self.budget=budget;self.next_frame=0.
+
+    def due(self, now, force=False):
+        return force or now>=self.next_frame
+
+    def finish(self, began, ended):
+        self.next_frame=began+max(self.period,(ended-began)/self.budget)
+
+
 class GridView:
     def __init__(self, world, app, count=16, fps=5, output=None):
         from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux, UsdShade
         import omni.ui as ui
         self.world, self.app, self.stage = world, app, world.scene.stage
+        self.context=world.sim.get_physics_context()
+        self.original_writeback=self.context.get_physx_update_transformations_settings()
         self.count, self.fps = min(count, len(world.slots)), fps
+        self.direct=len(world.slots)==1
+        self.physics_dt=world.sim.get_physics_dt()
+        self.cadence=DisplayCadence(fps)
+        self.timings=dict(frames=0,state_updates=0,geometry_s=0.,render_s=0.,total_s=0.)
         self.output, self.last_frame, self.frames = output, 0., 0
-        self.last_state_step = -16
+        self.last_state_step = -1
         self.offsets = grid_offsets(self.count)
         self.root = '/World/DatasetDisplay'
         self.geometry = []
+        self.skin_cache={}
         self.status = ['waiting'] * len(world.slots)
         self.labels = []
         self.paused, self.finished = False, False
@@ -33,7 +53,7 @@ class GridView:
         self.focused = None
         first = world.slots[0]
         template = []
-        for branch in ('Robot', 'HarvestableStem'):
+        for branch in (() if self.direct else ('Robot', 'HarvestableStem')):
             for prim in Usd.PrimRange(self.stage.GetPrimAtPath(first.root+'/'+branch), Usd.TraverseInstanceProxies()):
                 if not prim.IsA(UsdGeom.Gprim):
                     continue
@@ -42,7 +62,7 @@ class GridView:
                 if UsdGeom.Imageable(prim).ComputePurpose() in ('guide', 'proxy'):
                     continue
                 template.append(prim)
-        for tile in range(self.count):
+        for tile in range(0 if self.direct else self.count):
             meshes = {}
             for index, source in enumerate(template):
                 path = self.root+f'/Tile_{tile:02d}/Geometry_{index:04d}'
@@ -73,11 +93,12 @@ class GridView:
             pad.AddScaleOp().Set(Gf.Vec3d(2.05,2.05,.025))
         UsdLux.DomeLight.Define(self.stage,self.root+'/Light').CreateIntensityAttr(1200.)
         # Hide the original overlapping scenes only after the dataset camera has captured.
-        for slot in world.slots:UsdGeom.Imageable(self.stage.GetPrimAtPath(slot.root)).MakeInvisible()
+        if not self.direct:
+            for slot in world.slots:UsdGeom.Imageable(self.stage.GetPrimAtPath(slot.root)).MakeInvisible()
         self.window = ui.Window('Parallel tomato tests', width=390, height=570)
         with self.window.frame:
             with ui.VStack(spacing=5):
-                ui.Label('LIVE GPU PHYSICS / display-only grid', height=25)
+                ui.Label('LIVE GPU PHYSICS / '+('single environment' if self.direct else 'display-only grid'), height=25)
                 self.header = ui.Label('', height=30)
                 with ui.HStack(height=28):
                     ui.Button('Overview', clicked_fn=self.overview)
@@ -96,6 +117,10 @@ class GridView:
         for prim in Usd.PrimRange(self.stage.GetPrimAtPath(self.root)):
             if any('Physics' in api or 'Physx' in api for api in prim.GetAppliedSchemas()):
                 raise RuntimeError('Physics schema leaked into display: '+str(prim.GetPath()))
+        # Physics and labels read native tensors/contact reports. USD transforms
+        # are needed only for a displayed frame, not every 120/960 Hz substep.
+        # Reset paths explicitly synchronize their USD attachment frames.
+        self.context.set_physx_update_transformations_settings(update_to_usd=False,update_velocities_to_usd=False)
         self.overview()
         self.update(force=True)
 
@@ -104,6 +129,7 @@ class GridView:
         self.pause_button.text = 'Resume' if self.paused else 'Pause'
 
     def page(self, direction):
+        if self.direct:return
         pages = math.ceil(len(self.world.slots)/self.count)
         self.base = ((self.base//self.count+direction) % pages)*self.count
         from pxr import UsdGeom
@@ -117,7 +143,8 @@ class GridView:
                 self.labels[tile].text = f'{tile+1:02d} | empty'
         self.overview()
         self.last_frame = 0.
-        self.last_state_step = -16
+        self.last_state_step = -1
+        self.cadence.next_frame=0.
 
     def overview(self):
         from isaacsim.core.utils.viewports import set_camera_view
@@ -144,18 +171,59 @@ class GridView:
         self.request_capture = True
 
     def update(self, force=False, physics_step=False):
-        if not force and time.monotonic()-self.last_frame < 1./self.fps:
+        began=time.monotonic()
+        if not self.cadence.due(began,force=force or self.request_capture):
             return
-        # Commands change at 60 Hz (16 physics substeps). Skinning all visible
-        # plants between every 960 Hz substep makes presentation dominate the
-        # experiment. UI can still refresh without rewriting display geometry.
-        step_delta = self.world.step_timings['steps']-self.last_state_step
-        if not force and not self.request_capture and (step_delta == 0 or (physics_step and step_delta < 16)):
-            self.world.sim.render()
-            self.last_frame = time.monotonic()
-            return
+        state_changed=force or self.request_capture or self.world.step_timings['steps']!=self.last_state_step
+        if state_changed:self._update_geometry()
+        geometry_done=time.monotonic()
+        self.header.text = f'{len(self.world.slots)} physics environments / showing {self.base}–{min(self.base+self.count,len(self.world.slots))-1}'
+        self.footer.text = f'Simulated {self.world.step_timings["steps"]*self.physics_dt:.3f} s | '+('Finished; close window to exit.' if self.finished else 'Latest physical state; refresh adapts to display cost.')
+        self.world.sim.render()
+        rendered=time.monotonic()
+        self.frames += 1
+        self.timings['frames']+=1
+        self.timings['state_updates']+=int(state_changed)
+        self.timings['geometry_s']+=geometry_done-began
+        self.timings['render_s']+=rendered-geometry_done
+        self.timings['total_s']+=rendered-began
+        self.last_state_step = self.world.step_timings['steps']
+        self.last_frame = rendered
+        self.cadence.finish(began,rendered)
+        if self.request_capture and self.output:
+            from omni.kit.viewport.utility import get_active_viewport, capture_viewport_to_file
+            from datetime import datetime
+            path = self.output/('grid_'+datetime.now().strftime('%Y%m%d_%H%M%S_%f')+'.png')
+            capture_viewport_to_file(get_active_viewport(),str(path))
+            self.request_capture = False
+            print('[화면 저장]',path,flush=True)
+
+    def _update_geometry(self):
         from pxr import Gf, UsdGeom, Vt
-        from elastic_plant import skin_points
+        from display_skin import DisplaySkin
+        from omni.physx import get_physx_interface
+        get_physx_interface().update_transformations(False,True,False)
+        updates=[]
+        if self.direct:
+            # Native USD transforms already follow robot/fruit rigid bodies.
+            # Update only non-colliding elastic visual meshes, no duplicated robot.
+            elastic=self.world.slots[0].elastic
+            poses,rotations=elastic._visual_transforms()
+            transforms=DisplaySkin.transforms(rotations,poses[:,:3])
+            for op,matrix,parent_inverse,index in elastic.rigid_visuals:
+                delta=np.eye(4);delta[:3,:3]=rotations[index].T
+                delta[3,:3]=poses[index,:3]-elastic.visual_rest[index,:3]@delta[:3,:3]
+                updates.append((op,Gf.Matrix4d(*(matrix@delta@parent_inverse).flatten())))
+            for row,kernel in zip(elastic.skin,self._skin_kernels(elastic)):
+                mesh,_,inverse,_,_,_,normal_inverse=row
+                points,normals=kernel.evaluate(transforms)
+                points=points@inverse[:3,:3]+inverse[3,:3]
+                normals=normals@normal_inverse
+                normals/=np.maximum(np.linalg.norm(normals,axis=1,keepdims=True),1e-12)
+                updates.append((mesh.GetPointsAttr(),Vt.Vec3fArray.FromNumpy(points.astype(np.float32))))
+                updates.append((mesh.GetNormalsAttr(),Vt.Vec3fArray.FromNumpy(normals.astype(np.float32))))
+            self._apply_geometry_updates(updates)
+            return
         cache = UsdGeom.XformCache()
         first = self.world.slots[0]
         for tile, meshes in enumerate(self.geometry):
@@ -164,18 +232,17 @@ class GridView:
             slot = self.world.slots[index]
             offset = self.offsets[tile]
             poses, rotations = slot.elastic._visual_transforms()
-            skin = {str(row[0].GetPath())[len(first.root):]:row for row in slot.elastic.skin}
+            transforms=DisplaySkin.transforms(rotations,poses[:,:3])
+            skin = {str(row[0].GetPath())[len(first.root):]:kernel for row,kernel in zip(slot.elastic.skin,self._skin_kernels(slot.elastic))}
             rigid = {str(row[0].GetAttr().GetPrimPath())[len(first.root):]:row for row in slot.elastic.rigid_visuals}
             for relative, (prim, op) in meshes.items():
                 if relative in skin:
-                    _, points, _, ids, weights, normals, _ = skin[relative]
-                    points = skin_points(points,slot.elastic.visual_rest[:,:3],rotations,poses[:,:3],ids,weights)
-                    normal = (np.einsum('nkij,nj->nki',rotations[ids],normals)*weights[:,:,None]).sum(axis=1)
+                    points,normal=skin[relative].evaluate(transforms)
                     normal /= np.maximum(np.linalg.norm(normal,axis=1,keepdims=True),1e-12)
                     mesh = UsdGeom.Mesh(prim)
-                    mesh.GetPointsAttr().Set(Vt.Vec3fArray.FromNumpy(points.astype(np.float32)))
-                    mesh.GetNormalsAttr().Set(Vt.Vec3fArray.FromNumpy(normal.astype(np.float32)))
-                    mesh.GetExtentAttr().Set(Vt.Vec3fArray.FromNumpy(np.array([points.min(0),points.max(0)],dtype=np.float32)))
+                    updates.append((mesh.GetPointsAttr(),Vt.Vec3fArray.FromNumpy(points.astype(np.float32))))
+                    updates.append((mesh.GetNormalsAttr(),Vt.Vec3fArray.FromNumpy(normal.astype(np.float32))))
+                    updates.append((mesh.GetExtentAttr(),Vt.Vec3fArray.FromNumpy(np.array([points.min(0),points.max(0)],dtype=np.float32))))
                     matrix = np.eye(4)
                 elif relative in rigid:
                     _, rest, _, body = rigid[relative]
@@ -186,21 +253,27 @@ class GridView:
                     source = self.stage.GetPrimAtPath(slot.root+relative)
                     matrix = np.array(cache.GetLocalToWorldTransform(source))
                 matrix[3,:3] += offset
-                op.Set(Gf.Matrix4d(*matrix.flatten()))
+                updates.append((op,Gf.Matrix4d(*matrix.flatten())))
             self.labels[tile].text = f'{tile+1:02d} | env {index:04d} | {self.status[index]}'
-        self.header.text = f'{len(self.world.slots)} physics environments / showing {self.base}–{min(self.base+self.count,len(self.world.slots))-1}'
-        self.footer.text = f'Simulated {self.world.step_timings["steps"]/960:.3f} s | '+('Finished; close window to exit.' if self.finished else 'Physics timestep unchanged; wall-clock playback may be slow.')
-        self.world.sim.render()
-        self.frames += 1
-        self.last_state_step = self.world.step_timings['steps']
-        self.last_frame = time.monotonic()
-        if self.request_capture and self.output:
-            from omni.kit.viewport.utility import get_active_viewport, capture_viewport_to_file
-            from datetime import datetime
-            path = self.output/('grid_'+datetime.now().strftime('%Y%m%d_%H%M%S_%f')+'.png')
-            capture_viewport_to_file(get_active_viewport(),str(path))
-            self.request_capture = False
-            print('[DATASET VIEW] screenshot',path,flush=True)
+        self._apply_geometry_updates(updates)
+
+    @staticmethod
+    def _apply_geometry_updates(updates):
+        from pxr import Sdf
+        # Batch USD notices. All scene reads and attribute lookups happen before
+        # entering the block; physics is never advanced while edits are pending.
+        with Sdf.ChangeBlock():
+            for attribute,value in updates:attribute.Set(value)
+
+    def _skin_kernels(self, elastic):
+        from display_skin import DisplaySkin
+        # Co-located clones share authored vertices and rest coordinates, so
+        # their display matrices are compiled only once, not once per robot.
+        key=elastic.visual_rest[:,:3].tobytes()
+        if key not in self.skin_cache:
+            self.skin_cache[key]=[DisplaySkin(points,elastic.visual_rest[:,:3],ids,weights,normals)
+                for _,points,_,ids,weights,normals,_ in elastic.skin]
+        return self.skin_cache[key]
 
     def pump(self, physics_step=False):
         self.update(physics_step=physics_step)
@@ -211,3 +284,4 @@ class GridView:
 
     def close(self):
         self.window.visible = False
+        self.context.set_physx_update_transformations_settings(*self.original_writeback)

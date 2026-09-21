@@ -1,0 +1,47 @@
+{
+  "description": "단일 환경 GUI 비교. 대규모 환경 처리량 측정은 아님.",
+  "candidate": "candidate_00049",
+  "target": "Tomato_05",
+  "physics_preset": "contact120",
+  "physics_hz": 120,
+  "control_hz": 60,
+  "before": {
+    "run": "20260921_211330_tomato_05_gpu_candidate_dataset",
+    "initialization_wall_s": 21.554930418729782,
+    "rollout_wall_s": 150.3436996974051,
+    "physics_step_wall_s": 100.41239305399358
+  },
+  "after": {
+    "run": "20260921_213000_single_view_batched",
+    "initialization_wall_s": 18.94036754965782,
+    "rollout_wall_s": 103.9529984453693,
+    "physics_step_wall_s": 73.45575488824397,
+    "display_state_updates": 225,
+    "display_total_s": 19.49644112866372
+  },
+  "equivalence": {
+    "planned_commands_exact": true,
+    "control_trace_exact": true,
+    "control_trace_samples": 995,
+    "tool_contact_trace_exact": true,
+    "tool_contact_trace_samples": 1990,
+    "contact_events_exact": true,
+    "contact_event_count": 306,
+    "physical_audit_exact": true,
+    "result": "excessive_displacement",
+    "max_tool_penetration_mm": 0.19599837757504301
+  },
+  "multi_environment_smoke": {
+    "run": "20260921_213500_display_reset_smoke",
+    "num_envs": 2,
+    "candidate_indices": [0, 1, 5, 49],
+    "max_control_steps_per_candidate": 16,
+    "schedule": "continuous",
+    "all_candidate_resets_passed": true,
+    "display_creation_preserves_physics": true,
+    "invalid_physics_count": 0,
+    "incomplete_count": 4,
+    "scope": "다중 환경 표시와 슬롯 재사용 리셋 확인. 의도적인 짧은 실행이므로 수확 성공률 검증에 사용하지 않음."
+  },
+  "unit_tests_passed": 18
+}

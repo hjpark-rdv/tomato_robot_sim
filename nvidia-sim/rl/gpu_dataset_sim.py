@@ -135,7 +135,7 @@ def run(root):
              'dataset_design.py','dataset_scene.py','dataset_motion.py','dataset_camera.py','gpu_dataset_sim.py',
              'gpu_dataset_scene.py','gpu_batch_views.py','gpu_validation.py','gpu_prim_lookup.py','gpu_replication.py','gpu_physics_errors.py','gpu_initialization.py','gpu_grid_view.py',
              'gpu_planning.py','gpu_planning_worker.py','trajectory_search.py','trajectory_report.py',
-             'tool_contact_audit.py','connection_audit.py','contact_policy.py']
+             'tool_contact_audit.py','connection_audit.py','contact_policy.py','display_skin.py']
     fingerprints={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest() for name in sources}
     from assets import SIM_DIR, ROBOT_SOURCE
     from greenhouse_env import SCENE_SOURCE, STEM_SOURCE
@@ -296,11 +296,14 @@ def run(root):
             viewer=GridView(world,app,count=16,fps=config.get('view_fps',5.),output=root)
             checks=[state_comparison(a,snapshot(s)) for a,s in zip(before,world.slots)]
             write_json(root/'display_validation.json',dict(physics_state_preserved=all(c['passed'] for c in checks),
-                checks=checks,displayed_environments=viewer.count,layout='read-only visual copies; original physics co-located',
+                checks=checks,displayed_environments=viewer.count,
+                layout='native single environment' if viewer.direct else 'read-only visual copies; original physics co-located',
+                physics_dt_s=viewer.physics_dt,requested_fps=viewer.fps,display_budget_fraction=viewer.cadence.budget,
+                usd_writeback='explicit at display refresh; native physics readback unchanged',
                 display_has_physics_schemas=False))
             if not all(c['passed'] for c in checks):raise RuntimeError('Display rendering modified physics state')
             viewer.capture();viewer.update(force=True)
-            print('[DATASET VIEW] live grid ready; click rows to inspect individual hooks',flush=True)
+            print('[실시간 화면] '+('원본 단일 환경' if viewer.direct else '다중 환경 격자')+' 준비 완료; 환경 행을 누르면 고리 주변을 확대합니다',flush=True)
         if config['validate_only']:
             write_json(root/'validation_complete.json',dict(passed=True,candidate_rollouts_executed=0))
             return
@@ -321,6 +324,7 @@ def run(root):
             planning_service=PlanningService(folder,model,[dict(p,goal=config['goal']) for p in pending],workers)
             print('[DATASET PLANNING]',workers,'CPU workers; precomputing',len(pending),'paths',flush=True)
         rollout_step_start=world.step_timings.copy()
+        display_start=viewer.timings.copy() if viewer else None
         active_env_steps=0
         def progress_summary():
             elapsed=time.monotonic()-rollout_started
@@ -330,6 +334,8 @@ def run(root):
             result['physics_step_timings']=world.step_timings.copy()
             result['rollout_step_timings']={k:world.step_timings[k]-rollout_step_start[k] for k in world.step_timings}
             result['phase_timings']=phase_timings.copy()
+            if viewer:
+                result['display_timings']={k:viewer.timings[k]-display_start[k] for k in viewer.timings}
             result['schedule']=config.get('schedule','batch')
             result['planning_workers']=workers if planning_service else 0
             result['planning_timing_basis']='main-thread wait for CPU preplanning' if planning_service else 'synchronous CPU calculation'
