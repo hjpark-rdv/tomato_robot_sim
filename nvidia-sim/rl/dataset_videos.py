@@ -59,6 +59,9 @@ def compare(source, replay):
     """Outcome + trajectory metrics, NOT a claim of bitwise repeatability."""
     classification=replay['classification']
     checks={}
+    source_device=source.get('physical_inputs',{}).get('backend',{}).get('physics_device','gpu')
+    replay_device=replay.get('physics_device','gpu')
+    checks['physics_device']=dict(source=source_device,replay=replay_device,passed=source_device==replay_device)
     def model(row):
         return row.get('plant_resolution',row.get('physical_inputs',{}).get('backend',{}).get('plant_resolution','full'))
     a,b=model(source),model(replay)
@@ -127,7 +130,7 @@ def gallery(root, manifest):
     counts=e(json.dumps(manifest['counts'],ensure_ascii=False))
     missing='' if manifest['counts'].get('success_target_hook',0) else '<p><b>이번 시험에는 완전 걸림 성공이 없습니다. 열매 중심 진입은 별도의 부분 성공입니다.</b></p>'
     diagnostic_section=('<h1>추가 진단: 재실행 불일치 또는 물리 오류</h1>'+''.join(diagnostics)) if diagnostics else ''
-    plant_label='경량 식물 모델' if manifest.get('plant_resolution','full')=='light' else '원본 식물 모델'
+    plant_label={'full':'원본 식물 모델','light':'경량 식물 모델','ultralight':'초경량 식물 모델'}[manifest.get('plant_resolution','full')]
     if manifest.get('main_appendage_collisions','keep')=='ignore':plant_label+=' · 주줄기 잎/잘린 가지 충돌 무시'
     (root/'index.html').write_text(f'''<!doctype html><html lang="ko"><meta charset="utf-8"><title>고리 경로 대표 영상</title>
 <style>body{{background:#151a21;color:#eee;font:16px sans-serif;max-width:1320px;margin:30px auto;padding:20px}}video{{width:100%}}section{{background:#202833;padding:20px;margin:24px 0}}a{{color:#86c8ff}}</style>
@@ -148,7 +151,7 @@ def main():
     if not 1<=args.max_videos<=12: parser.error('max-videos must be 1..12')
     dataset=args.run_dir.resolve();cfg=read(dataset/'config.json')
     if cfg['target']!='Tomato_05' or cfg['solver']!='PGS' or cfg.get('trajectory_mode')!='staged6d':
-        parser.error('This replay adapter currently requires Tomato_05 staged6d, GPU PGS')
+        parser.error('This replay adapter currently requires Tomato_05 staged6d, PGS')
     summary=read(dataset/'summary.json')
     if not summary.get('execution_complete') or (dataset/'execution_error.json').exists():
         parser.error('Dataset execution must finish successfully before video processing')
@@ -173,7 +176,7 @@ def main():
         save(identity_path,identity)
         capture=replay_dir/'captures'/candidate_id
         if not (replay_dir/'report.json').exists() or not read(replay_dir/'report.json').get('complete'):
-            command=[sys.executable,'-u',HERE/'gpu_probe_worker.py','--headless','--mode','gpu','--solver','pgs',
+            command=[sys.executable,'-u',HERE/'gpu_probe_worker.py','--headless','--mode',cfg.get('physics_device','gpu'),'--solver','pgs',
                 '--batched-io','--native-replication','--gpu-partitions','1','--num-envs','1','--physics-hz',str(cfg['physics_hz']),
                 '--joint-armature',str(cfg['elastic_joint_armature']),'--position-iterations',str(cfg['position_iterations']),
                 '--record-physics-video','--fixture',fixture,'--output',replay_dir]
@@ -184,6 +187,7 @@ def main():
             if 'physical_audit' in source:command+=['--guard-tool-contacts']
             run(command,replay_dir/'run.log')
         report=read(replay_dir/'report.json');replay=report['motion']['outcomes'][0]
+        replay['physics_device']=report['backend'].get('physics_device','gpu' if report['backend'].get('gpu_dynamics') else 'cpu')
         replay['plant_resolution']=report['backend'].get('plant_resolution','full')
         replay['main_appendage_collisions']=report['backend'].get('main_appendage_collisions','keep')
         if not report.get('complete') or report['fixture']['commands_sha256']!=command_hash:

@@ -35,7 +35,9 @@ class GpuDatasetScene(DatasetScene):
         self._diagnostic_grid_spacing = getattr(cfg, 'gpu_diagnostic_grid_spacing', 0.)
         if cfg.sim.device != 'cpu':
             raise ValueError('Native collider logging requires CPU tensor readback')
-        cfg.probe_gpu_dynamics = True
+        cpu_single=getattr(cfg,'dataset_cpu_single',False)
+        if cpu_single and num_envs!=1:raise ValueError('CPU preview supports one environment only')
+        cfg.probe_gpu_dynamics = not cpu_single
         with fast_explicit_asset_lookup(), native_environment_replication(getattr(cfg,'gpu_native_replication',False)), initialize_identical_slots():
             super().__init__(cfg, num_envs)
         self.batch_groups=[]
@@ -61,7 +63,7 @@ class GpuDatasetScene(DatasetScene):
                 asset.data._root_physx_view=proxy
         self._efforts=None
         self.batched_joint_commands=getattr(cfg,'gpu_batched_joint_commands',True)
-        self.backend_description='GPU PhysX / GPU broadphase / CPU native collider readback / '+('batched joint commands' if self.batched_joint_commands else 'batched efforts')
+        self.backend_description=('CPU PhysX single environment' if cpu_single else 'GPU PhysX / GPU broadphase')+' / CPU native collider readback / '+('batched joint commands' if self.batched_joint_commands else 'batched efforts')
         self.reset_all()
 
     def step(self):

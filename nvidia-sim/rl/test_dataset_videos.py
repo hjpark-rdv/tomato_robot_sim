@@ -50,6 +50,15 @@ def test_same_result_from_different_plant_models_is_not_a_matching_replay():
     replay['main_appendage_collisions']='ignore'
     assert compare(source,replay)['passed']
 
+
+def test_cpu_gpu_replay_difference_is_not_hidden():
+    source=dict(result='miss',hook_success=False,executed_steps=10,target_max_displacement_m=0.,main_stem_max_displacement_m=0.,
+                physical_inputs={'backend':{'physics_device':'cpu'}})
+    replay=dict(classification={'result':'miss','hook_success':False},executed_steps=10,target_max_displacement_m=0.,main_stem_max_displacement_m=0.)
+    assert not compare(source,replay)['checks']['physics_device']['passed']
+    replay['physics_device']='cpu'
+    assert compare(source,replay)['checks']['physics_device']['passed']
+
 def test_mismatched_replay_is_separate_from_representative_gallery(tmp_path):
     from dataset_videos import gallery
     manifest=dict(total_candidates=1,counts={'miss':1},videos=[dict(title='실패',candidate_id='candidate_00000',

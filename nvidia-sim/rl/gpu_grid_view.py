@@ -98,7 +98,8 @@ class GridView:
         self.window = ui.Window('Parallel tomato tests', width=390, height=570)
         with self.window.frame:
             with ui.VStack(spacing=5):
-                ui.Label('LIVE GPU PHYSICS / '+('single environment' if self.direct else 'display-only grid'), height=25)
+                device='CPU' if getattr(world.slots[0].cfg,'dataset_cpu_single',False) else 'GPU'
+                ui.Label('LIVE '+device+' PHYSICS / '+('single environment' if self.direct else 'display-only grid'), height=25)
                 self.header = ui.Label('', height=30)
                 with ui.HStack(height=28):
                     ui.Button('Overview', clicked_fn=self.overview)
@@ -121,7 +122,8 @@ class GridView:
         # are needed only for a displayed frame, not every 120/960 Hz substep.
         # Reset paths explicitly synchronize their USD attachment frames.
         self.context.set_physx_update_transformations_settings(update_to_usd=False,update_velocities_to_usd=False)
-        self.overview()
+        if self.direct:self.focus(0)
+        else:self.overview()
         self.update(force=True)
 
     def toggle_pause(self):
@@ -157,8 +159,10 @@ class GridView:
         from isaacsim.core.utils.viewports import set_camera_view
         if self.base+tile >= len(self.world.slots):return
         slot = self.world.slots[self.base+tile]
-        target = slot.elastic.fruit_centers()[slot.target_index]+self.offsets[tile]
-        set_camera_view(target+[.5,-.8,.35],target)
+        # Look from the plant side used by the inspection videos, rather than
+        # through the approaching wrist. Keep nearby fruit and the ring visible.
+        target = slot.elastic.fruit_centers()[slot.target_index]+self.offsets[tile]+[.005,0.,.015]
+        set_camera_view(target+[.13,.38,.16],target)
         self.focused = tile
 
     def set_status(self, index, text):

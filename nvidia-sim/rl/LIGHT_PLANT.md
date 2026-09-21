@@ -1,5 +1,8 @@
 # 원본을 유지하는 별도 경량 식물 모델
 
+추가된 `ultralight` 모델과 단일 환경 CPU 실시간 실행은
+[ULTRALIGHT_PLANT.md](ULTRALIGHT_PLANT.md)를 참고한다. 아래 내용은 기존 `light` 모델이다.
+
 원본 USD를 수정하거나 교체하지 않는다. 기존 실행의 기본값은 `--plant-resolution full`이다.
 `--plant-resolution light`를 지정하면 동일 USD에서 별도의 경량 물리 관절 구조를 구성한다.
 물리 주파수와 정밀도 프리셋은 별도 옵션이며 기본 contact120을 유지한다.

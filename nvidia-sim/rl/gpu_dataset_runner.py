@@ -91,6 +91,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', default='Tomato_05', choices=[f'Tomato_{i:02d}' for i in range(1,12)])
     parser.add_argument('--num-envs', type=int, default=4, help='Environments in ONE GPU PhysX process; experimental PGS solver')
+    parser.add_argument('--physics-device',choices=['gpu','cpu'],default='gpu',help='GPU for parallel environments; CPU supports a single-environment preview')
     parser.add_argument('--candidates', type=int, default=100)
     parser.add_argument('--candidate-indices',default='',help='Optional comma-separated Sobol candidate indices, e.g. 0,3,27; no resampling')
     parser.add_argument('--seed', type=int, default=42)
@@ -111,7 +112,7 @@ def main():
     parser.add_argument('--benchmark-candidates', type=int, default=0, help='Execute only this many pending full candidates, estimate total runtime; resume without this flag')
     parser.add_argument('--physics-threads', type=int, default=4, help='CPU PhysX worker threads; benchmark before scaling environments')
     parser.add_argument('--physics-preset',choices=list(PRESETS),default='contact120',help='Default contact120 fixes the reproduced thin-stem crossing; practical60 and reference960 remain explicit comparison models')
-    parser.add_argument('--plant-resolution',choices=['full','light'],default='full',help='full keeps the original plant; light reduces distant hinges and ignores main-stem leaf/stub collisions by default; fruit, stem and break joints retained')
+    parser.add_argument('--plant-resolution',choices=['full','light','ultralight'],default='full',help='full: original; light: fewer hinges; ultralight: coarse stem/truss skeleton, target pedicel and all fruit break joints retained')
     parser.add_argument('--main-appendage-collisions',choices=['keep','ignore'],help='Default: full=keep, light=ignore. keep reproduces the earlier light model with leaf/stub collisions')
     parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],help='Override preset rate; robot control remains 60 Hz')
     parser.add_argument('--elastic-joint-armature',type=float,help='Override preset joint inertia in kg m^2; changes physical response')
@@ -133,6 +134,7 @@ def main():
     parser.add_argument('--video-limit',type=int,default=4)
     parser.add_argument('--video-display',default=':0',help='NVIDIA display for offline video rendering')
     args = parser.parse_args()
+    if args.physics_device=='cpu' and args.num_envs!=1:parser.error('CPU preview requires --num-envs 1; use GPU for parallel environments')
     try:args.main_appendage_collisions=appendage_policy(args.plant_resolution,args.main_appendage_collisions)
     except ValueError as error:parser.error(str(error))
     resolve_physics(args)
@@ -166,16 +168,16 @@ def main():
         parser.error('candidate-indices must be comma-separated integers')
     if indices is not None and (len(set(indices))!=len(indices) or any(i<0 or i>=args.candidates for i in indices)):
         parser.error('candidate-indices must be unique and within the candidate pool')
-    model_suffix='_light' if args.plant_resolution=='light' else ''
-    root = (args.run_dir or HERE/'runs'/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_'+args.target.lower()+'_gpu_candidate_dataset'+model_suffix)).resolve()
+    model_suffix='_'+args.plant_resolution if args.plant_resolution!='full' else ''
+    root = (args.run_dir or HERE/'runs'/(datetime.now().strftime('%Y%m%d_%H%M%S')+'_'+args.target.lower()+'_'+args.physics_device+'_candidate_dataset'+model_suffix)).resolve()
     root.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy(); config.pop('run_dir'); config.pop('resume'); config.pop('prepare_only'); config.pop('rebuild')
     config.pop('benchmark_candidates');config.pop('profile')
     for key in ('representative_videos','video_limit','video_display'):config.pop(key)
     config.update(schema_version=1, sampling='scrambled_sobol_plus_nominal', bounds=BOUNDS,
-                  domain_randomization=False, learning=False, physics_device='gpu', tensor_device='cpu', solver='PGS',
-                  experimental=True, cpu_tgs_equivalence_guaranteed=False, gpu_max_num_partitions=1,native_physics_replication=True,
-                  parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback',
+                  domain_randomization=False, learning=False, physics_device=args.physics_device, tensor_device='cpu', solver='PGS',
+                  experimental=True, cpu_tgs_equivalence_guaranteed=False, gpu_max_num_partitions=1,native_physics_replication=args.physics_device=='gpu',
+                  parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback' if args.physics_device=='gpu' else 'single CPU PhysX environment, batched articulation I/O',
                   observation_mode='isolated_single_environment' if args.num_envs>128 and not args.gui else 'in_process')
     if args.trajectory_mode=='staged6d':
         from trajectory_search import BOUNDS as staged_bounds
@@ -200,7 +202,7 @@ def main():
         (root/'candidates.json').write_text(json.dumps(proposals,indent=2)+'\n')
     print('[DATASET]',root,flush=True)
     print('[DATASET PHYSICS CONFIG]',json.dumps({k:config[k] for k in ('physics_preset','physics_hz','elastic_joint_armature','position_iterations')}),flush=True)
-    print('[DATASET 식물 모델]', '원본 유지' if args.plant_resolution=='full' else '별도 경량 모델: 목표 주변 관절·주줄기·송이 충돌 유지',flush=True)
+    print('[DATASET 식물 모델]', {'full':'원본 유지','light':'별도 경량 모델: 목표 주변 관절·주줄기·송이 충돌 유지','ultralight':'별도 초경량 모델: 주줄기·송이 강체 축소, 목표 꼭지·열매·파단 유지'}[args.plant_resolution],flush=True)
     print('[DATASET 잎·잘린 가지 충돌]', '유지' if args.main_appendage_collisions=='keep' else '무시; 화면 표시는 유지',flush=True)
     if args.prepare_only:
         print('Prepared candidates only. Launch the same command with --resume and without --prepare-only.'); return

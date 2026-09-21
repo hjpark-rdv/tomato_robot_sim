@@ -1,7 +1,7 @@
 """Optional coarse skeleton and an explicit policy for main-stem appendages."""
 import numpy as np
 
-RESOLUTIONS = ('full', 'light')
+RESOLUTIONS = ('full', 'light', 'ultralight')
 # 70 mm around the target centre covers the 55 mm ring and nearby pedicels.
 # Rod collision shapes outside this region remain present and contact-enabled too.
 PROTECTED_RADIUS_M = .07
@@ -9,10 +9,22 @@ PROTECTED_RADIUS_M = .07
 
 def appendage_policy(resolution, policy=None):
     if resolution not in RESOLUTIONS:raise ValueError('Unknown plant resolution: '+str(resolution))
-    if policy is None:policy='ignore' if resolution=='light' else 'keep'
+    if policy is None:policy='keep' if resolution=='full' else 'ignore'
     if policy not in ('keep','ignore'):raise ValueError('Unknown appendage collision policy: '+str(policy))
     if resolution=='full' and policy!='keep':raise ValueError('full preserves original collisions; use light to ignore appendages')
     return policy
+
+
+def segment_count(resolution, name, original, target_name):
+    """Coarsen the skeleton, retaining the target's three proximal segments."""
+    if resolution not in RESOLUTIONS:raise ValueError('Unknown plant resolution: '+str(resolution))
+    if resolution!='ultralight':return original
+    if name=='STEM_MainStem':return 3
+    if name=='TRUSS_Truss_01_Peduncle':return 1
+    if name=='TRUSS_Rachis':return 5
+    if name=='TRUSS_Pedicel_proximal_'+target_name[-2:]:return original
+    if name.startswith('TRUSS_Pedicel_proximal_'):return 1
+    raise ValueError('Unknown tube: '+name)
 
 
 def collision_inventory(stage, root):
@@ -49,6 +61,8 @@ def joint_layout(resolution, name, nodes, target_center, target_name, world_root
     free=available.copy()
     protected=np.zeros(count,dtype=bool)
     scales=np.ones(count)
+    if resolution=='ultralight' and name=='TRUSS_Pedicel_proximal_'+target_name[-2:]:
+        protected=available.copy()
     if resolution=='light':
         a,b=nodes[:-1],nodes[1:]
         ab=b-a

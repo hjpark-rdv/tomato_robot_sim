@@ -66,6 +66,23 @@ def test_leaf_collision_policy_is_explicit_and_preserves_full(tmp_path):
     assert prepare(full,'--resume').returncode==0
 
 
+def test_ultralight_config_cannot_resume_as_other_models(tmp_path):
+    assert prepare(tmp_path,'--plant-resolution','ultralight').returncode==0
+    config=json.loads((tmp_path/'config.json').read_text())
+    assert config['plant_resolution']=='ultralight'
+    assert config['main_appendage_collisions']=='ignore'
+    assert prepare(tmp_path,'--plant-resolution','ultralight','--resume').returncode==0
+    assert prepare(tmp_path,'--plant-resolution','light','--resume').returncode!=0
+
+
+def test_cpu_preview_is_explicit_single_environment_and_recorded(tmp_path):
+    assert prepare(tmp_path,'--physics-device','cpu','--plant-resolution','ultralight').returncode==0
+    config=json.loads((tmp_path/'config.json').read_text())
+    assert config['physics_device']=='cpu' and not config['native_physics_replication']
+    assert prepare(tmp_path,'--physics-device','gpu','--plant-resolution','ultralight','--resume').returncode!=0
+    assert prepare(tmp_path/'bad','--physics-device','cpu','--num-envs','4').returncode!=0
+
+
 def test_scheduling_mode_is_recorded_and_cannot_change_on_resume(tmp_path):
     result=prepare(tmp_path,'--schedule','continuous')
     assert result.returncode==0,result.stderr

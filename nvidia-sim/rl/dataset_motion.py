@@ -13,7 +13,12 @@ from pose_candidates import rear_capsule_geometry
 def non_target_seated(env, path):
     """Require geometry as well as native rear-arc contact for a wrong hook."""
     cap = None
-    if '/ElasticPlant/' in path and path.endswith('/StemCollider'):
+    if path in getattr(env.elastic,'collider_shapes',{}):
+        index,a,b,radius=env.elastic.collider_shapes[path]
+        body=env.elastic.poses()[index]
+        rotation=Rotation.from_quat(body[[4,5,6,3]])
+        cap=(body[:3]+rotation.apply(a),body[:3]+rotation.apply(b),radius)
+    elif '/ElasticPlant/' in path and path.endswith('/StemCollider'):
         body_path = path.rsplit('/', 1)[0]
         if body_path in env.elastic.paths:
             index = env.elastic.paths.index(body_path)

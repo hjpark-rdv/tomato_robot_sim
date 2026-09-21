@@ -25,7 +25,7 @@ parser.add_argument('--no-gravity',action='store_true',help='Stationary diagnosi
 parser.add_argument('--no-preload',action='store_true',help='Stationary diagnosis only; retain gravity but remove preload')
 parser.add_argument('--preload-mode',choices=['effort','drive','velocity'],default='effort',help='Experimental spring rest-load representation')
 parser.add_argument('--joint-armature',type=float,default=1e-5,help='Diagnostic virtual joint inertia; original 1e-5 kg m^2')
-parser.add_argument('--plant-resolution',choices=['full','light'],default='full')
+parser.add_argument('--plant-resolution',choices=['full','light','ultralight'],default='full')
 parser.add_argument('--main-appendage-collisions',choices=['keep','ignore'])
 parser.add_argument('--pulse-force',type=float,default=0.,help='Stationary diagnosis: fixed joint torques equivalent to this world-X force at the target stem in its rest pose, on 0.5..1.5 s')
 parser.add_argument('--behavior-probe',action='store_true',help='Original plant qualitative mechanics and preinserted CAD ring fixture, not a harvest trial')
@@ -33,6 +33,7 @@ parser.add_argument('--record-physics-video',action='store_true',help='Save actu
 parser.add_argument('--no-contacts',action='store_true',help='Diagnostic only: disable all collision shapes')
 parser.add_argument('--cuda-tensors',action='store_true',help='Diagnostic: use CUDA tensor API as well as GPU physics')
 parser.add_argument('--fabric',action='store_true',help='Diagnostic: avoid per-step USD physics writeback')
+parser.add_argument('--manual-usd-sync',action='store_true',help='Skip per-step USD writes after initialization; native physics readback retained')
 parser.add_argument('--joint-variant',choices=['original','reverse-fixed','locked-d6'],default='original',help='Diagnostic equivalent joint authoring, unchanged break thresholds')
 parser.add_argument('--batched-io',action='store_true',help='GPU physics with batched efforts and native collider readback')
 parser.add_argument('--legacy-command-uploads',action='store_true',help='A/B check: upload each articulation target separately')
@@ -182,8 +183,10 @@ def run():
     try:
         if args.batched_io:
             cfg.gpu_diagnostic_grid_spacing=args.diagnostic_grid_spacing
-            if args.mode!='gpu' or args.cuda_tensors:
-                raise ValueError('Batched native-readback path requires GPU mode and CPU tensors')
+            if args.cuda_tensors or (args.mode!='gpu' and args.num_envs!=1):
+                raise ValueError('Batched native-readback path requires CPU tensors; CPU physics supports one environment')
+            cfg.dataset_cpu_single=args.mode!='gpu'
+            if cfg.dataset_cpu_single:cfg.gpu_native_replication=False
             from gpu_dataset_scene import GpuDatasetScene
             world=GpuDatasetScene(cfg,args.num_envs)
             report['batched_io']=True
@@ -191,6 +194,7 @@ def run():
             world=DatasetScene(cfg,args.num_envs)
         context=world.sim.get_physics_context()
         report['backend']=dict(gpu_dynamics=context.is_gpu_dynamics_enabled(),
+            physics_device='gpu' if args.mode=='gpu' else 'cpu',
             plant_resolution=args.plant_resolution,plant_dofs=world.slots[0].elastic.articulation.num_joints,
             main_appendage_collisions=cfg.main_appendage_collisions,
             command_uploads=('legacy' if args.legacy_command_uploads else 'batched') if args.batched_io else 'per_asset',
@@ -244,6 +248,8 @@ def run():
         if args.record_physics_video:
             from physics_video_capture import PhysicsVideoCapture
             video=PhysicsVideoCapture(world.slots[0], args.output/'captures')
+        if args.manual_usd_sync:
+            context.set_physx_update_transformations_settings(update_to_usd=False,update_velocities_to_usd=False)
         if args.behavior_probe:
             from gpu_behavior_probe import run_behavior
             report['behavior']=run_behavior(world,args.output,app,video=video)
@@ -362,6 +368,13 @@ def run():
                             extra_metadata=dict(parameters=fixture.get('parameters',{}),progress_metrics=metrics,
                                 source_result=fixture.get('result'),source_candidate_file=str(args.fixture/'candidate.json')))
                     del active[index]
+            if 'motion_prefix_10s' not in report and world.step_timings['steps']>=round(10/cfg.sim.dt):
+                report['motion_prefix_10s']=dict(wall_s=time.perf_counter()-began,
+                    batch_sim_s=world.step_timings['steps']*cfg.sim.dt,
+                    active_envs=len(active),physics_step_timings=world.step_timings.copy(),
+                    scope='Saved-command replay prefix, including per-step labels/audits; excludes initialization and planning; not a completed contact trial')
+                write_json(args.output/'report.json',report)
+                print('[GPU PROBE 10초 측정]',json.dumps(report['motion_prefix_10s']),flush=True)
             if active:
                 world.step()
                 if audit:audit.sample(body_poses(world.slots[0]),world.step_timings['steps']*cfg.sim.dt)

@@ -14,7 +14,7 @@ from pxr import Gf, UsdGeom, UsdPhysics, PhysxSchema, Vt
 from isaaclab.assets import Articulation, ArticulationCfg
 from isaaclab.actuators import ImplicitActuatorCfg
 from assets import capsule, collision
-from plant_resolution import joint_layout, PROTECTED_RADIUS_M, appendage_policy, collision_inventory
+from plant_resolution import joint_layout, segment_count, PROTECTED_RADIUS_M, appendage_policy, collision_inventory
 from elastic_geometry import (tube_centerline, resample_rod, point_segment_distances,
                               bind_terminal_frame, skin_points, weld_tube_end, vertex_normals, mesh_components)
 
@@ -36,6 +36,7 @@ class ElasticPlant:
         self.joint_specs = []
         self.rod_masses = []
         self.rod_shapes = []
+        self.collider_shapes = {}
         self.contact_records = []
         self.resolution=getattr(env.cfg,'plant_resolution','full')
         self.appendage_collisions=appendage_policy(self.resolution,getattr(env.cfg,'main_appendage_collisions',None))
@@ -43,6 +44,7 @@ class ElasticPlant:
         target_pose=np.asarray(target['pose'])
         self.resolution_target=target_pose[:3]+Rotation.from_quat(target_pose[[4,5,6,3]]).apply(target['center'])
         self.resolution_chains={}
+        self.compliant_anchor_joints=0
         self.scale = env.cfg.elastic_stiffness_scale
         self.cache = UsdGeom.XformCache()
         self.static = static
@@ -93,8 +95,10 @@ class ElasticPlant:
             connected = [self.paths[i] for i in rachis if abs(i-parent)<=1]
             UsdPhysics.FilteredPairsAPI.Apply(self.stage.GetPrimAtPath(self.paths[chain[0]])).CreateFilteredPairsRel().SetTargets(connected)
             anchor_pose = np.asarray(spec['pose'])
+            fixed_anchor=self.resolution=='ultralight' and spec['name']!=env.cfg.target_fruit
+            self.compliant_anchor_joints+=int(not fixed_anchor)
             self._joint(f'anchor_{index:02d}', chain[-1], spec['anchor'], anchor_pose,
-                        self.endpoints[name], .25, .02)
+                        self.endpoints[name], .25, .02,fixed=fixed_anchor)
             # Only the fruit's own terminal stem capsule is excluded, because the
             # authored distal pedicel and proximal cap meet at the break section.
             targets = [self.paths[chain[-1]]]
@@ -160,18 +164,21 @@ class ElasticPlant:
             raise RuntimeError('Ignored main-stem appendages still have enabled collision shapes')
         self.model.update(main_appendage_collisions=self.appendage_collisions,collision_inventory=inventory)
         self.model.update(plant_resolution=self.resolution,
-                          resolution_schema='fixed-distant-hinges-v1',
-                          protected_radius_m=PROTECTED_RADIUS_M,
+                          resolution_schema='compound-rods-v1' if self.resolution=='ultralight' else 'fixed-distant-hinges-v1',
+                          protected_radius_m=None if self.resolution=='ultralight' else PROTECTED_RADIUS_M,
                           resolution_target=env.cfg.target_fruit,
                           resolution_chains=self.resolution_chains,
                           rod_collision_geometry_preserved=True,
-                          rod_mass_and_inertia_preserved=True,
+                          rod_mass_and_inertia_preserved=self.resolution!='ultralight',
+                          aggregate_rod_mass_inertia_preserved=True,
+                          compound_internal_self_collision_suppressed=self.resolution=='ultralight',
                           compliant_rod_joints=sum(len(v['free_indices']) for v in self.resolution_chains.values()),
+                          compliant_anchor_joints=self.compliant_anchor_joints,
                           rod_mass_kg=float(sum(self.rod_masses)),
                           rod_geometry_mass_sha256=hashlib.sha256(np.asarray([
                               [*pose,*a,*b,radius,mass] for pose,(a,b,radius),mass in
                               zip(self.rest,self.rod_shapes,self.rod_masses)],dtype=np.float64).tobytes()).hexdigest(),
-                          approximation='none; original skeleton' if self.resolution=='full' else 'distant serial hinge reduction; near-target springs unchanged; dynamic equivalence not assumed')
+                          approximation=('original rod capsules grouped into fewer massive links; non-target terminal hinges merged; target pedicel and fruit break joints retained; not equivalent dynamics' if self.resolution=='ultralight' else 'none; original skeleton' if self.resolution=='full' else 'distant serial hinge reduction; near-target springs unchanged; dynamic equivalence not assumed'))
         cfg = ArticulationCfg(prim_path=self.root,spawn=None,
                 init_state=ArticulationCfg.InitialStateCfg(pos=tuple(self.rest[0][:3]),joint_pos={'.*':0.}),
                 actuators={'springs':ImplicitActuatorCfg(joint_names_expr=['.*'],stiffness=None,damping=None,armature=self.armature)})
@@ -195,9 +202,24 @@ class ElasticPlant:
 
     def _tube(self, name, sides, segments, parent, stiffness, damping):
         points, radii = self._source_tube(name, sides)
-        nodes, radii = resample_rod(points, radii, segments)
+        original_segments=segments
+        segments=segment_count(self.resolution,name,segments,self.env.cfg.target_fruit)
+        # Serial small-angle constant-moment compliance, not a modal match.
+        original_hinges=original_segments-int(parent is None)
+        if self.resolution=='ultralight' and name.startswith('TRUSS_Pedicel_proximal_') and name!='TRUSS_Pedicel_proximal_'+self.env.cfg.target_fruit[-2:]:
+            # The non-target terminal hinge is merged into the root spring.
+            original_hinges+=1
+        hinges=segments-int(parent is None)
+        coarse_scale=hinges/original_hinges
+        stiffness*=coarse_scale;damping*=coarse_scale
+        source_nodes,source_radii=resample_rod(points,radii,original_segments)
+        cuts=np.rint(np.linspace(0,original_segments,segments+1)).astype(int)
+        if self.resolution=='ultralight':
+            nodes,radii=source_nodes[cuts],source_radii[cuts]
+        else:
+            nodes,radii=source_nodes,source_radii
         layout=joint_layout(self.resolution,name,nodes,self.resolution_target,self.env.cfg.target_fruit,parent is None)
-        self.resolution_chains[name]=dict(original_segments=segments,
+        self.resolution_chains[name]=dict(original_segments=original_segments,segments=segments,coarse_spring_scale=coarse_scale,
             free_indices=np.flatnonzero(layout['free']).tolist(),
             protected_indices=np.flatnonzero(layout['protected']).tolist(),
             spring_scale=layout['spring_scale'].tolist())
@@ -212,6 +234,13 @@ class ElasticPlant:
             x.AddOrientOp().Set(Gf.Quatf(1.))
             UsdPhysics.RigidBodyAPI.Apply(x.GetPrim())
             mass = max(.0005, 1000.*np.pi*radius**2*np.linalg.norm(b-a))
+            pieces=[]
+            if self.resolution=='ultralight':
+                for k in range(cuts[j],cuts[j+1]):
+                    sa,sb=source_nodes[k:k+2];sr=float(max(source_radii[k:k+2]))
+                    sm=max(.0005,1000.*np.pi*sr**2*np.linalg.norm(sb-sa))
+                    pieces.append((sa,sb,sr,sm))
+                mass=sum(p[3] for p in pieces)
             mass_api=UsdPhysics.MassAPI.Apply(x.GetPrim())
             mass_api.CreateMassAttr(float(mass))
             mass_api.CreateCenterOfMassAttr(Gf.Vec3f(0.))
@@ -219,14 +248,32 @@ class ElasticPlant:
             mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(mass*(3*radius**2+length**2)/12,
                 mass*(3*radius**2+length**2)/12,mass*radius**2/2))
             mass_api.CreatePrincipalAxesAttr(Gf.Quatf(Gf.Rotation(Gf.Vec3d(0,0,1),Gf.Vec3d(*(b-a))).GetQuat()))
+            if pieces:
+                # Exact aggregate mass, COM and inertia of the old rod bodies.
+                com=sum((sa+sb)*.5*sm for sa,sb,sr,sm in pieces)/mass
+                inertia=np.zeros((3,3))
+                for sa,sb,sr,sm in pieces:
+                    length=np.linalg.norm(sb-sa);axis=(sb-sa)/length
+                    axial=sm*sr*sr/2;transverse=sm*(3*sr*sr+length*length)/12
+                    offset=(sa+sb)*.5-com
+                    inertia+=transverse*np.eye(3)+(axial-transverse)*np.outer(axis,axis)+sm*(np.dot(offset,offset)*np.eye(3)-np.outer(offset,offset))
+                values,axes=np.linalg.eigh(inertia)
+                if np.linalg.det(axes)<0:axes[:,0]*=-1
+                q=Rotation.from_matrix(axes).as_quat()
+                mass_api.CreateCenterOfMassAttr(Gf.Vec3f(*(com-center)))
+                mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(*values))
+                mass_api.CreatePrincipalAxesAttr(Gf.Quatf(float(q[3]),Gf.Vec3f(*q[:3])))
             phys = PhysxSchema.PhysxRigidBodyAPI.Apply(x.GetPrim())
             phys.CreateSolverPositionIterationCountAttr(64)
             phys.CreateSolverVelocityIterationCountAttr(16)
             phys.CreateEnableCCDAttr(True)
             phys.CreateSleepThresholdAttr(0.)
             PhysxSchema.PhysxContactReportAPI.Apply(x.GetPrim()).CreateThresholdAttr(0.)
-            shape = capsule(self.stage, path+'/StemCollider', a-center, b-center, radius)
-            shape.MakeInvisible()
+            for k,(sa,sb,sr,_) in enumerate(pieces or [(a,b,radius,mass)]):
+                collider_path=path+('/StemCollider' if k==0 else f'/StemCollider_{k:02d}')
+                shape = capsule(self.stage,collider_path,sa-center,sb-center,sr)
+                shape.MakeInvisible()
+                self.collider_shapes[collider_path]=(len(self.bodies),sa-center,sb-center,sr)
             pose = np.r_[center, 1., 0., 0., 0.]
             spring_scale=layout['spring_scale'][j]
             self._joint(f'{name}_{j:02d}', parent, path, pose, a,
@@ -394,7 +441,7 @@ class ElasticPlant:
         q = torch.zeros_like(self.articulation.data.joint_pos)
         self.articulation.write_joint_state_to_sim(q,q)
         if self.body_ids is None:
-            expected=3*(self.model['compliant_rod_joints']+len(self.env.fruit_specs))
+            expected=3*(self.model['compliant_rod_joints']+self.compliant_anchor_joints)
             if self.articulation.num_joints!=expected:
                 raise RuntimeError(f'Plant joint layout mismatch: expected {expected}, got {self.articulation.num_joints}')
             self.model.update(native_dofs=self.articulation.num_joints,
@@ -529,11 +576,12 @@ class ElasticPlant:
             wa=a[:3]+Rotation.from_quat(a[[4,5,6,3]]).apply(p0)
             wb=b[:3]+Rotation.from_quat(b[[4,5,6,3]]).apply(p1)
             gaps.append(np.linalg.norm(wa-wb))
-        ids = self.chains['TRUSS_Rachis']
+        selected=[s for s in self.collider_shapes.values() if s[0] in self.chains['TRUSS_Rachis']]
+        ids = [s[0] for s in selected]
         rotations = Rotation.from_quat(poses[ids][:,[4,5,6,3]])
-        a = rotations.apply(np.array([self.rod_shapes[i][0] for i in ids]))+poses[ids,:3]
-        b = rotations.apply(np.array([self.rod_shapes[i][1] for i in ids]))+poses[ids,:3]
-        radii = np.array([self.rod_shapes[i][2] for i in ids])
+        a = rotations.apply(np.array([s[1] for s in selected]))+poses[ids,:3]
+        b = rotations.apply(np.array([s[2] for s in selected]))+poses[ids,:3]
+        radii = np.array([s[3] for s in selected])
         center = self.env._target_geometry()[0][0].cpu().numpy()
         gap = (point_segment_distances(center[None],a,b)[0]-radii-self.env.target_spec['radius']).min()
         attachment_gaps = [np.linalg.norm(body_poses[s['anchor']][:3]-f.data.root_pos_w[0].cpu().numpy())

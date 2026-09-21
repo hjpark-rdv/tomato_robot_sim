@@ -113,7 +113,8 @@ def export(root,rows,elapsed):
                  invalid_physics_candidates=counts['invalid_physics'],
                  non_target_contact_event_count=sum('non_target_contact' in r['events'] for r in rows),
                  elapsed_wall_s=elapsed,candidates_per_second=len(rows)/elapsed if elapsed else None)
-    summary.update(physics_device='gpu',tensor_device='cpu',solver='PGS',experimental=True)
+    device=rows[0].get('physical_inputs',{}).get('backend',{}).get('physics_device','gpu') if rows else json.loads((root/'config.json').read_text()).get('physics_device','gpu')
+    summary.update(physics_device=device,tensor_device='cpu',solver='PGS',experimental=True)
     write_json(root/'summary.json',summary)
     return summary
 
@@ -161,12 +162,13 @@ def run(root):
     # Keep their readback current; GPU dynamics is independent of Fabric.
     cfg.sim.use_fabric=False
     cfg.gpu_batched_joint_commands=config.get('command_uploads','batched')=='batched'
+    cfg.dataset_cpu_single=config.get('physics_device','gpu')=='cpu'
     cfg.sim.physx.solver_type=0
     # Multiple GPU constraint partitions diverge for this branched plant with
     # standalone break joints. One partition keeps environments independent
     # without changing drives, contacts, timestep, iterations or tolerances.
     cfg.sim.physx.gpu_max_num_partitions=1
-    cfg.sim.physx.enable_ccd=False
+    cfg.sim.physx.enable_ccd=cfg.dataset_cpu_single
     position_iterations=config.get('position_iterations',64)
     cfg.sim.physx.max_position_iteration_count=position_iterations
     velocity_iterations=config.get('velocity_iterations',4)
@@ -185,13 +187,13 @@ def run(root):
     cfg.dataset_rise_speed=config.get('rise_speed',.002)
     cfg.dataset_pull_speed=config.get('pull_speed',.004)
     cfg.dataset_physics_sync=config.get('physics_sync','legacy')
-    cfg.gpu_native_replication=True
+    cfg.gpu_native_replication=not cfg.dataset_cpu_single
     world=DatasetScene(cfg,config['num_envs'])
     viewer=None;planning_service=None
     try:
         context=world.sim.get_physics_context()
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
-        backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=position_iterations,
+        backend=dict(physics_device='cpu' if cfg.dataset_cpu_single else 'gpu',tensor_device='cpu',solver='PGS',position_iterations=position_iterations,
                      plant_resolution=cfg.plant_resolution,
                      main_appendage_collisions=cfg.main_appendage_collisions,
                      plant_dofs=world.slots[0].elastic.articulation.num_joints,
@@ -202,13 +204,14 @@ def run(root):
                      command_uploads=config.get('command_uploads','batched'),
                      velocity_iterations=velocity_iterations,contact_policy=world.contact_policy,
                      tool_penetration_guard=True,tool_penetration_tolerance_m=.0005,
-                     gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
+                     gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=cfg.dataset_cpu_single,native_collider_reports=True,
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
                      suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
                      experimental=True,cpu_tgs_equivalence_guaranteed=False,
                      native_physics_replication=config['num_envs']>1,
                      environment_id_bounds_bits=env_id_attr.Get() if env_id_attr else None)
-        if not backend['gpu_dynamics'] or backend['broadphase']!='GPU' or backend['suppress_readback'] or backend['gpu_max_num_partitions']!=1:
+        gpu_invalid=not cfg.dataset_cpu_single and (not backend['gpu_dynamics'] or backend['broadphase']!='GPU' or backend['gpu_max_num_partitions']!=1)
+        if gpu_invalid or backend['suppress_readback'] or (cfg.dataset_cpu_single and backend['gpu_dynamics']):
             raise RuntimeError('GPU physics / native collider readback backend assertion failed')
         for slot in world.slots:
             actual=slot.elastic.articulation.root_physx_view.get_dof_armatures()
@@ -220,7 +223,7 @@ def run(root):
                 raise RuntimeError('Native environment-ID broadphase filtering not configured')
         write_json(root/('observation_backend.json' if args.observation_only else 'backend.json'),backend)
         write_json(root/'plant_model.json',world.slots[0].elastic.model)
-        print('[DATASET GPU]',backend,flush=True)
+        print('[DATASET 물리]',backend,flush=True)
         validation=verify_resets(world);write_json(validation_path,validation)
         from tool_contact_audit import initialize_world_audits
         initialize_world_audits(world,root/'collision_model')
@@ -314,6 +317,14 @@ def run(root):
         if config['validate_only']:
             write_json(root/'validation_complete.json',dict(passed=True,candidate_rollouts_executed=0))
             return
+        if cfg.plant_resolution=='ultralight':
+            # Initial USD-based FCL/camera setup has finished. Dynamics,
+            # contacts, audits and resets read native tensors. GridView syncs
+            # USD explicitly before drawing each frame.
+            context.set_physx_update_transformations_settings(update_to_usd=False,update_velocities_to_usd=False)
+            backend['usd_writeback']='explicit display refresh only'
+            write_json(root/'backend.json',backend)
+            print('[DATASET 초경량] 매 물리 스텝의 USD 화면 갱신 생략; 접촉·관통 검사는 유지',flush=True)
         params=json.loads((root/'candidates.json').read_text())
         rows=[json.loads(p.read_text()) for p in sorted((root/'results').glob('*/candidate.json'))]
         done={r['candidate_id'] for r in rows}

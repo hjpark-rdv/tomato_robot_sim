@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from plant_resolution import joint_layout, appendage_policy
+from plant_resolution import joint_layout, segment_count, appendage_policy
 
 
 def nodes(count=16):
@@ -48,3 +48,15 @@ def test_appendage_policy_keeps_original_and_allows_old_light_comparison():
     assert appendage_policy('light','keep')=='keep'
     with pytest.raises(ValueError):appendage_policy('full','ignore')
     with pytest.raises(ValueError):appendage_policy('typo')
+
+
+def test_ultralight_is_separate_and_retains_selected_target_pedicel():
+    for target in ('Tomato_01','Tomato_05','Tomato_11'):
+        for resolution in ('full','light'):
+            assert segment_count(resolution,'STEM_MainStem',16,target)==16
+        assert segment_count('ultralight','STEM_MainStem',16,target)==3
+        assert segment_count('ultralight','TRUSS_Rachis',14,target)==5
+        for index in range(1,12):
+            count=segment_count('ultralight',f'TRUSS_Pedicel_proximal_{index:02d}',3,target)
+            assert count==(3 if target==f'Tomato_{index:02d}' else 1)
+    assert appendage_policy('ultralight')=='ignore'

@@ -1,0 +1,220 @@
+{
+  "run_dir": "nvidia-sim/rl/runs/20260921_231100_ultralight_gpu_scale",
+  "scope": "Identical saved candidate in every slot; capacity and contact regression, not unique pose throughput",
+  "physics": {
+    "device": "gpu",
+    "hz": 120,
+    "solver": "pgs",
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "armature": 0.0005,
+    "plant_resolution": "ultralight",
+    "contact_policy": "legacy",
+    "penetration_guard_m": 0.0005
+  },
+  "execution_complete": true,
+  "runs": [
+    {
+      "num_envs": 1,
+      "complete": true,
+      "exit_code": 0,
+      "process_wall_s": 53.69326495938003,
+      "initialization_wall_s": 4.091680586338043,
+      "prefix_10s": {
+        "wall_s": 22.259545563720167,
+        "batch_sim_s": 10.0,
+        "active_envs": 1,
+        "physics_step_timings": {
+          "steps": 1200,
+          "write_s": 0.5517345713451505,
+          "physics_s": 16.76484816428274,
+          "read_s": 0.2310254955664277
+        },
+        "scope": "Saved-command replay prefix, including per-step labels/audits; excludes initialization and planning; not a completed contact trial"
+      },
+      "motion_wall_s": 40.64491127245128,
+      "batch_sim_s": 17.916666666666668,
+      "physics_step_timings": {
+        "steps": 2150,
+        "write_s": 0.9928396437317133,
+        "physics_s": 30.361984860152006,
+        "read_s": 0.41198165714740753
+      },
+      "counts": {
+        "invalid_physics": 1
+      },
+      "valid_physics_count": 0,
+      "invalid_physics_count": 1,
+      "contact_envs": 1,
+      "max_tool_penetration_mm": 0.5213604691616984,
+      "reset_and_break_api_passed": true,
+      "cross_environment_contacts": 0,
+      "native_errors": [],
+      "aggregate_prefix_sim_seconds_per_wall_second": 0.44924546960646633,
+      "peak_total_gpu_memory_mib": 3470.0,
+      "peak_worker_cpu_percent": 298.5812975064188,
+      "mean_worker_cpu_percent": 153.53053991126288,
+      "memory_scope": "Whole GPU, including pre-existing user sessions; not per-process allocation",
+      "clone_comparison_passed": true,
+      "mismatched_clones": 0,
+      "contact_screen_passed": false,
+      "motion_process_cpu_percent": 127.12686059182471,
+      "source_changes_vs_one": []
+    },
+    {
+      "num_envs": 16,
+      "complete": true,
+      "exit_code": 0,
+      "process_wall_s": 132.72541439160705,
+      "initialization_wall_s": 6.352318794466555,
+      "prefix_10s": {
+        "wall_s": 62.9575047371909,
+        "batch_sim_s": 10.0,
+        "active_envs": 16,
+        "physics_step_timings": {
+          "steps": 1200,
+          "write_s": 3.28854541759938,
+          "physics_s": 20.45682212151587,
+          "read_s": 0.9870864804834127
+        },
+        "scope": "Saved-command replay prefix, including per-step labels/audits; excludes initialization and planning; not a completed contact trial"
+      },
+      "motion_wall_s": 117.09154749847949,
+      "batch_sim_s": 17.916666666666668,
+      "physics_step_timings": {
+        "steps": 2150,
+        "write_s": 5.888931231573224,
+        "physics_s": 38.288604421541095,
+        "read_s": 1.7477521104738116
+      },
+      "counts": {
+        "invalid_physics": 16
+      },
+      "valid_physics_count": 0,
+      "invalid_physics_count": 16,
+      "contact_envs": 16,
+      "max_tool_penetration_mm": 0.5213604691616984,
+      "reset_and_break_api_passed": true,
+      "cross_environment_contacts": 0,
+      "native_errors": [],
+      "aggregate_prefix_sim_seconds_per_wall_second": 2.541396782923691,
+      "peak_total_gpu_memory_mib": 3534.0,
+      "peak_worker_cpu_percent": 309.6168479983472,
+      "mean_worker_cpu_percent": 132.3800438915257,
+      "memory_scope": "Whole GPU, including pre-existing user sessions; not per-process allocation",
+      "clone_comparison_passed": true,
+      "mismatched_clones": 0,
+      "contact_screen_passed": false,
+      "motion_process_cpu_percent": 112.75973014338591,
+      "source_changes_vs_one": []
+    },
+    {
+      "num_envs": 32,
+      "complete": true,
+      "exit_code": 0,
+      "process_wall_s": 217.73559899628162,
+      "initialization_wall_s": 8.732319731265306,
+      "prefix_10s": {
+        "wall_s": 106.87680690269917,
+        "batch_sim_s": 10.0,
+        "active_envs": 32,
+        "physics_step_timings": {
+          "steps": 1200,
+          "write_s": 6.560049394145608,
+          "physics_s": 22.431494241580367,
+          "read_s": 1.8483439488336444
+        },
+        "scope": "Saved-command replay prefix, including per-step labels/audits; excludes initialization and planning; not a completed contact trial"
+      },
+      "motion_wall_s": 199.644985136576,
+      "batch_sim_s": 17.916666666666668,
+      "physics_step_timings": {
+        "steps": 2150,
+        "write_s": 11.82122809998691,
+        "physics_s": 43.74040894024074,
+        "read_s": 3.27637760899961
+      },
+      "counts": {
+        "invalid_physics": 32
+      },
+      "valid_physics_count": 0,
+      "invalid_physics_count": 32,
+      "contact_envs": 32,
+      "max_tool_penetration_mm": 0.5213604691616984,
+      "reset_and_break_api_passed": true,
+      "cross_environment_contacts": 0,
+      "native_errors": [],
+      "aggregate_prefix_sim_seconds_per_wall_second": 2.9941014264332257,
+      "peak_total_gpu_memory_mib": 3534.0,
+      "peak_worker_cpu_percent": 427.51195043827636,
+      "mean_worker_cpu_percent": 124.89776123674748,
+      "memory_scope": "Whole GPU, including pre-existing user sessions; not per-process allocation",
+      "clone_comparison_passed": true,
+      "mismatched_clones": 0,
+      "contact_screen_passed": false,
+      "motion_process_cpu_percent": 110.88023586646275,
+      "source_changes_vs_one": [
+        "ultralight_scale_benchmark.py",
+        "test_ultralight_scale_benchmark.py"
+      ]
+    },
+    {
+      "num_envs": 64,
+      "complete": true,
+      "exit_code": 0,
+      "process_wall_s": 400.09405445028096,
+      "initialization_wall_s": 13.382418667897582,
+      "prefix_10s": {
+        "wall_s": 200.26512459479272,
+        "batch_sim_s": 10.0,
+        "active_envs": 64,
+        "physics_step_timings": {
+          "steps": 1200,
+          "write_s": 13.46233001165092,
+          "physics_s": 27.95065241586417,
+          "read_s": 3.892470476217568
+        },
+        "scope": "Saved-command replay prefix, including per-step labels/audits; excludes initialization and planning; not a completed contact trial"
+      },
+      "motion_wall_s": 376.15601501148194,
+      "batch_sim_s": 17.916666666666668,
+      "physics_step_timings": {
+        "steps": 2150,
+        "write_s": 24.186901992186904,
+        "physics_s": 56.874343825504184,
+        "read_s": 7.01949595566839
+      },
+      "counts": {
+        "invalid_physics": 64
+      },
+      "valid_physics_count": 0,
+      "invalid_physics_count": 64,
+      "contact_envs": 64,
+      "max_tool_penetration_mm": 0.5213604691616984,
+      "reset_and_break_api_passed": true,
+      "cross_environment_contacts": 0,
+      "native_errors": [],
+      "aggregate_prefix_sim_seconds_per_wall_second": 3.195763622322892,
+      "peak_total_gpu_memory_mib": 3534.0,
+      "peak_worker_cpu_percent": 620.447290199278,
+      "mean_worker_cpu_percent": 121.09329066608781,
+      "memory_scope": "Whole GPU, including pre-existing user sessions; not per-process allocation",
+      "clone_comparison_passed": true,
+      "mismatched_clones": 0,
+      "contact_screen_passed": false,
+      "motion_process_cpu_percent": 110.00192295193514,
+      "source_changes_vs_one": [
+        "ultralight_scale_benchmark.py",
+        "test_ultralight_scale_benchmark.py"
+      ]
+    }
+  ],
+  "notes": [
+    "Same saved candidate 49, not distinct trajectory throughput.",
+    "All replay traces matched the one-environment baseline; all were invalid due to the unchanged 0.5 mm penetration guard.",
+    "Only the controller/reporting source changed during the sequence; probe, model and physics source remained unchanged.",
+    "GPU memory includes existing user processes. GUI, camera capture and planning excluded.",
+    "128 environments not tested."
+  ],
+  "automated_tests": "4 passed; PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 to exclude unrelated ROS launch plugin"
+}
