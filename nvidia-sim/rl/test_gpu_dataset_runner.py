@@ -75,12 +75,17 @@ def test_ultralight_config_cannot_resume_as_other_models(tmp_path):
     assert prepare(tmp_path,'--plant-resolution','light','--resume').returncode!=0
 
 
-def test_cpu_preview_is_explicit_single_environment_and_recorded(tmp_path):
+def test_cpu_parallel_environments_are_recorded_and_resume_is_strict(tmp_path):
     assert prepare(tmp_path,'--physics-device','cpu','--plant-resolution','ultralight').returncode==0
     config=json.loads((tmp_path/'config.json').read_text())
     assert config['physics_device']=='cpu' and not config['native_physics_replication']
     assert prepare(tmp_path,'--physics-device','gpu','--plant-resolution','ultralight','--resume').returncode!=0
-    assert prepare(tmp_path/'bad','--physics-device','cpu','--num-envs','4').returncode!=0
+    multi=tmp_path/'multi'
+    assert prepare(multi,'--physics-device','cpu','--num-envs','4').returncode==0
+    config=json.loads((multi/'config.json').read_text())
+    assert config['num_envs']==4 and not config['native_physics_replication']
+    assert prepare(multi,'--physics-device','cpu','--num-envs','4','--resume').returncode==0
+    assert prepare(multi,'--physics-device','cpu','--num-envs','2','--resume').returncode!=0
 
 
 def test_scheduling_mode_is_recorded_and_cannot_change_on_resume(tmp_path):

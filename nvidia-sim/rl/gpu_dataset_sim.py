@@ -169,6 +169,8 @@ def run(root):
     # without changing drives, contacts, timestep, iterations or tolerances.
     cfg.sim.physx.gpu_max_num_partitions=1
     cfg.sim.physx.enable_ccd=cfg.dataset_cpu_single
+    # Keep independent CPU solver islands insensitive to other cloned islands.
+    cfg.sim.physx.enable_enhanced_determinism=cfg.dataset_cpu_single
     position_iterations=config.get('position_iterations',64)
     cfg.sim.physx.max_position_iteration_count=position_iterations
     velocity_iterations=config.get('velocity_iterations',4)
@@ -208,7 +210,9 @@ def run(root):
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
                      suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
                      experimental=True,cpu_tgs_equivalence_guaranteed=False,
-                     native_physics_replication=config['num_envs']>1,
+                     enhanced_determinism=cfg.sim.physx.enable_enhanced_determinism,
+                     environment_collision_filter='USD collision groups' if cfg.dataset_cpu_single else 'native environment IDs and USD collision groups',
+                     native_physics_replication=config['num_envs']>1 and not cfg.dataset_cpu_single,
                      environment_id_bounds_bits=env_id_attr.Get() if env_id_attr else None)
         gpu_invalid=not cfg.dataset_cpu_single and (not backend['gpu_dynamics'] or backend['broadphase']!='GPU' or backend['gpu_max_num_partitions']!=1)
         if gpu_invalid or backend['suppress_readback'] or (cfg.dataset_cpu_single and backend['gpu_dynamics']):
@@ -217,7 +221,7 @@ def run(root):
             actual=slot.elastic.articulation.root_physx_view.get_dof_armatures()
             if not torch.equal(actual,torch.full_like(actual,cfg.elastic_joint_armature)):
                 raise RuntimeError('Native elastic joint armature differs from requested configuration')
-        if config['num_envs']>1:
+        if config['num_envs']>1 and not cfg.dataset_cpu_single:
             from gpu_replication import environment_id_bits
             if backend['environment_id_bounds_bits']!=environment_id_bits(config['num_envs']):
                 raise RuntimeError('Native environment-ID broadphase filtering not configured')

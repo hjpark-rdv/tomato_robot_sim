@@ -90,8 +90,8 @@ def run_worker(command,root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', default='Tomato_05', choices=[f'Tomato_{i:02d}' for i in range(1,12)])
-    parser.add_argument('--num-envs', type=int, default=4, help='Environments in ONE GPU PhysX process; experimental PGS solver')
-    parser.add_argument('--physics-device',choices=['gpu','cpu'],default='gpu',help='GPU for parallel environments; CPU supports a single-environment preview')
+    parser.add_argument('--num-envs', type=int, default=4, help='Environments in ONE CPU/GPU PhysX process; experimental PGS solver')
+    parser.add_argument('--physics-device',choices=['gpu','cpu'],default='gpu',help='CPU or GPU physics with collision-isolated parallel environments')
     parser.add_argument('--candidates', type=int, default=100)
     parser.add_argument('--candidate-indices',default='',help='Optional comma-separated Sobol candidate indices, e.g. 0,3,27; no resampling')
     parser.add_argument('--seed', type=int, default=42)
@@ -134,7 +134,6 @@ def main():
     parser.add_argument('--video-limit',type=int,default=4)
     parser.add_argument('--video-display',default=':0',help='NVIDIA display for offline video rendering')
     args = parser.parse_args()
-    if args.physics_device=='cpu' and args.num_envs!=1:parser.error('CPU preview requires --num-envs 1; use GPU for parallel environments')
     try:args.main_appendage_collisions=appendage_policy(args.plant_resolution,args.main_appendage_collisions)
     except ValueError as error:parser.error(str(error))
     resolve_physics(args)
@@ -177,7 +176,7 @@ def main():
     config.update(schema_version=1, sampling='scrambled_sobol_plus_nominal', bounds=BOUNDS,
                   domain_randomization=False, learning=False, physics_device=args.physics_device, tensor_device='cpu', solver='PGS',
                   experimental=True, cpu_tgs_equivalence_guaranteed=False, gpu_max_num_partitions=1,native_physics_replication=args.physics_device=='gpu',
-                  parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback' if args.physics_device=='gpu' else 'single CPU PhysX environment, batched articulation I/O',
+                  parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback' if args.physics_device=='gpu' else 'single CPU PhysX scene, collision-isolated environments, batched articulation I/O',
                   observation_mode='isolated_single_environment' if args.num_envs>128 and not args.gui else 'in_process')
     if args.trajectory_mode=='staged6d':
         from trajectory_search import BOUNDS as staged_bounds

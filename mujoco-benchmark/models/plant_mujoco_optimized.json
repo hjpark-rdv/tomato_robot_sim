@@ -1,0 +1,9 @@
+{
+  "source": "/root/farmily_tomato/mujoco-benchmark/models/plant_original_equivalent.xml",
+  "optimization": "disable 286 leaf/stub collisions and eliminate 11 unbreakable fruit welds/free joints; original elastic joints, bodies, masses/inertias retained",
+  "active_plant_colliders": 90,
+  "elastic_dofs": 234,
+  "fruit_free_dofs": 0,
+  "detachment_supported": false,
+  "comparable_to_original_physics": false
+}

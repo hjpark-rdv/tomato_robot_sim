@@ -1,0 +1,73 @@
+{
+  "scope": "CPU, full plant + prescribed hook, no arm/rendering/break; six identical fixtures at 240 Hz",
+  "isaac": {
+    "count": 6,
+    "simulated_s": 72.0,
+    "execution_wall_s": 70.01317704562098,
+    "rtf": 1.0283778431177948,
+    "total_wall_s": 81.33205035701394,
+    "max_penetration_mm": 0.4310789700502906,
+    "max_attachment_gap_mm": 0.372394104488194,
+    "invalid_count": 0
+  },
+  "mujoco": {
+    "count": 6,
+    "simulated_s": 72.0,
+    "execution_wall_s": 67.06061515491456,
+    "rtf": 1.073655525432851,
+    "total_wall_s": 79.3645701771602,
+    "max_penetration_mm": 0.0,
+    "max_attachment_gap_mm": 0.19340469446157774,
+    "invalid_count": 0
+  },
+  "checks": [
+    {
+      "trajectory": "fixture_miss",
+      "commands_identical": true,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "miss",
+      "mujoco_result": "miss"
+    },
+    {
+      "trajectory": "fixture_fruit_collision",
+      "commands_identical": true,
+      "initial_position_error_m": 6.200581070814337e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration"
+    },
+    {
+      "trajectory": "fixture_pedicel_contact",
+      "commands_identical": true,
+      "initial_position_error_m": 8.705993659319233e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration"
+    },
+    {
+      "trajectory": "fixture_stem_push",
+      "commands_identical": true,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration"
+    },
+    {
+      "trajectory": "fixture_entry_lift",
+      "commands_identical": true,
+      "initial_position_error_m": 6.200581070814337e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration"
+    },
+    {
+      "trajectory": "fixture_large_displacement",
+      "commands_identical": true,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration"
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "source_usd": "/root/farmily_tomato/mujoco-benchmark/assets/reference/robot_export_only.usda",
+  "source_plant": "/root/farmily_tomato/mujoco-benchmark/models/plant_mujoco_optimized.xml",
+  "source_plant_sha256": "02cd0c5521c27a009c8642b81629d0a5dcf0dee4e436d9391108c9737c2d524a",
+  "model_sha256": "e74fafbf5b9af1839b3f4a4ed40805be092454e3cc10e825e395c73659b8237c",
+  "joints": [
+    {
+      "name": "farmily_lift_height_joint",
+      "body": "Robot_farmily_lift_platform",
+      "limits": [
+        0.0,
+        0.75
+      ]
+    },
+    {
+      "name": "base",
+      "body": "Robot_link1",
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ]
+    },
+    {
+      "name": "shoulder",
+      "body": "Robot_link2",
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ]
+    },
+    {
+      "name": "elbow",
+      "body": "Robot_link3",
+      "limits": [
+        -2.879792999474535,
+        2.879792999474535
+      ]
+    },
+    {
+      "name": "wrist1",
+      "body": "Robot_link4",
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ]
+    },
+    {
+      "name": "wrist2",
+      "body": "Robot_link5",
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ]
+    },
+    {
+      "name": "wrist3",
+      "body": "Robot_link6",
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ]
+    }
+  ],
+  "geometry": [
+    {
+      "path": "/Robot/world/visuals/assy_lift/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_0",
+      "collision": false
+    },
+    {
+      "path": "/Robot/farmily_lift_platform/visuals/mesh_0/box",
+      "geom": "robot_geom_1",
+      "collision": false
+    },
+    {
+      "path": "/Robot/farmily_lift_platform/visuals/link0/Scene/mesh",
+      "geom": "robot_geom_2",
+      "collision": false
+    },
+    {
+      "path": "/Robot/farmily_lift_platform/collisions/mesh_0/box",
+      "geom": "robot_geom_3",
+      "collision": true
+    },
+    {
+      "path": "/Robot/farmily_lift_platform/collisions/link0/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_4",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link1/visuals/link1/Scene/mesh",
+      "geom": "robot_geom_5",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_6",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link2/visuals/link2/Scene/mesh",
+      "geom": "robot_geom_7",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_8",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link3/visuals/link3/Scene/mesh",
+      "geom": "robot_geom_9",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_10",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link4/visuals/link4/Scene/mesh",
+      "geom": "robot_geom_11",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link4/collisions/link4/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_12",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link5/visuals/link5/Scene/mesh",
+      "geom": "robot_geom_13",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_14",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link6/visuals/link6/Scene/mesh",
+      "geom": "robot_geom_15",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link6/visuals/assy_gripper_ver_6/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_16",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link6/visuals/d435/ID1/mesh",
+      "geom": "robot_geom_17",
+      "collision": false
+    },
+    {
+      "path": "/Robot/link6/collisions/link6/node_STL_BINARY_/mesh",
+      "geom": "robot_geom_18",
+      "collision": true
+    },
+    {
+      "path": "/Robot/link6/collisions/mesh_2/box",
+      "geom": "robot_geom_19",
+      "collision": true
+    }
+  ],
+  "counts": {
+    "collision": 9,
+    "visual": 11
+  },
+  "nq": 241,
+  "nv": 241,
+  "nbody": 100,
+  "ngeom": 530,
+  "nu": 7,
+  "robot_self_collision": false,
+  "robot_gravity_compensation": true,
+  "break_enabled": false
+}

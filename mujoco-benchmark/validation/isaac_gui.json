@@ -1,0 +1,13 @@
+{
+  "scope": "Isaac GUI: 240Hz entry/lift, native physics unchanged",
+  "gui_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_isaac_gui_sync_check",
+  "headless_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_002000_original_comparison/isaac_240hz_6_pgs",
+  "identical_hook_commands": true,
+  "identical_all_body_poses": true,
+  "physics_states": 2881,
+  "result": "contact_no_detected_penetration",
+  "rtf_including_gui": 0.35264215786974284,
+  "screenshot": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_isaac_gui_sync_check/gui_final.png",
+  "hold_window_checked_in": "20260922_isaac_gui_final",
+  "fix": "Flush display/material USD notices before native reset/targets; prevents first-step hook pose reverting to its USD spawn transform."
+}

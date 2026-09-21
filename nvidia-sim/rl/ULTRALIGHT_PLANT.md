@@ -20,7 +20,9 @@ DISPLAY=:0 ./nvidia-sim/run_gpu_candidate_dataset.sh \
 기존 실행기 이름을 유지했지만 `--physics-device cpu`는 실제 CPU PhysX를 사용한다.
 화면과 RGB-D 렌더링은 GPU를 사용한다. `64`는 후보 생성 풀 크기이고 실제로는
 49번 하나만 실행한다. 다른 후보는 `--candidate-indices`로 선택한다.
-CPU 모드는 현재 환경 1개만 지원한다. 여러 환경은 기존 GPU 모드를 사용한다.
+CPU 모드도 여러 환경을 지원한다(2026-09-22 추가). 한 프로세스의 CPU PhysX 장면에
+충돌 그룹으로 분리한 복제 환경을 만들며, GPU native replication은 사용하지 않는다.
+CPU에서는 enhanced determinism을 켜 복제 환경 수에 따른 물리 계산 순서 차이를 줄인다.
 `--keep-open`은 시험 후 창을 유지한다. 단일 환경은 처음부터 목표 토마토를 중심으로
 송이와 고리가 보이는 가까운 사선 구도로 시작한다. `Overview`는 전체 화면으로 돌아가며,
 환경 행을 누르면 토마토 구도를 다시 잡는다. 다중 환경은 전체 격자로 시작한다.
@@ -155,3 +157,70 @@ GPU 설정을 낮춘 결과를 정상으로 보이게 하기 위한 판정 기�
 메모리는 기존 세션을 포함한 전체 사용량이다. 영상은 이 속도 비교에 포함하지 않는다.
 복제 결과 일치와 물리 유효성을 별개로 검사하므로 동일한 관통 오류가 복제됐다고
 접촉 검증에 통과한 것으로 처리하지 않는다.
+
+
+## CPU 다중 환경 추가 (2026-09-22)
+
+한 Isaac Sim에서 CPU 물리 환경을 여러 개 실행할 수 있다. 기존 `--num-envs 1`
+제한 두 곳을 제거하고, GPU 전용 native environment-ID 검사는 GPU에서만 한다.
+CPU는 기존 USD 충돌 그룹으로 환경을 분리하고 batched I/O 및 개별 reset을 재사용한다.
+`dataset_cpu_single`은 호환성을 위한 기존 내부 이름이며 이제 CPU backend 전체를 뜻한다.
+CPU의 CCD와 접촉·관통 판정 기준은 유지한다. GPU 동작은 변경하지 않았다.
+
+CPU 8개에서 기존 설정은 무동작 초기 검사에 실패했다: 복제본 각속도 차이
+0.020112 rad/s > 기존 0.02 rad/s. 스레드 4/16 모두 동일했다.
+CPU `enable_enhanced_determinism=True`로 수정한 뒤 같은 검사에서 위치 차이 0,
+모든 동적 복제/반복 reset/개별 reset/화면 캡처 상태 보존 검사를 통과했다.
+허용치를 완화하지 않았다. CPU 1개에도 이 옵션을 적용해 환경 수에 따른 설정 차이를 없앴다.
+이 옵션으로 과거 CPU 결과와 수치가 완전히 같다는 보장은 하지 않는다.
+
+### 실행
+
+```bash
+DISPLAY=:0 ./nvidia-sim/run_gpu_candidate_dataset.sh \
+  --physics-device cpu --plant-resolution ultralight \
+  --physics-preset contact120 --trajectory-mode staged6d \
+  --num-envs 8 --candidates 64 \
+  --physics-threads 16 --planning-workers 4 --schedule continuous \
+  --view-grid --view-fps 30 --keep-open
+```
+
+화면 없이 처리하려면 마지막 줄의 세 옵션을 모두 제거한다. CPU 물리를 선택해도
+RGB-D/화면 렌더링은 GPU를 사용한다. `--physics-threads`는 PhysX 스레드 수,
+`--planning-workers`는 별도 경로 계산 프로세스 수이며 환경 수와 다르다.
+16스레드는 이번 실험값이지 최적값을 확인한 것은 아니다.
+
+### 실제 검증 결과
+
+- CPU 2개, 후보 49·50, 화면 최대 30fps: 초기화 제외 25.59초, 두 후보 모두
+  excessive_displacement, invalid_physics 0. 이 최초 시험은 enhanced determinism 적용 전.
+  이전 CPU 1개 순차 25.31초와 비슷했으므로 환경 수만 늘려서 가속됐다고 볼 수 없다.
+- CPU 8개, 후보 48~59 총 12개, 화면 없음, 16 물리 스레드, 4 경로 작업자,
+  continuous, enhanced determinism: 초기화 10.41초, rollout 198.70초.
+  12개 전부 완료, invalid_physics 0, excessive_displacement 10, non_target_contact 1,
+  miss 1, success 0. 정상 실행 검증이며 수확 성공을 의미하지 않는다.
+- CPU 8개 실행에서 초기 무동작 복제본 위치 차이 0, 접촉 라우팅 오류 0,
+  개별 초기화와 다음 후보 재배정 통과. 관련 pytest 23개 통과.
+- 실행 로그: `runs/20260922_cpu_multi_env2_check`,
+  `runs/20260922_cpu_multi_env8_determinism`.
+  실패 조사 로그도 `runs/20260922_cpu_multi_env8_check`,
+  `runs/20260922_cpu_multi_env8_threads4`에 남겼다.
+- 8개 측정 중 짧은 단위 테스트를 함께 실행했으므로 정밀 성능 벤치마크는 아니다.
+  1개와 동일 12개 후보를 최종 설정으로 재측정하지 않았으므로 배속을 산출하지 않는다.
+- 8개 이상 CPU 환경은 이번에 검증하지 않았다. 큰 환경 수의 충돌 그룹 비용,
+  완료 후 유휴 환경 물리 비용, Python 접촉/변위 판정 비용은 여전히 남아 있다.
+
+
+### 별도 Isaac Sim 8개 비교 (2026-09-22)
+
+동일 후보 48~59를 화면 없는 CPU 단일 환경 프로세스 8개에 분배했다.
+각 프로세스 물리 2스레드, 경로 계산 1개. 12개 모두 완료, 물리 오류 0,
+기존 단일 세션 8환경과 결과 분류 및 종료 시뮬레이션 시간 일치.
+초기화 제외 가장 긴 프로세스 처리 시간 33.59초, 전체 시작~종료 확인 80.85초
+(10초 단위 종료 확인). 이전 단일 세션 8환경 rollout은 198.72초.
+GPU 메모리는 시스템 전체 샘플 최대 23007MiB로 여유가 작았다.
+각 프로세스는 배정 완료 후 종료했으므로 장기 상주 풀 성능은 별도 검증 대상이다.
+상세: `runs/20260922_054239_cpu_single_pool8_benchmark/comparison.md`.
+
+GPU 동일 12후보 후속 비교: `runs/20260922_054612_gpu_env8_matched12/comparison.md`.
+GPU 8환경 초기화 제외 265.48초, 프로세스 전체 293.80초, invalid_physics 2건. CPU와 종료 조건/시간이 다른 후보가 있어 순수 solver 배속으로 해석하지 않는다.

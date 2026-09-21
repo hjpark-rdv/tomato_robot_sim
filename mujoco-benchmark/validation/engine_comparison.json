@@ -1,0 +1,758 @@
+{
+  "date": "2026-09-22",
+  "source_commit": "8e0d820",
+  "scope": "Full plant + prescribed hook, CPU engines, no robot; break disabled on both; NOT a harvest success benchmark",
+  "hardware": {
+    "cpu": "AMD Ryzen Threadripper 3960X",
+    "logical_cpus": 48,
+    "gpu": "NVIDIA GeForce RTX 3090 Ti 24GB",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.35"
+  },
+  "run_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_002000_original_comparison",
+  "runs": [
+    {
+      "run": "isaac_120hz_100_implicitfast",
+      "count": 100,
+      "requested_count": 100,
+      "sim_s": 997.6833333333332,
+      "physics_wall_s": 475.8368858192116,
+      "replay_wall_s": 502.15616195555776,
+      "rtf": 1.9867989460649713,
+      "total_wall_s": 565.2698882492259,
+      "reset_mean_ms": 0.17504382878541946,
+      "reset_100_s": 0.017504382878541946,
+      "rss_peak_mib": 2054.078125,
+      "process_cpu_percent": 201.19643783429586,
+      "steps_per_second": 251.6030252549335,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 5,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 52.26489739492483,
+      "max_penetration_mm": 0.4085441612819789,
+      "max_attachment_gap_mm": 1.1598196579143405
+    },
+    {
+      "run": "isaac_120hz_10_implicitfast",
+      "count": 10,
+      "requested_count": 10,
+      "sim_s": 108.64999999999999,
+      "physics_wall_s": 52.57970577199012,
+      "replay_wall_s": 55.475909486413,
+      "rtf": 1.9585077740205454,
+      "total_wall_s": 63.511208162643015,
+      "reset_mean_ms": 0.17792001366615295,
+      "reset_100_s": 0.017792001366615295,
+      "rss_peak_mib": 2041.60546875,
+      "process_cpu_percent": 216.82047060888544,
+      "steps_per_second": 247.96639327992415,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 1,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 52.26489739492483,
+      "max_penetration_mm": 0.4085441612819789,
+      "max_attachment_gap_mm": 1.1598196579143405
+    },
+    {
+      "run": "isaac_120hz_1_implicitfast",
+      "count": 1,
+      "requested_count": 1,
+      "sim_s": 12.0,
+      "physics_wall_s": 5.717002809047699,
+      "replay_wall_s": 6.030253563076258,
+      "rtf": 1.989966072650244,
+      "total_wall_s": 6.676469874568284,
+      "reset_mean_ms": 0.179458474740386,
+      "reset_100_s": 0.0179458474740386,
+      "rss_peak_mib": 2039.97265625,
+      "process_cpu_percent": 235.43912148127458,
+      "steps_per_second": 251.88023306916406,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 0.07651137869409283,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.05598853022092953
+    },
+    {
+      "run": "mujoco_120hz_100_implicitfast",
+      "count": 100,
+      "requested_count": 100,
+      "sim_s": 997.6833333333332,
+      "physics_wall_s": 433.0577209657058,
+      "replay_wall_s": 464.9112796811387,
+      "rtf": 2.145964997918739,
+      "total_wall_s": 539.8283414170146,
+      "reset_mean_ms": 3.969227913767099,
+      "reset_100_s": 0.39692279137670994,
+      "rss_peak_mib": 707.140625,
+      "process_cpu_percent": 99.98412626142577,
+      "steps_per_second": 276.45737324120097,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 22,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 44.97591182230977,
+      "max_penetration_mm": 0.03651446885289452,
+      "max_attachment_gap_mm": 3.2018252293073344
+    },
+    {
+      "run": "mujoco_120hz_10_implicitfast",
+      "count": 10,
+      "requested_count": 10,
+      "sim_s": 108.64999999999999,
+      "physics_wall_s": 48.62976367212832,
+      "replay_wall_s": 52.21322882641107,
+      "rtf": 2.080890273252771,
+      "total_wall_s": 61.32299997471273,
+      "reset_mean_ms": 4.082812946289778,
+      "reset_100_s": 0.4082812946289778,
+      "rss_peak_mib": 683.83203125,
+      "process_cpu_percent": 99.98125191138129,
+      "steps_per_second": 268.1074102663716,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 4,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 44.97591182230977,
+      "max_penetration_mm": 0.03651446885289452,
+      "max_attachment_gap_mm": 3.2018252293073344
+    },
+    {
+      "run": "mujoco_120hz_1_implicitfast",
+      "count": 1,
+      "requested_count": 1,
+      "sim_s": 12.0,
+      "physics_wall_s": 5.139222181402147,
+      "replay_wall_s": 5.533388983458281,
+      "rtf": 2.1686528881076765,
+      "total_wall_s": 6.340969095937908,
+      "reset_mean_ms": 4.077553413808346,
+      "reset_100_s": 0.4077553413808346,
+      "rss_peak_mib": 664.5625,
+      "process_cpu_percent": 99.98759148398328,
+      "steps_per_second": 280.19804343370913,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 0.10448442926570581,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.07190914517414405
+    },
+    {
+      "run": "mujoco_120hz_6_Euler",
+      "count": 6,
+      "requested_count": 6,
+      "sim_s": 72.0,
+      "physics_wall_s": 31.81233294401318,
+      "replay_wall_s": 34.15650248527527,
+      "rtf": 2.1079441617606753,
+      "total_wall_s": 40.48026306089014,
+      "reset_mean_ms": 4.058691160753369,
+      "reset_100_s": 0.40586911607533693,
+      "rss_peak_mib": 664.59375,
+      "process_cpu_percent": 99.98811572034631,
+      "steps_per_second": 271.5927818058995,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 1,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 44.97589538620016,
+      "max_penetration_mm": 0.03650042329315668,
+      "max_attachment_gap_mm": 0.633936282622653
+    },
+    {
+      "run": "mujoco_240hz_6_implicitfast",
+      "count": 6,
+      "requested_count": 6,
+      "sim_s": 72.0,
+      "physics_wall_s": 62.40966579224914,
+      "replay_wall_s": 67.06061515491456,
+      "rtf": 1.073655525432851,
+      "total_wall_s": 79.3645701771602,
+      "reset_mean_ms": 4.0461191069334745,
+      "reset_100_s": 0.40461191069334745,
+      "rss_peak_mib": 698.71484375,
+      "process_cpu_percent": 99.98654363981943,
+      "steps_per_second": 276.8801880388544,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 45.079961413809414,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.19340469446157774
+    },
+    {
+      "run": "mujoco_480hz_6_implicitfast",
+      "count": 6,
+      "requested_count": 6,
+      "sim_s": 72.0,
+      "physics_wall_s": 124.99966731574386,
+      "replay_wall_s": 134.47727772779763,
+      "rtf": 0.5354064360652727,
+      "total_wall_s": 159.2188385706395,
+      "reset_mean_ms": 4.069238640367985,
+      "reset_100_s": 0.4069238640367985,
+      "rss_peak_mib": 738.7578125,
+      "process_cpu_percent": 99.98536525193684,
+      "steps_per_second": 276.4807358463035,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 45.083744604594564,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.04746366536888807
+    },
+    {
+      "run": "mujoco_60hz_6_implicitfast",
+      "count": 6,
+      "requested_count": 6,
+      "sim_s": 12.266666666666667,
+      "physics_wall_s": 3.2641313495114446,
+      "replay_wall_s": 3.4666369669139385,
+      "rtf": 3.5384918535576197,
+      "total_wall_s": 4.3254685597494245,
+      "reset_mean_ms": 4.176702229306102,
+      "reset_100_s": 0.4176702229306102,
+      "rss_peak_mib": 634.4921875,
+      "process_cpu_percent": 99.99003100361428,
+      "steps_per_second": 225.48112229312096,
+      "penetration_trials": 5,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 6,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 6,
+      "max_stem_mm": 1730.3435340574765,
+      "max_penetration_mm": 8.978041034681839,
+      "max_attachment_gap_mm": 3760567.055142027
+    },
+    {
+      "run": "mujoco_optimized_120hz_10",
+      "count": 10,
+      "requested_count": 10,
+      "sim_s": 108.64999999999999,
+      "physics_wall_s": 27.892675475217402,
+      "replay_wall_s": 31.42279771436006,
+      "rtf": 3.4576806619083285,
+      "total_wall_s": 39.80320140346885,
+      "reset_mean_ms": 2.727801352739334,
+      "reset_100_s": 0.2727801352739334,
+      "rss_peak_mib": 682.42578125,
+      "process_cpu_percent": 99.98334826705243,
+      "steps_per_second": 467.4345425050473,
+      "penetration_trials": 0,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 45.12834707537401,
+      "max_penetration_mm": 0.023787869322285105,
+      "max_attachment_gap_mm": 0.0003998401125751992
+    },
+    {
+      "run": "mujoco_optimized_60hz_6",
+      "count": 6,
+      "requested_count": 6,
+      "sim_s": 72.0,
+      "physics_wall_s": 9.513659597374499,
+      "replay_wall_s": 10.677285277284682,
+      "rtf": 6.743287093131801,
+      "total_wall_s": 13.660924658179283,
+      "reset_mean_ms": 2.723012687638402,
+      "reset_100_s": 0.2723012687638402,
+      "rss_peak_mib": 650.9296875,
+      "process_cpu_percent": 99.98475895096533,
+      "steps_per_second": 454.0839364477785,
+      "penetration_trials": 2,
+      "initial_overlap_trials": 0,
+      "attachment_invalid_trials": 0,
+      "tunneling_suspect_trials": 0,
+      "unstable_trials": 0,
+      "max_stem_mm": 44.64656452092689,
+      "max_penetration_mm": 1.2287453307104441,
+      "max_attachment_gap_mm": 0.0003998401125776882
+    }
+  ],
+  "matched_input_checks": {
+    "count": 111,
+    "commands_identical": true,
+    "max_initial_position_error_m": 1.5206092895958534e-07,
+    "max_initial_rotation_error_rad": 3.1832948418708173e-07
+  },
+  "repeatability": [
+    {
+      "engine": "isaac",
+      "trajectory": "candidate_00173",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_stem_push",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_large_displacement",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_entry_lift",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_pedicel_contact",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_miss",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "candidate_00157",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "fixture_fruit_collision",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "candidate_00829",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "isaac",
+      "trajectory": "candidate_00049",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "candidate_00173",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_stem_push",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_large_displacement",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_entry_lift",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_pedicel_contact",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_miss",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "candidate_00157",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "fixture_fruit_collision",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "candidate_00829",
+      "max_position_error_m": 0.0,
+      "passed": true
+    },
+    {
+      "engine": "mujoco",
+      "trajectory": "candidate_00049",
+      "max_position_error_m": 0.0,
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "count": 100,
+      "trajectory": "fixture_miss",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "miss",
+      "mujoco_result": "miss",
+      "isaac_stem_mm": 0.07651137869409283,
+      "mujoco_stem_mm": 0.10448442926570581,
+      "isaac_target_mm": 0.0731436043882086,
+      "mujoco_target_mm": 0.05997880149698385
+    },
+    {
+      "count": 100,
+      "trajectory": "fixture_fruit_collision",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 6.200581070814337e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration",
+      "isaac_stem_mm": 29.477124135165802,
+      "mujoco_stem_mm": 29.673441092491334,
+      "isaac_target_mm": 26.513792263766447,
+      "mujoco_target_mm": 27.50700234851977
+    },
+    {
+      "count": 100,
+      "trajectory": "fixture_pedicel_contact",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 8.705993659319233e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration",
+      "isaac_stem_mm": 10.507928396442189,
+      "mujoco_stem_mm": 11.682239196663595,
+      "isaac_target_mm": 9.06054604357166,
+      "mujoco_target_mm": 9.98279187181627
+    },
+    {
+      "count": 100,
+      "trajectory": "fixture_stem_push",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration",
+      "isaac_stem_mm": 29.275904854040306,
+      "mujoco_stem_mm": 28.965594577205643,
+      "isaac_target_mm": 16.64482663801582,
+      "mujoco_target_mm": 16.198063725176503
+    },
+    {
+      "count": 100,
+      "trajectory": "fixture_entry_lift",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 6.200581070814337e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "invalid_attachment",
+      "mujoco_result": "invalid_attachment",
+      "isaac_stem_mm": 37.58205956855536,
+      "mujoco_stem_mm": 44.97591182230977,
+      "isaac_target_mm": 31.447715769023414,
+      "mujoco_target_mm": 38.095841759160145
+    },
+    {
+      "count": 100,
+      "trajectory": "fixture_large_displacement",
+      "identical_hook_commands": true,
+      "hook_command_max_abs_error": 0.0,
+      "hook_command_tolerance": 1e-12,
+      "initial_position_error_m": 5.960480464750617e-08,
+      "initial_rotation_error_rad": 3.1832948418708173e-07,
+      "isaac_result": "contact_no_detected_penetration",
+      "mujoco_result": "contact_no_detected_penetration",
+      "isaac_stem_mm": 23.21082476861043,
+      "mujoco_stem_mm": 24.60428979275267,
+      "isaac_target_mm": 16.290019763512742,
+      "mujoco_target_mm": 16.888010477416874
+    }
+  ],
+  "structure": {
+    "source": "/root/farmily_tomato/mujoco-benchmark/assets/reference/reference.json",
+    "bodies": 90,
+    "elastic_dofs": 234,
+    "fruit_free_dofs": 66,
+    "plant_colliders": 376,
+    "hook_colliders": 35,
+    "mass_kg": 0.720472369226627,
+    "unmapped_filters": [],
+    "differences": [
+      "D6/spherical rotational coordinates approximated by three colocated Euler hinges; same per-axis spring/damping/limits.",
+      "11 native fixed break joints replaced by free fruit bodies plus weld constraints; breaking disabled in BOTH Phase 1 engines.",
+      "MuJoCo has one sliding friction coefficient; source dynamic 0.4 used, static 0.5 cannot be represented separately.",
+      "solref/solimp are MuJoCo-specific, not a conversion of PhysX restitution or iteration count.",
+      "Triangle hull cooking differs by engine; full input vertices retained. Original fruit visuals retained, stems/leaves display collision proxies.",
+      "MuJoCo preload computed once from initial gravitational load with fruit mass at attachment, then held constant; no live gravity compensation.",
+      "Hook mocap has no solver-integrated inertia; prescribed kinematic path also used in PhysX. No robot arm."
+    ]
+  },
+  "tests": {
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 mujoco-benchmark/.venv/bin/python -m pytest -q mujoco-benchmark/scripts/test_reference.py",
+    "passed": 6,
+    "elapsed_s": 2.78
+  },
+  "rgbd": {
+    "mujoco": {
+      "engine": "MuJoCo",
+      "mode": "physics_plus_rgbd",
+      "graphics": {
+        "backend": "egl",
+        "vendor": "NVIDIA Corporation",
+        "renderer": "NVIDIA GeForce RTX 3090 Ti/PCIe/SSE2"
+      },
+      "hz": 120,
+      "rgbd_hz": 15,
+      "resolution": [
+        640,
+        480
+      ],
+      "simulated_s": 10.0,
+      "wall_s": 5.627571479417384,
+      "rtf": 1.7769654346594437,
+      "physics_step_wall_s": 4.427303004078567,
+      "render_rgbd_wall_s": 0.5689381714910269,
+      "frames": 150,
+      "depth_validation": {
+        "samples": 26,
+        "median_abs_depth_error_m": 9.869773844317642e-07,
+        "max_abs_depth_error_m": 0.0003609208738292735,
+        "nearest_visible_geom_ids": [
+          "g73",
+          "g75",
+          "g62",
+          "g90",
+          "g75",
+          "g77",
+          "g61",
+          "g90",
+          "g410",
+          "g410",
+          "v25",
+          "g50",
+          "g410",
+          "g410",
+          "g410",
+          "v43",
+          "g410",
+          "g410",
+          "g410",
+          "v61",
+          "g410",
+          "g410",
+          "g410",
+          "g410",
+          "g410",
+          "g410"
+        ],
+        "depth_definition": "metres along camera optical axis, occluded geometry excluded",
+        "clipping_m": [
+          0.005,
+          5.0
+        ],
+        "K": [
+          [
+            539.0488257370118,
+            0,
+            320
+          ],
+          [
+            0,
+            539.0488257370118,
+            240
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "source_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_005800_mujoco_rgbd_final"
+    },
+    "isaac": {
+      "engine": "Isaac Sim",
+      "version": "5.1",
+      "mode": "physics_plus_rgbd",
+      "rgbd_frames": 150,
+      "rgbd_render_wall_s": 2.2997014857828617,
+      "trajectory_id": "fixture_fruit_collision",
+      "category": "fruit_collision",
+      "hz": 120,
+      "solver": "pgs",
+      "iterations": 64,
+      "requested_sim_s": 10.0,
+      "simulated_s": 10.0,
+      "wall_s": 7.9058291129767895,
+      "physics_only_wall_s": 5.30126872099936,
+      "rtf": 1.2648894704270544,
+      "physics_only_rtf": 1.8863408980548464,
+      "steps_per_second": 226.36090776658156,
+      "process_cpu_percent": 398.333380749517,
+      "rss_mib": 4902.25,
+      "audit_wall_s": 1.033555286936462,
+      "unstable": false,
+      "break_enabled": false,
+      "tomato_max_displacement_m": 0.028718320225523234,
+      "tomato_residual_m": 0.00039622558709009274,
+      "tomato_time_last_above_1mm_s": 7.825,
+      "main_stem_max_displacement_m": 0.029470746317373352,
+      "main_stem_residual_m": 0.00021005914881111313,
+      "main_stem_time_last_above_1mm_s": 7.816666666666666,
+      "pedicel_max_displacement_m": 0.028050312562247208,
+      "pedicel_residual_m": 0.00028006208837132136,
+      "pedicel_time_last_above_1mm_s": 7.816666666666666,
+      "target_max_displacement_m": 0.026514141316888888,
+      "target_residual_m": 0.00023276638393943314,
+      "max_attachment_gap_m": 0.00026016999618150294,
+      "attachment_valid": true,
+      "max_penetration_m": 3.5671689906890004e-05,
+      "initial_penetration_m": 0.0,
+      "worst_pair": [
+        "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_11",
+        "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider"
+      ],
+      "penetration_steps": 0,
+      "tunneling_suspect_count": 0,
+      "tunneling_suspects": [],
+      "sweep_sampling_capped_steps": 2,
+      "audit_scope": "capsules/spheres only, every physics state + interpolated sweep; mesh/housing not certified",
+      "contact_steps": 1116,
+      "contact_pairs": [
+        [
+          "g335",
+          "g386"
+        ],
+        [
+          "g335",
+          "g387"
+        ],
+        [
+          "g335",
+          "g388"
+        ],
+        [
+          "g362",
+          "g389"
+        ],
+        [
+          "g362",
+          "g390"
+        ],
+        [
+          "g362",
+          "g391"
+        ],
+        [
+          "g362",
+          "g392"
+        ],
+        [
+          "g362",
+          "g393"
+        ],
+        [
+          "g362",
+          "g394"
+        ],
+        [
+          "g363",
+          "g386"
+        ],
+        [
+          "g363",
+          "g387"
+        ],
+        [
+          "g363",
+          "g388"
+        ]
+      ],
+      "finite": true,
+      "result": "contact_no_detected_penetration",
+      "camera": {
+        "resolution": [
+          640,
+          480
+        ],
+        "rgbd_hz": 15,
+        "K": [
+          [
+            539.0488257370118,
+            0,
+            320
+          ],
+          [
+            0,
+            539.0488257370118,
+            240
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "clipping_m": [
+          0.005,
+          5.0
+        ],
+        "depth_definition": "metres along camera optical axis",
+        "hook_display": "native pose visual mirror; no physics schemas"
+      },
+      "source_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_010200_isaac_rgbd_final"
+    }
+  },
+  "viewer": {
+    "engine": "MuJoCo",
+    "mode": "physics_plus_passive_viewer",
+    "trajectory_id": "fixture_fruit_collision",
+    "hz": 120,
+    "simulated_s": 10.0,
+    "wall_s": 5.726134379394352,
+    "rtf": 1.746378854814387,
+    "physics_wall_s": 4.499074487015605,
+    "viewer_sync_wall_s": 1.14038650598377,
+    "sync_calls": 300,
+    "note": "Unpaced physics, viewer.sync at 30 Hz of simulated time; GUI renders asynchronously, sync calls are not guaranteed displayed frame count. Startup excluded."
+  }
+}

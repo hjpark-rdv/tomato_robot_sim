@@ -1,0 +1,8 @@
+{
+  "test": "RGB-D, pre-authored light overlay, 240Hz entry/lift",
+  "all_body_poses_identical_to_headless": true,
+  "hook_commands_identical": true,
+  "states": 2881,
+  "run": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_isaac_preopen_light_check",
+  "scope": "Stage contains the light before open; rendered rollout checked. GUI notification itself not captured."
+}

@@ -1,8 +1,9 @@
-"""GPU PhysX with native collider reports and batched articulation effort uploads.
+"""CPU/GPU PhysX with native collider reports and batched articulation uploads.
 
 CPU tensor readback is intentional: Isaac Sim 5.1's CUDA contact filters cannot
-identify individual colliders of a rigid body. Physics still uses GPU dynamics
-and GPU broadphase. Keeping native contact reports preserves the hook labels.
+identify individual colliders of a rigid body. GPU mode uses native environment
+IDs; CPU mode uses USD collision groups with independent cloned physics.
+Keeping native contact reports preserves the hook labels.
 """
 import time
 import numpy as np
@@ -35,8 +36,8 @@ class GpuDatasetScene(DatasetScene):
         self._diagnostic_grid_spacing = getattr(cfg, 'gpu_diagnostic_grid_spacing', 0.)
         if cfg.sim.device != 'cpu':
             raise ValueError('Native collider logging requires CPU tensor readback')
+        # Legacy config name selects the CPU backend, including multiple slots.
         cpu_single=getattr(cfg,'dataset_cpu_single',False)
-        if cpu_single and num_envs!=1:raise ValueError('CPU preview supports one environment only')
         cfg.probe_gpu_dynamics = not cpu_single
         with fast_explicit_asset_lookup(), native_environment_replication(getattr(cfg,'gpu_native_replication',False)), initialize_identical_slots():
             super().__init__(cfg, num_envs)
@@ -63,7 +64,7 @@ class GpuDatasetScene(DatasetScene):
                 asset.data._root_physx_view=proxy
         self._efforts=None
         self.batched_joint_commands=getattr(cfg,'gpu_batched_joint_commands',True)
-        self.backend_description=('CPU PhysX single environment' if cpu_single else 'GPU PhysX / GPU broadphase')+' / CPU native collider readback / '+('batched joint commands' if self.batched_joint_commands else 'batched efforts')
+        self.backend_description=('CPU PhysX / collision-isolated environments' if cpu_single else 'GPU PhysX / GPU broadphase')+' / CPU native collider readback / '+('batched joint commands' if self.batched_joint_commands else 'batched efforts')
         self.reset_all()
 
     def step(self):

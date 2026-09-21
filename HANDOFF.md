@@ -4,6 +4,40 @@
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
 
+## 최신 측정: Isaac 로봇 팔 비용 비교
+
+- `mujoco-benchmark/scripts/robot_cost_comparison.py` 추가. 후보49 첫10초, full/CPU240Hz/PGS64/4,
+  파단 비활성. 실제 관절 모터 명령을 재생하고 측정한 고리 경로로 단독 조건과 비교했다.
+- 실행 시간: 고리 headless9.87초 / 팔 headless10.78초 / 고리 GUI18.62초 /
+  팔 물리+외형 숨김20.41초 / 팔 외형 표시21.24초. 준비/검사/저장 제외, 각1회 측정.
+- 팔 물리/제어 약+0.91초, 팔 외형 약+0.83초. 이번 조건에서는 팔보다 전체 화면 갱신 부담이 큼.
+- 팔 세 조건의 상태 완전 일치. 고리 경로 차이0.00015mm 미만. kinematic/dynamic 구동 차이로
+  식물 반응 차이 최대1.22mm는 있음. 모두 접촉/관통·부착 검사 통과. 고리걸기 성공률 시험 아님.
+- 결과 `mujoco-benchmark/outputs/20260922_044331_robot_cost/index.html`, CSV/JSON/스크린샷.
+  요약 `mujoco-benchmark/validation/robot_cost.json`, 해석 `RESULTS.md`.
+- benchmark_isaac.py에 --robot-trace/--robot-visuals/--camera-scale 추가. MuJoCo 로봇 이식 아님.
+  기존 GUI는 --gui --trajectory fixture_entry_lift --hz240 사용; 조명은 stage open 전에 추가.
+- timestamp 경로 입력 수정, 초기 고리 USD notice를 모든 모드에서 flush 후 reset하도록 수정.
+  실패한 초기 실험은 최종 표에서 제외. 자동 테스트7개 통과. 기존 Isaac 원본 코드는 유지.
+
+## 최신 추가: 원본 식물의 MuJoCo 비교 (2026-09-22)
+
+- 별도 `mujoco-benchmark/`에 이식/benchmark/viewer/RGB-D/영상 생성기 추가. 기존 Isaac 코드와 USD 유지.
+- 기준 `8e0d820`의 **full** 모델. 90강체/300 DOF/식물376+고리35 collision 유지.
+  팔은 제외하고 world 고리 기록을 직접 재생. 양쪽 파단 비활성화한 Phase 1이다.
+- CPU 원본120Hz 100개 순차 실행: Isaac 전체565.27초, MuJoCo539.83초. 병렬100환경이 아니다.
+  부착 오차0.5mm 초과는 각각5/100,22/100. 엔진 변경만으로 큰 속도 이득 없음.
+- MuJoCo 원본60Hz는6/6 폭주.240/480Hz는6개 fixture 검사 통과, 각각 RTF1.07/0.54.
+- 별도 최적화는 잎/잘린 가지 충돌286개 비활성, 열매free/weld 병합(파단 불가).
+  120Hz10개 RTF3.46, 검사 통과.60Hz6개 중2개 약1mm 관통으로 정상 채택 불가.
+- GPU RGB-D10초5.63초(RTF1.78), 실제 DISPLAY=:0 viewer10초5.73초. scoped NVIDIA EGL 설정 사용.
+- 결과 `mujoco-benchmark/outputs/20260922_002000_original_comparison/index.html`: 영상16개·RGB-D·CSV/JSON.
+- 결론/사용법/구조 차이: `mujoco-benchmark/RESULTS.md`, `README.md`, `CONVERSION.md`.
+  테스트6개, 입력 동일성/초기 상태/반복성 확인. raw 출력/대형 모델/venv는gitignore,
+  작은 보존 요약은 `mujoco-benchmark/validation/engine_comparison.json`.
+- 아직 전체 로봇/자동 detach/병렬 MuJoCo/RL/탐색 미구현. 원본120Hz 부착 오차를 먼저 해결해야 한다.
+- 이 추가 작업의 커밋 여부는 `git status`로 확인한다.
+
 ## 최신 확인: 초경량 GPU 1·16·32·64환경 비교
 
 - 같은 후보49 저장 경로를 모든 복제에 재생했다. 서로 다른 후보 탐색이나 계획 성능 시험은 아니다.
@@ -533,3 +567,14 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 > GPU 멀티환경과 CPU 경로 병렬화는 구현되어 있지만, 물리 결과를 유지하는 저주파 설정은 아직 검증하지 못했어.
 > 그 이후 실용적인 물리 동작을 우선하는 기준으로 바뀌었고, 최신 기본값은 practical60이야.
 > 이 문서 맨 위의 최신 후속 작업과 GPU_PRACTICAL_PHYSICS.md를 먼저 확인해줘.
+
+## 2026-09-22 로봇 포함 MuJoCo CPU 기준선
+
+- 현재 사용자 작업 브랜치 `mujoco-sim`에서 로봇 USD 관절/질량/관성/충돌 형상을 MuJoCo에 추가.
+- `mujoco-benchmark/scripts/build_robot_model.py`, `robot_engine.py`, `robot_viewer.py`, `benchmark_robot_pool.py`.
+- 기준 모델은 기존 최적화 식물, 로봇 7축, 전체 241 DOF. 고리는 동적 로봇 팔 끝에 고정. 하우스 없음.
+- CPU 1/2/4/8/16/24/32/48/64 프로세스, 동일 49번 16.5초 기록을 각각 3회 실행.
+- 48개 평균 6.443초/배치, 처리량 122.97 sim-s/s. 64개는 비슷한 처리량. 최대 검증64, 권장48.
+- 모든 반복 발산0. 전체 영상/기하 검사 `outputs/20260922_robot_validation_final`, 순기구학 위치 오차 3.3e-8m, 9테스트 통과.
+- 원본 시간/자원/코드 해시는 `outputs/20260922_robot_cpu_scaling{,64}`; 커밋용 요약은 `validation/robot_cpu_scaling.json`.
+- 사용자는 CPU 기준선 커밋 후 새로운 브랜치에서 mjlab/MJWarp를 구축해 같은 조건의 GPU 성능 비교를 요청했다.

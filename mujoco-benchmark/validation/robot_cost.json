@@ -1,0 +1,129 @@
+{
+  "scope": "One 10s candidate49 prefix, full plant, CPU PGS 240Hz 64/4 iterations, break disabled. No IK/planning. Dynamic arm follows saved commands; kinematic hook-only follows measured actual arm motion. GUI 960x720,30Hz, same wide camera. Single trial per configuration; not a statistical benchmark.",
+  "rows": [
+    {
+      "case": "hook_headless",
+      "simulation_context_initialization_s": 0.13430383428931236,
+      "simulated_s": 10.0,
+      "wall_s": 9.873125828802586,
+      "physics_s": 9.33578331489116,
+      "render_s": 0.0,
+      "other_s": 0.5373425139114261,
+      "rtf": 1.0128504562179577,
+      "cpu_percent": 236.14504843019537,
+      "rss_mib": 2005.25390625,
+      "result": "contact_no_detected_penetration",
+      "contact_steps": 136,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.04768744111061096,
+      "total_with_audit_save_s": 10.945158444344997
+    },
+    {
+      "case": "arm_headless",
+      "simulation_context_initialization_s": 0.1513460474088788,
+      "simulated_s": 10.0,
+      "wall_s": 10.77935310266912,
+      "physics_s": 9.62310060672462,
+      "render_s": 0.0,
+      "other_s": 1.1562524959445,
+      "rtf": 0.9276994551299984,
+      "cpu_percent": 216.83378407200004,
+      "rss_mib": 2018.61328125,
+      "result": "contact_no_detected_penetration",
+      "contact_steps": 138,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.05096922177472152,
+      "total_with_audit_save_s": 11.841432821936905
+    },
+    {
+      "case": "hook_gui",
+      "simulation_context_initialization_s": 1.4976151222363114,
+      "simulated_s": 10.0,
+      "wall_s": 18.61728068999946,
+      "physics_s": 10.3580784490332,
+      "render_s": 7.550851774401963,
+      "other_s": 0.7083504665642977,
+      "rtf": 0.5371353725880946,
+      "cpu_percent": 398.4341091062002,
+      "rss_mib": 5266.69921875,
+      "result": "contact_no_detected_penetration",
+      "contact_steps": 136,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.04768744111061096,
+      "total_with_audit_save_s": 19.76572433207184
+    },
+    {
+      "case": "arm_hidden_gui",
+      "simulation_context_initialization_s": 2.6466595977544785,
+      "simulated_s": 10.0,
+      "wall_s": 20.41461633797735,
+      "physics_s": 10.577171333134174,
+      "render_s": 8.444604501128197,
+      "other_s": 1.3928405037149787,
+      "rtf": 0.489845110701247,
+      "cpu_percent": 397.615571775386,
+      "rss_mib": 5602.3203125,
+      "result": "contact_no_detected_penetration",
+      "contact_steps": 138,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.05096922177472152,
+      "total_with_audit_save_s": 21.518511316739023
+    },
+    {
+      "case": "arm_visible_gui",
+      "simulation_context_initialization_s": 2.5508122481405735,
+      "simulated_s": 10.0,
+      "wall_s": 21.244426953606308,
+      "physics_s": 10.579851241782308,
+      "render_s": 9.250134367495775,
+      "other_s": 1.4144413443282247,
+      "rtf": 0.47071168461441926,
+      "cpu_percent": 383.53884763725483,
+      "rss_mib": 5662.68359375,
+      "result": "contact_no_detected_penetration",
+      "contact_steps": 138,
+      "max_penetration_mm": 0.0,
+      "max_attachment_gap_mm": 0.05096922177472152,
+      "total_with_audit_save_s": 22.35929934028536
+    }
+  ],
+  "checks": {
+    "hook_headless": {
+      "max_hook_position_error_m": 1.4507680686902235e-07,
+      "max_hook_rotation_error_rad": 3.2939572975644684e-07,
+      "max_plant_position_difference_m": 0.0012205839157104492
+    },
+    "arm_headless": {
+      "max_hook_position_error_m": 0.0,
+      "max_hook_rotation_error_rad": 0.0,
+      "max_plant_position_difference_m": 0.0,
+      "identical_native_states": true,
+      "identical_recorded_joint_positions": true
+    },
+    "hook_gui": {
+      "max_hook_position_error_m": 1.4507680686902235e-07,
+      "max_hook_rotation_error_rad": 3.2939572975644684e-07,
+      "max_plant_position_difference_m": 0.0012205839157104492
+    },
+    "arm_hidden_gui": {
+      "max_hook_position_error_m": 0.0,
+      "max_hook_rotation_error_rad": 0.0,
+      "max_plant_position_difference_m": 0.0,
+      "identical_native_states": true,
+      "identical_recorded_joint_positions": true
+    },
+    "arm_visible_gui": {
+      "max_hook_position_error_m": 0.0,
+      "max_hook_rotation_error_rad": 0.0,
+      "max_plant_position_difference_m": 0.0,
+      "identical_native_states": true,
+      "identical_recorded_joint_positions": true
+    }
+  },
+  "run_directory": "/root/farmily_tomato/mujoco-benchmark/outputs/20260922_044331_robot_cost",
+  "tests": "7 passed",
+  "trace": {
+    "path": "/root/farmily_tomato/nvidia-sim/rl/runs/20260921_213000_single_view_batched/results/candidate_00049/trace.json",
+    "sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b"
+  }
+}
