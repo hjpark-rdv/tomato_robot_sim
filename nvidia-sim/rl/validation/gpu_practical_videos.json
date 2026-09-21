@@ -1,0 +1,117 @@
+{
+  "passed": true,
+  "videos": [
+    {
+      "file": "videos/00_overview_2x.mp4",
+      "bytes": 2301336,
+      "sha256": "7241c6634ba6c076c3ce2a8ef3bcbdb1c24e25fe8507f3a7ee71547084318344",
+      "frames": 378,
+      "duration_s": 12.6,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/01_robot_push_2x.mp4",
+      "bytes": 587736,
+      "sha256": "f0ea8a2517f76a0bee50e5035d44249fb8d6ed2ff1d5ee5a0007b80eb76178ac",
+      "frames": 96,
+      "duration_s": 3.2,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/02_elastic_recovery_2x.mp4",
+      "bytes": 1152879,
+      "sha256": "bbba34d8e2d3f076983b1352dce79c6ea4f883f1195077fe801bc33c69ca58bd",
+      "frames": 180,
+      "duration_s": 6.0,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/03_hook_retention_1x.mp4",
+      "bytes": 743160,
+      "sha256": "1bbf59609887412d8665c2a1d8289f20c15749e842cee69e762495c8483d9540",
+      "frames": 174,
+      "duration_s": 5.8,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/03_hook_retention_2x.mp4",
+      "bytes": 562306,
+      "sha256": "24090ec7817749739a49932433bff3953b15ca50dce323716409169911e4dfdd",
+      "frames": 102,
+      "duration_s": 3.4,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/04_hook_retention_090_2x.mp4",
+      "bytes": 562486,
+      "sha256": "cd962b23edd7b3f590f199d8d40320956ac8ce323ad46fcc78da0e31e19dfba0",
+      "frames": 102,
+      "duration_s": 3.4,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/05_hook_retention_180_2x.mp4",
+      "bytes": 651041,
+      "sha256": "984e9327d5cbf5821335336c61678644ca9b11abcd4015b4a673d7419ad4d06b",
+      "frames": 102,
+      "duration_s": 3.4,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    },
+    {
+      "file": "videos/06_hook_retention_270_2x.mp4",
+      "bytes": 580752,
+      "sha256": "1023f3a818091b71907fcfa6105117798970b01eba6f0fcff11c691aab64bd76",
+      "frames": 102,
+      "duration_s": 3.4,
+      "fps": 30,
+      "width": 1280,
+      "height": 612,
+      "full_decode_passed": true
+    }
+  ],
+  "physics": {
+    "behavior_trace.json": true,
+    "behavior_contacts.json": true,
+    "behavior_checks": true,
+    "ring_trials": true,
+    "robot_trace_0.json": true,
+    "robot_contacts_0.json": true,
+    "passed": true
+  },
+  "run_directory": "nvidia-sim/rl/runs/20260921_162920_practical60_contact_videos_2x",
+  "physics_config": {
+    "physics_hz": 60,
+    "solver": "PGS",
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "joint_armature_kg_m2": 0.0005
+  },
+  "scope": {
+    "robot": "candidate_00003 touches main-stem leaf and aborts excessive displacement, not hook success",
+    "recovery": "0.2 N applied directly to target fruit for one second then released",
+    "ring": "preinserted separate kinematic CAD half-ring+rails; not robot insertion",
+    "render": "original scene meshes and skinning, fixed external cameras, fixture display colour silver, no invented intermediate poses"
+  },
+  "visual_review": "Inspected eight azimuths, selected complementary side/upper oblique views, then inspected decoded native-contact frames for all four fixture rotations."
+}

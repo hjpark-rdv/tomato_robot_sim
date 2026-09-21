@@ -13,7 +13,7 @@ parser.add_argument('--output',type=Path,required=True)
 parser.add_argument('--fixture',type=Path,required=True)
 parser.add_argument('--mode',choices=['cpu','cpu-no-ccd','gpu'],required=True)
 parser.add_argument('--num-envs',type=int,default=1)
-parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],default=960,help='Timestep experiment; command rate remains 60 Hz')
+parser.add_argument('--physics-hz',type=int,choices=[30,60,120,240,480,720,960],default=960,help='Timestep experiment; 30 Hz is mechanics/stationary only, saved motion commands remain 60 Hz')
 parser.add_argument('--max-control-steps',type=int,default=0)
 parser.add_argument('--external-forces-once',action='store_true',help='Diagnostic only: change TGS external force integration')
 parser.add_argument('--stationary-steps',type=int,default=0,help='Diagnostic: hold robot and stop at first break')
@@ -26,6 +26,8 @@ parser.add_argument('--no-preload',action='store_true',help='Stationary diagnosi
 parser.add_argument('--preload-mode',choices=['effort','drive','velocity'],default='effort',help='Experimental spring rest-load representation')
 parser.add_argument('--joint-armature',type=float,default=1e-5,help='Diagnostic virtual joint inertia; original 1e-5 kg m^2')
 parser.add_argument('--pulse-force',type=float,default=0.,help='Stationary diagnosis: fixed joint torques equivalent to this world-X force at the target stem in its rest pose, on 0.5..1.5 s')
+parser.add_argument('--behavior-probe',action='store_true',help='Original plant qualitative mechanics and preinserted CAD ring fixture, not a harvest trial')
+parser.add_argument('--record-physics-video',action='store_true',help='Save actual poses and original geometry for offline video (one environment)')
 parser.add_argument('--no-contacts',action='store_true',help='Diagnostic only: disable all collision shapes')
 parser.add_argument('--cuda-tensors',action='store_true',help='Diagnostic: use CUDA tensor API as well as GPU physics')
 parser.add_argument('--fabric',action='store_true',help='Diagnostic: avoid per-step USD physics writeback')
@@ -46,10 +48,16 @@ parser.add_argument('--position-iterations',type=int,default=64,help='Diagnostic
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(device='cpu')
 args=parser.parse_args()
+if args.record_physics_video and (args.num_envs!=1 or args.stationary_steps or args.neighbor_reset_interval or args.physics_hz!=60):
+    parser.error('Video capture supports one 60 Hz behavior/motion environment without diagnostic resets')
 if not 1<=args.position_iterations<=255 or not 0<=args.velocity_iterations<=255:
     parser.error('Solver iteration count is out of range')
 if args.stationary_steps<0 or args.max_control_steps<0 or args.num_envs<1:
     parser.error('Invalid step/environment count')
+if args.behavior_probe and (args.num_envs!=1 or args.stationary_steps or args.pulse_force or args.zero_load or args.no_contacts or args.no_gravity or args.no_preload or args.preload_mode!='effort' or args.joint_variant!='original'):
+    parser.error('Behavior probe requires one environment and original loads, contacts and joint formulation')
+if args.physics_hz<60 and not (args.behavior_probe or args.stationary_steps):
+    parser.error('30 Hz is a mechanics-only experiment; cannot replay a 60 Hz command fixture')
 if not 0<=args.joint_armature<=.01 or not 0<=args.pulse_force<=1:
     parser.error('Invalid armature or diagnostic pulse')
 if args.pulse_force and (not args.stationary_steps or args.zero_load or args.no_preload or args.no_gravity or args.no_contacts):
@@ -118,7 +126,7 @@ def run():
     if args.cuda_tensors and args.mode!='gpu':raise ValueError('CUDA tensors require GPU physics')
     report['tensor_device']=cfg.sim.device
     cfg.sim.use_fabric=args.fabric
-    cfg.sim.dt=1/args.physics_hz;cfg.decimation=args.physics_hz//60;cfg.sim.render_interval=cfg.decimation
+    cfg.sim.dt=1/args.physics_hz;cfg.decimation=max(1,args.physics_hz//60);cfg.sim.render_interval=cfg.decimation
     cfg.sim.physx.min_position_iteration_count=args.position_iterations
     cfg.sim.physx.max_position_iteration_count=args.position_iterations
     cfg.sim.physx.min_velocity_iteration_count=args.velocity_iterations
@@ -208,6 +216,14 @@ def run():
                     ref=getattr(get_asset(world.slots[0]).root_physx_view,getter)()
                     report['clone_properties'][kind+':'+getter]=max(float(torch.max(torch.abs(getattr(get_asset(s).root_physx_view,getter)()-ref))) for s in world.slots)
         report['initialization_wall_s']=time.perf_counter()-started
+        video=None
+        if args.record_physics_video:
+            from physics_video_capture import PhysicsVideoCapture
+            video=PhysicsVideoCapture(world.slots[0], args.output/'captures')
+        if args.behavior_probe:
+            from gpu_behavior_probe import run_behavior
+            report['behavior']=run_behavior(world,args.output,app,video=video)
+            report['complete']=True;checkpoint('complete');return
         if args.stationary_steps:
             checkpoint('stationary_diagnostic')
             report['diagnostic']=dict(preserve_joints=args.preserve_joints,
@@ -287,6 +303,9 @@ def run():
             np.savez(args.output/'final_state.npz',**state(world.slots[0]))
             report['complete']=True;checkpoint('complete');return
         checkpoint('executing_same_commands')
+        if video:
+            video.begin('robot_push', '60 Hz | actual robot approach | candidate_00003',
+                'Saved robot commands: pushes a leaf attached to the main stem; aborts on displacement (not hook success).')
         world.step_timings=dict(steps=0,write_s=0.,physics_s=0.,read_s=0.)
         active={slot.index:execute_steps(slot,dict(commands=commands,phases=phases),identity(slot),app,DEFAULT_LIMITS.copy()) for slot in world.slots}
         if args.profile_motion:
@@ -306,9 +325,13 @@ def run():
                     write_json(args.output/f'trace_{index}.json',trace)
                     write_json(args.output/f'contacts_{index}.json',world.slots[index].contact_diagnostics)
                     np.savez(args.output/f'final_state_{index}.npz',**state(world.slots[index]))
+                    if video:
+                        video.finish(row['classification']['result'],trace=trace,
+                            retained_hook=bool(metrics.get('retained_hook',False)),first_contact=metrics.get('first_contact'))
                     del active[index]
             if active:
                 world.step()
+                if video: video.sample()
                 if args.neighbor_reset_interval and world.step_timings['steps'] % args.neighbor_reset_interval == 0:
                     before=[state(s) for s in world.slots[1:]]
                     world.reset_slot(0)

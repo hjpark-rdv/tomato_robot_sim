@@ -18,7 +18,7 @@ def body_poses(env):
         env.elastic._visual_transforms()[0])).copy()
 
 
-def export_scene(env, destination):
+def export_scene(env, destination, extra_bodies=()):
     """Export original visible geometry; retain the original elastic skin weights."""
     from pxr import Usd, UsdGeom, UsdShade
     from omni.physx import get_physx_interface
@@ -30,12 +30,23 @@ def export_scene(env, destination):
     robot_paths = list(env.robot.root_physx_view.link_paths[0])
     fruit_paths = [s['path'] for s in env.fruit_specs]
     elastic_paths = env.elastic.paths + [s['anchor'] for s in env.fruit_specs]
-    paths = robot_paths + fruit_paths + elastic_paths
+    paths = robot_paths + fruit_paths + elastic_paths + [p for p, _ in extra_bodies]
     elastic_start = len(robot_paths) + len(fruit_paths)
     owners = {p: i for i, p in enumerate(paths)}
+    # A native-teleported kinematic fixture may still have its parking transform
+    # in USD. Bind its child geometry in body-local coordinates, then place it
+    # using the recorded native pose, not that stale render transform.
+    extra_frames = {}
+    if extra_bodies:
+        from scipy.spatial.transform import Rotation
+        for path, pose in extra_bodies:
+            usd_frame = np.asarray(cache.GetLocalToWorldTransform(env.stage.GetPrimAtPath(path)))
+            extra_frames[owners[path]] = (usd_frame, Rotation.from_quat(np.asarray(pose)[[4, 5, 6, 3]]).as_matrix(), np.asarray(pose)[:3])
     skins = {str(s[0].GetPath()): s for s in env.elastic.skin}
     rigids = {str(op.GetAttr().GetPrim().GetPath()): idx for op, _, _, idx in env.elastic.rigid_visuals}
     arrays = {'body_rest': body_poses(env), 'elastic_visual_rest': env.elastic.visual_rest}
+    if extra_bodies:
+        arrays['body_rest'] = np.concatenate((arrays['body_rest'], np.asarray([p for _, p in extra_bodies])))
     objects = []; unsupported = []; hidden = 0
     for prim in Usd.PrimRange.Stage(env.stage, Usd.TraverseInstanceProxies()):
         if not prim.IsA(UsdGeom.Gprim): continue
@@ -59,6 +70,14 @@ def export_scene(env, destination):
                 cylinder = UsdGeom.Cylinder(prim)
                 shape = trimesh.creation.cylinder(radius=cylinder.GetRadiusAttr().Get(), height=cylinder.GetHeightAttr().Get(), sections=32)
                 axis = str(cylinder.GetAxisAttr().Get())
+                if axis == 'X': shape.vertices = shape.vertices[:, [2, 0, 1]]
+                if axis == 'Y': shape.vertices = shape.vertices[:, [1, 2, 0]]
+            elif prim.IsA(UsdGeom.Capsule):
+                capsule = UsdGeom.Capsule(prim)
+                shape = trimesh.creation.capsule(radius=capsule.GetRadiusAttr().Get(),
+                    height=capsule.GetHeightAttr().Get(), count=[8, 16])
+                shape.vertices -= (shape.bounds[0] + shape.bounds[1]) / 2
+                axis = str(capsule.GetAxisAttr().Get())
                 if axis == 'X': shape.vertices = shape.vertices[:, [2, 0, 1]]
                 if axis == 'Y': shape.vertices = shape.vertices[:, [1, 2, 0]]
             elif prim.GetTypeName() == 'Plane':
@@ -88,6 +107,9 @@ def export_scene(env, destination):
                 if str(ancestor.GetPath()) in owners:
                     binding = dict(kind='rigid', body=owners[str(ancestor.GetPath())]); break
                 ancestor = ancestor.GetParent()
+        if binding.get('body') in extra_frames:
+            usd_frame, native_r, native_p = extra_frames[binding['body']]
+            world = (world-usd_frame[3, :3]) @ np.linalg.inv(usd_frame[:3, :3]) @ native_r.T + native_p
         color = [.55, .55, .55]
         display = UsdGeom.Gprim(prim).GetDisplayColorAttr().Get()
         if display: color = list(display[0])

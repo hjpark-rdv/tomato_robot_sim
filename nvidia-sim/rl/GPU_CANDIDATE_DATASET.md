@@ -7,7 +7,10 @@ GPU 렌더링만 켜는 실행기가 아니다. 상태·effort I/O는 articulati
 IK/FCL 계획, 결과 판정과 파일 저장은 CPU에서 수행한다.
 
 기존 CPU 실행기와 데이터 폴더는 변경하지 않는다. GPU 데이터는 새 폴더에서 생성한다.
-현재 GPU는 **PGS 64 position / 4 velocity iterations, 960 Hz**를 사용한다.
+현재 GPU 기본은 **`practical60`: PGS 64 position / 4 velocity iterations, 60Hz,
+식물 보조 관성 5e-4 kg·m²**다. 원래 960Hz/1e-5는 `--physics-preset reference960`으로 선택한다.
+최신 기능 검사와 범위는 [GPU_PRACTICAL_PHYSICS.md](GPU_PRACTICAL_PHYSICS.md)를 읽는다.
+아래의 960Hz 대규모 시험 수치는 이전 모델의 기록이며 새 모델의 처리량 보증이 아니다.
 CPU의 TGS와 수치적으로 같다고 보장하지 않는다. 각 데이터의 config / backend /
 candidate physical_inputs에 GPU·PGS·experimental 정보를 명시한다.
 원래 식물, 11개 과실, 로봇, 탄성/감쇠/마찰, 파단 임계값을 유지한다.
@@ -95,7 +98,7 @@ DISPLAY=:0 ./nvidia-sim/view_gpu_candidates.sh --view-fps 2
 직접 실행기에서는 `--view-grid --keep-open`을 추가하면 된다. `--view-grid`가 GUI를
 자동으로 켠다. 변형 형상은 최소 16 physics step(한 제어 주기) 간격으로 갱신하며,
 화면 갱신은 기본 최대 5회/벽시계 초이다. 실제 속도는 장면/장비에 따라
-더 낮을 수 있다. 960 Hz 물리 주기와 모션 명령은 변경하지 않는다.
+더 낮을 수 있다. 선택한 물리 주기와 모션 명령은 화면 갱신 때문에 변경되지 않는다.
 
 검증: `runs/20260921_grid_view_smoke/`에서 16개 화면 생성/렌더 전후 모든 물리 상태가
 일치했고, 화면 트리에 Physics/PhysX schema가 없는 것을 검사했다.
@@ -119,7 +122,7 @@ filter로 지정해도 `GPU contact filter for collider ... is not supported` �
 
 `gpu_batch_views.py`는 환경별 asset adapter를 유지하면서 동일 종류의 articulation을
 한 번에 조회한다. 물리 step 및 모든 local write 때 cache를 무효화한다.
-`gpu_dataset_scene.py`는 960 Hz effort를 두 batch 호출로 전달하며, drive target은
+`gpu_dataset_scene.py`는 매 물리 스텝의 effort를 두 batch 호출로 전달하며, drive target은
 변경될 때 전송한다. 외력이나 explicit actuator가 추가되면 이 경로는 오류로 중단한다.
 
 GPU worker는 기존 worker의 실험용 분기다. 계획/접촉 판정/식물/카메라 모듈은 공유한다.
@@ -257,6 +260,6 @@ HTML에는 GPU/PGS 실험용이라는 표시가 포함된다. 원본 CSV/JSON/�
 이제 경로 계산은 기본 최대 8개 CPU worker에서 미리 수행한다.
 `--planning-workers 0`으로 기존 순차 방식을 선택할 수 있다.
 `DATASET READY`는 후보 경로 준비 완료이며 spawn 로그가 아니다.
-물리 기본값은 960Hz를 유지한다. `--physics-hz`는 실험용 비교 옵션이며,
-낮은 주파수에서는 탄성/접촉 결과가 달라질 수 있다.
+물리 기본값은 현재 기능 검사를 거친 `practical60`이다. `--physics-hz`만 바꾸면
+preset의 나머지 물성은 유지된다. 낮은 주파수에서는 탄성/접촉 결과가 달라질 수 있다.
 자세한 명령과 검증 범위는 [물리 주기·경로 병렬화](GPU_TIMESTEP_AND_PLANNING.md)를 참고한다.

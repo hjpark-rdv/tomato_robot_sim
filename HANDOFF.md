@@ -4,6 +4,37 @@
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
 
+## 최신 후속 작업: 실용 60Hz (이 절을 먼저 읽기)
+
+사용자가 960Hz와 완전히 같은 결과보다 밀림·걸림·휘어짐·복원을 유지하는 실용적
+처리량을 우선하도록 기준을 변경했다. 따라서 아래의 이전 "960Hz 유지" 작업 지침은
+후속 작업에서 대체됐다. 원래 성능/물리 이력은 삭제하지 않고 보존한다.
+
+- 기준 커밋은 `bc84d41`; 실용 preset/검사/문서와 관찰 영상 도구는 후속 커밋에 포함했다.
+  한글 커밋 제목은 `시뮬레이션: 실용 60Hz GPU 물리 설정과 접촉 관찰 영상 도구 추가`다.
+- GPU dataset 기본은 `--physics-preset practical60`: 60Hz, armature 5e-4, PGS 64/4 iterations.
+- `reference960`으로 원래 960Hz/1e-5 모델 선택 가능. `practical120`은 120Hz/3e-4 중간 비교용.
+- 60Hz/5e-4에서 정지·실제 과실 하중/복원·원래 임계값 파손·리셋·네 방향 CAD 고리
+  접촉 유지 검사가 통과했다. 고리 fixture는 미리 삽입된 별도 kinematic 도구이며 로봇 진입 성공은 아니다.
+- 저장 로봇 경로 4환경 재생: 17.50초에 sim 4.4초 실행. 과거 960Hz는 168.69초/sim 4.333초였다.
+  물리 모델이 다르므로 정밀 동등성 speedup이라고 부르지 않는다.
+- 16환경 같은 경로 재생도 27.71초/sim 4.4초로 통과했고 native 접촉 라우팅/reset 오류가 없었다.
+- 실제 dataset 4환경/서로 다른 4후보/8초 제한: RGB-D·계획·reset 통과. 결과 1개 과도 변위,
+  3개 incomplete로 전체 수확 성공 검사는 아니다. 관련 자동 테스트 60개 통과.
+- 30Hz/1e-3 잔류 변위가 커 제외. 60Hz/1e-3/32 iterations는 연결 간격 0.555mm로 0.5mm 기준 초과해 제외.
+- 60Hz/3e-4 초기 검사는 idle을 과실만 검사했던 문제가 있었다. 주줄기도 포함하도록 수정했고
+  최종 채택 모델은 5e-4다. 초기 `behavior60`의 passed 값을 그대로 최종 판정에 사용하지 않는다.
+- 코드: `gpu_physics_presets.py`, `gpu_behavior_probe.py`, `gpu_low_hz_benchmark.py`, GPU runner/sim 변경.
+- 새 검증 원본: `nvidia-sim/rl/runs/20260921_low_hz_practical/` (ignored).
+- 최신 문서/실행법/레퍼런스: [GPU_PRACTICAL_PHYSICS.md](nvidia-sim/rl/GPU_PRACTICAL_PHYSICS.md).
+- 60Hz 동작 관찰 영상: [GPU_PHYSICS_VIDEOS.md](nvidia-sim/rl/GPU_PHYSICS_VIDEOS.md).
+  `runs/20260921_162920_practical60_contact_videos_2x/`에 실제 로봇 밀림, 하중/복원,
+  미리 끼운 고리 유지의 두 시점 영상과 원본 pose/contact를 저장했다. 2배속 기본,
+  고리 1배속 추가. 촬영 코드는 후속 커밋에 포함했고, 영상은 ignored runs에만 있다.
+- 요약: [gpu_practical_physics.json](nvidia-sim/rl/validation/gpu_practical_physics.json).
+- 다음에는 실제 로봇의 성공 진입/상승 경로, 타겟 1~11, 빠른 접촉과 더 많은 환경 수를 검증한다.
+  아직 실측 보정이나 모든 상황의 비관통 보증은 없다. RL/DR을 추가하지 않았다.
+
 ## 1. 현재 결론과 바로 이어갈 일
 
 - 기존 작업은 **`1305651`**까지 커밋했다. 브랜치는 **`nvidia-sim`**이다.
@@ -329,4 +360,5 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 > `/root/farmily_tomato/HANDOFF.md`를 읽고 현재 Git diff와 연결된 최신 검증 자료를 확인한 뒤 이어서 작업해줘.
 > 성능 개선 기준 커밋은 `1305651`이고, 저주파 안정화 진단과 이 문서는 후속 커밋에 포함했어.
 > GPU 멀티환경과 CPU 경로 병렬화는 구현되어 있지만, 물리 결과를 유지하는 저주파 설정은 아직 검증하지 못했어.
-> 기본 960Hz는 유지하고, 먼저 1환경/4환경에서 원인을 확인해줘.
+> 그 이후 실용적인 물리 동작을 우선하는 기준으로 바뀌었고, 최신 기본값은 practical60이야.
+> 이 문서 맨 위의 최신 후속 작업과 GPU_PRACTICAL_PHYSICS.md를 먼저 확인해줘.

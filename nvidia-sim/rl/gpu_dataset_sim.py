@@ -162,10 +162,11 @@ def run(root):
     # without changing drives, contacts, timestep, iterations or tolerances.
     cfg.sim.physx.gpu_max_num_partitions=1
     cfg.sim.physx.enable_ccd=False
-    cfg.sim.physx.max_position_iteration_count=64
+    position_iterations=config.get('position_iterations',64)
+    cfg.sim.physx.max_position_iteration_count=position_iterations
     cfg.sim.physx.min_velocity_iteration_count=4
     cfg.sim.physx.max_velocity_iteration_count=4
-    cfg.sim.physx.min_position_iteration_count=64;cfg.sim.physx.enable_external_forces_every_iteration=True
+    cfg.sim.physx.min_position_iteration_count=position_iterations;cfg.sim.physx.enable_external_forces_every_iteration=True
     cfg.position_jitter=0.;cfg.break_randomization=0.;cfg.plant_model='elastic';cfg.elastic_stiffness_scale=1.
     cfg.elastic_joint_armature=config.get('elastic_joint_armature',1e-5)
     cfg.target_fruit=config['target'];cfg.stem_position=(-.75,.55,.32);cfg.stem_yaw=0.;cfg.stem_scale=.5
@@ -181,7 +182,8 @@ def run(root):
     try:
         context=world.sim.get_physics_context()
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
-        backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=64,
+        backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=position_iterations,
+                     physics_preset=config.get('physics_preset','reference960'),
                      physics_hz=physics_hz,control_hz=60,
                      elastic_joint_armature_kg_m2=cfg.elastic_joint_armature,
                      command_uploads=config.get('command_uploads','batched'),

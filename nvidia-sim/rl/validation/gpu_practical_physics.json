@@ -1,0 +1,1275 @@
+{
+  "date": "2026-09-21",
+  "base_commit": "bc84d41",
+  "selected_preset": "practical60",
+  "selected_settings": {
+    "physics_hz": 60,
+    "elastic_joint_armature": 0.0005,
+    "position_iterations": 64
+  },
+  "acceptance": "functional contact, deflection, recovery and native break; not 960Hz trajectory equivalence",
+  "source_run_dir": "runs/20260921_low_hz_practical",
+  "behavior": {
+    "scope": "mechanics fixture only; no robot approach/IK or harvest success claim",
+    "tolerances": {
+      "idle_drift_m": 0.003,
+      "attachment_gap_m": 0.0005,
+      "recovery_fraction": 0.25,
+      "ring_penetration_m": 0.001
+    },
+    "checks": {
+      "idle": {
+        "passed": true,
+        "last": {
+          "phase": "idle",
+          "time_s": 5.0,
+          "target_displacement_m": 0.0005905197393584686,
+          "main_displacement_m": 0.0013166108864279989,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true,
+          "attachment_gap_m": 0.00017374625895172358
+        }
+      },
+      "bending_recovery": {
+        "passed": true,
+        "peak_m": 0.02424099846498685,
+        "residual_m": 0.0013215791135908802,
+        "max_attachment_gap_m": 0.00023995035735424608
+      },
+      "native_break": {
+        "passed": true,
+        "last": {
+          "phase": "overload",
+          "time_s": 10.016666666666666,
+          "target_displacement_m": 0.011825369910505444,
+          "main_displacement_m": 0.0022441634506022517,
+          "target_broken": true,
+          "other_broken": false,
+          "finite": true
+        },
+        "events": [
+          {
+            "event": "break",
+            "path": "/World/envs/env_0/HarvestJoint_04_5",
+            "step": 600
+          }
+        ],
+        "force_N": 6.0
+      },
+      "reset": {
+        "passed": true,
+        "last": {
+          "phase": "reset_recovery",
+          "time_s": 12.016666666666666,
+          "target_displacement_m": 0.000697894697736489,
+          "main_displacement_m": 0.001462808097235081,
+          "target_broken": false,
+          "other_broken": false,
+          "finite": true
+        }
+      },
+      "ring_retention": {
+        "passed": true,
+        "scope": "preinserted ring fixture; not an approach solution or guarantee for all orientations"
+      }
+    },
+    "wall_s": 84.96856085490435,
+    "ring_fixture": {
+      "target": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider",
+      "robot_controlled": false,
+      "starts_preinserted": true,
+      "geometry": "original 32 half-ring capsules and two rails; no proximal assembly",
+      "trials": [
+        {
+          "angle_deg": 0.0,
+          "target_contact_count": 266,
+          "hold_target_contact_count": 120,
+          "minimum_gap_m": -1.3507340755404313e-05,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.005368882538895943,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 90.0,
+          "target_contact_count": 251,
+          "hold_target_contact_count": 120,
+          "minimum_gap_m": 9.215776620007696e-06,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.0061776240593573745,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 180.0,
+          "target_contact_count": 274,
+          "hold_target_contact_count": 120,
+          "minimum_gap_m": 2.1159336751570726e-05,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.005311443223017354,
+          "broken": false,
+          "retention_passed": true
+        },
+        {
+          "angle_deg": 270.0,
+          "target_contact_count": 257,
+          "hold_target_contact_count": 120,
+          "minimum_gap_m": 1.3814852373877115e-05,
+          "hold_seated_fraction": 1.0,
+          "peak_target_displacement_m": 0.006376758024262968,
+          "broken": false,
+          "retention_passed": true
+        }
+      ]
+    },
+    "passed": true
+  },
+  "motion": {
+    "1": {
+      "num_envs": 1,
+      "wall_s": 11.915177529677749,
+      "sim_s": 4.4,
+      "initialization_s": 8.828969771042466,
+      "api_checks_passed": true,
+      "routing_faults": [],
+      "outcomes": [
+        {
+          "env_index": 0,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        }
+      ],
+      "clone_common_trace_max_error": {
+        "joints": 0.0,
+        "target_displacement_m": 0.0,
+        "main_stem_displacement_m": 0.0,
+        "gap_m": 0.0
+      },
+      "commands_sha256": "cd300bcd280159339580dcba375ed759459f458eb8e84d03da730701aa5d2ad2"
+    },
+    "4": {
+      "num_envs": 4,
+      "wall_s": 17.496681017801166,
+      "sim_s": 4.4,
+      "initialization_s": 9.919522480107844,
+      "api_checks_passed": true,
+      "routing_faults": [],
+      "outcomes": [
+        {
+          "env_index": 0,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 1,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 2,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 3,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        }
+      ],
+      "clone_common_trace_max_error": {
+        "joints": 1.71661376953125e-05,
+        "target_displacement_m": 0.00010247197543520464,
+        "main_stem_displacement_m": 0.00028445571660995483,
+        "gap_m": 0.0001859414275908744
+      },
+      "commands_sha256": "cd300bcd280159339580dcba375ed759459f458eb8e84d03da730701aa5d2ad2"
+    },
+    "16": {
+      "num_envs": 16,
+      "wall_s": 27.70973424334079,
+      "sim_s": 4.4,
+      "initialization_s": 13.33926133159548,
+      "api_checks_passed": true,
+      "routing_faults": [],
+      "outcomes": [
+        {
+          "env_index": 0,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_0/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 1,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_1/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 2,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_2/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 3,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_3/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 4,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_4/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 5,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_5/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 6,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_6/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 7,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_7/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 8,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_8/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 9,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_9/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 10,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_10/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 11,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_11/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 12,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_12/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 13,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_13/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 14,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_14/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        },
+        {
+          "env_index": 15,
+          "classification": {
+            "result": "excessive_displacement",
+            "events": [
+              "non_target_contact",
+              "excessive_displacement",
+              "miss"
+            ],
+            "hook_success": false,
+            "executed": true
+          },
+          "abort_reason": "excessive_displacement",
+          "first_contact_object": "/World/envs/env_15/ElasticPlant/STEM_MainStem_09/Appendage_STEM_CompoundLeaf_11_bd3761_2",
+          "executed_steps": 264
+        }
+      ],
+      "clone_common_trace_max_error": {
+        "joints": 1.71661376953125e-05,
+        "target_displacement_m": 0.00010259092390912244,
+        "main_stem_displacement_m": 0.00028468482196331024,
+        "gap_m": 0.00018599115394141164
+      },
+      "commands_sha256": "cd300bcd280159339580dcba375ed759459f458eb8e84d03da730701aa5d2ad2"
+    }
+  },
+  "rejected": {
+    "pulse30": {
+      "steps": 180,
+      "wall_s": 7.959035434760153,
+      "history": [
+        {
+          "time_s": 0.03333333333333333,
+          "max_rod_displacement_m": 0.0021579188760370016,
+          "max_fruit_displacement_m": 0.0011843815445899963,
+          "target_displacement_m": 0.00031762418802827597,
+          "max_joint_speed": 0.17613893747329712
+        },
+        {
+          "time_s": 0.1,
+          "max_rod_displacement_m": 0.007202676963061094,
+          "max_fruit_displacement_m": 0.0038839709013700485,
+          "target_displacement_m": 0.001403039670549333,
+          "max_joint_speed": 0.050489794462919235
+        },
+        {
+          "time_s": 0.2,
+          "max_rod_displacement_m": 0.009453551843762398,
+          "max_fruit_displacement_m": 0.005997828207910061,
+          "target_displacement_m": 0.0028755043167620897,
+          "max_joint_speed": 0.06837300956249237
+        },
+        {
+          "time_s": 0.3,
+          "max_rod_displacement_m": 0.008606908842921257,
+          "max_fruit_displacement_m": 0.006306685972958803,
+          "target_displacement_m": 0.003924976568669081,
+          "max_joint_speed": 0.07606197148561478
+        },
+        {
+          "time_s": 0.4,
+          "max_rod_displacement_m": 0.009748103097081184,
+          "max_fruit_displacement_m": 0.00681638577952981,
+          "target_displacement_m": 0.0046701147221028805,
+          "max_joint_speed": 0.05137285217642784
+        },
+        {
+          "time_s": 0.5,
+          "max_rod_displacement_m": 0.011019534431397915,
+          "max_fruit_displacement_m": 0.007167775183916092,
+          "target_displacement_m": 0.005282311700284481,
+          "max_joint_speed": 0.049660418182611465
+        },
+        {
+          "time_s": 0.6,
+          "max_rod_displacement_m": 0.010040489956736565,
+          "max_fruit_displacement_m": 0.007104696240276098,
+          "target_displacement_m": 0.005468987859785557,
+          "max_joint_speed": 0.07278437912464142
+        },
+        {
+          "time_s": 0.7,
+          "max_rod_displacement_m": 0.009925100021064281,
+          "max_fruit_displacement_m": 0.008793308399617672,
+          "target_displacement_m": 0.006367410067468882,
+          "max_joint_speed": 0.04306939244270325
+        },
+        {
+          "time_s": 0.8,
+          "max_rod_displacement_m": 0.014713807962834835,
+          "max_fruit_displacement_m": 0.012186563573777676,
+          "target_displacement_m": 0.009128176607191563,
+          "max_joint_speed": 0.04221998155117035
+        },
+        {
+          "time_s": 0.9,
+          "max_rod_displacement_m": 0.020466750487685204,
+          "max_fruit_displacement_m": 0.01629718579351902,
+          "target_displacement_m": 0.013815615326166153,
+          "max_joint_speed": 0.09104197472333908
+        },
+        {
+          "time_s": 1.0,
+          "max_rod_displacement_m": 0.026088159531354904,
+          "max_fruit_displacement_m": 0.02032773196697235,
+          "target_displacement_m": 0.017254794016480446,
+          "max_joint_speed": 0.06652527302503586
+        },
+        {
+          "time_s": 1.1,
+          "max_rod_displacement_m": 0.03008606843650341,
+          "max_fruit_displacement_m": 0.023291494697332382,
+          "target_displacement_m": 0.019736485555768013,
+          "max_joint_speed": 0.07264683395624161
+        },
+        {
+          "time_s": 1.2,
+          "max_rod_displacement_m": 0.03223146125674248,
+          "max_fruit_displacement_m": 0.024431457743048668,
+          "target_displacement_m": 0.021000366657972336,
+          "max_joint_speed": 0.08758266270160675
+        },
+        {
+          "time_s": 1.3,
+          "max_rod_displacement_m": 0.03274671360850334,
+          "max_fruit_displacement_m": 0.024462221190333366,
+          "target_displacement_m": 0.021612342447042465,
+          "max_joint_speed": 0.06274361163377762
+        },
+        {
+          "time_s": 1.4,
+          "max_rod_displacement_m": 0.0311328936368227,
+          "max_fruit_displacement_m": 0.023159684613347054,
+          "target_displacement_m": 0.019960859790444374,
+          "max_joint_speed": 0.04590412229299545
+        },
+        {
+          "time_s": 1.5,
+          "max_rod_displacement_m": 0.028142834082245827,
+          "max_fruit_displacement_m": 0.021018916741013527,
+          "target_displacement_m": 0.018270084634423256,
+          "max_joint_speed": 0.07269597053527832
+        },
+        {
+          "time_s": 1.6,
+          "max_rod_displacement_m": 0.021834399551153183,
+          "max_fruit_displacement_m": 0.016889911144971848,
+          "target_displacement_m": 0.013281253166496754,
+          "max_joint_speed": 0.08074809610843658
+        },
+        {
+          "time_s": 1.7,
+          "max_rod_displacement_m": 0.013561837375164032,
+          "max_fruit_displacement_m": 0.010924441739916801,
+          "target_displacement_m": 0.008199170231819153,
+          "max_joint_speed": 0.06544896960258484
+        },
+        {
+          "time_s": 1.8,
+          "max_rod_displacement_m": 0.010741635225713253,
+          "max_fruit_displacement_m": 0.00564121687784791,
+          "target_displacement_m": 0.004353963769972324,
+          "max_joint_speed": 0.08814459294080734
+        },
+        {
+          "time_s": 1.9,
+          "max_rod_displacement_m": 0.01579577475786209,
+          "max_fruit_displacement_m": 0.008951868861913681,
+          "target_displacement_m": 0.007436627056449652,
+          "max_joint_speed": 0.08106176555156708
+        },
+        {
+          "time_s": 2.0,
+          "max_rod_displacement_m": 0.021083824336528778,
+          "max_fruit_displacement_m": 0.013151310384273529,
+          "target_displacement_m": 0.011532369069755077,
+          "max_joint_speed": 0.06261321902275085
+        },
+        {
+          "time_s": 2.1,
+          "max_rod_displacement_m": 0.025479117408394814,
+          "max_fruit_displacement_m": 0.015540637075901031,
+          "target_displacement_m": 0.014397836290299892,
+          "max_joint_speed": 0.07151170074939728
+        },
+        {
+          "time_s": 2.2,
+          "max_rod_displacement_m": 0.023777298629283905,
+          "max_fruit_displacement_m": 0.01629139482975006,
+          "target_displacement_m": 0.014612706378102303,
+          "max_joint_speed": 0.08044540137052536
+        },
+        {
+          "time_s": 2.3,
+          "max_rod_displacement_m": 0.022397881373763084,
+          "max_fruit_displacement_m": 0.014739518985152245,
+          "target_displacement_m": 0.013908111490309238,
+          "max_joint_speed": 0.07760881632566452
+        },
+        {
+          "time_s": 2.4,
+          "max_rod_displacement_m": 0.01949935406446457,
+          "max_fruit_displacement_m": 0.011602785438299179,
+          "target_displacement_m": 0.010793465189635754,
+          "max_joint_speed": 0.06451177597045898
+        },
+        {
+          "time_s": 2.5,
+          "max_rod_displacement_m": 0.01611565239727497,
+          "max_fruit_displacement_m": 0.008169027045369148,
+          "target_displacement_m": 0.007924561388790607,
+          "max_joint_speed": 0.05454627424478531
+        },
+        {
+          "time_s": 2.6,
+          "max_rod_displacement_m": 0.012241009622812271,
+          "max_fruit_displacement_m": 0.005970338359475136,
+          "target_displacement_m": 0.005828506778925657,
+          "max_joint_speed": 0.07583124190568924
+        },
+        {
+          "time_s": 2.7,
+          "max_rod_displacement_m": 0.008305724710226059,
+          "max_fruit_displacement_m": 0.005553273018449545,
+          "target_displacement_m": 0.004598982632160187,
+          "max_joint_speed": 0.08242791146039963
+        },
+        {
+          "time_s": 2.8,
+          "max_rod_displacement_m": 0.006129231303930283,
+          "max_fruit_displacement_m": 0.006380508188158274,
+          "target_displacement_m": 0.004577983636409044,
+          "max_joint_speed": 0.0843234658241272
+        },
+        {
+          "time_s": 2.9,
+          "max_rod_displacement_m": 0.007260212209075689,
+          "max_fruit_displacement_m": 0.0070778499357402325,
+          "target_displacement_m": 0.0048768529668450356,
+          "max_joint_speed": 0.05393731966614723
+        },
+        {
+          "time_s": 3.0,
+          "max_rod_displacement_m": 0.006673447787761688,
+          "max_fruit_displacement_m": 0.006930286530405283,
+          "target_displacement_m": 0.004770691506564617,
+          "max_joint_speed": 0.08095233142375946
+        },
+        {
+          "time_s": 3.1,
+          "max_rod_displacement_m": 0.0067800176329910755,
+          "max_fruit_displacement_m": 0.006163666490465403,
+          "target_displacement_m": 0.004495490342378616,
+          "max_joint_speed": 0.089034304022789
+        },
+        {
+          "time_s": 3.2,
+          "max_rod_displacement_m": 0.010475337505340576,
+          "max_fruit_displacement_m": 0.005324449390172958,
+          "target_displacement_m": 0.003987301141023636,
+          "max_joint_speed": 0.06266671419143677
+        },
+        {
+          "time_s": 3.3,
+          "max_rod_displacement_m": 0.010160832665860653,
+          "max_fruit_displacement_m": 0.0053218635730445385,
+          "target_displacement_m": 0.005012460984289646,
+          "max_joint_speed": 0.08775996416807175
+        },
+        {
+          "time_s": 3.4,
+          "max_rod_displacement_m": 0.01316980179399252,
+          "max_fruit_displacement_m": 0.006163549609482288,
+          "target_displacement_m": 0.00542669091373682,
+          "max_joint_speed": 0.06642286479473114
+        },
+        {
+          "time_s": 3.5,
+          "max_rod_displacement_m": 0.014710545539855957,
+          "max_fruit_displacement_m": 0.007068038452416658,
+          "target_displacement_m": 0.006642816588282585,
+          "max_joint_speed": 0.054171185940504074
+        },
+        {
+          "time_s": 3.6,
+          "max_rod_displacement_m": 0.015225574374198914,
+          "max_fruit_displacement_m": 0.007945779711008072,
+          "target_displacement_m": 0.00763117428869009,
+          "max_joint_speed": 0.0781741812825203
+        },
+        {
+          "time_s": 3.7,
+          "max_rod_displacement_m": 0.015354336239397526,
+          "max_fruit_displacement_m": 0.007931242696940899,
+          "target_displacement_m": 0.007348138373345137,
+          "max_joint_speed": 0.06953688710927963
+        },
+        {
+          "time_s": 3.8,
+          "max_rod_displacement_m": 0.01690804958343506,
+          "max_fruit_displacement_m": 0.007501494605094194,
+          "target_displacement_m": 0.007326334714889526,
+          "max_joint_speed": 0.051316723227500916
+        },
+        {
+          "time_s": 3.9,
+          "max_rod_displacement_m": 0.013873472809791565,
+          "max_fruit_displacement_m": 0.007235193625092506,
+          "target_displacement_m": 0.006616454571485519,
+          "max_joint_speed": 0.08347392082214355
+        },
+        {
+          "time_s": 4.0,
+          "max_rod_displacement_m": 0.012586441822350025,
+          "max_fruit_displacement_m": 0.006749498657882214,
+          "target_displacement_m": 0.006549875717610121,
+          "max_joint_speed": 0.08432932198047638
+        },
+        {
+          "time_s": 4.1,
+          "max_rod_displacement_m": 0.012839194387197495,
+          "max_fruit_displacement_m": 0.005979529581964016,
+          "target_displacement_m": 0.005833383649587631,
+          "max_joint_speed": 0.07842497527599335
+        },
+        {
+          "time_s": 4.2,
+          "max_rod_displacement_m": 0.01314591709524393,
+          "max_fruit_displacement_m": 0.005856824107468128,
+          "target_displacement_m": 0.004879454150795937,
+          "max_joint_speed": 0.05665354058146477
+        },
+        {
+          "time_s": 4.3,
+          "max_rod_displacement_m": 0.009928320534527302,
+          "max_fruit_displacement_m": 0.00552793126553297,
+          "target_displacement_m": 0.005248538218438625,
+          "max_joint_speed": 0.09859588742256165
+        },
+        {
+          "time_s": 4.4,
+          "max_rod_displacement_m": 0.01121690683066845,
+          "max_fruit_displacement_m": 0.005660222843289375,
+          "target_displacement_m": 0.004315043333917856,
+          "max_joint_speed": 0.051624298095703125
+        },
+        {
+          "time_s": 4.5,
+          "max_rod_displacement_m": 0.009831988252699375,
+          "max_fruit_displacement_m": 0.005507217720150948,
+          "target_displacement_m": 0.004953928757458925,
+          "max_joint_speed": 0.08352440595626831
+        },
+        {
+          "time_s": 4.6,
+          "max_rod_displacement_m": 0.010065043345093727,
+          "max_fruit_displacement_m": 0.005511111579835415,
+          "target_displacement_m": 0.0050860438495874405,
+          "max_joint_speed": 0.0809134989976883
+        },
+        {
+          "time_s": 4.7,
+          "max_rod_displacement_m": 0.010380820371210575,
+          "max_fruit_displacement_m": 0.005733019672334194,
+          "target_displacement_m": 0.005283444654196501,
+          "max_joint_speed": 0.08270284533500671
+        },
+        {
+          "time_s": 4.8,
+          "max_rod_displacement_m": 0.010904875583946705,
+          "max_fruit_displacement_m": 0.005898120813071728,
+          "target_displacement_m": 0.005570833571255207,
+          "max_joint_speed": 0.08551714569330215
+        },
+        {
+          "time_s": 4.9,
+          "max_rod_displacement_m": 0.012953231111168861,
+          "max_fruit_displacement_m": 0.006106904242187738,
+          "target_displacement_m": 0.005420127883553505,
+          "max_joint_speed": 0.04864899814128876
+        },
+        {
+          "time_s": 5.0,
+          "max_rod_displacement_m": 0.014233892783522606,
+          "max_fruit_displacement_m": 0.00621916214004159,
+          "target_displacement_m": 0.005650246515870094,
+          "max_joint_speed": 0.06250181049108505
+        },
+        {
+          "time_s": 5.1,
+          "max_rod_displacement_m": 0.011982128955423832,
+          "max_fruit_displacement_m": 0.006237173918634653,
+          "target_displacement_m": 0.0061159939505159855,
+          "max_joint_speed": 0.08840280771255493
+        },
+        {
+          "time_s": 5.2,
+          "max_rod_displacement_m": 0.013665303587913513,
+          "max_fruit_displacement_m": 0.006374357268214226,
+          "target_displacement_m": 0.0058380067348480225,
+          "max_joint_speed": 0.06602045148611069
+        },
+        {
+          "time_s": 5.3,
+          "max_rod_displacement_m": 0.014979170635342598,
+          "max_fruit_displacement_m": 0.006414851173758507,
+          "target_displacement_m": 0.005693863611668348,
+          "max_joint_speed": 0.05309572443366051
+        },
+        {
+          "time_s": 5.4,
+          "max_rod_displacement_m": 0.011740202084183693,
+          "max_fruit_displacement_m": 0.00626765564084053,
+          "target_displacement_m": 0.006171736400574446,
+          "max_joint_speed": 0.09226350486278534
+        },
+        {
+          "time_s": 5.5,
+          "max_rod_displacement_m": 0.01409528311342001,
+          "max_fruit_displacement_m": 0.006106626708060503,
+          "target_displacement_m": 0.005598912946879864,
+          "max_joint_speed": 0.05817710608243942
+        },
+        {
+          "time_s": 5.6,
+          "max_rod_displacement_m": 0.011598989367485046,
+          "max_fruit_displacement_m": 0.005958321504294872,
+          "target_displacement_m": 0.005671240855008364,
+          "max_joint_speed": 0.08483951538801193
+        },
+        {
+          "time_s": 5.7,
+          "max_rod_displacement_m": 0.011164573952555656,
+          "max_fruit_displacement_m": 0.005964851006865501,
+          "target_displacement_m": 0.005936514586210251,
+          "max_joint_speed": 0.09299547225236893
+        },
+        {
+          "time_s": 5.8,
+          "max_rod_displacement_m": 0.01145903393626213,
+          "max_fruit_displacement_m": 0.00588254677131772,
+          "target_displacement_m": 0.005020171869546175,
+          "max_joint_speed": 0.0672231987118721
+        },
+        {
+          "time_s": 5.9,
+          "max_rod_displacement_m": 0.013186861760914326,
+          "max_fruit_displacement_m": 0.00585996313020587,
+          "target_displacement_m": 0.004979241639375687,
+          "max_joint_speed": 0.054471731185913086
+        },
+        {
+          "time_s": 6.0,
+          "max_rod_displacement_m": 0.01114862971007824,
+          "max_fruit_displacement_m": 0.005885684862732887,
+          "target_displacement_m": 0.005250981543213129,
+          "max_joint_speed": 0.08545029163360596
+        }
+      ],
+      "preload_mode": "effort",
+      "broken_envs": [],
+      "events": [],
+      "state_change": {
+        "passed": false,
+        "max_abs_by_field": {
+          "robot_q": 0.0,
+          "robot_dq": 0.0,
+          "robot_root": 0.0,
+          "elastic_q": 0.028871813789010048,
+          "elastic_dq": 0.08545029163360596,
+          "elastic_bodies": 1.9999710321426392,
+          "fruits": 1.0158319473266602,
+          "preload": 0.0,
+          "stiffness": 0.0,
+          "damping": 0.0
+        },
+        "tolerance": 1e-06
+      }
+    },
+    "behavior60_fast": {
+      "scope": "mechanics fixture only; no robot approach/IK or harvest success claim",
+      "tolerances": {
+        "idle_drift_m": 0.003,
+        "attachment_gap_m": 0.0005,
+        "recovery_fraction": 0.25,
+        "ring_penetration_m": 0.001
+      },
+      "checks": {
+        "idle": {
+          "passed": true,
+          "last": {
+            "phase": "idle",
+            "time_s": 5.0,
+            "target_displacement_m": 0.0009655050701492027,
+            "target_position_xyz": [
+              -0.7214546772973418,
+              1.0970389387949573,
+              0.9616119676782114
+            ],
+            "main_displacement_m": 0.00206768314239174,
+            "target_broken": false,
+            "other_broken": false,
+            "finite": true,
+            "attachment_gap_m": 0.0003970219404436648
+          }
+        },
+        "bending_recovery": {
+          "passed": false,
+          "peak_m": 0.024503396267091606,
+          "residual_m": 0.001625392581131628,
+          "max_attachment_gap_m": 0.0005546268075704575
+        },
+        "native_break": {
+          "passed": true,
+          "last": {
+            "phase": "overload",
+            "time_s": 10.016666666666666,
+            "target_displacement_m": 0.01580318672398278,
+            "target_position_xyz": [
+              -0.7067281895448841,
+              1.0975957000657517,
+              0.9590663053066013
+            ],
+            "main_displacement_m": 0.0024881056965695477,
+            "target_broken": true,
+            "other_broken": false,
+            "finite": true
+          },
+          "events": [
+            {
+              "event": "break",
+              "path": "/World/envs/env_0/HarvestJoint_04_5",
+              "step": 600
+            }
+          ],
+          "force_N": 6.0
+        },
+        "reset": {
+          "passed": true,
+          "last": {
+            "phase": "reset_recovery",
+            "time_s": 12.016666666666666,
+            "target_displacement_m": 0.0011450328565812437,
+            "target_position_xyz": [
+              -0.7212986086303712,
+              1.0971348437025275,
+              0.9615634790857984
+            ],
+            "main_displacement_m": 0.002312283227429984,
+            "target_broken": false,
+            "other_broken": false,
+            "finite": true
+          }
+        },
+        "ring_retention": {
+          "passed": true,
+          "scope": "preinserted ring fixture; not an approach solution or guarantee for all orientations"
+        }
+      },
+      "wall_s": 54.699824155308306,
+      "ring_fixture": {
+        "target": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider",
+        "robot_controlled": false,
+        "starts_preinserted": true,
+        "geometry": "original 32 half-ring capsules and two rails; no proximal assembly",
+        "trials": [
+          {
+            "angle_deg": 0.0,
+            "target_contact_count": 264,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": -6.649768890299834e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.005510836444799079,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 90.0,
+            "target_contact_count": 250,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": -4.337897391601983e-06,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.0063365486979769315,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 180.0,
+            "target_contact_count": 278,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": 1.2196628943464817e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.005312058717709963,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 270.0,
+            "target_contact_count": 260,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": -1.6791475488562636e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.006239020043014664,
+            "broken": false,
+            "retention_passed": true
+          }
+        ]
+      },
+      "passed": false
+    },
+    "behavior60": {
+      "scope": "mechanics fixture only; no robot approach/IK or harvest success claim",
+      "tolerances": {
+        "idle_drift_m": 0.003,
+        "attachment_gap_m": 0.0005,
+        "recovery_fraction": 0.25,
+        "ring_penetration_m": 0.001
+      },
+      "checks": {
+        "idle": {
+          "passed": true,
+          "last": {
+            "phase": "idle",
+            "time_s": 5.0,
+            "target_displacement_m": 0.001112533775703816,
+            "main_displacement_m": 0.002552717271210872,
+            "target_broken": false,
+            "other_broken": false,
+            "finite": true,
+            "attachment_gap_m": 0.0002480502880644053
+          }
+        },
+        "bending_recovery": {
+          "passed": true,
+          "peak_m": 0.03601518356937709,
+          "residual_m": 0.0015281827288595733,
+          "max_attachment_gap_m": 0.0003743502893485129
+        },
+        "native_break": {
+          "passed": true,
+          "last": {
+            "phase": "overload",
+            "time_s": 10.016666666666666,
+            "target_displacement_m": 0.01324252597586785,
+            "main_displacement_m": 0.002416776269556992,
+            "target_broken": true,
+            "other_broken": false,
+            "finite": true
+          },
+          "events": [
+            {
+              "event": "break",
+              "path": "/World/envs/env_0/HarvestJoint_04_5",
+              "step": 0
+            }
+          ],
+          "force_N": 6.0
+        },
+        "reset": {
+          "passed": true,
+          "last": {
+            "phase": "reset_recovery",
+            "time_s": 12.016666666666666,
+            "target_displacement_m": 0.0010767666461996722,
+            "main_displacement_m": 0.0024412767167124355,
+            "target_broken": false,
+            "other_broken": false,
+            "finite": true
+          }
+        },
+        "ring_retention": {
+          "passed": true,
+          "scope": "preinserted ring fixture; not an approach solution or guarantee for all orientations"
+        }
+      },
+      "wall_s": 84.63890282064676,
+      "ring_fixture": {
+        "target": "/World/envs/env_0/ElasticPlant/TRUSS_Pedicel_proximal_05_02/StemCollider",
+        "robot_controlled": false,
+        "starts_preinserted": true,
+        "geometry": "original 32 half-ring capsules and two rails; no proximal assembly",
+        "trials": [
+          {
+            "angle_deg": 0.0,
+            "target_contact_count": 209,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": -7.224317873769104e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.0055329529821451584,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 90.0,
+            "target_contact_count": 248,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": 4.421380326337268e-06,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.006212066210040833,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 180.0,
+            "target_contact_count": 280,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": 2.080259597973214e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.005376676961471821,
+            "broken": false,
+            "retention_passed": true
+          },
+          {
+            "angle_deg": 270.0,
+            "target_contact_count": 262,
+            "hold_target_contact_count": 120,
+            "minimum_gap_m": 1.912377368430533e-05,
+            "hold_seated_fraction": 1.0,
+            "peak_target_displacement_m": 0.006459527192571641,
+            "broken": false,
+            "retention_passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "acceptance_correction": {
+        "reason": "initial idle gate checked only fruit; corrected gate also checks main stem",
+        "main_and_target_max_idle_m": 0.003507723135810517,
+        "corrected_passed": false
+      }
+    }
+  },
+  "integration": {
+    "num_envs": 4,
+    "distinct_candidates": 4,
+    "max_control_steps": 480,
+    "counts": {
+      "success_target_hook": 0,
+      "miss": 0,
+      "non_target_contact": 0,
+      "excessive_displacement": 1,
+      "ik_failure": 0,
+      "planning_failure": 0,
+      "incomplete": 3
+    },
+    "execution_complete": true,
+    "dataset_complete": false,
+    "elapsed_wall_s": 52.218252481892705,
+    "initialization_wall_s": 17.533038541674614,
+    "rollout_wall_s": 34.6860571205616,
+    "backend": {
+      "physics_device": "gpu",
+      "tensor_device": "cpu",
+      "solver": "PGS",
+      "position_iterations": 64,
+      "physics_preset": "practical60",
+      "physics_hz": 60,
+      "control_hz": 60,
+      "elastic_joint_armature_kg_m2": 0.0005,
+      "command_uploads": "batched",
+      "velocity_iterations": 4,
+      "gpu_max_num_partitions": 1,
+      "ccd": false,
+      "native_collider_reports": true,
+      "gpu_dynamics": true,
+      "broadphase": "GPU",
+      "suppress_readback": false,
+      "experimental": true,
+      "cpu_tgs_equivalence_guaranteed": false,
+      "native_physics_replication": true,
+      "environment_id_bounds_bits": 4
+    },
+    "reset_checks_passed": true,
+    "candidate_resets_passed": true
+  },
+  "native_error_logs": [],
+  "limitations": [
+    "Ring fixture starts preinserted; no robot insertion success claimed.",
+    "Only Tomato_05 mechanics and one saved robot trajectory; no all-target or high-speed validation.",
+    "16-env motion repeats one command stream; not 16 different candidate poses.",
+    "Dataset integration has three truncated candidates labelled incomplete; not usable success/failure data.",
+    "Changed numerical inertia changes dynamics; no real-plant calibration.",
+    "960Hz timings refer to an earlier physical model and slightly different stopping time."
+  ]
+}

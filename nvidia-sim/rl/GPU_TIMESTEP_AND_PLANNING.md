@@ -1,19 +1,23 @@
 # GPU 물리 주기와 CPU 경로 병렬화
 
+> 최신 GPU dataset 기본 물리는 기능 검사를 거친 `practical60`이다.
+> 아래 960Hz 유지 결론은 이전의 궤적 동등성 검사 당시 기록이다.
+> 현재 기준과 실행법: [GPU_PRACTICAL_PHYSICS.md](GPU_PRACTICAL_PHYSICS.md).
+
 ## 실행
 
 ```bash
 # 기존 물리 조건 유지. 경로 계산만 최대 8개 CPU 프로세스로 미리 처리.
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --num-envs 4 --candidates 32 --schedule continuous --planning-workers 8
+  --physics-preset reference960 --num-envs 4 --candidates 32 --schedule continuous --planning-workers 8
 
 # 기존 순차 경로 계산과 비교
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --num-envs 4 --candidates 32 --schedule continuous --planning-workers 0
+  --physics-preset reference960 --num-envs 4 --candidates 32 --schedule continuous --planning-workers 0
 
-# 물리 주기 비교용. 기본값은 여전히 960Hz이며 낮은 주파수는 실험용.
+# 이전 모델에서 물리 주기만 비교하기 위한 명시적 설정.
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --num-envs 1 --candidates 1 --physics-hz 480
+  --physics-preset reference960 --num-envs 1 --candidates 1 --physics-hz 480
 ```
 
 `--physics-hz`는 60/120/240/480/720/960을 받는다. `decimation=Hz/60`으로

@@ -1,5 +1,10 @@
 # 낮은 물리 주파수의 탄성 식물 안정성
 
+> 후속 변경: 사용자가 960Hz와의 정밀 일치보다 실용적인 접촉·걸림·탄성 동작을
+> 우선하도록 기준을 변경했다. 기능 검사를 거쳐 GPU dataset 기본값을 60Hz preset으로
+> 변경했다. 최신 설정/범위는 [GPU_PRACTICAL_PHYSICS.md](GPU_PRACTICAL_PHYSICS.md)를 읽는다.
+> 아래는 이전의 엄격한 동등성 검사 기록으로 보존한다.
+
 기존 주파수·CPU 병렬화 작업은 `1305651`에 커밋했다. 아래는 후속 안정성 실험이다.
 장면 배치, 충돌 도형, 줄기 분할 수, 질량, 스프링 강성·감쇠, 마찰, 꼭지 파손
 임계값은 유지했다. 로봇 명령은 모든 설정에서 60Hz다. RL/DR은 사용하지 않았다.
@@ -18,12 +23,12 @@
 ```bash
 # 기존 기준 설정: 기본값은 그대로 유지
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --num-envs 4 --candidates 8 --schedule continuous \
+  --physics-preset reference960 --num-envs 4 --candidates 8 --schedule continuous \
   --physics-hz 960 --elastic-joint-armature 0.00001
 
 # 진단 목적의 실험 설정: 원래 모델과 다른 응답이며 동등성 검사를 통과하지 않음
 ./nvidia-sim/run_gpu_candidate_dataset.sh \
-  --num-envs 4 --candidates 8 --schedule continuous \
+  --physics-preset reference960 --num-envs 4 --candidates 8 --schedule continuous \
   --physics-hz 240 --elastic-joint-armature 0.0001
 ```
 

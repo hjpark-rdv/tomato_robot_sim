@@ -12,6 +12,7 @@ import sys
 from datetime import datetime
 from dataset_design import BOUNDS, candidates
 from gpu_physics_errors import invalid_physics_message
+from gpu_physics_presets import PRESETS, resolve as resolve_physics
 
 HERE = Path(__file__).resolve().parent
 
@@ -107,8 +108,10 @@ def main():
     parser.add_argument('--profile', action='store_true', help='Save CPU profile for throughput diagnosis')
     parser.add_argument('--benchmark-candidates', type=int, default=0, help='Execute only this many pending full candidates, estimate total runtime; resume without this flag')
     parser.add_argument('--physics-threads', type=int, default=4, help='CPU PhysX worker threads; benchmark before scaling environments')
-    parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],default=960,help='Experimental physics rate; robot control remains 60 Hz; default preserves validated baseline')
-    parser.add_argument('--elastic-joint-armature',type=float,default=1e-5,help='Experimental numerical plant joint inertia in kg m^2; changes physical response, not an equivalent speedup; original 1e-5')
+    parser.add_argument('--physics-preset',choices=list(PRESETS),default='practical60',help='Physical model (default practical60); reference960 restores old physics; practical presets change transient response')
+    parser.add_argument('--physics-hz',type=int,choices=[60,120,240,480,720,960],help='Override preset rate; robot control remains 60 Hz')
+    parser.add_argument('--elastic-joint-armature',type=float,help='Override preset joint inertia in kg m^2; changes physical response')
+    parser.add_argument('--position-iterations',type=int,help='Override preset solver position iterations (1..255); lower values require contact validation')
     parser.add_argument('--planning-workers',type=int,default=8,help='CPU-only path workers; 0 uses original synchronous planning; capped at pending candidate count')
     parser.add_argument('--torch-threads', type=int, default=1, help='Small CPU tensors usually benefit from one Torch thread')
     parser.add_argument('--physics-sync', choices=['optimized','legacy'], default='optimized', help='Retain implicit drive targets between control updates; legacy is for equivalence checks')
@@ -121,6 +124,8 @@ def main():
     parser.add_argument('--keep-open', action='store_true', help='Keep the live display open after completion until the window is closed')
     parser.add_argument('--rebuild', action='store_true')
     args = parser.parse_args()
+    resolve_physics(args)
+    if not 1<=args.position_iterations<=255:parser.error('position-iterations must be 1..255')
     if args.view_grid:args.gui=True
     if not 1 <= args.view_fps <= 30:parser.error('view-fps must be 1..30')
     if args.keep_open and not args.view_grid:parser.error('keep-open requires view-grid')
@@ -165,6 +170,7 @@ def main():
         if indices is not None:proposals=[proposals[i] for i in indices]
         (root/'candidates.json').write_text(json.dumps(proposals,indent=2)+'\n')
     print('[DATASET]',root,flush=True)
+    print('[DATASET PHYSICS CONFIG]',json.dumps({k:config[k] for k in ('physics_preset','physics_hz','elastic_joint_armature','position_iterations')}),flush=True)
     if args.prepare_only:
         print('Prepared candidates only. Launch the same command with --resume and without --prepare-only.'); return
     command = [sys.executable, '-u', str(HERE/'gpu_dataset_sim.py'), '--run-dir', str(root),'--app-threads','8']

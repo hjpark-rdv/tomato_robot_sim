@@ -39,7 +39,8 @@ def render_parts(args, motion_frames):
         output = parts/f'part_{i:02d}.mp4'; log = parts/f'part_{i:02d}.log'
         command = ['xvfb-run','-a','blender','-t','2','--python',str(Path(__file__).resolve()),'--',
             '--scene',str(args.scene),'--capture',str(args.capture),'--output',str(output),
-            '--frame-start',str(cuts[i]),'--frame-stop',str(cuts[i+1])]
+            '--frame-start',str(cuts[i]),'--frame-stop',str(cuts[i+1]),'--playback-speed',str(args.playback_speed)]
+        if args.views: command.extend(['--views',str(args.views)])
         with log.open('w') as stream:
             result = subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT)
         if result.returncode: raise RuntimeError('Video segment failed: '+str(log))
@@ -69,12 +70,16 @@ def main():
     parser.add_argument('--capture', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--preview', action='store_true', help='Render initial and final frames only')
+    parser.add_argument('--preview-times', help='Comma separated simulation times for camera inspection (implies preview)')
+    parser.add_argument('--views', type=Path, help='JSON array of two camera views: name, eye, target, lens')
+    parser.add_argument('--playback-speed', type=float, choices=[.5, 1., 2.], default=2., help='Video playback only; never changes physics')
     parser.add_argument('--gpu',action='store_true',help='Require an NVIDIA OpenGL context; bypass CPU segment splitting')
     parser.add_argument('--frame-start',type=int,default=0,help=argparse.SUPPRESS)
     parser.add_argument('--frame-stop',type=int,help=argparse.SUPPRESS)
     args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
+    if args.preview_times: args.preview = True
     record = json.loads((args.capture/'recording.json').read_text())
-    total_motion_frames = int(math.ceil(record['simulated_duration_s']/2*30))
+    total_motion_frames = int(math.ceil(record['simulated_duration_s']/args.playback_speed*30))
     if not args.gpu and not args.preview and args.frame_stop is None and total_motion_frames>=600:
         render_parts(args,total_motion_frames); return
     with np.load(args.scene, allow_pickle=False) as archive:
@@ -83,7 +88,8 @@ def main():
     data = np.load(args.capture/'motion.npz', allow_pickle=False)
     trace = json.loads((args.capture/'trace.json').read_text())
     model_update = record['validation'].get('model_update', {})
-    if not (record['validation']['reexecution']['passed'] or
+    if not (record['validation'].get('recorded_physics', {}).get('passed') or
+            record['validation'].get('reexecution', {}).get('passed') or
             (model_update.get('enabled') and model_update.get('passed'))):
         raise RuntimeError('Refusing to render a mismatched reexecution')
     bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
@@ -112,6 +118,8 @@ def main():
         mesh.update()
         obj = bpy.data.objects.new(key, mesh); scene.collection.objects.link(obj)
         color = tuple(item['color'])
+        if record.get('extra_body') and item['path'].startswith(record['extra_body']+'/'):
+            color = (.88, .88, .9)  # Display-only contrast for the isolated fixture.
         if color not in materials:
             material = bpy.data.materials.new('USD constant '+str(color)); material.diffuse_color = (*color, 1.)
             materials[color] = material
@@ -123,6 +131,12 @@ def main():
     focus = center + np.array([.005, 0, .012])
     views = [dict(name='OVERVIEW', eye=center+np.array([1.1, -1.4, .75]), target=center+np.array([.30, 0, -.03]), lens=28.),
              dict(name='HOOK CLOSE-UP', eye=focus+np.array([.18, -.18, .065]), target=focus, lens=45.)]
+    if args.views:
+        views = json.loads(args.views.read_text())
+        if len(views) != 2: raise ValueError('Two complementary camera views are required')
+        for view in views:
+            view['eye'] = np.asarray(view['eye'], dtype=float)
+            view['target'] = np.asarray(view['target'], dtype=float)
     cameras = []
     for view in views:
         camera_data = bpy.data.cameras.new(view['name']); camera_data.lens = view['lens']; camera_data.sensor_width = 36
@@ -155,7 +169,7 @@ def main():
     font = ImageFont.truetype(font_path, 19); small = ImageFont.truetype(font_path, 16)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.capture/'render_frame.png'
-    fps = 30; speed = 2.; duration = record['simulated_duration_s']
+    fps = 30; speed = args.playback_speed; duration = record['simulated_duration_s']
     frame_count = int(math.ceil(duration/speed*fps))
     sample_times = np.arange(frame_count)*speed/fps
     # Stored poses are at precisely 15 simulation Hz. No interpolation invents contacts.
@@ -167,6 +181,8 @@ def main():
     indices = indices[args.frame_start:stop]
     if last_segment: indices = np.r_[indices, len(data['times_s'])-1]  # exact endpoint for final still
     if args.preview: indices = np.asarray([0, len(data['times_s'])-1])
+    if args.preview_times:
+        indices = np.clip(np.searchsorted(data['times_s'], [float(t) for t in args.preview_times.split(',')]), 0, len(data['times_s'])-1)
     encoder = None
     if not args.preview:
         encoder = subprocess.Popen(['ffmpeg','-hide_banner','-loglevel','error','-y',
@@ -178,7 +194,7 @@ def main():
             frame = args.frame_start+local_frame
             poses = data['poses'][idx]; rotations = rotation(poses[:, 3:7]); delta_r = rotations @ rest_r.transpose(0,2,1)
             delta_t = poses[:, :3]-np.einsum('nij,nj->ni', delta_r, rest[:, :3])
-            offset = manifest['elastic_start']; er = rotations[offset:] @ elastic_r.transpose(0,2,1)
+            offset = manifest['elastic_start']; er = rotations[offset:offset+len(elastic_r)] @ elastic_r.transpose(0,2,1)
             for obj, item in dynamic:
                 key = item['key']; binding = item['binding']
                 if binding['kind'] == 'rigid':
@@ -192,10 +208,14 @@ def main():
             time_s = float(data['times_s'][idx]); tick = min(max(int(round(time_s/record['control_dt']))-1, 0),len(trace)-1)
             current = trace[tick]; canvas = Image.new('RGB',(1280,612),(21,27,34)); draw = ImageDraw.Draw(canvas)
             if time_s == 0: current = dict(current,phase='initial',target_displacement_m=0.,main_stem_displacement_m=0.)
-            p = record['parameters']
             repair_label = ' | repaired wire colliders' if model_update.get('enabled') else ''
-            draw.text((14,8), f"{record['candidate_id']} | Tomato_05 | 2x | PhysX / {'GPU' if args.gpu else 'CPU'} visual replay{repair_label}", font=font, fill='white')
-            draw.text((14,35), f"az {p['azimuth_deg']:+g} deg   elev {p['elevation_deg']:+g}   roll {p['roll_deg']:+g}   pitch {p['pitch_deg']:+g}   offset mm {np.round(np.asarray(p['offset_xyz_m'])*1000,1).tolist()}   pre-hook {p['pre_hook_distance_m']*1000:g} mm",font=small,fill=(195,205,218))
+            if 'title' in record:
+                draw.text((14,8), record['title']+f' | Tomato_05 | {speed:g}x',font=font,fill='white')
+                draw.text((14,35), record['subtitle'],font=small,fill=(195,205,218))
+            else:
+                p = record['parameters']
+                draw.text((14,8), f"{record['candidate_id']} | Tomato_05 | {speed:g}x | PhysX / {'GPU' if args.gpu else 'CPU'} visual replay{repair_label}", font=font, fill='white')
+                draw.text((14,35), f"az {p['azimuth_deg']:+g} deg   elev {p['elevation_deg']:+g}   roll {p['roll_deg']:+g}   pitch {p['pitch_deg']:+g}   offset mm {np.round(np.asarray(p['offset_xyz_m'])*1000,1).tolist()}   pre-hook {p['pre_hook_distance_m']*1000:g} mm",font=small,fill=(195,205,218))
             for view_index, camera in enumerate(cameras):
                 scene.camera = camera
                 if offscreen:
@@ -225,9 +245,19 @@ def main():
             draw = ImageDraw.Draw(canvas)
             draw.text((14,549),f"sim t={time_s:.2f}s | {current['phase']} | target move {current['target_displacement_m']*1000:.2f} mm | main stem {current['main_stem_displacement_m']*1000:.2f} mm",font=small,fill='white')
             first = record.get('first_contact') or {}; first_time=(first.get('step',10**9)+1)*record['control_dt']
-            name = record['first_contact_object'].split('/')[-2] if record.get('first_contact_object') and time_s>=first_time else '(none yet)'
-            draw.text((14,578),f"First contact: {name} | final: {record['result']} | retained hook: {record['retained_hook']}",font=small,fill=(255,185,95))
-            if args.preview: canvas.save(args.output.with_name(args.output.stem+('_initial.png' if local_frame==0 else '_final.png')))
+            name = record['first_contact_object'].split('/')[-1] if record.get('first_contact_object') and time_s>=first_time else '(none yet)'
+            if record.get('extra_body'):
+                footer = f"Preinserted fixture | final: {record['result']} | no robot approach tested"
+                if 'gap_m' in current:
+                    footer = f"Native target contact: {current.get('intended_contact')} | rear gap {current['gap_m']*1000:.2f} mm | seated: {current['seated']} | fixture test only"
+            elif record['candidate_id']=='elastic_recovery':
+                footer = f"Applied force: {0.2 if current['phase']=='fruit_load' else 0.:g} N (world X) | Original break thresholds | final: {record['result']}"
+            else:
+                footer = f"First contact: {name} | final: {record['result']} | retained hook: {record['retained_hook']}"
+            draw.text((14,578),footer,font=small,fill=(255,185,95))
+            if args.preview:
+                suffix = f'_t{time_s:.3f}.png' if args.preview_times else ('_initial.png' if local_frame==0 else '_final.png')
+                canvas.save(args.output.with_name(args.output.stem+suffix))
             elif frame < frame_count: encoder.stdin.write(np.asarray(canvas).tobytes())
             final_canvas = canvas
             if local_frame%60==0: print('[RENDER PROGRESS]',record['candidate_id'],frame,frame_count,'elapsed',round(time.monotonic()-started,1),flush=True)
@@ -252,7 +282,9 @@ def main():
             simulated_duration_s=duration,video_duration_s=output_count/fps,
             appearance=manifest['appearance'],renderer='Blender Workbench / '+renderer_device,
             render_backend='gpu' if args.gpu else 'cpu',
-            reexecution_matches_original=record['validation']['reexecution']['passed'],
+            reexecution_matches_original=record['validation'].get('reexecution', {}).get('passed'),
+            recorded_physics=record['validation'].get('recorded_physics'),
+            camera_views=[dict(v,eye=v['eye'].tolist(),target=v['target'].tolist()) for v in views],
             collision_model_update=model_update,
             result=record['result'],retained_hook=record['retained_hook'])
         args.output.with_suffix('.json').write_text(json.dumps(info,indent=2)+'\n')
