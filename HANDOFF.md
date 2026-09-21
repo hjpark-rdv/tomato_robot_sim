@@ -578,3 +578,14 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 - 모든 반복 발산0. 전체 영상/기하 검사 `outputs/20260922_robot_validation_final`, 순기구학 위치 오차 3.3e-8m, 9테스트 통과.
 - 원본 시간/자원/코드 해시는 `outputs/20260922_robot_cpu_scaling{,64}`; 커밋용 요약은 `validation/robot_cpu_scaling.json`.
 - 사용자는 CPU 기준선 커밋 후 새로운 브랜치에서 mjlab/MJWarp를 구축해 같은 조건의 GPU 성능 비교를 요청했다.
+
+## mjlab GPU 비교 완료
+
+- CPU 기준선 `38bac4d` 이후 `mjlab-performance` 브랜치 생성. 별도 `.mjlab-venv` 설치, 기존 `.venv` 보존.
+- mjlab 1.6.0 / MuJoCo·MJWarp 3.11 / Warp 1.17 / Torch 2.7 cu128. `setup_mjlab.sh`, lock 파일 포함.
+- 동일 모델 1/8/32/128/256/512/1024환경, 각 16.5초 × 3회. CUDA 제어·물리·평가 시간과 자원 시계열 저장.
+- 가장 효율적인 GPU 설정 256: 평균 32.030초, 131.88 sim-s/s. 1024는 평균 179.960초, 93.89 sim-s/s.
+- CPU 3.13/48프로세스 122.97 sim-s/s; 버전 맞춘 CPU3.11/24프로세스 75.62 sim-s/s.
+- 모든 반복 비정상/overflow 0. GPU world0와 CPU 전체 스텝의 위치 오차는 validation/mjlab_robot_equivalence.json.
+- 상세/한계/명령: mujoco-benchmark/MJLAB_PERFORMANCE.md. 비교 화면은 outputs/20260922_robot_backend_comparison/index.html.
+- 파단은 비활성화, 동일49번 반복 성능 시험. 다양한 후보 탐색이나 RL 학습/수확 성공 평가기는 아님. mjlab Simulation 계층을 사용했으며 ManagerBasedRlEnv는 아직 추가하지 않음.

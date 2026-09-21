@@ -226,3 +226,5 @@ mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/benchmark_mujoco.py \
 
 실제 7축 로봇을 포함하는 모델과 1~64프로세스 측정 결과는
 [ROBOT_PARALLEL.md](ROBOT_PARALLEL.md)를 참고한다. 기존 고리 단독 모델도 유지한다.
+
+GPU mjlab 구성·CPU와의 버전 일치 비교는 [MJLAB_PERFORMANCE.md](MJLAB_PERFORMANCE.md)를 참고한다.

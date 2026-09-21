@@ -1,0 +1,233 @@
+[
+  {
+    "num_envs": 1,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.00018723053714175792,
+    "max_hook_origin_difference_m": 1.4487086765968183e-05,
+    "max_robot_joint_difference_m_or_rad": 1.554283484739294e-05,
+    "max_all_joint_coordinate_difference": 0.0013063840592149809,
+    "gpu_target_peak_displacement_m": 0.020039059221744537,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.0803582351654768
+  },
+  {
+    "num_envs": 1,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.0001900344542701972,
+    "max_hook_origin_difference_m": 1.4720833399312121e-05,
+    "max_robot_joint_difference_m_or_rad": 1.554283484739294e-05,
+    "max_all_joint_coordinate_difference": 0.0012847401225809171,
+    "gpu_target_peak_displacement_m": 0.02003696747124195,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08137946017086506
+  },
+  {
+    "num_envs": 1,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.0001805236317013864,
+    "max_hook_origin_difference_m": 1.5268531212819043e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013096288256661814,
+    "gpu_target_peak_displacement_m": 0.020019952207803726,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08203936740756035
+  },
+  {
+    "num_envs": 8,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.00018101593942936478,
+    "max_hook_origin_difference_m": 1.4985095707638664e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013053782694356364,
+    "gpu_target_peak_displacement_m": 0.020038357004523277,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08019727375358343
+  },
+  {
+    "num_envs": 8,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.0001867701522937756,
+    "max_hook_origin_difference_m": 1.4416695714346537e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5423625557842158e-05,
+    "max_all_joint_coordinate_difference": 0.0013075165474657133,
+    "gpu_target_peak_displacement_m": 0.020085180178284645,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08001600299030542
+  },
+  {
+    "num_envs": 8,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.00018054797519932223,
+    "max_hook_origin_difference_m": 1.5208822882601327e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013096996061818522,
+    "gpu_target_peak_displacement_m": 0.020038940012454987,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08045295719057322
+  },
+  {
+    "num_envs": 32,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.00018061637756276041,
+    "max_hook_origin_difference_m": 1.5111045343463186e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.00131026212501692,
+    "gpu_target_peak_displacement_m": 0.02007848583161831,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08034589234739542
+  },
+  {
+    "num_envs": 32,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.00018973106749204237,
+    "max_hook_origin_difference_m": 1.491445564690054e-05,
+    "max_robot_joint_difference_m_or_rad": 1.554283484739294e-05,
+    "max_all_joint_coordinate_difference": 0.00129008591415921,
+    "gpu_target_peak_displacement_m": 0.020085521042346954,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.0807540500536561
+  },
+  {
+    "num_envs": 32,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.0001810440208935428,
+    "max_hook_origin_difference_m": 1.5011435452165904e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013053633682744425,
+    "gpu_target_peak_displacement_m": 0.02008572220802307,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.07990330643951893
+  },
+  {
+    "num_envs": 128,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.0001810978860495585,
+    "max_hook_origin_difference_m": 1.5010614206775562e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.001305408071758024,
+    "gpu_target_peak_displacement_m": 0.02008569985628128,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08047058153897524
+  },
+  {
+    "num_envs": 128,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.00018672184082046693,
+    "max_hook_origin_difference_m": 1.4375030546365608e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5423625557842158e-05,
+    "max_all_joint_coordinate_difference": 0.0013071700954679563,
+    "gpu_target_peak_displacement_m": 0.020086029544472694,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.0819644620642066
+  },
+  {
+    "num_envs": 128,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.00018091842649916334,
+    "max_hook_origin_difference_m": 1.5016394939693594e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013057582490460795,
+    "gpu_target_peak_displacement_m": 0.020086465403437614,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08392624650150537
+  },
+  {
+    "num_envs": 256,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.00018677817118089617,
+    "max_hook_origin_difference_m": 1.4400411796509794e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5423625557842158e-05,
+    "max_all_joint_coordinate_difference": 0.0013075910532716825,
+    "gpu_target_peak_displacement_m": 0.020086484029889107,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08275544829666615
+  },
+  {
+    "num_envs": 256,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.0001809748002841241,
+    "max_hook_origin_difference_m": 1.5027910373054087e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013052516095654887,
+    "gpu_target_peak_displacement_m": 0.020086465403437614,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08111790474504232
+  },
+  {
+    "num_envs": 256,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.00018066221847566304,
+    "max_hook_origin_difference_m": 1.5188557290640165e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.001309617649795286,
+    "gpu_target_peak_displacement_m": 0.02008647471666336,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08405625633895397
+  },
+  {
+    "num_envs": 512,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.00018066510550915135,
+    "max_hook_origin_difference_m": 1.5248630101274582e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5788935366023438e-05,
+    "max_all_joint_coordinate_difference": 0.0013097666614072245,
+    "gpu_target_peak_displacement_m": 0.020085878670215607,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08340742066502571
+  },
+  {
+    "num_envs": 512,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.00019063879361552632,
+    "max_hook_origin_difference_m": 1.4723306915383857e-05,
+    "max_robot_joint_difference_m_or_rad": 1.554283484739294e-05,
+    "max_all_joint_coordinate_difference": 0.0012873478257898405,
+    "gpu_target_peak_displacement_m": 0.020086996257305145,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08049474935978651
+  },
+  {
+    "num_envs": 512,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.0001810140315439077,
+    "max_hook_origin_difference_m": 1.5046450207364457e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013063952736871165,
+    "gpu_target_peak_displacement_m": 0.020086539909243584,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08105333894491196
+  },
+  {
+    "num_envs": 1024,
+    "repeat": "repeat_00",
+    "max_plant_body_origin_difference_m": 0.0001806499569590109,
+    "max_hook_origin_difference_m": 1.5193327638895446e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.0013093308024423045,
+    "gpu_target_peak_displacement_m": 0.02008689008653164,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.08027366083115339
+  },
+  {
+    "num_envs": 1024,
+    "repeat": "repeat_01",
+    "max_plant_body_origin_difference_m": 0.00019042549716003458,
+    "max_hook_origin_difference_m": 1.4346938271687065e-05,
+    "max_robot_joint_difference_m_or_rad": 1.56251786789241e-05,
+    "max_all_joint_coordinate_difference": 0.0012903231246744959,
+    "gpu_target_peak_displacement_m": 0.02008689194917679,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.07992044929414988
+  },
+  {
+    "num_envs": 1024,
+    "repeat": "repeat_02",
+    "max_plant_body_origin_difference_m": 0.00018102269301150206,
+    "max_hook_origin_difference_m": 1.4970285534929831e-05,
+    "max_robot_joint_difference_m_or_rad": 1.5669726076472656e-05,
+    "max_all_joint_coordinate_difference": 0.001305214356662504,
+    "gpu_target_peak_displacement_m": 0.020086023956537247,
+    "cpu_target_peak_displacement_m": 0.020085927604413314,
+    "analysis_wall_s": 0.07989912666380405
+  }
+]
