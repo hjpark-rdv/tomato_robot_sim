@@ -110,6 +110,8 @@ def main():
     parser.add_argument('--torch-threads', type=int, default=1, help='Small CPU tensors usually benefit from one Torch thread')
     parser.add_argument('--physics-sync', choices=['optimized','legacy'], default='optimized', help='Retain implicit drive targets between control updates; legacy is for equivalence checks')
     parser.add_argument('--max-control-steps', type=int, default=0, help='Debug only; truncated candidates are labelled incomplete, never failure training data')
+    parser.add_argument('--schedule',choices=['batch','continuous'],default='batch',help='Continuous refills completed slots after independent reset; batch retains the original barrier')
+    parser.add_argument('--command-uploads',choices=['batched','legacy'],default='batched',help='Batch joint targets across clones; legacy is for equivalence checks')
     parser.add_argument('--gui', action='store_true')
     parser.add_argument('--view-grid', action='store_true', help='Show live physics states in a read-only 4x4 display grid (enables GUI)')
     parser.add_argument('--view-fps', type=float, default=5., help='Maximum display refreshes per wall-clock second; physics timestep unchanged')

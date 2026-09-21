@@ -153,6 +153,7 @@ def run(root):
     # FCL initialization and source-mesh RGB-D currently read USD transforms.
     # Keep their readback current; GPU dynamics is independent of Fabric.
     cfg.sim.use_fabric=False
+    cfg.gpu_batched_joint_commands=config.get('command_uploads','batched')=='batched'
     cfg.sim.physx.solver_type=0
     # Multiple GPU constraint partitions diverge for this branched plant with
     # standalone break joints. One partition keeps environments independent
@@ -178,6 +179,7 @@ def run(root):
         context=world.sim.get_physics_context()
         env_id_attr=world.scene.stage.GetPrimAtPath(context.prim_path).GetAttribute('physxScene:envIdInBoundsBitCount')
         backend=dict(physics_device='gpu',tensor_device='cpu',solver='PGS',position_iterations=64,
+                     command_uploads=config.get('command_uploads','batched'),
                      velocity_iterations=4,gpu_max_num_partitions=context.get_gpu_max_num_partitions(),ccd=False,native_collider_reports=True,
                      gpu_dynamics=context.is_gpu_dynamics_enabled(),broadphase=context.get_broadphase_type(),
                      suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
@@ -286,83 +288,125 @@ def run(root):
         pending=[p for p in params if p['candidate_id'] not in done]
         if args.benchmark_candidates:pending=pending[:args.benchmark_candidates]
         rollout_started=time.monotonic();initial_rows=len(rows);last_progress=rollout_started
+        phase_timings=dict(batch_reset_s=0.,planning_s=0.,execution_and_label_s=0.,result_save_s=0.)
+        rollout_step_start=world.step_timings.copy()
+        active_env_steps=0
         def progress_summary():
             elapsed=time.monotonic()-rollout_started
             finished=len(rows)-initial_rows
             result=throughput_estimate(len(params),len(rows),finished,rollout_started-started,
                                        elapsed,bool(config['max_control_steps']))
             result['physics_step_timings']=world.step_timings.copy()
+            result['rollout_step_timings']={k:world.step_timings[k]-rollout_step_start[k] for k in world.step_timings}
+            result['phase_timings']=phase_timings.copy()
+            result['schedule']=config.get('schedule','batch')
+            allocated_steps=result['rollout_step_timings']['steps']*config['num_envs']
+            result['active_env_step_fraction']=active_env_steps/allocated_steps if allocated_steps else None
             return result
-        for batch_start in range(0,len(pending),config['num_envs']):
+        from collections import deque
+        continuous=config.get('schedule','batch')=='continuous'
+        queue=deque(pending)
+        def prepare(slot,param,reset_check):
+            p=dict(param,goal=config['goal'])
+            target_center,target_neck,_=[v[0].cpu().numpy() for v in slot._target_geometry()]
+            desired_rotation,desired_waypoints,desired_direction=design_waypoints(target_center,target_neck,p)
+            desired_position=desired_waypoints[0][1]
+            desired_quaternion=desired_rotation.as_quat().tolist()
+            plan_started=time.monotonic()
+            # All clones share canonical geometry/joints. Use this freshly
+            # reset slot; env_0 may still be executing another candidate.
+            planned,preflight=plan(slot,slot.pose_search_kin,checker,p)
+            phase_timings['planning_s']+=time.monotonic()-plan_started
+            folder=root/'results'/p['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
+            row=dict(scene_id='scene_0001',target_id=config['target'],candidate_id=p['candidate_id'],
+                observation_id='observation_0001',observation_path='scene_0001/observation_0001/observation.json',
+                parameters=p,env_index=slot.index,env_origin_world=slot.dataset_origin.tolist(),
+                robot_joint_positions_at_start=slot.robot.data.joint_pos[0].tolist(),
+                preflight=preflight,reset_validation=reset_check,planning_wall_s=time.monotonic()-plan_started,
+                candidate_pose_target_frame=dict(position_xyz=(desired_position-target_center).tolist(),orientation_xyzw=desired_quaternion),
+                candidate_position_xyz=desired_position.tolist(),candidate_orientation_quaternion=desired_quaternion,
+                quaternion_order='xyzw',candidate_world_frame='canonical env_0; add env_origin_world for executed clone',
+                approach_direction=desired_direction.tolist(),
+                target_frame_definition='origin at initial fruit centre, axes aligned with world; GT centre for generation only',
+                physical_inputs=dict(physics_dt=slot.physics_dt,control_dt=slot.step_dt,
+                    backend=backend,
+                    solver_position_iterations=cfg.sim.physx.min_position_iteration_count,
+                    approach_speed_m_s=.035,rise_speed_m_s=cfg.dataset_rise_speed,
+                    pull_speed_m_s=cfg.dataset_pull_speed,hold_s=DEFAULT_LIMITS['hold_seconds'],limits=DEFAULT_LIMITS),
+                label_policy='dataset_v1: gentle target-fruit contact allowed; excessive displacement, break, dangerous non-target contact and non-target hook disqualify')
+            if planned is None:
+                row.update(classify_result(dict(planning_failure_reason=preflight),DEFAULT_LIMITS))
+                if viewer:viewer.set_status(slot.index,p['candidate_id']+' / planning failure');viewer.pump()
+                write_json(folder/'candidate.json',row);rows.append(row);return False
+            position=planned['prehook'];quat=planned['orientation'].as_quat().tolist()
+            row.update(candidate_position_xyz=position.tolist(),candidate_orientation_quaternion=quat,
+                quaternion_order='xyzw',approach_direction=planned['direction'].tolist(),
+                candidate_pose_target_frame=dict(position_xyz=(position-planned['target_center']).tolist(),orientation_xyzw=quat),
+                commanded_waypoints=planned['waypoints'],planned_command_file=str((folder/'planned_commands.npy').relative_to(root)))
+            np.save(folder/'planned_commands.npy',planned['commands'])
+            slot.contact_diagnostics=[]
+            active[slot.index]=execute_steps(slot,planned,identity(slot),app,DEFAULT_LIMITS.copy())
+            contexts[slot.index]=(row,folder)
+            print('[DATASET START]',p['candidate_id'],'env',slot.index,flush=True)
+            if viewer:viewer.set_status(slot.index,p['candidate_id']+' / running');viewer.pump()
+            return True
+
+        def fill_slot(index,reset_check=None):
+            if not queue:return
+            slot=world.slots[index]
+            if reset_check is None:
+                reset_started=time.monotonic()
+                world.reset_slot(index)
+                reset_check=state_comparison(references[index],snapshot(slot))
+                phase_timings['batch_reset_s']+=time.monotonic()-reset_started
+                if not reset_check['passed']:raise RuntimeError('Continuous candidate reset contamination')
+            while queue:
+                if prepare(slot,queue.popleft(),reset_check):return
+
+        batch_starts=[0] if continuous and pending else range(0,len(pending),config['num_envs'])
+        for batch_start in batch_starts:
+            reset_started=time.monotonic()
             world.reset_all()
             if viewer:
                 for slot in world.slots:viewer.set_status(slot.index,'planning')
                 viewer.pump()
             resets=[state_comparison(r,snapshot(s)) for r,s in zip(references,world.slots)]
+            phase_timings['batch_reset_s']+=time.monotonic()-reset_started
             if not all(c['passed'] for c in resets):raise RuntimeError('Candidate reset contamination')
             active={};contexts={}
-            for slot,param in zip(world.slots,pending[batch_start:batch_start+config['num_envs']]):
-                p=dict(param,goal=config['goal'])
-                target_center,target_neck,_=[v[0].cpu().numpy() for v in first._target_geometry()]
-                desired_rotation,desired_waypoints,desired_direction=design_waypoints(target_center,target_neck,p)
-                desired_position=desired_waypoints[0][1]
-                desired_quaternion=desired_rotation.as_quat().tolist()
-                plan_started=time.monotonic()
-                # All clones share canonical geometry/joints; IK/FCL is computed
-                # in env_0 coordinates, then identical commands run in each slot.
-                planned,preflight=plan(first,first.pose_search_kin,checker,p)
-                folder=root/'results'/p['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
-                row=dict(scene_id='scene_0001',target_id=config['target'],candidate_id=p['candidate_id'],
-                    observation_id='observation_0001',observation_path='scene_0001/observation_0001/observation.json',
-                    parameters=p,env_index=slot.index,env_origin_world=slot.dataset_origin.tolist(),
-                    robot_joint_positions_at_start=slot.robot.data.joint_pos[0].tolist(),
-                    preflight=preflight,reset_validation=resets[slot.index],planning_wall_s=time.monotonic()-plan_started,
-                    candidate_pose_target_frame=dict(position_xyz=(desired_position-target_center).tolist(),orientation_xyzw=desired_quaternion),
-                    candidate_position_xyz=desired_position.tolist(),candidate_orientation_quaternion=desired_quaternion,
-                    quaternion_order='xyzw',candidate_world_frame='canonical env_0; add env_origin_world for executed clone',
-                    approach_direction=desired_direction.tolist(),
-                    target_frame_definition='origin at initial fruit centre, axes aligned with world; GT centre for generation only',
-                    physical_inputs=dict(physics_dt=slot.physics_dt,control_dt=slot.step_dt,
-                        backend=backend,
-                        solver_position_iterations=cfg.sim.physx.min_position_iteration_count,
-                        approach_speed_m_s=.035,rise_speed_m_s=cfg.dataset_rise_speed,
-                        pull_speed_m_s=cfg.dataset_pull_speed,hold_s=DEFAULT_LIMITS['hold_seconds'],limits=DEFAULT_LIMITS),
-                    label_policy='dataset_v1: gentle target-fruit contact allowed; excessive displacement, break, dangerous non-target contact and non-target hook disqualify')
-                if planned is None:
-                    row.update(classify_result(dict(planning_failure_reason=preflight),DEFAULT_LIMITS))
-                    if viewer:viewer.set_status(slot.index,p['candidate_id']+' / planning failure');viewer.pump()
-                    write_json(folder/'candidate.json',row);rows.append(row);continue
-                position=planned['prehook'];quat=planned['orientation'].as_quat().tolist()
-                row.update(candidate_position_xyz=position.tolist(),candidate_orientation_quaternion=quat,
-                    quaternion_order='xyzw',approach_direction=planned['direction'].tolist(),
-                    candidate_pose_target_frame=dict(position_xyz=(position-planned['target_center']).tolist(),orientation_xyzw=quat),
-                    commanded_waypoints=planned['waypoints'],planned_command_file=str((folder/'planned_commands.npy').relative_to(root)))
-                np.save(folder/'planned_commands.npy',planned['commands'])
-                slot.contact_diagnostics=[]
-                active[slot.index]=execute_steps(slot,planned,identity(slot),app,DEFAULT_LIMITS.copy())
-                contexts[slot.index]=(row,folder)
-                print('[DATASET START]',p['candidate_id'],'env',slot.index,flush=True)
-                if viewer:viewer.set_status(slot.index,p['candidate_id']+' / running');viewer.pump()
+            if continuous:
+                for slot in world.slots:fill_slot(slot.index,resets[slot.index])
+            else:
+                for slot,param in zip(world.slots,pending[batch_start:batch_start+config['num_envs']]):
+                    prepare(slot,param,resets[slot.index])
             ticks=0
             while active:
                 for index in list(active):
-                    try:next(active[index])
-                    except StopIteration as finished:
-                        metrics,trace=finished.value;slot=world.slots[index];row,folder=contexts[index]
-                        row.update(metrics);row.update(classify_result(metrics,DEFAULT_LIMITS))
-                        first_contact=metrics['first_contact']
-                        row.update(first_contact_time_s=(first_contact['step']+1)*slot.step_dt if first_contact else None,
-                            target_max_displacement_mm=metrics['target_max_displacement_m']*1000,
-                            main_stem_max_displacement_mm=metrics['main_stem_max_displacement_m']*1000,
-                            episode_duration_s=len(trace)*slot.step_dt,hooked_target=metrics['retained_hook'])
-                        write_json(folder/'trace.json',trace);write_json(folder/'contacts.json',slot.contact_diagnostics)
-                        write_json(folder/'candidate.json',row);rows.append(row);del active[index]
-                        # Completed slot may evolve but is not re-used mid-batch.
-                        # Batch barrier avoids changing constraints under another
-                        # slot's ongoing trial; all slots reset before next batch.
-                        print('[DATASET RESULT]',row['candidate_id'],row['result'],metrics['abort_reason'],flush=True)
-                        if viewer:viewer.set_status(index,row['candidate_id']+' / '+row['result'])
-                if active:world.step();ticks+=1
+                    while index in active:
+                        advance_started=time.monotonic()
+                        try:next(active[index])
+                        except StopIteration as finished:
+                            phase_timings['execution_and_label_s']+=time.monotonic()-advance_started
+                            save_started=time.monotonic()
+                            metrics,trace=finished.value;slot=world.slots[index];row,folder=contexts[index]
+                            row.update(metrics);row.update(classify_result(metrics,DEFAULT_LIMITS))
+                            first_contact=metrics['first_contact']
+                            row.update(first_contact_time_s=(first_contact['step']+1)*slot.step_dt if first_contact else None,
+                                target_max_displacement_mm=metrics['target_max_displacement_m']*1000,
+                                main_stem_max_displacement_mm=metrics['main_stem_max_displacement_m']*1000,
+                                episode_duration_s=len(trace)*slot.step_dt,hooked_target=metrics['retained_hook'])
+                            write_json(folder/'trace.json',trace);write_json(folder/'contacts.json',slot.contact_diagnostics)
+                            write_json(folder/'candidate.json',row);rows.append(row);del active[index]
+                            print('[DATASET RESULT]',row['candidate_id'],row['result'],metrics['abort_reason'],flush=True)
+                            if viewer:viewer.set_status(index,row['candidate_id']+' / '+row['result'])
+                            phase_timings['result_save_s']+=time.monotonic()-save_started
+                            if continuous:fill_slot(index)
+                        else:
+                            phase_timings['execution_and_label_s']+=time.monotonic()-advance_started
+                            break
+                if active:
+                    active_env_steps+=len(active)
+                    world.step();ticks+=1
                 if viewer:viewer.pump(physics_step=True)
                 if time.monotonic()-last_progress>=15:
                     progress=progress_summary();progress.update(active_candidates=len(active),batch_sim_seconds=round(ticks*cfg.sim.dt,2))

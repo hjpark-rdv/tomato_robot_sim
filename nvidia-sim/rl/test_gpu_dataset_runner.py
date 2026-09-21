@@ -36,6 +36,14 @@ def test_reject_duplicate_or_out_of_range_indices(tmp_path):
     assert not (tmp_path/'outside'/'config.json').exists()
 
 
+def test_scheduling_mode_is_recorded_and_cannot_change_on_resume(tmp_path):
+    result=prepare(tmp_path,'--schedule','continuous')
+    assert result.returncode==0,result.stderr
+    assert json.loads((tmp_path/'config.json').read_text())['schedule']=='continuous'
+    assert prepare(tmp_path,'--schedule','continuous','--resume').returncode==0
+    assert prepare(tmp_path,'--schedule','batch','--resume').returncode!=0
+
+
 def test_sigterm_cleans_up_independent_gpu_worker(tmp_path):
     import signal
     import time

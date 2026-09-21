@@ -138,3 +138,7 @@ kinematic 고정부를 `wakeUp()` 하던 오류를 방지합니다.
 이 초기 모델은 `runs/pick_ready_smoke/policy.zip`에 있으며 새 형식으로 이어 학습할 수 있습니다.
 
 16개 동시 실험을 4×4 화면으로 보려면 `DISPLAY=:0 ./nvidia-sim/view_gpu_candidates.sh`를 실행하세요. 자세한 조작은 [GPU 화면 사용법](GPU_CANDIDATE_DATASET.md#실시간-44-화면)에 있습니다.
+
+GPU 병렬 환경 수를 실제 후보 처리량으로 비교하려면 [32/64/128환경 벤치마크](GPU_THROUGHPUT.md)를 참고하세요.
+
+현재 장면의 1/32환경 처리량과 CUDA 커널 병목 실측은 [GPU 병목 진단](GPU_BOTTLENECK.md)에 정리했습니다.

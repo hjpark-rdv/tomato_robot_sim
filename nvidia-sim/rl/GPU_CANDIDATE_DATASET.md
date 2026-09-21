@@ -26,6 +26,29 @@ CCD는 GPU 경로에서 끈다. 고리 관통 방지와 다양한 후보의 CPU 
 ./nvidia-sim/run_gpu_candidate_dataset.sh --num-envs 16 --candidates 32
 ```
 
+## 처리량 개선 실행
+
+```bash
+./nvidia-sim/run_gpu_candidate_dataset.sh \
+  --num-envs 256 --candidates 1000 --schedule continuous
+```
+
+`--schedule continuous`는 완료된 슬롯만 원래 상태로 리셋하고 다음 후보를 배정한다.
+느린 후보가 끝날 때까지 모든 슬롯이 기다리는 기존 방식은 `--schedule batch`이며,
+호환성을 위해 기본값으로 유지한다. 후보 시작마다 reset 상태를 검사한다.
+계획도 방금 리셋된 슬롯의 GT를 사용하므로, 실행 중인 env_0의 변형을 새 후보에
+가져오지 않는다. RGB-D는 동일한 초기 상태의 공통 관측을 계속 참조한다.
+
+관절 명령은 기본 `--command-uploads batched`로 전달한다. 모든 implicit actuator
+계산을 먼저 마치고 position/velocity/effort를 articulation 종류별로 묶어 보낸다.
+기존 비교용 경로는 `--command-uploads legacy`이다. 물리 주기, 솔버 반복 횟수,
+관절 목표값과 접촉·파단 기준을 변경하는 옵션이 아니다.
+
+짧은 동일 명령 구간에서 기존 32환경 대비 256환경의 처리량은 약 3.4배였다.
+이는 1,000개 전체 후보의 완료 시간이나 1시간 내 완료를 보장하는 수치가 아니다.
+상세 측정 범위와 검증 결과는 [GPU 처리량 개선 기록](GPU_OPTIMIZATION.md)에 정리한다.
+변경 전 실험 폴더와 섞지 않도록 새 datetime 폴더로 실행한다.
+
 `--candidate-indices 0,3,27`은 `--candidates`로 생성한 원래 목록의 인덱스만 고른다.
 초기 Sobol 표본 수와 seed를 같게 유지해야 기존 후보와 비교할 수 있다.
 대규모 데이터셋에 쓰기 전 해당 후보들의 결과/접촉/변위를 확인한다.

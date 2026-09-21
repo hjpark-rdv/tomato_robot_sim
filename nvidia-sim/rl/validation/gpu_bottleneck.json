@@ -1,0 +1,601 @@
+{
+  "date": "2026-09-21",
+  "scope": "GPU bottleneck diagnosis: one saved candidate replayed in 1 and 32 environments, no camera rendering during motion; not diverse-pose throughput or CPU-equivalence certification",
+  "run_dir": "nvidia-sim/rl/runs/20260921_132000_gpu_bottleneck",
+  "long_benchmark_paused": {
+    "run": "runs/20260921_gpu_throughput_32_64_128",
+    "completed_candidates": 31,
+    "requested_candidates": 128,
+    "reason": "User requested bottleneck diagnosis; saved results preserved"
+  },
+  "settings": {
+    "gpu_dynamics": true,
+    "broadphase": "GPU",
+    "ccd": false,
+    "gpu_max_num_partitions": 1,
+    "suppress_readback": false,
+    "physics_dt_s": 0.0010416666666666667,
+    "solver_position_iterations": 64,
+    "solver": "pgs",
+    "solver_velocity_iterations": 4,
+    "fabric": false,
+    "external_forces_every_iteration": true,
+    "articulation_count": 2,
+    "rigid_object_count": 11
+  },
+  "scene": {
+    "robot_dofs": 7,
+    "plant_dofs": 234,
+    "plant_bodies": 79,
+    "fruits": 11
+  },
+  "replays": [
+    {
+      "num_envs": 1,
+      "motion_wall_s": 156.63753467425704,
+      "motion_process_cpu_s": 181.433530863,
+      "physics_steps": 4160,
+      "batch_sim_s": 4.333333333333333,
+      "step_timings": {
+        "steps": 4160,
+        "write_s": 0.638888468965888,
+        "physics_s": 153.61733175441623,
+        "read_s": 0.7868154374882579
+      },
+      "native_profile": {
+        "calls": {
+          "simulate": {
+            "calls": 4160,
+            "wall_s": 0.3776677791029215,
+            "process_cpu_s": 0.44046336400025865,
+            "caller_cpu_s": 0.37044527999997
+          },
+          "fetch_results": {
+            "calls": 4160,
+            "wall_s": 152.9287117384374,
+            "process_cpu_s": 176.92075320900096,
+            "caller_cpu_s": 1.9564533410000635
+          }
+        },
+        "scope": "Existing native calls only; no extra GPU synchronization; CPU time is not GPU kernel duration"
+      },
+      "control_steps": 260,
+      "outcomes": [
+        "excessive_displacement"
+      ],
+      "api_checks_passed": true
+    },
+    {
+      "num_envs": 32,
+      "motion_wall_s": 341.16380475182086,
+      "motion_process_cpu_s": 381.97177405800005,
+      "physics_steps": 4160,
+      "batch_sim_s": 4.333333333333333,
+      "step_timings": {
+        "steps": 4160,
+        "write_s": 7.915648548863828,
+        "physics_s": 289.68524925690144,
+        "read_s": 10.707064953632653
+      },
+      "native_profile": {
+        "calls": {
+          "simulate": {
+            "calls": 4160,
+            "wall_s": 0.4250146262347698,
+            "process_cpu_s": 0.5488155510021571,
+            "caller_cpu_s": 0.4038065529999244
+          },
+          "fetch_results": {
+            "calls": 4160,
+            "wall_s": 288.9138340149075,
+            "process_cpu_s": 324.6130316220017,
+            "caller_cpu_s": 30.14528858400001
+          }
+        },
+        "scope": "Existing native calls only; no extra GPU synchronization; CPU time is not GPU kernel duration"
+      },
+      "control_steps": 260,
+      "outcomes": [
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement",
+        "excessive_displacement"
+      ],
+      "api_checks_passed": true
+    }
+  ],
+  "initial_max_abs_errors": {
+    "robot_q": 0.0,
+    "robot_dq": 0.0,
+    "robot_root": 0.0,
+    "elastic_q": 0.0,
+    "elastic_dq": 0.0,
+    "elastic_bodies": 0.0,
+    "fruits": 0.0,
+    "preload": 0.0,
+    "stiffness": 0.0,
+    "damping": 0.0
+  },
+  "replay_comparison_passed": true,
+  "latency_multiplier": 2.1780463122156775,
+  "aggregate_speedup_over_serial_gpu": 14.692065921889016,
+  "cuda_traces": [
+    {
+      "num_envs": 1,
+      "scope": "First 32 motion physics steps; CUDA tracing adds overhead; not candidate throughput",
+      "physics_calls": 32,
+      "native_range_wall_ms": 1209.321299,
+      "kernel_count": 22384,
+      "kernel_duration_sum_ms": 1138.329226000003,
+      "kernel_union_ms": 1137.3532919921875,
+      "kernel_window_ms": 1250.305787109375,
+      "top_kernels": [
+        {
+          "name": "artiSolveInternalConstraints1T",
+          "calls": 2176,
+          "total_ms": 814.1158460000019,
+          "percent_of_kernel_duration_sum": 71.51848756978147,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 252
+        },
+        {
+          "name": "artiPropagateRigidImpulsesAndSolveSelfConstraints1T",
+          "calls": 2176,
+          "total_ms": 109.14008800000191,
+          "percent_of_kernel_duration_sum": 9.587743642804583,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 231
+        },
+        {
+          "name": "artiPropagateImpulses2PGS",
+          "calls": 2176,
+          "total_ms": 72.57047199999938,
+          "percent_of_kernel_duration_sum": 6.375174276690247,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 122
+        },
+        {
+          "name": "doSelfCollision",
+          "calls": 32,
+          "total_ms": 43.360596,
+          "percent_of_kernel_duration_sum": 3.809143700225077,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            16,
+            1
+          ],
+          "registers_per_thread": 48
+        },
+        {
+          "name": "artiSolveBlockPartition",
+          "calls": 2176,
+          "total_ms": 13.188429999999883,
+          "percent_of_kernel_duration_sum": 1.1585778260603008,
+          "grid": [
+            7,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 136
+        },
+        {
+          "name": "computeUnconstrainedVelocities1TLaunch",
+          "calls": 32,
+          "total_ms": 12.971045999999998,
+          "percent_of_kernel_duration_sum": 1.1394810660865844,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 140
+        },
+        {
+          "name": "setupInternalConstraintLaunch1T",
+          "calls": 32,
+          "total_ms": 10.974375999999998,
+          "percent_of_kernel_duration_sum": 0.9640775049379229,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 168
+        },
+        {
+          "name": "updateBodiesLaunch1T",
+          "calls": 32,
+          "total_ms": 6.579764,
+          "percent_of_kernel_duration_sum": 0.5780194208946703,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 128
+        },
+        {
+          "name": "computeAverageSolverBodyVelocity",
+          "calls": 2176,
+          "total_ms": 6.3352820000001175,
+          "percent_of_kernel_duration_sum": 0.5565421545278062,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "registers_per_thread": 48
+        },
+        {
+          "name": "computeMassMatrix1T",
+          "calls": 32,
+          "total_ms": 4.661749,
+          "percent_of_kernel_duration_sum": 0.40952554792790574,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 164
+        },
+        {
+          "name": "markActiveSlabPGS",
+          "calls": 2176,
+          "total_ms": 4.587877999999883,
+          "percent_of_kernel_duration_sum": 0.4030361248055903,
+          "grid": [
+            7,
+            2,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 64
+        },
+        {
+          "name": "artiSolveInternalTendonAndMimicJointConstraints1T",
+          "calls": 2176,
+          "total_ms": 4.509040999999824,
+          "percent_of_kernel_duration_sum": 0.39611044827902997,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 140
+        }
+      ]
+    },
+    {
+      "num_envs": 32,
+      "scope": "First 32 motion physics steps; CUDA tracing adds overhead; not candidate throughput",
+      "physics_calls": 32,
+      "native_range_wall_ms": 2095.3314560000003,
+      "kernel_count": 22384,
+      "kernel_duration_sum_ms": 1923.0390270000014,
+      "kernel_union_ms": 1920.31332421875,
+      "kernel_window_ms": 2452.9372275390624,
+      "top_kernels": [
+        {
+          "name": "artiSolveInternalConstraints1T",
+          "calls": 2176,
+          "total_ms": 1418.630700000001,
+          "percent_of_kernel_duration_sum": 73.77025011359794,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 252
+        },
+        {
+          "name": "artiPropagateRigidImpulsesAndSolveSelfConstraints1T",
+          "calls": 2176,
+          "total_ms": 155.06251299999985,
+          "percent_of_kernel_duration_sum": 8.063409573226501,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 231
+        },
+        {
+          "name": "artiPropagateImpulses2PGS",
+          "calls": 2176,
+          "total_ms": 121.03986400000026,
+          "percent_of_kernel_duration_sum": 6.294196961193559,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 122
+        },
+        {
+          "name": "doSelfCollision",
+          "calls": 32,
+          "total_ms": 65.435958,
+          "percent_of_kernel_duration_sum": 3.402736870196652,
+          "grid": [
+            4,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            16,
+            1
+          ],
+          "registers_per_thread": 48
+        },
+        {
+          "name": "computeUnconstrainedVelocities1TLaunch",
+          "calls": 32,
+          "total_ms": 33.074641,
+          "percent_of_kernel_duration_sum": 1.719915224580618,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 140
+        },
+        {
+          "name": "artiSolveBlockPartition",
+          "calls": 2176,
+          "total_ms": 20.837893000000072,
+          "percent_of_kernel_duration_sum": 1.0835917892164577,
+          "grid": [
+            7,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 136
+        },
+        {
+          "name": "setupInternalConstraintLaunch1T",
+          "calls": 32,
+          "total_ms": 18.744431000000006,
+          "percent_of_kernel_duration_sum": 0.9747296199829016,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 168
+        },
+        {
+          "name": "updateBodiesLaunch1T",
+          "calls": 32,
+          "total_ms": 12.101431,
+          "percent_of_kernel_duration_sum": 0.6292868127007591,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 128
+        },
+        {
+          "name": "computeMassMatrix1T",
+          "calls": 32,
+          "total_ms": 7.191360999999999,
+          "percent_of_kernel_duration_sum": 0.3739581412041719,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 164
+        },
+        {
+          "name": "computeAverageSolverBodyVelocity",
+          "calls": 2176,
+          "total_ms": 6.933212999999997,
+          "percent_of_kernel_duration_sum": 0.36053418067214255,
+          "grid": [
+            44,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "registers_per_thread": 48
+        },
+        {
+          "name": "computeUnconstrainedSpatialInertiaLaunchPartial1T",
+          "calls": 32,
+          "total_ms": 6.897373,
+          "percent_of_kernel_duration_sum": 0.3586704639458154,
+          "grid": [
+            1,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            2,
+            1
+          ],
+          "registers_per_thread": 100
+        },
+        {
+          "name": "computeUnconstrainedSpatialInertiaLaunch1T",
+          "calls": 32,
+          "total_ms": 6.365360999999998,
+          "percent_of_kernel_duration_sum": 0.33100529477709834,
+          "grid": [
+            2,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            1,
+            1
+          ],
+          "registers_per_thread": 176
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "32 environments provide 14.69x aggregate throughput on this repeated-command replay, not 32x wall-time inflation",
+    "fetch_results accounts for 97.6% (1 env) and 84.7% (32 env) of full replay wall time",
+    "In the separate first-32-step CUDA capture, artiSolveInternalConstraints1T accounts for 71.5% / 73.8% of summed kernel durations",
+    "That kernel launches grid [1,1,1] / [2,1,1], block [32,1,1] on an 84-SM RTX 3090 Ti",
+    "Its 2176 launches across 32 physics steps equal 68 launches per step, consistent with 64 position plus 4 velocity iterations",
+    "Plant has 234 DOFs versus robot 7; attribution of relative robot/plant kernel cost has not been isolated"
+  ],
+  "limitations": [
+    "CUDA capture covers first 32 physics steps only and adds overhead; percentages are not full-dataset kernel percentages",
+    "Full replay is one early-ending failure (260 control steps); does not estimate diverse-pose or 1000-pose throughput",
+    "GPU kernel grid is directly recorded; no SM hardware occupancy counters were collected",
+    "No timestep, solver accuracy, geometry or production behavior changed for speed",
+    "CPU TGS equivalence remains a separate unresolved issue",
+    "External py-spy attachment denied by OS; in-process native timing and CUPTI trace succeeded"
+  ],
+  "unit_tests_passed": 43
+}

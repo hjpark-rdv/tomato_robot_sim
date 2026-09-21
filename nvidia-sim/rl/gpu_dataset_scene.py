@@ -60,7 +60,8 @@ class GpuDatasetScene(DatasetScene):
                 asset._root_physx_view=proxy
                 asset.data._root_physx_view=proxy
         self._efforts=None
-        self.backend_description='GPU PhysX / GPU broadphase / CPU native collider readback / batched efforts'
+        self.batched_joint_commands=getattr(cfg,'gpu_batched_joint_commands',True)
+        self.backend_description='GPU PhysX / GPU broadphase / CPU native collider readback / '+('batched joint commands' if self.batched_joint_commands else 'batched efforts')
         self.reset_all()
 
     def step(self):
@@ -71,12 +72,23 @@ class GpuDatasetScene(DatasetScene):
                 if asset._instantaneous_wrench_composer.active or asset._permanent_wrench_composer.active:
                     raise RuntimeError('Batched step does not support external body wrenches')
             if slot.command_dirty:
-                slot.robot.write_data_to_sim()
-                slot.elastic.articulation.write_data_to_sim()
+                for asset in (slot.robot,slot.elastic.articulation):
+                    if self.batched_joint_commands:
+                        # Preserve actuator processing and estimated effort, but
+                        # upload after ALL models have consumed the same cached
+                        # state. Per-slot setters invalidated that batch cache
+                        # and forced repeated full-scene readbacks at scale.
+                        asset._apply_actuator_model()
+                    else:
+                        asset.write_data_to_sim()
                 slot.command_dirty=False
                 dirty=True
         if dirty or self._efforts is None:
             self._efforts=[torch.cat([a._joint_effort_target_sim for a in assets]) for _,assets,_ in self.batch_groups]
+            if self.batched_joint_commands:
+                for view,assets,indices in self.batch_groups:
+                    view.set_dof_position_targets(torch.cat([a._joint_pos_target_sim for a in assets]),indices)
+                    view.set_dof_velocity_targets(torch.cat([a._joint_vel_target_sim for a in assets]),indices)
         for (view,_,indices),efforts in zip(self.batch_groups,self._efforts):
             view.set_dof_actuation_forces(efforts,indices)
         written=time.monotonic()
@@ -91,6 +103,25 @@ class GpuDatasetScene(DatasetScene):
         self.step_timings['read_s']+=after-simulated
         if self.routing_faults:
             raise RuntimeError('Contact crossed environment boundaries: '+str(self.routing_faults[-1]))
+
+    def reset_slot(self, index):
+        """Reset one independent clone without recreating other constraints."""
+        slot=self.slots[index]
+        if getattr(slot.cfg,'probe_preserve_joints',False):
+            raise ValueError('Continuous reset requires recreatable harvest joints')
+        for path in slot.cluster_joint_paths:
+            if not path.startswith(slot.root+'/HarvestJoint_') or not slot.stage.GetPrimAtPath(path).IsA(UsdPhysics.Joint):
+                raise RuntimeError('Slot reset attempted to delete a non-harvest joint')
+        SimulationManager.enable_usd_notice_handler(False)
+        try:
+            with Sdf.ChangeBlock():
+                for path in slot.cluster_joint_paths:slot.stage.RemovePrim(path)
+                slot.cluster_joint_paths=[]
+        finally:
+            SimulationManager.enable_usd_notice_handler(True)
+        for cache in self.read_caches:cache.invalidate()
+        slot.reset_slot()
+        self._efforts=None
 
     def reset_all(self):
         # All candidates share a reset barrier. Flush/update the global scene

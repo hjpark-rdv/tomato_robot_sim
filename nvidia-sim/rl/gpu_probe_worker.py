@@ -25,8 +25,12 @@ parser.add_argument('--cuda-tensors',action='store_true',help='Diagnostic: use C
 parser.add_argument('--fabric',action='store_true',help='Diagnostic: avoid per-step USD physics writeback')
 parser.add_argument('--joint-variant',choices=['original','reverse-fixed','locked-d6'],default='original',help='Diagnostic equivalent joint authoring, unchanged break thresholds')
 parser.add_argument('--batched-io',action='store_true',help='GPU physics with batched efforts and native collider readback')
+parser.add_argument('--legacy-command-uploads',action='store_true',help='A/B check: upload each articulation target separately')
 parser.add_argument('--native-replication',action='store_true',help='Native clone/environment IDs for early GPU broadphase filtering')
 parser.add_argument('--profile-init',action='store_true',help='Save cProfile of scene initialization and reset')
+parser.add_argument('--profile-motion',action='store_true',help='Measure native simulate/fetch wall and CPU times; no extra sync')
+parser.add_argument('--python-profile-motion',action='store_true',help='Diagnostic cProfile during motion; adds profiling overhead')
+parser.add_argument('--neighbor-reset-interval',type=int,default=0,help='Diagnostic only: reset env_0 every N physics steps while other clones execute unchanged')
 parser.add_argument('--legacy-reset',action='store_true',help='Use original per-slot global flushes for controlled comparison')
 parser.add_argument('--gpu-partitions',type=int,default=8,choices=[1,2,4,8,16,32])
 parser.add_argument('--clone-diagnostic',action='store_true',help='Record unit-aware per-step clone spread and compare batched reads with original native views')
@@ -40,6 +44,8 @@ if not 1<=args.position_iterations<=255 or not 0<=args.velocity_iterations<=255:
     parser.error('Solver iteration count is out of range')
 if args.stationary_steps<0 or args.max_control_steps<0 or args.num_envs<1:
     parser.error('Invalid step/environment count')
+if args.neighbor_reset_interval and (args.neighbor_reset_interval<1 or args.num_envs<2 or not args.batched_io or args.stationary_steps):
+    parser.error('neighbor-reset-interval requires batched motion with at least two environments')
 if (args.zero_load or args.no_contacts or args.preserve_joints or args.joint_variant!='original') and not args.stationary_steps:
     parser.error('Physical isolation switches require --stationary-steps')
 launcher=AppLauncher(args,limit_cpu_threads=8);app=launcher.app
@@ -95,6 +101,7 @@ def run():
     cfg.probe_preserve_joints=args.preserve_joints
     cfg.gpu_legacy_reset=args.legacy_reset
     cfg.gpu_native_replication=args.native_replication
+    cfg.gpu_batched_joint_commands=not args.legacy_command_uploads
     cfg.sim.physx.gpu_max_num_partitions=args.gpu_partitions
     cfg.sim.physx.solver_type=1 if args.solver=='tgs' else 0
     if args.zero_load:cfg.sim.gravity=(0.,0.,0.)
@@ -125,7 +132,7 @@ def run():
         profiler.enable()
         import faulthandler
         faulthandler.dump_traceback_later(60,repeat=True)
-    started=time.perf_counter();world=None
+    started=time.perf_counter();world=None;native_profile=None;motion_profiler=None
     try:
         if args.batched_io:
             cfg.gpu_diagnostic_grid_spacing=args.diagnostic_grid_spacing
@@ -138,6 +145,7 @@ def run():
             world=DatasetScene(cfg,args.num_envs)
         context=world.sim.get_physics_context()
         report['backend']=dict(gpu_dynamics=context.is_gpu_dynamics_enabled(),
+            command_uploads=('legacy' if args.legacy_command_uploads else 'batched') if args.batched_io else 'per_asset',
             broadphase=context.get_broadphase_type(),ccd=context.is_ccd_enabled(),
             gpu_max_num_partitions=context.get_gpu_max_num_partitions(),
             suppress_readback=world.sim.carb_settings.get('/physics/suppressReadback'),
@@ -222,7 +230,13 @@ def run():
         checkpoint('executing_same_commands')
         world.step_timings=dict(steps=0,write_s=0.,physics_s=0.,read_s=0.)
         active={slot.index:execute_steps(slot,dict(commands=commands,phases=phases),identity(slot),app,DEFAULT_LIMITS.copy()) for slot in world.slots}
-        rows=[];began=time.perf_counter();last=began;motion_started_unix=time.time()
+        if args.profile_motion:
+            from gpu_step_profile import NativeStepProfile
+            native_profile=NativeStepProfile(context);native_profile.start()
+        if args.python_profile_motion:
+            motion_profiler=cProfile.Profile();motion_profiler.enable()
+        rows=[];neighbor_resets=[];began=time.perf_counter();last=began;motion_started_unix=time.time()
+        motion_cpu_started=time.process_time()
         while active:
             for index in list(active):
                 try:next(active[index])
@@ -234,10 +248,28 @@ def run():
                     write_json(args.output/f'contacts_{index}.json',world.slots[index].contact_diagnostics)
                     np.savez(args.output/f'final_state_{index}.npz',**state(world.slots[index]))
                     del active[index]
-            if active:world.step()
+            if active:
+                world.step()
+                if args.neighbor_reset_interval and world.step_timings['steps'] % args.neighbor_reset_interval == 0:
+                    before=[state(s) for s in world.slots[1:]]
+                    world.reset_slot(0)
+                    checks=[state_comparison(a,state(s)) for a,s in zip(before,world.slots[1:])]
+                    restored=state_comparison(second[0],state(world.slots[0]))
+                    neighbor_resets.append(dict(step=world.step_timings['steps'],restored=restored,neighbors=checks))
+                    if not restored['passed'] or not all(c['passed'] for c in checks):
+                        raise RuntimeError('Independent live reset modified physical state')
             if time.perf_counter()-last>15:
                 print('[GPU PROBE PROGRESS]',args.mode,world.step_timings,flush=True);last=time.perf_counter()
         elapsed=time.perf_counter()-began
+        report['motion_process_cpu_s']=time.process_time()-motion_cpu_started
+        if args.neighbor_reset_interval:report['neighbor_resets']=neighbor_resets
+        if native_profile:
+            native_profile.stop();report['native_step_profile']=native_profile.report()
+        if motion_profiler:
+            motion_profiler.disable();motion_profiler.dump_stats(str(args.output/'motion.pstats'))
+            import pstats
+            with (args.output/'motion_profile.txt').open('w') as stream:
+                pstats.Stats(motion_profiler,stream=stream).sort_stats('cumulative').print_stats(60)
         steps=world.step_timings['steps']
         report['motion']=dict(wall_s=elapsed,started_unix_s=motion_started_unix,physics_step_timings=world.step_timings.copy(),
             batch_sim_s=steps*cfg.sim.dt,sim_seconds_per_wall_second=steps*cfg.sim.dt/elapsed,
@@ -279,7 +311,11 @@ def run():
         report['error']=dict(type=type(error).__name__,message=str(error))
         checkpoint('failed');raise
     finally:
-        if world is not None:world.close()
+        try:
+            if motion_profiler:motion_profiler.disable()
+            if native_profile:native_profile.stop()
+        finally:
+            if world is not None:world.close()
 
 
 try:run()

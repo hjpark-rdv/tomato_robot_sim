@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-21",
+  "run_dir": "nvidia-sim/rl/runs/20260921_140000_gpu_optimization",
+  "changes": [
+    "Default batched position/velocity/effort uploads after per-asset implicit actuator processing; avoids repeated batch-cache invalidation by local setters",
+    "Opt-in continuous scheduling reuses completed slots after checked independent reset",
+    "Planning uses the freshly reset slot, not potentially deformed active env_0"
+  ],
+  "unchanged": {
+    "physics_hz": 960,
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "solver": "PGS",
+    "gpu_partitions": 1,
+    "plant_dofs": 234,
+    "geometry": true,
+    "stiffness_damping_friction": true,
+    "motion_speeds": true,
+    "contact_and_break_rules": true
+  },
+  "short_scaling": {
+    "control_steps": 32,
+    "physics_steps": 512,
+    "scope": "Fixed-command prefixes; not full candidate throughput. Single measurements, not confidence intervals.",
+    "runs": [
+      {
+        "run": "scale_0032",
+        "num_envs": 32,
+        "motion_wall_s": 39.339066182263196,
+        "initialization_wall_s": 18.38672192301601,
+        "physics_step_timings": {
+          "steps": 512,
+          "write_s": 1.011371036991477,
+          "physics_s": 32.87799082417041,
+          "read_s": 1.3620448121801019
+        },
+        "sim_seconds": 0.5333333333333333,
+        "command_uploads": "legacy",
+        "all_labels_incomplete": true,
+        "aggregate_step_throughput_relative_to_old_32": 1.0
+      },
+      {
+        "run": "scale_0128",
+        "num_envs": 128,
+        "motion_wall_s": 64.38299543317407,
+        "initialization_wall_s": 49.6137708555907,
+        "physics_step_timings": {
+          "steps": 512,
+          "write_s": 4.683079158887267,
+          "physics_s": 41.73613062500954,
+          "read_s": 5.485490298829973
+        },
+        "sim_seconds": 0.5333333333333333,
+        "command_uploads": "legacy",
+        "all_labels_incomplete": true,
+        "aggregate_step_throughput_relative_to_old_32": 2.444065605682788
+      },
+      {
+        "run": "scale_0256",
+        "num_envs": 256,
+        "motion_wall_s": 92.59104919526726,
+        "initialization_wall_s": 87.53660402540118,
+        "physics_step_timings": {
+          "steps": 512,
+          "write_s": 10.234006051905453,
+          "physics_s": 48.637686958536506,
+          "read_s": 10.195654631592333
+        },
+        "sim_seconds": 0.5333333333333333,
+        "command_uploads": "legacy",
+        "all_labels_incomplete": true,
+        "aggregate_step_throughput_relative_to_old_32": 3.3989519742281082
+      },
+      {
+        "run": "batched_commands_0256",
+        "num_envs": 256,
+        "motion_wall_s": 90.61221324559301,
+        "initialization_wall_s": 89.19613541755825,
+        "physics_step_timings": {
+          "steps": 512,
+          "write_s": 7.2589587569236755,
+          "physics_s": 48.969216307625175,
+          "read_s": 10.673338886350393
+        },
+        "sim_seconds": 0.5333333333333333,
+        "command_uploads": "batched",
+        "all_labels_incomplete": true,
+        "aggregate_step_throughput_relative_to_old_32": 3.4731800293313313
+      }
+    ]
+  },
+  "command_upload_write_time_reduction_fraction": 0.2907021238694556,
+  "command_upload_total_time_reduction_fraction": 0.021371784496156176,
+  "checks": {
+    "scale_128": true,
+    "scale_256": true,
+    "batched_uploads_256": true,
+    "dataset_schedule_prefix": true,
+    "untouched_31_clones_contact_replay": true,
+    "all_final_state_fields": {
+      "max_abs_by_field": {
+        "robot_q": 0.0,
+        "robot_dq": 0.0,
+        "robot_root": 0.0,
+        "elastic_q": 0.0,
+        "elastic_dq": 0.0,
+        "elastic_bodies": 0.0,
+        "fruits": 0.0,
+        "preload": 0.0,
+        "stiffness": 0.0,
+        "damping": 0.0
+      },
+      "passed": true
+    },
+    "contact_logs_1336_events_each": true,
+    "live_reset_count": 8,
+    "live_reset_checks": true,
+    "native_break_and_restore": true
+  },
+  "scope_notes": [
+    "Short scaling replays intentionally stop at 32 control steps and have incomplete labels",
+    "32-env contact diagnostic stops at debug limit 260, exactly where old reference ended on displacement; labels are incomplete, not claimed completed harvest trials",
+    "Env_0 is deliberately reset and excluded from reference trajectory equality; 31 untouched clones match all recorded final fields and contact logs exactly",
+    "Continuous dataset integration: four candidates in two environments, four control steps each; labels remain incomplete",
+    "An earlier 2-env independent-reset test completed both physical trials with nine resets and an identical untouched-neighbor trajectory",
+    "No 1000-candidate completion time measured; no one-hour guarantee",
+    "CPU TGS equivalence and real-world calibration remain unverified"
+  ],
+  "recommended_command": "./nvidia-sim/run_gpu_candidate_dataset.sh --num-envs 256 --candidates 1000 --schedule continuous",
+  "unit_tests_passed": 44
+}
