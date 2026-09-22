@@ -91,3 +91,15 @@ DISPLAY=:0 ./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/view_pla
 현재 각도는 주줄기 표면 부착점에서 열매 중심 좌표들의 산술평균을 향하는 방향과 국소 주줄기 위쪽 접선 사이의 각도다. 각 열매 중심은 원본 메시 경계상자 중심을 송이와 함께 강체 변환한다. 이전의 짧은 가지/긴 중심가지 각도는 과거 정의다.
 
 CLI는 `--fruit-center-angle`로 변경했다. 생략시15~85도 방향을 샘플링한 후 표면 접합 보정을 적용하고 실제 최종 각도를 기록하므로 요청값과 실제값은 약간 다를 수 있다. HTML에 실제 각도를 표시한다. 새9개 샘플은 `/root/docker_share/mujoko_debugging_data/20260923_fruit_center_angle_samples/index.html`. 컴파일된 열매 body 위치에서 각도를 독립 재계산하여 메타데이터와1e-5도 이내 일치 확인. 접합/지지 가지 비관통9개 통과, 실패2개는 rejected 폴더 보존. 기존 데이터는 변경하지 않았다.
+
+## 현재 GLB 구현 및 초기 겹침 검사
+
+현재 사용자는 `nvidia-sim/env_usd/tomato_rotate_glb`의5원본과 **GLB Y축0~180° 회전만** 사용하도록 확정했다. 위의 시작가지/열매중심/반구 추정은 이전 시행착오다. `assemble_glb_plant.py --output NEW_DIR --seed 23 --view`로5종을 각각1개씩 기존 주줄기의 구간별 무작위 위치에 붙인다. 원본 크기1, GLB Y-up→MuJoCo Z-up 변환 후 Y축 회전. 아직 시각 전용이다.
+
+검사 명령:
+
+```bash
+./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/audit_glb_collisions.py   /root/docker_share/mujoko_debugging_data/20260923_multi_glb_y_random   --output /root/docker_share/mujoko_debugging_data/NEW_collision_audit
+```
+
+접촉 마스크와 관계없이 convex hull의 명시적 거리를 계산한다. 검사는 초기 상태만 대상으로 하며 메시 삼각형 그대로의 관통 보증이 아니다. 줄기/꽃받침/열매/털의 의도된 연결과 convex 과대근사 때문에 내부 겹침이 많다. 털 포함 여부를 별도 기록한다. 임계값0.5mm에서 서로 다른 송이0쌍, 털 제외 송이–주줄기7쌍(최대3.042mm), 송이–잎/잘린가지1쌍(최대3.201mm). 형상을 바꾸거나 충돌을 추가 제외하지 않았다. 상세 `validation/glb_initial_overlap.json`.

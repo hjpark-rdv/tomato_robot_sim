@@ -1,0 +1,306 @@
+{
+  "scene": "/root/docker_share/mujoko_debugging_data/20260923_multi_glb_y_random",
+  "scene_sha256": "66c051fbd7ff5677566bb6acb56121f4d31276b8425175b062332cded0605261",
+  "method": "explicit_mj_geomDistance_convex_hulls_bypassing_contact_masks",
+  "threshold_m": 0.0005,
+  "geom_count": 1072,
+  "truss_geom_count": 770,
+  "tested_pairs": 4592,
+  "groups": {
+    "within_truss": {
+      "non_hair_overlap_pairs": 1292,
+      "non_hair_max_penetration_m": 0.00585407941615707,
+      "candidate_pairs": 4523,
+      "overlaps_over_threshold": 2082,
+      "max_penetration_m": 0.01217801342638433,
+      "examples": [
+        {
+          "category": "within_truss",
+          "includes_trichomes": true,
+          "geom1": 920,
+          "geom2": 921,
+          "owner1": "truss_00_origin",
+          "owner2": "truss_00_origin",
+          "shape1": "Rachis/primitive_0",
+          "shape2": "Rachis_Trichomes/primitive_0",
+          "penetration_m": 0.01217801342638433,
+          "witness_points": [
+            -0.5987581922911358,
+            0.8279018745663201,
+            0.011613875105744914,
+            -0.5939507042169041,
+            0.8389100323858987,
+            0.013617005368251292
+          ]
+        },
+        {
+          "category": "within_truss",
+          "includes_trichomes": true,
+          "geom1": 458,
+          "geom2": 459,
+          "owner1": "truss_03_origin",
+          "owner2": "truss_03_origin",
+          "shape1": "Rachis/primitive_0",
+          "shape2": "Rachis_Trichomes/primitive_0",
+          "penetration_m": 0.011946981574761827,
+          "witness_points": [
+            -0.7205934077978433,
+            1.5437693938093568,
+            0.9507840483330943,
+            -0.7323133331849043,
+            1.5457495691281986,
+            0.9519892965963458
+          ]
+        },
+        {
+          "category": "within_truss",
+          "includes_trichomes": true,
+          "geom1": 766,
+          "geom2": 767,
+          "owner1": "truss_01_origin",
+          "owner2": "truss_01_origin",
+          "shape1": "Rachis/primitive_0",
+          "shape2": "Rachis_Trichomes/primitive_0",
+          "penetration_m": 0.010898384833462916,
+          "witness_points": [
+            -0.7679951102629373,
+            1.0089276480836282,
+            0.13992205712519515,
+            -0.7772297155764578,
+            1.0031400025258166,
+            0.13992600413645684
+          ]
+        },
+        {
+          "category": "within_truss",
+          "includes_trichomes": true,
+          "geom1": 918,
+          "geom2": 919,
+          "owner1": "truss_00_origin",
+          "owner2": "truss_00_origin",
+          "shape1": "Truss_01_Peduncle/primitive_0",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.010367661550079477,
+          "witness_points": [
+            -0.7266506660753466,
+            0.8012696843577856,
+            0.4651443838529138,
+            -0.7244576665016145,
+            0.7911488853964967,
+            0.4656429691232391
+          ]
+        },
+        {
+          "category": "within_truss",
+          "includes_trichomes": true,
+          "geom1": 764,
+          "geom2": 765,
+          "owner1": "truss_01_origin",
+          "owner2": "truss_01_origin",
+          "shape1": "Truss_01_Peduncle/primitive_0",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.009679693827952914,
+          "witness_points": [
+            -0.7746031140309317,
+            0.9990929809711695,
+            0.5590748899966739,
+            -0.7697382484092252,
+            1.0074182461237329,
+            0.5599231324296855
+          ]
+        }
+      ]
+    },
+    "truss_main_stem": {
+      "non_hair_overlap_pairs": 7,
+      "non_hair_max_penetration_m": 0.0030421010502515175,
+      "candidate_pairs": 16,
+      "overlaps_over_threshold": 14,
+      "max_penetration_m": 0.003881929238878305,
+      "examples": [
+        {
+          "category": "truss_main_stem",
+          "includes_trichomes": true,
+          "geom1": 10,
+          "geom2": 919,
+          "owner1": "main_stem",
+          "owner2": "truss_00_origin",
+          "shape1": "g10",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.003881929238878305,
+          "witness_points": [
+            -0.7540836995069146,
+            0.78882616975962,
+            0.45515779302153414,
+            -0.7574302799670928,
+            0.7876792916553226,
+            0.4567560559702051
+          ]
+        },
+        {
+          "category": "truss_main_stem",
+          "includes_trichomes": true,
+          "geom1": 14,
+          "geom2": 919,
+          "owner1": "main_stem",
+          "owner2": "truss_00_origin",
+          "shape1": "g14",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.003654345615117751,
+          "witness_points": [
+            -0.7542014777835743,
+            0.7885719911634993,
+            0.4552934500432529,
+            -0.7574008152790753,
+            0.7877032915321699,
+            0.45683092928380864
+          ]
+        },
+        {
+          "category": "truss_main_stem",
+          "includes_trichomes": true,
+          "geom1": 106,
+          "geom2": 457,
+          "owner1": "main_stem",
+          "owner2": "truss_03_origin",
+          "shape1": "g106",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.003219393105642972,
+          "witness_points": [
+            -0.784478581617624,
+            1.0823897075961069,
+            1.138715450808255,
+            -0.7863906620460616,
+            1.0798278344866163,
+            1.1390965630944883
+          ]
+        },
+        {
+          "category": "truss_main_stem",
+          "includes_trichomes": false,
+          "geom1": 10,
+          "geom2": 918,
+          "owner1": "main_stem",
+          "owner2": "truss_00_origin",
+          "shape1": "g10",
+          "shape2": "Truss_01_Peduncle/primitive_0",
+          "penetration_m": 0.0030421010502515175,
+          "witness_points": [
+            -0.7542867244717568,
+            0.7898906218099007,
+            0.4557074846712276,
+            -0.756812169918746,
+            0.7885428297487831,
+            0.4567370285771455
+          ]
+        },
+        {
+          "category": "truss_main_stem",
+          "includes_trichomes": false,
+          "geom1": 14,
+          "geom2": 918,
+          "owner1": "main_stem",
+          "owner2": "truss_00_origin",
+          "shape1": "g14",
+          "shape2": "Truss_01_Peduncle/primitive_0",
+          "penetration_m": 0.00288726924523322,
+          "witness_points": [
+            -0.7542379977701757,
+            0.7899874113314735,
+            0.45646105268171555,
+            -0.7567570242950314,
+            0.7889943105840416,
+            0.45746334004918754
+          ]
+        }
+      ]
+    },
+    "truss_leaves_stubs": {
+      "non_hair_overlap_pairs": 1,
+      "non_hair_max_penetration_m": 0.0032008123656866666,
+      "candidate_pairs": 51,
+      "overlaps_over_threshold": 3,
+      "max_penetration_m": 0.0032008123656866666,
+      "examples": [
+        {
+          "category": "truss_leaves_stubs",
+          "includes_trichomes": false,
+          "geom1": 173,
+          "geom2": 455,
+          "owner1": "stem_appendages",
+          "owner2": "truss_04_origin",
+          "shape1": "g173",
+          "shape2": "Truss_01_Peduncle/primitive_0",
+          "penetration_m": 0.0032008123656866666,
+          "witness_points": [
+            -0.7745010857936071,
+            1.104803233573202,
+            1.3136590358595965,
+            -0.7749618800467323,
+            1.101996722265456,
+            1.3151274917615943
+          ]
+        },
+        {
+          "category": "truss_leaves_stubs",
+          "includes_trichomes": true,
+          "geom1": 173,
+          "geom2": 454,
+          "owner1": "stem_appendages",
+          "owner2": "truss_04_origin",
+          "shape1": "g173",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.0031098493804677624,
+          "witness_points": [
+            -0.7746881783883602,
+            1.1052935733021654,
+            1.3146767500772296,
+            -0.7746177062800953,
+            1.1022007283896313,
+            1.3149937787796595
+          ]
+        },
+        {
+          "category": "truss_leaves_stubs",
+          "includes_trichomes": true,
+          "geom1": 117,
+          "geom2": 457,
+          "owner1": "stem_appendages",
+          "owner2": "truss_03_origin",
+          "shape1": "g117",
+          "shape2": "Truss_01_Peduncle_Trichomes/primitive_0",
+          "penetration_m": 0.0012194636916540815,
+          "witness_points": [
+            -0.785570109262471,
+            1.081241945805713,
+            1.1393832083804296,
+            -0.7866129834768275,
+            1.0809815447173454,
+            1.1399591392282487
+          ]
+        }
+      ]
+    },
+    "between_trusses": {
+      "non_hair_overlap_pairs": 0,
+      "non_hair_max_penetration_m": 0,
+      "candidate_pairs": 2,
+      "overlaps_over_threshold": 0,
+      "max_penetration_m": 0,
+      "examples": []
+    }
+  },
+  "elapsed_s": 1.4880715478211641,
+  "physics_ready": false,
+  "limitations": [
+    "Mesh collision uses convex hull, not exact original triangle surfaces",
+    "Within-truss overlaps include intentional connections; not automatically failures",
+    "Main stem attachment may contain intentional junction overlap",
+    "Truss geometry has contact masks disabled and no elastic physics; this is a separate read-only geometry screen"
+  ],
+  "distance_api_validation": {
+    "disabled_masks_no_contacts": true,
+    "convex_mesh_overlap_touch_separation_passed": 3,
+    "absolute_tolerance_m": 1e-07
+  }
+}
