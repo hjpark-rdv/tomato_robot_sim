@@ -1,8 +1,66 @@
 # Farmily Tomato 작업 인수인계
 
-최종 갱신: 2026-09-22 KST (실험 폴더 이름은 기존 기록의 표기를 그대로 유지함).
+최종 갱신: 2026-09-23 KST (실험 폴더 이름은 기존 기록의 표기를 그대로 유지함).
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
+
+## 최신: GLB 5종을 동일 주줄기에 무작위 부착
+
+- 사용자 확정 규칙: GLB Y축0~180°만 회전. Y-up→Z-up 변환 C=Rx90 후 C·Ry(theta), 추가 X/Z 회전 없음. 기존 주줄기·잎 보존, GLB 원본 크기1 유지.
+- `assemble_glb_plant.py --output NEW_DIR --seed 23 --view`: 5파일을 각각1번 사용, 주줄기 호 길이 구간별 무작위 위치에 동시 부착. `--axes` 선택 가능. seed 재현 가능, 출처해시/각도/부착점은 scene.json 저장.
+- 결과 `/root/docker_share/mujoko_debugging_data/20260923_multi_glb_y_random/index.html`. red20.5°, cyan153.6°, green39.2°, white84.7°, rotated90 62.8°. 컴파일 후5송이 변환/Y축 위쪽 및 기존 주줄기302형상 위치·몸체 질량/관성 보존 검사 통과.
+- 정지 시각 미리보기다. 송이 간·잎 간 겹침 필터와 송이 충돌/탄성은 미적용이며 학습용 물리 장면이 아니다.
+
+## 최신 수정: GLB Y-up → MuJoCo Z-up 좌표계 변환
+
+- `attach_glb_preview.py`는 좌표계 변환 C=Rx(+90°) 뒤 원본 GLB Y회전 적용: R=C·Ry(theta). GLB +X→월드 +X, +Y→월드 +Z, +Z→월드 -Y(추가회전0도). 이 좌표계 변환은 송이의 추가 X회전 조작과 구분한다.
+- 기존 축 변환 없는 부착 샘플은 과거 결과다. 새 cyan0도 부착: `/root/docker_share/mujoko_debugging_data/20260923_glb_y_up_attached/axes.png`. GUI 열림, 주줄기·잎 보존. -90/-30/0/30/90도 모두 GLB Y가 월드 위쪽인지 검사.
+- 새 송이는 시각 전용이며 탄성/충돌 연결 미완료. `view_glb_truss.py`의 이전 단독 뷰어는 아직 숫자 좌표 그대로 표시하므로 위쪽 축 수정은 부착 뷰어에 적용된 상태다.
+
+## 현재 사용자 확정: 새 GLB, Y축 회전만
+
+- 원본 송이5개: `nvidia-sim/env_usd/tomato_rotate_glb/*.glb`. 사용자 조건은 **GLB의 Y축만 회전하고 X/Z축 회전을 추가하지 않는 것**. 아래 과거 방향 추정/반구 제한을 새 기준으로 적용하지 않는다.
+- `mujoco-benchmark/scripts/view_glb_truss.py FILE.glb`: 원본 노드 변환·스케일·좌표/원점 유지한 송이 단독 미리보기. `[`, `]`로 Y축±5도, `0`으로 원본. 마우스는 카메라만 회전. 원점 기준 공통 GLB XYZ 표시.
+- 5파일 각154메시 읽기 및 Y회전시 Y좌표/원점거리 보존 검사 통과. cyan0도 화면 실행 확인. 시각 확인 단계이며 새 GLB의 탄성/충돌/주줄기 연결은 아직 구현하지 않았다. 원본 GLB는 수정하지 않았다.
+
+## 현재 기준: 사용자 지정 단계로 롤백
+
+사용자 요청으로 `20260923_tipward_surface_attachment` 단계의 생성 동작으로 복원했다. 짧은 시작 가지 기준 회전과 당시 표면 부착 계산을 사용한다. 이후 캡슐 축 순서 수정, 엄격한 접합 거부/재샘플링, 긴 중심가지/열매 중심 각도 변경은 현재 코드에서 되돌렸다. 아래 후속 변경 기록은 과거 이력이며 현재 동작이 아니다. 기존 주줄기·잎과 모든 결과 폴더는 보존한다. 이 단계의 알려진 초기 겹침도 복원되므로 수집 검증 완료로 해석하지 않는다.
+
+기준 결과: `/root/docker_share/mujoko_debugging_data/20260923_tipward_surface_attachment/index.html`.
+
+## 최신 수정: 부착점→열매 평균 중심 기준(v5)
+
+- 사용자 최종 정정: 주줄기 표면 부착점에서 각 열매 중심 좌표의 평균을 향하는 방향으로 각도를 계산한다. 국소 주줄기 위쪽0°, 0~90도 허용. 아래 v3/v4는 과거 기준이다.
+- 새9개 샘플: `/root/docker_share/mujoko_debugging_data/20260923_fruit_center_angle_samples/index.html`. 컴파일된 열매 body 좌표에서 각도 독립 재계산 통과. 부착 불량2개 제외 기록 보존.
+- `--fruit-center-angle` 사용. 기존 주줄기·잎 보존, 접합/지지 가지 비관통 검사 유지. 전체 장면 물리/학습 수집 준비 완료는 아니다.
+
+## 최신 수정: 긴 중심가지 기준 샘플
+
+- 각도 기준을 짧은 시작 가지에서 **송이 Rachis 중심선 시작→끝 방향**으로 변경(v4). 국소 주줄기 위쪽0°, 0~90도 허용. 기존32도 등 v3 수치와 다른 정의다.
+- `assemble_plant_scene.py --rachis-angle 60`으로 명시 가능. 생략시15~85도 seed 샘플링. 기존 주줄기·잎/송이 내부 형상 유지, 표면 접합·주줄기 관통 검사는 별도 유지.
+- 새9개 샘플: `/root/docker_share/mujoko_debugging_data/20260923_rachis_angle_samples_checked/index.html`. 전체 장면 물리/로봇 수집 검증은 미완료.
+
+## 최신 수정: 송이 허용 방향과 표면 접합
+
+- 사용자 확정: 주줄기 위쪽 끝 방향0°, ±90° 허용. 국소 주줄기 끝 방향과 시작 가지의 각도가90° 이내인지 검사하며 뿌리 방향 배치는 거부한다.
+- 기존 주줄기·잎 보존. 원본 캡슐 fromto 순서로 축 방향을 복구하고, 송이 시작 캡슐 끝을 주줄기 표면에 접합한다. 접합 간격/지지 가지 전체의 주줄기 관통을 컴파일된 형상으로 검사하고 실패하면 생성 거부.
+- 새 미리보기 `/root/docker_share/mujoko_debugging_data/20260923_tipward_attachment_final/index.html`. 전체 장면 충돌/로봇 수집 준비 완료를 의미하지 않는다.
+
+## 최신 수정: 기존 주줄기와 잎 보존
+
+- 조립기가 기존 `plant_mujoco_optimized.xml`의 주줄기 트리를 복사하고 기존 송이만 교체하도록 수정했다. 주줄기16몸체와 잎·잘린 가지 포함302형상을 유지하며 주줄기를 재생성하지 않는다.
+- 기존 월드 배치·메시·색상·질량·관성·관절·충돌 정책을 보존한다. 새 송이의 위치·종류·회전만 바꾸며 새 하중에 따른 물리 응답까지 동일하다는 뜻은 아니다.
+- 전체 식물/송이 확대 미리보기: `/root/docker_share/mujoko_debugging_data/20260923_preserved_stem_leaves/index.html`. 새 송이 물리와 수집기 연결은 여전히 미완료.
+
+## 최신 추가: USD 송이 부착 장면 생성 미리보기
+
+- `assemble_plant_scene.py` / `view_plant_scene.py`: 원본 송이 선택, 주줄기 호 길이 위치·국소 회전 변경, seed 재현, MuJoCo XML/JSON/미리보기 HTML 저장.
+- 온실 USD 54식물/162부착 사례 확인. 162종 형상이라는 뜻은 아니다. L_00의3개 송이 배치로6장면 생성·렌더 완료.
+- 2초 물리 발산은 없지만 초기 충돌 겹침1.03~2.82mm로6개 모두 겹침 기준 실패. **형태 검토용, 학습 수집 준비 미완료**. 기존 모델/데이터는 보존.
+- 로봇·리프트·30후보 수집기 연결, 새 장면 분할 및 Depth+mask 학습은 아직 구현하지 않았다.
+- 상세 범위/명령/검사: [PLANT_ASSEMBLY.md](mujoco-benchmark/PLANT_ASSEMBLY.md).
+- 결과 `/root/docker_share/mujoko_debugging_data/20260923_attachment_preview_convex/index.html`.
 
 ## 최신 상태: RGB-D 진입각 학습·물리 검증 완료
 
