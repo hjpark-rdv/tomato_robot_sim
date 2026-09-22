@@ -46,7 +46,7 @@ def execute(candidate):
 
 
 def report(root,results):
- (root/'results.json').write_text(json.dumps(results,indent=2))
+ temporary=root/'results.tmp.json';temporary.write_text(json.dumps(results,indent=2));temporary.replace(root/'results.json')
  with (root/'results.csv').open('w') as f:
   fields=['candidate_id','result','center_entered','target_center_max_displacement_m','planning_wall_s'];w=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');w.writeheader();w.writerows(results)
  from camera_action import FEATURE_NAMES

@@ -1,16 +1,20 @@
 """Offline integrity checks for observation/action coordinate pairing."""
-import argparse,json
+import argparse,json,time
+from concurrent.futures import ThreadPoolExecutor
+from camera_action import pack_actions,batch_arrays
 from pathlib import Path
 import numpy as np
 from PIL import Image
 from scipy.spatial.transform import Rotation
 
 
-def validate(root):
+def validate(root,workers=8):
+    began=time.perf_counter()
     root=Path(root);rows=[json.loads(s) for s in (root/'observations.jsonl').read_text().splitlines()]
     actions=json.loads((root/'actions.json').read_text());lookup={a['candidate_id']:a for a in actions}
-    max_pos=0.;max_rot=0.;checks=0
-    for row in rows:
+    packed=pack_actions(actions)
+    def check(row):
+        max_pos=0.;max_rot=0.;checks=0
         f=root/'observations'/row['observation_id'];meta=json.loads((f/'camera.json').read_text());pose=np.array(meta['world_from_optical']['color']);k=np.array(meta['K'])
         rgb=np.array(Image.open(f/'rgb.png'));depth=np.load(f/'depth_aligned_to_color_m.npy');valid=np.array(Image.open(f/'aligned_valid.png'))>0
         assert rgb.shape==(480,640,3) and depth.shape==(480,640)
@@ -28,28 +32,29 @@ def validate(root):
         labels=np.load(f/('actions_camera_v2.npz' if is_v2 else 'actions_camera.npz'))
         assert len(labels['candidate_ids'])==len(set(labels['candidate_ids']))
         if is_v2:
-            from camera_action import encode,FEATURE_NAMES
-            assert list(labels['feature_names'])==FEATURE_NAMES
+            expected,_=batch_arrays(packed,row['target']['center_world_gt'],pose)
+            for key in expected:
+                if expected[key].dtype.kind in 'US':np.testing.assert_array_equal(labels[key],expected[key])
+                else:np.testing.assert_allclose(labels[key],expected[key],atol=1e-10)
             world_positions=labels['target_relative_waypoint_xyz_camera']@pose[:3,:3].T+row['target']['center_world_gt']
-            camera_rot=Rotation.from_quat(labels['features'][:,3:7]).as_matrix()
-            world_rot=np.repeat((pose[:3,:3]@camera_rot)[:,None],4,axis=1)
-            np.testing.assert_allclose(pose[:3,:3]@labels['gravity_direction_camera'],[0,0,-1],atol=1e-10)
-            for j,cid in enumerate(labels['candidate_ids']):
-                action=lookup[str(cid)]
-                expected=encode(action['waypoints_world'],action['parameters'],row['target']['center_world_gt'],pose)
-                np.testing.assert_allclose(labels['features'][j],expected['features'],atol=1e-10)
+            world_rot=pose[:3,:3]@Rotation.from_quat(labels['features'][:,3:7]).as_matrix()
+            max_rot=float(abs(world_rot-packed['rot']).max())
         else:
+            np.testing.assert_array_equal(labels['candidate_ids'],packed['ids'])
             world_positions=labels['position_xyz']@pose[:3,:3].T+pose[:3,3]
             world_rot=pose[:3,:3]@Rotation.from_quat(labels['orientation_xyzw'].reshape(-1,4)).as_matrix().reshape(-1,4,3,3)
-        for i,cid in enumerate(labels['candidate_ids']):
-            orig=lookup[str(cid)]['waypoints_world'];p=np.array([w['position_xyz'] for w in orig]);r=Rotation.from_quat([w['orientation_xyzw'] for w in orig]).as_matrix()
-            max_pos=max(max_pos,float(abs(p-world_positions[i]).max()));max_rot=max(max_rot,float(abs(r-world_rot[i]).max()));checks+=1
+            max_rot=float(abs(world_rot-packed['rot'][:,None]).max())
+        max_pos=float(abs(world_positions-packed['xyz']).max());checks=len(packed['ids'])
+        labels.close()
         if 'world_from_robot_tool' in meta:
             for stream in ('color','depth'):
                 np.testing.assert_allclose(np.array(meta['world_from_robot_tool'])@np.array(meta['tool_from_optical'][stream]),meta['world_from_optical'][stream],atol=1e-10)
         assert abs(np.linalg.norm(np.array(meta['world_from_optical']['color'])[:3,3]-np.array(meta['world_from_optical']['depth'])[:3,3])-.015)<1e-10
+        return max_pos,max_rot,checks
+    with ThreadPoolExecutor(max_workers=workers) as pool:measurements=list(pool.map(check,rows))
+    max_pos=max(v[0] for v in measurements);max_rot=max(v[1] for v in measurements);checks=sum(v[2] for v in measurements)
     assert max_pos<1e-10 and max_rot<1e-10
-    result=dict(observations=len(rows),observation_action_pairs_checked=checks,max_position_reconstruction_error_m=max_pos,max_rotation_matrix_reconstruction_error=max_rot,mask_depth_crop_and_baseline_checks='passed')
+    result=dict(wall_s=time.perf_counter()-began,workers=workers,observations=len(rows),observation_action_pairs_checked=checks,max_position_reconstruction_error_m=max_pos,max_rotation_matrix_reconstruction_error=max_rot,mask_depth_crop_and_baseline_checks='passed')
     (root/'validation.json').write_text(json.dumps(result,indent=2));return result
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('root',type=Path);a=p.parse_args();print(validate(a.root))

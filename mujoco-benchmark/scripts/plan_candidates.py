@@ -26,7 +26,7 @@ def initialize(root):
 
 def compute(params):
  from dataset_motion import plan
- begin=time.perf_counter();folder=OUT/'candidates'/params['candidate_id'];folder.mkdir(parents=True)
+ begin=time.perf_counter();folder=OUT/'candidates'/params['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
  planned,check=plan(*MODEL,params)
  info={'candidate_id':params['candidate_id'],'parameters':params,'preflight':check,'planning_wall_s':time.perf_counter()-begin}
  if planned is not None:
@@ -40,8 +40,21 @@ def compute(params):
  (folder/'plan.json').write_text(json.dumps(info,indent=2));return info
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('--workers',type=int,default=4);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('--workers',type=int,default=4);p.add_argument('--resume',action='store_true');a=p.parse_args()
  params=json.loads((a.root/'candidates.json').read_text())
+ if a.resume:
+  missing=[]
+  for c in params:
+   folder=a.root/'candidates'/c['candidate_id']
+   try:
+    info=json.loads((folder/'plan.json').read_text())
+    if info['parameters']!=c:raise ValueError('Plan inputs differ')
+    if info['preflight']['passed']:
+     trace=json.loads((folder/'trace.json').read_text())
+     if not trace or any(len(r['command'])!=7 for r in trace):raise ValueError('Invalid trace')
+   except (OSError,ValueError,KeyError):missing.append(c)
+  print('[계획 재사용]',len(params)-len(missing),'새 계획',len(missing),flush=True);params=missing
+ if not params:return
  with ProcessPoolExecutor(max_workers=a.workers,initializer=initialize,initargs=(str(a.root),)) as pool:
   for info in pool.map(compute,params):print('[경로 계획]',info['candidate_id'],info['preflight'],flush=True)
 if __name__=='__main__':main()

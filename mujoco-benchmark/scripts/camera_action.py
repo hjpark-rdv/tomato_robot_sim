@@ -50,12 +50,44 @@ def encode(waypoints,parameters,target_world,world_from_camera):
     return dict(schema=SCHEMA,coordinate_frame='observation_color_optical',axis_convention='x right, y down, z forward',position_origin='initial target fruit center',approach_direction_camera=approach.tolist(),hook_orientation_camera_xyzw=orientation.tolist(),lift_direction_camera=lift.tolist(),gravity_direction_camera=gravity.tolist(),entry_clearance_m=float(parameters['entry_clearance_m']),lateral_offset_m=float(parameters['lateral_offset_m']),insertion_distance_m=float(insertion),lift_distance_m=float(distance),feature_names=FEATURE_NAMES,features=vector.tolist(),target_relative_waypoint_xyz_camera=offsets.tolist(),phase_names=PHASES,absolute_start_position_is_model_input=False)
 
 
+def pack_actions(actions):
+    """Validate camera-independent geometry once, in batches."""
+    chosen=[a for a in actions if len(a.get('waypoints_world',a.get('waypoints',[])))==4]
+    if not chosen:raise ValueError('No planned actions to encode')
+    paths=[]
+    for a in chosen:
+        w={w['phase']:w for w in a.get('waypoints_world',a.get('waypoints',[]))}
+        paths.append([w[p] for p in PHASES])
+    xyz=np.array([[w['position_xyz'] for w in row] for row in paths],dtype=float)
+    rotations=Rotation.from_quat(np.array([[w['orientation_xyzw'] for w in row] for row in paths]).reshape(-1,4)).as_matrix().reshape(-1,4,3,3)
+    np.testing.assert_allclose(rotations,np.repeat(rotations[:,:1],4,axis=1),rtol=0,atol=1e-8)
+    approach=xyz[:,2]-xyz[:,1];lift=xyz[:,3]-xyz[:,2];insertion=np.linalg.norm(approach,axis=1);distance=np.linalg.norm(lift,axis=1)
+    if not np.isfinite(xyz).all() or np.any(insertion<=0) or np.any(distance<=0):raise ValueError('Invalid geometry')
+    np.testing.assert_allclose(insertion,[a['parameters']['insertion_distance_m'] for a in chosen],atol=1e-8)
+    np.testing.assert_allclose(distance,[a['parameters']['lift_distance_m'] for a in chosen],atol=1e-8)
+    approach/=insertion[:,None];lift/=distance[:,None]
+    np.testing.assert_allclose(approach,-rotations[:,0,:,0],atol=1e-8)
+    return dict(ids=np.array([a['candidate_id'] for a in chosen]),xyz=xyz,rot=rotations[:,0],approach=approach,lift=lift,insertion=insertion,distance=distance,clearance=np.array([a['parameters']['entry_clearance_m'] for a in chosen]),lateral=np.array([a['parameters']['lateral_offset_m'] for a in chosen]))
+
+
+def batch_arrays(packed,target,pose):
+    p=packed;pose=np.asarray(pose);target=np.asarray(target);rc=pose[:3,:3]
+    if not np.isfinite(pose).all() or not np.isfinite(target).all():raise ValueError('Non-finite camera/target')
+    np.testing.assert_allclose(rc.T@rc,np.eye(3),atol=1e-8);np.testing.assert_allclose(np.linalg.det(rc),1,atol=1e-8)
+    quat=Rotation.from_matrix(rc.T@p['rot']).as_quat();quat[quat[:,3]<0]*=-1
+    features=np.c_[p['approach']@rc,quat,p['clearance'],p['lateral'],p['insertion'],p['lift']@rc,p['distance']]
+    if not np.isfinite(features).all():raise ValueError('Non-finite action features')
+    offsets=(p['xyz']-target)@rc
+    # Independently reconstruct every stored position/direction/orientation.
+    error=float(np.abs(offsets@rc.T+target-p['xyz']).max())
+    if error>1e-10:raise ValueError('Position reconstruction mismatch')
+    np.testing.assert_allclose(features[:,:3]@rc.T,p['approach'],atol=1e-9)
+    np.testing.assert_allclose(features[:,10:13]@rc.T,p['lift'],atol=1e-9)
+    np.testing.assert_allclose(rc@Rotation.from_quat(quat).as_matrix(),p['rot'],atol=1e-9)
+    return dict(schema=np.array(SCHEMA),candidate_ids=p['ids'],feature_names=np.array(FEATURE_NAMES),features=features,target_relative_waypoint_xyz_camera=offsets,gravity_direction_camera=rc.T@np.array([0.,0.,-1.]),target_center_camera=(target-pose[:3,3])@rc,phase_names=np.array(PHASES)),error
+
+
 def export_batch(path,actions,target,pose):
-    encoded=[];ids=[]
-    for a in actions:
-        w=a.get('waypoints_world',a.get('waypoints',[]))
-        if len(w)!=4:continue
-        encoded.append(encode(w,a['parameters'],target,pose));ids.append(a['candidate_id'])
-    if not encoded:raise ValueError('No planned actions to encode')
-    np.savez_compressed(path,schema=np.array(SCHEMA),candidate_ids=np.array(ids),feature_names=np.array(FEATURE_NAMES),features=np.array([e['features'] for e in encoded]),target_relative_waypoint_xyz_camera=np.array([e['target_relative_waypoint_xyz_camera'] for e in encoded]),gravity_direction_camera=np.array(encoded[0]['gravity_direction_camera']),target_center_camera=(np.asarray(target)-np.asarray(pose)[:3,3])@np.asarray(pose)[:3,:3],phase_names=np.array(PHASES))
-    return len(ids)
+    arrays,_=batch_arrays(pack_actions(actions),target,pose)
+    np.savez_compressed(path,**arrays)
+    return len(arrays['candidate_ids'])

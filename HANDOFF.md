@@ -10,15 +10,15 @@
 2. 71개 RGB-D 관측과 71,000개 관측–후보 쌍의 좌표 변환 검증 완료. 목표는 부분 중심 진입과 최대 이동량이며, 꼭지 걸림 성공 판정은 아직 없다.
 3. ResNet18 / DINOv2의 고정 영상 특징 + 작은 평가기, 영상 없는 기준 모델을 각각 3회 학습 완료. 검증 손실 기준 선택은 영상 없는 모델이다. AP는 실제 성공 확률이 아니다.
 4. 모델 추천 21회(서로 다른 경로 3개)를 새 물리 실행으로 확인하고 2배속 영상 저장. 영상 모델은 각각 7/7 중심 진입 및 최대 이동 20mm 이하. 동일 장면 반복이며 실물 일반화 검증은 아니다.
-5. 05를 제외한 10개 토마토의 수집 실행기 준비 완료. 각 대상 1후보 + 1시점 촬영 소량 검증 통과. **전체 10,000개 본 수집은 아직 실행하지 않았으며 사용자가 실행할 예정**이다.
+5. 05를 제외한 10개 토마토의 수집 실행기 준비 완료. 각 대상 1후보 + 1시점 촬영 소량 검증 통과. 이후 본 수집을 진행하다 사용자 중단: 01~04 완료, 06은 정상 저장931개/남음69개. 아래 최신 재개 기능으로 이어갈 수 있다.
 
-다음 실행 명령:
+중단된 수집을 이어가는 명령:
 
 ```bash
 cd /root/farmily_tomato
 ./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/collect_tomatoes.py \
-  --targets 1,2,3,4,6,7,8,9,10,11 \
-  --candidates 1000 --workers 48 --planning-workers 16
+  --resume --output /root/docker_share/mujoko_debugging_data/20260922_134834_multi_tomato_collection \
+  --candidates 1000 --workers 48 --planning-workers 16 --postprocess-workers 8
 ```
 
 - 상세 수집 명령과 카메라 의미: [MULTI_TOMATO_COLLECTION.md](mujoco-benchmark/MULTI_TOMATO_COLLECTION.md)
@@ -677,3 +677,16 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 - `collect_tomatoes.py --targets 1,2,3,4,6,7,8,9,10,11 --candidates 1000 --workers 48 --planning-workers 16`으로대상순차물리시험→RGBD저장. 전체10,000개본수집은사용자가실행.
 - 명령/출력/공간/카메라한계: `mujoco-benchmark/MULTI_TOMATO_COLLECTION.md`.
 - 다중대상시상태재연카메라/HTML대상표시도연결. 기존데이터변경없음.
+
+## 후처리 최적화와 재개 기능 (최신 추가)
+
+- `camera_action.py`: 고정 기하 일괄 준비 / 카메라 변환·검증 벡터화. 관측별 압축·검증은 기본8 CPU 스레드. `prepare_observations.py`의 v1 중복 검증 제거, 최종v2 모든검사유지.
+- 71,000쌍 후처리 131.81초→1.41초. 71장 촬영 포함65.61초(장면 초기화 제외). 기존RGB/Depth/mask각71파일완전일치, action오차1e-12이내. 물리 약8분은변경없음.
+- `collect_tomatoes.py --resume --output 기존폴더` + `resume_candidates.py` 추가. 개별결과/상태/명령해시검사후누락만실행. 기존계획/완성관측재사용, Ctrl+C시단계프로세스그룹정리.
+- 실제중단수집 `20260922_134834_multi_tomato_collection`: 01~04완료,06은정상931개/남음69개검사확인. 사용자대신본수집을다시시작하지않음. 재개명령은 MULTI_TOMATO_COLLECTION.md 최신절.
+- 성능검증복사본 `20260922_144727_postprocess_benchmark/` 보존. 중단복구/원래물리결과일치/손상데이터검출확인.
+
+
+## 2026-09-22 진입 탐색 범위 변경
+
+새 staged6d 후보는 진입각 −45°~+45°, 하부 여유 0~10mm를 Sobol 샘플링한다. MuJoCo와 Isaac의 공통 생성기 `nvidia-sim/rl/trajectory_search.py`에 적용했다. 여유는 초기 열매 충돌 구의 아랫면과 고리 와이어 윗면 기준이다. 0mm는 기하학상 여유가 없는 조건이며 실제 접촉은 물리 엔진의 접촉 설정에도 영향을 받는다. Sobol은 끝값 조합을 반드시 포함하지 않는다. 기존 데이터/저장된 후보/재생은 변경하지 않았고, resume은 저장된 후보를 계속 사용한다. 같은 seed와 candidate_id라도 새 실행은 이전 범위와 다른 경로이므로 실행 폴더를 구분한다. 실제 새 범위 물리 실험은 아직 수행하지 않았다.

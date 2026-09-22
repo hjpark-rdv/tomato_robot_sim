@@ -9,7 +9,7 @@ from scipy.spatial.transform import Rotation
 from scipy.stats import qmc
 from geometry import RING_RADIUS, WIRE_RADIUS
 
-BOUNDS = dict(approach_azimuth_deg=(-35., 35.), entry_clearance_m=(.005, .015),
+BOUNDS = dict(approach_azimuth_deg=(-45., 45.), entry_clearance_m=(.000, .010),
               lateral_offset_m=(-.008, .008), insertion_distance_m=(.025, .060),
               lift_forward_angle_deg=(-15., 15.), lift_distance_m=(.020, .045))
 

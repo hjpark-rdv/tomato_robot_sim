@@ -74,7 +74,7 @@ def gallery(root,rows):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('run',type=Path);p.add_argument('--seed',type=int,default=42);p.add_argument('--output',type=Path);p.add_argument('--limit',type=int);args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('run',type=Path);p.add_argument('--seed',type=int,default=42);p.add_argument('--output',type=Path);p.add_argument('--limit',type=int);p.add_argument('--postprocess-workers',type=int,default=8);args=p.parse_args()
     source=args.run.resolve();manifest=json.loads((source/'manifest.json').read_text());results=json.loads((source/'results.json').read_text());assets=source/'replay_assets'
     if mj.__version__!=manifest['mujoco']:raise RuntimeError('Matching MuJoCo required')
     target_name=manifest['target']
@@ -148,9 +148,7 @@ def main():
     metadata=dict(schema='farmily_observation_v1',source_run=str(source),source_model_sha256=manifest['model_sha256'],source_results_sha256=sha(source/'results.json'),initial_state_sha256=sha(out/'initial_state.npz'),source_camera_urdf_sha256=sha(HOME.parent/'nvidia-sim/robot_usd/rb5_farmily.urdf'),target=target_name,actual_robot_world_from_color=actual_nominal.tolist(),virtual_reference_translation_world=(center-reference_center).tolist(),observations=len(rows),actions=len(actions),pose_label_actions=len(action_ids),seed=args.seed,nominal_world_from_color=nominal.tolist(),translation_bounds_camera_m=[.05,.05,.025],rotation_bounds_camera_xyz_deg=[20,20,5],sampling='independent Sobol pose perturbations, selection stratified by target projected 3x3 image cell; no look-at recentering',visibility_counts=dict(counts),screen_cell_counts=dict(cells),split_rule='upper-right cell test; lower-left validation; other in-frame train; out-of-frame visibility_test',split_caveat='All observations share one plant scene and action outcomes. This split tests view variation only, not unseen tomatoes or proof of image necessity. Do not randomly split image-action pairs.',task='predict center entry and maximum displacement; hook success unvalidated',physical_robot_motion=False,plant_randomization=False,physical_rollouts_performed=0,label_semantics='same world-frame paths/outcomes for every view; per-view camera-frame ring waypoints provided. Virtual observation camera pose is an input, not a physically reachable robot pose.',occlusion_definition='1 - visible fruit pixels / isolated fruit pixels inside image; does not measure offscreen fraction',depth_model='ideal D435 intrinsics approximation; clip 0.10m; no real sensor noise',wall_s=time.perf_counter()-began)
     (out/'dataset.json').write_text(json.dumps(metadata,indent=2))
     from validate_observations import validate
-    validation=validate(out)
-    metadata['validation']=validation
-    (out/'dataset.json').write_text(json.dumps(metadata,indent=2))
+
     sheet=Image.new('RGB',(960,792),'#e9efea');draw=ImageDraw.Draw(sheet)
     for cell in range(9):
         sample=next((r for r in rows if r['screen_cell']==cell and not r.get('nominal')),None)
@@ -159,7 +157,9 @@ def main():
         x,y=(cell%3)*320,(cell//3)*264;sheet.paste(image,(x,y));draw.text((x+8,y+244),sample['observation_id']+' / cell '+str(cell),fill='#234e3e')
     sheet.save(out/'coverage_preview.jpg',quality=90)
     from upgrade_observation_actions import upgrade
-    upgrade(out)
+    upgrade(out,workers=args.postprocess_workers)
+    validation=validate(out,workers=args.postprocess_workers)
+    final_meta=json.loads((out/'dataset.json').read_text());final_meta.update(validation=validation,total_observation_wall_s=time.perf_counter()-began);(out/'dataset.json').write_text(json.dumps(final_meta,indent=2))
     gallery(out,rows)
     print('[관측 준비 완료]',out/'index.html',dict(counts),flush=True)
 if __name__=='__main__':main()
