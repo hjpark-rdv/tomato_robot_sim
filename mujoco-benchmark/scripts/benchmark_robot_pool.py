@@ -11,7 +11,7 @@ def worker(index,barrier,out,model,trace,hz,seconds,repeats):
  try:
   import mujoco
   from robot_engine import RobotEngine
-  start=time.perf_counter();e=RobotEngine(model,trace,hz);load=time.perf_counter()-start
+  start=time.perf_counter();e=RobotEngine(model,trace,hz,reference=Path(model).parent/'reference.json' if (Path(model).parent/'reference.json').exists() else None);load=time.perf_counter()-start
   t=time.perf_counter();e.rollout(seconds=min(2.,seconds));warm=time.perf_counter()-t
   out.put(dict(kind='ready',worker=index,pid=os.getpid(),load_s=load,warmup_s=warm,rss_mib=psutil.Process().memory_info().rss/2**20,mujoco=mujoco.__version__,fk_error_m=e.fk_error_m))
   for repeat in range(repeats):
@@ -76,6 +76,16 @@ def run_scale(n,a,root):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--workers',default='1,2,4,8,16,24,32,48');p.add_argument('--repeats',type=int,default=3);p.add_argument('--seconds',type=float,default=16.5);p.add_argument('--hz',type=int,default=120);p.add_argument('--model',type=Path,default=DEFAULT_MODEL);p.add_argument('--trace',type=Path,default=DEFAULT_TRACE);p.add_argument('--output',type=Path);a=p.parse_args();root=a.output or HOME/'outputs'/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_robot_cpu_scaling');root.mkdir(parents=True,exist_ok=False)
  manifest=dict(arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()},utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),cpu=platform.processor(),logical_cpus=psutil.cpu_count(),physical_cpus=psutil.cpu_count(logical=False),ram_bytes=psutil.virtual_memory().total,git_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=HOME,text=True).strip(),model_sha256=hashlib.sha256(a.model.read_bytes()).hexdigest(),trace_sha256=hashlib.sha256(a.trace.read_bytes()).hexdigest(),scope='weak scaling: one identical full command replay per worker per repetition; no rendering, no IK, no harvest-success inference',source_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in Path(__file__).parent.glob('*.py')})
+ # Freeze model, command trace and reference once per run, not per worker.
+ import shutil
+ assets=root/'replay_assets';assets.mkdir()
+ if a.model.suffix!='.mjb':raise ValueError('Replay archive requires compiled .mjb model')
+ for src,name in ((a.model,'model.mjb'),(a.trace,'trace.json'),(HOME/'assets/reference/reference.json','reference.json')):
+  shutil.copy2(src,assets/name)
+ manifest['reference_sha256']=hashlib.sha256((assets/'reference.json').read_bytes()).hexdigest()
+ manifest['replay_archive']='replay_assets'
+ shutil.copytree(Path(__file__).parent,assets/'scripts',ignore=shutil.ignore_patterns('__pycache__'))
+ a.model=assets/'model.mjb';a.trace=assets/'trace.json'
  (root/'manifest.json').write_text(json.dumps(manifest,indent=2));print('[CPU 결과 폴더]',root,flush=True);reports=[]
  for n in map(int,a.workers.split(',')):
   if not 1<=n<=128:raise ValueError('workers must be 1..128')
@@ -84,6 +94,9 @@ def main():
   reports.append(run_scale(n,a,root));(root/'summary.json').write_text(json.dumps(reports,indent=2))
  rows=[{'workers':r['workers'],**v} for r in reports for v in r['rounds']]
  with (root/'rounds.csv').open('w') as f:
-  w=csv.DictWriter(f,fieldnames=rows[0]);w.writeheader();w.writerows(rows)
+  if rows:
+   w=csv.DictWriter(f,fieldnames=rows[0]);w.writeheader();w.writerows(rows)
+ from cpu_report import generate
+ print('[CPU HTML 보고서]',generate(root),flush=True)
  print('[CPU 완료]',root,flush=True)
 if __name__=='__main__':main()

@@ -36,6 +36,20 @@ def build(plant,output):
  for path in bodies:body(path)
  tool=stage.GetPrimAtPath('/Robot/link6/tcp/tomato_gripper');local=np.linalg.inv(tf(bodies['/Robot/link6']))@tf(tool)
  hook.set('pos',nums(local[:3,3]));hook.set('quat',nums(quat(R.from_matrix(local[:3,:3]))));nodes['/Robot/link6'].append(hook)
+ # The source URDF uses ver.6 in millimetres with no visual-origin offset.
+ # Keep the aperture-preserving collision proxies, but render the original CAD.
+ stl=HOME.parent/'ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_6.stl'
+ for geom in hook.findall('geom'):
+  geom.set('rgba','0.65 0.68 0.72 0')
+  geom.set('group','3')
+ # Binary STL exceeds MuJoCo's direct STL decoder face limit. Preserve
+ # every triangle via inline mesh data; only merge identical vertices.
+ raw=stl.read_bytes();n=int.from_bytes(raw[80:84],'little')
+ assert len(raw)==84+50*n, 'Expected binary STL'
+ triangles=np.frombuffer(raw,offset=84,count=n,dtype=np.dtype([('normal','<f4',(3,)),('vertices','<f4',(3,3)),('attr','<u2')]))['vertices']
+ vertices,inverse=np.unique(triangles.reshape(-1,3),axis=0,return_inverse=True)
+ E.SubElement(assets,'mesh',name='gripper_original_stl',vertex=nums(vertices*0.001),face=nums(inverse.reshape(-1,3)))
+ E.SubElement(hook,'geom',name='gripper_original_visual',type='mesh',mesh='gripper_original_stl',contype='0',conaffinity='0',density='0',group='2',rgba='0.65 0.68 0.72 1')
  counts={'collision':0,'visual':0};manifest=[]
  for p in prims:
   path=str(p.GetPath())
@@ -65,7 +79,7 @@ def build(plant,output):
  E.indent(root);output=Path(output);tree.write(output,encoding='unicode')
  import mujoco as mj
  m=mj.MjModel.from_xml_path(str(output));mj.mj_saveModel(m,str(output.with_suffix('.mjb')))
- info=dict(source_usd=str(source),source_plant=str(plant),source_plant_sha256=hashlib.sha256(Path(plant).read_bytes()).hexdigest(),model_sha256=hashlib.sha256(output.read_bytes()).hexdigest(),joints=record,geometry=manifest,counts=counts,nq=m.nq,nv=m.nv,nbody=m.nbody,ngeom=m.ngeom,nu=m.nu,robot_self_collision=False,robot_gravity_compensation=True,break_enabled=False)
+ info=dict(gripper_visual_stl=str(stl),gripper_visual_sha256=hashlib.sha256(stl.read_bytes()).hexdigest(),gripper_collision='Existing Isaac split ring/rail and proximal hull proxies; unchanged',source_usd=str(source),source_plant=str(plant),source_plant_sha256=hashlib.sha256(Path(plant).read_bytes()).hexdigest(),model_sha256=hashlib.sha256(output.read_bytes()).hexdigest(),joints=record,geometry=manifest,counts=counts,nq=m.nq,nv=m.nv,nbody=m.nbody,ngeom=m.ngeom,nu=m.nu,robot_self_collision=False,robot_gravity_compensation=True,break_enabled=False)
  output.with_suffix('.json').write_text(json.dumps(info,indent=2));print('[로봇 모델 생성]',output,counts,m.nv,flush=True)
  return info
 if __name__=='__main__':

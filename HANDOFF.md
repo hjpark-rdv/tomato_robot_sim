@@ -597,3 +597,12 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 - 아직 동일 경로 재생 벤치마크이므로 다양한 후보 생성/저장까지 포함한 완료 시간은 미검증.
 - autoreset 호환 변경은 별도 모델의 disable → enable 변경이며, MJWarp의 미지원 기능을 구현한 것이 아님. 원본과 오류 처리 의미가 같다고 설명하지 않는다.
 - 상세 근거와 다음 단계: [MJLAB_PERFORMANCE.md](mujoco-benchmark/MJLAB_PERFORMANCE.md)의 운영 권장 절.
+
+## MuJoCo 다양한 경로 생성 연결
+
+- `mujoco-benchmark/scripts/candidate_experiment.py`: 기존 Isaac Sobol staged6d/IK/FCL 계획 → MuJoCo CPU 작업자별 서로 다른 경로 실행.
+- 매 스텝 상태 저장, HTML/CSV, `replay_candidate.py`로 원본 상태 재생.
+- 단순 벤치마크와 별도 실행기. 상세 명령/판정 한계: [CANDIDATE_SEARCH.md](mujoco-benchmark/CANDIDATE_SEARCH.md).
+- 현재 부분 중심 진입/과도 변위/물리 이상 진단이며 꼭지 걸림 성공 평가기는 아직 아님.
+
+- 경로 탐색 기본 출력 위치 변경: `/root/docker_share/mujoko_debugging_data/YYYYMMDD_HHMMSS_candidate_search/`. `candidate_experiment.py --output`으로 개별 지정 가능.

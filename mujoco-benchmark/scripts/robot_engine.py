@@ -19,8 +19,8 @@ def forward(ref,q):
  return t
 
 class RobotEngine:
- def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120):
-  began=time.perf_counter();self.ref=json.loads((HOME/'assets/reference/reference.json').read_text())
+ def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120,reference=None):
+  began=time.perf_counter();self.ref=json.loads(Path(reference or HOME/'assets/reference/reference.json').read_text())
   self.model=m=mj.MjModel.from_binary_path(str(model)) if str(model).endswith('.mjb') else mj.MjModel.from_xml_path(str(model));self.data=d=mj.MjData(m);m.opt.timestep=1/hz
   self.names=self.ref['robot_fk']['joint_names'];self.qids=np.array([m.jnt_qposadr[m.joint(n).id] for n in self.names]);self.dofs=np.array([m.jnt_dofadr[m.joint(n).id] for n in self.names]);self.aids=np.array([m.actuator('drive_'+n).id for n in self.names]);self.hook=m.body('Hook').id
   rows=json.loads(Path(trace).read_text());self.initial=np.asarray(rows[0]['joints']);self.commands=np.asarray([r['command'] for r in rows]);self.ts=np.arange(len(rows))/60

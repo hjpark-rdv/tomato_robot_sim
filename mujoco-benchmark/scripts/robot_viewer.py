@@ -24,7 +24,8 @@ def main():
  import mujoco as mj,mujoco.viewer
  e=RobotEngine(a.model,a.trace,a.hz)
  with mujoco.viewer.launch_passive(e.model,e.data) as view:
-  view.cam.type=mj.mjtCamera.mjCAMERA_FIXED;view.cam.fixedcamid=e.model.camera(a.camera).id
+  from view_camera import target_camera
+  target_camera(e.model,e.data,view.cam)
   while view.is_running():
    e.reset()
    for t in np.arange(0,e.ts[-1],1/a.hz):

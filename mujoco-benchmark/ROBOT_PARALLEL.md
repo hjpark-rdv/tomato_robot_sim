@@ -46,3 +46,24 @@ mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/robot_viewer.py \
 ```
 
 대형 XML/MJB 및 상태/영상은 git 제외. 기존 reference.json/robot_export_only.usda 생성은 README의 원본 추출 절차를 사용한다. 동작 입력은 기존 candidate_00049 trace.json이며 실행 manifest에 경로와 해시를 보존한다.
+
+## CPU 결과 HTML 보고서
+
+`benchmark_robot_pool.py` 완료 시 결과 폴더에 `index.html`을 자동 생성한다.
+평균/표준편차, 반복별 시간, 합산 처리량, 비정상 실행 수, 준비/전체 시간,
+샘플 기준 작업자 RSS 합계 최대치와 원본 CSV/JSON 링크를 표시한다.
+기존 결과는 시뮬레이션을 다시 실행하지 않고 다음 명령으로 변환한다.
+
+```bash
+python3 mujoco-benchmark/scripts/cpu_report.py mujoco-benchmark/outputs/20260922_090946_robot_cpu_scaling
+```
+
+이번 결과는 48환경 × 3회 동일 경로 재생이며, 다양한 후보의 성공률이 아니다.
+
+## 회차·환경 재연
+
+HTML에서 반복 회차(1부터)와 환경 번호(0부터)를 선택하면 전체 원본 지표와 실행 명령을 볼 수 있다.
+`replay_cpu_case.py RUN --workers 48 --repeat 2 --env 17`로 선택 실행을 검증한 뒤 실시간 화면으로 반복 재연한다. `--check-only`는 화면 없이 결과 비교만 수행한다.
+모델/명령 해시와 MuJoCo 버전을 확인하고, 최종 고리 위치·최대 목표 변위·접촉 침투·접촉 스텝·비정상/경고 지표를 비교한다. 불일치는 파일로 기록하고 화면 실행을 중단한다.
+매 스텝 원본 상태를 재생하는 기능은 아니며, 요약 지표 일치가 전체 궤적의 동일함을 보장하지 않는다. 현재 시험은 동일49번 경로 반복이다.
+앞으로 CPU 실행은 `replay_assets`에 모델 MJB·trace·reference 및 Python 소스 사본을 한 번씩 보관한다. 모델 아카이브는 수백 MB 추가된다. 기존 실행은 원본 파일이 남아 있고 해시가 맞을 때만 재연 가능하다. Python 의존 환경은 별도 보존이 필요하며 소스 변경 시 경고한다.

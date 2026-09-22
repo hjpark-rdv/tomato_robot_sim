@@ -1,11 +1,11 @@
 {
   "mujoco": "3.11.0",
-  "source_sha256": "e74fafbf5b9af1839b3f4a4ed40805be092454e3cc10e825e395c73659b8237c",
-  "xml_sha256": "4292424a5fcaee6a1434a52e85b0895ec9d4ad854f09e5fcedf2cbff467f73a7",
+  "source_sha256": "7cf003332c26629e5a82a17b51a74aab40320a1ebb213d188d5906b00f9dd6ad",
+  "xml_sha256": "99a85ede522dc515c18f1b8b03a22024f072d1c13032fa776b4140718155f6b3",
   "changes": [
     "MJWarp rejects mjDSBL_AUTORESET; remove that disable bit for BOTH matched CPU/GPU benchmarks. Valid finite-state trajectories are otherwise unchanged. Nonfinite/overflow results are rejected, never counted as fast valid runs."
   ],
   "nq": 241,
   "nv": 241,
-  "ngeom": 530
+  "ngeom": 531
 }

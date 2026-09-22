@@ -1,8 +1,11 @@
 {
+  "gripper_visual_stl": "/root/farmily_tomato/ros2_ws/src/rbpodo_ros2/rbpodo_description/meshes/tomato_gripper/assy_gripper_ver_6.stl",
+  "gripper_visual_sha256": "9308630d988979328d32f497b6fd569c18a52014309d6538deb7dbd9df373656",
+  "gripper_collision": "Existing Isaac split ring/rail and proximal hull proxies; unchanged",
   "source_usd": "/root/farmily_tomato/mujoco-benchmark/assets/reference/robot_export_only.usda",
   "source_plant": "/root/farmily_tomato/mujoco-benchmark/models/plant_mujoco_optimized.xml",
   "source_plant_sha256": "02cd0c5521c27a009c8642b81629d0a5dcf0dee4e436d9391108c9737c2d524a",
-  "model_sha256": "e74fafbf5b9af1839b3f4a4ed40805be092454e3cc10e825e395c73659b8237c",
+  "model_sha256": "7cf003332c26629e5a82a17b51a74aab40320a1ebb213d188d5906b00f9dd6ad",
   "joints": [
     {
       "name": "farmily_lift_height_joint",
@@ -170,7 +173,7 @@
   "nq": 241,
   "nv": 241,
   "nbody": 100,
-  "ngeom": 530,
+  "ngeom": 531,
   "nu": 7,
   "robot_self_collision": false,
   "robot_gravity_compensation": true,
