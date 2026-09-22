@@ -1,6 +1,7 @@
 'use strict';
 const DATA=JSON.parse(document.getElementById('reportData').textContent), M=DATA.manifest, all=DATA.cases;
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const entryOnly=M.classification_rule==='center_entry_only_v2';
 const labels={partial_center_entry:['부분 진입','#268167','#e9f3ec'],excessive_displacement:['과도 변위','#c16c51','#faf0ea'],miss:['미진입','#809396','#edf1f1'],ik_or_planning_failure:['계획 불가','#a88344','#f8f2e7'],invalid_physics:['물리 이상','#9d5976','#f6eaf0'],execution_error:['실행 오류','#97534c','#faeeeb']};
 const paramDefs=[['approach_azimuth_deg','월드 기준 방위각','°',1],['entry_clearance_m','하부 여유','mm',1000],['lateral_offset_m','좌우 오프셋','mm',1000],['insertion_distance_m','삽입 거리','mm',1000],['lift_forward_angle_deg','상승 기울기','°',1],['lift_distance_m','상승 거리','mm',1000]];
 const f=(v,n=1)=>Number.isFinite(v)?v.toLocaleString('ko-KR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';
@@ -13,12 +14,12 @@ const entered=all.filter(r=>r.center_entered===true).length, exceededEntry=all.f
 let filtered=[],page=0,selected=null,returnFocus=null;const pageSize=20;
 $('runName').textContent=DATA.run;$('configLine').textContent=`${M.target||'Tomato_05'} · ${M.workers??'—'}개 물리 작업자 · ${M.hz??'—'} Hz · MuJoCo ${M.mujoco||'—'}`;
 $('runStatus').textContent=all.length>=(M.count??all.length)?'● 기록 완료':'◌ 수집 중';
-const metrics=[['기록된 후보',f(all.length,0),`요청 ${f(M.count,0)}개 · 서로 다른 경로`],['부분 진입 · 변위 20mm 이내',f(counts.partial_center_entry,0),`전체의 ${f(100*(counts.partial_center_entry||0)/Math.max(all.length,1))}% · 우선 검토 대상`],['과도한 열매 밀림',f(counts.excessive_displacement,0),'최대 중심 변위 20mm 초과'],['전체 실험 소요',Number.isFinite(M.total_wall_s)?`${Math.floor(M.total_wall_s/60)}<em>분</em> ${Math.round(M.total_wall_s%60)}<em>초</em>`:'—','계획·실행·결과 저장 포함']];
+const metrics=[['기록된 후보',f(all.length,0),`요청 ${f(M.count,0)}개 · 서로 다른 경로`],[entryOnly?'중심 진입 성공 · 변위 무관':'부분 진입 · 변위 20mm 이내',f(counts.partial_center_entry,0),`전체의 ${f(100*(counts.partial_center_entry||0)/Math.max(all.length,1))}% · 우선 검토 대상`],['과도한 열매 밀림',f(entryOnly?all.filter(r=>mm(r)>20).length:counts.excessive_displacement,0),entryOnly?'최대 열매 변위 20mm 초과 · 성공과 별도 집계':'최대 중심 변위 20mm 초과'],['전체 실험 소요',Number.isFinite(M.total_wall_s)?`${Math.floor(M.total_wall_s/60)}<em>분</em> ${Math.round(M.total_wall_s%60)}<em>초</em>`:'—','계획·실행·결과 저장 포함']];
 $('metrics').innerHTML=metrics.map((m,i)=>`<article class="metric ${i===1?'accent':''}"><span class="metric-index">0${i+1}</span><div class="metric-title">${m[0]}</div><strong>${m[1]}</strong><small>${m[2]}</small></article>`).join('');
-$('takeaway').textContent=counts.partial_center_entry?`먼저 ${f(counts.partial_center_entry,0)}개의 부분 진입 후보를 확인하세요.`:'허용 변위 내 부분 진입으로 분류된 후보가 아직 없습니다.';
-$('explanation').textContent=`중심 진입 이력이 있는 후보는 ${f(entered,0)}개입니다. 그중 ${f(exceededEntry,0)}개는 변위 한도를 초과해 ‘과도 변위’로 분류됐습니다. 진입 여부와 최종 판정을 함께 보세요.`;
+$('takeaway').textContent=counts.partial_center_entry?`먼저 ${f(counts.partial_center_entry,0)}개의 부분 진입 후보를 확인하세요.`:(entryOnly?'중심 진입 성공으로 분류된 후보가 아직 없습니다.':'허용 변위 내 부분 진입으로 분류된 후보가 아직 없습니다.');
+$('explanation').textContent=entryOnly?'정상 물리 실행에서 중심 진입 이력이 있으면 열매 밀림과 관계없이 부분 진입 성공입니다. 최대 변위는 별도 지표입니다.':`중심 진입 이력이 있는 후보는 ${f(entered,0)}개입니다. 그중 ${f(exceededEntry,0)}개는 변위 한도를 초과해 ‘과도 변위’로 분류됐습니다. 진입 여부와 최종 판정을 함께 보세요.`;
 $('distribution').innerHTML=Object.entries(labels).map(([k,l])=>`<button class="dist-row" data-result="${k}" aria-label="${l[0]} 필터"><span class="dist-label"><span>${l[0]}</span><b>${f(counts[k],0)}<small>${f(100*counts[k]/Math.max(all.length,1))}%</small></b></span><div class="bar-track"><div class="bar-fill" style="width:${100*counts[k]/Math.max(all.length,1)}%;background:${l[1]}"></div></div></button>`).join('');
-$('distributionNote').textContent='판정은 후보마다 하나입니다. 물리 이상 → 과도 변위 → 부분 진입 → 미진입 순으로 분류합니다. ‘물리 이상 0’이 수확 성공을 뜻하지는 않습니다.';
+$('distributionNote').textContent=entryOnly?'물리 이상을 먼저 제외하고 중심 진입 여부로 성공/미진입을 분류합니다. 꼭지 걸림이나 수확 성공 판정은 아닙니다.':'판정은 후보마다 하나입니다. 물리 이상 → 과도 변위 → 부분 진입 → 미진입 순으로 분류합니다. ‘물리 이상 0’이 수확 성공을 뜻하지는 않습니다.';
 $('legend').innerHTML=Object.entries(labels).filter(([k])=>counts[k]).map(([k,l])=>`<span><i class="dot" style="background:${l[1]}"></i>${l[0]}</span>`).join('');
 $('axis').innerHTML=paramDefs.map(([k,l,u])=>`<option value="${k}">${l} (${u})</option>`).join('');
 $('resultFilter').innerHTML+=Object.entries(labels).map(([k,l])=>`<option value="${k}">${l[0]} (${counts[k]})</option>`).join('');
@@ -60,7 +61,7 @@ function openDetail(id){
  const paths=r.first_contact_candidate?.prim_paths||r.first_contact_candidate?.objects||[];
  const timing=[['경로 계획',r.planning_wall_s],['물리 계산',m.physics_s],['진단',m.evaluation_s],['상태 기록',m.recording_s]].filter(([,v])=>Number.isFinite(v));let max=Math.max(1,...timing.map(t=>t[1]));
  const linkbase=`candidates/${encodeURIComponent(r.candidate_id)}/`;
- $('detailBody').innerHTML=`${badge(r.result)}<p class="detail-note">${r.result==='partial_center_entry'?'변위 기준 이내에서 중심 진입 이력이 있습니다. 재연으로 실제 걸림 가능성을 확인하세요.':r.result==='excessive_displacement'?'목표 열매가 변위 기준 20mm보다 많이 움직였습니다. 진입 이력이 있어도 이 판정이 우선합니다.':r.result==='miss'?'변위 한도 내에서 열매 중심 진입이 기록되지 않았습니다.':esc(r.error||r.preflight?.reason||'상세 진단을 확인하세요.')}</p>
+ $('detailBody').innerHTML=`${badge(r.result)}<p class="detail-note">${r.result==='partial_center_entry'?(entryOnly?'중심 진입 이력이 있어 성공으로 분류했습니다. 열매 최대 변위는 별도로 확인하세요.':'변위 기준 이내에서 중심 진입 이력이 있습니다. 재연으로 실제 걸림 가능성을 확인하세요.'):r.result==='excessive_displacement'?'목표 열매가 변위 기준 20mm보다 많이 움직였습니다. 진입 이력이 있어도 이 판정이 우선합니다.':r.result==='miss'?(entryOnly?'열매 중심 진입이 기록되지 않았습니다.':'변위 한도 내에서 열매 중심 진입이 기록되지 않았습니다.'):esc(r.error||r.preflight?.reason||'상세 진단을 확인하세요.')}</p>
  <div class="detail-metrics"><div><span>최대 중심 변위</span><b>${f(v)} <small>mm</small></b></div><div><span>중심 진입 이력</span><b>${r.center_entered===true?'있음':r.center_entered===false?'없음':'미기록'}</b></div><div><span>시뮬레이션 길이</span><b>${f(m.simulated_s??r.seconds)} <small>s</small></b></div></div>
  <div class="detail-section"><h3>원본 동작 재연</h3>${r.replay_available?`<p class="detail-note">저장된 원본 상태를 표시합니다. 새 실험은 30Hz 재연 데이터를 사용합니다. 아래 명령을 복사해 터미널에서 실행하세요. 화면은 DISPLAY=:0에서 열립니다.</p><pre id="replayCommand">${esc(r.command)}</pre><div class="command-actions"><button class="button primary" id="copyCommand">명령 복사</button><button class="button ghost" id="downloadScript">실행 스크립트 저장</button></div>`:'<p class="detail-note">저장된 상태 파일이 없어 재연할 수 없습니다.</p>'}</div>
  <div class="detail-section"><h3>재현용 경로 파라미터</h3><div class="parameter-list">${paramDefs.map(([k,l,u,s])=>`<div class="param"><span>${l}</span><b>${f(p[k]*s)} ${u}</b></div>`).join('')}</div></div>

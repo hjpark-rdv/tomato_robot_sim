@@ -9,18 +9,25 @@ from scipy.spatial.transform import Rotation
 from scipy.stats import qmc
 from geometry import RING_RADIUS, WIRE_RADIUS
 
-BOUNDS = dict(approach_azimuth_deg=(-45., 45.), entry_clearance_m=(.000, .010),
-              lateral_offset_m=(-.008, .008), insertion_distance_m=(.025, .060),
-              lift_forward_angle_deg=(-15., 15.), lift_distance_m=(.020, .045))
+# Keep the staged6d file/CLI schema, but sample only azimuth for new datasets.
+# Other motion parameters use the former interval midpoints, except user-fixed clearance/offset.
+SAMPLING = 'scrambled_sobol_azimuth_only'
+FIXED = dict(entry_clearance_m=.002, lateral_offset_m=0., insertion_distance_m=.0425,
+             lift_forward_angle_deg=0., lift_distance_m=.0325)
+BOUNDS = dict(approach_azimuth_deg=(-90., 90.), **{k:(v,v) for k,v in FIXED.items()})
 
 
 def candidates(count, seed):
-    unit = qmc.Sobol(d=6, scramble=True, seed=seed).random_base2(int(math.ceil(math.log2(count))))[:count]
-    values = qmc.scale(unit, [v[0] for v in BOUNDS.values()], [v[1] for v in BOUNDS.values()])
-    return [dict(zip(BOUNDS, map(float, row)), candidate_id=f'candidate_{i:05d}',
+    if count < 1:
+        raise ValueError('Candidate count must be positive')
+    unit = qmc.Sobol(d=1, scramble=True, seed=seed).random_base2(int(math.ceil(math.log2(count))))[:count,0]
+    low, high = BOUNDS['approach_azimuth_deg']
+    angles = low + (high-low)*unit
+    return [dict(approach_azimuth_deg=float(angle), **FIXED,
+                 candidate_id=f'candidate_{i:05d}', sampling=SAMPLING, lift_profile='diagonal_45_return',
                  trajectory_mode='staged6d', stage='coarse', parent_id=None, seed=seed, sobol_index=i,
                  pre_hook_distance_m=.17, hook_roll_deg=0., approach_elevation_deg=0.)
-            for i, row in enumerate(values)]
+            for i, angle in enumerate(angles)]
 
 
 def waypoints(center, neck, params, radius):
@@ -38,7 +45,14 @@ def waypoints(center, neck, params, radius):
     insert = entry - outward*params['insertion_distance_m']
     tilt = np.deg2rad(params['lift_forward_angle_deg'])
     lift = insert + params['lift_distance_m']*(up*np.cos(tilt)-outward*np.sin(tilt))
-    return r, [('preapproach', pre), ('entry', entry), ('insert', insert), ('rise', lift)], -outward
+    points=[('preapproach', pre), ('entry', entry), ('insert', insert)]
+    if params.get('lift_profile')=='diagonal_45_return':
+        if abs(params['lift_forward_angle_deg'])>1e-12:
+            raise ValueError('45-degree return lift requires a vertical net endpoint')
+        mid=insert+params['lift_distance_m']*.5*(up-outward)
+        points.append(('rise_mid',mid))
+    points.append(('rise',lift))
+    return r, points, -outward
 
 
 def center_region(local_center, radius):

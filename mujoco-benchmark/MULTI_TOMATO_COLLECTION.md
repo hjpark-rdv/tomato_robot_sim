@@ -79,3 +79,30 @@ cd /root/farmily_tomato
 ## 2026-09-22 진입 탐색 범위 변경
 
 새 staged6d 후보는 진입각 −45°~+45°, 하부 여유 0~10mm를 Sobol 샘플링한다. MuJoCo와 Isaac의 공통 생성기 `nvidia-sim/rl/trajectory_search.py`에 적용했다. 여유는 초기 열매 충돌 구의 아랫면과 고리 와이어 윗면 기준이다. 0mm는 기하학상 여유가 없는 조건이며 실제 접촉은 물리 엔진의 접촉 설정에도 영향을 받는다. Sobol은 끝값 조합을 반드시 포함하지 않는다. 기존 데이터/저장된 후보/재생은 변경하지 않았고, resume은 저장된 후보를 계속 사용한다. 같은 seed와 candidate_id라도 새 실행은 이전 범위와 다른 경로이므로 실행 폴더를 구분한다. 실제 새 범위 물리 실험은 아직 수행하지 않았다.
+
+## 최신 데이터 생성 조건: 각도만 탐색
+
+새 staged6d/Sobol 후보는 1차원 scrambled Sobol로 진입 방위각 −45°~+45°만 바꾼다. GT 중심에 인식 오차 없음. 좌우 오프셋0mm, 하부 여유2mm 고정. 삽입42.5mm/수직 상승32.5mm는 이전 범위 중간값으로 고정, pre-hook170mm/roll0/elevation0 유지. 이 조건은 중심선을 향하는 계획이며 접촉/변형/제어 오차까지 제거하거나 실제 진입 성공100%를 보장하지 않는다. 삽입 깊이도 모든 후보에서 동일하고 열매 중심 도달을 자동 보장하지 않는다.
+
+공통 trajectory_search 생성기와 새 실행 metadata에 sampling=scrambled_sobol_azimuth_only 기록. 파일/CLI trajectory_mode=staged6d 명칭은 호환성을 위해 유지. 기존 저장 후보/재생/계속 실행(resume)은 이전 경로를 유지하므로 새 조건 수집은 새 실행 폴더로 시작해야 한다. 이전 seed/candidate 번호와 새 경로는 다르다. RL 제어에는 적용하지 않는다.
+
+생성/기하 검사5개 통과(1,000후보에서 각도만 다름, 좌우 중심 정렬, 와이어 여유2mm 확인). 물리 실행/데이터 수집은 실행하지 않았다.
+
+
+### 추가 변경: 진입각 ±90°
+
+새 angle-only 후보의 각도 범위를 −90°~+90°로 확대. 나머지 고정값은 동일. Tomato_06 재생성: `./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/collect_tomatoes.py --targets 6 --candidates 30 --workers 30 --planning-workers 16`. 기존 데이터를 resume하지 않고 새 폴더에 생성한다. Sobol은 정확한 끝값을 포함하지 않을 수 있다. 이 변경 후 수집은 실행하지 않았다.
+
+## 두 구간 45° 상승 적용
+
+새 후보에 `lift_profile=diagonal_45_return`을 저장한다. 진입 방향 기준 전진16.25mm+상승16.25mm 후, 후퇴16.25mm+상승16.25mm. 최종 위치는 이전 수직32.5mm 상승과 동일하며 고리 회전은 바꾸지 않는다. 경유점명은 `rise_mid`, 마지막은 `rise`; 실제 제어 단계는 두 구간 모두 rise로 처리하여 동일 상승 속도/접촉 판정을 적용한다. 이동 거리는 기존 상승의 √2배이므로 동일 속도에서는 상승 시간이 길어진다.
+
+기존 저장 후보에 profile이 없으면 기존 상승을 유지한다. 새 방식은 waypoint5개를 카메라 좌표에도 모두 저장한다. 기존14개 compact features의 lift 방향/거리는 최종 순변위이며, 이14개만으로 직선 상승과 대각 상승을 구분할 수 없다. 두 방식을 학습용으로 섞으려면 phase_names/전체 waypoint 또는 별도 profile 입력을 사용해야 한다. 서로 다른 phase 구조를 한 batch로 섞으면 명시적으로 거부한다.
+
+기하 검사6개 통과, 기존4점/새5점의 카메라 좌표 변환·복원 검증 통과.
+
+## 중심 진입 단독 성공 기준
+
+새 MuJoCo 데이터 수집의 classification_rule=center_entry_only_v2: 물리 오류는 invalid_physics, 정상 실행에서 중심 진입 이력이 있으면 열매 최대 밀림과 무관하게 partial_center_entry, 없으면 miss. target_center_max_displacement_m과 target_displacement_exceeded(20mm 초과)는 참고 지표로 별도 저장. 결과 JSON/CSV와 HTML의 판정 설명/밀림 집계를 갱신했다.
+
+기존 데이터는 자동 덮어쓰지 않았다. 과거 manifest에 rule이 없으면 displacement_first_v1로 이어 실행하여 혼합 판정을 방지한다. 기존 ±90°/30개 데이터를 읽기 전용으로 재분류 검증하면 중심 진입 성공3개, 미진입27개다. RL 보상/종료 조건은 이번 변경 대상이 아니다.

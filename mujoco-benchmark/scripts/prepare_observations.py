@@ -103,7 +103,8 @@ def main():
     (out/'view_plan.json').write_text(json.dumps(plan,indent=2))
     target_ids=[m.geom(s['name']).id for s in reference['shapes'] if s['path']==spec['path']+'/FruitCollider']+[m.geom(s['name']).id for s in reference['visuals'] if s['path']==spec['path']+'/TRUSS_Fruit_'+target_name[-2:]]
     if len(target_ids)!=2:raise RuntimeError('Unexpected target fruit geometry')
-    actions=[];world_poses=[];action_ids=[]
+    from camera_action import motion_phases
+    actions=[];world_poses=[];action_ids=[];action_phases=None
     for r in sorted(results,key=lambda r:r['candidate_id']):
         poses=r.get('waypoints',[])
         item={key:r.get(key) for key in ('candidate_id','parameters','result','center_entered','target_center_max_displacement_m','trace_sha256','states_sha256')}
@@ -111,10 +112,13 @@ def main():
         item['waypoints_world']=poses
         item['hook_success']=None
         actions.append(item)
-        if len(poses)==4:
+        if len(poses) in (4,5):
+            names=motion_phases(poses)
+            if action_phases is not None and names!=action_phases:raise ValueError('Mixed trajectory phases')
+            action_phases=names
             world_poses.append([[*w['position_xyz'],*w['orientation_xyzw']] for w in poses]);action_ids.append(r['candidate_id'])
     (out/'actions.json').write_text(json.dumps(actions,indent=2))
-    positions=np.array(world_poses)[:,:,:3];rotations=Rotation.from_quat(np.array(world_poses)[:,:,3:].reshape(-1,4)).as_matrix().reshape(-1,4,3,3)
+    positions=np.array(world_poses)[:,:,:3];rotations=Rotation.from_quat(np.array(world_poses)[:,:,3:].reshape(-1,4)).as_matrix().reshape(-1,len(action_phases),3,3)
     rows=[];began=time.perf_counter();print('[관측 데이터]',out,flush=True)
     for v in plan:
         oid=v['observation_id'];folder=out/'observations'/oid;pose=np.array(v['world_from_color'])
@@ -134,8 +138,8 @@ def main():
         preview.save(folder/'annotated_preview.jpg',quality=85)
         camera_positions=(positions-pose[:3,3])@pose[:3,:3]
         camera_rotations=pose[:3,:3].T@rotations
-        quats=Rotation.from_matrix(camera_rotations.reshape(-1,3,3)).as_quat().reshape(-1,4,4)
-        np.savez_compressed(folder/'actions_camera.npz',candidate_ids=np.array(action_ids),position_xyz=camera_positions,orientation_xyzw=quats,phase_names=np.array(['preapproach','entry','insert','rise']))
+        quats=Rotation.from_matrix(camera_rotations.reshape(-1,3,3)).as_quat().reshape(-1,len(action_phases),4)
+        np.savez_compressed(folder/'actions_camera.npz',candidate_ids=np.array(action_ids),position_xyz=camera_positions,orientation_xyzw=quats,phase_names=np.array(action_phases))
         # Check camera labels reconstruct the original physical paths.
         np.testing.assert_allclose(camera_positions@pose[:3,:3].T+pose[:3,3],positions,atol=1e-10)
         np.testing.assert_allclose(pose[:3,:3]@camera_rotations,rotations,atol=1e-10)

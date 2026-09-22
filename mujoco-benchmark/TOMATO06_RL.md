@@ -63,7 +63,7 @@ DISPLAY=:0 ./mujoco-benchmark/.mjlab-venv/bin/python \
 
 기존 사용자 실행 `20260922_184128_tomato06_rl`의 200회 체크포인트에서 추가 학습을 시작했다. 짧은 동일 조건 비교(3초 에피소드, 32스텝, 4업데이트): 64환경 1,150전이/초, 256환경 2,352전이/초. 256환경에서 관측한 GPU 사용률 95%, 메모리4,414MiB(평균/최댓값 아님). 기존16환경 357전이/초는 30초 에피소드의 장기 측정이라 엄밀히 동일 조건 비교는 아니다.
 
-- 실행 중: `/root/docker_share/mujoko_debugging_data/20260922_185257_tomato06_rl_gpu256`
+- 중단된 실행: `/root/docker_share/mujoko_debugging_data/20260922_185257_tomato06_rl_gpu256`
 - PID 286916 (종료/상태 확인 전 프로세스 명령을 다시 확인할 것)
 - 환경256, 추가1,000업데이트, 32스텝, 에피소드30초. 총8,192,000전이. 기존 물리/보상 유지.
 - 로그: 같은 경로 뒤 `.log`; 실행 인자/PID는 `.launcher.json`. 25업데이트마다 체크포인트, 완료 후 summary/평가 재생 데이터 저장.
@@ -76,11 +76,11 @@ DISPLAY=:0 ./mujoco-benchmark/.mjlab-venv/bin/python \
 
 `--train-seconds 600 --compare-before --iterations 100000`으로 학습 구간만 600초 제한, 진행 중인 업데이트 종료까지 몇 초 초과 가능. 준비/기준평가/최종평가는 별도. 실제 완료 업데이트와 전이 수 기록, 마지막 체크포인트 저장. 2초 제한 검증에서 2.76초/2업데이트 후 자동 종료·저장·전후 비교 통과.
 
-현재 실행: /root/docker_share/mujoko_debugging_data/20260922_185721_tomato06_rl_10min
+완료된 실행: /root/docker_share/mujoko_debugging_data/20260922_185721_tomato06_rl_10min
 
 PID 291847; 로그: /root/docker_share/mujoko_debugging_data/20260922_185721_tomato06_rl_10min.log
 
-완료 후 summary.json의 comparison에 전후 성공수, 평균 최근접 거리, 평균 최대 열매 이동량 저장. baseline_world0.npz와 evaluation_world0.npz 저장. 실제 향상 여부는 완료 후 확인해야 한다.
+완료 후 summary.json의 comparison에 전후 성공수, 평균 최근접 거리, 평균 최대 열매 이동량 저장. baseline_world0.npz와 evaluation_world0.npz 저장. 완료 결과와 해석은 아래 절을 참고한다.
 
 ## 10분 추가 학습 완료 및 진단
 
@@ -89,3 +89,23 @@ PID 291847; 로그: /root/docker_share/mujoko_debugging_data/20260922_185721_tom
 평가 궤적은 약5초에 접근한 뒤30초까지 비슷한 위치에 머문다. 현재 근접 항은 정지 상태에서도 시간 비용 차감 후 약+0.024/제어스텝(다른 감점 전)을 지급한다. 성공 경험이 없는 정책에서 머무르기 보상과 밀림 실패 페널티가 정체를 유도했을 가능성이 크다. 성공 조건은 고리 평면2mm 이내/0.2초 유지이며 좁다. 다음 작업 후보는 정지 근접 보상 제거와 실제 정렬/삽입 진전 보상 설계, 물리적 진입 가능성 점검이다. **보상 수정은 아직 하지 않았다.**
 
 이전 문단의 '실행 중'은 과거 기록이다. 1,000회 실행은 사용자 요청으로 중단했고 10분 비교 실행은 정상 완료했다. 학습 모델/대형 상태 기록은 docker_share에 유지하며 Git에는 코드·문서·작은 검증 요약만 포함한다.
+
+## 최신 변경: 보상 progress_v2 (학습 실행 안 함)
+
+사용자 요청으로 보상만 변경. 정지 근접 보상과 반복 내부 체류 보상을 제거했다. 기존 목표점 거리 감소20배 + 고리 좌표계의 포획 조건 위반 거리 감소20배로 진전을 보상한다. 포획 오차는 반원 내부/고리 평면/와이어 여유의 위반량이며 특정 세계 방향이나 경로를 고정하지 않는다. 최초 안전 부분 진입은 에피소드당1회 +2, 기존0.2초 유지 성공 +10. 기존 밀림/접촉/급격한 액션/시간 감점과 실패 -5 유지. 후퇴는 signed progress 감점이지만 물리적으로 금지하지 않는다.
+
+물리·관측·행동·종료·성공 기준·학습기는 변경하지 않았다. manifest의 reward_version=progress_v2로 구분한다. 정지/진전/후퇴/왕복/최초 진입/포획 오차 산술 검증 통과. 수정 보상의 실제 학습 개선 여부는 아직 미검증. 학습은 사용자가 직접 실행한다.
+
+2시간 추가 학습(이전10분 모델에서 시작):
+
+```bash
+cd /root/farmily_tomato
+./mujoco-benchmark/.mjlab-venv/bin/python -u \
+  mujoco-benchmark/scripts/train_tomato_rl.py \
+  --num-envs 256 --iterations 100000 \
+  --steps-per-env 32 --episode-seconds 30 \
+  --train-seconds 7200 --compare-before \
+  --checkpoint /root/docker_share/mujoko_debugging_data/20260922_185721_tomato06_rl_10min/model_00170.pt
+```
+
+학습 구간2시간이며 업데이트 경계까지 수 초 초과 가능, 준비·전후 평가는 별도다. 새 datetime 폴더로 저장. 기존 보상과 점수 크기가 달라졌으므로 보상 합보다는 독립 평가 성공/거리/변위를 비교한다.

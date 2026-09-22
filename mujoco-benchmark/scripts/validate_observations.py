@@ -42,7 +42,7 @@ def validate(root,workers=8):
         else:
             np.testing.assert_array_equal(labels['candidate_ids'],packed['ids'])
             world_positions=labels['position_xyz']@pose[:3,:3].T+pose[:3,3]
-            world_rot=pose[:3,:3]@Rotation.from_quat(labels['orientation_xyzw'].reshape(-1,4)).as_matrix().reshape(-1,4,3,3)
+            world_rot=pose[:3,:3]@Rotation.from_quat(labels['orientation_xyzw'].reshape(-1,4)).as_matrix().reshape(-1,len(packed['phases']),3,3)
             max_rot=float(abs(world_rot-packed['rot'][:,None]).max())
         max_pos=float(abs(world_positions-packed['xyz']).max());checks=len(packed['ids'])
         labels.close()

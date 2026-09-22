@@ -179,8 +179,8 @@ def main():
                   parallelism='single GPU PhysX scene, batched articulation I/O, native CPU collider readback' if args.physics_device=='gpu' else 'single CPU PhysX scene, collision-isolated environments, batched articulation I/O',
                   observation_mode='isolated_single_environment' if args.num_envs>128 and not args.gui else 'in_process')
     if args.trajectory_mode=='staged6d':
-        from trajectory_search import BOUNDS as staged_bounds
-        config.update(sampling='scrambled_sobol_6d',bounds=staged_bounds)
+        from trajectory_search import BOUNDS as staged_bounds, SAMPLING as staged_sampling
+        config.update(sampling=staged_sampling,bounds=staged_bounds)
     path = root/'config.json'
     if path.exists():
         if not args.resume:

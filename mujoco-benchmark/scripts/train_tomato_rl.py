@@ -16,6 +16,50 @@ from rsl_rl.algorithms import PPO
 sys.path.insert(0,str(HOME.parent/'nvidia-sim/rl'))
 from geometry import RING_RADIUS,WIRE_RADIUS
 
+REWARD_VERSION = 'reward_v7_funnel_guidance'
+
+def capture_error(local, radius):
+ """Distance to capture constraints in the moving hook frame, no fixed entry path."""
+ inside_x = local[:, 0] <= 0
+ radial_in = (torch.linalg.vector_norm(local[:, [0, 2]], dim=1) + radius - (RING_RADIUS - WIRE_RADIUS)).clamp_min(0)
+ radial = torch.where(inside_x, radial_in, torch.zeros_like(radial_in))
+ plane = (local[:, 1].abs() - .003).clamp_min(0)
+ lat = (local[:, 2].abs() - .005).clamp_min(0)
+ rear = (local[:, 0] + .001).clamp_min(0)
+ return torch.linalg.vector_norm(torch.stack((radial, plane, lat, rear), dim=1), dim=1)
+
+def alignment_metrics(r, center, ring):
+ dir_to_fruit = center - ring
+ dist = torch.linalg.vector_norm(dir_to_fruit, dim=1, keepdim=True).clamp_min(1e-4)
+ u = dir_to_fruit / dist
+ # +X is opening: must point toward fruit (u)
+ cos_opening = (r[:, :, 0] * u).sum(dim=1)
+ # +Y is normal: should point downward (-Z world)
+ cos_down = -r[:, 2, 1]
+ return cos_opening, cos_down
+
+def progress_reward(before_distance,after_distance,before_capture,after_capture,before_align,after_align,before_lat,after_lat,dist_08,first_funnel,first_entry,peak,other,actions,last_action,success,failure):
+ # 1. Distance & capture progress
+ reward=20*(before_distance-after_distance)+20*(before_capture-after_capture)
+ # 2. Opening alignment progress: rotates opening (+X) to face tomato
+ reward+=10.0*(after_align-before_align)
+ # 3. Lateral centering progress: align Z to 0 so hook does not bypass sideways
+ reward+=20.0*(before_lat-after_lat)
+ # 4. Obstacle evasion: penalize getting within 22mm of neighbour Tomato_08 (target is 25.4mm)
+ reward-=(0.022-dist_08).clamp_min(0)*20.0
+ # 5. Discrete entry & success milestones (reinforced)
+ reward+=2.0*(first_funnel&~failure).float()+5.0*(first_entry&~failure).float()+20.0*success.float()-1.5*failure.float()
+ # 6. Penalties and step cost
+ reward-=2*(peak/.02).square()*.05+.01*other.float()+.005*(actions-last_action).square().mean(1)+.003
+ return reward
+
+def duration_text(seconds):
+ total=max(0,int(seconds))
+ return f'{total//60}분 {total%60:02d}초'
+
+def log_status(message):
+ print(f'[{datetime.datetime.now():%H:%M:%S}] {message}',flush=True)
+
 @wp.kernel
 def contact_flags(n:wp.array(dtype=int),world:wp.array(dtype=int),geom:wp.array(dtype=wp.vec2i),dist:wp.array(dtype=float),robot:wp.array(dtype=int),target:wp.array(dtype=int),minimum:wp.array(dtype=float),other:wp.array(dtype=int)):
  i=wp.tid()
@@ -72,6 +116,9 @@ class TomatoEnv:
   self.fruitoffsets=tensor([s['center'] for s in e.ref['fruit_specs']])
   self.fruit0=tensor([e.data.xpos[e.model.body(s['name']).id]+e.data.xmat[e.model.body(s['name']).id].reshape(3,3)@np.array(s['center']) for s in e.ref['fruit_specs']])
   self.target0=tensor(e.data.xpos[e.fruit]+e.data.xmat[e.fruit].reshape(3,3)@np.array(e.target_spec['center']))
+  self.q_approach=tensor([0.740, 2.952, -0.545, -1.567, 0.003, -1.408, 1.133])
+  self.body_08=e.model.body('Tomato_08').id
+  self.offset_08=tensor(next(s for s in e.ref['fruit_specs'] if s['name']=='Tomato_08')['center'])
   robot=np.zeros(e.model.ngeom,np.int32);target=np.zeros_like(robot)
   robot_bodies={e.model.jnt_bodyid[j] for j in jids}|{e.hook}
   for g,b in enumerate(e.model.geom_bodyid):
@@ -84,7 +131,7 @@ class TomatoEnv:
   self.minimum=torch.zeros(a.num_envs,device=self.device);self.other=torch.zeros(a.num_envs,dtype=torch.int32,device=self.device)
   self.episode_length_buf=torch.zeros(a.num_envs,dtype=torch.long,device=self.device)
   self.command=self.ctrl0[self.aids].repeat(a.num_envs,1);self.last_action=torch.zeros_like(self.command)
-  self.peak=torch.zeros(a.num_envs,device=self.device);self.hold=torch.zeros_like(self.peak);self.entered=torch.zeros(a.num_envs,dtype=torch.bool,device=self.device)
+  self.peak=torch.zeros(a.num_envs,device=self.device);self.hold=torch.zeros_like(self.peak);self.entered=torch.zeros(a.num_envs,dtype=torch.bool,device=self.device);self.funnel_entered=torch.zeros_like(self.entered)
   self.stats=dict(episodes=0,success=0,excessive_displacement=0,penetration=0,timeouts=0)
   self.reset(torch.arange(a.num_envs,device=self.device));self.initial_distance=self.distance().clone()
   assert not bool(self.inside().any()), 'Initial pose must be outside the capture region'
@@ -99,27 +146,46 @@ class TomatoEnv:
   center=d.xpos[:,self.e.fruit]+torch.matmul(fr,self.offset)
   ring=d.xpos[:,self.e.hook]+torch.matmul(r,self.ring)
   local=torch.bmm(r.transpose(1,2),(center-ring).unsqueeze(2)).squeeze(2)
-  return center,ring,r,local
+  p8=d.xpos[:,self.body_08]+torch.matmul(d.xmat[:,self.body_08].reshape(-1,3,3),self.offset_08)
+  dist_08=torch.linalg.vector_norm(ring-p8,dim=1)
+  return center,ring,r,local,dist_08
  def distance(self):
-  _,_,_,local=self.geometry()
+  _,_,_,local,_=self.geometry()
   # Aim inside rear aperture, with all orientations free.
   goal=local.new_tensor([-.010,0,0]);return torch.linalg.vector_norm(local-goal,dim=1)
  def inside(self):
   v=self.geometry()[3]
-  return (v[:,0]<=-.001)&(torch.linalg.vector_norm(v[:,[0,2]],dim=1)+self.radius<=RING_RADIUS-WIRE_RADIUS)&(v[:,1].abs()<=.002)
+  return (v[:,0]<=-.001)&(torch.linalg.vector_norm(v[:,[0,2]],dim=1)+self.radius<=RING_RADIUS-WIRE_RADIUS)&(v[:,1].abs()<=.003)
+ def funnel_inside(self):
+  v=self.geometry()[3]
+  return (torch.linalg.vector_norm(v[:,[0,2]],dim=1)<=RING_RADIUS+.005)&(v[:,1].abs()<=.008)&(v[:,0]<=.015)
  @torch.inference_mode()
  def reset(self,ids):
   self.sim.reset(ids);d=self.sim.data
   d.qpos[ids]=self.q0;d.qvel[ids]=0;d.ctrl[ids]=self.ctrl0;d.qfrc_applied[ids]=self.preload
-  self.command[ids]=self.ctrl0[self.aids];self.last_action[ids]=0;self.episode_length_buf[ids]=0;self.peak[ids]=0;self.hold[ids]=0;self.entered[ids]=False
+  # Curriculum: in training, 50% envs start near approach pose (3-5cm from target) to discover capture
+  if getattr(self,'training_mode',True) and len(ids)>1:
+   near_mask=(ids%2==1)
+   near_ids=ids[near_mask]
+   if len(near_ids)>0:
+    d.qpos[near_ids[:,None],self.qids]=self.q_approach
+    d.ctrl[near_ids[:,None],self.aids]=self.q_approach
+    self.command[near_ids]=self.q_approach
+  self.command[ids]=d.ctrl[ids[:,None],self.aids]
+  self.last_action[ids]=0;self.episode_length_buf[ids]=0;self.peak[ids]=0;self.hold[ids]=0;self.entered[ids]=False;self.funnel_entered[ids]=False
   self.sim.forward()
  def get_observations(self):
-  d=self.sim.data;c,ring,r,local=self.geometry()
+  d=self.sim.data;c,ring,r,local,_=self.geometry()
   obs=torch.cat(((d.qpos[:,self.qids]-self.q0[self.qids]),d.qvel[:,self.dofs]/self.speed,(self.command-d.qpos[:,self.qids])/self.speed,local/.2,r.reshape(-1,9),(c-self.target0)/.02,self.peak[:,None]/.02,self.last_action,self.episode_length_buf[:,None]/self.max_episode_length),1)
   return TensorDict({'policy':obs},batch_size=[self.num_envs])
  def step(self,actions):
   if not bool(torch.isfinite(actions).all()):raise RuntimeError('Nonfinite policy action')
-  actions=actions.clamp(-1,1);before=self.distance();d=self.sim.data
+  actions=actions.clamp(-1,1);before=self.distance()
+  c0,ring0,r0,local0,d8_0=self.geometry()
+  before_capture=capture_error(local0,self.radius)
+  before_lat=local0[:,2].abs()
+  b_open,b_down=alignment_metrics(r0,c0,ring0);before_align=0.5*(b_open+b_down)
+  d=self.sim.data
   delta=actions*self.speed*self.dt
   self.command=torch.clamp(self.command+delta,self.limits[:,0],self.limits[:,1])
   # Prevent a blocked arm from accumulating large position error and stored drive force.
@@ -137,13 +203,17 @@ class TomatoEnv:
    wp.launch(contact_flags,dim=c.dist.shape[0],inputs=[self.sim.wp_data.nacon,c.worldid,c.geom,c.dist,wp.from_torch(self.robot),wp.from_torch(self.targetmask),wp.from_torch(self.minimum),wp.from_torch(self.other)],device=self.device)
   if hasattr(self.sim.wp_data,'overflow') and np.any(self.sim.wp_data.overflow.numpy()):raise RuntimeError('MJWarp contact/constraint overflow')
   self.episode_length_buf+=1
-  inside=self.inside();self.entered|=inside;self.hold=torch.where(inside,self.hold+self.dt,0.)
+  c1,ring1,r1,local1,d8_1=self.geometry()
+  after_capture=capture_error(local1,self.radius)
+  after_lat=local1[:,2].abs()
+  a_open,a_down=alignment_metrics(r1,c1,ring1);after_align=0.5*(a_open+a_down)
+  inside=self.inside();first_entry=inside&~self.entered;self.entered|=inside;self.hold=torch.where(inside,self.hold+self.dt,0.)
+  funnel=self.funnel_inside();first_funnel=funnel&~self.funnel_entered;self.funnel_entered|=funnel
   displaced=self.peak>.020;penetration=self.minimum<-.002
   success=(self.hold>=.2)&~displaced&~penetration
   timeout=self.episode_length_buf>=self.max_episode_length
   done=success|displaced|penetration|timeout
-  reward=20*(before-self.distance())+.05*torch.exp(-self.distance()/.05)+inside.float()*.5-2*(self.peak/.02).square()*.05-.01*self.other.float()-.005*(actions-self.last_action).square().mean(1)-.001
-  reward+=success.float()*10-(displaced|penetration).float()*5
+  reward=progress_reward(before,self.distance(),before_capture,after_capture,before_align,after_align,before_lat,after_lat,d8_1,first_funnel,first_entry,self.peak,self.other,actions,self.last_action,success,displaced|penetration)
   self.last_action=actions.clone()
   info={'terminal_ring_distance':self.geometry()[3].norm(dim=1),'terminal_qpos_world0':d.qpos[0].clone() if getattr(self,'record_evaluation',False) else None,'success':success.clone(),'peak_displacement':self.peak.clone(),'entered':self.entered.clone(),'penetration_m':-self.minimum.clone()}
   if bool(done.any()):
@@ -153,14 +223,14 @@ class TomatoEnv:
 
 def train_config(steps):
  return dict(num_steps_per_env=steps,obs_groups={'actor':['policy'],'critic':['policy']},multi_gpu=None,
- actor=dict(class_name='MLPModel',hidden_dims=[128,128],activation='elu',obs_normalization=True,distribution_cfg=dict(class_name='GaussianDistribution',init_std=.5,std_type='scalar')),
+ actor=dict(class_name='MLPModel',hidden_dims=[128,128],activation='elu',obs_normalization=True,distribution_cfg=dict(class_name='GaussianDistribution',init_std=.25,std_type='scalar')),
  critic=dict(class_name='MLPModel',hidden_dims=[128,128],activation='elu',obs_normalization=True),
  algorithm=dict(class_name='PPO',num_learning_epochs=4,num_mini_batches=4,learning_rate=3e-4,schedule='adaptive',gamma=.99,lam=.95,entropy_coef=.01,rnd_cfg=None))
 
 
 @torch.inference_mode()
 def evaluate(env,alg,root,prefix):
- alg.eval_mode();env.record_evaluation=True;env.reset(torch.arange(env.num_envs,device=env.device));started=time.perf_counter()
+ alg.eval_mode();env.record_evaluation=True;env.training_mode=False;env.reset(torch.arange(env.num_envs,device=env.device));started=time.perf_counter()
  active=torch.ones(env.num_envs,dtype=torch.bool,device=env.device);success=torch.zeros_like(active)
  peak=torch.zeros(env.num_envs,device=env.device);closest=torch.full_like(peak,float('inf'))
  q=[env.sim.data.qpos[0].cpu().numpy().copy()]
@@ -174,7 +244,7 @@ def evaluate(env,alg,root,prefix):
   if not bool(active.any()):break
  np.savez_compressed(root/f'{prefix}_world0.npz',qpos=np.array(q),times_s=np.arange(len(q))*env.dt)
  result=dict(wall_s=time.perf_counter()-started,successes=int(success.sum()),environments=env.num_envs,max_fruit_displacement_m=peak.tolist(),mean_closest_ring_center_distance_m=float(closest.mean()),note='identical start deterministic clones; terminal frame included; not independent generalization trials')
- env.record_evaluation=False
+ env.record_evaluation=False;env.training_mode=True
  return result
 
 def main():
@@ -185,7 +255,7 @@ def main():
  torch.manual_seed(a.seed);np.random.seed(a.seed);torch.set_num_threads(1);wp.init();start=time.perf_counter()
  env=TomatoEnv(a);cfg=train_config(a.steps_per_env)
  import importlib.metadata as meta
- manifest=dict(arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()},versions={n:meta.version(n) for n in ['mujoco','mujoco-warp','mjlab','rsl-rl-lib']},model_sha256=hashlib.sha256((a.output/'rl_model.mjb').read_bytes()).hexdigest(),model_changes=['non-adjacent robot self-collision enabled; adjacent/welded links excluded; robot collision geoms use zero margin/gap for MJWarp self-collision compatibility; plant margins unchanged'],selective_reset_verified=env.selective_reset_verified,config=copy.deepcopy(cfg),joint_names=env.e.names,speed_caps=env.speed.tolist(),initial_distance_m=env.initial_distance.tolist(),initial_qpos_error=env.initial_qpos_error,physics_hz=120,control_hz=20,target='Tomato_06',scope='GT fixed scene; finite horizon; partial entry held 0.2s; all fruit displacement <=20mm; penetration <=2mm; not pedicel hook success; no randomization',sources=['https://github.com/mujocolab/mjlab','https://github.com/leggedrobotics/rsl_rl'])
+ manifest=dict(reward_version=REWARD_VERSION,reward_description='20*distance_progress + 20*capture_constraint_progress (directed funnel) + 10.0*aperture_alignment_progress + 20.0*lateral_centering_progress + dist_08_evasion + 2.0*funnel_entry + 5.0*narrow_entry + 20.0*held_success; safe 43mm approach curriculum',arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()},versions={n:meta.version(n) for n in ['mujoco','mujoco-warp','mjlab','rsl-rl-lib']},model_sha256=hashlib.sha256((a.output/'rl_model.mjb').read_bytes()).hexdigest(),model_changes=['non-adjacent robot self-collision enabled; adjacent/welded links excluded; robot collision geoms use zero margin/gap for MJWarp self-collision compatibility; plant margins unchanged'],selective_reset_verified=env.selective_reset_verified,config=copy.deepcopy(cfg),joint_names=env.e.names,speed_caps=env.speed.tolist(),initial_distance_m=env.initial_distance.tolist(),initial_qpos_error=env.initial_qpos_error,physics_hz=120,control_hz=20,target='Tomato_06',scope='GT fixed scene; finite horizon; partial entry held 0.2s; all fruit displacement <=20mm; penetration <=2mm; not pedicel hook success; no randomization',sources=['https://github.com/mujocolab/mjlab','https://github.com/leggedrobotics/rsl_rl'])
  (a.output/'manifest.json').write_text(json.dumps(manifest,indent=2))
  shutil.copy2(__file__,a.output/'train_source.py')
  alg=PPO.construct_algorithm(env.get_observations(),env,cfg,env.device)
@@ -194,11 +264,15 @@ def main():
   if checkpoint['manifest']['model_sha256']!=manifest['model_sha256']:raise RuntimeError('Checkpoint physics model hash differs')
   alg.load(checkpoint['algorithm'],load_cfg=None,strict=True)
  initial=[p.detach().clone() for p in alg.actor.parameters()]
- setup=time.perf_counter()-start;print('[RL 준비]',a.output,'환경',a.num_envs,'준비초',round(setup,2),flush=True)
+ setup=time.perf_counter()-start;log_status(f'준비 완료 : {duration_text(setup)} | 환경 {a.num_envs}개 | 저장 {a.output}')
+ if a.compare_before:log_status('학습 전 평가 시작')
  baseline=evaluate(env,alg,a.output,'baseline') if a.compare_before else None
- if baseline is not None:(a.output/'baseline.json').write_text(json.dumps(baseline,indent=2))
+ if baseline is not None:
+  (a.output/'baseline.json').write_text(json.dumps(baseline,indent=2))
+  log_status(f"학습 전 평가 완료 : {duration_text(baseline['wall_s'])} | 성공 {baseline['successes']}/{baseline['environments']}")
  env.reset(torch.arange(a.num_envs,device=env.device));env.stats={k:0 for k in env.stats};env.record_evaluation=False
  torch.manual_seed(a.seed)
+ log_status('학습 시작'+(f' | 시간 제한 {duration_text(a.train_seconds)}' if a.train_seconds is not None else f' | 최대 {a.iterations}회 업데이트'))
  obs=env.get_observations();rows=[];trainstart=time.perf_counter()
  for iteration in range(a.iterations):
   t=time.perf_counter();alg.train_mode();rew=0.
@@ -215,17 +289,21 @@ def main():
   if a.train_seconds is not None:row['estimated_remaining_minutes']=min(row['estimated_remaining_minutes'],max(0.,a.train_seconds-elapsed)/60)
   rows.append(row)
   with (a.output/'progress.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
-  print('[RL 학습]',json.dumps(row),flush=True)
+  log_status(f"학습 {iteration+1}회 | 경과 {duration_text(elapsed)} | 예상 남음 {duration_text(row['estimated_remaining_minutes']*60)} | {row['transitions_per_second']:.0f}스텝/초 | 평균 보상 {row['mean_step_reward']:.5f} | 성공 {row['success']}/{row['episodes']}")
   time_done=a.train_seconds is not None and time.perf_counter()-trainstart>=a.train_seconds
   if (iteration+1)%25==0 or iteration==a.iterations-1 or time_done:torch.save({'algorithm':alg.save(),'iteration':iteration,'manifest':manifest},a.output/f'model_{iteration+1:05d}.pt')
   if time_done:break
  trainwall=time.perf_counter()-trainstart
+ log_status(f'학습 종료 : {duration_text(trainwall)} | {len(rows)}회 업데이트')
  changed=any(not torch.equal(x,p) for x,p in zip(initial,alg.actor.parameters()))
+ log_status('학습 후 평가 시작')
  evaluation=evaluate(env,alg,a.output,'evaluation')
+ log_status(f"학습 후 평가 완료 : {duration_text(evaluation['wall_s'])} | 성공 {evaluation['successes']}/{evaluation['environments']}")
  transitions=len(rows)*a.steps_per_env*a.num_envs
  summary=dict(setup_wall_s=setup,training_wall_s=trainwall,completed_updates=len(rows),stop_reason='time_budget' if a.train_seconds is not None and trainwall>=a.train_seconds else 'iteration_limit',transitions=transitions,transitions_per_second=transitions/trainwall,weights_changed=changed,training=rows[-1],evaluation=evaluation,total_wall_s=time.perf_counter()-start)
  if baseline is not None:
   summary['baseline_evaluation']=baseline
   summary['comparison']=dict(successes_before=baseline['successes'],successes_after=evaluation['successes'],mean_closest_distance_before_m=baseline['mean_closest_ring_center_distance_m'],mean_closest_distance_after_m=evaluation['mean_closest_ring_center_distance_m'],mean_max_displacement_before_m=float(np.mean(baseline['max_fruit_displacement_m'])),mean_max_displacement_after_m=float(np.mean(evaluation['max_fruit_displacement_m'])),note='identical initial scene; deterministic GPU clones, not independent generalization trials')
- (a.output/'summary.json').write_text(json.dumps(summary,indent=2));print('[RL 완료]',json.dumps(summary),flush=True)
+ (a.output/'summary.json').write_text(json.dumps(summary,indent=2))
+ log_status(f"전체 종료 : {duration_text(summary['total_wall_s'])} | 결과 {a.output/'summary.json'}")
 if __name__=='__main__':main()

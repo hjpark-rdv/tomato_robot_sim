@@ -63,13 +63,13 @@ def plan(env,kin,checker,params):
                 sol,pe,re=kin.ik(position+(goal-position)*u,r,knots[-1])
                 if pe>.002 or re>.03: return None,dict(reason='path_ik',phase=name,position_error_m=pe,rotation_error_rad=re)
                 knots.append(sol)
-            speed=(getattr(env.cfg,'dataset_rise_speed',.002) if name=='rise' else
+            speed=(getattr(env.cfg,'dataset_rise_speed',.002) if name in ('rise_mid','rise') else
                    getattr(env.cfg,'dataset_pull_speed',.004) if name=='pull' else .035)
             seconds=max(1.5*distance/speed,angle/.15,.2)
             steps=int(np.ceil(seconds/env.step_dt));u=np.linspace(0,1,steps+1)[1:];u=u*u*(3-2*u)
             segment=np.stack([np.interp(u,np.linspace(0,1,len(knots)),np.array(knots)[:,i]) for i in range(len(q))],axis=1)
         segment=np.concatenate([segment,np.repeat(segment[-1:],20,axis=0)])
-        commands.extend(segment);phases.extend([name]*len(segment));q=segment[-1]
+        commands.extend(segment);phases.extend(['rise' if name=='rise_mid' else name]*len(segment));q=segment[-1]
         position,orientation=kin.fk(q)
         diagnostics.append(dict(phase=name,position_xyz=goal.tolist(),orientation_xyzw=rotation.as_quat().tolist(),steps=len(segment)))
     commands=np.asarray(commands)

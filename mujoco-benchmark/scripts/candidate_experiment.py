@@ -9,13 +9,21 @@ import numpy as np
 from robot_engine import RobotEngine,HOME,DEFAULT_MODEL,DEFAULT_TRACE
 ROOT=HOME.parent
 sys.path.insert(0,str(ROOT/'nvidia-sim/rl'))
-from trajectory_search import candidates,center_region
+from trajectory_search import candidates,center_region,BOUNDS,SAMPLING
 from suite import RING
 
 
+CLASSIFICATION_RULE='center_entry_only_v2'
+
+def classify_result(unstable,entry,displacement,rule=CLASSIFICATION_RULE):
+ if unstable:return 'invalid_physics'
+ if rule==CLASSIFICATION_RULE:return 'partial_center_entry' if entry else 'miss'
+ if rule!='displacement_first_v1':raise ValueError('Unknown classification rule: '+rule)
+ return 'excessive_displacement' if displacement>.020 else 'partial_center_entry' if entry else 'miss'
+
 def initialize(root):
- global ENGINE,RUN
- RUN=Path(root);ENGINE=RobotEngine(RUN/'replay_assets/model.mjb',RUN/'replay_assets/initial_trace.json',json.loads((RUN/'manifest.json').read_text())['hz'],reference=RUN/'replay_assets/reference.json',target=json.loads((RUN/'manifest.json').read_text()).get('target','Tomato_05'))
+ global ENGINE,RUN,RULE
+ RUN=Path(root);RULE=json.loads((RUN/'manifest.json').read_text()).get('classification_rule','displacement_first_v1');ENGINE=RobotEngine(RUN/'replay_assets/model.mjb',RUN/'replay_assets/initial_trace.json',json.loads((RUN/'manifest.json').read_text())['hz'],reference=RUN/'replay_assets/reference.json',target=json.loads((RUN/'manifest.json').read_text()).get('target','Tomato_05'))
 
 
 def execute(candidate):
@@ -35,10 +43,10 @@ def execute(candidate):
  local=Rotation.from_quat(hp[:,3:]).inv().apply(centers-rings)
  entry=not center_region(local[0],spec['radius']) and any(center_region(v,spec['radius']) for v in local[1:])
  displacement=float(np.linalg.norm(centers-centers[0],axis=1).max())
- label='invalid_physics' if r['unstable'] else 'excessive_displacement' if displacement>.020 else 'partial_center_entry' if entry else 'miss'
+ label=classify_result(r['unstable'],entry,displacement,RULE)
  path_by_name={shape['name']:shape['path'] for shape in e.ref['shapes']}
  first=next(({'step':i+1,'objects':pair,'prim_paths':[path_by_name.get(name,name) for name in pair]} for i,pairs in enumerate(contacts) for pair in pairs),None)
- result=dict(info,result=label,center_entered=entry,target_center_max_displacement_m=displacement,first_contact_candidate=first,metrics=r,execution_and_save_wall_s=time.perf_counter()-started,hook_success=None,scope='partial geometry/contact diagnostics; no validated hook-success evaluator')
+ result=dict(info,result=label,classification_rule=RULE,partial_entry_success=label=='partial_center_entry',target_displacement_exceeded=displacement>.020,center_entered=entry,target_center_max_displacement_m=displacement,first_contact_candidate=first,metrics=r,execution_and_save_wall_s=time.perf_counter()-started,hook_success=None,scope='partial geometry/contact diagnostics; no validated hook-success evaluator')
  result['state_storage']=dict(format='qpos_only',max_fps=30,diagnostics_hz=1/e.model.opt.timestep,final_frame_preserved=True)
  result['trace_sha256']=hashlib.sha256((folder/'trace.json').read_bytes()).hexdigest()
  result['states_sha256']=hashlib.sha256((folder/'states.npz').read_bytes()).hexdigest()
@@ -48,7 +56,7 @@ def execute(candidate):
 def report(root,results):
  temporary=root/'results.tmp.json';temporary.write_text(json.dumps(results,indent=2));temporary.replace(root/'results.json')
  with (root/'results.csv').open('w') as f:
-  fields=['candidate_id','result','center_entered','target_center_max_displacement_m','planning_wall_s'];w=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');w.writeheader();w.writerows(results)
+  fields=['candidate_id','result','center_entered','target_center_max_displacement_m','planning_wall_s','classification_rule','partial_entry_success','target_displacement_exceeded'];w=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');w.writeheader();w.writerows(results)
  from camera_action import FEATURE_NAMES
  with (root/'camera_actions.csv').open('w') as f:
   w=csv.writer(f);w.writerow(['candidate_id',*FEATURE_NAMES,'center_entered','target_max_displacement_m','result'])
@@ -75,7 +83,7 @@ def main():
  shutil.copytree(HOME/'scripts',assets/'scripts',ignore=shutil.ignore_patterns('__pycache__'))
  legacy=assets/'isaac_planner_sources';legacy.mkdir()
  for source in (ROOT/'nvidia-sim/rl').glob('*.py'):shutil.copy2(source,legacy/source.name)
- manifest=dict(hz=a.hz,workers=a.workers,planning_workers=a.planning_workers,seed=a.seed,count=a.candidates,mujoco=mujoco.__version__,target=a.target,model_sha256=hashlib.sha256((assets/'model.mjb').read_bytes()).hexdigest(),physics='optimized plant; break disabled',scope='Sobol staged6d, existing IK/FCL planner, CPU MuJoCo execution; no RL/perception/randomization',arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()})
+ manifest=dict(classification_rule=CLASSIFICATION_RULE,sampling=SAMPLING,bounds=BOUNDS,hz=a.hz,workers=a.workers,planning_workers=a.planning_workers,seed=a.seed,count=a.candidates,mujoco=mujoco.__version__,target=a.target,model_sha256=hashlib.sha256((assets/'model.mjb').read_bytes()).hexdigest(),physics='optimized plant; break disabled',scope='Sobol staged6d, existing IK/FCL planner, CPU MuJoCo execution; no RL/perception/randomization',arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()})
  manifest['action_schema']=SCHEMA
  manifest['action_frame']='action_frame.json'
  manifest['legacy_parameters']='world-axis Sobol parameters for reproduction; use action_camera.features for model input'

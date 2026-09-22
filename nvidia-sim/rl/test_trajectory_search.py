@@ -13,7 +13,7 @@ def test_remote_start_and_below_fruit_entry_with_real_collision_size():
     c=np.array([-.7,1.1,.96]);radius=.012
     for p in candidates(8,42):
         r,wp,d=waypoints(c,c+[0,0,.025],p,radius)
-        pre,entry,insert,lift=[point for _,point in wp]
+        pre,entry,insert,mid,lift=[point for _,point in wp]
         # Ring wire cannot already surround or touch the target at prepose.
         assert np.linalg.norm((pre-c)[:2])>=.17-1e-9
         assert np.linalg.norm((pre-c)[:2])-RING_RADIUS-radius>.12
@@ -49,5 +49,36 @@ def test_staged_cli_records_bounds_and_does_not_claim_pull_support(tmp_path):
     result=prepare(tmp_path/'valid','--trajectory-mode','staged6d','--candidates','8')
     assert result.returncode==0,result.stderr
     config=json.loads((tmp_path/'valid/config.json').read_text())
-    assert config['sampling']=='scrambled_sobol_6d' and len(config['bounds'])==6
+    assert config['sampling']=='scrambled_sobol_azimuth_only' and len(config['bounds'])==6
     assert prepare(tmp_path/'invalid','--trajectory-mode','staged6d','--goal','pull').returncode!=0
+
+
+def test_only_azimuth_varies_with_centered_two_mm_clearance():
+    rows=candidates(1000,0)
+    assert len({p['approach_azimuth_deg'] for p in rows})==1000
+    assert all(-90<=p['approach_azimuth_deg']<=90 for p in rows)
+    assert min(p['approach_azimuth_deg'] for p in rows)<-85
+    assert max(p['approach_azimuth_deg'] for p in rows)>85
+    for key,value in dict(entry_clearance_m=.002,lateral_offset_m=0.,insertion_distance_m=.0425,lift_forward_angle_deg=0.,lift_distance_m=.0325).items():
+        assert {p[key] for p in rows}=={value}
+    c=np.array([0.,0.,1.]);radius=.012
+    for p in rows:
+        _,wp,d=waypoints(c,c,p,radius)
+        side=np.cross(d,[0.,0.,1.])
+        for _,point in wp:
+            assert abs(np.dot(point-c,side))<1e-12
+        assert wp[1][1][2]+WIRE_RADIUS==pytest.approx(c[2]-radius-.002)
+
+
+def test_diagonal_lift_returns_to_vertical_endpoint_and_preserves_old_paths():
+    c=np.array([0.,0.,1.])
+    for p in candidates(30,0):
+        _,wp,d=waypoints(c,c,p,.012)
+        insert,mid,end=[v for _,v in wp[2:]]
+        half=p['lift_distance_m']/2
+        np.testing.assert_allclose(mid-insert,half*(d+np.array([0.,0.,1.])),atol=1e-12)
+        np.testing.assert_allclose(end-mid,half*(-d+np.array([0.,0.,1.])),atol=1e-12)
+        old=dict(p);old.pop('lift_profile')
+        _,legacy,_=waypoints(c,c,old,.012)
+        assert len(legacy)==4
+        np.testing.assert_allclose(end,legacy[-1][1],atol=1e-12)
