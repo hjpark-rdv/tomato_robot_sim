@@ -589,3 +589,11 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 - 모든 반복 비정상/overflow 0. GPU world0와 CPU 전체 스텝의 위치 오차는 validation/mjlab_robot_equivalence.json.
 - 상세/한계/명령: mujoco-benchmark/MJLAB_PERFORMANCE.md. 비교 화면은 outputs/20260922_robot_backend_comparison/index.html.
 - 파단은 비활성화, 동일49번 반복 성능 시험. 다양한 후보 탐색이나 RL 학습/수확 성공 평가기는 아님. mjlab Simulation 계층을 사용했으며 ManagerBasedRlEnv는 아직 추가하지 않음.
+
+## 2026-09-22 CPU/GPU 운영 권장 정리
+
+- GPU 구성 및 비교 구현 커밋: `115560b` (`mjlab-performance`). CPU 기준선: `38bac4d`.
+- 대량 탐색 후속 구현 기본값은 GPU 256환경 권장. 기존 CPU 3.13/48 대비 처리량 약 7% 우세이며, 소수 경로 디버깅은 CPU 권장.
+- 아직 동일 경로 재생 벤치마크이므로 다양한 후보 생성/저장까지 포함한 완료 시간은 미검증.
+- autoreset 호환 변경은 별도 모델의 disable → enable 변경이며, MJWarp의 미지원 기능을 구현한 것이 아님. 원본과 오류 처리 의미가 같다고 설명하지 않는다.
+- 상세 근거와 다음 단계: [MJLAB_PERFORMANCE.md](mujoco-benchmark/MJLAB_PERFORMANCE.md)의 운영 권장 절.
