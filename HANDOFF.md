@@ -1,10 +1,33 @@
 # Farmily Tomato 작업 인수인계
 
-작성일: 2026-09-21 KST (실험 폴더 이름은 기존 기록의 표기를 그대로 유지함).
+최종 갱신: 2026-09-22 KST (실험 폴더 이름은 기존 기록의 표기를 그대로 유지함).
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
 
-## 최신 측정: Isaac 로봇 팔 비용 비교
+## 현재 상태와 다음 작업 (2026-09-22)
+
+1. Tomato_05의 1,000개 경로를 카메라 좌표 action v2로 저장하고 재실험 완료: 510.83초. 기존 결과와 일치.
+2. 71개 RGB-D 관측과 71,000개 관측–후보 쌍의 좌표 변환 검증 완료. 목표는 부분 중심 진입과 최대 이동량이며, 꼭지 걸림 성공 판정은 아직 없다.
+3. ResNet18 / DINOv2의 고정 영상 특징 + 작은 평가기, 영상 없는 기준 모델을 각각 3회 학습 완료. 검증 손실 기준 선택은 영상 없는 모델이다. AP는 실제 성공 확률이 아니다.
+4. 모델 추천 21회(서로 다른 경로 3개)를 새 물리 실행으로 확인하고 2배속 영상 저장. 영상 모델은 각각 7/7 중심 진입 및 최대 이동 20mm 이하. 동일 장면 반복이며 실물 일반화 검증은 아니다.
+5. 05를 제외한 10개 토마토의 수집 실행기 준비 완료. 각 대상 1후보 + 1시점 촬영 소량 검증 통과. **전체 10,000개 본 수집은 아직 실행하지 않았으며 사용자가 실행할 예정**이다.
+
+다음 실행 명령:
+
+```bash
+cd /root/farmily_tomato
+./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/collect_tomatoes.py \
+  --targets 1,2,3,4,6,7,8,9,10,11 \
+  --candidates 1000 --workers 48 --planning-workers 16
+```
+
+- 상세 수집 명령과 카메라 의미: [MULTI_TOMATO_COLLECTION.md](mujoco-benchmark/MULTI_TOMATO_COLLECTION.md)
+- 학습 비교와 재실행 방법: [learning/README.md](mujoco-benchmark/learning/README.md)
+- 센서 저장 형식: [D435_RGBD.md](mujoco-benchmark/D435_RGBD.md), [OBSERVATION_DATASET.md](mujoco-benchmark/OBSERVATION_DATASET.md)
+- 결과 데이터·모델 가중치·영상은 `/root/docker_share/mujoko_debugging_data/`에 있다. Git에는 코드와 문서를 저장한다. 계정/머신 이동 시 이 디렉터리와 기존 MuJoCo 모델·계획 자산·Python 환경도 별도 보존해야 한다.
+- 카메라는 대상별 가상 시점이며 실제 로봇 관측 자세의 도달성을 검증하지 않았다. 다음 학습에서는 토마토 ID 단위로도 학습/평가를 분리해야 한다.
+
+## 이전 측정: Isaac 로봇 팔 비용 비교
 
 - `mujoco-benchmark/scripts/robot_cost_comparison.py` 추가. 후보49 첫10초, full/CPU240Hz/PGS64/4,
   파단 비활성. 실제 관절 모터 명령을 재생하고 측정한 고리 경로로 단독 조건과 비교했다.
@@ -606,3 +629,51 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=nvidia-sim/rl \
 - 현재 부분 중심 진입/과도 변위/물리 이상 진단이며 꼭지 걸림 성공 평가기는 아직 아님.
 
 - 경로 탐색 기본 출력 위치 변경: `/root/docker_share/mujoko_debugging_data/YYYYMMDD_HHMMSS_candidate_search/`. `candidate_experiment.py --output`으로 개별 지정 가능.
+
+## D435 RGB-D 촬영
+
+- `mujoco-benchmark/scripts/d435_capture.py`: 기존 ROS/Isaac URDF 광학 프레임 체인과69.4° FOV 사용, 저장된 후보 상태에서RGB/native depth/color-aligned depth와 행렬 저장.
+- 사용법과 실물 센서 모사 한계: `mujoco-benchmark/D435_RGBD.md`.
+- 후보87 preapproach/entry 샘플은 `/root/docker_share/mujoko_debugging_data/20260922_111838_candidate_search/candidates/candidate_00087/rgbd/`.
+
+## Tomato_05 시점 변경 관측 준비 완료
+
+- `prepare_observations.py`로 초기 상태 고정, 가상 D435 이동·회전, 자동 타깃 중앙정렬 없이71개RGB-D/GT목표표시/3배·6배크롭 촬영.
+- 최종 데이터: `/root/docker_share/mujoko_debugging_data/20260922_122302_tomato05_observations/` (`index.html` 갤러리). 약192MiB.
+- 기존 `20260922_111838_candidate_search`의1,000개경로/결과와 연결, per-view camera좌표라벨 제공. 당시 관측 생성 단계에는 새 물리시험0회. 이후 재실험·학습은 아래 기록 참조.
+- `validate_observations.py`의71,000관측-후보pair좌표검증 및RGB/Depth/mask/crop검증통과. 대상gt마스크ID보간을피하기위해촬영MSAA비활성.
+- 가상카메라 변환은 실제관절만으로복구불가. `camera.json`의유효tool_from_optical/world_from_optical 사용.
+- 실제로봇도달성/새토마토일반화는검증하지않음. 상세: `mujoco-benchmark/OBSERVATION_DATASET.md`.
+
+## 카메라 기준 action v2 및 1,000개 재실험 (2026-09-22)
+
+- `camera_action.py`: 카메라 광학축 기준 진입 방향/고리 quaternion/거리/상승 방향의14차원 입력. 절대 시작 위치는 제외, 정확한 재연용 토마토 중심 상대 경유점은 별도 보존. 중력 방향도 관측별 저장.
+- `candidate_experiment.py` → `action_frame.json`, `plan.json`/`result.json:action_camera`. 기존6개변수/월드경로 보존. 보고서 방위각은 명시적으로 월드 기준이라고 표시.
+- 새 실험 `/root/docker_share/mujoko_debugging_data/20260922_124028_camera_action_v2_1000/`: CPU48/계획16,120Hz,seed0,1,000개 완료, 총510.83초. 부분중심진입36/과도변위908/miss56. 중심진입 자체는200개(과도변위 포함). 오류0. 이전111838실험과모든분류/최대변위동일.
+- 기존71개관측은 `upgrade_observation_actions.py --run NEW_RUN`으로 새결과에연결. `actions_camera_v2.npz:features`를학습에사용하고 `candidate_ids`로`actions.json`과join. 원래초기카메라의단일action_camera를다른관측에그대로사용하면안됨.
+- 사진과물리장면은보존. 모델해시/초기qpos동일확인. 71,000쌍좌표검증최대위치오차3.33e-16m. 카메라병진에대한불변성/회전에대한월드복원검증통과. v1원본메타는schema_v1_backup보존.
+- 이 저장 형식 변경 이후 학습 완료(아래 참조). 꼭지걸림성공평가기는미구현. 동일Tomato05의시점변경만있으므로영상없는기준모델과비교필요.
+
+## Tomato_05 카메라 기준 후보 학습 예비 비교 (2026-09-22)
+
+- `mujoco-benchmark/learning/train.py`: 고정 DINOv2/ResNet18의 local/context RGB 특징 + metric Depth/validity/K + 카메라 action14/중력3 → 부분 중심 진입 확률/최대 이동량. 영상 없는 대조군 포함 3종×3seed 실제 GPU 학습, 41.21초.
+- 결과 HTML/가중치/CSV/분할/코드 사본: `/root/docker_share/mujoko_debugging_data/20260922_130308_camera_action_training/`.
+- 후보 train699/val149/test152와 관측 train50/val7/test7/잘림검사7을 별도 분리. 새 시점+새 후보가 주 평가. 모델/정규화/체크포인트 선택은 train/val만 사용.
+- 테스트 AP: 영상 없음.837 / ResNet.849 / DINO.855. 이동 MAE 2.575/2.535/2.618mm. 검증 손실은 영상 없는 모델이 최소라 공식 선택도 영상 없음. 영상 모델의 확실한 우위 또는 sim-to-real 성공을 주장하지 않음.
+- `predict.py`로 저장 관측의 후보 순위 재계산 가능. 세 모델 checkpoint 재로드/분할 비중복 확인 완료. 새 실물 이미지 배포는 미구현. 추가 physics 검증은 다음 절 참조.
+- 모델 조사 근거와 명령: `mujoco-benchmark/learning/README.md`. DINOv3는 공식 가중치 접근 신청 필요해 미학습. 단일 장면 반복 관측의 한계/영상 없는 기준과의 비교를 계속 유지할 것.
+
+## 학습 추천의 실제 물리 검증
+
+- `learning/test_physics.py` / `render_physics.py` 추가. 평가용7시점×3모델(seed0)의1순위추천21회를독립reset후MuJoCo120Hz새실행. 중복제외3경로.
+- `/root/docker_share/mujoko_debugging_data/20260922_model_recommendation_physics/index.html` 결과/상태/대표3개2배속영상. 물리41.52초(렌더제외).
+- ResNet/DINO각진입7/7·20mm이하7/7. 영상없는모델진입7/7·20mm이하4/7. 초기상태동일/원본결과일치/불안정0확인.
+- 기존카탈로그경로를추천해관절명령재실행. 새trajectory생성·새장면일반화·꼭지걸림성공실험은아님.
+
+## Tomato01~11 다중 대상 수집 (05 제외)
+
+- `candidate_experiment.py --target Tomato_XX`와 `RobotEngine(target=...)`로계획기하/과실진입판정/변위측정대상을선택. 기본05보존.
+- `prepare_observations.py`는manifest대상으로GT과실마스크/라벨/action좌표자동연결. 가상카메라기준위치는05대비대상중심차만큼이동하고원래장착카메라pose와이동량을명시. 로봇실제관측자세검증은아님.
+- `collect_tomatoes.py --targets 1,2,3,4,6,7,8,9,10,11 --candidates 1000 --workers 48 --planning-workers 16`으로대상순차물리시험→RGBD저장. 전체10,000개본수집은사용자가실행.
+- 명령/출력/공간/카메라한계: `mujoco-benchmark/MULTI_TOMATO_COLLECTION.md`.
+- 다중대상시상태재연카메라/HTML대상표시도연결. 기존데이터변경없음.

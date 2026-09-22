@@ -3,9 +3,9 @@ import mujoco as mj
 import numpy as np
 
 
-def target_camera(model,data,camera):
+def target_camera(model,data,camera,target="Tomato_05"):
     mj.mj_forward(model,data)
-    fruit=model.body('Tomato_05').id
+    fruit=model.body(target).id
     camera.type=mj.mjtCamera.mjCAMERA_FREE
     camera.fixedcamid=-1
     camera.lookat[:]=data.xpos[fruit]+np.array([0,0,.015])

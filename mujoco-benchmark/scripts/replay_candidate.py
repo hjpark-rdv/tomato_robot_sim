@@ -21,7 +21,7 @@ def main():
  with mj.viewer.launch_passive(m,d) as view:
   d.qpos[:]=q[0]
   from view_camera import target_camera
-  target_camera(m,d,view.cam)
+  target_camera(m,d,view.cam,manifest.get("target","Tomato_05"))
   while view.is_running():
    began=time.perf_counter()
    for i in np.unique(np.r_[np.searchsorted(times,np.arange(0,times[-1],1/30)),len(times)-1]):

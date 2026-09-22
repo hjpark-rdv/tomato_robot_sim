@@ -9,10 +9,11 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'nvidia-sim/rl'))
 
 def initialize(root):
- global MODEL,OUT,START
+ global MODEL,OUT,START,FRAME
  import torch
  from gpu_planning import restore_model
  torch.set_num_threads(1);OUT=Path(root)
+ FRAME=json.loads((OUT/'action_frame.json').read_text()) if (OUT/'action_frame.json').exists() else None
  model=pickle.loads((OUT/'replay_assets/planning_model.pkl').read_bytes())
  values=json.loads((OUT/'planning_inputs.json').read_text())
  model['inputs'].update({k:np.asarray(v) if k in ('start','geometry') else v for k,v in values['inputs'].items()})
@@ -33,6 +34,9 @@ def compute(params):
   rows.extend({'joints':START.tolist(),'command':q.tolist(),'phase':phase} for q,phase in zip(planned['commands'],planned['phases']))
   (folder/'trace.json').write_text(json.dumps(rows))
   info.update(waypoints=planned['waypoints'],seconds=(len(rows)-1)/60)
+  if FRAME is not None:
+   from camera_action import encode
+   info['action_camera']=encode(planned['waypoints'],params,FRAME['target_center_world'],FRAME['world_from_color_optical'])
  (folder/'plan.json').write_text(json.dumps(info,indent=2));return info
 
 def main():

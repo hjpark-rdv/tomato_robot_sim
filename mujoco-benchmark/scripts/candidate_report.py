@@ -21,7 +21,7 @@ def generate(root, results=None):
         cases.append(item)
     payload = json.dumps(dict(manifest=manifest, cases=cases, run=root.name), ensure_ascii=False).replace('<', '\\u003c')
     assets = Path(__file__).with_name('report_assets')
-    template = (assets / 'candidate.html').read_text()
+    template = (assets / 'candidate.html').read_text().replace('Tomato_05', str(manifest.get('target','Tomato_05')))
     page = template.replace('/*REPORT_CSS*/', (assets / 'candidate.css').read_text()).replace('/*REPORT_JS*/', (assets / 'candidate.js').read_text()).replace('/*REPORT_DATA*/', payload)
     temporary = root / 'index.html.tmp'
     temporary.write_text(page, encoding='utf-8')

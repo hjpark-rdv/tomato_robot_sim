@@ -19,12 +19,12 @@ def forward(ref,q):
  return t
 
 class RobotEngine:
- def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120,reference=None):
+ def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120,reference=None,target="Tomato_05"):
   began=time.perf_counter();self.ref=json.loads(Path(reference or HOME/'assets/reference/reference.json').read_text())
   self.model=m=mj.MjModel.from_binary_path(str(model)) if str(model).endswith('.mjb') else mj.MjModel.from_xml_path(str(model));self.data=d=mj.MjData(m);m.opt.timestep=1/hz
   self.names=self.ref['robot_fk']['joint_names'];self.qids=np.array([m.jnt_qposadr[m.joint(n).id] for n in self.names]);self.dofs=np.array([m.jnt_dofadr[m.joint(n).id] for n in self.names]);self.aids=np.array([m.actuator('drive_'+n).id for n in self.names]);self.hook=m.body('Hook').id
   rows=json.loads(Path(trace).read_text());self.initial=np.asarray(rows[0]['joints']);self.commands=np.asarray([r['command'] for r in rows]);self.ts=np.arange(len(rows))/60
-  self.ids=np.array([m.body(b['name']).id for b in self.ref['bodies']]+[self.hook]);self.hookgeoms=np.array([m.geom(s['name']).id for s in self.ref['shapes'] if s['body']==self.ref['tool_path']]);self.fruit=m.body('Tomato_05').id
+  self.ids=np.array([m.body(b['name']).id for b in self.ref['bodies']]+[self.hook]);self.hookgeoms=np.array([m.geom(s['name']).id for s in self.ref['shapes'] if s['body']==self.ref['tool_path']]);self.target=target;self.target_spec=next(s for s in self.ref['fruit_specs'] if s['name']==target);self.fruit=m.body(target).id
   mj.mj_resetData(m,d);d.qpos[self.qids]=self.initial;mj.mj_forward(m,d)
   self.preload=d.qfrc_bias.copy();self.preload[self.dofs]=0 # robot gravity compensated separately; plant preload is frozen
   self.initial_fruit=d.xpos[self.fruit].copy();self.reset()
