@@ -1,0 +1,182 @@
+{
+  "junction_filters": [
+    {
+      "rachis": "TRUSS_Rachis_10",
+      "proximal": "TRUSS_Pedicel_proximal_09_00",
+      "reason": "adjacent capsule contains authored branch root"
+    },
+    {
+      "rachis": "TRUSS_Rachis_10",
+      "proximal": "TRUSS_Pedicel_proximal_10_00",
+      "reason": "adjacent capsule contains authored branch root"
+    }
+  ],
+  "before_idle_max_motion_m": 0.05168527837796851,
+  "after": {
+    "idle": {
+      "initial_contacts_over_0_5mm": [
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        }
+      ],
+      "warmup_max_plant_motion_m": 0.008660873341895036,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 0,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "force": {
+      "initial_contacts_over_0_5mm": [
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        }
+      ],
+      "warmup_max_plant_motion_m": 0.008660873341895036,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 0,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "force_peak_delta_vs_idle_m": 0.023975378607373515,
+    "force_residual_delta_vs_idle_m": 0.0012819603188965144,
+    "recovered_fraction": 0.9465301324375226,
+    "contact": {
+      "initial_contacts_over_0_5mm": [
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Rachis_09",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.001845180629393098
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_00",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004927440480989704
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        },
+        {
+          "a": "glb_col_TRUSS_Pedicel_proximal_08_01",
+          "b": "glb_col_Tomato_06",
+          "penetration_m": 0.004900023874069672
+        }
+      ],
+      "warmup_max_plant_motion_m": 0.008660873341895036,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 559,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "contact_peak_delta_vs_idle_m": 0.02178144785551499,
+    "baseline_force_peak_delta_m": 0.01634570234392579,
+    "baseline_force_residual_delta_m": 0.001401270411754627,
+    "force_N": [
+      0.2,
+      0,
+      0
+    ],
+    "force_interval_s": [
+      2.5,
+      3
+    ],
+    "duration_s": 6,
+    "hz": 240,
+    "scope": "Matched idle subtraction; contact and restoration demonstrated, not physical equivalence or collection acceptance",
+    "initial_geometry_valid": false
+  },
+  "tests_passed": 4,
+  "report": "/root/docker_share/mujoko_debugging_data/20260923_glb_junction_fix/index.html"
+}

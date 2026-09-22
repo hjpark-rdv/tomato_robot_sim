@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-def read_glb(path):
+def read_glb(path, named=False):
     blob=Path(path).read_bytes();magic,version,length=struct.unpack_from('<III',blob)
     if magic!=0x46546c67 or version!=2 or length!=len(blob):raise ValueError('Invalid GLB')
     offset=12;binary=None;doc=None
@@ -32,7 +32,7 @@ def read_glb(path):
                 indices=accessor(primitive['indices']).reshape(-1,3)
                 material=doc.get('materials',[])[primitive['material']] if 'material' in primitive else {}
                 color=material.get('pbrMetallicRoughness',{}).get('baseColorFactor',[.2,.5,.08,1])
-                meshes.append((vertices,indices,color))
+                meshes.append((node.get('name',f'node_{i}'),vertices,indices,color) if named else (vertices,indices,color))
         for child in node.get('children',[]):visit(child,world)
     for i in doc['scenes'][doc.get('scene',0)]['nodes']:visit(i,np.eye(4))
     return meshes

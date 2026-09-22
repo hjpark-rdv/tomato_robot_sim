@@ -1,0 +1,55 @@
+{
+  "status": "initial_geometry_and_limited_mechanics_passed",
+  "source_geometry_diagnostic": {
+    "rachis_vertices_inside_fruit02_convex_hull": 7,
+    "max_hull_plane_depth_m": 0.0005678571725268597,
+    "scope": "source vertices against convex hull, not exact mesh intersection"
+  },
+  "fruit_offset_glb_m": {
+    "2": [
+      -0.0005066500582317888,
+      -0.0008218853535071469,
+      0.002840389090280442
+    ]
+  },
+  "local_stiffness_min_eigenvalue_before": -0.40900462,
+  "local_stiffness_min_eigenvalue_after": 0.20318585,
+  "rachis_stiffness_scale": 2,
+  "rachis_damping_scale": 1.4142135623730951,
+  "extended_tests": [
+    {
+      "target": "Tomato_05",
+      "axis": 0,
+      "peak_m": 0.05189115045026727,
+      "at6s_m": 0.0186523463298846,
+      "residual12s_m": 0.0024676300649205084,
+      "max_penetration_m": 0
+    },
+    {
+      "target": "Tomato_05",
+      "axis": 1,
+      "peak_m": 0.019431292350107023,
+      "at6s_m": 0.003226697261452279,
+      "residual12s_m": 0.0002871228103588592,
+      "max_penetration_m": 0
+    },
+    {
+      "target": "Tomato_05",
+      "axis": 2,
+      "peak_m": 0.02600488478241799,
+      "at6s_m": 0.0030338444785798515,
+      "residual12s_m": 0.00019795242025412744,
+      "max_penetration_m": 0
+    },
+    {
+      "target": "Tomato_02",
+      "axis": 0,
+      "peak_m": 0.02989311049762037,
+      "at6s_m": 0.011039652956868703,
+      "residual12s_m": 0.001469133110947576,
+      "max_penetration_m": 0
+    }
+  ],
+  "tests_passed": 12,
+  "robot_collection_rerun": false
+}

@@ -1,5 +1,9 @@
 # USD 기반 주줄기·송이 조립 미리보기
 
+## 최신: GLB 탄성·충돌 이식 및 로봇 수집 시험
+
+기존 주줄기·잎과 GLB Y축 배치를 유지하여 241자유도 물리 모델로 이식했다. 힘/접촉에 의한 휘어짐·복원 및 후보3개 실제 실행 완료. 초기 내부 겹침4.93mm로 모두 invalid_physics이며 학습 사용 금지. 기존과 동일한 동역학이나 수확 성공을 의미하지 않는다. [구현·검증·실행 명령](GLB_PHYSICS.md).
+
 2026-09-23. 기존 수집 모델과 USD는 변경하지 않는다. **이번 구현은 조립 장면 생성·관찰 단계이며 30후보 자동 수집기로 연결된 상태가 아니다.**
 
 ## 현재 기준: 사용자 지정 단계로 롤백
@@ -103,3 +107,36 @@ CLI는 `--fruit-center-angle`로 변경했다. 생략시15~85도 방향을 샘�
 ```
 
 접촉 마스크와 관계없이 convex hull의 명시적 거리를 계산한다. 검사는 초기 상태만 대상으로 하며 메시 삼각형 그대로의 관통 보증이 아니다. 줄기/꽃받침/열매/털의 의도된 연결과 convex 과대근사 때문에 내부 겹침이 많다. 털 포함 여부를 별도 기록한다. 임계값0.5mm에서 서로 다른 송이0쌍, 털 제외 송이–주줄기7쌍(최대3.042mm), 송이–잎/잘린가지1쌍(최대3.201mm). 형상을 바꾸거나 충돌을 추가 제외하지 않았다. 상세 `validation/glb_initial_overlap.json`.
+
+## 단일 GLB 수집 전 파일럿
+
+`./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/collect_glb_pilot.py`는 송이1개 장면의 RGB/depth/segmentation/target mask와 camera.json을 저장하고 물리 수집 전 상태를 검사한다. 배경 깊이는 far plane 값으로 남으므로 `depth_valid.npy`로 제외한다. 물리가 준비되지 않은 현재 GLB 모델은 `rejected_before_rollout`, `training_eligible=false`로 기록되며 action/성공 라벨을 만들지 않는다. 기존 candidate_experiment.py에 새 모델을 연결한 것은 아니다. 결과020731파일럿에서 관측 저장 통과, 실제 로봇 실행은 선행조건 미충족으로0회다.
+
+
+## 최신: 전체5 GLB 6번 제거 완료
+
+cyan/green/red/white/rotated90 모두 `--remove-fruit 6` 적용, 열매10개 유지. 기존 주줄기·잎 및 Y90° 배치/segment11 유지. 각 모델 240Hz 정지·0.2N 힘·접촉·복원·reset 검사 완료, 회귀12테스트 통과. 초기0.5mm 초과 겹침은 cyan/green/red/rotated90에서0개. white는 Fruit_02와 Rachis_04 충돌체 약1.001mm 겹침이 별도로 남아 사용 보류. 또한 힘 시험 무부하 대비 최대/종료 변위가 모두626.09mm로 복원 검증 실패했으며, 이 큰 이동의 원인을 해당 초기 겹침으로 단정하지 않는다. 다른 알맹이를 임의 삭제하거나 해당 충돌을 숨기지 않았다. 초기2초 최대 바디 이동 cyan2.20/green2.30/red2.35/white3.18/rotated90약0mm. 로봇 후보 수집은 제거 모델들로 재실행하지 않아 전체 수집 물리 유효성은 미검증.
+
+모음 `/root/docker_share/mujoko_debugging_data/20260923_all_glb_without_fruit06/index.html`. 요약 `mujoco-benchmark/validation/all_glb_without_fruit06.json`. 개별 하위폴더의 model.mjb/reference.json 사용. 원본GLB 보존.
+
+
+## 최신: white 2번 간격 및 탄성 안정성 수정
+
+2번을 중심가지에서 멀어지는 방향으로3mm 이동(원본GLB 좌표 offset은 build.json), 꽃받침/말단 꼭지를 함께 이동하고 proximal 시작점은 유지해 변형했다. 원본GLB 보존, 나머지 body 위치와 모든 질량 유지 검사 통과. 6번 제거 및 연결부 필터 유지. 초기0.5mm 초과 겹침0개.
+
+간격 수정만으로 힘 시험 미복원이 해결되지 않았다. 고정 중력 preload를 쓰는 초기 평형의 (중력 토크 미분+스프링) 대칭 행렬 최소 고유값이 -0.409로 국소 불안정 방향이 확인됐다. white 전용 `--rachis-stiffness-scale 2` 적용: Rachis k2→4, d0.15→0.2121. 최소 고유값+0.203. 물성 조정이며 실측 보정/기존과 동역학 동등성 아님. 다른GLB/기본값은1 유지.
+
+240Hz 0.2N(2.5~3초) 이후12초까지 검사: 5번 X/Y/Z 최대51.89/19.43/26.00mm→잔류2.47/0.287/0.198mm. 2번 X 최대29.89mm→잔류1.47mm. 네 시험 모두 접촉 관통0, 경고0; 별도 구형 물체 접촉 반응26.24mm. 6초 시점 X잔류18.65mm로 빠른복원을 주장하지 않는다. 초기 정지2초 이동 수치오차 수준. 회귀12개 통과. 로봇 수집은 이 수정 모델로 미실행, 모든각도/부착위치 안정성은 미검증.
+
+최신 white: `/root/docker_share/mujoko_debugging_data/20260923_white_fruit02_stable/index.html`. 이전모음의 white 실패기록은 보존한다. 요약 `mujoco-benchmark/validation/white_fruit02_fix.json`.
+
+
+## 최신: 전체 GLB 로봇 수집 소량 검사 완료
+
+2026-09-23, 최신5종/각1개 전체 로봇 경로, Tomato_05, Y90°/segment11, 240Hz. white는2번 위치·강성 수정 모델, 첫seed0 준비자세IK실패 후seed1실행. 총 계획6회/실제물리5회. 결과: green/red/white miss(물리 기준통과), rotated90 partial_center_entry(물리 기준통과), cyan invalid_physics(최대겹침0.514mm로0.5mm기준초과, 학습제외). 경고/수치불안정0.
+
+최대목표밀림 cyan219.00/green156.96/red81.02/rotated90 83.86/white90.58mm. 현재center_entry_only_v2는밀림을실패로분류하지않으므로 유효4개 또는 rotated90부분진입을 안전수확 성공으로 해석하지 않는다. 각1경로라 전체각도/부착위치 성공률이나대량수집승인아님. cyan 접촉중겹침은미해결로보존.
+
+5개 초기RGB-D/목표mask640×480 저장, 각가상카메라로action_camera재변환 및복원검사통과. 후보states/trace해시·수치유한성·관측모델해시일치검사통과, 회귀12테스트통과. 관측의실제관절도달성은미검증.
+
+결과 `/root/docker_share/mujoko_debugging_data/20260923_024914_all_glb_robot_smoke/index.html`. 보존요약 `mujoco-benchmark/validation/all_glb_robot_smoke.json`.

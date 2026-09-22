@@ -1,0 +1,84 @@
+{
+  "scope": "cyan Y90 segment11; fruit06 and calyx removed, pedicel retained; no robot collection rerun",
+  "mechanics": {
+    "idle": {
+      "initial_contacts_over_0_5mm": [],
+      "warmup_max_plant_motion_m": 0.002200776185286644,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 0,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "force": {
+      "initial_contacts_over_0_5mm": [],
+      "warmup_max_plant_motion_m": 0.002200776185286644,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 0,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "force_peak_delta_vs_idle_m": 0.0251885768665709,
+    "force_residual_delta_vs_idle_m": 0.004849084417109585,
+    "recovered_fraction": 0.8074887500474446,
+    "contact": {
+      "initial_contacts_over_0_5mm": [],
+      "warmup_max_plant_motion_m": 0.002200776185286644,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reset_exact": true,
+      "contact_probe_events": 563,
+      "contact_probe_max_penetration_m": 0.0,
+      "qpos_changed": true
+    },
+    "contact_peak_delta_vs_idle_m": 0.02174594719456345,
+    "baseline_force_peak_delta_m": 0.01634570234392579,
+    "baseline_force_residual_delta_m": 0.001401270411754627,
+    "force_N": [
+      0.2,
+      0,
+      0
+    ],
+    "force_interval_s": [
+      2.5,
+      3
+    ],
+    "duration_s": 6,
+    "hz": 240,
+    "scope": "Matched idle subtraction; contact and restoration demonstrated, not physical equivalence or collection acceptance",
+    "initial_geometry_valid": true
+  },
+  "removal": {
+    "fruit06_absent": true,
+    "remaining_fruits": 10,
+    "pedicel06_retained": true,
+    "initial_contacts_over_0_5mm": []
+  },
+  "removed_mass_kg": 0.06045391783118248,
+  "remaining_body_masses_unchanged": true,
+  "tests_passed": 4
+}

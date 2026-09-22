@@ -41,6 +41,7 @@ class RobotEngine:
   steps=round(seconds/self.model.opt.timestep);times=np.arange(steps+1)*self.model.opt.timestep
   t=time.perf_counter();commands=np.array([self.command(v) for v in times[1:]]);planning=time.perf_counter()-t
   t=time.perf_counter();self.reset();reset=time.perf_counter()-t
+  initial_glb_penetration=max([0.]+[-float(c.dist) for c in self.data.contact if self.model.geom(c.geom1).name.startswith('glb_col_') or self.model.geom(c.geom2).name.startswith('glb_col_')]);max_glb_penetration=initial_glb_penetration
   out={'control_s':0.,'physics_s':0.,'evaluation_s':0.,'recording_s':0.,'reset_s':reset,'command_prepare_s':planning};trace=[];poses=[];pairs=[];maxdisp=0.;mincontact=0.;contactsteps=0;maxerror=0.;unstable=False
   if record:trace.append(self.data.qpos.copy());poses.append(self.poses())
   begin=time.perf_counter();cpu=time.process_time()
@@ -48,7 +49,10 @@ class RobotEngine:
    t=time.perf_counter();self.data.ctrl[self.aids]=cmd;out['control_s']+=time.perf_counter()-t
    t=time.perf_counter();mj.mj_step(self.model,self.data);mj.mj_kinematics(self.model,self.data);out['physics_s']+=time.perf_counter()-t
    t=time.perf_counter();maxdisp=max(maxdisp,float(np.linalg.norm(self.data.xpos[self.fruit]-self.initial_fruit)));maxerror=max(maxerror,float(np.max(abs(self.data.qpos[self.qids]-cmd))))
-   contacts=self.data.contact;sel=np.isin(contacts.geom1,self.hookgeoms)|np.isin(contacts.geom2,self.hookgeoms);contactsteps+=int(sel.any())
+   contacts=self.data.contact
+   if self.ref.get('schema')=='glb_physics_reference_v1':
+    max_glb_penetration=max(max_glb_penetration,max([0.]+[-float(c.dist) for c in contacts if self.model.geom(c.geom1).name.startswith('glb_col_') or self.model.geom(c.geom2).name.startswith('glb_col_')]))
+   sel=np.isin(contacts.geom1,self.hookgeoms)|np.isin(contacts.geom2,self.hookgeoms);contactsteps+=int(sel.any())
    if sel.any():mincontact=min(mincontact,float(contacts.dist[sel].min()))
    unstable=not np.isfinite(self.data.qpos).all() or np.max(abs(self.data.qvel))>1e4 or bool(np.any(self.data.warning.number))
    out['evaluation_s']+=time.perf_counter()-t
@@ -57,5 +61,7 @@ class RobotEngine:
    if unstable:break
   wall=time.perf_counter()-begin
   out.update(rollout_wall_s=wall,process_cpu_s=time.process_time()-cpu,simulated_s=(i+1)*self.model.opt.timestep,requested_s=seconds,steps=i+1,rtf=(i+1)*self.model.opt.timestep/wall,unstable=unstable,max_target_displacement_m=maxdisp,max_hook_contact_penetration_m=-mincontact,hook_contact_steps=contactsteps,max_tracking_error_m_or_rad=maxerror,warning_counts=self.data.warning.number.tolist(),hook_final_xyz=self.data.xpos[self.hook].tolist(),break_enabled=False,success_evaluator='contact/displacement diagnostics only; no harvest success claim')
+  if self.ref.get('schema')=='glb_physics_reference_v1':
+   out['initial_glb_penetration_m']=initial_glb_penetration;out['max_glb_penetration_m']=max_glb_penetration;out['glb_physics_valid']=max_glb_penetration<=.0005 and not unstable
   if record:out['_arrays']=dict(times_s=times[:len(trace)],qpos=np.array(trace),poses=np.array(poses));out['_contacts']=pairs
   return out

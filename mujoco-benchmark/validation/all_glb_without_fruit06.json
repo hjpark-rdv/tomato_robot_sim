@@ -1,0 +1,73 @@
+{
+  "scope": "All five GLBs, Y90 segment11, remove fruit06 and calyx, retain pedicel; no robot collection rerun",
+  "tests_passed": 12,
+  "models": [
+    {
+      "name": "curve_cyan",
+      "remaining_fruits": 10,
+      "initial_overlap_count": 0,
+      "initial_max_overlap_mm": 0,
+      "contacts": [],
+      "idle_motion_mm": 2.200776185286644,
+      "force_peak_mm": 25.188576866570898,
+      "force_residual_mm": 4.849084417109585,
+      "contact_response_mm": 21.74594719456345,
+      "reset_exact": true
+    },
+    {
+      "name": "curve_green",
+      "remaining_fruits": 10,
+      "initial_overlap_count": 0,
+      "initial_max_overlap_mm": 0,
+      "contacts": [],
+      "idle_motion_mm": 2.3042499672359216,
+      "force_peak_mm": 31.295041913877178,
+      "force_residual_mm": 4.440945890171382,
+      "contact_response_mm": 22.10518430995566,
+      "reset_exact": true
+    },
+    {
+      "name": "curve_red",
+      "remaining_fruits": 10,
+      "initial_overlap_count": 0,
+      "initial_max_overlap_mm": 0,
+      "contacts": [],
+      "idle_motion_mm": 2.3479240002087898,
+      "force_peak_mm": 28.259275475325815,
+      "force_residual_mm": 8.502070583960094,
+      "contact_response_mm": 21.921097614786124,
+      "reset_exact": true
+    },
+    {
+      "name": "curve_white",
+      "remaining_fruits": 10,
+      "initial_overlap_count": 1,
+      "initial_max_overlap_mm": 1.0009979587172233,
+      "contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "penetration_m": 0.0010009979587172232
+        }
+      ],
+      "idle_motion_mm": 3.1816320043335202,
+      "force_peak_mm": 626.0884965717426,
+      "force_residual_mm": 626.0884965717426,
+      "contact_response_mm": 129.33149089609407,
+      "reset_exact": true
+    },
+    {
+      "name": "rotated90",
+      "remaining_fruits": 10,
+      "initial_overlap_count": 0,
+      "initial_max_overlap_mm": 0,
+      "contacts": [],
+      "idle_motion_mm": 5.551115123125783e-13,
+      "force_peak_mm": 27.747360216630728,
+      "force_residual_mm": 5.377186257621468,
+      "contact_response_mm": 21.82218047898684,
+      "reset_exact": true
+    }
+  ],
+  "white_status": "rejected: initial overlap and 626mm force displacement without recovery; causal diagnosis pending"
+}

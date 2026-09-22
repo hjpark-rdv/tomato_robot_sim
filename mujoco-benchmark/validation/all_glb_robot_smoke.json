@@ -1,0 +1,134 @@
+{
+  "scope": "five GLB variants, Y90 segment11, Tomato_05, one full candidate rollout each, 240Hz; white seed0 IK rejected then seed1 run",
+  "results": [
+    {
+      "name": "curve_cyan",
+      "run_folder": "curve_cyan",
+      "result": "invalid_physics",
+      "center_entered": true,
+      "displacement_mm": 219.00249805162383,
+      "initial_overlap_mm": 0.3470522431231575,
+      "max_overlap_mm": 0.5144238649600498,
+      "simulated_s": 53.81666666666666,
+      "unstable": false,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "training_eligible": false,
+      "target_visible_pixels": 1852,
+      "saved_data_checks": true
+    },
+    {
+      "name": "curve_green",
+      "run_folder": "curve_green",
+      "result": "miss",
+      "center_entered": false,
+      "displacement_mm": 156.9571265844638,
+      "initial_overlap_mm": 0.4458481638702303,
+      "max_overlap_mm": 0.4458481638702303,
+      "simulated_s": 54.766666666666666,
+      "unstable": false,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "training_eligible": true,
+      "target_visible_pixels": 1952,
+      "saved_data_checks": true
+    },
+    {
+      "name": "curve_red",
+      "run_folder": "curve_red",
+      "result": "miss",
+      "center_entered": false,
+      "displacement_mm": 81.01834670214885,
+      "initial_overlap_mm": 0.45603083906727104,
+      "max_overlap_mm": 0.45603083906727104,
+      "simulated_s": 54.38333333333333,
+      "unstable": false,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "training_eligible": true,
+      "target_visible_pixels": 1924,
+      "saved_data_checks": true
+    },
+    {
+      "name": "rotated90",
+      "run_folder": "rotated90",
+      "result": "partial_center_entry",
+      "center_entered": true,
+      "displacement_mm": 83.86121305881574,
+      "initial_overlap_mm": 0.0,
+      "max_overlap_mm": 0.0,
+      "simulated_s": 54.28333333333333,
+      "unstable": false,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "training_eligible": true,
+      "target_visible_pixels": 1738,
+      "saved_data_checks": true
+    },
+    {
+      "name": "curve_white",
+      "run_folder": "curve_white_retry",
+      "result": "miss",
+      "center_entered": false,
+      "displacement_mm": 90.57832315402108,
+      "initial_overlap_mm": 0.0,
+      "max_overlap_mm": 0.0,
+      "simulated_s": 45.55,
+      "unstable": false,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "training_eligible": true,
+      "target_visible_pixels": 1961,
+      "saved_data_checks": true
+    }
+  ],
+  "planning_attempts": 6,
+  "physics_rollouts": 5,
+  "valid_rollouts": 4,
+  "invalid_rollouts": 1,
+  "partial_center_entry_valid": 1,
+  "regression_tests_passed": 12,
+  "limits": [
+    "Not harvest success or success-rate estimate",
+    "Target displacement 81-219mm; current labels center_entry_only_v2 do not reject displacement",
+    "Cyan excluded for penetration >0.5mm",
+    "Virtual observation reachability unverified",
+    "Only one angle/attachment/target per model"
+  ],
+  "report": "/root/docker_share/mujoko_debugging_data/20260923_024914_all_glb_robot_smoke/index.html"
+}
