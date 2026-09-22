@@ -1,0 +1,53 @@
+{
+  "setup_wall_s": 11.357646947726607,
+  "training_wall_s": 28.8754787389189,
+  "transitions": 10240,
+  "transitions_per_second": 354.6261550357723,
+  "weights_changed": true,
+  "training": {
+    "iteration": 19,
+    "rollout_wall_s": 1.287215775810182,
+    "update_wall_s": 0.06800209265202284,
+    "mean_step_reward": 0.0473956365021877,
+    "loss": {
+      "value": 0.11472831573337317,
+      "surrogate": -0.018325489363633096,
+      "entropy": 5.102014601230621
+    },
+    "episodes": 32,
+    "success": 0,
+    "excessive_displacement": 13,
+    "penetration": 0,
+    "timeouts": 19
+  },
+  "evaluation": {
+    "wall_s": 5.691708532162011,
+    "successes": 0,
+    "environments": 16,
+    "max_fruit_displacement_m": [
+      0.020800713449716568,
+      0.020780296996235847,
+      0.021877437829971313,
+      0.020262228325009346,
+      0.021892543882131577,
+      0.021883105859160423,
+      0.021777799353003502,
+      0.02179635502398014,
+      0.021876821294426918,
+      0.02189011126756668,
+      0.021878128871321678,
+      0.021912984549999237,
+      0.021896161139011383,
+      0.021877555176615715,
+      0.021892938762903214,
+      0.021888963878154755
+    ],
+    "note": "deterministic identical start; clones are not independent generalization trials; replay includes terminal state before reset"
+  },
+  "total_wall_s": 45.92600983288139,
+  "run": "/root/docker_share/mujoko_debugging_data/20260922_182738_tomato06_rl",
+  "checkpoint_reload_run": "/root/docker_share/mujoko_debugging_data/20260922_182853_tomato06_rl",
+  "checkpoint_reload_passed": true,
+  "existing_center_region_comparisons": 1000,
+  "replay_check_passed": true
+}
