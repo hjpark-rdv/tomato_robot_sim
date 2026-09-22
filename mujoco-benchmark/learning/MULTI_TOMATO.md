@@ -1,5 +1,7 @@
 # 여러 토마토의 RGB-D 진입각 학습
 
+최신 기록: 2026-09-22. 구현 커밋 `ed13ca9` (`mjlab-performance`). 수집·경로 변경 기준 `3f636c2`.
+
 ## 이번 데이터와 실험
 
 원본: `/root/docker_share/mujoko_debugging_data/20260922_232150_multi_tomato_collection`
@@ -66,3 +68,12 @@ DISPLAY=:0 ./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/replay_c
  /root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/physics \
  --candidate candidate_00001
 ```
+
+## 검증 완료 사항 및 이어갈 작업
+
+- 저장 체크포인트를 다시 로드하여 첫/마지막 테스트 관측의 추천 ID와 점수가 학습 시 결과와 일치함을 확인했다.
+- 카메라 좌표5개 waypoint를 월드 좌표로 복원하여 실제 실행 경로와 비교한 뒤 물리 실행했다.
+- 학습 결과 HTML과 물리 결과 HTML을 브라우저에서 열어 오류 없이 표시되는지 확인했다.
+- 결과 링크: [학습 보고서](/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/index.html), [새 물리 실행 보고서](/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/physics/index.html).
+- 다음 단계는 재생으로 성공 의미 확인, 다른 토마토 holdout 비교, RGB-D 대비 action_only 성능 비교다. 현재 성공 예시 하나로 실물 배포나 영상 모델의 우위를 주장하지 않는다.
+- 대형 데이터/특징/체크포인트/재생 상태는 docker_share에 있고 Git에 포함하지 않는다. 다른 계정/장비에서 이어갈 때 해당 폴더도 별도 보존해야 한다.

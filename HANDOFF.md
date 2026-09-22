@@ -4,7 +4,20 @@
 이 파일은 대화 기록 없이 다른 계정/새 세션에서 작업을 이어가기 위한 시작점이다.
 아래 상태는 작성 시점 기준이므로, 재개할 때 `git status`를 먼저 확인한다.
 
-## 최신 상태: Tomato_06 RL (2026-09-22)
+## 최신 상태: RGB-D 진입각 학습·물리 검증 완료
+
+- 브랜치 `mjlab-performance`. 수집/경로 변경 커밋 `3f636c2`, 다중 토마토 학습·검증 커밋 **`ed13ca9`**.
+- 현재 방향은 고정 경로 후보를 RGB-D로 평가하는 지도학습이다. 아래 RL 기록과 구분한다.
+- 데이터10대상×30경로/710관측, Tomato_05는 없음. 중심 정렬, 하부2mm, 방위각±90° Sobol, 전진45°상승→후퇴45°상승. 최종 상승32.5mm. 정상 물리에서 중심진입이면 열매 밀림과 무관하게 부분 성공.
+- 8대상 학습(01,02,03,04,07,08,10,11),09검증,06테스트. DINOv2 RGB-D seed2 선택.06의64관측 모두 candidate_00001(−81.09°) 추천.
+- 고유 추천1경로를 새 물리로1회 실행하여 중심진입 성공 확인, 열매 최대변위30.78mm. 64회 독립 물리 성공이나 꼭지 수확 성공이 아니다.
+- 영상 없는 기준 모델도 top1성공이므로 RGB-D 우위 미입증. 확률 calibration도 불량(Brier약0.315); sigmoid1.0을 실제 성공확률100%로 해석하지 않는다.
+- 결과: `/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/index.html`.
+- 물리/재생: 같은 폴더 `physics/index.html`. 실행 명령·학습 분할·해석은 [learning/MULTI_TOMATO.md](mujoco-benchmark/learning/MULTI_TOMATO.md).
+- 다음 판단: 재생으로 실제 진입 확인, 다른 토마토 holdout 비교, 영상 없는 모델 대비 이점 평가. 현재 모델은 저장된 관측 특징과 기존 후보를 사용하며 새 실물 이미지 입력/자유 경로 생성 기능은 아니다.
+
+## 이전 단계: Tomato_06 RL (당시 상태 기록)
+
 
 - 브랜치 `mjlab-performance`, 구현 커밋 `a085f47`. 최신 작업 요약은 [RL 작업 인수인계](mujoco-benchmark/RL_HANDOFF.md), 세부 설계는 [TOMATO06_RL.md](mujoco-benchmark/TOMATO06_RL.md).
 - 팔6관절+리프트를 자유 제어하는 mjlab/MJWarp + RSL-RL PPO 구현. 고정 장면 GT 사용, 카메라 정책/RL 수확 성공은 아직 아니다.
