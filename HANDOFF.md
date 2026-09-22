@@ -780,3 +780,7 @@ cd /root/farmily_tomato
 새 MuJoCo 데이터 수집의 classification_rule=center_entry_only_v2: 물리 오류는 invalid_physics, 정상 실행에서 중심 진입 이력이 있으면 열매 최대 밀림과 무관하게 partial_center_entry, 없으면 miss. target_center_max_displacement_m과 target_displacement_exceeded(20mm 초과)는 참고 지표로 별도 저장. 결과 JSON/CSV와 HTML의 판정 설명/밀림 집계를 갱신했다.
 
 기존 데이터는 자동 덮어쓰지 않았다. 과거 manifest에 rule이 없으면 displacement_first_v1로 이어 실행하여 혼합 판정을 방지한다. 기존 ±90°/30개 데이터를 읽기 전용으로 재분류 검증하면 중심 진입 성공3개, 미진입27개다. RL 보상/종료 조건은 이번 변경 대상이 아니다.
+
+## 다중 토마토 RGB-D 진입각 학습 완료
+
+데이터10대상×30경로/710관측(05없음). 8대상 학습,09검증,06테스트로 분리. 진입 BCE만 학습하며 밀림 감점 제거. DINOv2 seed2 선택,06의64시점 모두−81.09° 후보00001 추천. 고유 경로1개 새 물리 실행에서 중심진입 성공(밀림30.78mm). action_only도동일 top1성공으로 영상 우위 미입증. 전체 후보 확률 calibration 불량(Brier약0.315). 상세/명령: [learning/MULTI_TOMATO.md](mujoco-benchmark/learning/MULTI_TOMATO.md). 결과 `/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/index.html`. 초기 요청 커밋3f636c2 이후 학습기 확장 작업.

@@ -1,0 +1,137 @@
+{
+  "training_run": "/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training",
+  "data_collection": "/root/docker_share/mujoko_debugging_data/20260922_232150_multi_tomato_collection",
+  "train_targets": [
+    "Tomato_01",
+    "Tomato_02",
+    "Tomato_03",
+    "Tomato_04",
+    "Tomato_07",
+    "Tomato_08",
+    "Tomato_10",
+    "Tomato_11"
+  ],
+  "validation_target": "Tomato_09",
+  "test_target": "Tomato_06",
+  "selected_model": "dinov2_rgbd",
+  "selected_seed": 2,
+  "wall_s": 23.355760443024337,
+  "results": [
+    {
+      "model": "action_only",
+      "seed": 0,
+      "best_epoch": 1,
+      "validation_bce": 0.6906015872955322,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.22589120268821716,
+        "wrong_rgbd_top1_entry_rate": 1.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "action_only",
+      "seed": 1,
+      "best_epoch": 1,
+      "validation_bce": 0.7016540765762329,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.22743554413318634,
+        "wrong_rgbd_top1_entry_rate": 1.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "action_only",
+      "seed": 2,
+      "best_epoch": 27,
+      "validation_bce": 0.7078793048858643,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.09775291383266449,
+        "wrong_rgbd_top1_entry_rate": 1.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "resnet18_rgbd",
+      "seed": 0,
+      "best_epoch": 12,
+      "validation_bce": 0.22857627272605896,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.31576842069625854,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "resnet18_rgbd",
+      "seed": 1,
+      "best_epoch": 8,
+      "validation_bce": 0.37336263060569763,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.31195464730262756,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "resnet18_rgbd",
+      "seed": 2,
+      "best_epoch": 10,
+      "validation_bce": 0.2581145167350769,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.31336116790771484,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "dinov2_rgbd",
+      "seed": 0,
+      "best_epoch": 10,
+      "validation_bce": 0.30082523822784424,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.31824764609336853,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "dinov2_rgbd",
+      "seed": 1,
+      "best_epoch": 30,
+      "validation_bce": 0.2887634336948395,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.32238101959228516,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    },
+    {
+      "model": "dinov2_rgbd",
+      "seed": 2,
+      "best_epoch": 15,
+      "validation_bce": 0.2435230314731598,
+      "test": {
+        "top1_entry_rate": 1.0,
+        "brier": 0.3146074712276459,
+        "wrong_rgbd_top1_entry_rate": 0.0,
+        "unique_recommended_candidates": 1
+      }
+    }
+  ],
+  "physics": {
+    "unique_paths": 1,
+    "unique_successes": 1,
+    "view_recommendations": 64,
+    "view_weighted_successes": 64,
+    "wall_s": 17.60315222851932,
+    "note": "one fresh simulation per unique path; virtual observations share outcomes; no independent view trials"
+  }
+}

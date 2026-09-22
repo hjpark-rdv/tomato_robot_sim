@@ -10,8 +10,10 @@ from torchvision import transforms,models
 
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
-def extract(root,out,device):
-    rows=[json.loads(x) for x in (root/'observations.jsonl').read_text().splitlines()]
+def extract(root,out,device,rows=None,backbone_store=None):
+    if rows is None:rows=[json.loads(x) for x in (root/'observations.jsonl').read_text().splitlines()]
+    store=Path(backbone_store) if backbone_store is not None else out
+    store.mkdir(parents=True,exist_ok=True)
     assert all(r['target']['input_usable'] or r['split']=='visibility_test' for r in rows),'Unusable views must be isolated from training' 
     images=[];depths=[];geometry=[]
     transform=transforms.Compose([transforms.Resize((224,224)),transforms.ToTensor(),transforms.Normalize([.485,.456,.406],[.229,.224,.225])])
@@ -41,9 +43,10 @@ def extract(root,out,device):
         with torch.inference_mode():
             for start in range(0,len(batch),16):features.append(model(batch[start:start+16].to(device)).cpu().numpy())
         result[name]=np.concatenate(features).reshape(len(rows),-1)
-        weights=out/f'{name}_backbone.pt';torch.save(model.cpu().state_dict(),weights)
+        weights=store/f'{name}_backbone.pt'
+        if not weights.exists():torch.save(model.cpu().state_dict(),weights)
         print('[영상 특징 완료]',name,result[name].shape,flush=True)
         del model
     result['view_ids']=np.array([r['observation_id'] for r in rows]);np.savez_compressed(out/'features.npz',**result)
-    (out/'feature_manifest.json').write_text(json.dumps(dict(images=hashes,inputs='unannotated local/context RGB, aligned metric depth and validity, crop K; NO world pose, labels or candidate ID',rgb_resize=[224,224],depth_pool=[16,16],depth_clip_m=2,backbones={n:sha(out/f'{n}_backbone.pt') for n in ('resnet18','dinov2')}),indent=2))
+    (out/'feature_manifest.json').write_text(json.dumps(dict(images=hashes,inputs='unannotated local/context RGB, aligned metric depth and validity, crop K; NO world pose, labels or candidate ID',rgb_resize=[224,224],depth_pool=[16,16],depth_clip_m=2,backbones={n:sha(store/f'{n}_backbone.pt') for n in ('resnet18','dinov2')}),indent=2))
     return result
