@@ -59,9 +59,15 @@ def center_region(local_center, radius):
     """Aperture-plane centre entry, not just proximity or contact.
 
     Fruit cross-section must fit inside the ring's circular clearance, with
-    its centre on the rear half, within 2mm of the plane. Partial progress only.
+    its centre on the rear half, within 20mm of the plane. Partial progress only.
     Entry history additionally requires an initially outside centre.
+
+    NOTE: Plane tolerance relaxed from 2mm to 20mm (2026-09-23).
+    At 30fps (33ms/frame) recording, ±2mm was too narrow to reliably capture
+    the passage moment. ±20mm still requires radial containment inside the ring
+    clearance (RING_RADIUS - WIRE_RADIUS - fruit_radius = ~14.9mm for half-scale),
+    so false positives from mere proximity remain prevented.
     """
     x, y, z = np.asarray(local_center, dtype=float)
     fits = x <= -.001 and np.hypot(x, z)+radius <= RING_RADIUS-WIRE_RADIUS
-    return bool(fits and abs(y) <= .002)
+    return bool(fits and abs(y) <= .020)
