@@ -1,5 +1,16 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신 수정: 송이 50% 축소와 고리–주줄기 관통 판정
+
+상세 변경·재현 명령·검증 한계: [HALF_SCALE_CONTACT_FIX.md](mujoco-benchmark/HALF_SCALE_CONTACT_FIX.md).
+
+- 새 GLB 생성/수집 CLI는 `--truss-scale 0.5` 기본. 주줄기·잎·로봇은 그대로, 송이 전체 가지·꼭지·열매의 길이/반경 50%, 질량 1/8. 강성·감쇠·armature 유지로 동역학 동등성은 주장하지 않음. 원래 크기는 `--truss-scale 1`.
+- 기존 크기 기록의 resume에는 `--truss-scale 1` 명시. 다른 크기를 같은 수집에 섞지 않도록 검사.
+- `20260923_random_glb_full_smoke/scene_0001/targets/Tomato_05` 후보00005의 기존 성공은 잘못된 유효성 판정. 고리–기존 주줄기 관통3.860mm를 GLB 전용 검사에서 누락. 새 실행은 invalid_physics로 처리하고 학습에서 제외. 기하 중심 진입 조건은 변경하지 않음.
+- 구버전 GLB 자료도 학습 로더에서 저장된 고리 관통 지표로 제외. 이전 학습 smoke 가중치/성능은 이 오류의 영향을 받으므로 유효 결과로 사용하지 말 것.
+- 근거/독립 재실행: `/root/docker_share/mujoko_debugging_data/20260923_center_entry_audit/`. 기존 수치/상태는 보존하고 해당 기존 HTML에 정정 안내만 추가.
+- 절반 크기3장면·기존 형상 비교·2후보 물리: `/root/docker_share/mujoko_debugging_data/20260923_half_scale_glb/comparison.html`. 정지3장면 통과, 로봇2후보 miss. 수확 성공 검증이 아님.
+
 ## 최신: 랜덤 GLB 장면 → 전체 열매 10후보·9 RGB-D → 장면 분할 학습 → 새 장면 물리 검증
 
 2026-09-23, 브랜치 `mjlab-performance`. 기존 장면 생성기·후보 수집기·D435 촬영·camera action v2·학습기를 연결했다. **이번 작업의 커밋 여부는 `git status`로 확인한다.** 랜덤화는 GLB 송이 종류, 원래 주줄기·잎에서의 송이 부착 위치, GLB Y각도이며 GLB 안 개별 열매의 배열은 바꾸지 않는다. 9-view 출력은 원본 RGB·Depth를 저장하고 별도 열매 mask 및 Depth 유효성 PNG는 저장하지 않는다.

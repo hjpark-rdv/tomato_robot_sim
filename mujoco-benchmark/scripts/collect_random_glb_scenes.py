@@ -107,13 +107,14 @@ def collect(args):
                   scene_splits=scene_splits(args.scenes),
                   source_dir=str(args.source_dir.resolve()),
                   segment_range=[args.segment_min, args.segment_max],
-                  angle_range=[args.angle_min, args.angle_max])
+                  angle_range=[args.angle_min, args.angle_max],truss_scale=args.truss_scale)
     manifest_path = output / "collection.json"
     scene_root = output / "scenes"
     extending=False
     generated_scenes=0
     if args.resume:
         previous = json.loads(manifest_path.read_text())
+        previous.setdefault('truss_scale',1.)
         generated_scenes=json.loads((scene_root / "manifest.json").read_text())["scenes"]
         extending=bool(args.extend and args.scenes>previous['scenes'])
         recovering_extension=(previous['scenes']==args.scenes and generated_scenes<args.scenes)
@@ -130,7 +131,7 @@ def collect(args):
         generate(scene_root, args.seed, args.scenes, args.trusses, args.source_dir,
                  args.segment_min, args.segment_max, args.angle_min, args.angle_max,
                  args.idle_seconds, not args.no_render,
-                 start_scene=generated_scenes if args.resume else 0)
+                 start_scene=generated_scenes if args.resume else 0,truss_scale=args.truss_scale)
     if args.resume and (extending or recovering_extension):
         manifest.update(scenes=args.scenes,scene_splits=config['scene_splits'])
         for row in manifest['targets']:
@@ -238,6 +239,7 @@ def main():
     p.add_argument("--segment-min", type=int, default=4)
     p.add_argument("--segment-max", type=int, default=13)
     p.add_argument("--angle-min", type=float, default=0)
+    p.add_argument("--truss-scale", type=float, default=.5)
     p.add_argument("--angle-max", type=float, default=180)
     p.add_argument("--idle-seconds", type=float, default=2)
     p.add_argument("--plan-only", action="store_true")

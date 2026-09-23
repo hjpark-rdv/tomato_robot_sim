@@ -18,6 +18,10 @@ def forward(ref,q):
    else:t[:3,:3]=t[:3,:3]@R.from_rotvec(axis*q[index]).as_matrix()
  return t
 
+def valid_glb_physics(glb_penetration,hook_penetration,unstable):
+ # Original main stem is not named glb_col_; hook contacts must also be screened.
+ return not unstable and max(glb_penetration,hook_penetration)<=.0005
+
 class RobotEngine:
  def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120,reference=None,target="Tomato_05"):
   began=time.perf_counter();self.ref=json.loads(Path(reference or HOME/'assets/reference/reference.json').read_text())
@@ -66,6 +70,8 @@ class RobotEngine:
   wall=time.perf_counter()-begin
   out.update(rollout_wall_s=wall,process_cpu_s=time.process_time()-cpu,simulated_s=(i+1)*self.model.opt.timestep,requested_s=seconds,steps=i+1,rtf=(i+1)*self.model.opt.timestep/wall,unstable=unstable,max_target_displacement_m=maxdisp,max_hook_contact_penetration_m=-mincontact,hook_contact_steps=contactsteps,max_tracking_error_m_or_rad=maxerror,warning_counts=self.data.warning.number.tolist(),hook_final_xyz=self.data.xpos[self.hook].tolist(),break_enabled=False,success_evaluator='contact/displacement diagnostics only; no harvest success claim')
   if glb_reference:
-   out['initial_glb_penetration_m']=initial_glb_penetration;out['max_glb_penetration_m']=max_glb_penetration;out['glb_physics_valid']=max_glb_penetration<=.0005 and not unstable
+   out['initial_glb_penetration_m']=initial_glb_penetration;out['max_glb_penetration_m']=max_glb_penetration;out['glb_physics_valid']=valid_glb_physics(max_glb_penetration,-mincontact,unstable)
+   out['physics_guard_version']='glb_and_hook_v2'
+   out['physics_penetration_limit_m']=.0005
   if record:out['_arrays']=dict(times_s=times[:len(trace)],qpos=np.array(trace),poses=np.array(poses));out['_contacts']=pairs
   return out

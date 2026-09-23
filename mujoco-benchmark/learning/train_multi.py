@@ -29,8 +29,12 @@ def train_random_scenes(a, collection):
   if run.get('classification_rule')!='center_entry_only_v2' or run.get('plan_only'):
    raise ValueError('Unexpected label definition: '+str(physics))
   actions=sorted(json.loads((obsroot/'actions.json').read_text()),key=lambda v:v['candidate_id'])
-  eligible=[action for action in actions if action['result'] in ('partial_center_entry','miss') and len(action.get('waypoints_world',[])) in (4,5)]
+  physical_results=json.loads((physics/'results.json').read_text())
+  # Older GLB rollouts omitted hook-to-original-stem penetration from validity.
+  rejected={r['candidate_id'] for r in physical_results if 'glb_physics_valid' in r.get('metrics',{}) and (not r['metrics']['glb_physics_valid'] or r['metrics'].get('max_hook_contact_penetration_m',0)>.0005)}
+  eligible=[action for action in actions if action['candidate_id'] not in rejected and action['result'] in ('partial_center_entry','miss') and len(action.get('waypoints_world',[])) in (4,5)]
   excluded={label:sum(x['result']==label for x in actions) for label in sorted({x['result'] for x in actions}) if label not in ('partial_center_entry','miss')}
+  excluded['legacy_hook_penetration']=sum(x['candidate_id'] in rejected and x['result'] in ('partial_center_entry','miss') for x in actions)
   if not eligible:
    sources.append(dict(scene=scene,target=item['target'],excluded=excluded));continue
   profiles.update(a['parameters'].get('lift_profile','vertical') for a in eligible)

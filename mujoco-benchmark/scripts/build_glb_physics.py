@@ -17,8 +17,9 @@ def junction_neighbors(points,radii,root,root_radius,parent_index):
  distance=np.linalg.norm(points[:-1]+t[:,None]*delta-root,axis=1)
  return [i for i in range(len(delta)) if abs(i-parent_index)==1 and distance[i]<=max(radii[i:i+2])+root_radius]
 
-def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fruit_offsets=None,rachis_stiffness_scale=1.,stem_fraction=.5):
+def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fruit_offsets=None,rachis_stiffness_scale=1.,stem_fraction=.5,truss_scale=1.):
  if not np.isfinite(rachis_stiffness_scale) or rachis_stiffness_scale<=0:raise ValueError("Invalid rachis stiffness scale")
+ if not np.isfinite(truss_scale) or truss_scale<=0:raise ValueError('truss_scale must be finite and positive')
  remove_fruits=set(remove_fruits)
  if any(i not in range(1,12) for i in remove_fruits):raise ValueError('Removed fruit IDs must be in [1, 11]')
  if int(target.rsplit('_',1)[-1]) in remove_fruits:raise ValueError('Cannot target a removed fruit')
@@ -45,6 +46,9 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
     nearest_ring=np.argmin(np.linalg.norm(v[:,None,:]-centerline[None,:,:],axis=2),axis=1)
     v+=offset*(lengths[nearest_ring]/lengths[-1])[:,None]
 
+ # Scale only authored truss geometry about its attachment, including rod radii.
+ pivot=tube_centerline(meshes['Truss_01_Peduncle'][0],14)[0][0].copy()
+ for v,_,_ in meshes.values():v[:]=pivot+(v-pivot)*truss_scale
  tree=E.parse(source);root=tree.getroot();root.set('model','GLB_ELASTIC_ROBOT_PILOT');root.find('compiler').set('inertiafromgeom','auto');root.find('option').set('timestep',str(1/240))
  stem=root.find("worldbody/body[@name='STEM_MainStem_00']")
  for node in list(stem.iter('body')):
@@ -85,7 +89,7 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
     params=dict(spec['axes'][j])
     if meshname=='Rachis':params['k']*=rachis_stiffness_scale;params['d']*=np.sqrt(rachis_stiffness_scale)
     E.SubElement(node,'joint',name=name+'_'+str(j),type='hinge',axis=nums(axis),pos='0 0 0',stiffness=str(params['k']),damping=str(params['d']),armature=str(reference['armature']),limited='true',range=nums(np.deg2rad(params['limit_deg'])))
-   E.SubElement(node,'geom',name='glb_col_'+name,type='capsule',fromto=nums([np.zeros(3),b-a]),size=str(float(max(radii[i:i+2]))),mass=str(bodies[name]['mass']),contype='1',conaffinity='15',group='3',rgba='0.15 0.4 0.05 0')
+   E.SubElement(node,'geom',name='glb_col_'+name,type='capsule',fromto=nums([np.zeros(3),b-a]),size=str(float(max(radii[i:i+2]))),mass=str(bodies[name]['mass']*truss_scale**3),contype='1',conaffinity='15',group='3',rgba='0.15 0.4 0.05 0')
    exclude(owner,name);rod_bodies.append(name);result.append(name)
   chains[meshname]=(points,result);return result
  def nearest(chain_name,point):
@@ -108,7 +112,7 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
   v=meshes['Fruit_'+suffix][0];center=tf((v.max(0)+v.min(0))/2);fruit='Tomato_'+suffix;node=E.SubElement(nodes[anchor],'body',name=fruit,pos=nums(center-positions[anchor]));nodes[fruit]=node;positions[fruit]=center
   vv=tf(v)-center;meshname='glb_fruit_collision_'+suffix
   E.SubElement(assets,'mesh',name=meshname,vertex=nums(vv),face=nums(meshes['Fruit_'+suffix][1]))
-  E.SubElement(node,'geom',name='glb_col_'+fruit,type='mesh',mesh=meshname,mass=str(bodies[fruit]['mass']),contype='1',conaffinity='15',group='3',rgba='0 0 0 0')
+  E.SubElement(node,'geom',name='glb_col_'+fruit,type='mesh',mesh=meshname,mass=str(bodies[fruit]['mass']*truss_scale**3),contype='1',conaffinity='15',group='3',rgba='0 0 0 0')
   exclude(anchor,fruit)
   # These adjacent proximal pieces are mechanically joined to this fruit's pedicel.
   # Only direct fruit-parent excluded here; nonadjacent contacts remain active.
@@ -148,7 +152,8 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
   (ref['shapes'] if m.geom_contype[i] or m.geom_conaffinity[i] else ref['visuals']).append(item)
  ref['schema']='glb_physics_reference_v1';ref['source_glb']=str(glb.resolve());ref['target']=target
  (output/'reference.json').write_text(json.dumps(ref,indent=2))
- meta=dict(source_glb=str(glb.resolve()),source_sha256=hashlib.sha256(glb.read_bytes()).hexdigest(),baseline_model=str(source),y_deg=y_deg,glb_to_world_rotation=rotation.tolist(),attachment_world_m=attachment.tolist(),scale=1,body_count=m.nbody,dof_count=m.nv,rod_bodies=rod_bodies,visual_triangle_count=sum(len(f) for _,f,_ in meshes.values()),armature=reference['armature'],physics_ready=False,scope='elastic GLB migration pilot; validation pending',limitations=['Original spring damping mass values reused; new geometry changes inertia and response','Visual rod triangles rigidly follow nearest segments; bending can expose seams','Fruit convex hulls; rods capsule chains; trichomes visual only','Break disabled as in optimized baseline; no detachment','Existing main-stem appendage collision policy preserved'])
+ meta=dict(source_glb=str(glb.resolve()),source_sha256=hashlib.sha256(glb.read_bytes()).hexdigest(),baseline_model=str(source),y_deg=y_deg,glb_to_world_rotation=rotation.tolist(),attachment_world_m=attachment.tolist(),scale=truss_scale,body_count=m.nbody,dof_count=m.nv,rod_bodies=rod_bodies,visual_triangle_count=sum(len(f) for _,f,_ in meshes.values()),armature=reference['armature'],physics_ready=False,scope='elastic GLB migration pilot; validation pending',limitations=['Spring damping and armature retained; truss masses scale cubically to preserve density; response requires validation','Visual rod triangles rigidly follow nearest segments; bending can expose seams','Fruit convex hulls; rods capsule chains; trichomes visual only','Break disabled as in optimized baseline; no detachment','Existing main-stem appendage collision policy preserved'])
+ meta['truss_mass_scale']=truss_scale**3
  meta['rachis_stiffness_scale']=rachis_stiffness_scale
  meta['stem_segment']=segment
  meta['stem_fraction']=stem_fraction
@@ -160,4 +165,4 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
  meta['visual_triangle_count']=sum(len(node.get('face','').split())//3 for node in assets.findall('mesh') if node.get('name','').startswith('glb_vis_mesh_'))
  (output/'build.json').write_text(json.dumps(meta,indent=2));print('GLB physics model',output,m.nv,m.ngeom,flush=True);return output
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--glb',type=Path,default=ROOT/'nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb');p.add_argument('--output',type=Path,required=True);p.add_argument('--y-deg',type=float,default=90);p.add_argument('--segment',type=int,default=11);p.add_argument('--stem-fraction',type=float,default=.5);p.add_argument('--remove-fruit',type=int,action='append',default=[]);p.add_argument('--rachis-stiffness-scale',type=float,default=1.);p.add_argument('--fruit-offset',nargs=4,action='append',default=[],metavar=('ID','DX','DY','DZ'),help='Fruit ID and offset in GLB meters; keep proximal root fixed');a=p.parse_args();build(a.glb,a.output,a.y_deg,a.segment,remove_fruits=a.remove_fruit,fruit_offsets={int(v[0]):[float(x) for x in v[1:]] for v in a.fruit_offset},rachis_stiffness_scale=a.rachis_stiffness_scale,stem_fraction=a.stem_fraction)
+ p=argparse.ArgumentParser();p.add_argument('--glb',type=Path,default=ROOT/'nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb');p.add_argument('--output',type=Path,required=True);p.add_argument('--truss-scale',type=float,default=.5);p.add_argument('--y-deg',type=float,default=90);p.add_argument('--segment',type=int,default=11);p.add_argument('--stem-fraction',type=float,default=.5);p.add_argument('--remove-fruit',type=int,action='append',default=[]);p.add_argument('--rachis-stiffness-scale',type=float,default=1.);p.add_argument('--fruit-offset',nargs=4,action='append',default=[],metavar=('ID','DX','DY','DZ'),help='Fruit ID and offset in GLB meters; keep proximal root fixed');a=p.parse_args();build(a.glb,a.output,a.y_deg,a.segment,remove_fruits=a.remove_fruit,fruit_offsets={int(v[0]):[float(x) for x in v[1:]] for v in a.fruit_offset},rachis_stiffness_scale=a.rachis_stiffness_scale,stem_fraction=a.stem_fraction,truss_scale=a.truss_scale)

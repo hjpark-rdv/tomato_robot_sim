@@ -192,7 +192,7 @@ def preview(model, data, destination, placements):
 
 def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
              segment_min=4, segment_max=13, angle_min=0., angle_max=180.,
-             idle_seconds=2., render=True, start_scene=0):
+             idle_seconds=2., render=True, start_scene=0, truss_scale=1.):
     if scenes < 1 or trusses < 1:
         raise ValueError("scenes and trusses must be positive")
     if not 0 <= segment_min <= segment_max < 16:
@@ -201,13 +201,16 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
         raise ValueError("GLB Y angle range must lie within [0, 180]")
     if idle_seconds < 0 or not np.isfinite(idle_seconds):
         raise ValueError("Invalid idle duration")
+    if not np.isfinite(truss_scale) or truss_scale<=0:
+        raise ValueError('Invalid truss scale')
     variants = profiles(source_dir)
     if start_scene:
         old=json.loads((output/'manifest.json').read_text())
         if (old['seed']!=seed or old['scenes']!=start_scene or old['trusses_per_scene']!=trusses
                 or old['source_dir']!=str(source_dir.resolve())
                 or old['segment_range']!=[segment_min,segment_max]
-                or old['y_deg_range']!=[angle_min,angle_max]):
+                or old['y_deg_range']!=[angle_min,angle_max]
+                or old.get('truss_scale',1.)!=truss_scale):
             raise ValueError('Existing scene generator settings differ')
         records=old['records']
     else:
@@ -227,8 +230,9 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
                   stem_fraction=placement["stem_fraction"],
                   remove_fruits=placement["remove_fruits"],
                   fruit_offsets=placement["fruit_offsets"],
-                  rachis_stiffness_scale=placement["rachis_stiffness_scale"])
+                  rachis_stiffness_scale=placement["rachis_stiffness_scale"],truss_scale=truss_scale)
             metadata = json.loads((part / "build.json").read_text())
+            placement["truss_scale"] = truss_scale
             placement["attachment_world_m"] = metadata["attachment_world_m"]
             parts.append(part)
         if trusses == 1:
@@ -257,13 +261,13 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
     (output / "manifest.json").write_text(json.dumps(dict(seed=seed, scenes=scenes,
         trusses_per_scene=trusses, source_dir=str(source_dir.resolve()),
         segment_range=[segment_min, segment_max], y_deg_range=[angle_min, angle_max],
-        idle_seconds=idle_seconds, records=records), indent=2))
+        idle_seconds=idle_seconds, truss_scale=truss_scale, records=records), indent=2))
     cards = []
     for record in records:
         path = record["scene"]
         rows = "".join(f"<li>{html.escape(Path(p['source_glb']).stem)}: "
                        f"segment {p['stem_segment']} + {p['stem_fraction']:.2f}, "
-                       f"Y {p['y_deg']:.1f}°</li>" for p in record["placements"])
+                       f"Y {p['y_deg']:.1f}°, scale {p.get('truss_scale',1):g}</li>" for p in record["placements"])
         image = f"<img src='{path}/preview.png'>" if record["preview"] == "preview.png" else ""
         cards.append(f"<section><h2>{path}</h2><p>초기 정지 검사 통과: "
                      f"{record['validation']['scene_screen_passed']}; 최대 겹침 "
@@ -291,12 +295,13 @@ def main():
     parser.add_argument("--segment-max", type=int, default=13)
     parser.add_argument("--angle-min", type=float, default=0.)
     parser.add_argument("--angle-max", type=float, default=180.)
+    parser.add_argument("--truss-scale", type=float, default=.5)
     parser.add_argument("--idle-seconds", type=float, default=2.)
     parser.add_argument("--no-render", action="store_true")
     args = parser.parse_args()
     generate(args.output, args.seed, args.scenes, args.trusses, args.source_dir,
              args.segment_min, args.segment_max, args.angle_min, args.angle_max,
-             args.idle_seconds, not args.no_render)
+             args.idle_seconds, not args.no_render, truss_scale=args.truss_scale)
     print(args.output / "index.html")
 
 

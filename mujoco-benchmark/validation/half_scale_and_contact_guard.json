@@ -1,0 +1,174 @@
+{
+  "problem_candidate": {
+    "source": "20260923_random_glb_full_smoke/scene_0001/targets/Tomato_05/candidate_00005",
+    "previous": "partial_center_entry",
+    "reexecuted": "invalid_physics",
+    "hook_penetration_m": 0.003860173778794644,
+    "first_geometric_entry_saved_frame_s": 46.03333333333333,
+    "worst_saved_frame": {
+      "time": 7.633333333333333,
+      "depth": 0.003860173778794644,
+      "bodies": [
+        "STEM_MainStem_03",
+        "Hook"
+      ]
+    },
+    "scope": "geometry occupancy was present; physical validity was incorrectly accepted"
+  },
+  "old_results_additionally_excluded": [
+    {
+      "run": "scene_0001/targets/Tomato_07/physics",
+      "candidate": "candidate_00005",
+      "previous": "miss",
+      "corrected": "invalid_physics",
+      "hook_penetration_m": 0.0010214158903218036
+    },
+    {
+      "run": "scene_0001/targets/Tomato_01/physics",
+      "candidate": "candidate_00005",
+      "previous": "miss",
+      "corrected": "invalid_physics",
+      "hook_penetration_m": 0.005811555109482723
+    },
+    {
+      "run": "scene_0001/targets/Tomato_05/physics",
+      "candidate": "candidate_00005",
+      "previous": "partial_center_entry",
+      "corrected": "invalid_physics",
+      "hook_penetration_m": 0.003860173778794644
+    },
+    {
+      "run": "scene_0002/targets/Tomato_01/physics",
+      "candidate": "candidate_00005",
+      "previous": "miss",
+      "corrected": "invalid_physics",
+      "hook_penetration_m": 0.0019437349138435155
+    }
+  ],
+  "scale": 0.5,
+  "mass_scale": 0.125,
+  "scale_checks": [
+    {
+      "scene": "scene_0000",
+      "max_truss_half_scale_position_error_m": 3.6126657221302594e-13,
+      "max_unchanged_body_position_error_m": 0.0,
+      "max_mass_scaling_error_kg": 0.0
+    },
+    {
+      "scene": "scene_0001",
+      "max_truss_half_scale_position_error_m": 1.7696955012524995e-13,
+      "max_unchanged_body_position_error_m": 0.0,
+      "max_mass_scaling_error_kg": 0.0
+    },
+    {
+      "scene": "scene_0002",
+      "max_truss_half_scale_position_error_m": 1.5509815654013437e-13,
+      "max_unchanged_body_position_error_m": 0.0,
+      "max_mass_scaling_error_kg": 0.0
+    }
+  ],
+  "idle_checks": [
+    {
+      "initial_penetration_m": 0.0,
+      "max_penetration_m": 0.0,
+      "worst_contact": null,
+      "max_idle_motion_m": 0.0018969332853797504,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "finite_and_warning_free": true,
+      "collision_screen_passed": true,
+      "idle_motion_screen_passed": true,
+      "scene_screen_passed": true,
+      "thresholds_m": {
+        "collision": 0.0005,
+        "idle_motion": 0.005
+      },
+      "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+    },
+    {
+      "initial_penetration_m": 0.00017352568588192277,
+      "max_penetration_m": 0.00017352568588192277,
+      "worst_contact": {
+        "a": "glb_col_TRUSS_Rachis_04",
+        "b": "glb_col_Tomato_02",
+        "penetration_m": 0.00017352568588192277,
+        "step": 0
+      },
+      "max_idle_motion_m": 0.002777991338837817,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "finite_and_warning_free": true,
+      "collision_screen_passed": true,
+      "idle_motion_screen_passed": true,
+      "scene_screen_passed": true,
+      "thresholds_m": {
+        "collision": 0.0005,
+        "idle_motion": 0.005
+      },
+      "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+    },
+    {
+      "initial_penetration_m": 0.0,
+      "max_penetration_m": 0.0,
+      "worst_contact": null,
+      "max_idle_motion_m": 0.0020496343931027477,
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "finite_and_warning_free": true,
+      "collision_screen_passed": true,
+      "idle_motion_screen_passed": true,
+      "scene_screen_passed": true,
+      "thresholds_m": {
+        "collision": 0.0005,
+        "idle_motion": 0.005
+      },
+      "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+    }
+  ],
+  "robot_results": [
+    {
+      "candidate": "candidate_00001",
+      "result": "miss",
+      "hook_penetration_m": -0.0,
+      "glb_valid": true
+    },
+    {
+      "candidate": "candidate_00000",
+      "result": "miss",
+      "hook_penetration_m": -0.0,
+      "glb_valid": true
+    }
+  ],
+  "tests_passed": 26,
+  "artifacts": {
+    "audit": "/root/docker_share/mujoko_debugging_data/20260923_center_entry_audit",
+    "half_scale": "/root/docker_share/mujoko_debugging_data/20260923_half_scale_glb"
+  },
+  "limitations": [
+    "Three scenes contain two GLB variants; not exhaustive",
+    "Spring damping armature unchanged; scaled dynamics not calibrated",
+    "Two robot trajectories only; no harvest success claim",
+    "Earlier training smoke weights affected; no retraining performed"
+  ]
+}

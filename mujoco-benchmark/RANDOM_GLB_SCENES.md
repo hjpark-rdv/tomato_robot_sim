@@ -92,3 +92,18 @@ DISPLAY=:0 ./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/replay_c
   /root/docker_share/mujoko_debugging_data/20260923_random_glb_fresh_physics_smoke/scene_0000/Tomato_10/physics \
   --candidate candidate_00004
 ```
+
+
+## 송이 크기와 물리 판정 수정 (2026-09-23)
+
+새 생성/수집 CLI의 `--truss-scale` 기본값은 **0.5**다. 송이 전체(가지, 꼭지, 열매, 시각/충돌 형상)를 부착점을 기준으로 균일 축소하며 기존 주줄기·잎·로봇은 보존한다. 동일 밀도를 위해 송이 질량은 scale³로 조정한다. 강성·감쇠·armature는 기존값이므로 축소 전과 같은 변형 응답을 보장하지 않는다. 라이브러리 build/generate의 생략 기본값은 기존 호환을 위해 1이다.
+
+이전 크기 수집을 resume/extend할 때는 `--truss-scale 1`을 명시한다. 크기 변경은 새 출력 폴더에서 수행한다. GLB Y축 0–180° 회전 규칙은 유지한다.
+
+GLB rollout의 유효성 검사에 고리 전체 접촉의 0.5mm 관통 한계를 포함했다. 이전 검사는 고리와 기존 주줄기 사이의 관통을 누락했다. 구버전 GLB 학습 자료는 저장된 `max_hook_contact_penetration_m`으로 추가 제외하며 원본 라벨 파일은 덮어쓰지 않는다. 중심 진입 기하 조건과 과실 변위 참고 지표는 그대로다.
+
+`20260923_random_glb_full_smoke/scene_0001/targets/Tomato_05/candidate_00005`는 기존 주줄기–고리 관통3.860mm로 **invalid_physics**다. 같은 명령의 독립 재실행에서 확인했다. 당시 학습 smoke 가중치는 유효한 학습 결과로 사용하지 않는다.
+
+미리보기: `/root/docker_share/mujoko_debugging_data/20260923_half_scale_glb/comparison.html`.
+
+상세 진단과 실행 예시는 [HALF_SCALE_CONTACT_FIX.md](HALF_SCALE_CONTACT_FIX.md)에 정리했다.
