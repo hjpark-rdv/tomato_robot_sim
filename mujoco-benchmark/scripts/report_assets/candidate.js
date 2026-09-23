@@ -63,18 +63,39 @@ function openDetail(id){
  const linkbase=`candidates/${encodeURIComponent(r.candidate_id)}/`;
  $('detailBody').innerHTML=`${badge(r.result)}<p class="detail-note">${r.result==='partial_center_entry'?(entryOnly?'중심 진입 이력이 있어 성공으로 분류했습니다. 열매 최대 변위는 별도로 확인하세요.':'변위 기준 이내에서 중심 진입 이력이 있습니다. 재연으로 실제 걸림 가능성을 확인하세요.'):r.result==='excessive_displacement'?'목표 열매가 변위 기준 20mm보다 많이 움직였습니다. 진입 이력이 있어도 이 판정이 우선합니다.':r.result==='miss'?(entryOnly?'열매 중심 진입이 기록되지 않았습니다.':'변위 한도 내에서 열매 중심 진입이 기록되지 않았습니다.'):esc(r.error||r.preflight?.reason||'상세 진단을 확인하세요.')}</p>
  <div class="detail-metrics"><div><span>최대 중심 변위</span><b>${f(v)} <small>mm</small></b></div><div><span>중심 진입 이력</span><b>${r.center_entered===true?'있음':r.center_entered===false?'없음':'미기록'}</b></div><div><span>시뮬레이션 길이</span><b>${f(m.simulated_s??r.seconds)} <small>s</small></b></div></div>
- <div class="detail-section"><h3>원본 동작 재연</h3>${r.replay_available?`<p class="detail-note">저장된 원본 상태를 표시합니다. 새 실험은 30Hz 재연 데이터를 사용합니다. 아래 명령을 복사해 터미널에서 실행하세요. 화면은 DISPLAY=:0에서 열립니다.</p><pre id="replayCommand">${esc(r.command)}</pre><div class="command-actions"><button class="button primary" id="copyCommand">명령 복사</button><button class="button ghost" id="downloadScript">실행 스크립트 저장</button></div>`:'<p class="detail-note">저장된 상태 파일이 없어 재연할 수 없습니다.</p>'}</div>
+ <div class="detail-section"><h3>원본 동작 재연</h3>${r.replay_available?`<p class="detail-note">저장된 원본 상태를 표시합니다. 새 실험은 30Hz 재연 데이터를 사용합니다. 아래 명령을 복사해 터미널에서 실행하세요. 화면은 DISPLAY=:0에서 열립니다.</p><pre id="replayCommand">${esc(r.command)}</pre><div class="command-actions"><button class="button primary" id="copyCommand">명령 복사</button><button class="button ghost" id="downloadScript">실행 스크립트 저장</button><button class="button primary" id="runCommand" style="background:#1b5e20;border-color:#1b5e20;color:#fff;">🚀 바로 실행 (도커)</button></div>`:'<p class="detail-note">저장된 상태 파일이 없어 재연할 수 없습니다.</p>'}</div>
  <div class="detail-section"><h3>재현용 경로 파라미터</h3><div class="parameter-list">${paramDefs.map(([k,l,u,s])=>`<div class="param"><span>${l}</span><b>${f(p[k]*s)} ${u}</b></div>`).join('')}</div></div>
  <div class="detail-section"><h3>고리 중심의 계획 경유점</h3><div class="detail-path">${pathView(r)}</div></div>
  <div class="detail-section"><h3>처음 기록된 접촉 후보</h3><p class="detail-note">${r.first_contact_candidate?`스텝 ${r.first_contact_candidate.step} · ${f(r.first_contact_candidate.step/(M.hz||120),2)}초`:'기록 없음'} · 비활성 후보도 포함하므로 실제 접촉력 발생을 의미하지 않습니다.</p>${paths.length?`<pre>${paths.map(esc).join('\n↕\n')}</pre>`:''}</div>
  <div class="detail-section"><h3>후보별 실행 시간</h3><div>${timing.map(([l,v])=>`<div class="timeline-row"><span>${l}</span><div class="bar-track"><div class="bar-fill" style="width:${v/max*100}%;background:#8bad99"></div></div><span>${f(v,2)}s</span></div>`).join('')}</div><p class="detail-note">물리 실행 벽시계 ${f(m.rollout_wall_s,2)}초 · 실행·저장 ${f(r.execution_and_save_wall_s,2)}초. 병렬 후보별 시간 합계는 실험 전체 소요 시간이 아닙니다.</p></div>
  <div class="detail-section"><h3>원본 데이터</h3><div class="links"><a href="${linkbase}plan.json">계획 JSON ↗</a><a href="${linkbase}result.json">결과 JSON ↗</a>${r.replay_available?`<a href="${linkbase}trace.json">관절 명령 ↗</a><a href="${linkbase}states.npz" download>상태 NPZ ↓</a>`:''}</div><details style="margin-top:18px"><summary>전체 진단과 해시 보기</summary><pre>${esc(JSON.stringify({action_camera:r.action_camera,preflight:r.preflight,metrics:r.metrics,hook_success:r.hook_success,trace_sha256:r.trace_sha256,states_sha256:r.states_sha256},null,2))}</pre></details></div>`;
  $('detail').hidden=false;$('backdrop').hidden=false;document.body.style.overflow='hidden';$('detail').scrollTop=0;$('closeDetail').focus();
- if(r.replay_available){$('copyCommand').onclick=()=>copy(r.command);$('downloadScript').onclick=()=>download(`#!/usr/bin/env bash\nset -e\n${r.command}\n`,`${r.candidate_id}_replay.sh`,'text/x-shellscript')}
+ if(r.replay_available){
+  $('copyCommand').onclick=()=>copy(r.command);
+  $('downloadScript').onclick=()=>download(`#!/usr/bin/env bash\nset -e\n${r.command}\n`,`${r.candidate_id}_replay.sh`,'text/x-shellscript');
+  $('runCommand').onclick=()=>executeReplay(r.command);
+ }
  history.replaceState(null,'',`#candidate=${encodeURIComponent(id)}`);
 }
 function closeDetail(){ $('detail').hidden=true;$('backdrop').hidden=true;document.body.style.overflow='';history.replaceState(null,'','#candidates');returnFocus?.focus(); }
-function notify(s){$('toast').textContent=s;$('toast').hidden=false;setTimeout(()=>$('toast').hidden=true,2600)}
+function notify(s){$('toast').textContent=s;$('toast').hidden=false;setTimeout(()=>$('toast').hidden=true,3200)}
+async function executeReplay(cmd){
+ notify('도커(humble_x64_env)에서 3D 리플레이 실행 요청 중...');
+ try{
+  const resp=await fetch('http://localhost:8766/replay',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({command:cmd})
+  });
+  const res=await resp.json();
+  if(res.status==='ok'){
+   notify('🎉 도커 내부 3D 리플레이 창이 열렸습니다! (DISPLAY=:0)');
+  }else{
+   notify('❌ 실행 실패: '+(res.error||'알 수 없는 오류'));
+  }
+ }catch(e){
+  notify('⚠️ 리플레이 서버(8766) 미실행. 컨테이너에서 python replay_server.py 실행 필요');
+ }
+}
 async function copy(s){try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(s);else{const area=document.createElement('textarea');area.value=s;document.body.append(area);area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw Error('copy')}notify('재연 명령을 복사했습니다.')}catch(e){notify('복사가 제한되어 있습니다. 명령을 직접 선택해 복사하세요.')}}
 function download(text,name,type){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $('exportFiltered').onclick=()=>{let keys=['candidate_id','result','center_entered','target_max_displacement_mm',...paramDefs.map(p=>p[0])];const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';let lines=[keys.map(cell).join(',')];filtered.forEach(r=>lines.push([r.candidate_id,r.result,r.center_entered,mm(r),...paramDefs.map(p=>r.parameters?.[p[0]])].map(cell).join(',')));download('\ufeff'+lines.join('\r\n'),'filtered_candidates.csv','text/csv;charset=utf-8');notify(`${filtered.length}개 후보를 CSV로 저장합니다.`)};

@@ -94,7 +94,8 @@ def render_test_report(output_dir: Path, data: dict):
           <td class="num">{disp_str}</td>
           <td class="contact-cell" title="{html.escape(first_contact)}"><code>{html.escape(first_contact)}</code></td>
           <td class="links-cell">
-            <a class="btn-action btn-primary" href="{phys_rel}" target="_blank">🎮 물리 3D 리플레이</a>
+            <button class="btn-action btn-primary" onclick="executeDirectReplay('{phys_path.resolve()}', 'predicted_00000')" style="background:#1b5e20;color:#fff;border-color:#1b5e20;cursor:pointer;">🚀 바로 실행</button>
+            <a class="btn-action" href="{phys_rel}" target="_blank">🎮 상세</a>
             <a class="btn-action" href="{rgb_rel}" target="_blank">📷 RGB</a>
             <a class="btn-action" href="{depth_rel}" target="_blank">🟦 Depth</a>
           </td>
@@ -113,7 +114,8 @@ def render_test_report(output_dir: Path, data: dict):
               <div><span>첫 접촉:</span> <code class="truncate">{first_contact}</code></div>
             </div>
             <div class="card-actions">
-              <a class="btn-action btn-primary" href="{phys_rel}" target="_blank">🎮 3D 리플레이</a>
+              <button class="btn-action btn-primary" onclick="executeDirectReplay('{phys_path.resolve()}', 'predicted_00000')" style="background:#1b5e20;color:#fff;border-color:#1b5e20;cursor:pointer;">🚀 바로 실행</button>
+              <a class="btn-action" href="{phys_rel}" target="_blank">🎮 상세</a>
               <a class="btn-action" href="{rgb_rel}" target="_blank">RGB 원본</a>
             </div>
           </div>
@@ -205,6 +207,44 @@ def render_test_report(output_dir: Path, data: dict):
         btnTable.classList.add('active');
         btnGrid.classList.remove('active');
       }
+    }
+
+    async function executeDirectReplay(physPath, candId) {
+      showToast('도커(humble_x64_env)에서 3D 리플레이 실행 요청 중...');
+      const cmd = `DISPLAY=:0 /root/farmily_tomato/mujoco-benchmark/.venv/bin/python /root/farmily_tomato/mujoco-benchmark/scripts/replay_candidate.py ${physPath} --candidate ${candId}`;
+      try {
+        const resp = await fetch('http://localhost:8766/replay', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({command: cmd})
+        });
+        const res = await resp.json();
+        if(res.status === 'ok') {
+          showToast('🎉 도커 내부 3D 리플레이 창이 열렸습니다! (DISPLAY=:0)');
+        } else {
+          showToast('❌ 실행 실패: ' + (res.error || '알 수 없는 오류'));
+        }
+      } catch(e) {
+        showToast('⚠️ 리플레이 서버(8766) 미실행. 컨테이너에서 python replay_server.py 실행 필요');
+      }
+    }
+
+    function showToast(msg) {
+      let t = document.getElementById('toastMsg');
+      if(!t) {
+        t = document.createElement('div');
+        t.id = 'toastMsg';
+        t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,0.3);z-index:99999;transition:opacity 0.2s;';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.display = 'block';
+      t.style.opacity = '1';
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.style.display = 'none', 250);
+      }, 3200);
     }
     """
 
