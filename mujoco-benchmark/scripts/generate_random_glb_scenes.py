@@ -192,7 +192,7 @@ def preview(model, data, destination, placements):
 
 def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
              segment_min=4, segment_max=13, angle_min=0., angle_max=180.,
-             idle_seconds=2., render=True):
+             idle_seconds=2., render=True, start_scene=0):
     if scenes < 1 or trusses < 1:
         raise ValueError("scenes and trusses must be positive")
     if not 0 <= segment_min <= segment_max < 16:
@@ -202,9 +202,18 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
     if idle_seconds < 0 or not np.isfinite(idle_seconds):
         raise ValueError("Invalid idle duration")
     variants = profiles(source_dir)
-    output.mkdir(parents=True, exist_ok=False)
-    records = []
-    for scene_id in range(scenes):
+    if start_scene:
+        old=json.loads((output/'manifest.json').read_text())
+        if (old['seed']!=seed or old['scenes']!=start_scene or old['trusses_per_scene']!=trusses
+                or old['source_dir']!=str(source_dir.resolve())
+                or old['segment_range']!=[segment_min,segment_max]
+                or old['y_deg_range']!=[angle_min,angle_max]):
+            raise ValueError('Existing scene generator settings differ')
+        records=old['records']
+    else:
+        output.mkdir(parents=True, exist_ok=False)
+        records=[]
+    for scene_id in range(start_scene,scenes):
         scene = output / f"scene_{scene_id:04d}"
         scene.mkdir()
         rng = np.random.default_rng(np.random.SeedSequence([seed, scene_id]))

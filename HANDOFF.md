@@ -1,5 +1,13 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신: 랜덤 GLB 장면 → 전체 열매 10후보·9 RGB-D → 장면 분할 학습 → 새 장면 물리 검증
+
+2026-09-23, 브랜치 `mjlab-performance`. 기존 장면 생성기·후보 수집기·D435 촬영·camera action v2·학습기를 연결했다. **이번 작업의 커밋 여부는 `git status`로 확인한다.** 랜덤화는 GLB 송이 종류, 원래 주줄기·잎에서의 송이 부착 위치, GLB Y각도이며 GLB 안 개별 열매의 배열은 바꾸지 않는다. 9-view 출력은 원본 RGB·Depth를 저장하고 별도 열매 mask 및 Depth 유효성 PNG는 저장하지 않는다.
+
+작은 전체 연결 시험: seed5의 3장면×송이1개×열매10개×후보10개 = 300회 시도. 계획 실패110, 물리 미진입160, 중심 진입18, 물리 오류12. RGB·Depth 각270장. 장면0/1/2를 train/validation/test로 분리했고 3모델×3seed 학습에서 검증 BCE로 ResNet18 RGB-D seed2를 선택했다. 테스트 장면은 발견된 진입이0개이며 계획 가능한 후보가 없는 열매3개를 포함한다. 실패 열매가 실제로 불가능할 수 있지만, 10후보 미발견을 그 증명으로 해석하지 않는다.
+
+별도 seed24 새 장면에서 열매10개의 후보를 결과 없이 계획해 모델 추천을 확정하고, 추천10개를 새 MuJoCo 물리로 독립 실행했다. 중심 진입1(Tomato_10), 미진입9, 물리 오류0. 저장 상태10개 재생 해시 확인. 꼭지 걸림 수확 및 RGB-D 우위·일반화는 미입증. 수집 `/root/docker_share/mujoko_debugging_data/20260923_random_glb_full_smoke/index.html`, 학습 `/root/docker_share/mujoko_debugging_data/20260923_random_glb_training_smoke/index.html`, 새 장면 물리 `/root/docker_share/mujoko_debugging_data/20260923_random_glb_fresh_physics_smoke/index.html`. 명령·한계: [RANDOM_GLB_SCENES.md](mujoco-benchmark/RANDOM_GLB_SCENES.md), 보존 수치: `mujoco-benchmark/validation/random_glb_collection_pipeline.json`.
+
 ## 최신: 주줄기 송이 위치·Y각도 랜덤 물리 장면 생성
 
 `mujoco-benchmark/scripts/generate_random_glb_scenes.py`는 seed로 GLB 종류·주줄기 segment 안 위치·Y축 각도를 재현 가능하게 뽑고, 기존 주줄기·잎을 유지한 여러 송이 물리 장면을 생성한다. 각 장면 초기 2초 겹침·정지 이동 검사를 저장하며 실패 장면도 표시한다. 2장면×2송이 샘플: `/root/docker_share/mujoko_debugging_data/20260923_random_glb_physics_final/index.html`. 실행 명령과 범위: [RANDOM_GLB_SCENES.md](mujoco-benchmark/RANDOM_GLB_SCENES.md).

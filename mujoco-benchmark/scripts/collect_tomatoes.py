@@ -11,21 +11,21 @@ def duration_text(seconds):
 def log_status(message):
     print(f'[{datetime.datetime.now():%H:%M:%S}] {message}',flush=True)
 
+def run_step(command,log):
+    child=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+    try:
+        if child.wait():raise subprocess.CalledProcessError(child.returncode,command)
+    except BaseException:
+        try:os.killpg(child.pid,signal.SIGTERM)
+        except ProcessLookupError:pass
+        try:child.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            try:os.killpg(child.pid,signal.SIGKILL)
+            except ProcessLookupError:pass
+            child.wait()
+        raise
 
 def main():
-    def run_step(command,log):
-        child=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-        try:
-            if child.wait():raise subprocess.CalledProcessError(child.returncode,command)
-        except BaseException:
-            try:os.killpg(child.pid,signal.SIGTERM)
-            except ProcessLookupError:pass
-            try:child.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                try:os.killpg(child.pid,signal.SIGKILL)
-                except ProcessLookupError:pass
-                child.wait()
-            raise
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--targets',default='1,2,3,4,6,7,8,9,10,11');p.add_argument('--candidates',type=int,default=1000);p.add_argument('--workers',type=int,default=48);p.add_argument('--planning-workers',type=int,default=16);p.add_argument('--output',type=Path);p.add_argument('--observation-limit',type=int);p.add_argument('--postprocess-workers',type=int,default=8);p.add_argument('--resume',action='store_true');a=p.parse_args()
     targets=[int(x) for x in a.targets.split(',')]
     if len(set(targets))!=len(targets) or any(t<1 or t>11 for t in targets):p.error('targets must be unique numbers in 1..11')

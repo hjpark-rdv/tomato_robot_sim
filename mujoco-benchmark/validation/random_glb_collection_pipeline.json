@@ -1,0 +1,59 @@
+{
+  "schema": "random_glb_collection_pipeline_validation_v1",
+  "date": "2026-09-23",
+  "scope": "small end-to-end smoke; one truss per scene; center entry only",
+  "train_collection": "/root/docker_share/mujoko_debugging_data/20260923_random_glb_full_smoke",
+  "train_collection_sha256": "ca2819dfb03541c05d7f07aef8a8f5dc931cadc2c4daad41603dbe74a8490104",
+  "random_scenes": 3,
+  "scene_split": {
+    "scene_0000": "train",
+    "scene_0001": "validation",
+    "scene_0002": "test"
+  },
+  "targets": 30,
+  "candidates_attempted": 300,
+  "physics_executed": 190,
+  "result_counts": {
+    "ik_or_planning_failure": 110,
+    "miss": 160,
+    "partial_center_entry": 18,
+    "invalid_physics": 12
+  },
+  "rgb_images": 270,
+  "depth_images": 270,
+  "semantic_or_depth_validity_png_files": 0,
+  "train_collection_action_pairs_validated": 1710,
+  "targets_with_no_plannable_candidate": [
+    "scene_0000/Tomato_11",
+    "scene_0002/Tomato_07",
+    "scene_0002/Tomato_09",
+    "scene_0002/Tomato_11"
+  ],
+  "targets_with_no_discovered_entry": 25,
+  "training": "/root/docker_share/mujoko_debugging_data/20260923_random_glb_training_smoke",
+  "training_manifest_sha256": "dc6c9729b6d2bffcb4e9ad01292fc8018a6633a260bc92615c4fb4a7cafbfcb0",
+  "training_scene_pair_counts": {
+    "train": 459,
+    "validation": 792,
+    "test": 351
+  },
+  "selected_model": "resnet18_rgbd",
+  "selected_seed": 2,
+  "unseen_collection": "/root/docker_share/mujoko_debugging_data/20260923_random_glb_unseen_seed24",
+  "unseen_collection_sha256": "6ebad03baa120bf50713503eeac4681df23cf0e1026dd3518b035e62c08bafd7",
+  "unseen_candidates_attempted": 100,
+  "unseen_planned": 88,
+  "unseen_rgb_images": 90,
+  "unseen_depth_images": 90,
+  "unseen_action_pairs_validated": 792,
+  "fresh_physics": "/root/docker_share/mujoko_debugging_data/20260923_random_glb_fresh_physics_smoke",
+  "fresh_summary_sha256": "76dffbd7730f0c8e4f9d13d94c9252c5874dd8455f82bc95e16a2daa45ec6858",
+  "fresh_targets": 10,
+  "fresh_physics_runs": 10,
+  "fresh_center_entries": 1,
+  "fresh_invalid_physics": 0,
+  "replay_checks_passed": 10,
+  "hook_success_evaluated": false,
+  "interpretation": "Ten tested paths can all fail, including at the planner stage. Zero discovered entries is not proof that a fruit is impossible to harvest; one fresh scene cannot establish generalization or RGB-D advantage.",
+  "no_plan_rgbd_targets_validated": 4
+}

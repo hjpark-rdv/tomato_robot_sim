@@ -9,6 +9,142 @@ from features import extract,sha
 from train import Scorer
 
 
+def train_random_scenes(a, collection):
+ """The same frozen image features and Scorer, with scene-held-out ragged candidates."""
+ root=a.collection.resolve()
+ if collection.get('plan_only'):raise ValueError('Plan-only runs have no training labels')
+ if collection.get('status')!='complete':raise ValueError('Random-scene collection is incomplete')
+ splits=collection['scene_splits']
+ if set(splits.values())!={'train','validation','test'}:
+  raise ValueError('Training requires distinct train, validation and test scenes')
+ out=a.output or root.parent/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_random_glb_training')
+ out.mkdir(parents=True,exist_ok=False)
+ torch.set_num_threads(4);device='cuda' if torch.cuda.is_available() else 'cpu';start=time.perf_counter()
+ xs=[];ys=[];obs_features={name:[] for name in ('resnet18_rgbd','dinov2_rgbd')};groups=[];sources=[];profiles=set()
+ for item in sorted(collection['targets'],key=lambda r:(r['scene'],r['target'])):
+  scene=item['scene'];folder=root/scene/'targets'/item['target'];obsroot=folder/'observations';physics=folder/'physics'
+  meta=json.loads((obsroot/'dataset.json').read_text());run=json.loads((physics/'manifest.json').read_text())
+  if meta.get('schema')!='farmily_observation_v2' or meta['source_results_sha256']!=sha(physics/'results.json'):
+   sources.append(dict(scene=scene,target=item['target'],excluded='no executable paths or stale observations'));continue
+  if run.get('classification_rule')!='center_entry_only_v2' or run.get('plan_only'):
+   raise ValueError('Unexpected label definition: '+str(physics))
+  actions=sorted(json.loads((obsroot/'actions.json').read_text()),key=lambda v:v['candidate_id'])
+  eligible=[action for action in actions if action['result'] in ('partial_center_entry','miss') and len(action.get('waypoints_world',[])) in (4,5)]
+  excluded={label:sum(x['result']==label for x in actions) for label in sorted({x['result'] for x in actions}) if label not in ('partial_center_entry','miss')}
+  if not eligible:
+   sources.append(dict(scene=scene,target=item['target'],excluded=excluded));continue
+  profiles.update(a['parameters'].get('lift_profile','vertical') for a in eligible)
+  rows=[json.loads(s) for s in (obsroot/'observations.jsonl').read_text().splitlines()]
+  valid=[r for r in rows if r['target']['input_usable'] and all(r['crops'][k]['available'] for k in ('local','context'))]
+  if not valid:
+   sources.append(dict(scene=scene,target=item['target'],excluded='no usable RGB-D views'));continue
+  featureout=out/'features'/scene/item['target'];featureout.mkdir(parents=True)
+  feature=extract(obsroot,featureout,device,rows=valid,backbone_store=out/'backbones')
+  labels={r['candidate_id']:r['result']=='partial_center_entry' for r in eligible}
+  for index,row in enumerate(valid):
+   with np.load(obsroot/'observations'/row['observation_id']/'actions_camera_v2.npz') as z:
+    saved=z['candidate_ids'].tolist();chosen=[saved.index(r['candidate_id']) for r in eligible]
+    action=np.c_[z['features'][chosen],np.repeat(z['gravity_direction_camera'][None],len(chosen),axis=0)].astype('float32')
+   if not np.isfinite(action).all():raise ValueError('Non-finite camera action: '+str(obsroot))
+   begin=sum(len(x) for x in xs);end=begin+len(eligible)
+   xs.append(action);ys.extend(float(labels[r['candidate_id']]) for r in eligible)
+   for name in obs_features:
+    vector=np.r_[feature[name.split('_')[0]][index],feature['depth'][index],feature['crop_intrinsics'][index]].astype('float32')
+    obs_features[name].append(np.repeat(vector[None],len(eligible),axis=0))
+   groups.append(dict(scene=scene,target=item['target'],view=row['observation_id'],split=splits[scene],
+                      pair_start=begin,pair_end=end,candidate_ids=[r['candidate_id'] for r in eligible],
+                      observation_root=str(obsroot)))
+  sources.append(dict(scene=scene,target=item['target'],actions=len(actions),eligible=len(eligible),
+                      physical_rollouts=sum(v['result'] in ('partial_center_entry','miss','invalid_physics') for v in actions),
+                      excluded=excluded,views=len(valid),entries=sum(labels.values()),
+                      physics_results_sha256=sha(physics/'results.json'),dataset_sha256=sha(obsroot/'dataset.json')))
+ if len(profiles)!=1:raise ValueError('Do not mix trajectory profiles; compact action14 cannot distinguish them')
+ x=np.concatenate(xs);y=np.asarray(ys,dtype='float32')
+ pair_splits={name:np.concatenate([np.arange(g['pair_start'],g['pair_end']) for g in groups if g['split']==name])
+              for name in ('train','validation','test')}
+ if any(not len(v) for v in pair_splits.values()):raise ValueError('No usable labeled pairs in a scene split')
+ assert all(set(pair_splits[a]).isdisjoint(pair_splits[b]) for a,b in [('train','validation'),('train','test'),('validation','test')])
+ assert all(set(g['scene'] for g in groups if g['split']==a).isdisjoint(g['scene'] for g in groups if g['split']==b) for a,b in [('train','validation'),('train','test'),('validation','test')])
+ am=x[pair_splits['train']].mean(0);ast=np.maximum(x[pair_splits['train']].std(0),.02)
+ ax=torch.tensor((x-am)/ast,device=device);yy=torch.tensor(y,device=device)
+ manifest=dict(schema='random_glb_training_v1',collection=str(root),scene_splits=splits,
+               groups=groups,sources=sources,profile=next(iter(profiles)),
+               pair_counts={name:len(v) for name,v in pair_splits.items()},
+               physical_rollouts=sum(s.get('physical_rollouts',0) for s in sources),
+               selection='model mean validation BCE then seed validation BCE',
+               input='same camera action14 + gravity3 and frozen RGB-D features as train_multi',
+               label='center_entry_only_v2; invalid physics and planning failures excluded',
+               search_policy='10 sampled paths per target; zero discovered entries is allowed and is not proof of physical impossibility',
+               test_scene_policy='test labels unused in normalization, training and model selection',
+               hook_success=None,device=device,epochs=a.epochs,seeds=a.seeds)
+ (out/'manifest.json').write_text(json.dumps(manifest,indent=2))
+ runs=[];test_predictions={}
+ for name in ('action_only','resnet18_rgbd','dinov2_rgbd'):
+  obs=np.zeros((len(x),0),dtype='float32') if name=='action_only' else np.concatenate(obs_features[name])
+  om=obs[pair_splits['train']].mean(0);ost=np.maximum(obs[pair_splits['train']].std(0),.1)
+  ox=torch.tensor((obs-om)/ost,device=device)
+  for seed in map(int,a.seeds.split(',')):
+   torch.manual_seed(seed);np.random.seed(seed);random.seed(seed)
+   model=Scorer(obs.shape[1]);model.head[-1]=nn.Linear(96,1);model=model.to(device)
+   optimizer=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.001)
+   best=float('inf');best_epoch=0;state=None;history=[]
+   for epoch in range(1,a.epochs+1):
+    model.train();total=0.
+    for batch in torch.randperm(len(pair_splits['train']),device=device).split(2048):
+     ix=torch.tensor(pair_splits['train'][batch.cpu().numpy()],device=device)
+     loss=F.binary_cross_entropy_with_logits(model(ax[ix],ox[ix])[:,0],yy[ix]);optimizer.zero_grad(set_to_none=True);loss.backward();optimizer.step();total+=float(loss)*len(ix)
+    model.eval()
+    with torch.no_grad():
+     ix=torch.tensor(pair_splits['validation'],device=device)
+     validation=float(F.binary_cross_entropy_with_logits(model(ax[ix],ox[ix])[:,0],yy[ix]))
+    history.append(dict(epoch=epoch,train_bce=total/len(pair_splits['train']),validation_bce=validation))
+    if validation<best-1e-5:best=validation;best_epoch=epoch;state=copy.deepcopy(model.state_dict())
+    if epoch-best_epoch>=30:break
+   model.load_state_dict(state);model.eval()
+   with torch.no_grad():
+    score=model(ax,ox)[:,0].sigmoid().cpu().numpy()
+   test=pair_splits['test'];test_groups=[g for g in groups if g['split']=='test']
+   recommendations=[]
+   for g in test_groups:
+    selected=int(g['pair_start']+np.argmax(score[g['pair_start']:g['pair_end']]))
+    recommendations.append(dict(scene=g['scene'],target=g['target'],view=g['view'],
+                                candidate_id=g['candidate_ids'][selected-g['pair_start']],
+                                entry_score=float(score[selected]),actual_entry=bool(y[selected])))
+   all_test_targets={(r['scene'],r['target']) for r in collection['targets'] if splits[r['scene']]=='test'}
+   covered_targets={(r['scene'],r['target']) for r in recommendations}
+   metrics=dict(top1_entry_rate=float(np.mean([r['actual_entry'] for r in recommendations])),
+                random_candidate_entry_rate=float(y[test].mean()),
+                brier=float(np.square(score[test]-y[test]).mean()),
+                view_recommendations=len(recommendations),
+                test_targets_total=len(all_test_targets),eligible_targets=len(covered_targets),
+                targets_without_eligible_input=len(all_test_targets-covered_targets),
+                unique_target_candidate_pairs=len({(r['scene'],r['target'],r['candidate_id']) for r in recommendations}))
+   folder=out/f'{name}_seed{seed}';folder.mkdir()
+   torch.save(dict(state_dict={k:v.cpu() for k,v in state.items()},obs_dim=obs.shape[1],
+                   action_mean=am,action_std=ast,observation_mean=om,observation_std=ost,
+                   score='entry sigmoid only',architecture='Scorer with one output',
+                   model=name,seed=seed),folder/'model.pt')
+   (folder/'history.json').write_text(json.dumps(history,indent=2))
+   row=dict(model=name,seed=seed,best_epoch=best_epoch,validation_bce=best,test=metrics)
+   runs.append(row);test_predictions[(name,seed)]=recommendations
+   print('[장면 분할 학습]',json.dumps(row),flush=True)
+ selected_model=min({r['model'] for r in runs},key=lambda name:np.mean([r['validation_bce'] for r in runs if r['model']==name]))
+ selected=min((r for r in runs if r['model']==selected_model),key=lambda r:r['validation_bce'])
+ manifest.update(selected_model=selected_model,selected_seed=selected['seed'],wall_s=time.perf_counter()-start)
+ (out/'manifest.json').write_text(json.dumps(manifest,indent=2));(out/'results.json').write_text(json.dumps(runs,indent=2))
+ (out/'recommendations.json').write_text(json.dumps(test_predictions[(selected_model,selected['seed'])],indent=2))
+ summary=''.join(f'<tr><td>{html.escape(r["model"])}</td><td>{r["seed"]}</td><td>{r["validation_bce"]:.4f}</td><td>{r["test"]["top1_entry_rate"]:.1%}</td><td>{r["test"]["brier"]:.3f}</td></tr>' for r in runs)
+ (out/'index.html').write_text('<meta charset="utf-8"><h1>랜덤 GLB 장면 단위 진입 학습</h1>'
+  '<p>선택 모델: '+html.escape(selected_model)+f' seed {selected["seed"]}. '
+  '중심 진입 판정이며 꼭지 걸림 성공이 아닙니다. 1순위 진입률은 계획 가능한 후보와 사용 가능한 관측이 있는 시점만의 값입니다. '
+  '계획 불가 열매도 원본 수집과 평가 대상 목록에 남아 있습니다. 카메라 시점별 추천은 독립 물리 실행 횟수가 아닙니다.</p>'
+  '<table><tr><th>모델</th><th>seed</th><th>검증 BCE</th><th>테스트 1순위 진입률</th><th>Brier</th></tr>'+summary+'</table>'
+  '<p><a href="manifest.json">분할/원본</a> · <a href="results.json">수치</a> · '
+  '<a href="recommendations.json">테스트 추천</a></p>')
+ print('[장면 분할 학습 완료]',out/'index.html',flush=True)
+ return out
+
+
 def report(out):
  m=json.loads((out/'manifest.json').read_text());rs=json.loads((out/'results.json').read_text())
  rows=''.join(f"<tr><td>{html.escape(r['model'])}</td><td>{r['seed']}</td><td>{r['best_epoch']}</td><td>{r['validation_bce']:.4f}</td><td>{r['test']['top1_entry_rate']:.1%}</td><td>{r['test']['brier']:.3f}</td></tr>" for r in rs)
@@ -26,6 +162,12 @@ def report(out):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('collection',type=Path);p.add_argument('--test-target',default='Tomato_06');p.add_argument('--validation-target',default='Tomato_09');p.add_argument('--epochs',type=int,default=150);p.add_argument('--seeds',default='0,1,2');p.add_argument('--output',type=Path);a=p.parse_args()
+ collection_file=a.collection/'collection.json'
+ if collection_file.exists():
+  collection=json.loads(collection_file.read_text())
+  if collection.get('schema')=='random_glb_collection_v1':
+   train_random_scenes(a,collection)
+   return
  if a.test_target==a.validation_target:p.error('test and validation targets must differ')
  out=a.output or a.collection.parent/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_multi_tomato_training');out.mkdir(parents=True,exist_ok=False);print('[학습 폴더]',out,flush=True)
  torch.set_num_threads(4);device='cuda' if torch.cuda.is_available() else 'cpu';start=time.perf_counter();datasets=[];views=[];xs=[];ys=[];ds=[];featlist=[];targets=[];ids=[];profiles=set();param_sets=[]
