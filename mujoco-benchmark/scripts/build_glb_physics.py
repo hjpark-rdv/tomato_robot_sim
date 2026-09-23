@@ -17,13 +17,14 @@ def junction_neighbors(points,radii,root,root_radius,parent_index):
  distance=np.linalg.norm(points[:-1]+t[:,None]*delta-root,axis=1)
  return [i for i in range(len(delta)) if abs(i-parent_index)==1 and distance[i]<=max(radii[i:i+2])+root_radius]
 
-def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fruit_offsets=None,rachis_stiffness_scale=1.):
+def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fruit_offsets=None,rachis_stiffness_scale=1.,stem_fraction=.5):
  if not np.isfinite(rachis_stiffness_scale) or rachis_stiffness_scale<=0:raise ValueError("Invalid rachis stiffness scale")
  remove_fruits=set(remove_fruits)
  if any(i not in range(1,12) for i in remove_fruits):raise ValueError('Removed fruit IDs must be in [1, 11]')
  if int(target.rsplit('_',1)[-1]) in remove_fruits:raise ValueError('Cannot target a removed fruit')
  if not np.isfinite(y_deg) or not 0<=y_deg<=180:raise ValueError('GLB Y rotation must be in [0, 180] degrees')
  if not 0<=segment<16:raise ValueError('Stem segment must be in [0, 15]')
+ if not np.isfinite(stem_fraction) or not 0<=stem_fraction<=1:raise ValueError('Stem fraction must be in [0, 1]')
  if target not in [f'Tomato_{i:02d}' for i in range(1,12)]:raise ValueError('Unknown fruit target')
  import mujoco as mj
  source=HOME/'models/robot_plant_optimized.xml';reference=json.loads((HOME/'assets/reference/reference.json').read_text());old=mj.MjModel.from_xml_path(str(source));od=mj.MjData(old);mj.mj_forward(old,od)
@@ -58,9 +59,16 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
  name=f'STEM_MainStem_{segment:02d}';parent=nodes[name];bid=old.body(name).id;gid=next(g for g in range(old.ngeom) if old.geom_bodyid[g]==bid and old.geom_type[g]==mj.mjtGeom.mjGEOM_CAPSULE)
  rotation=R.from_euler('x',90,degrees=True).as_matrix()@R.from_euler('y',y_deg,degrees=True).as_matrix()
  ped,rped=tube_centerline(meshes['Truss_01_Peduncle'][0],14);ped0=ped[0].copy()
- stemaxis=od.geom_xmat[gid].reshape(3,3)[:,2];heading=rotation@(ped[3]-ped[0]);normal=heading-stemaxis*np.dot(stemaxis,heading);normal/=np.linalg.norm(normal)
+ stemaxis=od.geom_xmat[gid].reshape(3,3)[:,2];heading=rotation@(ped[3]-ped[0]);normal=heading-stemaxis*np.dot(stemaxis,heading)
+ if np.linalg.norm(normal)<1e-9:
+  # A branch exactly parallel to the stem has no unique radial side. Use the
+  # transformed GLB X axis to choose a side without rotating the branch.
+  normal=rotation[:,0]-stemaxis*np.dot(stemaxis,rotation[:,0])
+ if np.linalg.norm(normal)<1e-9:raise ValueError('Cannot determine a radial stem attachment side')
+ normal/=np.linalg.norm(normal)
  # Anchor the actual proximal cross-section on the stem surface; no extra rotation.
- attachment=od.geom_xpos[gid]+normal*old.geom_size[gid,0];tf=lambda v:(np.asarray(v)-ped0)@rotation.T+attachment
+ stem_center=od.geom_xpos[gid]+(2*stem_fraction-1)*old.geom_size[gid,1]*stemaxis
+ attachment=stem_center+normal*old.geom_size[gid,0];tf=lambda v:(np.asarray(v)-ped0)@rotation.T+attachment
  for n in nodes:positions[n]=od.xpos[old.body(n).id].copy()
  def exclude(a,b):
   pair=tuple(sorted([a,b]))
@@ -142,6 +150,8 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
  (output/'reference.json').write_text(json.dumps(ref,indent=2))
  meta=dict(source_glb=str(glb.resolve()),source_sha256=hashlib.sha256(glb.read_bytes()).hexdigest(),baseline_model=str(source),y_deg=y_deg,glb_to_world_rotation=rotation.tolist(),attachment_world_m=attachment.tolist(),scale=1,body_count=m.nbody,dof_count=m.nv,rod_bodies=rod_bodies,visual_triangle_count=sum(len(f) for _,f,_ in meshes.values()),armature=reference['armature'],physics_ready=False,scope='elastic GLB migration pilot; validation pending',limitations=['Original spring damping mass values reused; new geometry changes inertia and response','Visual rod triangles rigidly follow nearest segments; bending can expose seams','Fruit convex hulls; rods capsule chains; trichomes visual only','Break disabled as in optimized baseline; no detachment','Existing main-stem appendage collision policy preserved'])
  meta['rachis_stiffness_scale']=rachis_stiffness_scale
+ meta['stem_segment']=segment
+ meta['stem_fraction']=stem_fraction
  meta['rachis_damping_scale']=float(np.sqrt(rachis_stiffness_scale))
  meta['junction_filters']=junction_filters
  meta['removed_fruit_ids']=sorted(remove_fruits)
@@ -150,4 +160,4 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
  meta['visual_triangle_count']=sum(len(node.get('face','').split())//3 for node in assets.findall('mesh') if node.get('name','').startswith('glb_vis_mesh_'))
  (output/'build.json').write_text(json.dumps(meta,indent=2));print('GLB physics model',output,m.nv,m.ngeom,flush=True);return output
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--glb',type=Path,default=ROOT/'nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb');p.add_argument('--output',type=Path,required=True);p.add_argument('--y-deg',type=float,default=90);p.add_argument('--segment',type=int,default=11);p.add_argument('--remove-fruit',type=int,action='append',default=[]);p.add_argument('--rachis-stiffness-scale',type=float,default=1.);p.add_argument('--fruit-offset',nargs=4,action='append',default=[],metavar=('ID','DX','DY','DZ'),help='Fruit ID and offset in GLB meters; keep proximal root fixed');a=p.parse_args();build(a.glb,a.output,a.y_deg,a.segment,remove_fruits=a.remove_fruit,fruit_offsets={int(v[0]):[float(x) for x in v[1:]] for v in a.fruit_offset},rachis_stiffness_scale=a.rachis_stiffness_scale)
+ p=argparse.ArgumentParser();p.add_argument('--glb',type=Path,default=ROOT/'nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb');p.add_argument('--output',type=Path,required=True);p.add_argument('--y-deg',type=float,default=90);p.add_argument('--segment',type=int,default=11);p.add_argument('--stem-fraction',type=float,default=.5);p.add_argument('--remove-fruit',type=int,action='append',default=[]);p.add_argument('--rachis-stiffness-scale',type=float,default=1.);p.add_argument('--fruit-offset',nargs=4,action='append',default=[],metavar=('ID','DX','DY','DZ'),help='Fruit ID and offset in GLB meters; keep proximal root fixed');a=p.parse_args();build(a.glb,a.output,a.y_deg,a.segment,remove_fruits=a.remove_fruit,fruit_offsets={int(v[0]):[float(x) for x in v[1:]] for v in a.fruit_offset},rachis_stiffness_scale=a.rachis_stiffness_scale,stem_fraction=a.stem_fraction)

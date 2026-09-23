@@ -1,5 +1,11 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신: 주줄기 송이 위치·Y각도 랜덤 물리 장면 생성
+
+`mujoco-benchmark/scripts/generate_random_glb_scenes.py`는 seed로 GLB 종류·주줄기 segment 안 위치·Y축 각도를 재현 가능하게 뽑고, 기존 주줄기·잎을 유지한 여러 송이 물리 장면을 생성한다. 각 장면 초기 2초 겹침·정지 이동 검사를 저장하며 실패 장면도 표시한다. 2장면×2송이 샘플: `/root/docker_share/mujoko_debugging_data/20260923_random_glb_physics_final/index.html`. 실행 명령과 범위: [RANDOM_GLB_SCENES.md](mujoco-benchmark/RANDOM_GLB_SCENES.md).
+
+2장면 모두 초기 검사 통과. 두 번째 송이를 대상으로 로봇 1경로 실제 실행: 최대 겹침0.347mm, 중심 미진입, 열매 이동52.51mm. 다중 송이의 이름 공간도 `RobotEngine`의 접촉 검사에 포함하도록 수정했다. 한 경로의 정상 실행을 전체 랜덤 장면의 수집 승인으로 해석하지 않는다.
+
 ## 최신: 전체 GLB 로봇 수집 소량 검사 완료
 
 2026-09-23, 최신5종/각1개 전체 로봇 경로, Tomato_05, Y90°/segment11, 240Hz. white는2번 위치·강성 수정 모델, 첫seed0 준비자세IK실패 후seed1실행. 총 계획6회/실제물리5회. 결과: green/red/white miss(물리 기준통과), rotated90 partial_center_entry(물리 기준통과), cyan invalid_physics(최대겹침0.514mm로0.5mm기준초과, 학습제외). 경고/수치불안정0.

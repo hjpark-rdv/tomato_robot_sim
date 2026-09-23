@@ -1,0 +1,121 @@
+{
+  "seed": 23,
+  "scenes": 2,
+  "trusses_per_scene": 2,
+  "scene_screens": [
+    {
+      "scene": "scene_0000",
+      "placements": [
+        {
+          "source_glb": "tomato_master_v10_cluster_curve_white.glb",
+          "stem_segment": 4,
+          "stem_fraction": 0.6432211215881809,
+          "y_deg": 20.467449023639283
+        },
+        {
+          "source_glb": "tomato_master_v10_cluster_curve_cyan.glb",
+          "stem_segment": 12,
+          "stem_fraction": 0.26672760667293716,
+          "y_deg": 153.62227907372892
+        }
+      ],
+      "validation": {
+        "initial_penetration_m": 0.00034705178792691655,
+        "max_penetration_m": 0.00034705178792691655,
+        "worst_contact": {
+          "a": "truss_01__glb_col_TRUSS_Rachis_04",
+          "b": "truss_01__glb_col_Tomato_02",
+          "penetration_m": 0.00034705178792691655,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.002298527658087584,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "model_sha256": "a51aa18f3b4fd0db61b49141a63d97bbff74bde3f3f237a92ff8abcd002d186c"
+    },
+    {
+      "scene": "scene_0001",
+      "placements": [
+        {
+          "source_glb": "tomato_master_v10_cluster_curve_red.glb",
+          "stem_segment": 4,
+          "stem_fraction": 0.15,
+          "y_deg": 33.27393890620805
+        },
+        {
+          "source_glb": "tomato_master_v10_cluster_curve_white.glb",
+          "stem_segment": 9,
+          "stem_fraction": 0.15,
+          "y_deg": 141.22858756682464
+        }
+      ],
+      "validation": {
+        "initial_penetration_m": 0.00045603185030168233,
+        "max_penetration_m": 0.00045603185030168233,
+        "worst_contact": {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "penetration_m": 0.00045603185030168233,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.002584464472381058,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "model_sha256": "4aa0af368885f3c942b624c236b0b43ec9d3d7b76896aa24eac93826bbb5dd2c"
+    }
+  ],
+  "stem_and_leaf_geoms_preserved": 302,
+  "fruit_targets_per_scene": 20,
+  "dof_per_scene": 430,
+  "seed_reproduction_verified": true,
+  "robot_smoke": {
+    "scene": "scene_0000",
+    "target": "truss_01__Tomato_05",
+    "result": "miss",
+    "max_glb_penetration_m": 0.00034705178792691655,
+    "glb_physics_valid": true,
+    "target_displacement_m": 0.05251357521289214,
+    "training_eligible": true
+  },
+  "limitations": [
+    "Idle screen is not robot contact proof for every sampled scene",
+    "One robot candidate is not a success-rate evaluation",
+    "Virtual observation dataset generation for multi-truss scenes is not connected"
+  ],
+  "report": "/root/docker_share/mujoko_debugging_data/20260923_random_glb_physics_final/index.html",
+  "regression_tests_passed": 15
+}
