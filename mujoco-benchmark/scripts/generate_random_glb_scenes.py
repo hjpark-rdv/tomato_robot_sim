@@ -192,7 +192,7 @@ def preview(model, data, destination, placements):
 
 def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
              segment_min=4, segment_max=13, angle_min=0., angle_max=180.,
-             idle_seconds=2., render=True, start_scene=0, truss_scale=1.):
+             idle_seconds=2., render=True, start_scene=0, truss_scale=1., glb=None):
     if scenes < 1 or trusses < 1:
         raise ValueError("scenes and trusses must be positive")
     if not 0 <= segment_min <= segment_max < 16:
@@ -204,6 +204,11 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
     if not np.isfinite(truss_scale) or truss_scale<=0:
         raise ValueError('Invalid truss scale')
     variants = profiles(source_dir)
+    if glb:
+        filtered = [v for v in variants if glb.lower() in v["path"].name.lower()]
+        if not filtered:
+            raise ValueError(f"No GLB matching {glb!r} found in {source_dir}")
+        variants = filtered
     if start_scene:
         old=json.loads((output/'manifest.json').read_text())
         if (old['seed']!=seed or old['scenes']!=start_scene or old['trusses_per_scene']!=trusses
@@ -298,10 +303,13 @@ def main():
     parser.add_argument("--truss-scale", type=float, default=.5)
     parser.add_argument("--idle-seconds", type=float, default=2.)
     parser.add_argument("--no-render", action="store_true")
+    parser.add_argument("--glb", type=str, default=None,
+                        help="특정 GLB 송이 지정 (예: cyan, green, red, white, rotated90)")
     args = parser.parse_args()
     generate(args.output, args.seed, args.scenes, args.trusses, args.source_dir,
              args.segment_min, args.segment_max, args.angle_min, args.angle_max,
-             args.idle_seconds, not args.no_render, truss_scale=args.truss_scale)
+             args.idle_seconds, not args.no_render, truss_scale=args.truss_scale,
+             glb=args.glb)
     print(args.output / "index.html")
 
 
