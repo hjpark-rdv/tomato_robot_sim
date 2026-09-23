@@ -24,7 +24,13 @@ def bbox(mask):
 
 
 def views(nominal,center,k,seed,count=71):
-    if count not in (9,71):raise ValueError('Supported view counts are 9 and 71')
+    if count not in (1,9,71):raise ValueError('Supported view counts are 1, 9 and 71')
+    if count==1:
+        uv,z=project(center,nominal,k)
+        return [dict(sobol_index=None,translation_camera_m=[0]*3,rotation_camera_xyz_deg=[0]*3,
+                     world_from_color=nominal.tolist(),projected_target_center_px=uv.tolist(),
+                     target_optical_z_m=z,screen_cell=4,nominal=True,
+                     observation_id='view_0000',split='scene')]
     # Independent rotations/translations; no look-at operation.
     u=qmc.Sobol(6,scramble=True,seed=seed).random_base2(12)*2-1
     groups={i:[] for i in range(9)};outside=[]
@@ -85,7 +91,7 @@ def gallery(root,rows):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('run',type=Path);p.add_argument('--seed',type=int,default=42);p.add_argument('--output',type=Path);p.add_argument('--limit',type=int);p.add_argument('--views',type=int,choices=(9,71),default=71);p.add_argument('--postprocess-workers',type=int,default=8);args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('run',type=Path);p.add_argument('--seed',type=int,default=42);p.add_argument('--output',type=Path);p.add_argument('--limit',type=int);p.add_argument('--views',type=int,choices=(1,9,71),default=71);p.add_argument('--postprocess-workers',type=int,default=8);args=p.parse_args()
     source=args.run.resolve();manifest=json.loads((source/'manifest.json').read_text());results=json.loads((source/'results.json').read_text());assets=source/'replay_assets'
     if mj.__version__!=manifest['mujoco']:raise RuntimeError('Matching MuJoCo required')
     target_name=manifest['target']
@@ -160,12 +166,12 @@ def main():
         target=dict(id=target_name,center_pixel_gt=uv,center_world_gt=center.tolist(),visible_bbox_xyxy=bbox(mask),isolated_bbox_xyxy_gt=bbox(isolated),visible_centroid_px=[float(x.mean()),float(y.mean())] if visible else None,visible_pixels=visible,isolated_pixels_in_frame_gt=expected,occlusion_fraction_in_frame=round(1-fraction,4) if fraction is not None else None,truncated=truncated,visibility=classification,label_source='MuJoCo geom-ID segmentation, fruit only; no vision detector',input_usable=visible>=20)
         crop=save_crops(folder,meta,uv,2*spec['radius']*k[0,0]/v['target_optical_z_m'])
         preview=Image.open(folder/'rgb.png').copy();draw=ImageDraw.Draw(preview)
-        if args.views!=9:
+        if args.views==71:
             if target['visible_bbox_xyxy']:
                 box=target['visible_bbox_xyxy'];draw.rectangle(box,outline='#58ffba',width=2);draw.text((max(0,box[0]),max(0,box[1]-14)),target_name+' (GT)',fill='#58ffba')
             if 0<=uv[0]<640 and 0<=uv[1]<480:draw.ellipse((uv[0]-3,uv[1]-3,uv[0]+3,uv[1]+3),outline='#ffff00',width=1)
         preview.save(folder/'annotated_preview.jpg',quality=85)
-        if args.views==9:
+        if args.views in (1,9):
             (folder/'target_visible_mask.png').unlink()
             (folder/'target_isolated_mask_gt.png').unlink()
             (folder/'aligned_valid.png').unlink()
@@ -184,9 +190,9 @@ def main():
     with (out/'observations.jsonl').open('w') as f:
         for r in rows:f.write(json.dumps(r)+'\n')
     counts=Counter(r['target']['visibility'] for r in rows);cells=Counter(str(r['screen_cell']) for r in rows)
-    metadata=dict(schema='farmily_observation_v1',source_run=str(source),source_model_sha256=manifest['model_sha256'],source_results_sha256=sha(source/'results.json'),initial_state_sha256=sha(out/'initial_state.npz'),source_camera_urdf_sha256=sha(HOME.parent/'nvidia-sim/robot_usd/rb5_farmily.urdf'),target=target_name,actual_robot_world_from_color=actual_nominal.tolist(),virtual_reference_translation_world=(center-reference_center).tolist(),observations=len(rows),actions=len(actions),pose_label_actions=len(action_ids),seed=args.seed,nominal_world_from_color=nominal.tolist(),translation_bounds_camera_m=[.05,.05,.025],rotation_bounds_camera_xyz_deg=[20,20,5],sampling='independent Sobol pose perturbations, selection stratified by target projected 3x3 image cell; no look-at recentering',visibility_counts=dict(counts),screen_cell_counts=dict(cells),split_rule='collection scene_splits applies to all views' if args.views==9 else 'upper-right cell test; lower-left validation; other in-frame train; out-of-frame visibility_test',split_caveat='Scene-held-out split is assigned by the collection; views are never independently split.' if args.views==9 else 'All observations share one plant scene and action outcomes. This split tests view variation only, not unseen tomatoes or proof of image necessity. Do not randomly split image-action pairs.',task='predict center entry and maximum displacement; hook success unvalidated',physical_robot_motion=False,plant_randomization=False,physical_rollouts_performed=0,label_semantics='same world-frame paths/outcomes for every view; per-view camera-frame ring waypoints provided. Virtual observation camera pose is an input, not a physically reachable robot pose.',occlusion_definition='1 - visible fruit pixels / isolated fruit pixels inside image; does not measure offscreen fraction',depth_model='ideal D435 intrinsics approximation; clip 0.10m; no real sensor noise',wall_s=time.perf_counter()-began)
-    metadata['plant_randomization']=reference.get('schema')=='random_glb_plant_v1' or (reference.get('schema')=='glb_physics_reference_v1' and args.views==9)
-    metadata['target_mask_files_saved']=args.views!=9
+    metadata=dict(schema='farmily_observation_v1',source_run=str(source),source_model_sha256=manifest['model_sha256'],source_results_sha256=sha(source/'results.json'),initial_state_sha256=sha(out/'initial_state.npz'),source_camera_urdf_sha256=sha(HOME.parent/'nvidia-sim/robot_usd/rb5_farmily.urdf'),target=target_name,actual_robot_world_from_color=actual_nominal.tolist(),virtual_reference_translation_world=(center-reference_center).tolist(),observations=len(rows),actions=len(actions),pose_label_actions=len(action_ids),seed=args.seed,nominal_world_from_color=nominal.tolist(),translation_bounds_camera_m=[.05,.05,.025],rotation_bounds_camera_xyz_deg=[20,20,5],sampling='independent Sobol pose perturbations, selection stratified by target projected 3x3 image cell; no look-at recentering',visibility_counts=dict(counts),screen_cell_counts=dict(cells),split_rule='collection scene_splits applies to all views' if args.views in (1,9) else 'upper-right cell test; lower-left validation; other in-frame train; out-of-frame visibility_test',split_caveat='Scene-held-out split is assigned by the collection; views are never independently split.' if args.views in (1,9) else 'All observations share one plant scene and action outcomes. This split tests view variation only, not unseen tomatoes or proof of image necessity. Do not randomly split image-action pairs.',task='predict center entry and maximum displacement; hook success unvalidated',physical_robot_motion=False,plant_randomization=False,physical_rollouts_performed=0,label_semantics='same world-frame paths/outcomes for every view; per-view camera-frame ring waypoints provided. Virtual observation camera pose is an input, not a physically reachable robot pose.',occlusion_definition='1 - visible fruit pixels / isolated fruit pixels inside image; does not measure offscreen fraction',depth_model='ideal D435 intrinsics approximation; clip 0.10m; no real sensor noise',wall_s=time.perf_counter()-began)
+    metadata['plant_randomization']=reference.get('schema')=='random_glb_plant_v1' or (reference.get('schema')=='glb_physics_reference_v1' and args.views in (1,9))
+    metadata['target_mask_files_saved']=args.views==71
     (out/'dataset.json').write_text(json.dumps(metadata,indent=2))
     from validate_observations import validate
 

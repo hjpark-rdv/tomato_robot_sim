@@ -11,6 +11,7 @@ import argparse
 import datetime
 import fcntl
 import hashlib
+import html
 import json
 import sys
 import time
@@ -35,6 +36,570 @@ SEGMENT_MIN = 6      # 부착 segment 하한 (너무 낮은 위치 제외)
 SEGMENT_MAX = 10     # 부착 segment 상한 (너무 높은 위치 제외)
 VIEWS_ARG   = 71     # prepare_observations 에 전달할 --views (9 또는 71만 지원)
 VIEWS_LIMIT = 20     # 실제로 수집할 이미지 수 (--limit으로 앞에서 자름)
+
+
+def format_duration(seconds):
+    s = int(seconds)
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    if h > 0:
+        return f"{h}시간 {m}분 {s}초"
+    elif m > 0:
+        return f"{m}분 {s}초"
+    return f"{s}초"
+
+
+def render_index_html(output_dir: Path, manifest: dict):
+    targets = manifest.get("targets", [])
+    total_targets = len(targets)
+    total_candidates = sum(t.get("candidates", 0) for t in targets)
+    total_success = sum(t.get("center_entries", 0) for t in targets)
+    total_failed = total_candidates - total_success
+    overall_rate = (total_success / total_candidates * 100) if total_candidates > 0 else 0
+    total_views = sum(t.get("views", 0) for t in targets)
+    total_planned = sum(t.get("planned", 0) for t in targets)
+    wall_s = manifest.get("wall_s", 0)
+    status = manifest.get("status", "running")
+
+    scenes = {}
+    for t in targets:
+        sc = t.get("scene", "unknown")
+        if sc not in scenes:
+            scenes[sc] = {"targets": 0, "candidates": 0, "success": 0, "views": 0, "planned": 0}
+        scenes[sc]["targets"] += 1
+        scenes[sc]["candidates"] += t.get("candidates", 0)
+        scenes[sc]["success"] += t.get("center_entries", 0)
+        scenes[sc]["views"] += t.get("views", 0)
+        scenes[sc]["planned"] += t.get("planned", 0)
+
+    scene_summary_rows = []
+    for sc, sdata in scenes.items():
+        sc_cands = sdata["candidates"]
+        sc_succ = sdata["success"]
+        sc_fail = sc_cands - sc_succ
+        sc_rate = (sc_succ / sc_cands * 100) if sc_cands > 0 else 0
+        scene_summary_rows.append(f"""
+        <tr>
+          <td><span class="scene-tag scene-{html.escape(sc)}"><strong>{html.escape(sc)}</strong></span></td>
+          <td class="num">{sdata['targets']}</td>
+          <td class="num">{sc_cands}</td>
+          <td class="num text-success"><strong>{sc_succ}</strong></td>
+          <td class="num text-danger">{sc_fail}</td>
+          <td>
+            <div class="rate-bar-container">
+              <div class="rate-bar-bg"><div class="rate-bar" style="width: {sc_rate:.1f}%;"></div></div>
+              <span class="rate-text">{sc_rate:.1f}%</span>
+            </div>
+          </td>
+          <td class="num">{sdata['planned']}</td>
+          <td class="num">{sdata['views']}</td>
+        </tr>""")
+
+    target_rows = []
+    for idx, t in enumerate(targets, 1):
+        sc = t.get("scene", "")
+        tgt = t.get("target", "")
+        cands = t.get("candidates", 0)
+        succ = t.get("center_entries", 0)
+        fail = cands - succ
+        rate = (succ / cands * 100) if cands > 0 else 0
+        planned = t.get("planned", 0)
+        views = t.get("views", 0)
+        rc = t.get("result_counts", {})
+        rc_str = ", ".join(f"{k}: {v}" for k, v in rc.items())
+        phys_url = f"scene_{sc}/targets/{tgt}/physics/index.html"
+        obs_url = f"scene_{sc}/targets/{tgt}/observations/index.html"
+
+        rate_badge_cls = "badge-success" if rate >= 50 else ("badge-warning" if rate > 0 else "badge-danger")
+
+        target_rows.append(f"""
+        <tr data-scene="{html.escape(sc)}" data-target="{html.escape(tgt)}">
+          <td class="num">{idx}</td>
+          <td><span class="scene-tag scene-{html.escape(sc)}">{html.escape(sc)}</span></td>
+          <td><strong>{html.escape(tgt)}</strong></td>
+          <td class="num">{cands}</td>
+          <td class="num text-success"><strong>{succ}</strong></td>
+          <td class="num text-danger">{fail}</td>
+          <td>
+            <div class="rate-bar-container">
+              <span class="badge {rate_badge_cls}">{rate:.0f}%</span>
+              <div class="rate-bar-bg" style="width: 50px;"><div class="rate-bar" style="width: {rate:.1f}%;"></div></div>
+            </div>
+          </td>
+          <td class="num">{planned}</td>
+          <td class="num">{views}</td>
+          <td class="breakdown-cell" title="{html.escape(rc_str)}"><span class="tiny-text">{html.escape(rc_str)}</span></td>
+          <td class="links-cell">
+            <a class="btn-link" href="{phys_url}">물리 결과</a>
+            <a class="btn-link" href="{obs_url}">RGB-D ({views})</a>
+          </td>
+        </tr>""")
+
+    css_content = """
+    :root {
+      --bg: #f8faf9;
+      --card-bg: #ffffff;
+      --text: #1a202c;
+      --subtext: #5a6a75;
+      --line: #e2e8f0;
+      --green: #198754;
+      --green-light: #e8f5e9;
+      --red: #dc3545;
+      --red-light: #ffebee;
+      --orange: #fd7e14;
+      --orange-light: #fff3cd;
+      --primary: #0f5132;
+      --accent: #2e7d32;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 30px 40px;
+    }
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--line);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--green-light);
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .subtitle {
+      color: var(--subtext);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--subtext);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .stat-value.success { color: var(--green); }
+    .stat-value.danger { color: var(--red); }
+    .stat-desc {
+      font-size: 13px;
+      color: var(--subtext);
+      margin-top: 6px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 25px 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      background: #f1f5f3;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    th:hover {
+      background: #e2ece6;
+    }
+    th::after {
+      content: " ↕";
+      opacity: 0.3;
+      font-size: 11px;
+    }
+    tr:hover td {
+      background: #fbfdfc;
+    }
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .text-success { color: var(--green); }
+    .text-danger { color: var(--red); }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .badge-success { background: var(--green-light); color: var(--green); }
+    .badge-warning { background: var(--orange-light); color: var(--orange); }
+    .badge-danger { background: var(--red-light); color: var(--red); }
+    .scene-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .scene-cyan { background: #e0f7fa; color: #00838f; }
+    .scene-green { background: #e8f5e9; color: #2e7d32; }
+    .scene-red { background: #ffebee; color: #c62828; }
+    .scene-white { background: #eceff1; color: #455a64; border: 1px solid #cfd8dc; }
+    .scene-rotated90 { background: #ede7f6; color: #512da8; }
+    .rate-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rate-bar-bg {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-grow: 1;
+      min-width: 60px;
+    }
+    .rate-bar {
+      height: 100%;
+      background: var(--green);
+      border-radius: 4px;
+    }
+    .rate-text {
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 45px;
+      text-align: right;
+    }
+    .btn-link {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--primary);
+      background: #e8f3ed;
+      margin-right: 4px;
+      transition: background 0.15s;
+    }
+    .btn-link:hover {
+      background: #cbe6d8;
+    }
+    .breakdown-cell {
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tiny-text {
+      font-size: 11px;
+      color: var(--subtext);
+    }
+    .filter-bar {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+    }
+    select, input[type="text"] {
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+      color: var(--text);
+    }
+    input[type="text"] { min-width: 200px; }
+    .manifest-link {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .manifest-link:hover { text-decoration: underline; }
+    """
+
+    js_content = """
+    const sceneSelect = document.getElementById('scene-select');
+    const searchInput = document.getElementById('search-input');
+    const statusFilter = document.getElementById('status-filter');
+    const tableBody = document.getElementById('table-body');
+    const filterCount = document.getElementById('filter-count');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+    function applyFilter() {
+      const sceneVal = sceneSelect.value.toLowerCase();
+      const searchVal = searchInput.value.trim().toLowerCase();
+      const statusVal = statusFilter.value;
+
+      let visible = 0;
+      rows.forEach(r => {
+        const rScene = (r.getAttribute('data-scene') || '').toLowerCase();
+        const rTarget = (r.getAttribute('data-target') || '').toLowerCase();
+        const succ = parseInt(r.children[4].textContent, 10) || 0;
+
+        let matchScene = (sceneVal === 'all' || rScene === sceneVal);
+        let matchSearch = (!searchVal || rTarget.includes(searchVal) || rScene.includes(searchVal));
+        let matchStatus = true;
+        if (statusVal === 'success_only') matchStatus = (succ > 0);
+        if (statusVal === 'fail_only') matchStatus = (succ === 0);
+
+        if (matchScene && matchSearch && matchStatus) {
+          r.style.display = '';
+          visible++;
+        } else {
+          r.style.display = 'none';
+        }
+      });
+      filterCount.textContent = `표시 중: ${visible} / ${rows.length}개 열매`;
+    }
+
+    sceneSelect.addEventListener('change', applyFilter);
+    searchInput.addEventListener('input', applyFilter);
+    statusFilter.addEventListener('change', applyFilter);
+
+    const headers = document.querySelectorAll('#detail-table th[data-col]');
+    let sortDir = {};
+
+    headers.forEach(th => {
+      th.addEventListener('click', () => {
+        const colIdx = parseInt(th.getAttribute('data-col'), 10);
+        const currentDir = sortDir[colIdx] === 'asc' ? 'desc' : 'asc';
+        sortDir = {};
+        sortDir[colIdx] = currentDir;
+
+        const sorted = rows.slice().sort((a, b) => {
+          let aVal = a.children[colIdx].textContent.trim();
+          let bVal = b.children[colIdx].textContent.trim();
+
+          let aNum = parseFloat(aVal.replace(/[^0-9.-]/g, ''));
+          let bNum = parseFloat(bVal.replace(/[^0-9.-]/g, ''));
+
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            return currentDir === 'asc' ? aNum - bNum : bNum - aNum;
+          }
+          return currentDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        sorted.forEach(r => tableBody.appendChild(r));
+      });
+    });
+    """
+
+    avg_views = total_views // max(1, total_targets)
+    scene_options = ''.join(f'<option value="{html.escape(sc)}">{html.escape(sc)}</option>' for sc in scenes)
+    scene_rows_str = ''.join(scene_summary_rows)
+    target_rows_str = ''.join(target_rows)
+
+    html_content = f"""<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>토마토 학습 데이터 수집 리포트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{css_content}</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>
+          <span>토마토 학습 데이터 수집 리포트</span>
+          <span class="status-badge">{status.upper()}</span>
+        </h1>
+        <div class="subtitle">
+          GLB 5종(cyan, green, red, white, rotated90) · Y축 회전 ±20° · Segment {SEGMENT_MIN}~{SEGMENT_MAX} · 
+          총 소요 시간: <strong>{format_duration(wall_s)}</strong>
+        </div>
+      </div>
+      <div>
+        <a class="manifest-link" href="collection.json" target="_blank">📄 collection.json 보기</a>
+      </div>
+    </header>
+
+    <!-- 종합 통계 카드 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">총 토마토 열매</div>
+        <div class="stat-value">{total_targets} <span style="font-size: 18px; font-weight: 400; color: var(--subtext);">개</span></div>
+        <div class="stat-desc">5종 송이 × 10개 열매</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">총 후보 시도</div>
+        <div class="stat-value">{total_candidates} <span style="font-size: 18px; font-weight: 400; color: var(--subtext);">회</span></div>
+        <div class="stat-desc">열매당 {manifest.get('candidates_per_target', 10)}회 시도</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">진입 성공 (성공)</div>
+        <div class="stat-value success">{total_success} <span style="font-size: 18px; font-weight: 400;">회</span></div>
+        <div class="stat-desc">전체 성공률: <strong>{overall_rate:.1f}%</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">미진입 / 오류 (실패)</div>
+        <div class="stat-value danger">{total_failed} <span style="font-size: 18px; font-weight: 400;">회</span></div>
+        <div class="stat-desc">전체 실패율: <strong>{(100-overall_rate):.1f}%</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">관측 RGB-D</div>
+        <div class="stat-value">{total_views:,} <span style="font-size: 18px; font-weight: 400; color: var(--subtext);">장</span></div>
+        <div class="stat-desc">열매당 평균 {avg_views}시점</div>
+      </div>
+    </div>
+
+    <!-- 송이별 요약 테이블 -->
+    <div class="section-title">
+      <span>송이(Scene)별 요약</span>
+    </div>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>송이 (Scene)</th>
+            <th class="num">열매 수</th>
+            <th class="num">후보 시도</th>
+            <th class="num">성공 (진입)</th>
+            <th class="num">실패</th>
+            <th>성공률</th>
+            <th class="num">계획 통과</th>
+            <th class="num">관측 이미지</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scene_rows_str}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 상세 테이블 섹션 -->
+    <div class="section-title">
+      <span>열매별 수집 및 판정 상세</span>
+      <span id="filter-count" style="font-size: 13px; font-weight: normal; color: var(--subtext);">전체 {total_targets}개 열매</span>
+    </div>
+
+    <!-- 필터 및 검색 툴바 -->
+    <div class="card" style="padding: 14px 20px;">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label class="filter-label" for="scene-select">송이 선택:</label>
+          <select id="scene-select">
+            <option value="all">전체 송이 (All Scenes)</option>
+            {scene_options}
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="search-input">열매 검색:</label>
+          <input type="text" id="search-input" placeholder="예: Tomato_05">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="status-filter">결과 필터:</label>
+          <select id="status-filter">
+            <option value="all">전체 보기</option>
+            <option value="success_only">성공 1회 이상</option>
+            <option value="fail_only">성공 0회 (미발견)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 열매별 상세 테이블 -->
+    <div class="card" style="padding: 0; overflow-x: auto;">
+      <table id="detail-table">
+        <thead>
+          <tr>
+            <th class="num" data-col="0">#</th>
+            <th data-col="1">송이</th>
+            <th data-col="2">열매 (Target)</th>
+            <th class="num" data-col="3">후보 시도</th>
+            <th class="num" data-col="4">성공 (진입)</th>
+            <th class="num" data-col="5">실패</th>
+            <th data-col="6">성공률</th>
+            <th class="num" data-col="7">계획 통과</th>
+            <th class="num" data-col="8">시점 (Views)</th>
+            <th data-col="9">판정 내역 (Breakdown)</th>
+            <th>상세 링크</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {target_rows_str}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>{js_content}</script>
+</body>
+</html>
+"""
+    (output_dir / "index.html").write_text(html_content, encoding="utf-8")
 
 
 def complete_target(folder, model_hash, target, count, n_views):
@@ -333,8 +898,13 @@ def collect(args):
                     run_step(command, log)
 
                 # RGB-D 관측 수집
-                # --views 71 + --limit 20 → 정확히 20장 수집
-                views_arg = str(VIEWS_ARG) if not args.smoke else "9"
+                if args.smoke or args.views_limit == 9:
+                    views_arg = "9"
+                    limit_arg = None
+                else:
+                    views_arg = "71"
+                    limit_arg = str(args.views_limit)
+
                 capture = [python,
                            str(Path(__file__).with_name("prepare_observations.py")),
                            str(physics),
@@ -342,8 +912,8 @@ def collect(args):
                            "--seed", str(args.seed + index),
                            "--postprocess-workers", str(args.postprocess_workers),
                            "--output", str(observations)]
-                if not args.smoke:
-                    capture.extend(["--limit", str(VIEWS_LIMIT)])
+                if limit_arg is not None:
+                    capture.extend(["--limit", limit_arg])
 
                 log_status(f"  관측 촬영: {label}/{target} ({n_views}장)")
                 with (folder / "observations.log").open("w") as log:
@@ -387,20 +957,8 @@ def collect(args):
         manifest["wall_s"] = manifest.get("wall_s", 0) + time.perf_counter() - started
         manifest_path.write_text(json.dumps(manifest, indent=2))
 
-        cards = "".join(
-            f'<li>{r["scene"]} / {r["target"]}: '
-            f'<a href="scene_{r["scene"]}/targets/{r["target"]}/physics/index.html">물리</a> · '
-            f'<a href="scene_{r["scene"]}/targets/{r["target"]}/observations/index.html">RGB-D</a> '
-            f'({r["candidates"]}후보, {r["views"]}시점, {r["search_outcome"]})</li>'
-            for r in manifest["targets"])
-        (output / "index.html").write_text(
-            '<meta charset="utf-8">'
-            '<h1>토마토 학습 데이터 수집 (GLB 5종)</h1>'
-            f'<p>Y축 ±20° / segment {SEGMENT_MIN}~{SEGMENT_MAX} / '
-            f'candidates={manifest["candidates_per_target"]} / '
-            f'views={manifest["views_per_target"]}</p><ul>'
-            + cards
-            + f'</ul><a href="collection.json">manifest</a>')
+        render_index_html(output, manifest)
+        log_status(f"리포트 생성 완료: {output / 'index.html'}")
     return manifest
 
 

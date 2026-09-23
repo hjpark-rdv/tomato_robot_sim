@@ -70,7 +70,8 @@ def report(root,results):
 
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--target',default='Tomato_05');p.add_argument('--candidates',type=int,default=8);p.add_argument('--workers',type=int,default=4);p.add_argument('--planning-workers',type=int,default=4);p.add_argument('--seed',type=int,default=0);p.add_argument('--hz',type=int,default=120);p.add_argument('--output',type=Path);p.add_argument('--planning-python',default='/root/isaaclab_env/bin/python');p.add_argument('--planning-model',type=Path,default=ROOT/'nvidia-sim/rl/runs/20260922_054612_gpu_env8_matched12/planning_20260922_054636_450257/model.pkl');p.add_argument('--model',type=Path,default=DEFAULT_MODEL);p.add_argument('--reference',type=Path,default=HOME/'assets/reference/reference.json');p.add_argument('--plan-only',action='store_true',help='save the same IK/FCL candidate plans without running physics');p.add_argument('--link-model',action='store_true',help='hard-link immutable scene model into the run on the same filesystem');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--target',default='Tomato_05');p.add_argument('--candidates',type=int,default=8);p.add_argument('--workers',type=int,default=4);p.add_argument('--planning-workers',type=int,default=4);p.add_argument('--seed',type=int,default=0);p.add_argument('--hz',type=int,default=120);p.add_argument('--output',type=Path);p.add_argument('--planning-python',default='/root/isaaclab_env/bin/python');p.add_argument('--planning-model',type=Path,default=ROOT/'nvidia-sim/rl/runs/20260922_054612_gpu_env8_matched12/planning_20260922_054636_450257/model.pkl');p.add_argument('--model',type=Path,default=DEFAULT_MODEL);p.add_argument('--reference',type=Path,default=HOME/'assets/reference/reference.json');p.add_argument('--plan-only',action='store_true',help='save the same IK/FCL candidate plans without running physics');p.add_argument('--scene-only',action='store_true',help='save the scene for one-image direct-angle inference; create no random candidates');p.add_argument('--link-model',action='store_true',help='hard-link immutable scene model into the run on the same filesystem');a=p.parse_args()
+ if a.scene_only and a.plan_only:p.error('--scene-only and --plan-only are mutually exclusive')
  if min(a.candidates,a.workers,a.planning_workers,a.hz)<1:p.error('counts/hz must be positive')
  if a.target not in {s['name'] for s in json.loads(a.reference.read_text())['fruit_specs']}:
   p.error(f'target {a.target!r} is absent from {a.reference}')
@@ -87,7 +88,7 @@ def main():
  camera_pose=hook_pose@optical_transform('color')
  frame=dict(schema=SCHEMA,observation='initial nominal D435',world_from_color_optical=camera_pose.tolist(),target_center_world=center.tolist(),gravity_direction_camera=(camera_pose[:3,:3].T@np.array([0.,0.,-1.])).tolist(),feature_names=FEATURE_NAMES)
  (root/'action_frame.json').write_text(json.dumps(frame,indent=2))
- (root/'planning_inputs.json').write_text(json.dumps(inputs));(root/'candidates.json').write_text(json.dumps(candidates(a.candidates,a.seed),indent=2))
+ (root/'planning_inputs.json').write_text(json.dumps(inputs));(root/'candidates.json').write_text(json.dumps([] if a.scene_only else candidates(a.candidates,a.seed),indent=2))
  import mujoco,psutil
  shutil.copytree(HOME/'scripts',assets/'scripts',ignore=shutil.ignore_patterns('__pycache__'))
  legacy=assets/'isaac_planner_sources';legacy.mkdir()
@@ -99,6 +100,11 @@ def main():
  manifest['hardware']=dict(logical_cpus=psutil.cpu_count(),physical_cpus=psutil.cpu_count(logical=False),ram_bytes=psutil.virtual_memory().total)
  manifest['asset_hashes']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in assets.iterdir() if p.is_file()}
  (root/'manifest.json').write_text(json.dumps(manifest,indent=2));print('[경로 실험]',root,flush=True)
+ if a.scene_only:
+  manifest.update(count=0,scene_only=True,scope='scene snapshot for one-image direct-angle prediction; no candidate or physics yet')
+  (root/'manifest.json').write_text(json.dumps(manifest,indent=2));report(root,[])
+  print('[장면 저장]',root/'index.html',flush=True)
+  return
  subprocess.run([a.planning_python,str(HOME/'scripts/plan_candidates.py'),str(root),'--workers',str(min(a.planning_workers,a.candidates))],check=True)
  if a.plan_only:
   results=[]

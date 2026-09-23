@@ -8,13 +8,26 @@ import torch.nn.functional as F
 from features import extract,sha
 from train import Scorer
 
+def random_scene_layout(collection):
+ schema=collection.get('schema')
+ if schema=='random_glb_collection_v1':
+  return collection['scene_splits'],lambda scene:scene
+ if schema=='training_dataset_v1':
+  scenes=sorted({row['scene'] for row in collection['targets']})
+  if len(scenes)<3:raise ValueError('Training needs at least three independent GLB scenes')
+  # Split by entire GLB scene; every tomato and camera view follows its scene.
+  train_count=len(scenes)-2
+  splits={scene:('train' if index<train_count else 'validation' if index==train_count else 'test') for index,scene in enumerate(scenes)}
+  return splits,lambda scene:'scene_'+scene
+ raise ValueError('Unsupported random-scene collection schema: '+str(schema))
+
 
 def train_random_scenes(a, collection):
  """The same frozen image features and Scorer, with scene-held-out ragged candidates."""
  root=a.collection.resolve()
  if collection.get('plan_only'):raise ValueError('Plan-only runs have no training labels')
  if collection.get('status')!='complete':raise ValueError('Random-scene collection is incomplete')
- splits=collection['scene_splits']
+ splits,scene_folder=random_scene_layout(collection)
  if set(splits.values())!={'train','validation','test'}:
   raise ValueError('Training requires distinct train, validation and test scenes')
  out=a.output or root.parent/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_random_glb_training')
@@ -22,7 +35,7 @@ def train_random_scenes(a, collection):
  torch.set_num_threads(4);device='cuda' if torch.cuda.is_available() else 'cpu';start=time.perf_counter()
  xs=[];ys=[];obs_features={name:[] for name in ('resnet18_rgbd','dinov2_rgbd')};groups=[];sources=[];profiles=set()
  for item in sorted(collection['targets'],key=lambda r:(r['scene'],r['target'])):
-  scene=item['scene'];folder=root/scene/'targets'/item['target'];obsroot=folder/'observations';physics=folder/'physics'
+  scene=item['scene'];folder=root/scene_folder(scene)/'targets'/item['target'];obsroot=folder/'observations';physics=folder/'physics'
   meta=json.loads((obsroot/'dataset.json').read_text());run=json.loads((physics/'manifest.json').read_text())
   if meta.get('schema')!='farmily_observation_v2' or meta['source_results_sha256']!=sha(physics/'results.json'):
    sources.append(dict(scene=scene,target=item['target'],excluded='no executable paths or stale observations'));continue
@@ -71,7 +84,7 @@ def train_random_scenes(a, collection):
  assert all(set(g['scene'] for g in groups if g['split']==a).isdisjoint(g['scene'] for g in groups if g['split']==b) for a,b in [('train','validation'),('train','test'),('validation','test')])
  am=x[pair_splits['train']].mean(0);ast=np.maximum(x[pair_splits['train']].std(0),.02)
  ax=torch.tensor((x-am)/ast,device=device);yy=torch.tensor(y,device=device)
- manifest=dict(schema='random_glb_training_v1',collection=str(root),scene_splits=splits,
+ manifest=dict(schema='random_glb_training_v1',collection=str(root),source_collection_schema=collection['schema'],scene_splits=splits,
                groups=groups,sources=sources,profile=next(iter(profiles)),
                pair_counts={name:len(v) for name,v in pair_splits.items()},
                physical_rollouts=sum(s.get('physical_rollouts',0) for s in sources),
@@ -169,7 +182,7 @@ def main():
  collection_file=a.collection/'collection.json'
  if collection_file.exists():
   collection=json.loads(collection_file.read_text())
-  if collection.get('schema')=='random_glb_collection_v1':
+  if collection.get('schema') in ('random_glb_collection_v1','training_dataset_v1'):
    train_random_scenes(a,collection)
    return
  if a.test_target==a.validation_target:p.error('test and validation targets must differ')
