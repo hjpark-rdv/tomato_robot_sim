@@ -21,6 +21,7 @@ from environment_preflight import Policy, check_engine, save_report
 
 FRUIT_PHASES = frozenset(('insert', 'seat', 'hold', 'verify'))
 PEDICEL_PHASES = frozenset(('seat', 'hold', 'verify'))
+SEARCH_TOUCH_PHASES = frozenset(('preapproach', 'approach', 'insert', 'seat', 'hold', 'verify'))
 PHYSICS_LIMIT_M = 0.0005  # Existing physical validity limit; NOT a skin limit.
 
 
@@ -30,6 +31,9 @@ class ContactScope:
     wires: tuple
     pedicels: tuple
     rear_wires: tuple
+    rachis: tuple = ()
+    search_policy: bool = False
+    truss_root: str = ''
 
     def __post_init__(self):
         for values in ((self.fruit,), self.wires, self.pedicels, self.rear_wires):
@@ -41,6 +45,12 @@ class ContactScope:
             raise ValueError('Rear wires must belong to the full wire inventory')
         if set(self.wires) & (set(self.pedicels) | {self.fruit}) or self.fruit in self.pedicels:
             raise ValueError('Contact roles must be disjoint')
+        if self.rachis:
+            if not self.search_policy or not self.truss_root:
+                raise ValueError('Rachis permission requires explicit search policy and truss ownership')
+            if (len(set(self.rachis)) != len(self.rachis) or any(not isinstance(n,str) or not n or any(c in n for c in '*?[') for n in self.rachis)
+                    or set(self.rachis) & (set(self.wires) | set(self.pedicels) | {self.fruit})):
+                raise ValueError('Invalid or overlapping rachis identities')
 
 
 def category(contact, scope, phases):
@@ -49,6 +59,14 @@ def category(contact, scope, phases):
     if len(names) != 2 or len(set(names)) != 2:
         raise ValueError('Expected two distinct geom identities')
     names, phases = set(names), set(phases)
+    if scope.search_policy and phases and phases <= SEARCH_TOUCH_PHASES and names & set(scope.wires):
+        if scope.fruit in names:
+            return 'target_fruit_touch'
+        if names & set(scope.rachis):
+            return 'target_rachis_touch'
+        if names & set(scope.pedicels):
+            return ('target_pedicel_contact' if phases <= PEDICEL_PHASES and names & set(scope.rear_wires)
+                    else 'target_pedicel_touch')
     if phases and phases <= FRUIT_PHASES and scope.fruit in names and names & set(scope.wires):
         return 'target_fruit_touch'
     if phases and phases <= PEDICEL_PHASES and names & set(scope.pedicels) and names & set(scope.rear_wires):
@@ -64,6 +82,9 @@ def contact_stats(contacts, scope, phases):
     """
     out = {k: dict(records=0, active_records=0, force_sum_N=0., max_normal_N=0.)
            for k in ('target_fruit_touch', 'target_pedicel_contact', 'forbidden_contact')}
+    if scope.search_policy:
+        out.update({k: dict(records=0, active_records=0, force_sum_N=0., max_normal_N=0.)
+                    for k in ('target_rachis_touch', 'target_pedicel_touch')})
     for row in contacts:
         f = np.asarray(row['force6'], dtype=float)
         if f.shape != (6,) or not np.isfinite(f).all() or not math.isfinite(row['dist_m']):
@@ -96,6 +117,12 @@ def trial_policy(base, scope, phases):
         raise ValueError('Base policy must retain every declared pedicel/rear permission in present seating phases')
     settings['allowed_contacts'] += [dict(robot_geom=w, environment_geom=scope.fruit,
                                          phases=sorted(present & FRUIT_PHASES)) for w in scope.wires]
+    if scope.search_policy:
+        # Same exact local contact identities in planning AND runtime. No phase
+        # name is a permission to push a mount, a different fruit or main stem.
+        settings['allowed_contacts'] = [dict(robot_geom=w, environment_geom=t,
+                    phases=sorted(present & SEARCH_TOUCH_PHASES))
+                    for w in scope.wires for t in (scope.fruit, *scope.rachis, *scope.pedicels)]
     return Policy.from_dict(settings)
 
 
@@ -133,7 +160,10 @@ def stop_reasons(snapshots, displacement_m, penetration_m, physics_valid, limits
                   ('target_fruit_touch', 'target_pedicel_contact', 'forbidden_contact')]
         if not np.isfinite(values).all() or min(values) < 0:
             raise ValueError('Invalid force totals')
-        target.append(values[0] + values[1]); forbidden.append(values[2])
+        extras = [stats.get(k, {}).get('force_sum_N', 0.) for k in ('target_rachis_touch','target_pedicel_touch')]
+        if not np.isfinite(extras).all() or min(extras) < 0:
+            raise ValueError('Invalid target-truss load')
+        target.append(values[0] + values[1] + sum(extras)); forbidden.append(values[2])
     if not target:
         raise ValueError('Missing force snapshots')
     reasons = []
@@ -145,7 +175,7 @@ def stop_reasons(snapshots, displacement_m, penetration_m, physics_valid, limits
     return reasons
 
 
-def scope_from_engine(engine, mapping):
+def scope_from_engine(engine, mapping, search_policy=False):
     """Match authored arc geometry, never g-number prefixes or all Hook geoms."""
     import mujoco as mj
     from hook_retention_diagnostic import capsule_endpoints
@@ -165,9 +195,14 @@ def scope_from_engine(engine, mapping):
             wires.append(m.geom(int(gid)).name)
     fruits = [m.geom(g).name for g in range(m.ngeom) if int(m.geom_bodyid[g]) == engine.fruit
               and (int(m.geom_contype[g]) or int(m.geom_conaffinity[g]))]
-    if len(wires) != 32 or len(fruits) != 1 or fruits[0] != 'glb_col_'+engine.target:
+    from target_truss_identity import target_rachis_geoms
+    prefix, target_base = (engine.target.rsplit('__',1) if '__' in engine.target else ('',engine.target))
+    expected_fruit = (prefix+'__' if prefix else '')+'glb_col_'+target_base
+    if len(wires) != 32 or len(fruits) != 1 or fruits[0] != expected_fruit:
         raise ValueError('Expected authored 32-wire arc and one exact target fruit collider; review mapping')
-    return ContactScope(fruits[0], tuple(sorted(wires)), tuple(mapping.target_names), tuple(sorted(mapping.rear_names)))
+    rachis, root = target_rachis_geoms(engine) if search_policy else ((), '')
+    return ContactScope(fruits[0], tuple(sorted(wires)), tuple(mapping.target_names), tuple(sorted(mapping.rear_names)),
+                        rachis=rachis, search_policy=bool(search_policy), truss_root=root)
 
 
 def sha(path):
@@ -203,6 +238,7 @@ def main():
     parser.add_argument('--base-policy', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--execute', action='store_true', help='Offline simulation only, after a complete conditional audit')
+    parser.add_argument('--search-contact-policy', action='store_true', help='Explicit wire contact with target fruit/pedicels/OWN truss rachis, not other plants or mounting hardware')
     parser.add_argument('--max-target-force-n', type=float)
     parser.add_argument('--max-target-displacement-m', type=float)
     args = parser.parse_args()
@@ -219,7 +255,7 @@ def main():
     if plan.get('parameters', {}).get('trajectory_mode') != 'diagnostic_pose_waypoints_v1':
         raise ValueError('First use only the saved diagnostic pose-waypoint trials')
     probe = SeatingProbe(engine, trace)
-    scope = scope_from_engine(engine, probe.mapping)
+    scope = scope_from_engine(engine, probe.mapping, search_policy=args.search_contact_policy)
     base = json.loads(args.base_policy.read_text())
     policy = trial_policy(base, scope, [r['phase'] for r in trace])
     inputs = [args.base_policy, root/'manifest.json', root/'replay_assets/model.mjb',
@@ -228,8 +264,10 @@ def main():
     hashes = {str(p): sha(p) for p in inputs}
     out.mkdir(parents=True, exist_ok=False)
     write_json(out/'contact_scope.json', dict(scope=asdict(scope), original_policy=base,
-               trial_policy=policy.snapshot(), user_requirement='Allow light target fruit/wire contact; not mounting hardware or non-targets',
+               trial_policy=policy.snapshot(), user_requirement=('Allow wire touch on target fruit and its own truss rachis; not capture evidence' if args.search_contact_policy else 'Allow light target fruit/wire contact; not mounting hardware or non-targets'),
                diagnostic_only=True, training_eligible=False, source_sha256=hashes, code_sha256=sha(__file__)))
+    # Bound the geometric audit too. Authorized overlaps require forward
+    # dynamics; other obstacles are still checked over the complete path.
     audit = check_engine(engine, trace, plan['seconds'], policy, collect_all_violations=True)
     save_report(out, audit)
     result = dict(physics_executed=False, completed=False, training_eligible=False, hook_success=None,

@@ -29,8 +29,8 @@ class HookProbe:
         self.engine=engine;self.hold_start=hold_start;self.sample_hz=sample_hz
         m=engine.model;self.private=mj.MjData(m);self.rows=[];self.count=0
         self.stride=round(1/m.opt.timestep/sample_hz)
-        self.target_names=['glb_col_'+engine.target_spec['anchor'].split('/')[-1],
-                           f"glb_col_TRUSS_Pedicel_proximal_{engine.target[-2:]}_02"]
+        from target_truss_identity import target_names
+        self.target_names=list(target_names(engine.target,engine.target_spec['anchor'])['pedicels'])
         self.target_ids=[m.geom(n).id for n in self.target_names]
         self.rear_ids=[]
         for g in engine.hookgeoms:
@@ -40,7 +40,7 @@ class HookProbe:
                 if angle>=3*np.pi/4-1e-6:self.rear_ids.append(int(g))
         if len(self.rear_ids)!=16:raise ValueError(f'Expected authored 16 rear arc capsules, found {len(self.rear_ids)}')
         self.rear_names={m.geom(g).name for g in self.rear_ids}
-        self.other_pedicels=[g for g in range(m.ngeom) if (m.geom(g).name or '').startswith('glb_col_') and
+        self.other_pedicels=[g for g in range(m.ngeom) if ('glb_col_' in (m.geom(g).name or '')) and
                             ('Attachment_' in m.geom(g).name or 'Pedicel_proximal_' in m.geom(g).name) and g not in self.target_ids]
         bodies=set()
         for i in range(1,m.nbody):
