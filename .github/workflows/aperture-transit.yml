@@ -1,0 +1,23 @@
+name: Aperture transit proposal tests
+on:
+  push:
+    branches: ['codex/aperture-*']
+    paths:
+      - 'mujoco-benchmark/scripts/propose_aperture_transit.py'
+      - 'mujoco-benchmark/tests/test_aperture_transit.py'
+      - '.github/workflows/aperture-transit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pure-proposal-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'pytest>=8,<10'
+      - run: python -m pytest -v -rs mujoco-benchmark/tests/test_aperture_transit.py
+      - run: python -m compileall -q mujoco-benchmark/scripts/propose_aperture_transit.py
