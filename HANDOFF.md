@@ -1,4 +1,15 @@
 # Farmily Tomato 작업 인수인계
+GPT-6 Pro 논의용 현황: [비목표 무접촉 수확 논의](mujoco-benchmark/NONCONTACT_HARVEST_DISCUSSION.md). 공유 폴더에도 동일 파일 저장.
+
+
+## 주변 식물 탄성화 비용 진단
+
+- `benchmark_neighbor_elastic.py`: 기존 생성기/RobotEngine 재사용, 주변1/4개 고정·탄성 비교. 운영 장면은 변경하지 않음.
+- 식물당 송이1개, 240Hz, 동일 명령10초 각2회: 주변1개 3.227→5.029초, 4개 3.409→16.708초. 접근 실행은 관통 기준 실패이므로 정상 수확 성능 아님.
+- 정지2초는 모두 관통 기준 통과. 주변4개 0.929→4.006초로 탄성 비용 확인. 전체68개/실시간 타깃 전환 미측정. 타깃만 탄성·나머지 고정 충돌체 방식이 유리할 근거이나 비접촉 보장은 별도.
+- 현재3송이 조밀 배치는 주변4개 탄성화 시 초기7.645mm 겹침 발견. 모델 전환 전에 배치 충돌 검사 필요.
+- 결과 `20260927_neighbor_elastic_one_truss/index.html`, 정지대조 `20260927_neighbor_elastic_idle/index.html`. 상세 GREENHOUSE_VISUAL.md 마지막 절.
+
 
 ## 로봇 쪽 타깃·주변 주줄기 장애물
 
