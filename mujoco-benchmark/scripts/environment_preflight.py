@@ -18,6 +18,7 @@ import numpy as np
 
 SCHEMA = "environment_preflight_v1"
 ENV_POLICY = "FARMILY_ENV_PREFLIGHT_POLICY"
+MAX_REPORTED_VIOLATIONS = 64
 
 
 @dataclass(frozen=True)
@@ -135,6 +136,17 @@ def pair_allowed(policy, robot_geom, environment_geom, phases):
     return bool(phases) and set(phases).issubset(allowed_phases)
 
 
+def classify_environment_geom(name):
+    """Name-based diagnostic class only; never changes gate/allow semantics."""
+    if name.startswith("gutter_collision_"):
+        return "gutter"
+    if name.startswith("neighbor_stem_collision_"):
+        return "neighbor_stem"
+    if name.startswith("glb_col_"):
+        return "glb_plant"
+    return "other"
+
+
 def require_native_distance_pipeline(mj, model):
     """Do not silently change the physics model to fix a query backend setting."""
     disabled_bit = getattr(mj.mjtDisableBit, "mjDSBL_NATIVECCD", None)
@@ -163,16 +175,20 @@ def nearby_indices(position, radius, env_positions, env_radii, threshold):
     return np.flatnonzero(distances <= radius + env_radii + threshold)
 
 
-def screen(backend, commands, phases, duration_s, policy):
-    """Engine-independent driver, also exercised with an analytic test backend."""
+def screen(backend, commands, phases, duration_s, policy, collect_all_violations=False):
+    """Engine-independent driver. Optional full audit never relaxes gate semantics."""
     started = time.perf_counter()
     result = dict(schema=SCHEMA, status="inconclusive", passed=False, complete=False,
                   policy=policy.snapshot(), samples_checked=0, distance_queries=0,
-                  first_violation=None, minimum_queried_distance_m=None,
+                  first_violation=None, violations=[], violation_summary={},
+                  minimum_queried_distance_m=None,
                   scope="GT initial environment; nominal commands; discrete screening only",
                   exclusions=["visual-only geoms", "environment/environment pairs", "robot self-collision"],
                   warnings=["No continuous collision guarantee", "No plant deformation or actuator tracking simulated",
                             "No real-observation collision model", "Missing visual-only colliders remain untested"])
+    reported_keys = set()
+    class_counts = {}
+    class_minima = {}
     try:
         result["inventory"] = backend.inventory
         result["backend"] = backend.version
@@ -209,12 +225,34 @@ def screen(backend, commands, phases, duration_s, policy):
                         previous = result["minimum_queried_distance_m"]
                         result["minimum_queried_distance_m"] = distance if previous is None else min(previous, distance)
                     if distance <= policy.clearance_m:
-                        result.update(status="blocked", reason="clearance_violation")
-                        result["first_violation"] = dict(time_s=timestamp, phases=list(active_phases),
-                            robot_geom=robot_name, environment_geom=env_name, distance_m=distance,
-                            command=q.tolist(), segment_world=np.asarray(segment).reshape(2, 3).tolist())
-                        return result
-        result.update(status="sampled_clear", passed=True, complete=True, reason="all_samples_passed")
+                        env_class = classify_environment_geom(env_name)
+                        record = dict(time_s=timestamp, phases=list(active_phases),
+                            robot_geom=robot_name, environment_geom=env_name, environment_class=env_class,
+                            distance_m=distance, command=q.tolist(),
+                            segment_world=np.asarray(segment).reshape(2, 3).tolist())
+                        if result["first_violation"] is None:
+                            result["first_violation"] = record
+                        class_counts[env_class] = class_counts.get(env_class, 0) + 1
+                        previous_class_min = class_minima.get(env_class)
+                        class_minima[env_class] = distance if previous_class_min is None else min(previous_class_min, distance)
+                        key = (robot_name, env_name, tuple(active_phases))
+                        if key not in reported_keys and len(result["violations"]) < MAX_REPORTED_VIOLATIONS:
+                            reported_keys.add(key)
+                            result["violations"].append(record)
+                        result["violation_summary"] = {
+                            "sample_hits_by_environment_class": dict(class_counts),
+                            "minimum_distance_m_by_environment_class": dict(class_minima),
+                            "reported_unique_pair_phase_count": len(result["violations"]),
+                            "reported_limit": MAX_REPORTED_VIOLATIONS,
+                            "full_path_collected": bool(collect_all_violations),
+                        }
+                        if not collect_all_violations:
+                            result.update(status="blocked", reason="clearance_violation")
+                            return result
+        if result["first_violation"] is not None:
+            result.update(status="blocked", passed=False, complete=True, reason="clearance_violation")
+        else:
+            result.update(status="sampled_clear", passed=True, complete=True, reason="all_samples_passed")
     except BudgetExceeded as exc:
         result["reason"] = str(exc)
     except Exception as exc:
@@ -295,7 +333,7 @@ class MuJoCoScene:
         return float(value), self.segment.copy()
 
 
-def check_engine(engine, rows, seconds, policy):
+def check_engine(engine, rows, seconds, policy, collect_all_violations=False):
     try:
         commands = np.asarray([row["command"] for row in rows], dtype=float)
         if commands.ndim != 2 or commands.shape[1] != len(engine.qids):
@@ -304,7 +342,7 @@ def check_engine(engine, rows, seconds, policy):
             raise ValueError("Trace first command differs from reset robot pose")
         phases = [row["phase"] for row in rows]
         scene = MuJoCoScene(engine, policy)
-        result = screen(scene, commands, phases, seconds, policy)
+        result = screen(scene, commands, phases, seconds, policy, collect_all_violations=collect_all_violations)
     except Exception as exc:
         result = dict(schema=SCHEMA, status="inconclusive", passed=False, complete=False,
                       reason="setup_error", error=f"{type(exc).__name__}: {exc}", policy=policy.snapshot())
