@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--policy", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True, help="NEW directory, outside the source run")
     parser.add_argument("--gui", action="store_true", help="Show first rejected NOMINAL pose; not a dynamics replay")
+    parser.add_argument("--all-violations", action="store_true", help="Continue the read-only scan after the first hit and report later unique pair/phase violations")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_-]+", args.candidate):
         parser.error("Invalid candidate ID")
@@ -39,13 +40,13 @@ def main():
     engine = RobotEngine(assets / "model.mjb", assets / "initial_trace.json", manifest["hz"],
                          reference=assets / "reference.json", target=manifest.get("target", "Tomato_05"))
     output.mkdir(parents=True, exist_ok=False)
-    result = check_engine(engine, rows, plan["seconds"], policy)
+    result = check_engine(engine, rows, plan["seconds"], policy, collect_all_violations=args.all_violations)
     result.update(source_run=str(root), candidate_id=args.candidate,
                   trace_sha256=hashlib.sha256((folder / "trace.json").read_bytes()).hexdigest(),
                   model_sha256=hashlib.sha256((assets / "model.mjb").read_bytes()).hexdigest(),
                   source_modified=False, physics_executed=False)
     save_report(output, result)
-    print(json.dumps({k: result.get(k) for k in ("status", "reason", "first_violation", "wall_s")}, indent=2))
+    print(json.dumps({k: result.get(k) for k in ("status", "reason", "first_violation", "violation_summary", "wall_s")}, indent=2))
     print("Report:", output / "environment_preflight.html")
     if args.gui:
         hit = result.get("first_violation")
