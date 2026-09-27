@@ -239,9 +239,12 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--execute', action='store_true', help='Offline simulation only, after a complete conditional audit')
     parser.add_argument('--search-contact-policy', action='store_true', help='Explicit wire contact with target fruit/pedicels/OWN truss rachis, not other plants or mounting hardware')
+    parser.add_argument('--legacy-azimuth-baseline', action='store_true', help='Evaluate unchanged saved staged6d commands with explicit diagnostic phase aliases; requires search policy')
     parser.add_argument('--max-target-force-n', type=float)
     parser.add_argument('--max-target-displacement-m', type=float)
     args = parser.parse_args()
+    if args.legacy_azimuth_baseline and not args.search_contact_policy:
+        parser.error('--legacy-azimuth-baseline requires --search-contact-policy')
     if not re.fullmatch(r'[A-Za-z0-9_-]+', args.candidate): parser.error('Invalid candidate identity')
     root, out = args.run.resolve(), args.output.resolve()
     if out.exists() or out == root or root in out.parents: parser.error('Use a NEW output outside the source run')
@@ -252,8 +255,8 @@ def main():
     from measure_seating_rollout import SeatingProbe
     from seating_evaluation import timeline_evidence
     engine, trace, plan = load_engine(root, args.candidate)
-    if plan.get('parameters', {}).get('trajectory_mode') != 'diagnostic_pose_waypoints_v1':
-        raise ValueError('First use only the saved diagnostic pose-waypoint trials')
+    from search_legacy_baseline import evaluation_trace
+    trace, baseline_metadata = evaluation_trace(plan, trace, args.legacy_azimuth_baseline)
     probe = SeatingProbe(engine, trace)
     scope = scope_from_engine(engine, probe.mapping, search_policy=args.search_contact_policy)
     base = json.loads(args.base_policy.read_text())
@@ -263,6 +266,9 @@ def main():
               root/'candidates'/args.candidate/'plan.json', root/'candidates'/args.candidate/'trace.json']
     hashes = {str(p): sha(p) for p in inputs}
     out.mkdir(parents=True, exist_ok=False)
+    if baseline_metadata:
+        write_json(out/'legacy_baseline_mapping.json', baseline_metadata)
+        (out/'evaluation_trace.json.gz').write_bytes(gzip.compress(json.dumps(trace).encode(),mtime=0))
     write_json(out/'contact_scope.json', dict(scope=asdict(scope), original_policy=base,
                trial_policy=policy.snapshot(), user_requirement=('Allow wire touch on target fruit and its own truss rachis; not capture evidence' if args.search_contact_policy else 'Allow light target fruit/wire contact; not mounting hardware or non-targets'),
                diagnostic_only=True, training_eligible=False, source_sha256=hashes, code_sha256=sha(__file__)))
@@ -271,6 +277,7 @@ def main():
     audit = check_engine(engine, trace, plan['seconds'], policy, collect_all_violations=True)
     save_report(out, audit)
     result = dict(physics_executed=False, completed=False, training_eligible=False, hook_success=None,
+                  baseline_evaluation=baseline_metadata,
                   audit_status=audit['status'], audit_complete=audit['complete'],
                   limits=None if limits is None else asdict(limits),
                   scope='Offline target-contact test; no calibrated skin-damage or real-safety claim')
