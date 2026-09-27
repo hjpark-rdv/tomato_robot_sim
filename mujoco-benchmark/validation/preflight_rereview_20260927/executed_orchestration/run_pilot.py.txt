@@ -1,0 +1,29 @@
+import sys,json,copy,hashlib
+from pathlib import Path
+import numpy as np
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+import candidate_experiment as ce
+from hook_retention_diagnostic import HookProbe
+from environment_preflight import Policy,check_engine,save_report
+O=Path(__file__).parent
+cases=json.loads((O/'candidates.json').read_text());results=[]
+policy=Policy.from_dict(json.loads((O.parent/'full_policy.json').read_text()))
+for case in cases:
+ c=O/'candidates'/case['candidate_id'];plan=json.loads((c/'plan.json').read_text());trace=json.loads((c/'trace.json').read_text());original_seconds=plan['seconds']
+ # Add a separately labelled 1s hold for all variants; preserve planned source.
+ (c/'plan_before_hold.json').write_text(json.dumps(plan,indent=2));(c/'trace_before_hold.json').write_text(json.dumps(trace))
+ trace += [dict(trace[-1],phase='hold') for _ in range(60)]
+ plan['seconds']=(len(trace)-1)/60;plan['diagnostic_hold_seconds']=1.;plan['diagnostic_only']=True
+ (c/'trace.json').write_text(json.dumps(trace));(c/'plan.json').write_text(json.dumps(plan,indent=2))
+ ce.initialize(O);e=ce.ENGINE;probe=HookProbe(e,original_seconds)
+ check=check_engine(e,trace,plan['seconds'],policy);save_report(c,check)
+ # Deliberate offline research replay of blocked proposals, not production gate execution.
+ rollout=e.rollout
+ def observed(**kwargs):return rollout(**kwargs,on_step=probe)
+ e.rollout=observed
+ result=ce.execute(case);result.update(diagnostic_only=True,training_eligible=False,offline_teacher_trial=True,
+   environment_screen_status=check['status'],scope='Offline trial despite blocked nominal plan. Not one-shot success; original collision model and controller unchanged.')
+ (c/'result.json').write_text(json.dumps(result,indent=2));(c/'hook_samples.json').write_text(json.dumps(probe.rows))
+ summary=probe.summary(result['metrics']);summary.update(candidate_id=case['candidate_id'],classification=result['result'],environment_screen_status=check['status'],model_sha256=hashlib.sha256((O/'replay_assets/model.mjb').read_bytes()).hexdigest(),trace_sha256=hashlib.sha256((c/'trace.json').read_bytes()).hexdigest())
+ (c/'hook_diagnostic.json').write_text(json.dumps(summary,indent=2));results.append(summary);(O/'hook_results.json').write_text(json.dumps(results,indent=2));print(case['candidate_id'],result['result'],summary['seated_ticks'],summary['intended_contact_ticks'],summary['held_seated_ticks'],summary['legacy_retention_proxy'],summary['forbidden_force_ticks'],flush=True)
+ce.report(O,[json.loads((O/'candidates'/c['candidate_id']/'result.json').read_text()) for c in cases])

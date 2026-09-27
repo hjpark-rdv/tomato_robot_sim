@@ -1,0 +1,189 @@
+{
+  "first_nominal_violation_time_s": 15.238888888888889,
+  "note": "Every ABCD row is evaluated at the stated time. Nearest row is not necessarily the exact preflight sample. Maxima/minima from different rows are not simultaneous.",
+  "samples": {
+    "nearest_sample_to_first_nominal_violation": {
+      "time_s": 15.233333333332789,
+      "phase": "insert",
+      "ABCD_distance_m": [
+        8.913870501408194e-05,
+        0.0010059946789432808,
+        0.00010799239194754441,
+        0.0010248189238226733
+      ],
+      "prismatic_error_m": 0.0002815208671819898,
+      "revolute_error_rad": 0.0014923205839071918,
+      "ring_position_error_m": 0.0009324980940189301,
+      "ring_rotation_error_rad": 0.00021057407185197776,
+      "live_pair_contacts_previous_solve": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.001122430773811453,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "solve_time_s": 15.229166666666123,
+          "poststep_time_s": 15.233333333332789
+        }
+      ],
+      "recomputed_pair_contacts": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.0010248189238226731,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recomputed_time_s": 15.233333333332789
+        }
+      ]
+    },
+    "maximum_recomputed_pair_force": {
+      "time_s": 21.399999999999107,
+      "phase": "rise",
+      "ABCD_distance_m": [
+        0.002149973564227212,
+        0.001759561104306236,
+        0.0004497460601725104,
+        0.000869010722788142
+      ],
+      "prismatic_error_m": 7.906212299508414e-05,
+      "revolute_error_rad": 0.0004794279375004429,
+      "ring_position_error_m": 0.0005422761520176048,
+      "ring_rotation_error_rad": 0.0006955204353075262,
+      "live_pair_contacts_previous_solve": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.0008757230636178479,
+          "includemargin_m": 0.001,
+          "efc_address": 6,
+          "active": true,
+          "normal_force_N": 0.7191638459463188,
+          "tangential_force_N": 0.2749641049176833,
+          "force6": [
+            0.7191638459463188,
+            -0.2710643147310969,
+            -0.04614538192001028,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "solve_time_s": 21.39583333333244,
+          "poststep_time_s": 21.399999999999107
+        }
+      ],
+      "recomputed_pair_contacts": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.000869010722788142,
+          "includemargin_m": 0.001,
+          "efc_address": 6,
+          "active": true,
+          "normal_force_N": 0.7343962898784618,
+          "tangential_force_N": 0.2937585159513847,
+          "force6": [
+            0.7343962898784618,
+            -0.29024944015857523,
+            -0.04526950608956976,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recomputed_time_s": 21.399999999999107
+        }
+      ]
+    },
+    "minimum_nominal_A_distance": {
+      "time_s": 15.349999999999449,
+      "phase": "insert",
+      "ABCD_distance_m": [
+        -0.002038429558263613,
+        -0.0013129363972873287,
+        0.0002759868174629528,
+        0.0009984976903785615
+      ],
+      "prismatic_error_m": 0.00020926560976357832,
+      "revolute_error_rad": 0.0011382475411819415,
+      "ring_position_error_m": 0.0007398841567789995,
+      "ring_rotation_error_rad": 0.00013064706947422326,
+      "live_pair_contacts_previous_solve": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.0009984245447003251,
+          "includemargin_m": 0.001,
+          "efc_address": 3,
+          "active": true,
+          "normal_force_N": 0.21581131186367225,
+          "tangential_force_N": 0.08632452474546891,
+          "force6": [
+            0.21581131186367225,
+            0.0863106880565368,
+            -0.0015455418914635524,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "solve_time_s": 15.345833333332783,
+          "poststep_time_s": 15.349999999999449
+        }
+      ],
+      "recomputed_pair_contacts": [
+        {
+          "geoms": [
+            "glb_col_TRUSS_Rachis_05",
+            "g390"
+          ],
+          "dist_m": 0.0009984976903785617,
+          "includemargin_m": 0.001,
+          "efc_address": 3,
+          "active": true,
+          "normal_force_N": 0.22528643301300272,
+          "tangential_force_N": 0.09011457320520111,
+          "force6": [
+            0.22528643301300272,
+            0.08178521543847023,
+            0.037839329270463545,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recomputed_time_s": 15.349999999999449
+        }
+      ]
+    }
+  }
+}

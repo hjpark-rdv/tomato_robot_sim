@@ -1,0 +1,887 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+  "pair": [
+    "g390",
+    "glb_col_TRUSS_Rachis_05"
+  ],
+  "version": "3.13.0",
+  "integrator": "mjtIntegrator.mjINT_IMPLICITFAST",
+  "timestep_s": 0.004166666666666667,
+  "sample_hz": 60,
+  "callbacks": {
+    "get_mjcb_act_bias": false,
+    "get_mjcb_act_dyn": false,
+    "get_mjcb_act_gain": false,
+    "get_mjcb_contactfilter": false,
+    "get_mjcb_control": false,
+    "get_mjcb_passive": false,
+    "get_mjcb_sensor": false,
+    "get_mjcb_time": false
+  },
+  "plugins": 0,
+  "config": [
+    {
+      "name": "g390",
+      "body": "Hook",
+      "margin_m": 0.0005,
+      "gap_m": 0.0005,
+      "priority": 0,
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "contype": 4,
+      "conaffinity": 3
+    },
+    {
+      "name": "glb_col_TRUSS_Rachis_05",
+      "body": "TRUSS_Rachis_05",
+      "margin_m": 0.0005,
+      "gap_m": 0.0005,
+      "priority": 0,
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "contype": 1,
+      "conaffinity": 15
+    }
+  ],
+  "explicit_pairs": [],
+  "baseline": {
+    "control_s": 0.007853640243411064,
+    "physics_s": 14.078394098207355,
+    "evaluation_s": 2.5197624526917934,
+    "recording_s": 0.0,
+    "reset_s": 0.0023512914776802063,
+    "command_prepare_s": 0.24727174825966358,
+    "rollout_wall_s": 16.654157547280192,
+    "process_cpu_s": 16.652456214,
+    "simulated_s": 41.85,
+    "requested_s": 41.85,
+    "steps": 10044,
+    "rtf": 2.512886039488354,
+    "unstable": false,
+    "max_target_displacement_m": 0.0077813730163545855,
+    "max_hook_contact_penetration_m": -0.0,
+    "hook_contact_steps": 6397,
+    "max_tracking_error_m_or_rad": 0.008800511987463983,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.6960308522351021,
+      0.799793546773481,
+      0.4984747951987943
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0,
+    "neighbor_stem_contact_steps": 0,
+    "neighbor_stem_contact_pairs": [],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": true,
+    "physics_guard_version": "glb_hook_gutter_v3",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "diagnostic": {
+    "control_s": 0.019968252629041672,
+    "physics_s": 14.142054457217455,
+    "evaluation_s": 2.677820337936282,
+    "recording_s": 0.0,
+    "reset_s": 0.002293108031153679,
+    "command_prepare_s": 0.2442803494632244,
+    "rollout_wall_s": 27.76018388569355,
+    "process_cpu_s": 27.755755422999997,
+    "simulated_s": 41.85,
+    "requested_s": 41.85,
+    "steps": 10044,
+    "rtf": 1.5075548552676468,
+    "unstable": false,
+    "max_target_displacement_m": 0.0077813730163545855,
+    "max_hook_contact_penetration_m": -0.0,
+    "hook_contact_steps": 6397,
+    "max_tracking_error_m_or_rad": 0.008800511987463983,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.6960308522351021,
+      0.799793546773481,
+      0.4984747951987943
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0,
+    "neighbor_stem_contact_steps": 0,
+    "neighbor_stem_contact_pairs": [],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": true,
+    "physics_guard_version": "glb_hook_gutter_v3",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "baseline_qpos_qvel_sha256": "e310f49751178d9542628f99cb9261f4d66ec7d116e92b5c8cb3e2d1fa01c351",
+  "diagnostic_qpos_qvel_sha256": "e310f49751178d9542628f99cb9261f4d66ec7d116e92b5c8cb3e2d1fa01c351",
+  "all_step_selected_pair_min_geometry_m": 0.0008664347622801469,
+  "minimum_ABCD_distance_m": [
+    -0.002038429558263613,
+    -0.0020995415484637682,
+    3.979825757617693e-05,
+    0.000869010722788142
+  ],
+  "selected_live": {
+    "detected_contacts": 1998,
+    "active_contacts": 1522,
+    "positive_normal_force_contacts": 1471,
+    "positive_distance_force_contacts": 1471,
+    "max_normal_force_N": 0.7343710503848931,
+    "examples": [
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.000869010722788142,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7343710503848931,
+        "tangential_force_N": 0.2937484201539573,
+        "force6": [
+          0.7343710503848931,
+          -0.2900406874908253,
+          -0.046524552042929344,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.399999999999107,
+        "poststep_time_s": 21.404166666665773
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.000868196576406009,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7343579523391084,
+        "tangential_force_N": 0.2937431809356434,
+        "force6": [
+          0.7343579523391084,
+          -0.2900183422258373,
+          -0.04663064999297405,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.358333333332443,
+        "poststep_time_s": 21.36249999999911
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008736691423336313,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.728036577338877,
+        "tangential_force_N": 0.27791185912835764,
+        "force6": [
+          0.728036577338877,
+          -0.2739595355065685,
+          -0.046703044324811885,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.44166666666577,
+        "poststep_time_s": 21.445833333332438
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008703820071050011,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7257059697732045,
+        "tangential_force_N": 0.29028238790928174,
+        "force6": [
+          0.7257059697732045,
+          -0.2866048392395295,
+          -0.04606007875371221,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.312499999999112,
+        "poststep_time_s": 21.31666666666578
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008713916316091268,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.72171671483521,
+        "tangential_force_N": 0.28868668593408403,
+        "force6": [
+          0.72171671483521,
+          -0.28501961849655844,
+          -0.04586741444294368,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.270833333332448,
+        "poststep_time_s": 21.274999999999114
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008705741056668963,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 0.7216991909320044,
+        "tangential_force_N": 0.28867967637280173,
+        "force6": [
+          0.7216991909320044,
+          -0.28499413164432913,
+          -0.04598152323488575,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.229166666665783,
+        "poststep_time_s": 21.23333333333245
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008751278942846061,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7197867706477127,
+        "tangential_force_N": 0.27491736163236036,
+        "force6": [
+          0.7197867706477127,
+          -0.2709917268345449,
+          -0.04629297694174994,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.354166666665776,
+        "poststep_time_s": 21.358333333332443
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008757230636178479,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7191638459463188,
+        "tangential_force_N": 0.2749641049176833,
+        "force6": [
+          0.7191638459463188,
+          -0.2710643147310969,
+          -0.04614538192001028,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 21.39583333333244,
+        "poststep_time_s": 21.399999999999107
+      }
+    ]
+  },
+  "all_robot_environment_live": {
+    "detected_contacts": 101466,
+    "active_contacts": 16641,
+    "positive_normal_force_contacts": 13896,
+    "positive_distance_force_contacts": 13896,
+    "max_normal_force_N": 3.3970159305473158,
+    "examples": [
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.0008360639323375817,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 3.3970159305473158,
+        "tangential_force_N": 0.7091755363534077,
+        "force6": [
+          3.3970159305473158,
+          -0.7061438681166721,
+          0.06550403715319848,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 36.66666666666888
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008006161473731632,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.3950954323195357,
+        "tangential_force_N": 0.23756755013218672,
+        "force6": [
+          3.3950954323195357,
+          -0.2334108368610608,
+          0.044246153636540164,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 35.137500000001
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0007990358476988868,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.3604913107410757,
+        "tangential_force_N": 0.0816157380197747,
+        "force6": [
+          3.3604913107410757,
+          -0.027189991838372705,
+          0.07695344720245952,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 34.64583333333394
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008123678906457104,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.3542561591951356,
+        "tangential_force_N": 0.11642449406462556,
+        "force6": [
+          3.3542561591951356,
+          -0.00668177928360264,
+          0.11623259716537891,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 34.16250000000022
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.0008790090714361303,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 3.3356265572429487,
+        "tangential_force_N": 0.7420727350322757,
+        "force6": [
+          3.3356265572429487,
+          -0.7356906135235296,
+          0.09711470152172948,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 36.33333333333528
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.000849691908573836,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.2956855054194345,
+        "tangential_force_N": 0.1473520524512621,
+        "force6": [
+          3.2956855054194345,
+          -0.14137351651321722,
+          0.041547035878466664,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 35.18750000000104
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008463726153245597,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.2923756586479143,
+        "tangential_force_N": 0.13482086470850552,
+        "force6": [
+          3.2923756586479143,
+          -0.1112201711932694,
+          0.07620196244512997,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 34.69583333333398
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.000890654928600781,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 3.2023927101027807,
+        "tangential_force_N": 0.8440349028680794,
+        "force6": [
+          3.2023927101027807,
+          -0.8251744301537783,
+          0.17743189420145208,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 36.28750000000191
+      }
+    ]
+  },
+  "selected_private": {
+    "detected_contacts": 499,
+    "active_contacts": 391,
+    "positive_normal_force_contacts": 380,
+    "positive_distance_force_contacts": 380,
+    "max_normal_force_N": 0.7343962898784618,
+    "examples": [
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.000869010722788142,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7343962898784618,
+        "tangential_force_N": 0.2937585159513847,
+        "force6": [
+          0.7343962898784618,
+          -0.29024944015857523,
+          -0.04526950608956976,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.399999999999107
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008727700923861321,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 0.7130359343514948,
+        "tangential_force_N": 0.28521437374059794,
+        "force6": [
+          0.7130359343514948,
+          -0.2817737273107801,
+          -0.04416792485086457,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.183333333332452
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008779168989732054,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7072045951715605,
+        "tangential_force_N": 0.27051799599910137,
+        "force6": [
+          0.7072045951715605,
+          -0.26687839211605985,
+          -0.044225671062363976,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.26666666666578
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008742322210852341,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7050626711409276,
+        "tangential_force_N": 0.2820250684563711,
+        "force6": [
+          0.7050626711409276,
+          -0.2786125115333173,
+          -0.04374022925086165,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.099999999999124
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008862654136188783,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.7005554181679968,
+        "tangential_force_N": 0.28022216726719873,
+        "force6": [
+          0.7005554181679968,
+          -0.2771396916011331,
+          -0.04144941938260094,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.31666666666578
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008756862652434078,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.6971581388078283,
+        "tangential_force_N": 0.27886325552313135,
+        "force6": [
+          0.6971581388078283,
+          -0.2754731883021505,
+          -0.04335017655797009,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.016666666665795
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008865009717469289,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 0.6957402701226005,
+        "tangential_force_N": 0.2782961080490402,
+        "force6": [
+          0.6957402701226005,
+          -0.2752151460154846,
+          -0.0412958491729928,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 21.23333333333245
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_05",
+          "g390"
+        ],
+        "dist_m": 0.0008771299632714168,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 0.689321646989677,
+        "tangential_force_N": 0.27572865879587083,
+        "force6": [
+          0.689321646989677,
+          -0.2723551145554897,
+          -0.042999823916335084,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 20.933333333332467
+      }
+    ]
+  },
+  "all_robot_environment_private": {
+    "detected_contacts": 25348,
+    "active_contacts": 4168,
+    "positive_normal_force_contacts": 3470,
+    "positive_distance_force_contacts": 3470,
+    "max_normal_force_N": 3.3968730385265067,
+    "examples": [
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.0008360639323375817,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 3.3968730385265067,
+        "tangential_force_N": 0.7091152683414066,
+        "force6": [
+          3.3968730385265067,
+          -0.706210668376904,
+          0.06411673467630423,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 36.66666666666888
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.0008790090714361303,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 3.3355038303372506,
+        "tangential_force_N": 0.7417954811887248,
+        "force6": [
+          3.3355038303372506,
+          -0.7355955647922955,
+          0.0957063266974327,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 36.33333333333528
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_03",
+          "g392"
+        ],
+        "dist_m": 0.0008787523563629455,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 3.0402365214607476,
+        "tangential_force_N": 0.8158750275739225,
+        "force6": [
+          3.0402365214607476,
+          -0.814736863650145,
+          0.04308019995628953,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 37.13333333333592
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008125100394694544,
+        "includemargin_m": 0.001,
+        "efc_address": 6,
+        "active": true,
+        "normal_force_N": 2.827834779358517,
+        "tangential_force_N": 0.16707306325766874,
+        "force6": [
+          2.827834779358517,
+          0.11652208693787784,
+          0.11973308532708335,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 32.98333333333262
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008430535633825033,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 2.3567480575173603,
+        "tangential_force_N": 0.46836554655298585,
+        "force6": [
+          2.3567480575173603,
+          -0.4679790281942782,
+          0.01902404710402274,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 34.65000000000061
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008559670405781346,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 2.313409975408264,
+        "tangential_force_N": 0.5308656139166115,
+        "force6": [
+          2.313409975408264,
+          -0.5304052563796394,
+          0.022103484881569036,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 34.16666666666689
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008945323723102204,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 2.294139618290659,
+        "tangential_force_N": 0.4570779585336523,
+        "force6": [
+          2.294139618290659,
+          -0.4557701375727125,
+          0.034552016934499136,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 34.70000000000065
+      },
+      {
+        "geoms": [
+          "glb_col_TRUSS_Rachis_04",
+          "g391"
+        ],
+        "dist_m": 0.0008595604119960311,
+        "includemargin_m": 0.001,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 2.2189837609781335,
+        "tangential_force_N": 0.4690459526859251,
+        "force6": [
+          2.2189837609781335,
+          -0.46862178577602615,
+          0.019943109765914985,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 33.599999999999774
+      }
+    ]
+  },
+  "scope": "A/B/C counterfactual geometry; D private forward at poststep state. Live force belongs to previous solve. Not a passed preflight run or hook-success label.",
+  "max_prismatic_error_m": 0.003664819154458321,
+  "max_revolute_error_rad": 0.008800511987481385,
+  "max_ring_position_error_m": 0.005695641109753904,
+  "max_ring_rotation_error_rad": 0.0069953979148558035
+}

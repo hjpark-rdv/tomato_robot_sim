@@ -1,0 +1,144 @@
+{
+  "first_nominal_violation_time_s": 4.133333333333334,
+  "note": "Every ABCD row is evaluated at the stated time. Nearest row is not necessarily the exact preflight sample. Maxima/minima from different rows are not simultaneous.",
+  "samples": {
+    "nearest_sample_to_first_nominal_violation": {
+      "time_s": 4.133333333333419,
+      "phase": "preapproach",
+      "ABCD_distance_m": [
+        -0.0003219586140072806,
+        0.0027480656012164074,
+        -0.0003219586140072806,
+        0.0027480656012164074
+      ],
+      "prismatic_error_m": 0.0036409230194507924,
+      "revolute_error_rad": 0.008912156171297675,
+      "ring_position_error_m": 0.005812027752324264,
+      "ring_rotation_error_rad": 0.007376439781804643,
+      "live_pair_contacts_previous_solve": [],
+      "recomputed_pair_contacts": []
+    },
+    "maximum_recomputed_pair_force": {
+      "time_s": 25.699999999998862,
+      "phase": "rise",
+      "ABCD_distance_m": [
+        0.07988032439809178,
+        0.00013144263431110435,
+        0.07988032439809178,
+        0.00013144263431110435
+      ],
+      "prismatic_error_m": 0.0006774086349119329,
+      "revolute_error_rad": 0.23013389996282285,
+      "ring_position_error_m": 0.2159617271107032,
+      "ring_rotation_error_rad": 0.2914363175898496,
+      "live_pair_contacts_previous_solve": [
+        {
+          "geoms": [
+            "neighbor_stem_collision_18_05",
+            "g410"
+          ],
+          "dist_m": 0.0005283059380892787,
+          "includemargin_m": 0.0005,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "solve_time_s": 25.695833333332196,
+          "poststep_time_s": 25.699999999998862
+        }
+      ],
+      "recomputed_pair_contacts": [
+        {
+          "geoms": [
+            "neighbor_stem_collision_18_05",
+            "g410"
+          ],
+          "dist_m": 0.0001314426481658481,
+          "includemargin_m": 0.0005,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 268.57340012475646,
+          "tangential_force_N": 89.68777827190866,
+          "force6": [
+            268.57340012475646,
+            83.93033194714096,
+            -31.616403188752837,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recomputed_time_s": 25.699999999998862
+        }
+      ]
+    },
+    "minimum_nominal_A_distance": {
+      "time_s": 4.766666666666716,
+      "phase": "preapproach",
+      "ABCD_distance_m": [
+        -0.037964923504466695,
+        -0.0008374944257998305,
+        -0.037964923504466695,
+        -0.0008374944257998305
+      ],
+      "prismatic_error_m": 0.004730519688596557,
+      "revolute_error_rad": 0.12157001342353863,
+      "ring_position_error_m": 0.08707044556620087,
+      "ring_rotation_error_rad": 0.07671205714963122,
+      "live_pair_contacts_previous_solve": [
+        {
+          "geoms": [
+            "neighbor_stem_collision_18_05",
+            "g410"
+          ],
+          "dist_m": -0.0010797039932978212,
+          "includemargin_m": 0.0005,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 250.80852699502395,
+          "tangential_force_N": 83.92942828394942,
+          "force6": [
+            250.80852699502395,
+            45.54434756205012,
+            70.49724347247762,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "solve_time_s": 4.76250000000005,
+          "poststep_time_s": 4.766666666666716
+        }
+      ],
+      "recomputed_pair_contacts": [
+        {
+          "geoms": [
+            "neighbor_stem_collision_18_05",
+            "g410"
+          ],
+          "dist_m": -0.0008374944257998401,
+          "includemargin_m": 0.0005,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 246.4853260156081,
+          "tangential_force_N": 84.30552444753238,
+          "force6": [
+            246.4853260156081,
+            53.865649894342006,
+            64.85301237285476,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recomputed_time_s": 4.766666666666716
+        }
+      ]
+    }
+  }
+}

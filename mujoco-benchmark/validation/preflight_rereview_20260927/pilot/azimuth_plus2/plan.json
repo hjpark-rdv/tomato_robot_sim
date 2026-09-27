@@ -1,0 +1,207 @@
+{
+  "candidate_id": "azimuth_plus2",
+  "parameters": {
+    "candidate_id": "azimuth_plus2",
+    "approach_azimuth_deg": -87.98944091796875,
+    "entry_clearance_m": 0.002,
+    "lateral_offset_m": 0.0,
+    "insertion_distance_m": 0.0425,
+    "lift_forward_angle_deg": 0.0,
+    "lift_distance_m": 0.0325,
+    "sampling": "direct_rgbd_angle_v1",
+    "lift_profile": "diagonal_75_return",
+    "trajectory_mode": "staged6d",
+    "stage": "coarse",
+    "parent_id": null,
+    "seed": 2026,
+    "sobol_index": null,
+    "pre_hook_distance_m": 0.17,
+    "hook_roll_deg": 0.0,
+    "approach_elevation_deg": 0.0
+  },
+  "preflight": {
+    "passed": true,
+    "samples": 2747,
+    "max_arm_sample_rad": 0.015,
+    "max_lift_sample_m": 0.001
+  },
+  "planning_wall_s": 2.4194300286471844,
+  "waypoints": [
+    {
+      "phase": "preapproach",
+      "position_xyz": [
+        -0.6901882989808529,
+        0.7459263835170663,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5086953102278663,
+        -0.49115077252527534,
+        0.49115077252527534,
+        -0.5086953102278663
+      ],
+      "steps": 498
+    },
+    {
+      "phase": "entry",
+      "position_xyz": [
+        -0.6943488861490487,
+        0.8644437814030556,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5086953102278663,
+        -0.49115077252527534,
+        0.49115077252527534,
+        -0.5086953102278663
+      ],
+      "steps": 325
+    },
+    {
+      "phase": "insert",
+      "position_xyz": [
+        -0.6958399423191789,
+        0.9069176174847837,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5086953102278663,
+        -0.49115077252527534,
+        0.49115077252527534,
+        -0.5086953102278663
+      ],
+      "steps": 130
+    },
+    {
+      "phase": "rise_mid",
+      "position_xyz": [
+        -0.6959927027561356,
+        0.911269111337965,
+        0.47657218492704473
+      ],
+      "orientation_xyzw": [
+        0.5086953102278663,
+        -0.49115077252527534,
+        0.49115077252527534,
+        -0.5086953102278663
+      ],
+      "steps": 778
+    },
+    {
+      "phase": "rise",
+      "position_xyz": [
+        -0.6958399423191789,
+        0.9069176174847837,
+        0.49282218492704477
+      ],
+      "orientation_xyzw": [
+        0.5086953102278663,
+        -0.49115077252527534,
+        0.49115077252527534,
+        -0.5086953102278663
+      ],
+      "steps": 778
+    }
+  ],
+  "seconds": 42.81666666666667,
+  "action_camera": {
+    "schema": "farmily_camera_action_v2",
+    "coordinate_frame": "observation_color_optical",
+    "axis_convention": "x right, y down, z forward",
+    "position_origin": "initial target fruit center",
+    "approach_direction_camera": [
+      0.6818711749054879,
+      -0.1629917954946869,
+      0.7130816050315899
+    ],
+    "hook_orientation_camera_xyzw": [
+      0.04471751012378202,
+      0.9112433732522239,
+      0.10281586529641859,
+      0.3963139624534898
+    ],
+    "lift_direction_camera": [
+      -2.3435798553726002e-06,
+      -0.9748584842633569,
+      -0.22282489908952982
+    ],
+    "gravity_direction_camera": [
+      2.3435798553726002e-06,
+      0.9748584842633569,
+      0.22282489908952982
+    ],
+    "entry_clearance_m": 0.002,
+    "lateral_offset_m": 0.0,
+    "insertion_distance_m": 0.04249999999999997,
+    "lift_distance_m": 0.03250000000000003,
+    "feature_names": [
+      "approach_x",
+      "approach_y",
+      "approach_z",
+      "hook_qx",
+      "hook_qy",
+      "hook_qz",
+      "hook_qw",
+      "entry_clearance_m",
+      "lateral_offset_m",
+      "insertion_distance_m",
+      "lift_x",
+      "lift_y",
+      "lift_z",
+      "lift_distance_m"
+    ],
+    "features": [
+      0.6818711749054879,
+      -0.1629917954946869,
+      0.7130816050315899,
+      0.04471751012378202,
+      0.9112433732522239,
+      0.10281586529641859,
+      0.3963139624534898,
+      0.002,
+      0.0,
+      0.04249999999999997,
+      -2.3435798553726002e-06,
+      -0.9748584842633569,
+      -0.22282489908952982,
+      0.03250000000000003
+    ],
+    "target_relative_waypoint_xyz_camera": [
+      [
+        -0.11591806010494587,
+        0.044193067676362996,
+        -0.11745599398932283
+      ],
+      [
+        -0.03505468151866144,
+        0.02486380468563459,
+        -0.032891357863477924
+      ],
+      [
+        -0.0060751565851782235,
+        0.017936653377110402,
+        -0.0025853896496353785
+      ],
+      [
+        -0.0031062086701586227,
+        0.0013855083082257383,
+        -0.00310141260649755
+      ],
+      [
+        -0.006075232751523524,
+        -0.013746247361448725,
+        -0.009827198870045104
+      ]
+    ],
+    "phase_names": [
+      "preapproach",
+      "entry",
+      "insert",
+      "rise_mid",
+      "rise"
+    ],
+    "absolute_start_position_is_model_input": false
+  },
+  "diagnostic_hold_seconds": 1.0,
+  "diagnostic_only": true
+}

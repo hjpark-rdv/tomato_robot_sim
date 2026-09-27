@@ -1,0 +1,56 @@
+{
+  "schema": "farmily_camera_action_v2",
+  "observation": "initial nominal D435",
+  "world_from_color_optical": [
+    [
+      0.7070994264652241,
+      0.15756102048054577,
+      -0.6893365839107055,
+      -0.47471823428704185
+    ],
+    [
+      0.7071141358274914,
+      -0.1575609738637095,
+      0.6893215058505432,
+      0.8492535399529182
+    ],
+    [
+      -2.3435798553726002e-06,
+      -0.9748584842633569,
+      -0.22282489908952982,
+      1.042139911061377
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "target_center_world": [
+    -0.696152523661374,
+    0.9158217278439791,
+    0.4772317802256101
+  ],
+  "gravity_direction_camera": [
+    2.3435798553726002e-06,
+    0.9748584842633569,
+    0.22282489908952982
+  ],
+  "feature_names": [
+    "approach_x",
+    "approach_y",
+    "approach_z",
+    "hook_qx",
+    "hook_qy",
+    "hook_qz",
+    "hook_qw",
+    "entry_clearance_m",
+    "lateral_offset_m",
+    "insertion_distance_m",
+    "lift_x",
+    "lift_y",
+    "lift_z",
+    "lift_distance_m"
+  ]
+}

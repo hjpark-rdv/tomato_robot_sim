@@ -1,0 +1,3 @@
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 mujoco-benchmark/.venv/bin/python -m pytest -q mujoco-benchmark/tests/test_environment_preflight.py mujoco-benchmark/tests/test_environment_preflight_native_extended.py mujoco-benchmark/tests/test_environment_preflight_review.py mujoco-benchmark/tests/test_contact_diagnostics.py
+.................................................................        [100%]
+65 passed in 0.94s

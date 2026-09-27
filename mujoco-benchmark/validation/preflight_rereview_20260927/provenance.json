@@ -1,0 +1,138 @@
+{
+  "base_commit": "bd59ea3e537bd9b8c48de4de54d3282ca1424334",
+  "required_ancestor": "1f5bc1ff610fd8bb0b1897fcba8d6b5c51351708",
+  "branch": "codex/server-preflight-rereview-20260927",
+  "commit_identity": "The git commit containing this file; no self-referential commit hash is embedded.",
+  "zip_sha256": "de6048edaae45bf5c0a685a9f4309bdeec8d169ce1ac80f572111cf28ab8c035",
+  "physics_python": "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+  "physics_python_version": "Python 3.11.14",
+  "mujoco": "3.13.0",
+  "integrator": "implicitfast",
+  "physics_hz": 240,
+  "control_hz": 60,
+  "geometry_and_private_force_sample_hz": 60,
+  "live_force_sample_hz": 240,
+  "pilot_seed": 2026,
+  "source_inputs": [
+    {
+      "case": "original02",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_130852_direct_angle_test/targets/Tomato_02/physics",
+      "model_sha256": "a126a831b7149287ef6c23c391c431e45aa24cdbb825b7ce24a47ebf90b6d419",
+      "trace_sha256": "0e255d667bcdf994fedb78bb957c4ec9b584813316c1e1e4455017db47a2114e",
+      "manifest_sha256": "493ae9b95a6ac7fd9df9afd8676a019219f31da013605ba7b1bcb0daaecf4cd8",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 120,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "visual02",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_dense_house_harvest_test/targets/Tomato_02/physics",
+      "model_sha256": "780429ec30f8057c4e8996c6e16d74347aef9041b813ce9d16b22d35a0bc17e9",
+      "trace_sha256": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d",
+      "manifest_sha256": "930379b9ab88ba155d35bc83c289997e460cbd3aeb51b47439557f8e2c123ea6",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "gutter02",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+      "model_sha256": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+      "trace_sha256": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d",
+      "manifest_sha256": "299ef72703a122928e270457f5ec96e2225a92c8e4c37fa86a7f96b4a9023afd",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "gutter09",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_09",
+      "model_sha256": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+      "trace_sha256": "bae80b1810474bed795f849f03331f1018d07cf43a8929be84f80ae16c6478c9",
+      "manifest_sha256": "c60bae9a0f5fe764c887dadb45a362d8da8e7f4807d19f625c2903f1a1146957",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "stem01",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_01",
+      "model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+      "trace_sha256": "a3ace2b9818596031f9dc55fb56e458e4be107e0e3dfde18efc7be22ba9edef9",
+      "manifest_sha256": "17d94b82731bee5e1b5697db49a5922825c91f0b3853b5dbef6cb469fa405b69",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "stem02",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_02",
+      "model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+      "trace_sha256": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d",
+      "manifest_sha256": "642610a9d52def69044d265317a7808141e16f302b04d9c6c6632ab72921ca3e",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    },
+    {
+      "case": "stem09",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_09",
+      "model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+      "trace_sha256": "bae80b1810474bed795f849f03331f1018d07cf43a8929be84f80ae16c6478c9",
+      "manifest_sha256": "dcc397437e090000d5ccc27d4410f89a33b7324092cd1404263d53f4f7b6b093",
+      "reference_sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+      "seed": 0,
+      "hz": 240,
+      "original_model_unchanged": true,
+      "original_trace_unchanged": true
+    }
+  ],
+  "code_sha256": {
+    "scripts/diagnose_contact_timing.py": "edf7a918e358fe757b64693cbf2d8070145166421a00a30bb4bdb2fa53aa37c7",
+    "scripts/hook_retention_diagnostic.py": "c2aa5bc9111a296ca50e563de23e807019523eb6e500645cf78385a84380ccaf",
+    "scripts/render_contact_diagnostic.py": "cbb4ccb6f1757b917f949d9173b5288b8dc6e7e18ede3cc5f1f3e5a3e84472d4",
+    "scripts/environment_preflight.py": "6ca41ff67306b7362daaa32a262747512d14e367d5683ae31f27011bbe8d88c9",
+    "scripts/robot_engine.py": "4423385a0654073a66800b82d93274638d830507e7352af41cfb18d050a3547d",
+    "scripts/candidate_experiment.py": "6db384a5052819a39c11f50e0ac28c2f22966b6b1a26c83c0d88e77fd293d508",
+    "scripts/plan_candidates.py": "7c1a0d2e33128fa4f25540f38141e69d945a7e5497bd25c4d3e60fdcc785f107",
+    "tests/test_contact_diagnostics.py": "45ddc104917102af98e5c6a1c1ad6b0fbf4f41333d36906e7e33beb9aa02ed3a"
+  },
+  "legacy_geometry_sha256": "1a24d65a3c98f5c35940e0a5fe2e74654f16281982153c2f6fc3548818215e9d",
+  "original_policy_sha256": "b61f11239aac81ddfec989eadc79a98c4e031480b229ab4a91389b7f89c1f533",
+  "diagnostic_policy_file_sha256": "61c6cad5a6d42ff26dcba637ec1adb8207da6f046dd0edd2fdbfadf8ac34d5a8",
+  "diagnostic_policy_semantic_sha256": "b53ec0f9bc7dcc0e338b3eb005a98b4a58e8be4c014dd3145d7dcecad606a8d1",
+  "policy_changes": {
+    "max_distance_queries": [
+      2000000,
+      12000000
+    ],
+    "timeout_s": [
+      120,
+      240
+    ]
+  },
+  "unchanged": [
+    "clearance",
+    "sample steps",
+    "allowed_contacts",
+    "physics Hz",
+    "actuator",
+    "collision masks",
+    "margin/gap",
+    "predictor",
+    "production success labels"
+  ],
+  "raw_output": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server"
+}

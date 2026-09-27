@@ -1,0 +1,163 @@
+{
+  "baseline_before_hold_matches_original_commands": true,
+  "cases": {
+    "gutter02": {
+      "target": "Tomato_02",
+      "target_spec": {
+        "name": "Tomato_02",
+        "path": "/GLB/Tomato_02",
+        "anchor": "/GLB/Attachment_01",
+        "pose": [
+          -0.69615252366142,
+          0.9158217278439754,
+          0.4772317802255452,
+          1,
+          0,
+          0,
+          0
+        ],
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "neck": [
+          0.005178091052837841,
+          0.00015870441797904977,
+          0.011014233800119622
+        ],
+        "axis": [
+          0.425419266448078,
+          0.013038765906156588,
+          0.9049024468518271
+        ],
+        "radius": 0.01390959529856534,
+        "force": 3.0,
+        "torque": 0.08
+      },
+      "geoms": {
+        "g6": {
+          "id": 3060,
+          "body": "STEM_MainStem_01",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "g390": {
+          "id": 3687,
+          "body": "Hook",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "g410": {
+          "id": 3707,
+          "body": "Hook",
+          "type": 7,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_TRUSS_Rachis_05": {
+          "id": 3386,
+          "body": "TRUSS_Rachis_05",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_Attachment_01": {
+          "id": 3620,
+          "body": "Attachment_01",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_TRUSS_Pedicel_proximal_02_02": {
+          "id": 3617,
+          "body": "TRUSS_Pedicel_proximal_02_02",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        }
+      }
+    },
+    "stem01": {
+      "target": "Tomato_01",
+      "target_spec": {
+        "name": "Tomato_01",
+        "path": "/GLB/Tomato_01",
+        "anchor": "/GLB/Attachment_00",
+        "pose": [
+          -0.7101458712973984,
+          0.94301778853296,
+          0.500772903103064,
+          1,
+          0,
+          0,
+          0
+        ],
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "neck": [
+          0.0030262252603472373,
+          0.0017410028088736818,
+          0.010783108402121266
+        ],
+        "axis": [
+          0.2669989727131411,
+          0.15360586918325717,
+          0.9513762586498485
+        ],
+        "radius": 0.012957105913751512,
+        "force": 3.0,
+        "torque": 0.08
+      },
+      "geoms": {
+        "g6": {
+          "id": 4148,
+          "body": "STEM_MainStem_01",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "g390": {
+          "id": 4775,
+          "body": "Hook",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "g410": {
+          "id": 4795,
+          "body": "Hook",
+          "type": 7,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_TRUSS_Rachis_05": {
+          "id": 4474,
+          "body": "TRUSS_Rachis_05",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_Attachment_01": {
+          "id": 4708,
+          "body": "Attachment_01",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        },
+        "glb_col_TRUSS_Pedicel_proximal_02_02": {
+          "id": 4705,
+          "body": "TRUSS_Pedicel_proximal_02_02",
+          "type": 3,
+          "margin": 0.0005,
+          "gap": 0.0005
+        }
+      }
+    }
+  }
+}

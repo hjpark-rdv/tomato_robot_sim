@@ -1,0 +1,38 @@
+[
+  {
+    "file": "pilot_azimuth_plus4.mp4",
+    "decoded": true,
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "21.400000",
+    "nb_read_frames": "214"
+  },
+  {
+    "file": "pilot_baseline.mp4",
+    "decoded": true,
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "21.600000",
+    "nb_read_frames": "216"
+  },
+  {
+    "file": "sync_gutter02.mp4",
+    "decoded": true,
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "21.000000",
+    "nb_read_frames": "210"
+  },
+  {
+    "file": "sync_stem01.mp4",
+    "decoded": true,
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "20.800000",
+    "nb_read_frames": "208"
+  }
+]

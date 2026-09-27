@@ -1,0 +1,26 @@
+[
+  {
+    "case": "blocked",
+    "rollout_calls": 0,
+    "result": "environment_preflight_blocked",
+    "physics_executed": false,
+    "states_saved": false,
+    "scope": "real saved path with actual distance screening"
+  },
+  {
+    "case": "inconclusive",
+    "rollout_calls": 0,
+    "result": "environment_preflight_inconclusive",
+    "physics_executed": false,
+    "states_saved": false,
+    "scope": "real saved path with actual distance screening"
+  },
+  {
+    "case": "clear_prefix",
+    "rollout_calls": 1,
+    "result": "miss",
+    "physics_executed": true,
+    "states_saved": true,
+    "scope": "one-second prefix only"
+  }
+]

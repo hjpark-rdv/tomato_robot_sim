@@ -1,0 +1,15 @@
+import sys,json,hashlib,subprocess,time
+from pathlib import Path
+O=Path(__file__).parent;repo=Path('/root/farmily_tomato');scripts=repo/'mujoco-benchmark/scripts';sys.path.insert(0,str(scripts))
+from environment_preflight import Policy
+prior=O.parent/'20260927_environment_preflight_server_review/results.json';rows=json.loads(prior.read_text())
+settings=json.loads((scripts.parent/'config/environment_preflight.example.json').read_text());settings.update(max_distance_queries=12000000,timeout_s=240.)
+(O/'full_policy.json').write_text(json.dumps(settings,indent=2));out=[]
+for row in rows:
+ root=Path(row['source_run'])
+ for p,h in [(root/'replay_assets/model.mjb',row['source_model_sha256']),(root/'candidates/predicted_00000/trace.json',row['source_trace_sha256'])]:assert hashlib.sha256(p.read_bytes()).hexdigest()==h
+ cmd=[sys.executable,str(scripts/'audit_environment_preflight.py'),str(root),'--candidate','predicted_00000','--policy',str(O/'full_policy.json'),'--output',str(O/('full_'+row['case'])),'--all-violations']
+ with (O/(row['case']+'.log')).open('w') as f:p=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT)
+ assert p.returncode in (0,2,3),row['case']
+ r=json.loads((O/('full_'+row['case'])/'environment_preflight.json').read_text());out.append(dict(case=row['case'],**r));(O/'full_results.json').write_text(json.dumps(out,indent=2))
+ print(row['case'],r['status'],r['complete'],r['scan_stop_reason'],r['distance_queries'],round(r['wall_s'],2),r['violation_summary']['observed_unique_pair_phase_count'],flush=True)

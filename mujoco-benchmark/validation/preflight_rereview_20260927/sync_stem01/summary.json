@@ -1,0 +1,945 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_01",
+  "pair": [
+    "g410",
+    "neighbor_stem_collision_18_05"
+  ],
+  "version": "3.13.0",
+  "integrator": "mjtIntegrator.mjINT_IMPLICITFAST",
+  "timestep_s": 0.004166666666666667,
+  "sample_hz": 60,
+  "callbacks": {
+    "get_mjcb_act_bias": false,
+    "get_mjcb_act_dyn": false,
+    "get_mjcb_act_gain": false,
+    "get_mjcb_contactfilter": false,
+    "get_mjcb_control": false,
+    "get_mjcb_passive": false,
+    "get_mjcb_sensor": false,
+    "get_mjcb_time": false
+  },
+  "plugins": 0,
+  "config": [
+    {
+      "name": "g410",
+      "body": "Hook",
+      "margin_m": 0.0005,
+      "gap_m": 0.0005,
+      "priority": 0,
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "contype": 4,
+      "conaffinity": 3
+    },
+    {
+      "name": "neighbor_stem_collision_18_05",
+      "body": "world",
+      "margin_m": 0.0,
+      "gap_m": 0.0,
+      "priority": 0,
+      "solref": [
+        0.004,
+        1.0
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.001,
+        0.5,
+        2.0
+      ],
+      "contype": 32,
+      "conaffinity": 15
+    }
+  ],
+  "explicit_pairs": [],
+  "baseline": {
+    "control_s": 0.007992217317223549,
+    "physics_s": 9.56744872033596,
+    "evaluation_s": 3.020526247099042,
+    "recording_s": 0.0,
+    "reset_s": 0.0025318581610918045,
+    "command_prepare_s": 0.2406184058636427,
+    "rollout_wall_s": 12.644382169470191,
+    "process_cpu_s": 12.643378316,
+    "simulated_s": 41.45,
+    "requested_s": 41.45,
+    "steps": 9948,
+    "rtf": 3.278135653008089,
+    "unstable": false,
+    "max_target_displacement_m": 3.820188059348833e-05,
+    "max_hook_contact_penetration_m": 0.0011831457545869624,
+    "hook_contact_steps": 8948,
+    "max_tracking_error_m_or_rad": 0.29297397637880673,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.6047073680133176,
+      0.6820269704082083,
+      0.6575308758650739
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0011831457545869624,
+    "neighbor_stem_contact_steps": 8948,
+    "neighbor_stem_contact_pairs": [
+      [
+        "neighbor_stem_collision_18_05",
+        "g407"
+      ],
+      [
+        "neighbor_stem_collision_18_05",
+        "g409"
+      ],
+      [
+        "neighbor_stem_collision_18_05",
+        "g410"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g407"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g409"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g410"
+      ],
+      [
+        "neighbor_stem_collision_18_07",
+        "g410"
+      ]
+    ],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": false,
+    "physics_guard_version": "glb_hook_environment_v4",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "diagnostic": {
+    "control_s": 0.01936105452477932,
+    "physics_s": 9.554629866033792,
+    "evaluation_s": 3.1873491685837507,
+    "recording_s": 0.0,
+    "reset_s": 0.0025399941951036453,
+    "command_prepare_s": 0.24280123598873615,
+    "rollout_wall_s": 21.091110195964575,
+    "process_cpu_s": 21.088113553,
+    "simulated_s": 41.45,
+    "requested_s": 41.45,
+    "steps": 9948,
+    "rtf": 1.9652829848630138,
+    "unstable": false,
+    "max_target_displacement_m": 3.820188059348833e-05,
+    "max_hook_contact_penetration_m": 0.0011831457545869624,
+    "hook_contact_steps": 8948,
+    "max_tracking_error_m_or_rad": 0.29297397637880673,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.6047073680133176,
+      0.6820269704082083,
+      0.6575308758650739
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0011831457545869624,
+    "neighbor_stem_contact_steps": 8948,
+    "neighbor_stem_contact_pairs": [
+      [
+        "neighbor_stem_collision_18_05",
+        "g407"
+      ],
+      [
+        "neighbor_stem_collision_18_05",
+        "g409"
+      ],
+      [
+        "neighbor_stem_collision_18_05",
+        "g410"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g407"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g409"
+      ],
+      [
+        "neighbor_stem_collision_18_06",
+        "g410"
+      ],
+      [
+        "neighbor_stem_collision_18_07",
+        "g410"
+      ]
+    ],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": false,
+    "physics_guard_version": "glb_hook_environment_v4",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "baseline_qpos_qvel_sha256": "89e34068e1cf5846a8344461e6e8e1530863ed9784e1b13c5edfae5402d4ca31",
+  "diagnostic_qpos_qvel_sha256": "89e34068e1cf5846a8344461e6e8e1530863ed9784e1b13c5edfae5402d4ca31",
+  "all_step_selected_pair_min_geometry_m": -0.0011831457545869693,
+  "minimum_ABCD_distance_m": [
+    -0.037964923504466695,
+    -0.0011831457545869693,
+    -0.037964923504466695,
+    -0.0011831457545869693
+  ],
+  "selected_live": {
+    "detected_contacts": 3173,
+    "active_contacts": 1091,
+    "positive_normal_force_contacts": 1066,
+    "positive_distance_force_contacts": 972,
+    "max_normal_force_N": 314.48596908400077,
+    "examples": [
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 7.0546355757147156e-06,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 314.48596908400077,
+        "tangential_force_N": 157.2429845420004,
+        "force6": [
+          314.48596908400077,
+          129.5721354126131,
+          89.08657537637883,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 15.391666666666113,
+        "poststep_time_s": 15.39583333333278
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.0001314426481658481,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 268.58292216008005,
+        "tangential_force_N": 89.70322398742952,
+        "force6": [
+          268.58292216008005,
+          83.94023684532775,
+          -31.633922173660896,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 25.699999999998862,
+        "poststep_time_s": 25.70416666666553
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.0002148994667162318,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 259.2248521744226,
+        "tangential_force_N": 129.6124260872113,
+        "force6": [
+          259.2248521744226,
+          41.308122856653426,
+          122.85365270219864,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 14.524999999999496,
+        "poststep_time_s": 14.529166666666162
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0010797039932978212,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 250.80852699502395,
+        "tangential_force_N": 83.92942828394942,
+        "force6": [
+          250.80852699502395,
+          45.54434756205012,
+          70.49724347247762,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 4.76250000000005,
+        "poststep_time_s": 4.766666666666716
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0010562630886128536,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 250.38960136946162,
+        "tangential_force_N": 88.54225359103079,
+        "force6": [
+          250.38960136946162,
+          56.406054571505145,
+          68.25018445876017,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 4.808333333333381,
+        "poststep_time_s": 4.812500000000047
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.00019471000917072566,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 250.28375370327996,
+        "tangential_force_N": 112.59365062308349,
+        "force6": [
+          250.28375370327996,
+          112.31800142013246,
+          -7.8737994399216245,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 25.524999999998872,
+        "poststep_time_s": 25.52916666666554
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0010903107697139047,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 249.9030296507889,
+        "tangential_force_N": 84.63626098926359,
+        "force6": [
+          249.9030296507889,
+          44.17498850297323,
+          72.19326190860838,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 4.716666666666719,
+        "poststep_time_s": 4.720833333333386
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0011426595484789748,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 249.20055670674452,
+        "tangential_force_N": 91.58436217086211,
+        "force6": [
+          249.20055670674452,
+          37.028129239113,
+          83.76522571625522,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 4.804166666666714,
+        "poststep_time_s": 4.808333333333381
+      }
+    ]
+  },
+  "all_robot_environment_live": {
+    "detected_contacts": 19888,
+    "active_contacts": 10577,
+    "positive_normal_force_contacts": 9753,
+    "positive_distance_force_contacts": 5219,
+    "max_normal_force_N": 414.0032440333756,
+    "examples": [
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.0010799180854368859,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 414.0032440333756,
+        "tangential_force_N": 207.0016220166878,
+        "force6": [
+          414.0032440333756,
+          -99.1773416709459,
+          181.6962476679806,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 6.5708333333332805
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.001086792105981887,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 397.87819707159,
+        "tangential_force_N": 198.939098535795,
+        "force6": [
+          397.87819707159,
+          -114.83475454885678,
+          162.4492045962016,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 6.566666666666614
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.0007377242493011287,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 359.7753787149434,
+        "tangential_force_N": 116.6692332113794,
+        "force6": [
+          359.7753787149434,
+          4.14136480882311,
+          116.59570779257476,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 6.574999999999947
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": -3.062699924701387e-05,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 325.5045056703223,
+        "tangential_force_N": 162.7522528351612,
+        "force6": [
+          325.5045056703223,
+          129.01305199357247,
+          99.21657229628526,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 10.870833333333037
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.0007137710383039375,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 315.24504583925625,
+        "tangential_force_N": 157.62252291962812,
+        "force6": [
+          315.24504583925625,
+          -98.44367168622938,
+          123.10037870162127,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 6.562499999999948
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 7.0546355757147156e-06,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 314.48596908400077,
+        "tangential_force_N": 157.2429845420004,
+        "force6": [
+          314.48596908400077,
+          129.5721354126131,
+          89.08657537637883,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 15.391666666666113
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.00016100035690477799,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 313.70590393957167,
+        "tangential_force_N": 84.97432497407702,
+        "force6": [
+          313.70590393957167,
+          33.880075966881435,
+          77.92802036031964,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 6.579166666666613
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": -2.2256100131076186e-05,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 310.67684105283445,
+        "tangential_force_N": 155.3384205264172,
+        "force6": [
+          310.67684105283445,
+          131.34249565538633,
+          82.94078445889488,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "solve_time_s": 10.566666666666388
+      }
+    ]
+  },
+  "selected_private": {
+    "detected_contacts": 791,
+    "active_contacts": 278,
+    "positive_normal_force_contacts": 274,
+    "positive_distance_force_contacts": 252,
+    "max_normal_force_N": 268.57340012475646,
+    "examples": [
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.0001314426481658481,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 268.57340012475646,
+        "tangential_force_N": 89.68777827190866,
+        "force6": [
+          268.57340012475646,
+          83.93033194714096,
+          -31.616403188752837,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 25.699999999998862
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0010903107697139047,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 251.60053782608435,
+        "tangential_force_N": 89.87070787698414,
+        "force6": [
+          251.60053782608435,
+          45.00271854313519,
+          77.79138421469035,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 4.716666666666719
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0011831457545869624,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 247.0485564518591,
+        "tangential_force_N": 101.3930963517928,
+        "force6": [
+          247.0485564518591,
+          35.167594345106394,
+          95.09889744777266,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 4.666666666666722
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.0008374944257998401,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 246.4853260156081,
+        "tangential_force_N": 84.30552444753238,
+        "force6": [
+          246.4853260156081,
+          53.865649894342006,
+          64.85301237285476,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 4.766666666666716
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.00022083041311067413,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 246.4232481813577,
+        "tangential_force_N": 105.88878488600534,
+        "force6": [
+          246.4232481813577,
+          103.24417158016985,
+          -23.517563635699233,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 25.583333333332202
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": -0.00103151556322887,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 239.44574544147088,
+        "tangential_force_N": 112.38944974939463,
+        "force6": [
+          239.44574544147088,
+          26.29906311188449,
+          109.2691525290135,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 4.800000000000048
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.00016457199020304767,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 237.96423197576965,
+        "tangential_force_N": 118.98211598788481,
+        "force6": [
+          237.96423197576965,
+          117.98374407772522,
+          -15.381159200668685,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 25.466666666665542
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g410"
+        ],
+        "dist_m": 0.0001453570164112036,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 234.27492384570655,
+        "tangential_force_N": 117.13746192285328,
+        "force6": [
+          234.27492384570655,
+          117.03336773939355,
+          4.937187590498934,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 15.549999999999438
+      }
+    ]
+  },
+  "all_robot_environment_private": {
+    "detected_contacts": 4971,
+    "active_contacts": 2672,
+    "positive_normal_force_contacts": 2456,
+    "positive_distance_force_contacts": 1327,
+    "max_normal_force_N": 401.2763715122755,
+    "examples": [
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g409"
+        ],
+        "dist_m": -0.001086792105981887,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 401.2763715122755,
+        "tangential_force_N": 200.63818575613777,
+        "force6": [
+          401.2763715122755,
+          -115.817745855432,
+          163.83507356021485,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 6.566666666666614
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": -2.2256100131076186e-05,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 310.5395235821464,
+        "tangential_force_N": 155.2697617910732,
+        "force6": [
+          310.5395235821464,
+          131.16643206599073,
+          83.0907096234859,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 10.566666666666388
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": -2.62961827574848e-05,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 306.5939797916581,
+        "tangential_force_N": 153.29698989582909,
+        "force6": [
+          306.5939797916581,
+          132.36073022533463,
+          77.33436626324746,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 10.199999999999742
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": 8.291577000566278e-05,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 292.41391653233234,
+        "tangential_force_N": 146.20695826616617,
+        "force6": [
+          292.41391653233234,
+          125.70780731939514,
+          74.65937197964016,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 9.983333333333087
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_06",
+          "g410"
+        ],
+        "dist_m": 0.0003151034836665059,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 290.48806907012414,
+        "tangential_force_N": 145.24403453506207,
+        "force6": [
+          290.48806907012414,
+          138.49765016114284,
+          -43.751919590618996,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 6.516666666666617
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g409"
+        ],
+        "dist_m": -0.0005698279751351213,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 287.10756106837124,
+        "tangential_force_N": 134.85904646970826,
+        "force6": [
+          287.10756106837124,
+          -70.39001223056077,
+          115.03133743854515,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 12.383333333332951
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g409"
+        ],
+        "dist_m": -0.0006194659063591158,
+        "includemargin_m": 0.0005,
+        "efc_address": 3,
+        "active": true,
+        "normal_force_N": 286.5514300157216,
+        "tangential_force_N": 123.38604894340621,
+        "force6": [
+          286.5514300157216,
+          -62.31155888372751,
+          106.4959468869327,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 13.466666666666223
+      },
+      {
+        "geoms": [
+          "neighbor_stem_collision_18_05",
+          "g409"
+        ],
+        "dist_m": -0.0005008011815707597,
+        "includemargin_m": 0.0005,
+        "efc_address": 0,
+        "active": true,
+        "normal_force_N": 285.5362414123154,
+        "tangential_force_N": 108.59389052291137,
+        "force6": [
+          285.5362414123154,
+          -64.40111390737151,
+          87.43643168835183,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "recomputed_time_s": 12.283333333332957
+      }
+    ]
+  },
+  "scope": "A/B/C counterfactual geometry; D private forward at poststep state. Live force belongs to previous solve. Not a passed preflight run or hook-success label.",
+  "max_prismatic_error_m": 0.004825133887775862,
+  "max_revolute_error_rad": 0.2929125814498452,
+  "max_ring_position_error_m": 0.23303649078550792,
+  "max_ring_rotation_error_rad": 0.30878946636665744
+}

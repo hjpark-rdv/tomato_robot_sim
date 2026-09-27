@@ -1,0 +1,14 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+  "states": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server/sync_gutter02/replay_states.npz",
+  "samples": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server/sync_gutter02/synchronized_samples.json",
+  "frames": 210,
+  "fps": 10,
+  "speed": 2,
+  "label": "sync_gutter02",
+  "physics_executed_by_renderer": false,
+  "pair": [
+    "g390",
+    "glb_col_TRUSS_Rachis_05"
+  ]
+}

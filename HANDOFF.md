@@ -1,4 +1,19 @@
 # Farmily Tomato 작업 인수인계
+
+## 환경 사전검사 재검토·접촉력 진단 (2026-09-27)
+
+- 작업 브랜치 `codex/server-preflight-rereview-20260927`, 기준 `bd59ea3`(필수 `1f5bc1f` 포함). 7경로 전체 스캔 완료, 모두 blocked. 상세 저장 상한64개와 클래스별 전체 집계를 구분.
+- gutter02는 양의 간격에서도 실제 법선력 최대0.734N. stem01은 고정 장애물에 막혀 회전 관절 추종 오차0.293rad. 무겹침을 무접촉으로 해석하지 않는다.
+- 별도 MjData에서 동기화한 힘/기하와 live 직전 solver 힘을 구분. 진단 유무에 따른 전체 qpos/qvel 해시 동일. 물리·성공 판정·운영 정책 유지.
+- Tomato02 5회 국소 변경: 기존 부분 중심 진입5/5, 목표 꼭지 안착/유지 지표0/5. 거터 장면의 별도 오프라인 조사이며 preflight를 통과한 수확 결과가 아니다. 학습 제외.
+- 자동65테스트, 실행 gate3조건 및 대표4영상. 상세/Pro 전달: [재검토 서버 결과](mujoco-benchmark/ENVIRONMENT_PREFLIGHT_SERVER_REREVIEW_RESULTS_KO.md). 출력 `20260927_preflight_rereview_server/index.html`.
+
+## 환경 사전검사 서버 검증 (2026-09-27)
+
+- 검토 브랜치 38cdb6a 반영, 자동46테스트 통과. 기존7경로 모두 blocked. 거터/주줄기 사례 검출, 실행 보류/판단 유보에서 물리0회 확인. 첫1초 통과 실행은 전체 경로 안전 검증 아님.
+- 기존 성공 경로의 계획 겹침과 실제 간격 차이 확인: gutter02 검출 쌍은 새 물리10,044스텝 최소0.866mm. 접촉 기록은 존재하므로 무접촉 증명 아님. 정책/경로 수정 안 함.
+- 상세: [1차 서버 검증 보존본](mujoco-benchmark/ENVIRONMENT_PREFLIGHT_SERVER_FIRST_RESULTS_KO.md). 출력 `20260927_environment_preflight_server_review/index.html`, 공유 폴더 `ENVIRONMENT_PREFLIGHT_PRO_FEEDBACK.zip`.
+
 GPT-6 Pro 논의용 현황: [비목표 무접촉 수확 논의](mujoco-benchmark/NONCONTACT_HARVEST_DISCUSSION.md). 공유 폴더에도 동일 파일 저장.
 
 

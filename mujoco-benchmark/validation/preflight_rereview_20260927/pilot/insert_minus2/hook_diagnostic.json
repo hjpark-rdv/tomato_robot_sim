@@ -1,0 +1,52 @@
+{
+  "target": "Tomato_02",
+  "target_capsules": [
+    "glb_col_Attachment_01",
+    "glb_col_TRUSS_Pedicel_proximal_02_02"
+  ],
+  "rear_capsules": [
+    "g384",
+    "g385",
+    "g386",
+    "g387",
+    "g388",
+    "g389",
+    "g390",
+    "g391",
+    "g392",
+    "g393",
+    "g394",
+    "g395",
+    "g396",
+    "g397",
+    "g398",
+    "g399"
+  ],
+  "legacy_limits": {
+    "target_displacement_m": 0.02,
+    "main_displacement_m": 0.03,
+    "dangerous_non_target_force_N": 3.0,
+    "hold_seconds": 1.0,
+    "gap_m": 0.0015,
+    "stable_relative_motion_m": 0.002,
+    "contact_force_floor_N": 0.01
+  },
+  "center_entry_sampled": true,
+  "seated_ticks": 0,
+  "intended_contact_ticks": 0,
+  "held_ticks": 60,
+  "held_seated_ticks": 0,
+  "held_contact_ticks": 0,
+  "stable_relative_motion_m": 0.00012183380680828579,
+  "legacy_retention_proxy": false,
+  "forbidden_force_ticks": 1583,
+  "wrong_pedicel_ticks": 0,
+  "physics_valid": true,
+  "hook_success": null,
+  "scope": "60Hz legacy geometry/contact/1s retention proxy, not validated harvesting success; no collision permissions changed",
+  "candidate_id": "insert_minus2",
+  "classification": "partial_center_entry",
+  "environment_screen_status": "blocked",
+  "model_sha256": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+  "trace_sha256": "e0cf1208ab2d2597405b7d6e9a968e671d72e683af2fa1718cb0d5264799ff06"
+}

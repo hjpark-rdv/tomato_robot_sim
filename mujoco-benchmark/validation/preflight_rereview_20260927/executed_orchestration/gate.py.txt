@@ -1,0 +1,30 @@
+import sys,json,shutil,hashlib
+from pathlib import Path
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+import candidate_experiment as ce
+from environment_preflight import Policy
+O=Path(__file__).parent;B=O.parent
+source=B/'20260927_stem_obstacle_scene/robot_checks/Tomato_01'
+checks=[]
+for mode in ['blocked','inconclusive','clear_prefix']:
+ out=O/f'gate_{mode}';out.mkdir();(out/'replay_assets').symlink_to(source/'replay_assets',target_is_directory=True)
+ manifest=json.loads((source/'manifest.json').read_text());settings=json.loads(Path('/root/farmily_tomato/mujoco-benchmark/config/environment_preflight.example.json').read_text())
+ if mode=='inconclusive':settings['max_samples']=1
+ manifest['environment_preflight_policy']=Policy.from_dict(settings).snapshot();(out/'manifest.json').write_text(json.dumps(manifest))
+ f=out/'candidates/predicted_00000';f.mkdir(parents=True)
+ for name in ['plan.json','trace.json']:shutil.copy2(source/'candidates/predicted_00000'/name,f/name)
+ if mode=='clear_prefix':
+  p=json.loads((f/'plan.json').read_text());p['seconds']=1.;p['scope']='Only first second; integration smoke, not full candidate success';(f/'plan.json').write_text(json.dumps(p))
+ ce.initialize(out);calls=[];original=ce.ENGINE.rollout
+ def counted(**kwargs):
+  calls.append(kwargs);return original(**kwargs)
+ ce.ENGINE.rollout=counted
+ result=ce.execute({'candidate_id':'predicted_00000'});(f/'result.json').write_text(json.dumps(result,indent=2))
+ expect=1 if mode=='clear_prefix' else 0
+ assert len(calls)==expect,(mode,calls)
+ assert (f/'states.npz').exists()==bool(expect)
+ if not expect:assert result['physics_executed'] is False and result['training_eligible'] is False
+ ce.report(out,[result])
+ checks.append(dict(case=mode,rollout_calls=len(calls),result=result['result'],physics_executed=result.get('physics_executed'),states_saved=(f/'states.npz').exists(),scope='one-second prefix only' if expect else 'real saved path with actual distance screening'))
+ print(checks[-1],flush=True)
+(O/'gate_results.json').write_text(json.dumps(checks,indent=2))

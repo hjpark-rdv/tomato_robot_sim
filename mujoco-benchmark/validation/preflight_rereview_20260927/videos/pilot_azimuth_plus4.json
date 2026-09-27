@@ -1,0 +1,11 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server/hook_pilot",
+  "states": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server/hook_pilot/candidates/azimuth_plus4/states.npz",
+  "samples": "/root/docker_share/mujoko_debugging_data/20260927_preflight_rereview_server/hook_pilot/candidates/azimuth_plus4/hook_samples.json",
+  "frames": 214,
+  "fps": 10,
+  "speed": 2,
+  "label": "offline pilot azimuth_plus4",
+  "physics_executed_by_renderer": false,
+  "pair": null
+}
