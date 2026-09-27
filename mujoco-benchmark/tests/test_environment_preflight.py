@@ -120,6 +120,30 @@ def test_positive_margin_rejects_near_but_separate():
     assert result["first_violation"]["distance_m"] > 0
 
 
+def test_collect_all_violations_keeps_gate_blocked_and_reveals_later_classes():
+    scene = AnalyticScene()
+    scene.environment_names = ["glb_col_TRUSS_Rachis_05", "gutter_collision_test"]
+    scene.environment_radii = np.array([0.05, 0.05])
+    scene.environment_positions = np.array([[0.35, 0.0, 0.0], [0.75, 0.0, 0.0]])
+    fast = ep.screen(scene, [[0.0], [1.0]], ["insert", "insert"], 1 / 60, policy())
+    assert fast["status"] == "blocked" and not fast["passed"] and not fast["complete"]
+    assert len(fast["violations"]) == 1
+    full = ep.screen(scene, [[0.0], [1.0]], ["insert", "insert"], 1 / 60, policy(),
+                     collect_all_violations=True)
+    assert full["status"] == "blocked" and not full["passed"] and full["complete"]
+    assert full["first_violation"]["environment_class"] == "glb_plant"
+    assert {x["environment_class"] for x in full["violations"]} == {"glb_plant", "gutter"}
+    assert full["violation_summary"]["reported_unique_pair_phase_count"] == 2
+    assert full["violation_summary"]["full_path_collected"] is True
+
+
+def test_environment_classification_is_diagnostic_only():
+    assert ep.classify_environment_geom("gutter_collision_GutterFoldedLip_001") == "gutter"
+    assert ep.classify_environment_geom("neighbor_stem_collision_18_05") == "neighbor_stem"
+    assert ep.classify_environment_geom("glb_col_TRUSS_Rachis_05") == "glb_plant"
+    assert ep.classify_environment_geom("ground") == "other"
+
+
 def test_allowlist_exact_pair_and_phase():
     allowance = {"robot_geom": "arm", "environment_geom": "obstacle", "phases": ["insert"]}
     assert audit(allowed_contacts=(allowance,))["passed"]
