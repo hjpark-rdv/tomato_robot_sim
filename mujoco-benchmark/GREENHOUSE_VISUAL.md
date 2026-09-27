@@ -43,3 +43,18 @@ DISPLAY=:0 ./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/greenhou
 16개 샘플: `/root/docker_share/mujoko_debugging_data/20260927_neighbor_plants_preview/index.html`. 추가480 geoms, 공유 mesh14개, 관절/바디/질량 변화 없음 확인. 전체/로봇/통로 시점 촬영 및 GUI 표시. 성능 벤치마크는 아직 미실시.
 
 더 촘촘한 미리보기: `--count 34 --spacing .25`, 주변34개/명목간격25cm. 실제 배치는±2.5cm 위치 지터 포함. `20260927_dense_neighbor_plants_preview/index.html`. 추가1020개 visual geom, 기존14개 template mesh 공유. 성능 및 주변 충돌 미검증.
+
+## 거터 양측 반대 방향 배치 + 줄기 2종
+
+`preview_neighbor_plants.py --paired-gutters --alternate-model V9_MODEL.xml`로 거터 양쪽(중심에서 ±0.10m)에 줄기를 배치한다. 한쪽 yaw 0°, 다른 쪽 180°로 기존 줄기의 굽은 방향을 반대로 배열한다. 위치 기준은 첫 줄기 분절 중심이 아닌 뿌리 끝점이다. 줄기 종류는 seed로 랜덤 선택한다. 기본 단일 줄기 배치도 유지한다.
+
+```bash
+cd /root/farmily_tomato
+./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/preview_neighbor_plants.py \
+  /root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml \
+  --alternate-model /root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml \
+  --paired-gutters --count 68 --spacing .25 --seed 27 \
+  --output /root/docker_share/mujoko_debugging_data/NEW_paired_mixed_house
+```
+
+검토 장면: `20260927_paired_mixed_stem_house/index.html`. 기존 수확 대상/로봇은 유지하고 주변 68개만 시각 복제한다. 거터는 기존 좌표 x=±0.775m, y=0.4~4.65m를 사용한다. 주줄기·잎·송이를 함께 복제하며, 종류별 공유 mesh를 재사용한다. 주변 식물은 충돌/탄성이 없는 표시용이며 이번 배치의 렌더 성능은 아직 벤치마크하지 않았다.

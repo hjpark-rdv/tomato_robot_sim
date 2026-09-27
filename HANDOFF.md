@@ -1,5 +1,11 @@
 # Farmily Tomato 작업 인수인계
 
+## 거터 양측 줄기 혼합 배치
+
+- `preview_neighbor_plants.py --paired-gutters --alternate-model` 추가. 거터 양쪽에서 줄기가 서로 반대 방향(0°/180°)으로 휘어 올라가도록 배치.
+- seed27, 간격25cm, 주변68개: 기존/v9 각34개 랜덤 선택. 주변 식물은 시각 전용.
+- 결과 `/root/docker_share/mujoko_debugging_data/20260927_paired_mixed_stem_house/index.html`. side 화면만 외벽/다른 거터 식물을 숨겨 배치 확인.
+
 ## 2026-09-27 새 줄기 leaves_v9 외형 추가
 
 - `tomato_stem_leaves_v9.glb`를 `--stem-glb`로 랜덤 장면 생성/직접 각도 테스트에서 선택 가능. 기본 줄기 유지.
