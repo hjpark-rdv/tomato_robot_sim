@@ -135,8 +135,30 @@ def pair_allowed(policy, robot_geom, environment_geom, phases):
     return bool(phases) and set(phases).issubset(allowed_phases)
 
 
+def require_native_distance_pipeline(mj, model):
+    """Do not silently change the physics model to fix a query backend setting."""
+    disabled_bit = getattr(mj.mjtDisableBit, "mjDSBL_NATIVECCD", None)
+    enabled_bit = getattr(mj.mjtEnableBit, "mjENBL_NATIVECCD", None)
+    if disabled_bit is not None:
+        enabled = not (int(model.opt.disableflags) & int(disabled_bit))
+    elif enabled_bit is not None:
+        enabled = bool(int(model.opt.enableflags) & int(enabled_bit))
+    else:
+        raise ValueError("Native convex distance capability is not verified for this MuJoCo version")
+    if not enabled:
+        raise ValueError("Legacy convex distance pipeline is not supported; model flags were NOT changed")
+
+
 def nearby_indices(position, radius, env_positions, env_radii, threshold):
     """Bounding spheres only cull provably distant pairs; planes have inf radius."""
+    position = np.asarray(position)
+    env_positions, env_radii = np.asarray(env_positions), np.asarray(env_radii)
+    if position.shape != (3,) or env_positions.shape != (len(env_radii), 3):
+        raise ValueError("Invalid geometry position array")
+    if not np.isfinite(position).all() or not np.isfinite(env_positions).all():
+        raise ValueError("Non-finite geometry position")
+    if not math.isfinite(radius) or radius < 0 or np.isnan(env_radii).any() or np.any(env_radii < 0):
+        raise ValueError("Invalid geometry bounding radius")
     distances = np.linalg.norm(env_positions - position, axis=1)
     return np.flatnonzero(distances <= radius + env_radii + threshold)
 
@@ -181,7 +203,7 @@ def screen(backend, commands, phases, duration_s, policy):
                         raise BudgetExceeded("time_budget")
                     distance, segment = backend.distance(robot_index, int(env_index), query_limit)
                     result["distance_queries"] += 1
-                    if not math.isfinite(distance):
+                    if not math.isfinite(distance) or not np.isfinite(segment).all():
                         raise ValueError("Non-finite distance result")
                     if distance < query_limit:
                         previous = result["minimum_queried_distance_m"]
@@ -208,11 +230,14 @@ class MuJoCoScene:
         import mujoco as mj
         self.mj = mj
         self.model = m = engine.model
+        require_native_distance_pipeline(mj, m)
         self.data = d = mj.MjData(m)
         mj.mj_resetData(m, d)
         self.qids = np.asarray(engine.qids, dtype=int)
         d.qpos[self.qids] = engine.initial
         mj.mj_forward(m, d)
+        if not np.isfinite(d.qpos).all() or not np.isfinite(d.geom_xpos).all() or np.any(d.warning.number):
+            raise ValueError("Initial model state has non-finite values or MuJoCo warnings")
         self.version = "MuJoCo " + mj.__version__
         robot_bodies = set()
         for bid in range(1, m.nbody):
@@ -254,7 +279,8 @@ class MuJoCoScene:
         # still a geometric obstacle unless explicitly allowed in our policy.
         self.inventory = dict(robot_collision_geoms=self.robot_names, environment_collision_geoms=self.environment_names,
                               ignored_visual_geom_count=m.ngeom - len(active),
-                              mesh_semantics="MuJoCo collision mesh (convex), not visual mesh triangles")
+                              mesh_semantics="MuJoCo collision mesh (convex), not visual mesh triangles",
+                              native_convex_distance=True)
         self.segment = np.empty(6)
 
     def set_robot(self, q):

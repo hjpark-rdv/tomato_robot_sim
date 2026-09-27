@@ -1,4 +1,4 @@
-"""Pure tests run without MuJoCo; native adapter cases skip explicitly if absent."""
+"""Pure tests plus native distance-query tests; no greenhouse assets are required."""
 import ast
 import hashlib
 import json
@@ -16,7 +16,7 @@ import environment_preflight as ep
 
 
 class AnalyticScene:
-    """Test double with exact sphere distance; not a greenhouse physics test."""
+    """Exact sphere distance test double; NOT a greenhouse physics test."""
     version = "analytic_test_double"
     robot_names = ["arm"]
     environment_names = ["obstacle"]
@@ -98,8 +98,7 @@ def test_sampling_hits_interior_and_final_and_matches_interpolation():
 def test_interior_collision_not_only_waypoints():
     result = audit()
     assert result["status"] == "blocked"
-    assert result["first_violation"]["time_s"] > 0
-    assert result["first_violation"]["time_s"] < 1 / 60
+    assert 0 < result["first_violation"]["time_s"] < 1 / 60
     assert result["first_violation"]["robot_geom"] == "arm"
     assert not result["passed"]
 
@@ -123,8 +122,7 @@ def test_positive_margin_rejects_near_but_separate():
 
 def test_allowlist_exact_pair_and_phase():
     allowance = {"robot_geom": "arm", "environment_geom": "obstacle", "phases": ["insert"]}
-    result = audit(allowed_contacts=(allowance,))
-    assert result["passed"]
+    assert audit(allowed_contacts=(allowance,))["passed"]
     mixed = audit(phases=["ready", "insert"], allowed_contacts=(allowance,))
     assert mixed["status"] == "blocked"
     assert not ep.pair_allowed(policy(allowed_contacts=(allowance,)), "other_arm", "obstacle", ("insert",))
@@ -165,6 +163,37 @@ def test_native_distance_error_is_not_a_clear_plan():
     assert result["reason"] == "check_error" and not result["passed"]
 
 
+def test_nonfinite_environment_pose_is_not_culled_as_clear():
+    scene = AnalyticScene()
+    scene.environment_positions = np.array([[np.nan, 0., 0.]])
+    result = audit(scene)
+    assert result["status"] == "inconclusive"
+    assert "Non-finite geometry" in result["error"]
+
+
+def test_invalid_bound_is_not_culled_as_clear():
+    scene = AnalyticScene()
+    scene.robot_radii = np.array([np.nan])
+    assert audit(scene)["status"] == "inconclusive"
+
+
+def test_native_pipeline_guard_does_not_mutate_flags():
+    fake = SimpleNamespace(mjtDisableBit=SimpleNamespace(mjDSBL_NATIVECCD=4), mjtEnableBit=SimpleNamespace())
+    model = SimpleNamespace(opt=SimpleNamespace(disableflags=0, enableflags=0))
+    ep.require_native_distance_pipeline(fake, model)
+    model.opt.disableflags = 4
+    with pytest.raises(ValueError, match="Legacy"):
+        ep.require_native_distance_pipeline(fake, model)
+    assert model.opt.disableflags == 4
+    fake.mjtDisableBit = SimpleNamespace()
+    fake.mjtEnableBit = SimpleNamespace(mjENBL_NATIVECCD=8)
+    model.opt.enableflags = 8
+    ep.require_native_distance_pipeline(fake, model)
+    fake.mjtEnableBit = SimpleNamespace()
+    with pytest.raises(ValueError, match="not verified"):
+        ep.require_native_distance_pipeline(fake, model)
+
+
 def test_planes_not_culled():
     indices = ep.nearby_indices(np.zeros(3), .1, np.array([[10000., 0, 0], [10000., 0, 0]]), np.array([np.inf, .1]), 0)
     assert indices.tolist() == [0]
@@ -182,7 +211,7 @@ def test_report_explains_scope_and_denominator(tmp_path):
 
 
 def execute_function(tmp_path, monkeypatch, preflight_policy):
-    # Compile the ACTUAL execute function without importing user's unavailable USD assets.
+    # Compile the actual integration function; skip unavailable USD/scene imports.
     tree = ast.parse((SCRIPTS / "candidate_experiment.py").read_text())
     function = next(x for x in tree.body if isinstance(x, ast.FunctionDef) and x.name == "execute")
     folder = tmp_path / "candidates" / "demo"
@@ -233,7 +262,7 @@ def test_real_execute_legacy_path_and_passed_path(tmp_path, monkeypatch, enabled
     assert ("environment_preflight" in result) == enabled
 
 
-def test_guard_does_not_overwrite_old_run(tmp_path, monkeypatch):
+def test_execute_refuses_previous_result(tmp_path, monkeypatch):
     execute, calls, folder = execute_function(tmp_path, monkeypatch, policy())
     old = '{"result":"miss"}'
     (folder / "result.json").write_text(old)
@@ -245,7 +274,7 @@ def test_guard_does_not_overwrite_old_run(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("obstacle", ['type="sphere" size=".1" pos=".5 0 0"', 'type="box" size=".1 .1 .1" pos=".5 0 0"'])
 def test_native_adapter_when_mujoco_available(obstacle):
-    mj = pytest.importorskip("mujoco", reason="Native MuJoCo dependency not installed; NOT physics-validated here")
+    mj = pytest.importorskip("mujoco", reason="Native MuJoCo not installed; NOT physics-validated here")
     xml = f'''<mujoco><worldbody><geom name="obstacle" {obstacle}/>
     <body name="Robot_link"><joint name="slide" type="slide" axis="1 0 0"/>
     <geom name="arm" type="sphere" size=".05" contype="8" conaffinity="3"/>
@@ -255,6 +284,6 @@ def test_native_adapter_when_mujoco_available(obstacle):
     engine = SimpleNamespace(model=model, qids=np.array([0]), initial=np.array([0.]))
     before = model.qpos0.copy()
     result = ep.check_engine(engine, [{"command": [0.], "phase": "insert"}, {"command": [1.], "phase": "insert"}], 1 / 60, policy())
-    assert result["status"] == "blocked"
+    assert result["status"] == "blocked", result
     assert "visual" not in result["inventory"]["robot_collision_geoms"]
     np.testing.assert_array_equal(model.qpos0, before)

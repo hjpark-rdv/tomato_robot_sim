@@ -1,152 +1,175 @@
-# Opt-in environment preflight (prototype)
+# Environment preflight: opt-in prototype
 
 Base: `mjlab-performance` at `da04a0dbb16a2b6c661beb8f5ffff1bac355689b`.
-This adds a **rejection gate, not a new planner**. It does not change the neural
-prediction, angle, trajectory, physics parameters, center-entry classifier, or
-`hook_success=None`. With no configuration selected, execution is unchanged.
+Branch: `codex/mujoco-environment-preflight`.
 
-## Why this integration point
+## What changed
 
-`test_direct_angle.py` already freezes image predictions, calls
-`plan_candidates.py`, then calls `candidate_experiment.initialize/execute` in the
-physics Python environment. The existing preflight covers IK/self-collision.
-The new optional gate runs inside `execute`, **before** `RobotEngine.rollout`.
-It reuses the actual loaded MuJoCo collision geoms, rather than building an
-independent FCL greenhouse. No Isaac import is needed by the new checker.
+This is a **nominal-path rejection gate, not a new planner**. It leaves the
+image prediction, angle, trajectory, actuator control, physics settings,
+center-entry classifier and `hook_success=None` unchanged. With no policy
+selected, the existing execution path is unchanged.
 
-## Check existing results first (read-only)
+The existing `test_direct_angle.py` freezes predictions, calls
+`plan_candidates.py`, and invokes `candidate_experiment.initialize/execute`
+in the physics Python environment. The new optional check runs in `execute`
+before `RobotEngine.rollout`. It uses the **actual loaded MuJoCo collision
+geoms**, not a second FCL greenhouse. Existing IK/self-collision checks remain.
+
+## First use: read-only inspection of an existing result
 
 Use a per-target **physics run** containing `manifest.json`, `replay_assets`,
-and `candidates/<id>/plan.json` plus `trace.json`. Do not pass the parent training
-folder. Set RUN to an existing run on your own machine:
+and `candidates/<id>/plan.json` and `trace.json`. Do not pass the parent training
+folder. Replace RUN with one of your existing paths:
 
 ```bash
 cd /root/farmily_tomato
 RUN=/absolute/path/to/existing/targets/Tomato_01/physics
 OUT=/root/docker_share/mujoko_debugging_data/$(date +%Y%m%d_%H%M%S)_environment_audit
-./mujoco-benchmark/.venv/bin/python mujoco-benchmark/scripts/audit_environment_preflight.py \
+DISPLAY=:0 ./mujoco-benchmark/.venv/bin/python \
+  mujoco-benchmark/scripts/audit_environment_preflight.py \
   "$RUN" --candidate predicted_00000 \
   --policy mujoco-benchmark/config/environment_preflight.example.json \
   --output "$OUT" --gui
 ```
 
-The output folder must be new and outside the source run. Original results and
-states are untouched. Exit codes: 0 sampled-clear, 2 blocked, 3 inconclusive.
-With `--gui`, the first rejected **nominal command pose** is displayed, with red
-markers at the returned closest points. Camera drag/scroll is enabled. This is
-a frozen kinematic preview, **not a physics replay or evidence of penetration
-that actually occurred**. Without a rejected sample there is no failure viewer.
-There is no MP4 renderer in this first change.
+The output folder must be new and outside the original run. The audit does not
+rewrite the original results, rerun dynamics or retrain the model.
 
-Outputs: `environment_preflight.json` and `environment_preflight.html`. They
-include geometry inventories, time, phase, geom pair, queried distance, command,
-policy hash, trace/model hashes and inspection budgets.
+Outputs: `environment_preflight.json` and `environment_preflight.html`, with
+sampled time, phase(s), robot/environment geom names, distance, robot command,
+geometry inventory, trace/model/policy hashes and processing counters.
 
-## Enable for NEW direct-angle / candidate runs
+With `--gui`, the first rejected **nominal command pose** opens in the interactive
+MuJoCo viewer, with red markers at the returned closest points. The camera starts
+in free mode and is not overwritten each frame. This is a frozen kinematic
+preview, **not a physical replay or evidence that this exact penetration actually
+occurred**. No rejected sample means no failure viewer. MP4 export is not added.
 
-The environment variable deliberately propagates through the existing
-subprocess pipeline, so the direct-angle script needs no copied implementation:
+Exit codes: 0 = sampled-clear, 2 = blocked, 3 = inconclusive. Nonzero here is an
+inspection result, not automatically a software crash.
+
+## Enable the check for NEW experiments
 
 ```bash
 export FARMILY_ENV_PREFLIGHT_POLICY="$PWD/mujoco-benchmark/config/environment_preflight.example.json"
-# Run your existing test_direct_angle.py or candidate_experiment.py command,
-# using a NEW --output directory. No angle or controller option is changed.
-# Disable for a new unguarded comparison:
+# Run the existing test_direct_angle.py or candidate_experiment.py command,
+# with a NEW output directory. Existing angles/controllers are unchanged.
+# For a new unguarded baseline run:
 # unset FARMILY_ENV_PREFLIGHT_POLICY
 ```
 
-New runs snapshot the policy in their manifest. Resume cannot silently disable
-or change a recorded policy. Conflicting policy hashes fail. Do not rerun
-`execute` over an old result: use the read-only audit above instead.
+The variable propagates through existing subprocesses; no duplicate direct-angle
+pipeline is needed. New manifests snapshot the policy. A recorded policy cannot
+silently be changed or disabled on resume; conflicting overrides fail.
+Use the standalone audit for old runs, not an execution/resume wrapper. The
+execution gate refuses a candidate with existing result/state files, but old
+external wrappers may have their own exception/result writers.
 
-`blocked` and `inconclusive` decisions DO NOT enter physics. Their results are
-`environment_preflight_blocked` / `environment_preflight_inconclusive`, with
-`physics_executed=false`, `training_eligible=false`, and no center-entry label.
-They are not negative physical-outcome training examples. A `sampled_clear`
-decision executes the SAME original commands and keeps the original outcome
-classifier. No new `hook_success` is invented.
+Outcomes:
 
-Each guarded candidate has a diagnostic HTML. The existing per-target dashboard
-links to `environment_preflight_index.html`, which separately counts decisions,
-held plans and physics executions. The legacy direct-angle top-level report may
-still call all processed decisions 'attempts'; use the companion report for the
-actual guarded-execution count. Do not interpret its denominator as harvest
-success rate.
+- `environment_preflight_blocked`: observed sampled distance violates policy.
+- `environment_preflight_inconclusive`: invalid input, unsupported model, timeout,
+  sampling/query budget, or checker error.
+- `sampled_clear`: all requested samples passed; the original commands then run.
 
-## Scope and policy
+Blocked/inconclusive candidates have `physics_executed=false`,
+`training_eligible=false`, `center_entered=null`, `hook_success=null`, and no
+`states.npz`. **Do not train on them as physical failures.** This patch does not
+modify training loaders. A passed check leaves the original physics outcome
+classifier intact.
 
-- All active geoms under `Robot_*` / `Hook` bodies (including descendants) versus
-  all other active geoms. Names follow `build_robot_model.py`.
-- Zero-mask visual geoms are excluded unless explicitly paired in MuJoCo.
-  Mask/exclude filters between active geoms are NOT used to hide obstacles.
-- Initial plant state is frozen in a separate `MjData`; the live engine data
-  and model are not edited. No `mj_step` occurs in preflight.
-- Commands are interpolated like `RobotEngine.command`, including start/end,
-  with time and scalar-joint subdivision. Phase boundaries require permission
-  in both phases. Robot hinge/slide joints only.
-- Native `mj_geomDistance` queries follow bounding-sphere culling. Supported
-  geometric primitives and collision meshes only; unsupported hfield/SDF/flex
-  models are inconclusive, not silently clear. Meshes use native convex
-  collision semantics, not visual triangles.
-- Empty robot/environment geometry, malformed data, stale allowlist names,
-  unsupported geometry, timeout or sampling/query budget: fail closed.
+The per-target report links to `environment_preflight_index.html`, separating
+checked decisions, held plans and actually executed rollouts. The original
+higher-level direct-angle report may still call all processed decisions
+'attempts'; the companion counters are the correct denominator for guarded runs.
 
-The example has **zero clearance**, meaning a diagnostic intersection/contact
-screen, NOT a calibrated safe margin. Choose a measured positive clearance
-separately; no arbitrary millimetre value is presented as real safety.
+## Policy and coverage
 
-There are **no default allowed target contacts**. Strict mode may reject an
-otherwise intended hook contact, or a fixed robot/base-ground contact. Inspect
-the exact pair and stage before adding an exception. For example, using actual
-names from YOUR inventory:
+The example deliberately has `clearance_m=0.0`: it is an **intersection/contact
+diagnostic**, not a measured safe margin for a real robot. Use a separate policy
+with a measured positive margin when appropriate. The sample step sizes and
+budgets are diagnostic settings, not certified collision bounds.
+
+There are no blanket target exceptions. Strict mode can reject intended hook
+contact or an existing base/ground mounting contact. Inspect the pair first,
+then allow only verified exact pairs in explicit stages, for example:
 
 ```json
 {
   "clearance_m": 0.0,
   "allowed_contacts": [
-    {"robot_geom": "EXACT_HOOK_GEOM", "environment_geom": "EXACT_TARGET_PEDICEL_GEOM", "phases": ["rise"]}
+    {
+      "robot_geom": "EXACT_HOOK_GEOM",
+      "environment_geom": "EXACT_TARGET_PEDICEL_GEOM",
+      "phases": ["rise"]
+    }
   ]
 }
 ```
 
-This example is deliberately not executable until real names are supplied.
-Never allow an entire truss or all target contacts to make the test pass.
-Allowlisting is a planning policy only: it DOES NOT turn physical collisions off.
+The placeholders must be replaced with actual names from the audit inventory.
+Unknown names or phases are rejected. No wildcards. At a phase boundary a pair
+must be allowed in both adjacent phases. Never allow the entire truss simply to
+get a pass. These permissions affect only preflight: physical collisions remain
+unchanged.
 
-## Limitations that remain
+Implementation coverage:
 
-**This is GT-based, discrete, frozen-scene screening, not a safety certificate.**
-A sampled-clear result can still collide due to between-sample motion, tracking
-error, deformation or missing collision geoms. It does not monitor or change
-commands during rollout, certify safe stopping, generate a detour, check robot
-self-collision again, or check environment/environment initial overlaps.
-Existing IK/self-collision and post-rollout physics audits remain necessary.
-Visual-only neighboring fruit/leaves remain outside physical coverage. This is
-not a real-RGB-D obstacle model and not sim-to-real validation.
+- Active geoms under `Robot_*`/`Hook` bodies and descendants, versus all other
+  active geoms, following `build_robot_model.py` naming.
+- Zero-mask visual geoms excluded unless explicitly paired. Collision masks or
+  body exclusions between active geoms do not silently remove obstacles here.
+- Separate `MjData` at the engine's reset joint positions. The environment is
+  frozen; the live data/model are not changed. No `mj_step` in the checker.
+- The same 60 Hz piecewise-linear command interpolation as `RobotEngine.command`,
+  with time and scalar-joint subdivision, including initial/final samples.
+- Bounding-sphere culling then native `mj_geomDistance` queries. Environment
+  planes are never culled by radius. Sphere/capsule/box/ellipsoid/cylinder/mesh
+  supported; unsupported hfield/SDF/flex coverage fails closed.
+- Collision meshes have native convex semantics, not the visual triangle shape.
+  Legacy convex-distance mode is refused without modifying model flags. MuJoCo's
+  `nativeccd` means native **convex** collision detection, not continuous-time CCD.
 
-`minimum_queried_distance_m` is only the minimum among queried narrow-phase
-pairs/samples before termination and below the query horizon. Null is not an
-infinite-clearance guarantee. `first_violation` is the first sampled time and
-pair visited, not a continuous-time first impact.
+MuJoCo documents that distance results differ under the legacy convex pipeline:
+https://mujoco.readthedocs.io/en/stable/APIreference/APIfunctions.html#mj-geomdistance
 
-## Validation
+## What a pass does NOT prove
+
+This is GT-based, **discrete, frozen-scene screening**, not a robot safety system.
+Between-sample collisions, real tracking error, motion/deformation of plants,
+and missing collision geometry remain possible. There is no online monitor,
+certified stop/retreat, detour generation, hook-success detector or REAL RGB-D
+obstacle reconstruction in this patch.
+
+It does not recheck robot self-collision or environment/environment initial
+intersections. Existing checks remain necessary. Visual-only neighboring fruit
+and leaves remain outside coverage: a visually present object is not necessarily
+a checked collider. A missing robot/environment geom set is inconclusive.
+
+`minimum_queried_distance_m` is only the minimum of narrow-phase distances
+actually queried before termination and below the query horizon. Null does not
+mean infinite clearance. `first_violation` is the first sampled violating pair,
+not a continuous-time first impact.
+
+## Validation and acceptance
 
 ```bash
-./mujoco-benchmark/.venv/bin/python -m pytest -v -rs \
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 ./mujoco-benchmark/.venv/bin/python -m pytest -v -rs \
   mujoco-benchmark/tests/test_environment_preflight.py
 ```
 
-Local implementation environment: **30 passed, 2 skipped** (MuJoCo unavailable).
-Pure tests cover command interpolation, interior/start collisions using an
-analytic test double, strict phase/pair permissions, configuration integrity,
-fail-closed budgets, dashboard counts, and the actual `execute` function's gate
-with a mocked engine. Legacy success/classification logic is unchanged.
-Two additional tests use small native MuJoCo models (sphere/box obstacles) when
-installed. A branch-only GitHub Actions job runs these tests with CPU MuJoCo;
-its result and exact installed version must be checked separately.
+Local implementation tests: **33 passed, 2 skipped** because MuJoCo is absent.
+The passing tests cover policy integrity, phases, interpolation, analytic
+geometry test doubles, fail-closed budgets/errors, report counters, and the
+actual `execute` function with a mocked engine. They are not plant simulations.
+Two native adapter tests run when MuJoCo is installed. The branch-specific
+GitHub Actions job installs CPU MuJoCo and runs both sets; inspect its result
+separately. The unchanged classifier was also checked against the base AST.
 
-**NOT executed here:** user's full greenhouse, real model binaries, neural
-weights, NVIDIA rendering, timing/throughput benchmark, or real robot. Before
-larger use, audit a known clear path, gutter intersection, elbow/stem collision,
-and entry-versus-rise cases using your saved scene assets. Native tests on toy
-models do not substitute for this acceptance check.
+**Not run in the authoring container:** original greenhouse model binaries,
+trained neural weights, GPU viewer/video, real robot, or throughput benchmark.
+Before enabling large runs, audit known clear, gutter-intersecting,
+elbow/stem-colliding, and rise-stage cases on the actual scene. Review any
+initial mounting contact and intended target-contact permissions explicitly.
+Passing toy geometry tests does not replace these acceptance checks.
