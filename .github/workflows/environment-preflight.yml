@@ -8,6 +8,7 @@ on:
       - 'mujoco-benchmark/scripts/candidate_experiment.py'
       - 'mujoco-benchmark/tests/test_environment_preflight.py'
       - 'mujoco-benchmark/tests/test_environment_preflight_native_extended.py'
+      - 'mujoco-benchmark/tests/test_environment_preflight_review.py'
       - '.github/workflows/environment-preflight.yml'
   workflow_dispatch:
 permissions:
@@ -27,5 +28,5 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'mujoco==${{ matrix.mujoco-version }}' 'pytest>=8,<10'
       - run: python -c "import mujoco, numpy, scipy; print('MuJoCo', mujoco.__version__, 'NumPy', numpy.__version__, 'SciPy', scipy.__version__)"
-      - run: python -m pytest -v -rs mujoco-benchmark/tests/test_environment_preflight.py mujoco-benchmark/tests/test_environment_preflight_native_extended.py
+      - run: python -m pytest -v -rs mujoco-benchmark/tests/test_environment_preflight.py mujoco-benchmark/tests/test_environment_preflight_native_extended.py mujoco-benchmark/tests/test_environment_preflight_review.py
       - run: python -m compileall -q mujoco-benchmark/scripts/environment_preflight.py mujoco-benchmark/scripts/audit_environment_preflight.py mujoco-benchmark/scripts/candidate_experiment.py

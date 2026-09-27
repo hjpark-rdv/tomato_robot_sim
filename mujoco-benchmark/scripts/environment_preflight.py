@@ -19,6 +19,7 @@ import numpy as np
 SCHEMA = "environment_preflight_v1"
 ENV_POLICY = "FARMILY_ENV_PREFLIGHT_POLICY"
 MAX_REPORTED_VIOLATIONS = 64
+CHECKER_REVISION = "audit_completion_v2"
 
 
 @dataclass(frozen=True)
@@ -142,7 +143,7 @@ def classify_environment_geom(name):
         return "gutter"
     if name.startswith("neighbor_stem_collision_"):
         return "neighbor_stem"
-    if name.startswith("glb_col_"):
+    if name.startswith("glb_col_") or "__glb_col_" in name:
         return "glb_plant"
     return "other"
 
@@ -176,19 +177,26 @@ def nearby_indices(position, radius, env_positions, env_radii, threshold):
 
 
 def screen(backend, commands, phases, duration_s, policy, collect_all_violations=False):
-    """Engine-independent driver. Optional full audit never relaxes gate semantics."""
+    """Keep collision evidence and scan completeness separate, including on abort.
+
+    Counts are sampled pair hits, not distinct physical contact events. Detailed
+    first-hit records are capped, but class summaries and distinct-key counts
+    continue across the visited path. A known violation cannot become unknown
+    just because a later sample exceeds a budget or fails.
+    """
     started = time.perf_counter()
-    result = dict(schema=SCHEMA, status="inconclusive", passed=False, complete=False,
+    result = dict(schema=SCHEMA, checker_revision=CHECKER_REVISION,
+                  status="inconclusive", passed=False, complete=False,
                   policy=policy.snapshot(), samples_checked=0, distance_queries=0,
+                  last_sample_time_s=None, last_completed_sample_time_s=None,
                   first_violation=None, violations=[], violation_summary={},
-                  minimum_queried_distance_m=None,
+                  scan_stop_reason=None, minimum_queried_distance_m=None,
                   scope="GT initial environment; nominal commands; discrete screening only",
                   exclusions=["visual-only geoms", "environment/environment pairs", "robot self-collision"],
                   warnings=["No continuous collision guarantee", "No plant deformation or actuator tracking simulated",
                             "No real-observation collision model", "Missing visual-only colliders remain untested"])
-    reported_keys = set()
-    class_counts = {}
-    class_minima = {}
+    seen_keys, stored_records = set(), {}
+    class_counts, class_minima, class_first, class_worst = {}, {}, {}, {}
     try:
         result["inventory"] = backend.inventory
         result["backend"] = backend.version
@@ -206,6 +214,7 @@ def screen(backend, commands, phases, duration_s, policy, collect_all_violations
                 raise BudgetExceeded("time_budget")
             backend.set_robot(q)
             result["samples_checked"] += 1
+            result["last_sample_time_s"] = timestamp
             for robot_index, robot_name in enumerate(backend.robot_names):
                 indices = nearby_indices(backend.robot_positions[robot_index], backend.robot_radii[robot_index],
                                          backend.environment_positions, backend.environment_radii, query_limit)
@@ -232,32 +241,60 @@ def screen(backend, commands, phases, duration_s, policy, collect_all_violations
                             segment_world=np.asarray(segment).reshape(2, 3).tolist())
                         if result["first_violation"] is None:
                             result["first_violation"] = record
+                        result.update(status="blocked", reason="clearance_violation")
                         class_counts[env_class] = class_counts.get(env_class, 0) + 1
-                        previous_class_min = class_minima.get(env_class)
-                        class_minima[env_class] = distance if previous_class_min is None else min(previous_class_min, distance)
+                        class_first.setdefault(env_class, record)
+                        if env_class not in class_minima or distance < class_minima[env_class]:
+                            class_minima[env_class] = distance
+                            class_worst[env_class] = record
                         key = (robot_name, env_name, tuple(active_phases))
-                        if key not in reported_keys and len(result["violations"]) < MAX_REPORTED_VIOLATIONS:
-                            reported_keys.add(key)
-                            result["violations"].append(record)
-                        result["violation_summary"] = {
-                            "sample_hits_by_environment_class": dict(class_counts),
-                            "minimum_distance_m_by_environment_class": dict(class_minima),
-                            "reported_unique_pair_phase_count": len(result["violations"]),
-                            "reported_limit": MAX_REPORTED_VIOLATIONS,
-                            "full_path_collected": bool(collect_all_violations),
-                        }
+                        if key not in seen_keys:
+                            seen_keys.add(key)
+                            if len(result["violations"]) < MAX_REPORTED_VIOLATIONS:
+                                # Keep distance_m/time_s as the original first hit.
+                                stored = dict(record, last_time_s=timestamp, sample_hit_count=0,
+                                              minimum_distance_m=distance, minimum_time_s=timestamp)
+                                stored_records[key] = stored
+                                result["violations"].append(stored)
+                        if key in stored_records:
+                            stored = stored_records[key]
+                            stored["last_time_s"] = timestamp
+                            stored["sample_hit_count"] += 1
+                            if distance < stored["minimum_distance_m"]:
+                                stored["minimum_distance_m"] = distance
+                                stored["minimum_time_s"] = timestamp
                         if not collect_all_violations:
-                            result.update(status="blocked", reason="clearance_violation")
+                            result["scan_stop_reason"] = "first_violation"
                             return result
-        if result["first_violation"] is not None:
-            result.update(status="blocked", passed=False, complete=True, reason="clearance_violation")
-        else:
-            result.update(status="sampled_clear", passed=True, complete=True, reason="all_samples_passed")
+            result["last_completed_sample_time_s"] = timestamp
+        result["complete"] = True
+        result["scan_stop_reason"] = "end_of_path"
+        if result["first_violation"] is None:
+            result.update(status="sampled_clear", passed=True, reason="all_samples_passed")
     except BudgetExceeded as exc:
-        result["reason"] = str(exc)
+        result["scan_stop_reason"] = str(exc)
+        if result["first_violation"] is None:
+            result["reason"] = str(exc)
     except Exception as exc:
-        result.update(reason="check_error", error=f"{type(exc).__name__}: {exc}")
+        result.update(scan_stop_reason="check_error", error=f"{type(exc).__name__}: {exc}")
+        if result["first_violation"] is None:
+            result["reason"] = "check_error"
     finally:
+        omitted = len(seen_keys) - len(result["violations"])
+        result["violation_summary"] = dict(
+            sample_hits_by_environment_class=class_counts,
+            minimum_distance_m_by_environment_class=class_minima,
+            first_by_environment_class=class_first,
+            worst_by_environment_class=class_worst,
+            observed_unique_pair_phase_count=len(seen_keys),
+            reported_unique_pair_phase_count=len(result["violations"]),
+            omitted_unique_pair_phase_count=omitted,
+            details_truncated=omitted > 0,
+            reported_limit=MAX_REPORTED_VIOLATIONS,
+            full_path_requested=bool(collect_all_violations),
+            full_path_collected=bool(collect_all_violations and result["complete"]),
+            counts_scope="visited samples only; pair/phase keys and sampled pair hits, not physical contact events",
+        )
         result["wall_s"] = time.perf_counter() - started
     return result
 
