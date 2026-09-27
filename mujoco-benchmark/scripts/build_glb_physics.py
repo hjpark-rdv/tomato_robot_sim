@@ -139,6 +139,8 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
    ids,inverse=np.unique(ff,return_inverse=True);mesh='glb_vis_mesh_'+str(visual_count);gn='glb_vis_'+str(visual_count);visual_count+=1
    E.SubElement(assets,'mesh',name=mesh,vertex=nums(worldv[ids]-positions[owner]),face=nums(inverse.reshape(-1,3)))
    E.SubElement(nodes[owner],'geom',name=gn,type='mesh',mesh=mesh,contype='0',conaffinity='0',density='0',group='2',rgba=nums(color))
+ from visual_colors import apply_stem_palette
+ apply_stem_palette(tree.getroot())
  output.mkdir(parents=True,exist_ok=False);tree.write(output/'model.xml',encoding='unicode');m=mj.MjModel.from_xml_path(str(output/'model.xml'));d=mj.MjData(m);mj.mj_forward(m,d);mj.mj_saveModel(m,str(output/'model.mjb'))
  # Reference used by the existing RobotEngine: all plant bodies and real collision identities.
  ref=copy.deepcopy(reference);ref['bodies']=[];ref['shapes']=[];ref['visuals']=[];ref['joints']=[];ref['filters']=[];ref['fruit_specs']=fruit_specs

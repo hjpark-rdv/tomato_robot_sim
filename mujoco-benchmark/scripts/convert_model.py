@@ -73,6 +73,8 @@ def build(reference,output):
     target=next(s for s in d['fruit_specs'] if s['name']=='Tomato_05');p=np.asarray(target['pose']);center=p[:3]+rotation(p).apply(target['center'])
     eye=center+np.array([.13,.38,.16]);z=(eye-center)/np.linalg.norm(eye-center);x=np.cross([0,0,1],z);x/=np.linalg.norm(x);y=np.cross(z,x)
     ET.SubElement(world,'camera',name='target',pos=nums(eye),xyaxes=nums([x,y]),fovy='48')
+    from visual_colors import apply_stem_palette
+    apply_stem_palette(root)
     ET.indent(root);ET.ElementTree(root).write(output,encoding='unicode')
     audit=dict(source=str(reference),bodies=len(bodies),elastic_dofs=len(joint_names),fruit_free_dofs=66,
         plant_colliders=sum(s['body']!=d['tool_path'] for s in d['shapes']),hook_colliders=sum(s['body']==d['tool_path'] for s in d['shapes']),

@@ -21,3 +21,23 @@ def shape_color(shape):
     if is_calyx_or_pedicel(shape['path']) and color == FRUIT:
         return GREEN.copy()
     return color
+
+
+def apply_stem_palette(root):
+    """Use v9 GLB object colours on legacy stem geometry; preserve alpha/physics."""
+    import json
+    from pathlib import Path
+    palette = json.loads((Path(__file__).resolve().parents[1] /
+                         'config/stem_v9_colors.json').read_text())['geom_rgba']
+    count = 0
+    for body in root.iter('body'):
+        if not body.get('name', '').startswith('STEM_'):
+            continue
+        for geom in body.findall('geom'):
+            color = palette.get(geom.get('name'))
+            if color is None:
+                continue
+            alpha = geom.get('rgba', '1 1 1 1').split()[3]
+            geom.set('rgba', ' '.join(map(str, color[:3])) + ' ' + alpha)
+            count += 1
+    return count

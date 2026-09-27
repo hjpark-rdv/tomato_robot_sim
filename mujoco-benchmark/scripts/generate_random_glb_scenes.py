@@ -192,7 +192,7 @@ def preview(model, data, destination, placements):
 
 def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
              segment_min=4, segment_max=13, angle_min=0., angle_max=180.,
-             idle_seconds=2., render=True, start_scene=0, truss_scale=1., glb=None):
+             idle_seconds=2., render=True, start_scene=0, truss_scale=1., glb=None, house=False, stem_glb=None):
     if scenes < 1 or trusses < 1:
         raise ValueError("scenes and trusses must be positive")
     if not 0 <= segment_min <= segment_max < 16:
@@ -245,13 +245,20 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
                 (scene / filename).write_bytes((parts[0] / filename).read_bytes())
         else:
             combine(parts, placements, scene)
+        if stem_glb is not None:
+            from stem_glb_visual import add_stem
+            add_stem(scene / "model.xml", scene / "model.xml", stem_glb)
+        house_info = None
+        if house:
+            from greenhouse_visual import add_house
+            house_info = add_house(scene / "model.xml", scene / "model.xml")
         model = mj.MjModel.from_binary_path(str(scene / "model.mjb"))
         data = mj.MjData(model)
         mj.mj_forward(model, data)
         check = inspect(scene / "model.mjb", scene / "reference.json",
                         seconds=idle_seconds)
         visual = preview(model, data, scene, placements) if render else None
-        record = dict(scene=scene.name, seed=seed, scene_id=scene_id,
+        record = dict(scene=scene.name, seed=seed, scene_id=scene_id, house_visual=bool(house), stem_glb=str(Path(stem_glb).resolve()) if stem_glb else None,
                       placements=placements, validation=check, preview=visual,
                       model_sha256=hashlib.sha256((scene / "model.mjb").read_bytes()).hexdigest(),
                       generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -282,7 +289,7 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
     (output / "index.html").write_text("<!doctype html><meta charset='utf-8'>"
         "<title>랜덤 GLB 송이 장면</title><style>body{font:18px sans-serif;"
         "max-width:1200px;margin:40px auto}img{max-width:100%}section{border-top:1px solid #888}"
-        "</style><h1>랜덤 GLB 송이 부착</h1><p>기존 주줄기·잎 유지. GLB Y축 "
+        "</style><h1>랜덤 GLB 송이 부착</h1><p>기존 주줄기 물리 유지; 줄기 외형은 scene.json의 stem_glb 참조. GLB Y축 "
         "0–180° 회전. 장면마다 초기 2초 검사 결과를 표시한다. 로봇 수집 결과는 별도다.</p>"
         + "".join(cards))
     return records
@@ -302,6 +309,8 @@ def main():
     parser.add_argument("--angle-max", type=float, default=180.)
     parser.add_argument("--truss-scale", type=float, default=.5)
     parser.add_argument("--idle-seconds", type=float, default=2.)
+    parser.add_argument("--stem-glb", type=Path, help="기존 골격과 일치하는 줄기 GLB 외형 선택")
+    parser.add_argument("--house", action="store_true", help="원본 하우스/거터를 충돌 없는 배경으로 표시")
     parser.add_argument("--no-render", action="store_true")
     parser.add_argument("--glb", type=str, default=None,
                         help="특정 GLB 송이 지정 (예: cyan, green, red, white, rotated90)")
@@ -309,7 +318,7 @@ def main():
     generate(args.output, args.seed, args.scenes, args.trusses, args.source_dir,
              args.segment_min, args.segment_max, args.angle_min, args.angle_max,
              args.idle_seconds, not args.no_render, truss_scale=args.truss_scale,
-             glb=args.glb)
+             glb=args.glb, house=args.house, stem_glb=args.stem_glb)
     print(args.output / "index.html")
 
 

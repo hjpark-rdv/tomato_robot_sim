@@ -348,7 +348,7 @@ def render_test_report(output_dir: Path, data: dict):
 
 
 
-def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None,gui=False):
+def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None,gui=False,house=False,stem_glb=None):
     training=Path(training).resolve();output=Path(output).resolve()
     meta=json.loads((training/'manifest.json').read_text())
     if meta.get('schema')!='direct_rgbd_angle_training_v1':raise ValueError('Use a direct RGB-D angle model')
@@ -366,6 +366,10 @@ def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,gl
         cmd = [PHYSICS_PY, HOME/'scripts/generate_random_glb_scenes.py', '--seed', attempt_seed,
                '--scenes', 1, '--trusses', 1, '--truss-scale', .5,
                '--angle-min', angle_min, '--angle-max', angle_max, '--output', scene_root]
+        if stem_glb is not None:
+            cmd.extend(["--stem-glb", str(stem_glb)])
+        if house:
+            cmd.append("--house")
         if glb:
             cmd.extend(['--glb', glb])
         if scene_root.exists():
@@ -461,6 +465,8 @@ if __name__=='__main__':
     p.add_argument('--angle-min',type=float,default=0.,help='Y축 최소 회전각 (기본: 0)')
     p.add_argument('--angle-max',type=float,default=90.,help='Y축 최대 회전각 (기본: 90)')
     p.add_argument('--max-targets',type=int,help='테스트할 최대 열매 수 (기본: 전체 10개)')
+    p.add_argument('--stem-glb',type=Path,help='기존 골격과 일치하는 줄기 GLB 외형 선택')
+    p.add_argument('--house',action='store_true',help='충돌 없는 원본 하우스/거터 배경 추가')
     p.add_argument('--gui',action='store_true',help='실제 물리 실행을 실시간 뷰어로 표시')
     p.add_argument('--repeat',type=int,default=1,help='새 장면 생성 및 테스트 반복 횟수')
     p.add_argument('--output',type=Path,default=Path('/root/docker_share/mujoko_debugging_data')/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_direct_angle_test'))
@@ -472,11 +478,11 @@ if __name__=='__main__':
 
     if a.repeat<1:p.error('--repeat must be positive')
     if a.repeat==1:
-        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui),indent=2))
+        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb),indent=2))
     else:
         a.output.mkdir(parents=True,exist_ok=False);summaries=[]
         for index in range(a.repeat):
-            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui)
+            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb)
             summaries.append(dict(test=index,seed=a.seed+index,status=result['status'],
                                   targets_attempted=result.get('targets_attempted',0),
                                   center_entries=result.get('center_entries',0),

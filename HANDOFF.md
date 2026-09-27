@@ -1,5 +1,19 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-09-27 새 줄기 leaves_v9 외형 추가
+
+- `tomato_stem_leaves_v9.glb`를 `--stem-glb`로 랜덤 장면 생성/직접 각도 테스트에서 선택 가능. 기본 줄기 유지.
+- 기존 16분절 주줄기 골격과 일치 확인. 신규 하부 잎을 포함한 모든 primitive 보존. 새 잎은 시각 전용이며 충돌/질량/개별 탄성 추가 없음.
+- 비교: `/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/index.html`. 기존/신규 240스텝 qpos 동일.
+- 상세: [STEM_GLB.md](mujoco-benchmark/STEM_GLB.md).
+
+## 2026-09-27 충돌 없는 하우스 표시
+
+- 기존 GUI/75도 상승 변경 커밋 `62e66be`. 물리 기본 Hz 변경 없음.
+- `greenhouse_visual.py`, 생성기/직접예측 `--house`: 기존 Isaac 하우스1,078메시를 visual-only로 추가. 기존 로봇/식물 충돌 유지.
+- 동일25초/240Hz 명령에서 배경 전후 qpos 완전 일치. 상세: [GREENHOUSE_VISUAL.md](mujoco-benchmark/GREENHOUSE_VISUAL.md).
+- 결과 `/root/docker_share/mujoko_debugging_data/20260927_greenhouse_visual/index.html`. 이 하우스 추가 작업의 커밋 여부는 git status로 확인.
+
 ## 최신 수정: 송이 50% 축소와 고리–주줄기 관통 판정
 
 상세 변경·재현 명령·검증 한계: [HALF_SCALE_CONTACT_FIX.md](mujoco-benchmark/HALF_SCALE_CONTACT_FIX.md).
