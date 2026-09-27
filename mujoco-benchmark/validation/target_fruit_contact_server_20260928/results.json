@@ -1,0 +1,228 @@
+{
+  "base_commit": "804e40cec63bae8272e7d692a29673dc3451e1c6",
+  "branch": "codex/server-target-fruit-contact-20260928",
+  "normal_start_physics_executions": 6,
+  "original_executions": 5,
+  "retimed_executions": 1,
+  "maximum_budget": 7,
+  "rows": [
+    {
+      "candidate": "seating_00_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "time_s": 16.112499999999407,
+      "fruit_force_live_N": 0.8626676192736471,
+      "fruit_force_private_N": 1.073502029819466,
+      "max_displacement_mm": 2.9677807355517025,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": "videos/seating_00_under.mp4"
+    },
+    {
+      "candidate": "seating_03_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "time_s": 16.429166666666056,
+      "fruit_force_live_N": 1.024516632932456,
+      "fruit_force_private_N": 0.8310753551215622,
+      "max_displacement_mm": 2.9677807355517025,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": null
+    },
+    {
+      "candidate": "seating_04_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "time_s": 16.220833333332735,
+      "fruit_force_live_N": 0.0,
+      "fruit_force_private_N": 1.0613589704649815,
+      "max_displacement_mm": 2.9677807355517025,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": null
+    },
+    {
+      "candidate": "seating_05_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "time_s": 16.141666666666072,
+      "fruit_force_live_N": 0.9695339814875052,
+      "fruit_force_private_N": 1.0115625890804407,
+      "max_displacement_mm": 4.566575319890515,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": "videos/seating_05_under.mp4"
+    },
+    {
+      "candidate": "seating_06_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "time_s": 16.27083333333273,
+      "fruit_force_live_N": 0.9719962481047717,
+      "fruit_force_private_N": 1.0832040977192312,
+      "max_displacement_mm": 3.948123080416862,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": null
+    },
+    {
+      "candidate": "slow_seating_00_under",
+      "audit_complete": true,
+      "audit_status": "sampled_clear",
+      "remaining_collision": null,
+      "physics_executed": true,
+      "completed": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "time_s": 28.299999999998715,
+      "fruit_force_live_N": 0.6040845320897504,
+      "fruit_force_private_N": 0.604070012195079,
+      "max_displacement_mm": 5.015187849949666,
+      "fruit_penetration_mm": 0.0,
+      "all_contact_penetration_mm": 0.22795559258460135,
+      "forbidden_force_N": 0.0,
+      "seated_samples": 0,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "training_eligible": false,
+      "hook_success": null,
+      "video": "videos/slow_seating_00_under.mp4"
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null
+}

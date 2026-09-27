@@ -13,6 +13,12 @@ import environment_preflight as ep
 S = tc.ContactScope('fruit', ('rear', 'front'), ('pedicel',), ('rear',))
 
 
+def test_tcp_speed_is_poststep_displacement_over_actual_physics_dt():
+    r=tc.tcp_sample([1.,2.,3.],[1.,2.,3.00001],.005)
+    assert r['actual_tcp_speed_m_s']==pytest.approx(.002)
+    with pytest.raises(ValueError):tc.tcp_sample([0,0,0],[0,0,0],0.)
+
+
 def base():
     return dict(clearance_m=0., allowed_contacts=[dict(robot_geom='rear', environment_geom='pedicel',
                                                     phases=['seat', 'hold', 'verify'])])

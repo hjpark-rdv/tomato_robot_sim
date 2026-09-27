@@ -1,0 +1,419 @@
+{
+  "trial": {
+    "physics_executed": true,
+    "completed": false,
+    "training_eligible": false,
+    "hook_success": null,
+    "audit_status": "sampled_clear",
+    "audit_complete": true,
+    "limits": {
+      "max_target_force_N": 1.0,
+      "max_target_displacement_m": 0.005,
+      "max_forbidden_force_N": 0.01
+    },
+    "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+    "stop_reasons": [
+      "target_force_limit"
+    ],
+    "stopped_before_next_sim_step": true,
+    "legacy_evidence": {
+      "initially_seated": false,
+      "entered_after_start": false,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 0.6314457012465389,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+      "sample_hz": 240.0,
+      "seated_samples": 0,
+      "legacy_seated_samples": 0,
+      "intended_contact_samples": 0,
+      "max_penetration_m": -0.0,
+      "max_prismatic_error_m": 0.003664819154458321,
+      "max_revolute_error_rad": 0.009327172829267122,
+      "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+    },
+    "authorized_contact_evidence": {
+      "initially_seated": false,
+      "entered_after_start": false,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 0.0,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+    },
+    "simulated_s": 16.141666666666072,
+    "source_unchanged": true
+  },
+  "audit": {
+    "passed": true,
+    "complete": true,
+    "status": "sampled_clear",
+    "samples_checked": 2873,
+    "last_sample_time_s": 20.616666666666667,
+    "first_violation": null,
+    "violation_summary": {
+      "sample_hits_by_environment_class": {},
+      "minimum_distance_m_by_environment_class": {},
+      "first_by_environment_class": {},
+      "worst_by_environment_class": {},
+      "observed_unique_pair_phase_count": 0,
+      "reported_unique_pair_phase_count": 0,
+      "omitted_unique_pair_phase_count": 0,
+      "details_truncated": false,
+      "reported_limit": 64,
+      "full_path_requested": true,
+      "full_path_collected": true,
+      "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+    }
+  },
+  "sample_timing": {
+    "first_s": 0.004166666666666667,
+    "last_s": 16.141666666666072,
+    "count": 3874,
+    "expected_dt_s": 0.004166666666666667,
+    "max_gap_s": 0.004166666666668206,
+    "missing_gap_count": 0
+  },
+  "forces": {
+    "contact_categories_live": {
+      "target_fruit_touch": {
+        "max_force_sum_N": 0.9695339814875052,
+        "max_time_s": 16.12083333333274,
+        "first_positive_time_s": 16.02916666666608,
+        "last_positive_time_s": 16.137499999999406,
+        "positive_samples": 18,
+        "observed_positive_elapsed_s": 0.04999999999999716,
+        "max_single_normal_N": 0.5549774151375367
+      },
+      "target_pedicel_contact": {
+        "max_force_sum_N": 0.0,
+        "max_time_s": 0.0,
+        "first_positive_time_s": null,
+        "last_positive_time_s": null,
+        "positive_samples": 0,
+        "observed_positive_elapsed_s": 0,
+        "max_single_normal_N": 0.0
+      },
+      "forbidden_contact": {
+        "max_force_sum_N": 0.0,
+        "max_time_s": 0.0,
+        "first_positive_time_s": null,
+        "last_positive_time_s": null,
+        "positive_samples": 0,
+        "observed_positive_elapsed_s": 0,
+        "max_single_normal_N": 0.0
+      }
+    },
+    "contact_categories_private": {
+      "target_fruit_touch": {
+        "max_force_sum_N": 1.0115625890804407,
+        "max_time_s": 16.141666666666072,
+        "first_positive_time_s": 16.02916666666608,
+        "last_positive_time_s": 16.141666666666072,
+        "positive_samples": 19,
+        "observed_positive_elapsed_s": 0.05416666666666359,
+        "max_single_normal_N": 0.6314457012465389
+      },
+      "target_pedicel_contact": {
+        "max_force_sum_N": 0.0,
+        "max_time_s": 0.004166666666666667,
+        "first_positive_time_s": null,
+        "last_positive_time_s": null,
+        "positive_samples": 0,
+        "observed_positive_elapsed_s": 0,
+        "max_single_normal_N": 0.0
+      },
+      "forbidden_contact": {
+        "max_force_sum_N": 0.0,
+        "max_time_s": 0.004166666666666667,
+        "first_positive_time_s": null,
+        "last_positive_time_s": null,
+        "positive_samples": 0,
+        "observed_positive_elapsed_s": 0,
+        "max_single_normal_N": 0.0
+      }
+    }
+  },
+  "target_displacement_m": {
+    "max_value": 0.004566575319890515,
+    "time_s": 16.141666666666072,
+    "phase": "seat"
+  },
+  "guard_penetration_m": {
+    "max_value": 0.00022795559258460135,
+    "time_s": 0.004166666666666667,
+    "phase": "ready"
+  },
+  "prismatic_error_m": {
+    "max_value": 0.003664819154458321,
+    "time_s": 4.033333333333425,
+    "phase": "preapproach"
+  },
+  "revolute_error_rad": {
+    "max_value": 0.009327172829267122,
+    "time_s": 16.141666666666072,
+    "phase": "seat"
+  },
+  "last_phase": "seat",
+  "geometric_seated_samples": 0,
+  "seated_with_pedicel_force_samples": 0,
+  "stop_sample": {
+    "time_s": 16.141666666666072,
+    "phase": "seat",
+    "seated": false,
+    "legacy_seated": false,
+    "target_contact": false,
+    "non_target_force_N": 0.0,
+    "physics_valid": true,
+    "max_penetration_m": -0.0,
+    "prismatic_error_m": 1.930866543974454e-05,
+    "revolute_error_rad": 0.009327172829267122,
+    "geometry": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.022945095238744023,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.02700171420420903,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "max_intended_force_N": 0.0,
+    "legacy_non_target_force_N": 0.34070820497885124,
+    "contact_categories_live": {
+      "target_fruit_touch": {
+        "records": 22,
+        "active_records": 7,
+        "force_sum_N": 0.8599886570635006,
+        "max_normal_N": 0.28566198189097963
+      },
+      "target_pedicel_contact": {
+        "records": 0,
+        "active_records": 0,
+        "force_sum_N": 0.0,
+        "max_normal_N": 0.0
+      },
+      "forbidden_contact": {
+        "records": 0,
+        "active_records": 0,
+        "force_sum_N": 0.0,
+        "max_normal_N": 0.0
+      }
+    },
+    "contact_categories_private": {
+      "target_fruit_touch": {
+        "records": 22,
+        "active_records": 8,
+        "force_sum_N": 1.0115625890804407,
+        "max_normal_N": 0.34070820497885124
+      },
+      "target_pedicel_contact": {
+        "records": 0,
+        "active_records": 0,
+        "force_sum_N": 0.0,
+        "max_normal_N": 0.0
+      },
+      "forbidden_contact": {
+        "records": 0,
+        "active_records": 0,
+        "force_sum_N": 0.0,
+        "max_normal_N": 0.0
+      }
+    },
+    "active_permission_phases": [
+      "seat"
+    ],
+    "target_displacement_m": 0.004566575319890515,
+    "guard_penetration_m": -0.0,
+    "stop_reasons": [
+      "target_force_limit"
+    ]
+  },
+  "pair_peaks": [
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g388",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.6314457012465389,
+      "max_penetration_m": 0.0,
+      "peak_time_s": 16.112499999999407
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g388",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.5549774151375367,
+      "max_penetration_m": 0.0,
+      "peak_time_s": 16.112499999999407
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g389",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.26576710551517885,
+      "max_penetration_m": 0.0,
+      "peak_time_s": 16.07499999999941
+    },
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g389",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.22279359282444636,
+      "max_penetration_m": 0.0,
+      "peak_time_s": 16.033333333332745
+    },
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g387",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g390",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g387",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g390",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g386",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "private_forward",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g391",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g386",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    },
+    {
+      "source": "live_previous_solve",
+      "role": "target_fruit_touch",
+      "geoms": [
+        "g391",
+        "glb_col_Tomato_02"
+      ],
+      "max_single_normal_N": 0.0,
+      "max_penetration_m": 0.0,
+      "peak_time_s": null
+    }
+  ],
+  "target_fruit_penetration_m": 0.0,
+  "units_note": "Force sum = sum of per-contact 3D force magnitudes, not resultant or single Fn. Live force timestamp precedes poststep geometry by dt; private forces recomputed at poststep. Positive elapsed durations sum consecutive positive sample intervals; no gap filling."
+}

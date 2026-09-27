@@ -187,6 +187,15 @@ class TrialStopped(RuntimeError):
     pass
 
 
+def tcp_sample(previous, current, dt):
+    """Poststep finite-difference RING-centre velocity; does not step or modify physics."""
+    previous, current = np.asarray(previous, dtype=float), np.asarray(current, dtype=float)
+    if previous.shape != (3,) or current.shape != (3,) or not np.isfinite([*previous,*current,dt]).all() or dt <= 0:
+        raise ValueError('Finite TCP positions and positive sample interval required')
+    return dict(actual_tcp_position_m=current.tolist(),
+                actual_tcp_speed_m_s=float(np.linalg.norm(current-previous)/dt))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('run', type=Path)
@@ -233,8 +242,9 @@ def main():
             m = engine.model
             initial = engine.data.xpos[engine.fruit].copy()
             count = 0
+            previous_tcp = probe.mapping.frame(engine.data)[0].copy()
             def measure(model, data):
-                nonlocal count
+                nonlocal count, previous_tcp
                 count += 1
                 result['physics_executed'] = True
                 if count % max(1, round(1/model.opt.timestep/30)) == 0:
@@ -247,6 +257,9 @@ def main():
                 live = contact_stats(force_rows(model, data, robot_ids=probe.mapping.robot_geoms), scope, phases)
                 fresh = contact_stats(force_rows(model, probe.private, robot_ids=probe.mapping.robot_geoms), scope, phases)
                 row = dict(probe.rows[-1])
+                current_tcp = probe.mapping.frame(probe.private)[0].copy()
+                row.update(tcp_sample(previous_tcp, current_tcp, model.opt.timestep))
+                previous_tcp = current_tcp
                 row.update(legacy_non_target_force_N=row['non_target_force_N'],
                            non_target_force_N=fresh['forbidden_contact']['force_sum_N'],
                            contact_categories_live=live, contact_categories_private=fresh,

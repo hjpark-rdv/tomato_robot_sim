@@ -1,0 +1,32 @@
+{
+  "initially_seated": false,
+  "entered_after_start": false,
+  "hold": {
+    "samples": 0,
+    "elapsed_s": 0.0,
+    "max_sample_gap_s": null,
+    "continuous": false,
+    "seated_with_force": false
+  },
+  "verify": {
+    "samples": 0,
+    "elapsed_s": 0.0,
+    "max_sample_gap_s": null,
+    "continuous": false,
+    "seated_with_force": false
+  },
+  "contact_retention_evidence": false,
+  "max_non_target_force_N": 0.3480927393818209,
+  "physics_valid": true,
+  "hook_success": null,
+  "training_eligible": false,
+  "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+  "sample_hz": 240.0,
+  "seated_samples": 0,
+  "legacy_seated_samples": 0,
+  "intended_contact_samples": 0,
+  "max_penetration_m": -0.0,
+  "max_prismatic_error_m": 0.005567585693132149,
+  "max_revolute_error_rad": 0.008800511987481385,
+  "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+}

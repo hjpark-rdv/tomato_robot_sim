@@ -33,6 +33,9 @@ def render(run,states,output,samples=None,pair=None,label='recorded',fps=10,spee
             if 'ABCD_distance_m' in r:
                 contacts=r['recomputed_pair_contacts'];force=max([c['normal_force_N'] for c in contacts]+[0.])
                 info=[f"{('/'.join(pair)) if pair else ''} | D geometry={r['ABCD_distance_m'][3]*1000:.3f}mm | private-forward Fn={force:.3f}N @ {r['time_s']:.4f}s"]
+            elif 'contact_categories_private' in r:
+                c=r['contact_categories_private']
+                info=[f"private force SUM N: fruit={c['target_fruit_touch']['force_sum_N']:.3f} pedicel={c['target_pedicel_contact']['force_sum_N']:.3f} forbidden={c['forbidden_contact']['force_sum_N']:.3f} | disp={r['target_displacement_m']*1000:.2f}mm | seated={r['seated']}"]
             elif 'target_contact' in r:info=[f"seated={r['seated']} target force={r['target_contact']} | private non-target Fn={r['non_target_force_N']:.3f}N @ {r['time_s']:.4f}s"]
             else:info=[f"legacy seated={r['seated']} target contact={r['intended_contact']} | hold={r['phase']=='hold'} | forbidden pairs={len(r['forbidden_contacts'])}"]
         draw.text((8,3),f'{label} | {e.target} | {phase} | t={t:.3f}s | {speed}x | NO NEW PHYSICS IN VIDEO',fill='white',font=font)

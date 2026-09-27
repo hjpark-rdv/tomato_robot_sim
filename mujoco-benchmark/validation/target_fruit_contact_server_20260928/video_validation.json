@@ -1,0 +1,50 @@
+[
+  {
+    "path": "seating_00_under.mp4",
+    "sha256": "4db04cd2396594e3dffcb9b8bb0ea608212775a8ff8cf77a94f83f77488ff511",
+    "full_decode_passed": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "r_frame_rate": "10/1",
+          "nb_read_frames": "82"
+        }
+      ]
+    }
+  },
+  {
+    "path": "seating_05_under.mp4",
+    "sha256": "d1776ee8d26f595b25488fb9262c10064111da0a1f7408342cdcd788725eadd2",
+    "full_decode_passed": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "r_frame_rate": "10/1",
+          "nb_read_frames": "82"
+        }
+      ]
+    }
+  },
+  {
+    "path": "slow_seating_00_under.mp4",
+    "sha256": "b158d63689c749cb518de6dad57cdef930c05df39b3ab435ed5bbc6f50d9b22b",
+    "full_decode_passed": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "r_frame_rate": "10/1",
+          "nb_read_frames": "143"
+        }
+      ]
+    }
+  }
+]

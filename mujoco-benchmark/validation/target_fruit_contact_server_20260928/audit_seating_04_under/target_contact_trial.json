@@ -1,0 +1,12 @@
+{
+  "physics_executed": false,
+  "completed": false,
+  "training_eligible": false,
+  "hook_success": null,
+  "audit_status": "sampled_clear",
+  "audit_complete": true,
+  "limits": null,
+  "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+  "reason": "audit_only",
+  "source_unchanged": true
+}
