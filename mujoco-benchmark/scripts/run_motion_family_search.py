@@ -214,6 +214,10 @@ def run_case(case, config, output):
     start = time.monotonic()
     try:
         run = out/'run'; manifest = prepare_snapshot(case, run)
+        if config.get('model_cache'):
+            from search_model_cache import attach
+            attach(run, Path(case['source_run'])/'replay_assets/model.mjb',
+                   case['hashes']['replay_assets/model.mjb'], config['model_cache'])
         geometry, policy = native_geometry(run); write(out/'base_policy.json',policy)
         candidates, rejected = generate_candidates(geometry, config['samples_per_family'], config['seed'])
         records.extend(dict(x, outcome='proposal_rejected') for x in rejected)
@@ -287,6 +291,8 @@ def run_case(case, config, output):
     except Exception as error:
         report.update(error=f'{type(error).__name__}: {error}', complete=False)
     finally:
+        from search_model_cache import restore
+        restore(out/'run')
         report.update(summary=summarize_target(records),physics_budget_charged=attempted,
                       wall_s=time.monotonic()-start,
                       source_unchanged=all(file_hash(Path(case['source_run'])/p)==h for p,h in case['hashes'].items()))
@@ -371,6 +377,7 @@ def main():
     p.add_argument('--trial-timeout-s',type=float,default=600.)
     p.add_argument('--case-timeout-s',type=float,default=3600.)
     p.add_argument('--render-budget',type=int,default=0)
+    p.add_argument('--model-cache',type=Path,help='Optional hash-verified binary cache; durable model links restored after each case')
     p.add_argument('--execute',action='store_true')
     p.add_argument('--max-target-force-n',type=float)
     p.add_argument('--max-target-displacement-m',type=float)
@@ -390,14 +397,21 @@ def main():
                 planning_python=a.planning_python,native_python=a.native_python,physics_per_target=a.physics_per_target,
                 refine_parents=a.refine_parents,planning_timeout_s=a.planning_timeout_s,trial_timeout_s=a.trial_timeout_s,
                 case_timeout_s=a.case_timeout_s,render_budget=a.render_budget,execute=a.execute,
-                max_target_force_N=a.max_target_force_n,max_target_displacement_m=a.max_target_displacement_m)
+                max_target_force_N=a.max_target_force_n,max_target_displacement_m=a.max_target_displacement_m,
+                model_cache=str(a.model_cache.resolve()) if a.model_cache else None)
     if a.execute:
         from target_fruit_contact_trial import TrialLimits
         TrialLimits(a.max_target_force_n,a.max_target_displacement_m)
     cases=load_cases(a.manifest)
     out=a.output.resolve()
     if any(out==Path(c['source_run']) or Path(c['source_run']) in out.parents for c in cases):p.error('Output must be outside source runs')
-    code_hashes={name:file_hash(SCRIPTS/name) for name in ('run_motion_family_search.py','motion_family_search.py','target_fruit_contact_trial.py','target_truss_identity.py','hook_retention_diagnostic.py')}
+    code_hashes={name:file_hash(SCRIPTS/name) for name in (
+        'run_motion_family_search.py','motion_family_search.py','target_fruit_contact_trial.py',
+        'target_truss_identity.py','hook_retention_diagnostic.py','environment_preflight.py',
+        'plan_candidates.py','robot_engine.py','measure_seating_rollout.py',
+        'hook_seating_geometry.py','seating_evaluation.py','render_contact_diagnostic.py',
+        'search_model_cache.py','search_legacy_baseline.py')}
+    code_hashes['nvidia-sim/rl/dataset_motion.py']=file_hash(SCRIPTS.parents[1]/'nvidia-sim/rl/dataset_motion.py')
     signature=digest(dict(cases=cases,config=config,code_sha256=code_hashes))
     if out.exists():
         if not a.resume or read(out/'campaign.json')['signature']!=signature:p.error('Existing output/config conflict')

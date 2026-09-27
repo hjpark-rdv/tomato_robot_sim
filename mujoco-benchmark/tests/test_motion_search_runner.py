@@ -89,12 +89,13 @@ def test_orchestration_reuses_planner_and_trial_and_bounds_physics(tmp_path,monk
     monkeypatch.setattr(runner,'run_command',fake)
     config=dict(planning_python='planner',native_python='native',samples_per_family=1,seed=5,planning_workers=1,
                 planning_timeout_s=5.,trial_timeout_s=5.,case_timeout_s=60.,physics_per_target=3,refine_parents=0,
-                execute=True,max_target_force_N=5.,max_target_displacement_m=.02)
+                execute=True,max_target_force_N=5.,max_target_displacement_m=.02,model_cache=str(tmp_path/'cache'))
     result=runner.run_case(case,config,tmp_path/'campaign')
     assert result['complete'],result
     assert result['summary']['physics_attempts']==3
     assert sum(r['outcome']=='not_evaluated_budget' for r in result['records'])==2
     assert result['source_unchanged']
+    assert (tmp_path/'campaign/cases/s/Tomato_02/run/replay_assets/model.mjb').resolve()==(root/'replay_assets/model.mjb').resolve()
     assert sum('plan_candidates.py' in c[1] for c in calls)==1
     assert sum('target_fruit_contact_trial.py' in c[1] for c in calls)==3
     # Completed case is reused without spending more experiments.

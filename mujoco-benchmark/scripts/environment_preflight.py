@@ -209,6 +209,12 @@ def screen(backend, commands, phases, duration_s, policy, collect_all_violations
                 raise ValueError("Allowlist refers to a phase absent from this trace")
         query_limit = policy.clearance_m + 0.01
         result["distance_query_horizon_m"] = query_limit
+        # A policy is fixed for this screen. Compile exact pairs once instead
+        # of scanning hundreds of permission records for every distance query.
+        permissions = {}
+        for item in policy.allowed_contacts:
+            key = (item["robot_geom"], item["environment_geom"])
+            permissions.setdefault(key, set()).update(item["phases"])
         for timestamp, q, active_phases in plan_samples(commands, phases, duration_s, backend.joint_steps, policy):
             if time.perf_counter() - started > policy.timeout_s:
                 raise BudgetExceeded("time_budget")
@@ -220,7 +226,7 @@ def screen(backend, commands, phases, duration_s, policy, collect_all_violations
                                          backend.environment_positions, backend.environment_radii, query_limit)
                 for env_index in indices:
                     env_name = backend.environment_names[env_index]
-                    if pair_allowed(policy, robot_name, env_name, active_phases):
+                    if active_phases and set(active_phases).issubset(permissions.get((robot_name, env_name), ())):
                         continue
                     if result["distance_queries"] >= policy.max_distance_queries:
                         raise BudgetExceeded("distance_query_budget")

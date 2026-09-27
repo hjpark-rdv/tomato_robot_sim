@@ -152,6 +152,15 @@ def test_allowlist_exact_pair_and_phase():
     assert not ep.pair_allowed(policy(allowed_contacts=(allowance,)), "other_arm", "obstacle", ("insert",))
 
 
+def test_compiled_permission_unions_duplicate_pair_phases_without_leaking():
+    allowances = tuple(dict(robot_geom='arm', environment_geom='obstacle', phases=[p])
+                       for p in ('ready', 'insert'))
+    assert audit(phases=['ready', 'insert'], allowed_contacts=allowances)['passed']
+    assert audit(phases=['insert', 'hold'], allowed_contacts=allowances)['status'] == 'inconclusive'
+    # A valid policy with a missing boundary permission still blocks contact.
+    assert audit(phases=['ready', 'insert'], allowed_contacts=allowances[1:])['status'] == 'blocked'
+
+
 def test_bad_allowlist_does_not_silently_match_nothing():
     result = audit(allowed_contacts=({"robot_geom": "typo", "environment_geom": "obstacle", "phases": ["insert"]},))
     assert result["status"] == "inconclusive" and not result["passed"]

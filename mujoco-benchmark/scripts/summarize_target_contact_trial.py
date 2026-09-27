@@ -44,7 +44,7 @@ def summarize(folder):
         max_gap_s=max((b['time_s']-a['time_s'] for a,b in zip(rows,rows[1:])), default=None),
         missing_gap_count=sum(b['time_s']-a['time_s'] > dt*1.5 for a,b in zip(rows,rows[1:])))
     out['forces'] = {field: {role: force_interval(rows, field, role, dt)
-                            for role in ('target_fruit_touch','target_pedicel_contact','forbidden_contact')}
+                            for role in rows[0][field]}
                      for field in ('contact_categories_live','contact_categories_private')}
     for key in ('target_displacement_m', 'guard_penetration_m', 'prismatic_error_m', 'revolute_error_rad'):
         r = max(rows, key=lambda r:r[key])
