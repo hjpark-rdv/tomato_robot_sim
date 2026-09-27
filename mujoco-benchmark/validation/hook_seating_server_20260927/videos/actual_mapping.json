@@ -1,0 +1,27 @@
+{
+  "scope": "Only rendering groups/colors changed; original model file untouched; static IK pose, no physics or entry",
+  "target": [
+    "glb_col_Attachment_01",
+    "glb_col_TRUSS_Pedicel_proximal_02_02"
+  ],
+  "rear": [
+    "g384",
+    "g385",
+    "g386",
+    "g387",
+    "g388",
+    "g389",
+    "g390",
+    "g391",
+    "g392",
+    "g393",
+    "g394",
+    "g395",
+    "g396",
+    "g397",
+    "g398",
+    "g399"
+  ],
+  "rachis": "glb_col_TRUSS_Rachis_05",
+  "physics_executed": false
+}

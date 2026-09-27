@@ -1,0 +1,7 @@
+MuJoCo 3.13.0 .venv: existing108 + timeline8
+116 passed in 1.61s
+Isaac Python with Torch/FCL: explicit-pose planner regression5
+5 passed in 1.50s
+No skips in either invoked suite.
+Server asset legacy command regression: 2512 commands and phases exactly identical.
+Independent native geometry/contact controls: seven cases; four synthetic timeline cases passed assertions.

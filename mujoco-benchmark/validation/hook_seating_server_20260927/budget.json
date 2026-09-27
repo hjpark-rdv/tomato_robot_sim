@@ -1,0 +1,29 @@
+{
+  "target": "Tomato_02",
+  "baseline_physics_max": 1,
+  "new_path_physics_max": 12,
+  "planned_paths": 12,
+  "selected_goal_ids": [
+    "seat_goal_0000",
+    "seat_goal_0001",
+    "seat_goal_0002",
+    "seat_goal_0003",
+    "seat_goal_0006",
+    "seat_goal_0007",
+    "seat_goal_0008",
+    "seat_goal_0009",
+    "seat_goal_0010",
+    "seat_goal_0015",
+    "seat_goal_0018",
+    "seat_goal_0019"
+  ],
+  "source_scene": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+  "gate": "No forced blocked prefix; new paths physically executed only if full nominal environment screen passes",
+  "training_eligible": false,
+  "prefix_refinement_rounds": 1,
+  "routed_plans": 10,
+  "note": "Initial 12 paths blocked at preapproach; 5 endpoint-clear goals get two bounded prefix alternatives. Physical new-path budget remains12. No blocked prefix is physically forced.",
+  "final_below_fruit_plans": 5,
+  "further_planning_rounds": 0,
+  "physical_new_limit": 12
+}

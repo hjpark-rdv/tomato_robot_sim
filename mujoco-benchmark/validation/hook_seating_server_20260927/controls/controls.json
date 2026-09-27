@@ -1,0 +1,732 @@
+{
+  "fixtures": [
+    {
+      "name": "positive",
+      "expected_target_seating": true,
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039710909578580776,
+        "nearest_rear_wire": "g391",
+        "centreline_plane_crossing_ring": [
+          -0.025099999999999997,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": true,
+      "identity_matches": true,
+      "accepted_target_geometry": true,
+      "native_gap_m": 0.00039710909578580906,
+      "contacts": [
+        {
+          "geoms": [
+            "g390",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0015224259927226398,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g391",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.00039710909578580906,
+          "includemargin_m": 0.001,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 0.0077914201752077,
+          "tangential_force_N": 0.004355480114387073,
+          "force6": [
+            0.0077914201752077,
+            -7.806255641895632e-18,
+            -0.004355480114387073,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g392",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.00039710909578586154,
+          "includemargin_m": 0.001,
+          "efc_address": 4,
+          "active": true,
+          "normal_force_N": 0.007791420175193137,
+          "tangential_force_N": 0.00435548011438224,
+          "force6": [
+            0.007791420175193137,
+            -2.3635607360183997e-17,
+            0.00435548011438224,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g393",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0015224259927227612,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.0077914201752077,
+      "fruit_center_occupancy_only": false
+    },
+    {
+      "name": "fruit_only",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "not_rear_half",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.025466875045399878,
+        "nearest_rear_wire": "g391",
+        "centreline_plane_crossing_ring": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": false,
+      "identity_matches": true,
+      "accepted_target_geometry": false,
+      "native_gap_m": 0.02546687504539988,
+      "contacts": [],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.0,
+      "fruit_center_occupancy_only": true
+    },
+    {
+      "name": "front",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "not_rear_half",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.04660474161780055,
+        "nearest_rear_wire": "g399",
+        "centreline_plane_crossing_ring": [
+          0.025099999999999997,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": false,
+      "identity_matches": true,
+      "accepted_target_geometry": false,
+      "native_gap_m": 0.04660474161780055,
+      "contacts": [],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.0,
+      "fruit_center_occupancy_only": false
+    },
+    {
+      "name": "outside",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "not_inside_wire_inner_footprint"
+        ],
+        "minimum_rear_surface_gap_m": 0.0003999999989999208,
+        "nearest_rear_wire": "g392",
+        "centreline_plane_crossing_ring": [
+          -0.029900000000000003,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": false,
+      "identity_matches": true,
+      "accepted_target_geometry": false,
+      "native_gap_m": 0.0003999999989999208,
+      "contacts": [
+        {
+          "geoms": [
+            "g390",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0016984749493551467,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g391",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0003999999989999659,
+          "includemargin_m": 0.001,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 0.0074968933380475415,
+          "tangential_force_N": 2.8490940076353664e-12,
+          "force6": [
+            0.0074968933380475415,
+            -1.5612511283791264e-17,
+            2.8490940075925897e-12,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g392",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0003999999989999208,
+          "includemargin_m": 0.001,
+          "efc_address": 4,
+          "active": true,
+          "normal_force_N": 0.007496893338065309,
+          "tangential_force_N": 2.849164697618208e-12,
+          "force6": [
+            0.007496893338065309,
+            -1.5829351718288365e-17,
+            -2.8491646975742357e-12,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g393",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.001698474949355262,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.007496893338065309,
+      "fruit_center_occupancy_only": false
+    },
+    {
+      "name": "penetration",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "not_inside_wire_inner_footprint",
+          "intersects_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": -0.0010012045428380864,
+        "nearest_rear_wire": "g391",
+        "centreline_plane_crossing_ring": [
+          -0.0265,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": true,
+      "identity_matches": true,
+      "accepted_target_geometry": false,
+      "native_gap_m": -0.001001204542838083,
+      "contacts": [
+        {
+          "geoms": [
+            "g390",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.0008316533856755686,
+          "includemargin_m": 0.001,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 0.08261518959022508,
+          "tangential_force_N": 0.08261518959022508,
+          "force6": [
+            0.08261518959022508,
+            0.0,
+            -0.08261518959022508,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g391",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": -0.001001204542838083,
+          "includemargin_m": 0.001,
+          "efc_address": 4,
+          "active": true,
+          "normal_force_N": 0.078822387867589,
+          "tangential_force_N": 0.022642071355909454,
+          "force6": [
+            0.078822387867589,
+            -1.2836953722228372e-16,
+            -0.022642071355909454,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g392",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": -0.0010012045428380355,
+          "includemargin_m": 0.001,
+          "efc_address": 8,
+          "active": true,
+          "normal_force_N": 0.07882238786756718,
+          "tangential_force_N": 0.022642071355923547,
+          "force6": [
+            0.07882238786756718,
+            -8.326672684688674e-17,
+            0.022642071355923547,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g393",
+            "glb_col_Attachment_01"
+          ],
+          "dist_m": 0.00083165338567572,
+          "includemargin_m": 0.001,
+          "efc_address": 12,
+          "active": true,
+          "normal_force_N": 0.08261518959021909,
+          "tangential_force_N": 0.08261518959021909,
+          "force6": [
+            0.08261518959021909,
+            0.0,
+            0.08261518959021909,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "intended_force": true,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.08261518959022508,
+      "fruit_center_occupancy_only": false
+    },
+    {
+      "name": "wrong_pedicel",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039710909578580776,
+        "nearest_rear_wire": "g391",
+        "centreline_plane_crossing_ring": [
+          -0.025099999999999997,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": true,
+      "identity_matches": false,
+      "accepted_target_geometry": false,
+      "native_gap_m": 0.00039710909578580906,
+      "contacts": [
+        {
+          "geoms": [
+            "g390",
+            "other_pedicel"
+          ],
+          "dist_m": 0.0015224259927226398,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g391",
+            "other_pedicel"
+          ],
+          "dist_m": 0.00039710909578580906,
+          "includemargin_m": 0.001,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 0.0077914201752077,
+          "tangential_force_N": 0.004355480114387073,
+          "force6": [
+            0.0077914201752077,
+            -7.806255641895632e-18,
+            -0.004355480114387073,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g392",
+            "other_pedicel"
+          ],
+          "dist_m": 0.00039710909578586154,
+          "includemargin_m": 0.001,
+          "efc_address": 4,
+          "active": true,
+          "normal_force_N": 0.007791420175193137,
+          "tangential_force_N": 0.00435548011438224,
+          "force6": [
+            0.007791420175193137,
+            -2.3635607360183997e-17,
+            0.00435548011438224,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g393",
+            "other_pedicel"
+          ],
+          "dist_m": 0.0015224259927227612,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.0077914201752077,
+      "fruit_center_occupancy_only": false
+    },
+    {
+      "name": "rachis",
+      "expected_target_seating": false,
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039710909578580776,
+        "nearest_rear_wire": "g391",
+        "centreline_plane_crossing_ring": [
+          -0.025099999999999997,
+          0.0,
+          0.0
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "legacy_seated": true,
+      "identity_matches": false,
+      "accepted_target_geometry": false,
+      "native_gap_m": 0.00039710909578580906,
+      "contacts": [
+        {
+          "geoms": [
+            "g390",
+            "Rachis"
+          ],
+          "dist_m": 0.0015224259927226398,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g391",
+            "Rachis"
+          ],
+          "dist_m": 0.00039710909578580906,
+          "includemargin_m": 0.001,
+          "efc_address": 0,
+          "active": true,
+          "normal_force_N": 0.0077914201752077,
+          "tangential_force_N": 0.004355480114387073,
+          "force6": [
+            0.0077914201752077,
+            -7.806255641895632e-18,
+            -0.004355480114387073,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g392",
+            "Rachis"
+          ],
+          "dist_m": 0.00039710909578586154,
+          "includemargin_m": 0.001,
+          "efc_address": 4,
+          "active": true,
+          "normal_force_N": 0.007791420175193137,
+          "tangential_force_N": 0.00435548011438224,
+          "force6": [
+            0.007791420175193137,
+            -2.3635607360183997e-17,
+            0.00435548011438224,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geoms": [
+            "g393",
+            "Rachis"
+          ],
+          "dist_m": 0.0015224259927227612,
+          "includemargin_m": 0.001,
+          "efc_address": -1,
+          "active": false,
+          "normal_force_N": 0.0,
+          "tangential_force_N": 0.0,
+          "force6": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "intended_force": false,
+      "automatic_entry_success": false,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Prescribed independent static geometry/contact fixture, no robot rollout",
+      "maximum_normal_force_N": 0.0077914201752077,
+      "fruit_center_occupancy_only": false
+    }
+  ],
+  "timeline_controls": {
+    "prescribed_entry_evidence": {
+      "initially_seated": false,
+      "entered_after_start": true,
+      "hold": {
+        "samples": 264,
+        "elapsed_s": 1.0958333333333334,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": true
+      },
+      "verify": {
+        "samples": 73,
+        "elapsed_s": 0.30000000000000004,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": true
+      },
+      "contact_retention_evidence": true,
+      "max_non_target_force_N": 0.0,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+    },
+    "preseated_stationary": {
+      "initially_seated": true,
+      "entered_after_start": false,
+      "hold": {
+        "samples": 264,
+        "elapsed_s": 1.0958333333333334,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": true
+      },
+      "verify": {
+        "samples": 73,
+        "elapsed_s": 0.30000000000000004,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": true
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 0.0,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+    },
+    "transient_exit": {
+      "initially_seated": false,
+      "entered_after_start": true,
+      "hold": {
+        "samples": 264,
+        "elapsed_s": 1.0958333333333334,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 73,
+        "elapsed_s": 0.30000000000000004,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": false
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 0.0,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+    },
+    "missing_samples": {
+      "initially_seated": false,
+      "entered_after_start": true,
+      "hold": {
+        "samples": 193,
+        "elapsed_s": 1.0958333333333334,
+        "max_sample_gap_s": 0.30000000000000004,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 73,
+        "elapsed_s": 0.30000000000000004,
+        "max_sample_gap_s": 0.004166666666666874,
+        "continuous": true,
+        "seated_with_force": true
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 0.0,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+    }
+  },
+  "timeline_scope": "Synthetic timestamps for evaluator controls, not real physics or robot entry",
+  "goal_source": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/goals/seating_goals.json",
+  "diagnostic_only": true,
+  "training_eligible": false
+}

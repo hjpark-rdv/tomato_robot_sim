@@ -1,0 +1,38 @@
+{
+  "candidate_id": "seating_10",
+  "result": "environment_preflight_blocked",
+  "physics_executed": false,
+  "training_eligible": false,
+  "hook_success": null,
+  "first_violation": {
+    "time_s": 5.622222222222222,
+    "phases": [
+      "preapproach"
+    ],
+    "robot_geom": "g410",
+    "environment_geom": "glb_col_Tomato_01",
+    "environment_class": "glb_plant",
+    "distance_m": -0.0002714503566104588,
+    "command": [
+      0.16685223042677427,
+      3.0789050098098008,
+      -0.38824142624483937,
+      -1.3510243436502414,
+      0.14166972720237328,
+      -1.5402074630990081,
+      0.20434434133504054
+    ],
+    "segment_world": [
+      [
+        -0.7023237421909297,
+        0.9463882018478241,
+        0.5090672415924355
+      ],
+      [
+        -0.7021437688630914,
+        0.9464644598972991,
+        0.5092556019047654
+      ]
+    ]
+  }
+}

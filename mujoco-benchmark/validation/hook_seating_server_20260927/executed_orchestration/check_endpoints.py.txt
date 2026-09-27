@@ -1,0 +1,10 @@
+import sys,json,numpy as np
+from pathlib import Path
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+from diagnose_contact_timing import load_engine
+from environment_preflight import Policy,MuJoCoScene,screen
+O=Path(__file__).parent;P=O/'robot';settings=json.loads((O/'diagnostic_policy.json').read_text());settings['allowed_contacts']=[dict(x,phases=['seat']) for x in settings['allowed_contacts']];policy=Policy.from_dict(settings);out=[]
+for case in json.loads((P/'candidates.json').read_text())[1:]:
+ c=case['candidate_id'];e,rows,plan=load_engine(P,c);cmd=next(r['command'] for r in reversed(rows) if r['phase']=='seat');res=screen(MuJoCoScene(e,policy),np.array([cmd,cmd]),['seat','seat'],1/60,policy)
+ (P/'candidates'/c/'endpoint_preflight_corrected.json').write_text(json.dumps(res,indent=2));h=res['first_violation'];out.append(dict(candidate_id=c,status=res['status'],reason=res['reason'],first_violation=h));print(c,res['status'],h and (h['robot_geom'],h['environment_geom'],h['distance_m']),flush=True)
+(O/'endpoint_results.json').write_text(json.dumps(out,indent=2))

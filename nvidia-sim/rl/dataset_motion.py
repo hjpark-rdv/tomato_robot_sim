@@ -42,16 +42,23 @@ def non_target_seated(env, path):
 
 def plan(env,kin,checker,params):
     center,neck,_=[v[0].cpu().numpy() for v in env._target_geometry()]
-    rotation,waypoints,direction=make_waypoints(center,neck,params,getattr(env,'target_spec',{}).get('radius'))
-    if params.get('goal', 'rise') == 'rise':
+    explicit=params.get('trajectory_mode')=='diagnostic_pose_waypoints_v1'
+    if explicit:
+        poses=diagnostic_poses(params)
+        rotation=poses[0][2];waypoints=[(name,position) for name,position,_,_ in poses];direction=None
+    else:
+        rotation,waypoints,direction=make_waypoints(center,neck,params,getattr(env,'target_spec',{}).get('radius'))
+    if not explicit and params.get('goal', 'rise') == 'rise':
         waypoints = [w for w in waypoints if w[0] != 'pull']
     start=env.robot.data.joint_pos[0].cpu().numpy().copy();q=start.copy();position,orientation=kin.fk(q)
     commands=[];phases=[];diagnostics=[]
-    for name,goal in waypoints:
+    for waypoint_index,(name,goal) in enumerate(waypoints):
+        if explicit:rotation=poses[waypoint_index][2]
         endpoint,pe,re=kin.ik(goal,rotation,q)
         if pe>.002 or re>.03: return None,dict(reason='endpoint_ik',phase=name,position_error_m=pe,rotation_error_rad=re)
         if name=='preapproach':
             seconds=max(1.5*np.max(np.abs(endpoint[1:]-q[1:]))/.35,1.5*abs(endpoint[0]-q[0])/.08,1.)
+            if explicit:seconds=max(seconds,poses[waypoint_index][3])
             steps=int(np.ceil(seconds/env.step_dt));u=np.linspace(0,1,steps+1)[1:];u=u*u*(3-2*u)
             segment=q[None]+u[:,None]*(endpoint-q)[None]
         else:
@@ -66,6 +73,7 @@ def plan(env,kin,checker,params):
             speed=(getattr(env.cfg,'dataset_rise_speed',.002) if name in ('rise_mid','rise') else
                    getattr(env.cfg,'dataset_pull_speed',.004) if name=='pull' else .035)
             seconds=max(1.5*distance/speed,angle/.15,.2)
+            if explicit:seconds=max(seconds,poses[waypoint_index][3])
             steps=int(np.ceil(seconds/env.step_dt));u=np.linspace(0,1,steps+1)[1:];u=u*u*(3-2*u)
             segment=np.stack([np.interp(u,np.linspace(0,1,len(knots)),np.array(knots)[:,i]) for i in range(len(q))],axis=1)
         segment=np.concatenate([segment,np.repeat(segment[-1:],20,axis=0)])
@@ -90,6 +98,23 @@ def plan(env,kin,checker,params):
     return dict(commands=commands,command_positions=command_positions,phases=phases,waypoints=diagnostics,direction=direction,
                 trajectory_mode=params.get('trajectory_mode','legacy'),
                 orientation=rotation,prehook=waypoints[0][1],target_center=center,target_neck=neck),dict(passed=True,samples=checked,max_arm_sample_rad=.015,max_lift_sample_m=.001)
+
+
+def diagnostic_poses(params):
+    """Opt-in RING-centre poses; explicitly incompatible with compact action14."""
+    if params.get('diagnostic_only') is not True or params.get('training_eligible') is not False:
+        raise ValueError('Explicit pose trajectories require diagnostic_only and training_eligible=false')
+    rows=params.get('pose_waypoints',[])
+    if not 2<=len(rows)<=16 or rows[0].get('phase')!='preapproach':
+        raise ValueError('Need 2..16 poses starting with preapproach')
+    poses=[]
+    for row in rows:
+        name=row['phase'];p=np.asarray(row['ring_position_xyz'],dtype=float);q=np.asarray(row['orientation_xyzw'],dtype=float)
+        seconds=float(row.get('minimum_seconds',0))
+        if name not in ('preapproach','approach','insert','seat','hold','verify') or p.shape!=(3,) or q.shape!=(4,) or not np.isfinite(np.r_[p,q,seconds]).all() or abs(np.linalg.norm(q)-1)>1e-6 or not 0<=seconds<=10:
+            raise ValueError('Invalid explicit RING pose')
+        poses.append((name,p,Rotation.from_quat(q),seconds))
+    return poses
 
 
 def retained_geometry(env):

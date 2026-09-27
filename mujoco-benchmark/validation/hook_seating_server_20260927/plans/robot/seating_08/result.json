@@ -1,0 +1,38 @@
+{
+  "candidate_id": "seating_08",
+  "result": "environment_preflight_blocked",
+  "physics_executed": false,
+  "training_eligible": false,
+  "hook_success": null,
+  "first_violation": {
+    "time_s": 6.5,
+    "phases": [
+      "preapproach"
+    ],
+    "robot_geom": "g410",
+    "environment_geom": "glb_col_TRUSS_Rachis_05",
+    "environment_class": "glb_plant",
+    "distance_m": -9.134580323573384e-05,
+    "command": [
+      0.1167140534387967,
+      3.0962182189788394,
+      -0.36081600984589346,
+      -1.3961668010728068,
+      0.151672725108969,
+      -1.530792735435125,
+      0.2303056779503901
+    ],
+    "segment_world": [
+      [
+        -0.6885616151125326,
+        0.9327911026818034,
+        0.45471560097969843
+      ],
+      [
+        -0.6884757438060342,
+        0.93281078177622,
+        0.4547397444618827
+      ]
+    ]
+  }
+}

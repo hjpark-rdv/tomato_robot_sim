@@ -29,12 +29,14 @@ def compute(params):
  begin=time.perf_counter();folder=OUT/'candidates'/params['candidate_id'];folder.mkdir(parents=True,exist_ok=True)
  planned,check=plan(*MODEL,params)
  info={'candidate_id':params['candidate_id'],'parameters':params,'preflight':check,'planning_wall_s':time.perf_counter()-begin}
+ if params.get('trajectory_mode')=='diagnostic_pose_waypoints_v1':
+  info.update(diagnostic_only=True,training_eligible=False,action_schema='explicit_ring_pose_waypoints_v1',hook_success=None)
  if planned is not None:
   rows=[{'joints':START.tolist(),'command':START.tolist(),'phase':'ready'}]
   rows.extend({'joints':START.tolist(),'command':q.tolist(),'phase':phase} for q,phase in zip(planned['commands'],planned['phases']))
   (folder/'trace.json').write_text(json.dumps(rows))
   info.update(waypoints=planned['waypoints'],seconds=(len(rows)-1)/60)
-  if FRAME is not None:
+  if FRAME is not None and params.get('trajectory_mode')!='diagnostic_pose_waypoints_v1':
    from camera_action import encode
    info['action_camera']=encode(planned['waypoints'],params,FRAME['target_center_world'],FRAME['world_from_color_optical'])
  (folder/'plan.json').write_text(json.dumps(info,indent=2));return info

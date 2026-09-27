@@ -1,0 +1,7 @@
+{
+  "candidate_id": "seating_06_route1",
+  "result": "environment_preflight_blocked",
+  "physics_executed": false,
+  "training_eligible": false,
+  "hook_success": null
+}

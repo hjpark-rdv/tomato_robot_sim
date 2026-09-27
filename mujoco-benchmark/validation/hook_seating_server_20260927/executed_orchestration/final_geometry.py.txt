@@ -1,0 +1,14 @@
+import sys,json,numpy as np
+from pathlib import Path
+from scipy.spatial.transform import Rotation
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+from diagnose_contact_timing import load_engine
+from measure_seating_rollout import SeatingProbe
+from hook_retention_diagnostic import capsule_endpoints
+from suite import RING
+import mujoco as mj
+O=Path(__file__).parent;P=O/'robot';out=[]
+for c in json.loads((P/'candidates.json').read_text())[1:]:
+ e,trace,plan=load_engine(P,c['candidate_id']);probe=SeatingProbe(e,trace);row=next(r for r in reversed(trace) if r['phase']=='seat');e.data.qpos[e.qids]=row['command'];mj.mj_kinematics(e.model,e.data);p,r=probe.mapping.frame(e.data);goal=c['pose_waypoints'][3];expected=Rotation.from_quat(goal['orientation_xyzw']);seated,legacy,metrics=probe.geometry(e.data)
+ out.append(dict(candidate_id=c['candidate_id'],ring_position_world=p.tolist(),hook_body_origin_world=e.data.xpos[e.hook].tolist(),ring_body_offset=RING.tolist(),position_residual_m=float(np.linalg.norm(p-goal['ring_position_xyz'])),rotation_residual_rad=float((r*expected.inv()).magnitude()),seated_geometry=seated,legacy_geometry=legacy,target_metrics=metrics,source_goal=c['source_goal'],physics_executed=False))
+(O/'actual_ik_goal_geometry.json').write_text(json.dumps(out,indent=2));print([(r['candidate_id'],r['seated_geometry'],r['position_residual_m']) for r in out])

@@ -1,0 +1,322 @@
+{
+  "candidate_id": "baseline",
+  "parameters": {
+    "candidate_id": "baseline",
+    "approach_azimuth_deg": -89.98944091796875,
+    "entry_clearance_m": 0.002,
+    "lateral_offset_m": 0.0,
+    "insertion_distance_m": 0.0425,
+    "lift_forward_angle_deg": 0.0,
+    "lift_distance_m": 0.0325,
+    "sampling": "direct_rgbd_angle_v1",
+    "lift_profile": "diagonal_75_return",
+    "trajectory_mode": "staged6d",
+    "stage": "coarse",
+    "parent_id": null,
+    "seed": 2026,
+    "sobol_index": null,
+    "pre_hook_distance_m": 0.17,
+    "hook_roll_deg": 0.0,
+    "approach_elevation_deg": 0.0
+  },
+  "preflight": {
+    "passed": true,
+    "samples": 2751,
+    "max_arm_sample_rad": 0.015,
+    "max_lift_sample_m": 0.001
+  },
+  "planning_wall_s": 2.4415117520838976,
+  "waypoints": [
+    {
+      "phase": "preapproach",
+      "position_xyz": [
+        -0.6961211942344877,
+        0.7458217307308408,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "steps": 500
+    },
+    {
+      "phase": "entry",
+      "position_xyz": [
+        -0.6961430493486849,
+        0.8644121334184278,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "steps": 325
+    },
+    {
+      "phase": "insert",
+      "position_xyz": [
+        -0.6961508817054065,
+        0.9069121326967123,
+        0.46032218492704474
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "steps": 130
+    },
+    {
+      "phase": "rise_mid",
+      "position_xyz": [
+        -0.6961516841394524,
+        0.9112663069997775,
+        0.47657218492704473
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "steps": 778
+    },
+    {
+      "phase": "rise",
+      "position_xyz": [
+        -0.6961508817054065,
+        0.9069121326967123,
+        0.49282218492704477
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "steps": 778
+    }
+  ],
+  "seconds": 41.85,
+  "action_camera": {
+    "schema": "farmily_camera_action_v2",
+    "coordinate_frame": "observation_color_optical",
+    "axis_convention": "x right, y down, z forward",
+    "position_origin": "initial target fruit center",
+    "approach_direction_camera": [
+      0.7069838119385282,
+      -0.15759000822614813,
+      0.6894485324983665
+    ],
+    "hook_orientation_camera_xyzw": [
+      0.04291631516104193,
+      0.9180212188222799,
+      0.1035806341036777,
+      0.3803502122041392
+    ],
+    "lift_direction_camera": [
+      -2.3435798553726002e-06,
+      -0.9748584842633569,
+      -0.22282489908952982
+    ],
+    "gravity_direction_camera": [
+      2.3435798553726002e-06,
+      0.9748584842633569,
+      0.22282489908952982
+    ],
+    "entry_clearance_m": 0.002,
+    "lateral_offset_m": 0.0,
+    "insertion_distance_m": 0.04249999999999996,
+    "lift_distance_m": 0.03250000000000003,
+    "feature_names": [
+      "approach_x",
+      "approach_y",
+      "approach_z",
+      "hook_qx",
+      "hook_qy",
+      "hook_qz",
+      "hook_qw",
+      "entry_clearance_m",
+      "lateral_offset_m",
+      "insertion_distance_m",
+      "lift_x",
+      "lift_y",
+      "lift_z",
+      "lift_distance_m"
+    ],
+    "features": [
+      0.7069838119385282,
+      -0.15759000822614813,
+      0.6894485324983665,
+      0.04291631516104193,
+      0.9180212188222799,
+      0.1035806341036777,
+      0.3803502122041392,
+      0.002,
+      0.0,
+      0.04249999999999996,
+      -2.3435798553726002e-06,
+      -0.9748584842633569,
+      -0.22282489908952982,
+      0.03250000000000003
+    ],
+    "target_relative_waypoint_xyz_camera": [
+      [
+        -0.12018720840056311,
+        0.04327476384071135,
+        -0.11343837165867457
+      ],
+      [
+        -0.03634571202540994,
+        0.02458610098827004,
+        -0.03167639116888313
+      ],
+      [
+        -0.0062989000180225145,
+        0.017888525638658746,
+        -0.0023748285377025815
+      ],
+      [
+        -0.003220607302294581,
+        0.0013609008934887877,
+        -0.002993754013438815
+      ],
+      [
+        -0.006298976184367815,
+        -0.013794375099900379,
+        -0.009616637758112308
+      ]
+    ],
+    "phase_names": [
+      "preapproach",
+      "entry",
+      "insert",
+      "rise_mid",
+      "rise"
+    ],
+    "absolute_start_position_is_model_input": false
+  },
+  "result": "partial_center_entry",
+  "classification_rule": "center_entry_only_v2",
+  "partial_entry_success": true,
+  "target_displacement_exceeded": false,
+  "center_entered": true,
+  "target_center_max_displacement_m": 0.0077813730163545855,
+  "first_contact_candidate": {
+    "step": 3648,
+    "objects": [
+      "glb_col_TRUSS_Rachis_05",
+      "g390"
+    ],
+    "prim_paths": [
+      "/GLB/TRUSS_Rachis_05/glb_col_TRUSS_Rachis_05",
+      "/GLB/Hook/g390"
+    ]
+  },
+  "metrics": {
+    "control_s": 0.024648059159517288,
+    "physics_s": 14.471902241930366,
+    "evaluation_s": 2.85855421051383,
+    "recording_s": 0.6075840145349503,
+    "reset_s": 0.0023387502878904343,
+    "command_prepare_s": 0.2423899918794632,
+    "rollout_wall_s": 68.39357473142445,
+    "process_cpu_s": 68.384151651,
+    "simulated_s": 41.85,
+    "requested_s": 41.85,
+    "steps": 10044,
+    "rtf": 0.6118995850756634,
+    "unstable": false,
+    "max_target_displacement_m": 0.0077813730163545855,
+    "max_hook_contact_penetration_m": -0.0,
+    "hook_contact_steps": 6397,
+    "max_tracking_error_m_or_rad": 0.008800511987463983,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.6960308522351021,
+      0.799793546773481,
+      0.4984747951987943
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0,
+    "neighbor_stem_contact_steps": 0,
+    "neighbor_stem_contact_pairs": [],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": true,
+    "physics_guard_version": "glb_hook_gutter_v3",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "execution_and_save_wall_s": 68.81373078376055,
+  "training_eligible": false,
+  "hook_success": null,
+  "scope": "partial geometry/contact diagnostics; no validated hook-success evaluator",
+  "center_entry_diagnostics": {
+    "first_time_s": 15.216666666666667,
+    "last_time_s": 36.229166666666664,
+    "matching_steps": 4960,
+    "scope": "geometric occupancy only; physics validity takes precedence"
+  },
+  "state_storage": {
+    "format": "qpos_only",
+    "max_fps": 30,
+    "diagnostics_hz": 240.0,
+    "final_frame_preserved": true
+  },
+  "trace_sha256": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d",
+  "states_sha256": "4c677f05f60c465644c19c494416881f9b32d31a6ce565c7c9cce7139acb21b5",
+  "physics_executed": true,
+  "diagnostic_only": true,
+  "baseline_blocked_reference": true,
+  "environment_screen_status": "blocked",
+  "seating_evidence": {
+    "initially_seated": false,
+    "entered_after_start": false,
+    "hold": {
+      "samples": 0,
+      "elapsed_s": 0.0,
+      "max_sample_gap_s": null,
+      "continuous": false,
+      "seated_with_force": false
+    },
+    "verify": {
+      "samples": 0,
+      "elapsed_s": 0.0,
+      "max_sample_gap_s": null,
+      "continuous": false,
+      "seated_with_force": false
+    },
+    "contact_retention_evidence": false,
+    "max_non_target_force_N": 3.3968730385265067,
+    "physics_valid": true,
+    "hook_success": null,
+    "training_eligible": false,
+    "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+    "sample_hz": 240.0,
+    "seated_samples": 0,
+    "legacy_seated_samples": 0,
+    "intended_contact_samples": 0,
+    "max_penetration_m": -0.0,
+    "max_prismatic_error_m": 0.003664819154458321,
+    "max_revolute_error_rad": 0.008800511987481385,
+    "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+  }
+}

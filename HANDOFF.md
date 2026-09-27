@@ -1,5 +1,13 @@
 # Farmily Tomato 작업 인수인계
 
+## 꼭지 안착 목표·전체 경로 연결 실험 (2026-09-27 후속)
+
+- `f24709c` 기반 별도 `codex/server-hook-seating-20260927`. 실제 gutter02/Tomato02에서 기하 목표32개 생성, 선택12개 IK·새 기하 통과, 전체 도구/환경의 끝 자세5개 통과.
+- opt-in `diagnostic_pose_waypoints_v1`: 경유점별 RING 위치·회전을 실제 IK에 반영. 기존 명령2,512개/phase 동일, action14 사용 안 함, 학습 제외.
+- 직접 준비12개/우회10개/하부 삽입5개 모두 경로 검사 차단. 마지막에는 안착 상승 중 뒤쪽 와이어가 목표 과실과 겹침. 새 물리0회, 비교 baseline1회만 실행. 정상 진입·안착·유지 동작 미확보.
+- baseline 부분 중심 진입이지만 꼭지 안착0; private 재계산 전체 비허용 힘 최대3.397N. 접촉/기하240Hz와 시각 구분 저장. 물리·충돌·성공 기준 유지.
+- 자동116+5개 통과, 독립 기하/시간 대조군. 정적 fixture는 자동 진입 성공이 아님. [서버 결과](mujoco-benchmark/HOOK_SEATING_SERVER_RESULTS_KO.md), 출력 `20260927_hook_seating_server/index.html`.
+
 ## 환경 사전검사 재검토·접촉력 진단 (2026-09-27)
 
 - 작업 브랜치 `codex/server-preflight-rereview-20260927`, 기준 `bd59ea3`(필수 `1f5bc1f` 포함). 7경로 전체 스캔 완료, 모두 blocked. 상세 저장 상한64개와 클래스별 전체 집계를 구분.

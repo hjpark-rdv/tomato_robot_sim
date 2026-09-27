@@ -1,0 +1,284 @@
+[
+  {
+    "candidate_id": "seating_00",
+    "status": "sampled_clear",
+    "reason": "all_samples_passed",
+    "first_violation": null
+  },
+  {
+    "candidate_id": "seating_01",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0004512737479390875,
+      "command": [
+        0.06830967298786791,
+        3.2832762504546857,
+        -0.5797512958302689,
+        -1.210465107449141,
+        0.21784334294477484,
+        -1.5705717149700427,
+        -0.14149911133571155
+      ],
+      "segment_world": [
+        [
+          -0.6929260013465545,
+          0.9196466752402532,
+          0.4887870768392335
+        ],
+        [
+          -0.6927402360133049,
+          0.9196639416850956,
+          0.4891979796336072
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_02",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0008907205153268669,
+      "command": [
+        0.09897099181379335,
+        3.244193573553365,
+        -0.56264404398166,
+        -1.2463269531456478,
+        0.26392328201332954,
+        -1.3102325480106707,
+        -0.10558080448716274
+      ],
+      "segment_world": [
+        [
+          -0.6928931698193651,
+          0.9195588169936967,
+          0.48829329110776476
+        ],
+        [
+          -0.6925263008524749,
+          0.9195929383098986,
+          0.4891042324948808
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_03",
+    "status": "sampled_clear",
+    "reason": "all_samples_passed",
+    "first_violation": null
+  },
+  {
+    "candidate_id": "seating_04",
+    "status": "sampled_clear",
+    "reason": "all_samples_passed",
+    "first_violation": null
+  },
+  {
+    "candidate_id": "seating_05",
+    "status": "sampled_clear",
+    "reason": "all_samples_passed",
+    "first_violation": null
+  },
+  {
+    "candidate_id": "seating_06",
+    "status": "sampled_clear",
+    "reason": "all_samples_passed",
+    "first_violation": null
+  },
+  {
+    "candidate_id": "seating_07",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0013628452444527997,
+      "command": [
+        0.1743124420826017,
+        3.280893005391949,
+        -0.6993656799871931,
+        -1.2334968916270561,
+        0.10110436960870095,
+        -1.5346853414404715,
+        -0.13437681868016765
+      ],
+      "segment_world": [
+        [
+          -0.6930133038469746,
+          0.9193217473279781,
+          0.48783825565083067
+        ],
+        [
+          -0.6924499886426387,
+          0.9193754291762863,
+          0.4890780707177072
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_08",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -7.181788270942862e-06,
+      "command": [
+        0.0063477226157719795,
+        3.2476247658891917,
+        -0.48690279224142347,
+        -1.1980731228251986,
+        0.40783787985747294,
+        -1.3474183980066818,
+        -0.17346701858715546
+      ],
+      "segment_world": [
+        [
+          -0.692701577958529,
+          0.9196932529000873,
+          0.4891714304583754
+        ],
+        [
+          -0.6926990021415756,
+          0.9196942048193106,
+          0.4891780665038532
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_09",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0009766249947609472,
+      "command": [
+        0.1651580915135135,
+        3.3045811531330984,
+        -0.7360544138198509,
+        -1.2309886899334486,
+        0.08753414482286515,
+        -1.7766351434740923,
+        -0.22981683081184187
+      ],
+      "segment_world": [
+        [
+          -0.6929880594207241,
+          0.9195056357410633,
+          0.4882440926112593
+        ],
+        [
+          -0.6925860349988715,
+          0.9195430029526108,
+          0.4891333487251697
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_10",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "g10",
+      "environment_class": "other",
+      "distance_m": -0.003498612483285061,
+      "command": [
+        0.004004827694485564,
+        3.289055588005265,
+        -0.5031701109674431,
+        -1.2908961844616447,
+        0.6628944317054232,
+        -1.6317632224219958,
+        -0.13318323818852662
+      ],
+      "segment_world": [
+        [
+          -0.7572182015420021,
+          0.7884734508350942,
+          0.45701819711725117
+        ],
+        [
+          -0.7543492675800868,
+          0.7901978291487454,
+          0.4560003431681131
+        ]
+      ]
+    }
+  },
+  {
+    "candidate_id": "seating_11",
+    "status": "blocked",
+    "reason": "clearance_violation",
+    "first_violation": {
+      "time_s": 0.0,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "robot_geom_10",
+      "environment_geom": "g22",
+      "environment_class": "other",
+      "distance_m": -0.01911086268018559,
+      "command": [
+        0.4557467359882691,
+        3.1774039020969616,
+        -1.1782692880871997,
+        -0.9070704133648329,
+        -0.28912801231161517,
+        -0.9612980002215917,
+        -0.028579268855260076
+      ],
+      "segment_world": [
+        [
+          -0.7735427552803511,
+          0.9617607183193809,
+          0.6674730855347637
+        ],
+        [
+          -0.7544412323844433,
+          0.9620355966291416,
+          0.6680034979713099
+        ]
+      ]
+    }
+  }
+]

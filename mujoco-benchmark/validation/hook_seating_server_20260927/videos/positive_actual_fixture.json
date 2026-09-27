@@ -1,0 +1,128 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/positive_actual_fixture_v2",
+  "states": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/positive_actual_fixture_v2/prescribed.npz",
+  "samples": "None",
+  "frames": 21,
+  "fps": 10,
+  "speed": 1,
+  "label": "PRESEATED FIXTURE; NOT automatic entry",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "prescribed STATIC state; NO dynamics",
+  "highlights": {
+    "glb_col_Attachment_01": [
+      1,
+      0.8,
+      0,
+      1
+    ],
+    "glb_col_TRUSS_Pedicel_proximal_02_02": [
+      1,
+      0.8,
+      0,
+      1
+    ],
+    "g384": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g385": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g386": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g387": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g388": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g389": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g390": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g391": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g392": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g393": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g394": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g395": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g396": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g397": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g398": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "g399": [
+      0,
+      0.8,
+      1,
+      1
+    ],
+    "glb_col_TRUSS_Rachis_05": [
+      1,
+      0.1,
+      0.7,
+      1
+    ]
+  }
+}

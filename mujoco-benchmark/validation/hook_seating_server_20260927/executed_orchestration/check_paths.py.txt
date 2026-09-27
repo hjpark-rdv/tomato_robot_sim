@@ -1,0 +1,29 @@
+import sys,json,numpy as np
+from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+from diagnose_contact_timing import load_engine
+from environment_preflight import Policy,check_engine,save_report,MuJoCoScene,screen
+O=Path(__file__).parent;P=O/'robot'
+goals=json.loads((O/'goals/seating_goals.json').read_text());targets=[t['name'] for t in goals['target_capsules_world']];rear=[w['name'] for w in goals['rear_wire_capsules_ring']]
+settings=json.loads(Path('/root/farmily_tomato/mujoco-benchmark/config/environment_preflight.example.json').read_text());settings.update(max_distance_queries=12000000,timeout_s=240,allowed_contacts=[dict(robot_geom=w,environment_geom=t,phases=['seat','hold','verify']) for w in rear for t in targets]);(O/'diagnostic_policy.json').write_text(json.dumps(settings,indent=2))
+def work(case):
+ c=case['candidate_id'];folder=P/'candidates'/c;e,rows,plan=load_engine(P,c)
+ policy=Policy.from_dict(settings if c!='baseline' else dict(settings,allowed_contacts=[]))
+ result=check_engine(e,rows,plan['seconds'],policy);save_report(folder,result)
+ ep=None
+ if c!='baseline':
+  command=next(r['command'] for r in reversed(rows) if r['phase']=='seat')
+  # screen API for endpoint only: not check_engine and not a normal-start path.
+  ep_policy=Policy.from_dict(dict(settings,allowed_contacts=[dict(x,phases=['seat']) for x in settings['allowed_contacts']]))
+  ep=screen(MuJoCoScene(e,ep_policy),np.array([command,command]),['seat','seat'],1/60,ep_policy)
+  (folder/'endpoint_preflight.json').write_text(json.dumps(ep,indent=2))
+ summary=dict(candidate_id=c,ik_pass=plan['preflight']['passed'],path_status=result['status'],first_violation=result['first_violation'],endpoint_status=None if ep is None else ep['status'],endpoint_first_violation=None if ep is None else ep['first_violation'],physics_executed=False)
+ print(c,summary['path_status'],summary['first_violation'] and summary['first_violation']['phases'],summary['endpoint_status'],flush=True);return summary
+if __name__=='__main__':
+ cases=json.loads((P/'candidates.json').read_text())
+ with ProcessPoolExecutor(max_workers=4) as pool:results=list(pool.map(work,cases))
+ (O/'path_results.json').write_text(json.dumps(results,indent=2))
+ original=json.loads((O.parent/'20260927_gutter_collision_scene/robot_checks/Tomato_02/candidates/predicted_00000/trace.json').read_text());baseline=json.loads((P/'candidates/baseline/trace.json').read_text())
+ assert np.array_equal([r['command'] for r in original],[r['command'] for r in baseline])
+ (O/'legacy_regression.json').write_text(json.dumps(dict(commands_equal=True,steps=len(original),phases_equal=[r['phase'] for r in original]==[r['phase'] for r in baseline]),indent=2))

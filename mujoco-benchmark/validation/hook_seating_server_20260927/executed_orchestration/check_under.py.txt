@@ -1,0 +1,12 @@
+import sys,json,numpy as np
+from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+from diagnose_contact_timing import load_engine
+from environment_preflight import Policy,check_engine,save_report
+O=Path(__file__).parent;P=O/'robot_under';policy=Policy.from_dict(json.loads((O/'diagnostic_policy.json').read_text()))
+def work(case):
+ c=case['candidate_id'];e,rows,plan=load_engine(P,c);result=check_engine(e,rows,plan['seconds'],policy);save_report(P/'candidates'/c,result);h=result['first_violation'];print(c,result['status'],h and (h['phases'],h['robot_geom'],h['environment_geom']),flush=True);return dict(candidate_id=c,status=result['status'],first_violation=h,complete=result['complete'])
+if __name__=='__main__':
+ with ProcessPoolExecutor(max_workers=4) as pool:r=list(pool.map(work,json.loads((P/'candidates.json').read_text())))
+ (O/'under_results.json').write_text(json.dumps(r,indent=2))

@@ -1,0 +1,1413 @@
+[
+  {
+    "candidate_id": "baseline",
+    "approach_azimuth_deg": -89.98944091796875,
+    "entry_clearance_m": 0.002,
+    "lateral_offset_m": 0.0,
+    "insertion_distance_m": 0.0425,
+    "lift_forward_angle_deg": 0.0,
+    "lift_distance_m": 0.0325,
+    "sampling": "direct_rgbd_angle_v1",
+    "lift_profile": "diagonal_75_return",
+    "trajectory_mode": "staged6d",
+    "stage": "coarse",
+    "parent_id": null,
+    "seed": 2026,
+    "sobol_index": null,
+    "pre_hook_distance_m": 0.17,
+    "hook_roll_deg": 0.0,
+    "approach_elevation_deg": 0.0
+  },
+  {
+    "candidate_id": "seating_00",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0000",
+    "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+    "rotation_seed": "local_x_0_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.702236648199181,
+          1.064823783548067,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.702218219124542,
+          0.964823785246221,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7022080831334905,
+          0.9098237861802057,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7022053187722946,
+          0.8948237864349288,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7022053187722946,
+          0.8948237864349288,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7022051344815482,
+          0.8938237864519103,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7022053187722946,
+          0.8948237864349288,
+          0.4934833653902833
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_01",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0001",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_0_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.703064818423481,
+          1.0642762989674124,
+          0.5296975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.703046389348842,
+          0.9642763006655664,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7030362533577905,
+          0.909276301599551,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7030334889965947,
+          0.8942763018542741,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7030334889965947,
+          0.8942763018542741,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7030333047058482,
+          0.8932763018712556,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7030334889965947,
+          0.8942763018542741,
+          0.4896975921370477
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_02",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0002",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_0_z_-15",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7030308469211874,
+          1.0592615891685289,
+          0.42178019529048905
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.703013045802039,
+          0.9626690081799129,
+          0.47766209980074115
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7030032551865074,
+          0.9095430886361741,
+          0.4918971472813798
+        ],
+        "orientation_xyzw": [
+          0.5610251892515298,
+          -0.43040764052847064,
+          0.5609458595791332,
+          -0.430511024970357
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7030005850186352,
+          0.8950542014878816,
+          0.4957794329579176
+        ],
+        "orientation_xyzw": [
+          0.5610251892515298,
+          -0.43040764052847064,
+          0.5609458595791332,
+          -0.430511024970357
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7030005850186352,
+          0.8950542014878816,
+          0.4957794329579176
+        ],
+        "orientation_xyzw": [
+          0.5610251892515298,
+          -0.43040764052847064,
+          0.5609458595791332,
+          -0.430511024970357
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7030004070074437,
+          0.8940882756779954,
+          0.4960382520030201
+        ],
+        "orientation_xyzw": [
+          0.5610251892515298,
+          -0.43040764052847064,
+          0.5609458595791332,
+          -0.430511024970357
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7030005850186352,
+          0.8950542014878816,
+          0.4957794329579176
+        ],
+        "orientation_xyzw": [
+          0.5610251892515298,
+          -0.43040764052847064,
+          0.5609458595791332,
+          -0.430511024970357
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_03",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0003",
+    "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+    "rotation_seed": "local_x_0_z_15",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7045439758988655,
+          1.0611029481800371,
+          0.5314601130697975
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7045261747797171,
+          0.964510367191421,
+          0.5055782085595454
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7045163841641855,
+          0.9113844476476822,
+          0.49134316107890674
+        ],
+        "orientation_xyzw": [
+          0.430511024970357,
+          -0.5609458595791332,
+          0.43040764052847064,
+          -0.5610251892515298
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7045137139963132,
+          0.8968955604993898,
+          0.48746087540236893
+        ],
+        "orientation_xyzw": [
+          0.430511024970357,
+          -0.5609458595791332,
+          0.43040764052847064,
+          -0.5610251892515298
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7045137139963132,
+          0.8968955604993898,
+          0.48746087540236893
+        ],
+        "orientation_xyzw": [
+          0.430511024970357,
+          -0.5609458595791332,
+          0.43040764052847064,
+          -0.5610251892515298
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7045135359851218,
+          0.8959296346895036,
+          0.48720205635726643
+        ],
+        "orientation_xyzw": [
+          0.430511024970357,
+          -0.5609458595791332,
+          0.43040764052847064,
+          -0.5610251892515298
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7045137139963132,
+          0.8968955604993898,
+          0.48746087540236893
+        ],
+        "orientation_xyzw": [
+          0.430511024970357,
+          -0.5609458595791332,
+          0.43040764052847064,
+          -0.5610251892515298
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_04",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0006",
+    "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+    "rotation_seed": "local_x_15_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7016594490044298,
+          1.064811570934193,
+          0.5306449387721315
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7016410199297908,
+          0.9648115726323471,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7016308839387393,
+          0.9098115735663317,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7016281195775435,
+          0.8948115738210548,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7016281195775435,
+          0.8948115738210548,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.701627935286797,
+          0.8938115738380363,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7016281195775435,
+          0.8948115738210548,
+          0.49064493877213144
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_05",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0007",
+    "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+    "rotation_seed": "local_x_-15_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7020994298906987,
+          1.0647929853137617,
+          0.4662717179925888
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7020810008160597,
+          0.9647929870119156,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7020708648250082,
+          0.9097929879459002,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7020681004638124,
+          0.8947929882006234,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7020681004638124,
+          0.8947929882006234,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.702067916173066,
+          0.8937929882176049,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7020681004638124,
+          0.8947929882006234,
+          0.49627171799258885
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_06",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0008",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_-15_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7046510953363437,
+          1.0656968697128921,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7046326662617047,
+          0.9656968714110461,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7046225302706532,
+          0.9106968723450307,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7046197659094574,
+          0.8956968725997538,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7046197659094574,
+          0.8956968725997538,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.704619581618711,
+          0.8946968726167354,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7046197659094574,
+          0.8956968725997538,
+          0.49388597001776247
+        ],
+        "orientation_xyzw": [
+          0.5610372166362747,
+          -0.5609338321943883,
+          0.4304196679132155,
+          -0.4304989975856121
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_07",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0009",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_15_z_0",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7003365094847362,
+          1.0630413093257394,
+          0.5266815474543028
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7003180804100972,
+          0.9630413110238935,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7003079444190458,
+          0.9080413119578781,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7003051800578499,
+          0.8930413122126012,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7003051800578499,
+          0.8930413122126012,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7003049957671035,
+          0.8920413122295827,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7003051800578499,
+          0.8930413122126012,
+          0.48668154745430287
+        ],
+        "orientation_xyzw": [
+          0.4304989975856121,
+          -0.4304196679132155,
+          0.5609338321943883,
+          -0.5610372166362747
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_08",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0010",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_-15_z_-15",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7025340175598787,
+          1.060195289663719,
+          0.42530286214714297
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7025162164407303,
+          0.963602708675103,
+          0.48118476665739507
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7025064258251986,
+          0.9104767891313642,
+          0.4954198141380337
+        ],
+        "orientation_xyzw": [
+          0.612418505782831,
+          -0.4999435705904464,
+          0.4999674195680487,
+          -0.3535994617790967
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7025037556573264,
+          0.8959879019830718,
+          0.4993020998145715
+        ],
+        "orientation_xyzw": [
+          0.612418505782831,
+          -0.4999435705904464,
+          0.4999674195680487,
+          -0.3535994617790967
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7025037556573264,
+          0.8959879019830718,
+          0.4993020998145715
+        ],
+        "orientation_xyzw": [
+          0.612418505782831,
+          -0.4999435705904464,
+          0.4999674195680487,
+          -0.3535994617790967
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7025035776461349,
+          0.8950219761731856,
+          0.499560918859674
+        ],
+        "orientation_xyzw": [
+          0.612418505782831,
+          -0.4999435705904464,
+          0.4999674195680487,
+          -0.3535994617790967
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7025037556573264,
+          0.8959879019830718,
+          0.4993020998145715
+        ],
+        "orientation_xyzw": [
+          0.612418505782831,
+          -0.4999435705904464,
+          0.4999674195680487,
+          -0.3535994617790967
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_09",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0015",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "local_x_15_z_15",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7003129279088193,
+          1.0588654362987644,
+          0.5243470909210127
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7002951267896708,
+          0.9622728553101483,
+          0.49846518641076065
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7002853361741391,
+          0.9091469357664095,
+          0.484230138930122
+        ],
+        "orientation_xyzw": [
+          0.3535994617790967,
+          -0.49996741956804863,
+          0.4999435705904464,
+          -0.6124185057828311
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7002826660062669,
+          0.894658048618117,
+          0.4803478532535842
+        ],
+        "orientation_xyzw": [
+          0.3535994617790967,
+          -0.49996741956804863,
+          0.4999435705904464,
+          -0.6124185057828311
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7002826660062669,
+          0.894658048618117,
+          0.4803478532535842
+        ],
+        "orientation_xyzw": [
+          0.3535994617790967,
+          -0.49996741956804863,
+          0.4999435705904464,
+          -0.6124185057828311
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7002824879950754,
+          0.8936921228082308,
+          0.4800890342084817
+        ],
+        "orientation_xyzw": [
+          0.3535994617790967,
+          -0.49996741956804863,
+          0.4999435705904464,
+          -0.6124185057828311
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7002826660062669,
+          0.894658048618117,
+          0.4803478532535842
+        ],
+        "orientation_xyzw": [
+          0.3535994617790967,
+          -0.49996741956804863,
+          0.4999435705904464,
+          -0.6124185057828311
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_10",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0018",
+    "target_geom": "glb_col_Attachment_01",
+    "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.7037593894410454,
+          1.0657078475852102,
+          0.5364265079905943
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.7036518362857633,
+          0.9657080799147754,
+          0.49661331853050605
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7035926820503581,
+          0.9107082076960361,
+          0.4967160643274576
+        ],
+        "orientation_xyzw": [
+          0.5987100231740554,
+          -0.5973619861110138,
+          0.3776518128820438,
+          -0.37694041164000014
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7035765490770658,
+          0.8957082425454709,
+          0.4967440859084443
+        ],
+        "orientation_xyzw": [
+          0.5987100231740554,
+          -0.5973619861110138,
+          0.3776518128820438,
+          -0.37694041164000014
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7035765490770658,
+          0.8957082425454709,
+          0.4967440859084443
+        ],
+        "orientation_xyzw": [
+          0.5987100231740554,
+          -0.5973619861110138,
+          0.3776518128820438,
+          -0.37694041164000014
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.703575473545513,
+          0.8947082448687665,
+          0.4967459540138434
+        ],
+        "orientation_xyzw": [
+          0.5987100231740554,
+          -0.5973619861110138,
+          0.3776518128820438,
+          -0.37694041164000014
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7035765490770658,
+          0.8957082425454709,
+          0.4967440859084443
+        ],
+        "orientation_xyzw": [
+          0.5987100231740554,
+          -0.5973619861110138,
+          0.3776518128820438,
+          -0.37694041164000014
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  },
+  {
+    "candidate_id": "seating_11",
+    "trajectory_mode": "diagnostic_pose_waypoints_v1",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_goal": "seat_goal_0019",
+    "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+    "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+    "pose_waypoints": [
+      {
+        "phase": "preapproach",
+        "ring_position_xyz": [
+          -0.6383888846573049,
+          1.0398446673828028,
+          0.4030058197514005
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "approach",
+        "ring_position_xyz": [
+          -0.6786048798132538,
+          0.9563912362024144,
+          0.47066479687289015
+        ],
+        "orientation_xyzw": [
+          0.5000460705641007,
+          -0.4999539251905144,
+          0.4999539251905144,
+          -0.5000460705641007
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "insert",
+        "ring_position_xyz": [
+          -0.7007236771490256,
+          0.9104918490532008,
+          0.4913772342897094
+        ],
+        "orientation_xyzw": [
+          0.32354846521658054,
+          -0.17402760304191187,
+          0.8190203716387222,
+          -0.4407226053610721
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "seat",
+        "ring_position_xyz": [
+          -0.7067560764224179,
+          0.8979738343761425,
+          0.4970260808579329
+        ],
+        "orientation_xyzw": [
+          0.32354846521658054,
+          -0.17402760304191187,
+          0.8190203716387222,
+          -0.4407226053610721
+        ],
+        "minimum_seconds": 0
+      },
+      {
+        "phase": "hold",
+        "ring_position_xyz": [
+          -0.7067560764224179,
+          0.8979738343761425,
+          0.4970260808579329
+        ],
+        "orientation_xyzw": [
+          0.32354846521658054,
+          -0.17402760304191187,
+          0.8190203716387222,
+          -0.4407226053610721
+        ],
+        "minimum_seconds": 1.1
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7071582363739773,
+          0.8971393000643386,
+          0.4974026706291478
+        ],
+        "orientation_xyzw": [
+          0.32354846521658054,
+          -0.17402760304191187,
+          0.8190203716387222,
+          -0.4407226053610721
+        ],
+        "minimum_seconds": 0.5
+      },
+      {
+        "phase": "verify",
+        "ring_position_xyz": [
+          -0.7067560764224179,
+          0.8979738343761425,
+          0.4970260808579329
+        ],
+        "orientation_xyzw": [
+          0.32354846521658054,
+          -0.17402760304191187,
+          0.8190203716387222,
+          -0.4407226053610721
+        ],
+        "minimum_seconds": 0.5
+      }
+    ]
+  }
+]

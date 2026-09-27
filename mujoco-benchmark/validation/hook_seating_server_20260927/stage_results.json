@@ -1,0 +1,1461 @@
+[
+  {
+    "family": "robot",
+    "candidate_id": "baseline",
+    "goal_id": null,
+    "rotation_seed": null,
+    "ik": {
+      "passed": true,
+      "samples": 2751,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": null,
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.238888888888889,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_TRUSS_Rachis_05",
+      "environment_class": "glb_plant",
+      "distance_m": -2.5974480317064773e-05,
+      "command": [
+        0.015403389383887715,
+        3.272629951118006,
+        -0.5453890780845164,
+        -1.203856897417775,
+        0.176870611241625,
+        -1.5705885227783598,
+        -0.13085286455504547
+      ],
+      "segment_world": [
+        [
+          -0.6912864638389705,
+          0.9310241818058532,
+          0.4604382046532233
+        ],
+        [
+          -0.691290244759745,
+          0.9309986605071222,
+          0.4604351977317214
+        ]
+      ]
+    },
+    "physics_executed": true,
+    "classification": "partial_center_entry",
+    "seating_evidence": {
+      "initially_seated": false,
+      "entered_after_start": false,
+      "hold": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "verify": {
+        "samples": 0,
+        "elapsed_s": 0.0,
+        "max_sample_gap_s": null,
+        "continuous": false,
+        "seated_with_force": false
+      },
+      "contact_retention_evidence": false,
+      "max_non_target_force_N": 3.3968730385265067,
+      "physics_valid": true,
+      "hook_success": null,
+      "training_eligible": false,
+      "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+      "sample_hz": 240.0,
+      "seated_samples": 0,
+      "legacy_seated_samples": 0,
+      "intended_contact_samples": 0,
+      "max_penetration_m": -0.0,
+      "max_prismatic_error_m": 0.003664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+    },
+    "trace_sha256": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_00",
+    "goal_id": "seat_goal_0000",
+    "rotation_seed": "local_x_0_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1457,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 6.016666666666667,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00022668705632813868,
+      "command": [
+        0.14332043826690433,
+        3.082553424114783,
+        -0.3803099233167265,
+        -1.370596306083754,
+        0.15141235438817163,
+        -1.5378921657649243,
+        0.21134246522346745
+      ],
+      "segment_world": [
+        [
+          -0.6987899157933354,
+          0.945644463308799,
+          0.5010439965463337
+        ],
+        [
+          -0.6985658912688335,
+          0.9456788197043768,
+          0.5010484318604512
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "9eca9f0513f7b9afc79002d5bb906b1542c6fdbd0fde162af64c08544b08cd99",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_01",
+    "goal_id": "seat_goal_0001",
+    "rotation_seed": "local_x_0_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1444,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.816666666666666,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00029568517072806587,
+      "command": [
+        0.15517621890004607,
+        3.0816548774945485,
+        -0.37952347898050043,
+        -1.3392140208492587,
+        0.12035680091623807,
+        -1.5392482869805326,
+        0.20599635180748066
+      ],
+      "segment_world": [
+        [
+          -0.7000114325179059,
+          0.9449380770076599,
+          0.5064576380559442
+        ],
+        [
+          -0.6997477410837672,
+          0.9449945449216823,
+          0.50657891427965
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "bd8c3378c1de87217d1ed4b35e3bbfdf31b6a5c5bf969170e7ad05800ca205a9",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_02",
+    "goal_id": "seat_goal_0002",
+    "rotation_seed": "local_x_0_z_-15",
+    "ik": {
+      "passed": true,
+      "samples": 1582,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 6.45,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_TRUSS_Rachis_05",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00012995414754298764,
+      "command": [
+        0.11983624624967021,
+        3.0980409428799156,
+        -0.36198153512929704,
+        -1.4024596733276704,
+        0.15860279583990944,
+        -1.5301470721589159,
+        0.2314460117631491
+      ],
+      "segment_world": [
+        [
+          -0.6885346867894194,
+          0.9328048004240258,
+          0.4544625702113936
+        ],
+        [
+          -0.6884126105175973,
+          0.9328331771523349,
+          0.4544969246232226
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "1e8efd60736574ca6c5defca54c3e539ed72abbfd986e3877de5dc0b67a3b0af",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_03",
+    "goal_id": "seat_goal_0003",
+    "rotation_seed": "local_x_0_z_15",
+    "ik": {
+      "passed": true,
+      "samples": 1399,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.6,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00038199366487585713,
+      "command": [
+        0.16843658430584468,
+        3.0858610295815705,
+        -0.387371787659022,
+        -1.355307094509577,
+        0.14406313496699663,
+        -1.5389564118196035,
+        0.2031047192770824
+      ],
+      "segment_world": [
+        [
+          -0.7017604427342267,
+          0.9456436139629253,
+          0.5086287728748697
+        ],
+        [
+          -0.7014721227611417,
+          0.9457218694628928,
+          0.5088668208319087
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "6cfb88800d8b03f65d8f66a0a5d733dac0b0f608074d8fcf19489dde1a9e4c74",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_04",
+    "goal_id": "seat_goal_0006",
+    "rotation_seed": "local_x_15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1513,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.841666666666667,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0004008641699262293,
+      "command": [
+        0.1534717806677545,
+        3.0800918962550607,
+        -0.3784631589625954,
+        -1.3404739820267038,
+        0.12108362482042678,
+        -1.5398922484096915,
+        0.2046021147005784
+      ],
+      "segment_world": [
+        [
+          -0.6996177812704522,
+          0.9453089756145299,
+          0.5050676153366492
+        ],
+        [
+          -0.6992479405709476,
+          0.945384040904915,
+          0.5052028009198305
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "de69779752e823cd4794d8f0744ae841f6f894911c1534f03931970815d4f528",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_05",
+    "goal_id": "seat_goal_0007",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1478,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.866666666666666,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_03_00",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0001771062630193086,
+      "command": [
+        0.15277865459839785,
+        3.0853510723102002,
+        -0.38805603714225734,
+        -1.4173039482191452,
+        0.20397397694635905,
+        -1.5355852810014536,
+        0.21915836875282507
+      ],
+      "segment_world": [
+        [
+          -0.6947266176136139,
+          0.9379920338148271,
+          0.4688747531290484
+        ],
+        [
+          -0.694589885641995,
+          0.9381034871650236,
+          0.4688905375222232
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "ccdf7d43c47a7b28e71053d1d03f9c47cd9fbd6122a991d804c7995de64a260f",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_06",
+    "goal_id": "seat_goal_0008",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1477,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 6.1416666666666675,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00023525878565412646,
+      "command": [
+        0.13645968418963028,
+        3.083102271438265,
+        -0.3759925332945589,
+        -1.347736678097669,
+        0.12336736228310646,
+        -1.5368345377143369,
+        0.21566555001156779
+      ],
+      "segment_world": [
+        [
+          -0.6987982086104617,
+          0.9456420343673565,
+          0.501043721447876
+        ],
+        [
+          -0.6985658912688337,
+          0.9456788197043772,
+          0.5010484318604513
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "f2659d1524c092d9877e5ad251c6788e765fbb5420c42367001b6609aa113e94",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_07",
+    "goal_id": "seat_goal_0009",
+    "rotation_seed": "local_x_15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1520,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.916666666666667,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0001408366857281949,
+      "command": [
+        0.14957159168856077,
+        3.081964089730744,
+        -0.375958731078412,
+        -1.3430655244170544,
+        0.12121170942150522,
+        -1.5399395186211453,
+        0.2024983153704481
+      ],
+      "segment_world": [
+        [
+          -0.6985515657682055,
+          0.944537732208484,
+          0.5014559593497598
+        ],
+        [
+          -0.6984123203689809,
+          0.9445581573644375,
+          0.5014612982490809
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "b0200f034f783b2ec2464e3406f78c95bec6304c67d14ebb1b3edf903d2745d5",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_08",
+    "goal_id": "seat_goal_0010",
+    "rotation_seed": "local_x_-15_z_-15",
+    "ik": {
+      "passed": true,
+      "samples": 1590,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 6.5,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_TRUSS_Rachis_05",
+      "environment_class": "glb_plant",
+      "distance_m": -9.134580323573384e-05,
+      "command": [
+        0.1167140534387967,
+        3.0962182189788394,
+        -0.36081600984589346,
+        -1.3961668010728068,
+        0.151672725108969,
+        -1.530792735435125,
+        0.2303056779503901
+      ],
+      "segment_world": [
+        [
+          -0.6885616151125326,
+          0.9327911026818034,
+          0.45471560097969843
+        ],
+        [
+          -0.6884757438060342,
+          0.93281078177622,
+          0.4547397444618827
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "2d0eda04e534c4509ab2b2e0300e6b1d03516d1151e5c9bc14ba8ceba255ae8e",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_09",
+    "goal_id": "seat_goal_0015",
+    "rotation_seed": "local_x_15_z_15",
+    "ik": {
+      "passed": true,
+      "samples": 1482,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.933333333333334,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00021406432567642688,
+      "command": [
+        0.14839501445837838,
+        3.0871108683731574,
+        -0.37590454415418945,
+        -1.3432202521766499,
+        0.12115264986726659,
+        -1.5397379960351412,
+        0.19824292483960965
+      ],
+      "segment_world": [
+        [
+          -0.6986081719998901,
+          0.9444957382170603,
+          0.5011623115055978
+        ],
+        [
+          -0.6983963504948392,
+          0.9445263773333294,
+          0.5011663649090428
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "37d8e4c2c09c939d55d2181bbb0e46e603c670f4cc09a81ef6c705e4d2b22f87",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_10",
+    "goal_id": "seat_goal_0018",
+    "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+    "ik": {
+      "passed": true,
+      "samples": 1493,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 5.622222222222222,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_01",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0002714503566104588,
+      "command": [
+        0.16685223042677427,
+        3.0789050098098008,
+        -0.38824142624483937,
+        -1.3510243436502414,
+        0.14166972720237328,
+        -1.5402074630990081,
+        0.20434434133504054
+      ],
+      "segment_world": [
+        [
+          -0.7023237421909297,
+          0.9463882018478241,
+          0.5090672415924355
+        ],
+        [
+          -0.7021437688630914,
+          0.9464644598972991,
+          0.5092556019047654
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "9666719345efe77db7d0efd46c9de74b11bbea8164cef1b833801cc745342a18",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot",
+    "candidate_id": "seating_11",
+    "goal_id": "seat_goal_0019",
+    "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+    "ik": {
+      "passed": true,
+      "samples": 2050,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "blocked",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 7.658333333333333,
+      "phases": [
+        "preapproach"
+      ],
+      "robot_geom": "g410",
+      "environment_geom": "glb_col_Tomato_08",
+      "environment_class": "glb_plant",
+      "distance_m": -3.345322093630287e-05,
+      "command": [
+        0.04754773474662449,
+        3.0890652595293107,
+        -0.3315434825113185,
+        -1.5747672423712875,
+        0.32052427031485553,
+        -1.5545706530667451,
+        0.12789374751469995
+      ],
+      "segment_world": [
+        [
+          -0.6569990340211905,
+          0.9290516143623251,
+          0.3675310540864064
+        ],
+        [
+          -0.6569714403842452,
+          0.9290702733521022,
+          0.36753414460280787
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "4c3835441e4cf19ca407b57518470a96d0544ee990badb4aa8916e45459976e3",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_00_route0",
+    "goal_id": "seat_goal_0000",
+    "rotation_seed": "local_x_0_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1523,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 14.625,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -7.224603116348324e-05,
+      "command": [
+        0.030979047021300908,
+        3.307402145304253,
+        -0.5714302416131343,
+        -1.1828501917612648,
+        0.18191324752911706,
+        -1.570533755633901,
+        -0.16562502695280457
+      ],
+      "segment_world": [
+        [
+          -0.6949140880854118,
+          0.9055151002120794,
+          0.4687558024915789
+        ],
+        [
+          -0.6949112701612475,
+          0.905461018009029,
+          0.4687079834196985
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "584306d214620878c7e73291d7d9dce77bad602ebfece711deadcfc001bb99b4",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_00_route1",
+    "goal_id": "seat_goal_0000",
+    "rotation_seed": "local_x_0_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1530,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.366666666666667,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -3.02931578784457e-05,
+      "command": [
+        0.03618490999516032,
+        3.302857622451832,
+        -0.5904603584700038,
+        -1.1688148847615234,
+        0.18690688684251186,
+        -1.5705408935199683,
+        -0.1610804881202064
+      ],
+      "segment_world": [
+        [
+          -0.6968585320831512,
+          0.9065336065650942,
+          0.4676732212739546
+        ],
+        [
+          -0.6968609035702757,
+          0.9065132498440942,
+          0.4676509130832347
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "a10f86a518e21238be460b6d289ab543e22a38ab36755da15c45733d35d4c359",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_03_route0",
+    "goal_id": "seat_goal_0003",
+    "rotation_seed": "local_x_0_z_15",
+    "ik": {
+      "passed": true,
+      "samples": 1527,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 14.605555555555556,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00012721980112061584,
+      "command": [
+        0.030395576126423334,
+        3.315206100560355,
+        -0.5793894915612662,
+        -1.1831142648448643,
+        0.1803584232965487,
+        -1.6262864570581084,
+        -0.1737901157572935
+      ],
+      "segment_world": [
+        [
+          -0.6952457737390147,
+          0.9048190050426359,
+          0.4696880858172047
+        ],
+        [
+          -0.6952480871440756,
+          0.9047127486312839,
+          0.46961816371053716
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "08944c4d68f3355cb62c9185e9e6cc82ff3a9b54dc022ca242b0aba20a08df68",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_03_route1",
+    "goal_id": "seat_goal_0003",
+    "rotation_seed": "local_x_0_z_15",
+    "ik": {
+      "passed": true,
+      "samples": 1525,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.341666666666667,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00019232009281427086,
+      "command": [
+        0.035371226256250374,
+        3.3126331748196316,
+        -0.6015807443980468,
+        -1.1689143481518856,
+        0.18519051822720511,
+        -1.6453762177461597,
+        -0.1714609157482409
+      ],
+      "segment_world": [
+        [
+          -0.6975308541877753,
+          0.9058929207028793,
+          0.46868140045631557
+        ],
+        [
+          -0.6975621661372866,
+          0.9057452575544772,
+          0.46856222757969573
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "2c3fafa747485716482c5fc94bba3f95de12d39e307895ddc58ce869ef869795",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_04_route0",
+    "goal_id": "seat_goal_0006",
+    "rotation_seed": "local_x_15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1585,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 14.625,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.00019079290735271516,
+      "command": [
+        0.056856971266887074,
+        3.305545861625543,
+        -0.5954503423323398,
+        -1.1952401424686925,
+        0.15585427196583956,
+        -1.560231300442867,
+        -0.16342837090064743
+      ],
+      "segment_world": [
+        [
+          -0.6949184315007367,
+          0.9058762990993571,
+          0.46852905475299184
+        ],
+        [
+          -0.6948939861539828,
+          0.9057429199040712,
+          0.4683948372102375
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "71a192af925d0907a65a1de4a2514a31ee03edd3eadc62ca46e9dbb4c7ec2f27",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_04_route1",
+    "goal_id": "seat_goal_0006",
+    "rotation_seed": "local_x_15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1587,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.355555555555556,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -8.034234387387291e-05,
+      "command": [
+        0.07064517999580212,
+        3.3009319350925455,
+        -0.6235365424938849,
+        -1.1840593271596727,
+        0.15320372079801917,
+        -1.5574064067728715,
+        -0.15859201915248022
+      ],
+      "segment_world": [
+        [
+          -0.696725626635465,
+          0.9067421502324661,
+          0.46755073111271883
+        ],
+        [
+          -0.6967289650154778,
+          0.9066894300427002,
+          0.4674901974111214
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "e3f165a164cec03f08ba0fc38835253b64e93baeb28290cbb65ff1f83ce0834f",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_05_route0",
+    "goal_id": "seat_goal_0007",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1527,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 14.633333333333333,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -1.2559117140861342e-05,
+      "command": [
+        0.006955487142421153,
+        3.309130777128675,
+        -0.5510663227397576,
+        -1.1691194248913996,
+        0.20684420386999333,
+        -1.580489740727984,
+        -0.16707348509662026
+      ],
+      "segment_world": [
+        [
+          -0.6948699550319017,
+          0.9052106336703419,
+          0.4690168855179508
+        ],
+        [
+          -0.6948693039665499,
+          0.9052009811398254,
+          0.469008877010481
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "32cc54851c132c97bb23029a17f3068ea527b8d567c4014c1d0c8e3b832f70f4",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_05_route1",
+    "goal_id": "seat_goal_0007",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1537,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.375,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g389",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -1.4999024251179105e-05,
+      "command": [
+        0.0038350341207517135,
+        3.3049254489088775,
+        -0.5632076432998447,
+        -1.1502321126638086,
+        0.22023003678552186,
+        -1.583547932274026,
+        -0.1626515644631553
+      ],
+      "segment_world": [
+        [
+          -0.6988877697807885,
+          0.9067592595713406,
+          0.4679084172609028
+        ],
+        [
+          -0.6988911275229095,
+          0.9067493184208752,
+          0.46789769952682514
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "0118a3e75204625388c8cbadd2c3af27167ab0a7723026e0848ffae16668eea1",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_06_route0",
+    "goal_id": "seat_goal_0008",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1526,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 14.633333333333333,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g391",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -5.079760097516958e-05,
+      "command": [
+        0.006734456579027468,
+        3.308541411341452,
+        -0.5522528247973967,
+        -1.168068315789895,
+        0.20759050166378462,
+        -1.5805565539873858,
+        -0.1664790055749776
+      ],
+      "segment_world": [
+        [
+          -0.6959912117625684,
+          0.9055498453982607,
+          0.4686203602358171
+        ],
+        [
+          -0.6959951120389911,
+          0.9055123741658175,
+          0.4685862854526506
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "0543dccd72ff979fb44da597f9d8bacc0d7823ebb11747917df8bb2a4af2a55b",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_routed",
+    "candidate_id": "seating_06_route1",
+    "goal_id": "seat_goal_0008",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1534,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.38888888888889,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -6.16094735853218e-07,
+      "command": [
+        0.002918317146446333,
+        3.3036309404867437,
+        -0.5637105276264739,
+        -1.1492392956575754,
+        0.22288736775154308,
+        -1.5839536168902673,
+        -0.16131964989209532
+      ],
+      "segment_world": [
+        [
+          -0.6975690836641074,
+          0.9070575011195278,
+          0.4672866059378572
+        ],
+        [
+          -0.6975691742138624,
+          0.9070571127951028,
+          0.4672861362809544
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "01933785eee4f645395495d59ebc62767f260dba84e5a222de01514b7bb60ff2",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_under",
+    "candidate_id": "seating_00_under",
+    "goal_id": "seat_goal_0000",
+    "rotation_seed": "local_x_0_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1476,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 16.041666666666668,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -0.0001579519597530722,
+      "command": [
+        0.027217912420973257,
+        3.2826901318694635,
+        -0.569336579777316,
+        -1.1858489568204005,
+        0.1828123453234041,
+        -1.5705726466520717,
+        -0.1409130223419161
+      ],
+      "segment_world": [
+        [
+          -0.6943740549741745,
+          0.9207732528234677,
+          0.46538198008223886
+        ],
+        [
+          -0.6943508793634485,
+          0.9208313581794614,
+          0.46523694394790627
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "64c33e1032b3ae29e05fc19a26f056615a9bed0a27ba2dfe4153e820efb96e89",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_under",
+    "candidate_id": "seating_03_under",
+    "goal_id": "seat_goal_0003",
+    "rotation_seed": "local_x_0_z_15",
+    "ik": {
+      "passed": true,
+      "samples": 1489,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 16.358333333333334,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -2.1512349061084948e-05,
+      "command": [
+        0.024777342031751595,
+        3.2910279815387744,
+        -0.5839735252823621,
+        -1.1853995167342894,
+        0.182433133426664,
+        -1.667041518325873,
+        -0.15011107947678126
+      ],
+      "segment_world": [
+        [
+          -0.6939072293795592,
+          0.9216246301476461,
+          0.4657108918580023
+        ],
+        [
+          -0.6939036231546887,
+          0.9216341502865533,
+          0.46569194078258436
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "89471fd0a357a476b403de4a4162410693be6d812edbffc74dbf859241314117",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_under",
+    "candidate_id": "seating_04_under",
+    "goal_id": "seat_goal_0006",
+    "rotation_seed": "local_x_15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1581,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 16.155555555555555,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -9.455677389717647e-05,
+      "command": [
+        0.06255710263896617,
+        3.281284452492594,
+        -0.6023500384700221,
+        -1.202792233769684,
+        0.14738706428046985,
+        -1.5586035678963028,
+        -0.13897136909812202
+      ],
+      "segment_world": [
+        [
+          -0.6937504662269598,
+          0.9206967134265928,
+          0.46541765777048405
+        ],
+        [
+          -0.6937303438404504,
+          0.9207322407485101,
+          0.465332370711393
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "f1917b1af6ca4ac2d63143ad9b0a2f055cb7b18c351db264727fbcab898d27c1",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_under",
+    "candidate_id": "seating_05_under",
+    "goal_id": "seat_goal_0007",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1477,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 15.95,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g389",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -5.352073953040083e-05,
+      "command": [
+        0.004638667908670112,
+        3.2837548972999335,
+        -0.5499161175870034,
+        -1.1735591543632233,
+        0.20553505006248082,
+        -1.5783481892893338,
+        -0.141776960136009
+      ],
+      "segment_world": [
+        [
+          -0.6957732922246656,
+          0.9211468229618587,
+          0.4652507789191577
+        ],
+        [
+          -0.6957710504348165,
+          0.9211666686115757,
+          0.46520112416988374
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "fc91dd7bcdc347dd45430a49dfdebb69c465c5c7a20129f662f8991794c0dfa0",
+    "training_eligible": false,
+    "hook_success": null
+  },
+  {
+    "family": "robot_under",
+    "candidate_id": "seating_06_under",
+    "goal_id": "seat_goal_0008",
+    "rotation_seed": "local_x_-15_z_0",
+    "ik": {
+      "passed": true,
+      "samples": 1481,
+      "max_arm_sample_rad": 0.015,
+      "max_lift_sample_m": 0.001
+    },
+    "endpoint_status": "sampled_clear",
+    "path_status": "blocked",
+    "first_violation": {
+      "time_s": 16.108333333333334,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Tomato_02",
+      "environment_class": "glb_plant",
+      "distance_m": -4.008861604860251e-05,
+      "command": [
+        0.0008468087553573519,
+        3.282338240396027,
+        -0.5509383405791839,
+        -1.1665852161281811,
+        0.217351288194263,
+        -1.5807810158662516,
+        -0.14020637317617834
+      ],
+      "segment_world": [
+        [
+          -0.6958988290591935,
+          0.9213126991376266,
+          0.4652968835225283
+        ],
+        [
+          -0.6958957774746931,
+          0.9213286745119548,
+          0.46526024239285413
+        ]
+      ]
+    },
+    "physics_executed": false,
+    "classification": "environment_preflight_blocked",
+    "seating_evidence": null,
+    "trace_sha256": "0aa997b149ad3ad4185071e6b55bf05b11dd6379edd3ad0625490a95107444b5",
+    "training_eligible": false,
+    "hook_success": null
+  }
+]

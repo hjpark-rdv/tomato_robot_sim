@@ -1,0 +1,25 @@
+import sys,json,numpy as np
+from pathlib import Path
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+import render_backend
+from diagnose_contact_timing import load_engine
+from hook_retention_diagnostic import capsule_endpoints,HookProbe
+import mujoco as mj
+from PIL import Image,ImageDraw,ImageFont
+import imageio.v2 as imageio
+O=Path(__file__).parent;e,trace,plan=load_engine(O/'robot_under','seating_00_under');m=e.model;d=e.data;p=HookProbe(e,0)
+q=next(r['command'] for r in reversed(trace) if r['phase']=='seat');d.qpos[e.qids]=q;mj.mj_kinematics(m,d)
+keep=p.target_ids+p.rear_ids+[m.geom('glb_col_TRUSS_Rachis_05').id]
+m.geom_group[:]=5
+for g in keep:m.geom_group[g]=0;m.geom_rgba[g]=[1,.8,0,1] if g in p.target_ids else [0,.8,1,1] if g in p.rear_ids else [1,.1,.7,1]
+opt=mj.MjvOption();opt.geomgroup[:]=0;opt.geomgroup[0]=1;opt.sitegroup[:]=0
+r=mj.Renderer(m,width=600,height=500);cam=mj.MjvCamera();a,b,_=capsule_endpoints(m,d,p.target_ids[1]);cam.lookat[:]=(a+b)/2;cam.distance=.09;cam.elevation=-20
+canvas=Image.new('RGB',(1200,560),(18,22,28));draw=ImageDraw.Draw(canvas);font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',16)
+for i,az in enumerate([-45,45]):
+ cam.azimuth=az;r.update_scene(d,camera=cam,scene_option=opt);canvas.paste(Image.fromarray(r.render()),(i*600,60))
+draw.text((10,4),'Actual MJB / IK seating_00 | collision shapes isolated for inspection | STATIC ONLY',fill='white',font=font)
+draw.text((10,28),'Yellow: Attachment_01 + proximal_02_02 | Cyan: g384..g399 | Pink: Rachis_05',fill='white',font=font)
+canvas.save(O/'videos/actual_mapping.png');r.close()
+with imageio.get_writer(O/'videos/actual_mapping.mp4',fps=10,codec='libx264',macro_block_size=1) as w:
+ for _ in range(30):w.append_data(np.asarray(canvas))
+(O/'videos/actual_mapping.json').write_text(json.dumps(dict(scope='Only rendering groups/colors changed; original model file untouched; static IK pose, no physics or entry',target=p.target_names,rear=sorted(p.rear_names),rachis='glb_col_TRUSS_Rachis_05',physics_executed=False),indent=2))

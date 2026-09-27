@@ -1,0 +1,7 @@
+{
+  "physics_steps": 0,
+  "prescribed_static_fixture": true,
+  "duration_is_display_time": true,
+  "automatic_entry_success": false,
+  "training_eligible": false
+}

@@ -1,0 +1,18 @@
+import sys,json
+from pathlib import Path
+sys.path.insert(0,'/root/farmily_tomato/mujoco-benchmark/scripts')
+import candidate_experiment as ce
+from measure_seating_rollout import SeatingProbe
+O=Path(__file__).parent;P=O/'robot';results=[]
+for case in json.loads((P/'candidates.json').read_text()):
+ c=case['candidate_id'];folder=P/'candidates'/c;check=json.loads((folder/'environment_preflight.json').read_text());plan=json.loads((folder/'plan.json').read_text())
+ if c!='baseline' and not check['passed']:
+  result=dict(candidate_id=c,result='environment_preflight_'+check['status'],physics_executed=False,training_eligible=False,hook_success=None,first_violation=check['first_violation'])
+ else:
+  if (folder/'states.npz').exists():raise ValueError('Preserve existing rollout')
+  ce.initialize(P);e=ce.ENGINE;probe=SeatingProbe(e,json.loads((folder/'trace.json').read_text()));original=e.rollout
+  def observed(**kw):return original(**kw,on_step=probe)
+  e.rollout=observed
+  result=ce.execute(case);result.update(physics_executed=True,training_eligible=False,diagnostic_only=True,baseline_blocked_reference=c=='baseline',environment_screen_status=check['status']);result['seating_evidence']=probe.save(folder)
+  print(c,result['result'],result['seating_evidence']['seated_samples'],flush=True)
+ (folder/'result.json').write_text(json.dumps(result,indent=2));results.append(result);(O/'execution_results.json').write_text(json.dumps(results,indent=2))

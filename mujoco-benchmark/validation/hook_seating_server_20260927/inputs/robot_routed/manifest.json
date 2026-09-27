@@ -1,0 +1,76 @@
+{
+  "classification_rule": "center_entry_only_v2",
+  "sampling": "SIM_GT_seating_goals",
+  "bounds": {
+    "approach_azimuth_deg": [
+      -90.0,
+      90.0
+    ],
+    "entry_clearance_m": [
+      0.002,
+      0.002
+    ],
+    "lateral_offset_m": [
+      0.0,
+      0.0
+    ],
+    "insertion_distance_m": [
+      0.0425,
+      0.0425
+    ],
+    "lift_forward_angle_deg": [
+      0.0,
+      0.0
+    ],
+    "lift_distance_m": [
+      0.0325,
+      0.0325
+    ]
+  },
+  "hz": 240,
+  "workers": 4,
+  "planning_workers": 4,
+  "seed": 0,
+  "count": 10,
+  "mujoco": "3.13.0",
+  "target": "Tomato_02",
+  "model_sha256": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+  "physics": "custom supplied model; break/validity require independent validation",
+  "scope": "Offline diagnostic plans; not one-shot inference or training",
+  "plan_only": false,
+  "arguments": {
+    "target": "Tomato_02",
+    "candidates": 8,
+    "workers": 4,
+    "planning_workers": 4,
+    "seed": 0,
+    "hz": 240,
+    "output": "/root/docker_share/mujoko_debugging_data/20260927_dense_house_harvest_test/targets/Tomato_02/physics",
+    "planning_python": "/root/isaaclab_env/bin/python",
+    "planning_model": "/root/farmily_tomato/nvidia-sim/rl/runs/20260922_054612_gpu_env8_matched12/planning_20260922_054636_450257/model.pkl",
+    "model": "/root/docker_share/mujoko_debugging_data/20260927_dense_house_harvest_test/scenes/scene_0000/model.mjb",
+    "reference": "/root/docker_share/mujoko_debugging_data/20260927_dense_house_harvest_test/scenes/scene_0000/reference.json",
+    "plan_only": false,
+    "scene_only": true,
+    "link_model": true
+  },
+  "action_schema": "explicit_ring_pose_waypoints_v1",
+  "action_frame": "action_frame.json",
+  "legacy_parameters": "world-axis Sobol parameters for reproduction; use action_camera.features for model input",
+  "hardware": {
+    "logical_cpus": 48,
+    "physical_cpus": 24,
+    "ram_bytes": 134913343488
+  },
+  "asset_hashes": {
+    "planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+    "model.mjb": "780429ec30f8057c4e8996c6e16d74347aef9041b813ce9d16b22d35a0bc17e9",
+    "initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+    "reference.json": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea"
+  },
+  "scene_only": false,
+  "gutter_collisions": true,
+  "diagnostic_only": true,
+  "training_eligible": false,
+  "experiment": "bounded_hook_seating"
+}

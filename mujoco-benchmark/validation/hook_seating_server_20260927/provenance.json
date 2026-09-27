@@ -1,0 +1,39 @@
+{
+  "base_commit": "f24709c431f670f6545ec120da12683d10b610c4",
+  "code_base": "bb38b35e831b0f4d87c8f042b36495bba94f04e4",
+  "ancestor_server": "ca833579ef0141e999ab9628d527f4636a628a9e",
+  "branch": "codex/server-hook-seating-20260927",
+  "commit": "Git commit containing this file",
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+  "source_hashes": {
+    "manifest.json": "299ef72703a122928e270457f5ec96e2225a92c8e4c37fa86a7f96b4a9023afd",
+    "replay_assets/model.mjb": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+    "replay_assets/reference.json": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+    "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+    "candidates/predicted_00000/trace.json": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d"
+  },
+  "code_sha256": {
+    "scripts/seating_evaluation.py": "e9ba9630ebf236fc8e21f15040643437617fec4eca3835fb1f09dd4c62435c47",
+    "scripts/seating_controls.py": "c0a25723799137f8f02ad8c7ac42f95c4bbcc1dc051b89fb75f04178ce07b064",
+    "scripts/measure_seating_rollout.py": "61d99d586828acb2e67ee3040f60aca89213c5764a88f1116e0af646b57526a1",
+    "scripts/render_seating_controls.py": "1e4fa2076c526e2007e34cb9dea81d0f2a2dbe3088b409468507d102f67ab1a3",
+    "scripts/plan_candidates.py": "4cf3a27c9d2983ce3fbd9335e91e0fa819b24f87e9e97622f2eff98fdc283644",
+    "scripts/candidate_experiment.py": "ab33fa35c7372603b560a8306522e256215c30dcc86ef19e3c9270fbee9a95ef",
+    "scripts/render_contact_diagnostic.py": "3adcaa81b927ececcc7730cb714a95077f9cf320f616ce574fca0ab72e1b95aa",
+    "scripts/hook_seating_geometry.py": "c81a09cca47191173ee7d6cd42efef9325ad756951b5d5963b3ff3c0060438ac",
+    "scripts/propose_hook_seating_goals.py": "f4671341a9b55f17b8e423d12ca15607270a06f731b2e0da5da098d681c6b631"
+  },
+  "planner_sha256": "92adf8f53085897824aa89d83849bb96d1be42329f42c60ba013443b81965354",
+  "python": "Python 3.11.14",
+  "mujoco": "3.13.0",
+  "physics_hz": 240,
+  "control_hz": 60,
+  "physics_baseline_runs": 1,
+  "physics_new_path_runs": 0,
+  "planning_new_paths": 27,
+  "nominal_clearance_m": 0,
+  "physics_penetration_limit_m": 0.0005,
+  "training_eligible": false,
+  "output": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server",
+  "notes": "No model, collision masks, margins/gaps, friction, stiffness, actuator, success labels or training data altered. Explicit-pose output never encoded as action14."
+}

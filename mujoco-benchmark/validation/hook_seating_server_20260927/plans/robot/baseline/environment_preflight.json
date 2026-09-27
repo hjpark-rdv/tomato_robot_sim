@@ -1,0 +1,353 @@
+{
+  "schema": "environment_preflight_v1",
+  "checker_revision": "audit_completion_v2",
+  "status": "blocked",
+  "passed": false,
+  "complete": false,
+  "policy": {
+    "schema": "environment_preflight_v1",
+    "settings": {
+      "clearance_m": 0.0,
+      "max_revolute_step_rad": 0.01,
+      "max_prismatic_step_m": 0.001,
+      "max_time_step_s": 0.008333333333333333,
+      "max_samples": 50000,
+      "max_distance_queries": 12000000,
+      "timeout_s": 240,
+      "allowed_contacts": []
+    },
+    "sha256": "6f9cf0a7bb138bbd7bed05b245f3fffb8481f91779dc872b81270b7ba2d5e2de"
+  },
+  "samples_checked": 2129,
+  "distance_queries": 1354087,
+  "last_sample_time_s": 15.238888888888889,
+  "last_completed_sample_time_s": 15.233333333333333,
+  "first_violation": {
+    "time_s": 15.238888888888889,
+    "phases": [
+      "insert"
+    ],
+    "robot_geom": "g390",
+    "environment_geom": "glb_col_TRUSS_Rachis_05",
+    "environment_class": "glb_plant",
+    "distance_m": -2.5974480317064773e-05,
+    "command": [
+      0.015403389383887715,
+      3.272629951118006,
+      -0.5453890780845164,
+      -1.203856897417775,
+      0.176870611241625,
+      -1.5705885227783598,
+      -0.13085286455504547
+    ],
+    "segment_world": [
+      [
+        -0.6912864638389705,
+        0.9310241818058532,
+        0.4604382046532233
+      ],
+      [
+        -0.691290244759745,
+        0.9309986605071222,
+        0.4604351977317214
+      ]
+    ]
+  },
+  "violations": [
+    {
+      "time_s": 15.238888888888889,
+      "phases": [
+        "insert"
+      ],
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_TRUSS_Rachis_05",
+      "environment_class": "glb_plant",
+      "distance_m": -2.5974480317064773e-05,
+      "command": [
+        0.015403389383887715,
+        3.272629951118006,
+        -0.5453890780845164,
+        -1.203856897417775,
+        0.176870611241625,
+        -1.5705885227783598,
+        -0.13085286455504547
+      ],
+      "segment_world": [
+        [
+          -0.6912864638389705,
+          0.9310241818058532,
+          0.4604382046532233
+        ],
+        [
+          -0.691290244759745,
+          0.9309986605071222,
+          0.4604351977317214
+        ]
+      ],
+      "last_time_s": 15.238888888888889,
+      "sample_hit_count": 1,
+      "minimum_distance_m": -2.5974480317064773e-05,
+      "minimum_time_s": 15.238888888888889
+    }
+  ],
+  "violation_summary": {
+    "sample_hits_by_environment_class": {
+      "glb_plant": 1
+    },
+    "minimum_distance_m_by_environment_class": {
+      "glb_plant": -2.5974480317064773e-05
+    },
+    "first_by_environment_class": {
+      "glb_plant": {
+        "time_s": 15.238888888888889,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g390",
+        "environment_geom": "glb_col_TRUSS_Rachis_05",
+        "environment_class": "glb_plant",
+        "distance_m": -2.5974480317064773e-05,
+        "command": [
+          0.015403389383887715,
+          3.272629951118006,
+          -0.5453890780845164,
+          -1.203856897417775,
+          0.176870611241625,
+          -1.5705885227783598,
+          -0.13085286455504547
+        ],
+        "segment_world": [
+          [
+            -0.6912864638389705,
+            0.9310241818058532,
+            0.4604382046532233
+          ],
+          [
+            -0.691290244759745,
+            0.9309986605071222,
+            0.4604351977317214
+          ]
+        ]
+      }
+    },
+    "worst_by_environment_class": {
+      "glb_plant": {
+        "time_s": 15.238888888888889,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g390",
+        "environment_geom": "glb_col_TRUSS_Rachis_05",
+        "environment_class": "glb_plant",
+        "distance_m": -2.5974480317064773e-05,
+        "command": [
+          0.015403389383887715,
+          3.272629951118006,
+          -0.5453890780845164,
+          -1.203856897417775,
+          0.176870611241625,
+          -1.5705885227783598,
+          -0.13085286455504547
+        ],
+        "segment_world": [
+          [
+            -0.6912864638389705,
+            0.9310241818058532,
+            0.4604382046532233
+          ],
+          [
+            -0.691290244759745,
+            0.9309986605071222,
+            0.4604351977317214
+          ]
+        ]
+      }
+    },
+    "observed_unique_pair_phase_count": 1,
+    "reported_unique_pair_phase_count": 1,
+    "omitted_unique_pair_phase_count": 0,
+    "details_truncated": false,
+    "reported_limit": 64,
+    "full_path_requested": false,
+    "full_path_collected": false,
+    "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+  },
+  "scan_stop_reason": "first_violation",
+  "minimum_queried_distance_m": -2.5974480317064773e-05,
+  "scope": "GT initial environment; nominal commands; discrete screening only",
+  "exclusions": [
+    "visual-only geoms",
+    "environment/environment pairs",
+    "robot self-collision"
+  ],
+  "warnings": [
+    "No continuous collision guarantee",
+    "No plant deformation or actuator tracking simulated",
+    "No real-observation collision model",
+    "Missing visual-only colliders remain untested"
+  ],
+  "inventory": {
+    "robot_collision_geoms": [
+      "robot_geom_3",
+      "robot_geom_4",
+      "robot_geom_6",
+      "robot_geom_8",
+      "robot_geom_10",
+      "robot_geom_12",
+      "robot_geom_14",
+      "robot_geom_18",
+      "robot_geom_19",
+      "g376",
+      "g377",
+      "g378",
+      "g379",
+      "g380",
+      "g381",
+      "g382",
+      "g383",
+      "g384",
+      "g385",
+      "g386",
+      "g387",
+      "g388",
+      "g389",
+      "g390",
+      "g391",
+      "g392",
+      "g393",
+      "g394",
+      "g395",
+      "g396",
+      "g397",
+      "g398",
+      "g399",
+      "g400",
+      "g401",
+      "g402",
+      "g403",
+      "g404",
+      "g405",
+      "g406",
+      "g407",
+      "g408",
+      "g409",
+      "g410"
+    ],
+    "environment_collision_geoms": [
+      "gutter_collision_Gutter_SlabSupportRib_003",
+      "gutter_collision_Gutter_SlabSupportRib_002",
+      "gutter_collision_Gutter_SlabSupportRib_001",
+      "gutter_collision_Gutter_SlabSupportRib",
+      "gutter_collision_GutterEndCap_003",
+      "gutter_collision_GutterEndCap_002",
+      "gutter_collision_GutterFoldedLip_003",
+      "gutter_collision_Gutter_1_Sidewall_001",
+      "gutter_collision_GutterFoldedLip_002",
+      "gutter_collision_Gutter_1_Sidewall",
+      "gutter_collision_Gutter_1_Base",
+      "gutter_collision_GutterEndCap_001",
+      "gutter_collision_GutterEndCap",
+      "gutter_collision_GutterFoldedLip_001",
+      "gutter_collision_Gutter_1_Sidewall_001_2",
+      "gutter_collision_GutterFoldedLip",
+      "gutter_collision_Gutter_1_Sidewall_2",
+      "gutter_collision_Gutter_1_Base_2",
+      "g0",
+      "g6",
+      "g10",
+      "g14",
+      "g18",
+      "g22",
+      "g26",
+      "g30",
+      "g34",
+      "g50",
+      "g78",
+      "g106",
+      "g137",
+      "g165",
+      "g205",
+      "g241",
+      "glb_col_TRUSS_Truss_01_Peduncle_00",
+      "glb_col_TRUSS_Truss_01_Peduncle_01",
+      "glb_col_TRUSS_Truss_01_Peduncle_02",
+      "glb_col_TRUSS_Truss_01_Peduncle_03",
+      "glb_col_TRUSS_Truss_01_Peduncle_04",
+      "glb_col_TRUSS_Rachis_00",
+      "glb_col_TRUSS_Rachis_01",
+      "glb_col_TRUSS_Rachis_02",
+      "glb_col_TRUSS_Rachis_03",
+      "glb_col_TRUSS_Rachis_04",
+      "glb_col_TRUSS_Rachis_05",
+      "glb_col_TRUSS_Rachis_06",
+      "glb_col_TRUSS_Rachis_07",
+      "glb_col_TRUSS_Rachis_08",
+      "glb_col_TRUSS_Rachis_09",
+      "glb_col_TRUSS_Rachis_10",
+      "glb_col_TRUSS_Rachis_11",
+      "glb_col_TRUSS_Rachis_12",
+      "glb_col_TRUSS_Rachis_13",
+      "glb_col_TRUSS_Pedicel_proximal_11_00",
+      "glb_col_TRUSS_Pedicel_proximal_11_01",
+      "glb_col_TRUSS_Pedicel_proximal_11_02",
+      "glb_col_Attachment_10",
+      "glb_col_Tomato_11",
+      "glb_col_TRUSS_Pedicel_proximal_10_00",
+      "glb_col_TRUSS_Pedicel_proximal_10_01",
+      "glb_col_TRUSS_Pedicel_proximal_10_02",
+      "glb_col_Attachment_09",
+      "glb_col_Tomato_10",
+      "glb_col_TRUSS_Pedicel_proximal_08_00",
+      "glb_col_TRUSS_Pedicel_proximal_08_01",
+      "glb_col_TRUSS_Pedicel_proximal_08_02",
+      "glb_col_Attachment_07",
+      "glb_col_Tomato_08",
+      "glb_col_TRUSS_Pedicel_proximal_09_00",
+      "glb_col_TRUSS_Pedicel_proximal_09_01",
+      "glb_col_TRUSS_Pedicel_proximal_09_02",
+      "glb_col_Attachment_08",
+      "glb_col_Tomato_09",
+      "glb_col_TRUSS_Pedicel_proximal_07_00",
+      "glb_col_TRUSS_Pedicel_proximal_07_01",
+      "glb_col_TRUSS_Pedicel_proximal_07_02",
+      "glb_col_Attachment_06",
+      "glb_col_Tomato_07",
+      "glb_col_TRUSS_Pedicel_proximal_06_00",
+      "glb_col_TRUSS_Pedicel_proximal_06_01",
+      "glb_col_TRUSS_Pedicel_proximal_06_02",
+      "glb_col_Attachment_05",
+      "glb_col_TRUSS_Pedicel_proximal_05_00",
+      "glb_col_TRUSS_Pedicel_proximal_05_01",
+      "glb_col_TRUSS_Pedicel_proximal_05_02",
+      "glb_col_Attachment_04",
+      "glb_col_Tomato_05",
+      "glb_col_TRUSS_Pedicel_proximal_04_00",
+      "glb_col_TRUSS_Pedicel_proximal_04_01",
+      "glb_col_TRUSS_Pedicel_proximal_04_02",
+      "glb_col_Attachment_03",
+      "glb_col_Tomato_04",
+      "glb_col_TRUSS_Pedicel_proximal_03_00",
+      "glb_col_TRUSS_Pedicel_proximal_03_01",
+      "glb_col_TRUSS_Pedicel_proximal_03_02",
+      "glb_col_Attachment_02",
+      "glb_col_Tomato_03",
+      "glb_col_TRUSS_Pedicel_proximal_02_00",
+      "glb_col_TRUSS_Pedicel_proximal_02_01",
+      "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "glb_col_Attachment_01",
+      "glb_col_Tomato_02",
+      "glb_col_TRUSS_Pedicel_proximal_01_00",
+      "glb_col_TRUSS_Pedicel_proximal_01_01",
+      "glb_col_TRUSS_Pedicel_proximal_01_02",
+      "glb_col_Attachment_00",
+      "glb_col_Tomato_01"
+    ],
+    "ignored_visual_geom_count": 3558,
+    "mesh_semantics": "MuJoCo collision mesh (convex), not visual mesh triangles",
+    "native_convex_distance": true
+  },
+  "backend": "MuJoCo 3.13.0",
+  "distance_query_horizon_m": 0.01,
+  "reason": "clearance_violation",
+  "wall_s": 9.797527950257063
+}

@@ -1,0 +1,299 @@
+{
+  "clearance_m": 0.0,
+  "max_revolute_step_rad": 0.01,
+  "max_prismatic_step_m": 0.001,
+  "max_time_step_s": 0.008333333333333333,
+  "max_samples": 50000,
+  "max_distance_queries": 12000000,
+  "timeout_s": 240,
+  "allowed_contacts": [
+    {
+      "robot_geom": "g384",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g384",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g385",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g385",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g386",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g386",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g387",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g388",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g389",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g389",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g390",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g391",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g391",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g392",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g392",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g393",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g393",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g394",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g394",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g395",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g395",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g396",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g396",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g397",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g397",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g398",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g398",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g399",
+      "environment_geom": "glb_col_Attachment_01",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    },
+    {
+      "robot_geom": "g399",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "phases": [
+        "seat",
+        "hold",
+        "verify"
+      ]
+    }
+  ]
+}

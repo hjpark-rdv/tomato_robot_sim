@@ -1,0 +1,653 @@
+[
+  {
+    "candidate_id": "seating_00",
+    "ring_position_world": [
+      -0.7022052962695869,
+      0.8948237950297877,
+      0.4934833902346167
+    ],
+    "hook_body_origin_world": [
+      -0.7022487359412029,
+      0.7884209152424361,
+      0.49965143067987466
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.460468688412628e-08,
+    "rotation_residual_rad": 1.0413955089925262e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0010349101403029776,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000060683562994,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.02238724359817081,
+          0.0,
+          0.01177669311284078
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0000",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_01",
+    "ring_position_world": [
+      -0.7030334662202316,
+      0.8942763104916537,
+      0.4896976158535887
+    ],
+    "hook_body_origin_world": [
+      -0.7030769059057292,
+      0.7878734307038138,
+      0.49586565629032375
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.399766695436306e-08,
+    "rotation_residual_rad": 1.0445232121499787e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000125391571906,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021705227778038363,
+          0.0,
+          0.012755568710688073
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0013972925704076075,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0001",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_02",
+    "ring_position_world": [
+      -0.7030005620209541,
+      0.895054209818082,
+      0.4957794577369889
+    ],
+    "hook_body_origin_world": [
+      -0.7030449640962467,
+      0.7938733261905911,
+      0.5292764166108456
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.481792568334984e-08,
+    "rotation_residual_rad": 1.0907680003859963e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000125011445017,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021666696201751164,
+          0.0,
+          0.01294870055169767
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0013137379768060078,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0002",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_03",
+    "ring_position_world": [
+      -0.7045136922747826,
+      0.8968955689817288,
+      0.48746090072309983
+    ],
+    "hook_body_origin_world": [
+      -0.7045575058935509,
+      0.7925218727228368,
+      0.46587968095672994
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.442258538346399e-08,
+    "rotation_residual_rad": 9.915038430225611e-08,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.00066942001429863,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.000400006861021077,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.020249907111337125,
+          0.0,
+          0.014919512315139796
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0003",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_04",
+    "ring_position_world": [
+      -0.7016280990612531,
+      0.8948115820695262,
+      0.4906449643602582
+    ],
+    "hook_body_origin_world": [
+      -0.7032657965783092,
+      0.7884084084484724,
+      0.4965865152681874
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.3818747435946525e-08,
+    "rotation_residual_rad": 1.006451480237305e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.0015185880533392909,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.000400008949404387,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022521626265532422,
+          -2.168404344971009e-19,
+          0.011454872445979565
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0006",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_05",
+    "ring_position_world": [
+      -0.7020680759205705,
+      0.8947929972073182,
+      0.49627174270971297
+    ],
+    "hook_body_origin_world": [
+      -0.7005129609097942,
+      0.7883904120461475,
+      0.5022459309645356
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.597815307936738e-08,
+    "rotation_residual_rad": 1.0651400534334084e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0005373710046220202,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000008700671938,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.021970683718514957,
+          0.0,
+          0.012562104448783354
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0007",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_06",
+    "ring_position_world": [
+      -0.7046197410021985,
+      0.8956968819756568,
+      0.49388599449567194
+    ],
+    "hook_body_origin_world": [
+      -0.7030646256005202,
+      0.7892942968247183,
+      0.4998601828309805
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.615863873784152e-08,
+    "rotation_residual_rad": 1.0731123080851244e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000144537356304,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.02028506656064039,
+          0.0,
+          0.014998830338348786
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0014876479752125734,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0008",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_07",
+    "ring_position_world": [
+      -0.7003051595239659,
+      0.8930413205231161,
+      0.48668157307595833
+    ],
+    "hook_body_origin_world": [
+      -0.7019428570390628,
+      0.7866381469021897,
+      0.4926231239867083
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.386996133738865e-08,
+    "rotation_residual_rad": 1.0064294693720376e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000105601115575,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022939854999733802,
+          0.0,
+          0.01019480195400955
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0012251596285245865,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0009",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_08",
+    "ring_position_world": [
+      -0.7025037300014499,
+      0.895987911049526,
+      0.4993021228394069
+    ],
+    "hook_body_origin_world": [
+      -0.7009495677762491,
+      0.7947571494387455,
+      0.5326118349435378
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.564502253725064e-08,
+    "rotation_residual_rad": 1.1355758383015571e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000151334371542,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021604447322277606,
+          0.0,
+          0.013029884622819609
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0014418113607479075,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0010",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_09",
+    "ring_position_world": [
+      -0.7002826463476758,
+      0.8946580567851818,
+      0.4803478792549961
+    ],
+    "hook_body_origin_world": [
+      -0.7019207286081516,
+      0.7903426864829363,
+      0.4585478874615506
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.360408565193072e-08,
+    "rotation_residual_rad": 9.542298324830742e-08,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00040000973188362076,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022758162763788767,
+          0.0,
+          0.009867317522622765
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing"
+        ],
+        "minimum_rear_surface_gap_m": 0.0013211282796947816,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0015",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_10",
+    "ring_position_world": [
+      -0.7035765236293563,
+      0.8957082521507103,
+      0.49674411456221124
+    ],
+    "hook_body_origin_world": [
+      -0.7008630989667354,
+      0.7893188751100142,
+      0.5025369736554314
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.950803589822146e-08,
+    "rotation_residual_rad": 1.0805073944081954e-07,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000139830861063,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.02027445411798759,
+          0.0,
+          0.015036556957671587
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.0015039945508318869,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0018",
+    "physics_executed": false
+  },
+  {
+    "candidate_id": "seating_11",
+    "ring_position_world": [
+      -0.7067560527058138,
+      0.8979738415475192,
+      0.4970261017894885
+    ],
+    "hook_body_origin_world": [
+      -0.753348352460015,
+      0.8125753057159965,
+      0.5405676580137183
+    ],
+    "ring_body_offset": [
+      -0.10640287,
+      0.00616804,
+      6.305e-05
+    ],
+    "position_residual_m": 3.24351040547018e-08,
+    "rotation_residual_rad": 6.348082016482903e-08,
+    "seated_geometry": true,
+    "legacy_geometry": true,
+    "target_metrics": [
+      {
+        "geometric_seating_candidate": false,
+        "reasons": [
+          "no_finite_centreline_plane_crossing",
+          "too_far_from_rear_wire"
+        ],
+        "minimum_rear_surface_gap_m": 0.0022937044462202575,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": null,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_Attachment_01"
+      },
+      {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00040001780197806676,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": [
+          -0.02395464727444563,
+          0.0,
+          0.008571081753580014
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity",
+        "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02"
+      }
+    ],
+    "source_goal": "seat_goal_0019",
+    "physics_executed": false
+  }
+]

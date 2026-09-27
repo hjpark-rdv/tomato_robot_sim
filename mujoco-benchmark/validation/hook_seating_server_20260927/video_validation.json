@@ -1,0 +1,72 @@
+[
+  {
+    "file": "actual_mapping.mp4",
+    "decoded": true,
+    "sha256": "f060980e99583aae4a1df750b9598753ad60407053467d859a513ff32031f3ea",
+    "width": 1200,
+    "height": 560,
+    "r_frame_rate": "10/1",
+    "duration": "3.000000",
+    "nb_read_frames": "30"
+  },
+  {
+    "file": "baseline.mp4",
+    "decoded": true,
+    "sha256": "b2153af16543a44695a3282fe98f663eabb6ef27a21aaa8b7f88d8ebf24c6000",
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "21.100000",
+    "nb_read_frames": "211"
+  },
+  {
+    "file": "final_under_plan.mp4",
+    "decoded": true,
+    "sha256": "ba1bd1641380bad11728f7010a6518dfb901172bb4ce8a4396f66c3ad7e8728d",
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "10.400000",
+    "nb_read_frames": "104"
+  },
+  {
+    "file": "negative_actual_fixture.mp4",
+    "decoded": true,
+    "sha256": "dd14293f4ede7bea12fd44a487d04d02f485a859b7fd7085d21bddbbbf367fee",
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "2.100000",
+    "nb_read_frames": "21"
+  },
+  {
+    "file": "negative_fixtures.mp4",
+    "decoded": true,
+    "sha256": "355938d43bce2d77a8541bf30603870e8367e1fb39c2210aa645ce5b05d5c54c",
+    "width": 1200,
+    "height": 780,
+    "r_frame_rate": "10/1",
+    "duration": "3.000000",
+    "nb_read_frames": "30"
+  },
+  {
+    "file": "positive_actual_fixture.mp4",
+    "decoded": true,
+    "sha256": "aab9305c078f7e29231838fb0eeb4a72bcf521904ab3b51d6703fedb9d7caa65",
+    "width": 960,
+    "height": 672,
+    "r_frame_rate": "10/1",
+    "duration": "2.100000",
+    "nb_read_frames": "21"
+  },
+  {
+    "file": "positive_fixture.mp4",
+    "decoded": true,
+    "sha256": "d8cb5d2a6c28dbfaae0e52003941d27e5d4dc638e336ae89f2e7dc2fe7556f89",
+    "width": 400,
+    "height": 420,
+    "r_frame_rate": "10/1",
+    "duration": "3.000000",
+    "nb_read_frames": "30"
+  }
+]

@@ -1,0 +1,2142 @@
+{
+  "schema": "hook_seating_goals_v1",
+  "attempted": 320,
+  "accepted_before_limit": 283,
+  "rejected_proposal_count": 37,
+  "exported_count": 32,
+  "omitted_by_limit": 251,
+  "rejection_condition_counts": {
+    "no_finite_centreline_plane_crossing": 37
+  },
+  "goals": [
+    {
+      "ring_position_xyz": [
+        -0.7022053187722946,
+        0.8948237864349288,
+        0.4934833653902833
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.023140092453313946,
+        -0.0007790773276917904,
+        0.010944448661954041
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.000400000000000034,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.000400000000000034,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022387227315369053,
+          0.0,
+          0.011776742947992856
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_0",
+      "position_delta_from_baseline_m": 0.013535933035688896,
+      "rotation_delta_from_baseline_rad": 0.0,
+      "hook_body_position_xyz": [
+        -0.7022487597068936,
+        0.7884209066222818,
+        0.4996514053902833
+      ],
+      "goal_id": "seat_goal_0000"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7030334889965947,
+        0.8942763018542741,
+        0.4896975921370477
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.02170646125684416,
+        -0.000534022438032342,
+        0.013010352201708026
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000032,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000032,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.0217052365798273,
+          0.0,
+          0.012755579206863188
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_0",
+      "position_delta_from_baseline_m": 0.014724047823432649,
+      "rotation_delta_from_baseline_rad": 0.0,
+      "hook_body_position_xyz": [
+        -0.7030769299311936,
+        0.7878734220416271,
+        0.4958656321370477
+      ],
+      "goal_id": "seat_goal_0001"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7030005850186352,
+        0.8950542014878816,
+        0.4957794329579176
+      ],
+      "orientation_xyzw": [
+        0.5610251892515298,
+        -0.43040764052847064,
+        0.5609458595791332,
+        -0.430511024970357
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.021651325105250894,
+        -5.793085202276866e-05,
+        0.012977304864603106
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.000399999999999972,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.000399999999999972,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021666705326094594,
+          0.0,
+          0.012948709658083464
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_-15",
+      "position_delta_from_baseline_m": 0.014009792430607897,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.7030449883187928,
+        0.793873317685233,
+        0.5292763913010693
+      ],
+      "goal_id": "seat_goal_0002"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7045137139963132,
+        0.8968955604993898,
+        0.48746087540236893
+      ],
+      "orientation_xyzw": [
+        0.430511024970357,
+        -0.5609458595791332,
+        0.43040764052847064,
+        -0.5610251892515298
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02211039711989848,
+        -0.0011170375786946133,
+        0.013252462037983786
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999997156,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999997156,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.020249882714388132,
+          0.0,
+          0.014919568987978828
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_15",
+      "position_delta_from_baseline_m": 0.014107172726290243,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.7045575288906821,
+        0.7925218643050517,
+        0.4658796553263853
+      ],
+      "goal_id": "seat_goal_0003"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7021456125350763,
+        0.8956690725747695,
+        0.49997448373501235
+      ],
+      "orientation_xyzw": [
+        0.5610251892515298,
+        -0.43040764052847064,
+        0.5609458595791332,
+        -0.430511024970357
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02301352485415599,
+        -0.00025291539320059463,
+        0.010884586647336023
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00040000000000004875,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00040000000000004875,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022873217628527957,
+          0.0,
+          0.011106776832229482
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_-15",
+      "position_delta_from_baseline_m": 0.014611590497419183,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.702190015835234,
+        0.7944881887721208,
+        0.533471442078164
+      ],
+      "goal_id": "seat_goal_0004"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7052055630664281,
+        0.8964715786463971,
+        0.4839545794896403
+      ],
+      "orientation_xyzw": [
+        0.430511024970357,
+        -0.5609458595791332,
+        0.43040764052847064,
+        -0.5610251892515298
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.020470586585368496,
+        -0.0010133877634132672,
+        0.015182021665457675
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999999845,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999999845,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.020196557756151753,
+          0.0,
+          0.014681188919848695
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_15",
+      "position_delta_from_baseline_m": 0.016420318194866685,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.705249377960797,
+        0.792097882452059,
+        0.4623733594136567
+      ],
+      "goal_id": "seat_goal_0005"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7016281195775435,
+        0.8948115738210548,
+        0.49064493877213144
+      ],
+      "orientation_xyzw": [
+        0.4304989975856121,
+        -0.4304196679132155,
+        0.5609338321943883,
+        -0.5610372166362747
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02315241143945089,
+        -0.0008109982954983656,
+        0.01095027510832037
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999954,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999954,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022521618735356175,
+          0.0,
+          0.011454911270375455
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_0",
+      "position_delta_from_baseline_m": 0.013459719931347394,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7032658183313711,
+        0.7884084002014393,
+        0.4965864893649218
+      ],
+      "goal_id": "seat_goal_0006"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7020681004638124,
+        0.8947929882006234,
+        0.49627171799258885
+      ],
+      "orientation_xyzw": [
+        0.5610372166362747,
+        -0.5609338321943883,
+        0.4304196679132155,
+        -0.4304989975856121
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02317091597516077,
+        -0.0008563076300309328,
+        0.010959027101678336
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999997893,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999997893,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.021970648988708444,
+          0.0,
+          0.01256218008237684
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_0",
+      "position_delta_from_baseline_m": 0.013920719073460113,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7005129868259506,
+        0.7883904029867966,
+        0.5022459056669666
+      ],
+      "goal_id": "seat_goal_0007"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7046197659094574,
+        0.8956968725997538,
+        0.49388597001776247
+      ],
+      "orientation_xyzw": [
+        0.5610372166362747,
+        -0.5609338321943883,
+        0.4304196679132155,
+        -0.4304989975856121
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.02028559819933169,
+        -0.00024798154333050226,
+        0.015044824921156528
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000349,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000349,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.020285076172934374,
+          2.168404344971009e-19,
+          0.014998841815442383
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_0",
+      "position_delta_from_baseline_m": 0.014093817702215595,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7030646522715956,
+        0.7892942873859271,
+        0.4998601576921402
+      ],
+      "goal_id": "seat_goal_0008"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7003051800578499,
+        0.8930413122126012,
+        0.48668154745430287
+      ],
+      "orientation_xyzw": [
+        0.4304989975856121,
+        -0.4304196679132155,
+        0.5609338321943883,
+        -0.5610372166362747
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.022941953679635765,
+        -0.0007678539795237577,
+        0.010850736003696931
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000132,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000132,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022939863431880585,
+          0.0,
+          0.010194810548726362
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_0",
+      "position_delta_from_baseline_m": 0.015727850592982928,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7019428788116776,
+        0.7866381385929857,
+        0.4926230980470932
+      ],
+      "goal_id": "seat_goal_0009"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7025037556573264,
+        0.8959879019830718,
+        0.4993020998145715
+      ],
+      "orientation_xyzw": [
+        0.612418505782831,
+        -0.4999435705904464,
+        0.4999674195680487,
+        -0.3535994617790967
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.021661261411483335,
+        0.0002339980264877762,
+        0.012983260457297776
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000327,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000327,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021604458047046197,
+          0.0,
+          0.013029896312636602
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_-15",
+      "position_delta_from_baseline_m": 0.014201659096155653,
+      "rotation_delta_from_baseline_rad": 0.3697099934696538,
+      "hook_body_position_xyz": [
+        -0.7009495951386638,
+        0.794757140106287,
+        0.5326118111899185
+      ],
+      "goal_id": "seat_goal_0010"
+    },
+    {
+      "ring_position_xyz": [
+        -0.6996568899073808,
+        0.895264210738725,
+        0.5022440364522794
+      ],
+      "orientation_xyzw": [
+        0.612418505782831,
+        -0.4999435705904464,
+        0.4999674195680487,
+        -0.3535994617790967
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g388",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.023992437838602314,
+        -0.00040113494715820716,
+        0.008584631536428638
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999616,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999616,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": [
+          -0.02369112624090101,
+          0.0,
+          0.00918610389513819
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_-15",
+      "position_delta_from_baseline_m": 0.015386275235262181,
+      "rotation_delta_from_baseline_rad": 0.3697099934696538,
+      "hook_body_position_xyz": [
+        -0.6981027293887183,
+        0.7940334488619402,
+        0.5355537478276264
+      ],
+      "goal_id": "seat_goal_0011"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7078637507397257,
+        0.8986698527091505,
+        0.4933574604132995
+      ],
+      "orientation_xyzw": [
+        0.5000564251641687,
+        -0.6123263604092447,
+        0.3535073164055104,
+        -0.5000325761865665
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g384",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.018869817634283602,
+        -0.00031807235939450355,
+        0.01710260571249712
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00040000000000000625,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00038203111753544634,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.01795586940102223,
+          0.0,
+          0.018035661899522864
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_15",
+      "position_delta_from_baseline_m": 0.014332236401017903,
+      "rotation_delta_from_baseline_rad": 0.36970999346965383,
+      "hook_body_position_xyz": [
+        -0.7063090203079934,
+        0.794346623786589,
+        0.4715889933695111
+      ],
+      "goal_id": "seat_goal_0012"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7016205845040907,
+        0.8964430092557141,
+        0.48433171038023537
+      ],
+      "orientation_xyzw": [
+        0.3535994617790967,
+        -0.49996741956804863,
+        0.4999435705904464,
+        -0.6124185057828311
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.023357930558885742,
+        -0.0012040408990399473,
+        0.011047478410063762
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999711,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999711,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.021874843531471892,
+          0.0,
+          0.01210065021788562
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_15",
+      "position_delta_from_baseline_m": 0.014546764326090228,
+      "rotation_delta_from_baseline_rad": 0.36970999346965383,
+      "hook_body_position_xyz": [
+        -0.7032586680207699,
+        0.7921276390255119,
+        0.462531718336447
+      ],
+      "goal_id": "seat_goal_0013"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7066392241045915,
+        0.8968698323682033,
+        0.4889983369435905
+      ],
+      "orientation_xyzw": [
+        0.5000564251641687,
+        -0.6123263604092447,
+        0.3535073164055104,
+        -0.5000325761865665
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g384",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.018780227340923022,
+        -0.0006730332531920121,
+        0.017021405798881586
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000067,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000067,
+        "nearest_rear_wire": "g384",
+        "centreline_plane_crossing_ring": [
+          -0.018613846256780628,
+          0.0,
+          0.016886928634208983
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_15",
+      "position_delta_from_baseline_m": 0.015015822840293533,
+      "rotation_delta_from_baseline_rad": 0.36970999346965383,
+      "hook_body_position_xyz": [
+        -0.7050844936728591,
+        0.7925466034456419,
+        0.46722986989980214
+      ],
+      "goal_id": "seat_goal_0014"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7002826660062669,
+        0.894658048618117,
+        0.4803478532535842
+      ],
+      "orientation_xyzw": [
+        0.3535994617790967,
+        -0.49996741956804863,
+        0.4999435705904464,
+        -0.6124185057828311
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.02315668781782133,
+        -0.001235026135509059,
+        0.010952297684605533
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000045,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000045,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.022758171720219232,
+          0.0,
+          0.009867326193707551
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_15",
+      "position_delta_from_baseline_m": 0.017967837065535196,
+      "rotation_delta_from_baseline_rad": 0.36970999346965383,
+      "hook_body_position_xyz": [
+        -0.701920749522946,
+        0.7903426783879148,
+        0.45854786120979585
+      ],
+      "goal_id": "seat_goal_0015"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7038304525446766,
+        0.8959182568323503,
+        0.4963719519824984
+      ],
+      "orientation_xyzw": [
+        0.5000325761865665,
+        -0.35350731640551036,
+        0.6123263604092447,
+        -0.5000564251641686
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02184012759982654,
+        -0.0002899365939312092,
+        0.013090468723599251
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999997503,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999997503,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021705337724945453,
+          0.0,
+          0.013233763172694719
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_-15",
+      "position_delta_from_baseline_m": 0.013872345185452741,
+      "rotation_delta_from_baseline_rad": 0.369709993469654,
+      "hook_body_position_xyz": [
+        -0.7054691028609814,
+        0.7946784594516287,
+        0.5296501383578454
+      ],
+      "goal_id": "seat_goal_0016"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7024734740047048,
+        0.8940721416984767,
+        0.492227478371637
+      ],
+      "orientation_xyzw": [
+        0.5000325761865665,
+        -0.35350731640551036,
+        0.6123263604092447,
+        -0.5000564251641686
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.021680702340079402,
+        -0.0003931207519216669,
+        0.012994912901336426
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999993947,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999993947,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021805224411251052,
+          0.0,
+          0.012649895725526123
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_-15",
+      "position_delta_from_baseline_m": 0.014324601848043227,
+      "rotation_delta_from_baseline_rad": 0.369709993469654,
+      "hook_body_position_xyz": [
+        -0.7041121243210097,
+        0.7928323443177552,
+        0.5255056647469839
+      ],
+      "goal_id": "seat_goal_0017"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7035765490770658,
+        0.8957082425454709,
+        0.4967440859084443
+      ],
+      "orientation_xyzw": [
+        0.5987100231740554,
+        -0.5973619861110138,
+        0.3776518128820438,
+        -0.37694041164000014
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.020274463938269167,
+        1.7436741203085447e-16,
+        0.015036567189951335
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999976,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999976,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.02027446393826921,
+          0.0,
+          0.015036567189951285
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+      "position_delta_from_baseline_m": 0.014001749810059933,
+      "rotation_delta_from_baseline_rad": 0.4451511884866409,
+      "hook_body_position_xyz": [
+        -0.7008631263793418,
+        0.7893188654131453,
+        0.5025369442392059
+      ],
+      "goal_id": "seat_goal_0018"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7067560764224179,
+        0.8979738343761425,
+        0.4970260808579329
+      ],
+      "orientation_xyzw": [
+        0.32354846521658054,
+        -0.17402760304191187,
+        0.8190203716387222,
+        -0.4407226053610721
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g388",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.023954655121623366,
+        3.2504161626966706e-17,
+        0.008571112664319702
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999997676,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999997676,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": [
+          -0.023954655121623383,
+          -4.336808689942018e-19,
+          0.008571112664319718
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "normal_aligned_to_SIM_GT_capsule",
+      "position_delta_from_baseline_m": 0.014492621324348628,
+      "rotation_delta_from_baseline_rad": 0.9955421754716626,
+      "hook_body_position_xyz": [
+        -0.7533483780606863,
+        0.8125752989272171,
+        0.5405676358164806
+      ],
+      "goal_id": "seat_goal_0019"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7043793090826059,
+        0.8960770705317516,
+        0.493717077050349
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.021886407731476893,
+        -0.0005453656676260828,
+        0.013118207966685922
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999924,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999924,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.021359390984879753,
+          0.0,
+          0.013700826293305428
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_0",
+      "position_delta_from_baseline_m": 0.013634750497635129,
+      "rotation_delta_from_baseline_rad": 0.0,
+      "hook_body_position_xyz": [
+        -0.7044227500172049,
+        0.7896741907191046,
+        0.499885117050349
+      ],
+      "goal_id": "seat_goal_0020"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7051110622059579,
+        0.8956390064393664,
+        0.4896197158565476
+      ],
+      "orientation_xyzw": [
+        0.5000460705641007,
+        -0.4999539251905144,
+        0.4999539251905144,
+        -0.5000460705641007
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.020343373817375172,
+        -0.0006118987185324478,
+        0.01508767424194564
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999386,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999386,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.020341970546194313,
+          0.0,
+          0.014795747802231633
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_0",
+      "position_delta_from_baseline_m": 0.014752085220876846,
+      "rotation_delta_from_baseline_rad": 0.0,
+      "hook_body_position_xyz": [
+        -0.7051545031405568,
+        0.7892361266267195,
+        0.4957877558565476
+      ],
+      "goal_id": "seat_goal_0021"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7050643908259093,
+        0.8963467757916591,
+        0.4953074508252484
+      ],
+      "orientation_xyzw": [
+        0.5610251892515298,
+        -0.43040764052847064,
+        0.5609458595791332,
+        -0.430511024970357
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.02028026887862302,
+        -0.00017918930285174816,
+        0.01504087242734743
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00040000000000001753,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00040000000000001753,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.020327842338264103,
+          0.0,
+          0.014952422923460646
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_-15",
+      "position_delta_from_baseline_m": 0.014044712811489477,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.705108794126067,
+        0.7951658919890104,
+        0.5288044091684001
+      ],
+      "goal_id": "seat_goal_0022"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7023506460195971,
+        0.8956592115699221,
+        0.4869121056258302
+      ],
+      "orientation_xyzw": [
+        0.430511024970357,
+        -0.5609458595791332,
+        0.43040764052847064,
+        -0.5610251892515298
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g387",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.023447035580749055,
+        -0.0013270146607167832,
+        0.01108962194566691
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999998544,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999998544,
+        "nearest_rear_wire": "g387",
+        "centreline_plane_crossing_ring": [
+          -0.021236787743364516,
+          0.0,
+          0.013070106224639472
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_15",
+      "position_delta_from_baseline_m": 0.014141935821658829,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.702394460913966,
+        0.791285515375584,
+        0.4653308855498466
+      ],
+      "goal_id": "seat_goal_0023"
+    },
+    {
+      "ring_position_xyz": [
+        -0.6998487878378348,
+        0.8946647343156462,
+        0.500042694323685
+      ],
+      "orientation_xyzw": [
+        0.5610251892515298,
+        -0.43040764052847064,
+        0.5609458595791332,
+        -0.430511024970357
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g388",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.024001704160426317,
+        -0.0004470804425884053,
+        0.008587947079345494
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999629,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999629,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": [
+          -0.02375368202251578,
+          0.0,
+          0.008980714340143147
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_-15",
+      "position_delta_from_baseline_m": 0.014690440184547286,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.6998931911379924,
+        0.7934838505129975,
+        0.5335396526668367
+      ],
+      "goal_id": "seat_goal_0024"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7031152845091512,
+        0.8951360813807814,
+        0.4836388588629347
+      ],
+      "orientation_xyzw": [
+        0.430511024970357,
+        -0.5609458595791332,
+        0.43040764052847064,
+        -0.5610251892515298
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.02184266446735882,
+        -0.0009725986474738506,
+        0.01309198926346479
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.000400000000000034,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.000400000000000034,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.0215796653684084,
+          0.0,
+          0.01261131516360268
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_0_z_15",
+      "position_delta_from_baseline_m": 0.016477614166134903,
+      "rotation_delta_from_baseline_rad": 0.2617993877991495,
+      "hook_body_position_xyz": [
+        -0.7031590994035201,
+        0.7907623851864433,
+        0.46205763878695105
+      ],
+      "goal_id": "seat_goal_0025"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7037788752808969,
+        0.896045250043882,
+        0.49022062373972464
+      ],
+      "orientation_xyzw": [
+        0.4304989975856121,
+        -0.4304196679132155,
+        0.5609338321943883,
+        -0.5610372166362747
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.0219183388731995,
+        -0.0006642574596779144,
+        0.0131373467562851
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0003999999999999503,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0003999999999999503,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.02140168087091874,
+          0.0,
+          0.013550674795232913
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_0",
+      "position_delta_from_baseline_m": 0.013529358639251062,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7054165740347246,
+        0.7896420764242666,
+        0.49616217433251497
+      ],
+      "goal_id": "seat_goal_0026"
+    },
+    {
+      "ring_position_xyz": [
+        -0.699953420479597,
+        0.8936730345173072,
+        0.4954021880621061
+      ],
+      "orientation_xyzw": [
+        0.5610372166362747,
+        -0.5609338321943883,
+        0.4304196679132155,
+        -0.4304989975856121
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g388",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.024291259355411092,
+        -0.001148943021198196,
+        0.00869155158326893
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999998197,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999998197,
+        "nearest_rear_wire": "g388",
+        "centreline_plane_crossing_ring": [
+          -0.022680811977277626,
+          0.0,
+          0.010842567601916476
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_0",
+      "position_delta_from_baseline_m": 0.014013901594847786,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.6983983068417352,
+        0.7872704493034804,
+        0.5013763757364839
+      ],
+      "goal_id": "seat_goal_0027"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7026187363194036,
+        0.8943232212485468,
+        0.49338389063723076
+      ],
+      "orientation_xyzw": [
+        0.5610372166362747,
+        -0.5609338321943883,
+        0.4304196679132155,
+        -0.4304989975856121
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.021659618298448684,
+        -0.00021511394526882492,
+        0.012982275613256466
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999999194,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999999194,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.02165916546169178,
+          0.0,
+          0.012942387131424192
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_0",
+      "position_delta_from_baseline_m": 0.014164368960967264,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7010636226815419,
+        0.7879206360347201,
+        0.4993580783116085
+      ],
+      "goal_id": "seat_goal_0028"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7024193969812832,
+        0.8941696160084274,
+        0.4859796933062959
+      ],
+      "orientation_xyzw": [
+        0.4304989975856121,
+        -0.4304196679132155,
+        0.5609338321943883,
+        -0.5610372166362747
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g386",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.0218132602723551,
+        -0.0008986472491851692,
+        0.013074365067424506
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999999715,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999999715,
+        "nearest_rear_wire": "g386",
+        "centreline_plane_crossing_ring": [
+          -0.02181081397990182,
+          0.0,
+          0.012306711813683032
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_15_z_0",
+      "position_delta_from_baseline_m": 0.015763429414157894,
+      "rotation_delta_from_baseline_rad": 0.2617993877991496,
+      "hook_body_position_xyz": [
+        -0.7040570957351109,
+        0.787766442388812,
+        0.49192124389908626
+      ],
+      "goal_id": "seat_goal_0029"
+    },
+    {
+      "ring_position_xyz": [
+        -0.7045078483480963,
+        0.897443676869948,
+        0.49939831936309503
+      ],
+      "orientation_xyzw": [
+        0.612418505782831,
+        -0.4999435705904464,
+        0.4999674195680487,
+        -0.3535994617790967
+      ],
+      "target_geom": "glb_col_Attachment_01",
+      "rear_wire_geom": "g385",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.690027137315769,
+        0.9159851604300272,
+        0.4902316145750801
+      ],
+      "target_point_ring": [
+        -0.020279637575606746,
+        0.00016918022667506503,
+        0.015040404221097557
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.00039999999999995985,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.00039999999999995985,
+        "nearest_rear_wire": "g385",
+        "centreline_plane_crossing_ring": [
+          -0.020238568827226234,
+          0.0,
+          0.015074121875454871
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_-15",
+      "position_delta_from_baseline_m": 0.014238542458110817,
+      "rotation_delta_from_baseline_rad": 0.3697099934696538,
+      "hook_body_position_xyz": [
+        -0.7029536878294338,
+        0.7962129149931632,
+        0.532708030738442
+      ],
+      "goal_id": "seat_goal_0030"
+    },
+    {
+      "ring_position_xyz": [
+        -0.6974401075674711,
+        0.894254457436438,
+        0.5015868392193414
+      ],
+      "orientation_xyzw": [
+        0.612418505782831,
+        -0.4999435705904464,
+        0.4999674195680487,
+        -0.3535994617790967
+      ],
+      "target_geom": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "rear_wire_geom": "g389",
+      "target_fraction": 0.5,
+      "target_point_world": [
+        -0.691265134801104,
+        0.917965895455901,
+        0.4942624427179751
+      ],
+      "target_point_ring": [
+        -0.02479808406669164,
+        -0.0006931514520358077,
+        0.006211596687750451
+      ],
+      "requested_surface_gap_m": 0.0004,
+      "chosen_wire_surface_gap_m": 0.0004000000000000071,
+      "diagnostic_only": true,
+      "offline_teacher_goal": true,
+      "physics_executed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "scope": "SIM-GT geometric pose proposal; no IK, path or holding success implied",
+      "geometry": {
+        "geometric_seating_candidate": true,
+        "reasons": [],
+        "minimum_rear_surface_gap_m": 0.0004000000000000071,
+        "nearest_rear_wire": "g389",
+        "centreline_plane_crossing_ring": [
+          -0.024277424939528766,
+          0.0,
+          0.007250926324204447
+        ],
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "selected finite target capsule vs rear wires only; not force, retention or path validity"
+      },
+      "rotation_seed": "local_x_-15_z_-15",
+      "position_delta_from_baseline_m": 0.015449854730108313,
+      "rotation_delta_from_baseline_rad": 0.3697099934696538,
+      "hook_body_position_xyz": [
+        -0.6958859470488086,
+        0.7930236955596532,
+        0.5348965505946884
+      ],
+      "goal_id": "seat_goal_0031"
+    }
+  ],
+  "accepted_pose_families": 20,
+  "exported_pose_families": 20,
+  "target_capsules_world": [
+    {
+      "name": "glb_col_Attachment_01",
+      "a": [
+        -0.6909744326085441,
+        0.9159804322619584,
+        0.4882460140257501
+      ],
+      "b": [
+        -0.689079842022994,
+        0.915989888598096,
+        0.4922172151244101
+      ],
+      "radius_m": 0.0008250002967545213
+    },
+    {
+      "name": "glb_col_TRUSS_Pedicel_proximal_02_02",
+      "a": [
+        -0.6890798427220439,
+        0.915989886612016,
+        0.4922172192869001
+      ],
+      "b": [
+        -0.693450426880164,
+        0.9199419042997861,
+        0.4963076661490501
+      ],
+      "radius_m": 0.0006249907936259818
+    }
+  ],
+  "rear_wire_capsules_ring": [
+    {
+      "name": "g384",
+      "a": [
+        -0.021257787497000115,
+        1.6049712464756758e-16,
+        0.017445815341699925
+      ],
+      "b": [
+        -0.019445436453000082,
+        1.7648323532348846e-17,
+        0.019445436455499992
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g385",
+      "a": [
+        -0.022865414364000084,
+        2.4236756903907204e-16,
+        0.01527818142679991
+      ],
+      "b": [
+        -0.021257787442000128,
+        1.0690606258750431e-16,
+        0.01744581529569997
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g386",
+      "a": [
+        -0.024252834764000017,
+        1.1547121460944567e-16,
+        0.012963410259099934
+      ],
+      "b": [
+        -0.02286541434400015,
+        1.3415619897969607e-16,
+        0.015278181411699955
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g387",
+      "a": [
+        -0.025406687132000047,
+        3.040710931128278e-17,
+        0.010523794384299923
+      ],
+      "b": [
+        -0.024252834782000212,
+        1.9841398787872233e-16,
+        0.012963410268499958
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g388",
+      "a": [
+        -0.02631585922699997,
+        1.1882369166839817e-16,
+        0.007982828622549993
+      ],
+      "b": [
+        -0.025406687150000048,
+        -5.334086454827777e-17,
+        0.010523794392000008
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g389",
+      "a": [
+        -0.026971595217000117,
+        1.2566224705696718e-16,
+        0.0053649838568799995
+      ],
+      "b": [
+        -0.02631585922700007,
+        2.744598461505305e-16,
+        0.007982828623059962
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g390",
+      "a": [
+        -0.027367579992000055,
+        5.1060579149883236e-17,
+        0.0026954713602798854
+      ],
+      "b": [
+        -0.026971595203000055,
+        1.1371202374799181e-16,
+        0.005364983854219876
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g391",
+      "a": [
+        -0.027500000001000034,
+        2.916982688938702e-17,
+        6.441235528443329e-14
+      ],
+      "b": [
+        -0.027367579982000005,
+        -1.6404274920936465e-17,
+        0.0026954713589999965
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g392",
+      "a": [
+        -0.027367579982000116,
+        2.1105770425963426e-16,
+        -0.0026954713590001335
+      ],
+      "b": [
+        -0.027500000001000082,
+        1.4328317292164818e-16,
+        -6.449204418698437e-14
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g393",
+      "a": [
+        -0.026971595203000145,
+        -7.636939899511842e-17,
+        -0.005364983854220055
+      ],
+      "b": [
+        -0.027367579992000055,
+        9.421672803321276e-17,
+        -0.002695471360280045
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g394",
+      "a": [
+        -0.026315859227000023,
+        8.39871900138253e-17,
+        -0.007982828623060094
+      ],
+      "b": [
+        -0.026971595217000027,
+        3.0791719790861555e-16,
+        -0.005364983856880036
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g395",
+      "a": [
+        -0.02540668715000006,
+        1.4702216927574934e-17,
+        -0.010523794392000099
+      ],
+      "b": [
+        -0.026315859227000072,
+        2.2293951643076463e-17,
+        -0.00798282862255013
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g396",
+      "a": [
+        -0.024252834782000087,
+        1.2118130682533725e-16,
+        -0.012963410268500133
+      ],
+      "b": [
+        -0.025406687131999978,
+        4.34235022213822e-17,
+        -0.010523794384300083
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g397",
+      "a": [
+        -0.022865414344000135,
+        2.368451525625476e-16,
+        -0.015278181411700023
+      ],
+      "b": [
+        -0.02425283476400007,
+        1.1747854289285702e-16,
+        -0.012963410259100099
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g398",
+      "a": [
+        -0.021257787442000093,
+        3.6028093141389536e-17,
+        -0.017445815295699992
+      ],
+      "b": [
+        -0.0228654143640001,
+        4.896349642771288e-17,
+        -0.0152781814268001
+      ],
+      "radius_m": 0.001
+    },
+    {
+      "name": "g399",
+      "a": [
+        -0.01944543645300002,
+        2.532487915110198e-16,
+        -0.019445436455500037
+      ],
+      "b": [
+        -0.021257787497000066,
+        1.650427840360178e-16,
+        -0.017445815341700067
+      ],
+      "radius_m": 0.001
+    }
+  ],
+  "search": {
+    "tilts_deg": [
+      -15.0,
+      0.0,
+      15.0
+    ],
+    "fractions": [
+      0.5
+    ],
+    "include_axis_aligned": true,
+    "surface_gap_m": 0.0004,
+    "max_surface_gap_m": 0.0015,
+    "ring_radius_m": 0.0275
+  },
+  "position_frame": "world; ring_position_xyz is RING centre, NOT Hook body origin",
+  "rotation_frame": "world_from_hook; quaternion xyzw; local x/z tilt composition",
+  "ranking": "round-robin target/rotation families; nearest pose within family; not success probability",
+  "requires": [
+    "whole_robot_IK",
+    "all_phase_environment_check",
+    "forward_physics_execution",
+    "target_identity_contact",
+    "retention_controls",
+    "non_target_contact_audit"
+  ],
+  "diagnostic_only": true,
+  "offline_teacher_goal": true,
+  "physics_executed": false,
+  "training_eligible": false,
+  "hook_success": null,
+  "scope": "SIM-GT terminal poses only; no collision-free approach or guaranteed hook",
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02",
+  "source_candidate": "predicted_00000",
+  "target": "Tomato_02",
+  "source_sha256": {
+    "manifest.json": "299ef72703a122928e270457f5ec96e2225a92c8e4c37fa86a7f96b4a9023afd",
+    "replay_assets/model.mjb": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+    "replay_assets/reference.json": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+    "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+    "candidates/predicted_00000/plan.json": "ff86ef1f2188b97f20d77bf86afd1cea41a374b5de282151fe8945197b81ced0",
+    "candidates/predicted_00000/trace.json": "1651c5ae1dfa9d1181fc37ed3a2f7ddd0963a922a759fe967fb542fbb211e66d"
+  },
+  "proposal_code_sha256": {
+    "hook_seating_geometry.py": "c81a09cca47191173ee7d6cd42efef9325ad756951b5d5963b3ff3c0060438ac",
+    "propose_hook_seating_goals.py": "f4671341a9b55f17b8e423d12ca15607270a06f731b2e0da5da098d681c6b631"
+  },
+  "initial_state_unchanged": true
+}
