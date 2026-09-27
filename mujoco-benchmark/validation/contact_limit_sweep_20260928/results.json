@@ -1,0 +1,1357 @@
+{
+  "executions": 12,
+  "rows": [
+    {
+      "name": "original_00_f2_d5",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 2,
+      "displacement_m": 0.005,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "simulated_s": 16.2124999999994,
+      "last_phase": "seat",
+      "force_live_N": 1.3085695802870239,
+      "force_private_N": 1.3075316674841742,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 5.096381106881282,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.1095971311850779,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.032049938800045426,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 181,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 22.45332705947191,
+          "maximum_nearest_rear_gap_mm": 34.61043239785019
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "original_00_f1_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 1,
+      "displacement_m": 0.01,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "target_force_limit"
+      ],
+      "simulated_s": 16.112499999999407,
+      "last_phase": "seat",
+      "force_live_N": 0.8626676192736471,
+      "force_private_N": 1.073502029819466,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 2.9677807355517025,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.3752599970885626,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.032049938800045426,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 157,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 23.195436237320976,
+          "maximum_nearest_rear_gap_mm": 34.61043239785019
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "original_00_f2_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 2,
+      "displacement_m": 0.01,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "simulated_s": 16.433333333332723,
+      "last_phase": "seat",
+      "force_live_N": 1.5770803840201482,
+      "force_private_N": 1.576429097634204,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.059717959654238,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.3142093380113273,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.03746533594984389,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 234,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 17.869918648938256,
+          "maximum_nearest_rear_gap_mm": 34.61043239785019
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "slow18_00_f2_d5",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 2,
+      "displacement_m": 0.005,
+      "speed": "slow18",
+      "complete": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "simulated_s": 28.299999999998715,
+      "last_phase": "seat",
+      "force_live_N": 0.6040845320897504,
+      "force_private_N": 0.604070012195079,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 5.015187849949666,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.5372113223516548,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.0023966269022667477,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 3014,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 22.04519923144421,
+          "maximum_nearest_rear_gap_mm": 34.68171116038644
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "slow18_00_f1_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 1,
+      "displacement_m": 0.01,
+      "speed": "slow18",
+      "complete": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "simulated_s": 32.46249999999887,
+      "last_phase": "seat",
+      "force_live_N": 0.8988146067622468,
+      "force_private_N": 0.898811769290081,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.001923169989533,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.002807013144696529,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 4013,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 16.907337987187283,
+          "maximum_nearest_rear_gap_mm": 34.68171116038644
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "slow18_00_f2_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 2,
+      "displacement_m": 0.01,
+      "speed": "slow18",
+      "complete": false,
+      "stop": [
+        "target_displacement_limit"
+      ],
+      "simulated_s": 32.46249999999887,
+      "last_phase": "seat",
+      "force_live_N": 0.8988146067622468,
+      "force_private_N": 0.898811769290081,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.001923169989533,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.002807013144696529,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 4013,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 16.907337987187283,
+          "maximum_nearest_rear_gap_mm": 34.68171116038644
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "original_00_f5_d20",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original",
+      "complete": true,
+      "stop": [],
+      "simulated_s": 20.599999999999152,
+      "last_phase": "verify",
+      "force_live_N": 1.5770803840201482,
+      "force_private_N": 1.576429097634204,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.951133614402789,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 51,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.3142093380113273,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 51,
+        "legacy_seated_samples": 47,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.03932216215053805,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 492,
+          "geometric_positive_samples": 51,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0.2083333333333215,
+          "minimum_rear_gap_mm": 1.4146000258846214,
+          "maximum_nearest_rear_gap_mm": 34.61043239785019
+        },
+        "hold": {
+          "samples": 344,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 1.5143063702714041,
+          "maximum_nearest_rear_gap_mm": 1.526074382256519
+        },
+        "verify": {
+          "samples": 398,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 1.5174265385207033,
+          "maximum_nearest_rear_gap_mm": 1.6222338784990589
+        }
+      }
+    },
+    {
+      "name": "original_03_f5_d20",
+      "candidate": "seating_03_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "forbidden_force"
+      ],
+      "simulated_s": 16.766666666666037,
+      "last_phase": "seat",
+      "force_live_N": 1.5052063304418004,
+      "force_private_N": 1.2658603434505782,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.638337457128859,
+      "target_displacement_mm": 10.024787974864875,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.638337457128859,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.9561099452420099,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.010213013619221112,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [
+        {
+          "source": "private_forward",
+          "role": "forbidden_contact",
+          "geoms": [
+            "g389",
+            "glb_col_TRUSS_Rachis_04"
+          ],
+          "max_single_normal_N": 0.5926814498631141,
+          "max_penetration_m": 0.0,
+          "peak_time_s": 16.766666666666037
+        }
+      ],
+      "seat_max_tcp_speed_m_s": 0.036036052689903224,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.010213013619221112,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 270,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 15.601741197454382,
+          "maximum_nearest_rear_gap_mm": 40.61099709758219
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "original_04_f5_d20",
+      "candidate": "seating_04_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original",
+      "complete": true,
+      "stop": [],
+      "simulated_s": 20.666666666665815,
+      "last_phase": "verify",
+      "force_live_N": 1.5293112435955716,
+      "force_private_N": 1.5851041917727076,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.628439276411918,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 750,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.2390081183881265,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 750,
+        "legacy_seated_samples": 681,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.005846093453740736,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.037964227542367224,
+      "max_lift_error_mm": 5.846093453740736,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 500,
+          "geometric_positive_samples": 104,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0.42916666666664227,
+          "minimum_rear_gap_mm": 1.1683314403633958,
+          "maximum_nearest_rear_gap_mm": 37.51353027351704
+        },
+        "hold": {
+          "samples": 344,
+          "geometric_positive_samples": 344,
+          "all_geometric": true,
+          "positive_adjacent_elapsed_s": 1.4291666666665854,
+          "minimum_rear_gap_mm": 1.3876815231173363,
+          "maximum_nearest_rear_gap_mm": 1.4731260967998199
+        },
+        "verify": {
+          "samples": 398,
+          "geometric_positive_samples": 302,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 1.249999999999929,
+          "minimum_rear_gap_mm": 1.4110005706978297,
+          "maximum_nearest_rear_gap_mm": 1.5109270920053448
+        }
+      }
+    },
+    {
+      "name": "original_05_f5_d20",
+      "candidate": "seating_05_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "forbidden_force"
+      ],
+      "simulated_s": 16.595833333332713,
+      "last_phase": "seat",
+      "force_live_N": 1.5387417770771288,
+      "force_private_N": 1.4828166581141244,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 1.0166034165156164,
+      "target_displacement_mm": 11.140533276852102,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.0166034165156164,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.2201261189299069,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.01057345921673336,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [
+        {
+          "source": "private_forward",
+          "role": "forbidden_contact",
+          "geoms": [
+            "g390",
+            "glb_col_TRUSS_Rachis_03"
+          ],
+          "max_single_normal_N": 0.9438925761090685,
+          "max_penetration_m": 0.0,
+          "peak_time_s": 16.595833333332713
+        }
+      ],
+      "seat_max_tcp_speed_m_s": 0.040617928880954675,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.01057345921673336,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 277,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 12.749919278952891,
+          "maximum_nearest_rear_gap_mm": 31.858843106903706
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "original_06_f5_d20",
+      "candidate": "seating_06_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original",
+      "complete": false,
+      "stop": [
+        "forbidden_force"
+      ],
+      "simulated_s": 16.662499999999376,
+      "last_phase": "seat",
+      "force_live_N": 1.5568377312788921,
+      "force_private_N": 1.507221047405596,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.9781682812239577,
+      "target_displacement_mm": 11.06346087701731,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.9781682812239577,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.322796436392434,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.010599959854343033,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [
+        {
+          "source": "private_forward",
+          "role": "forbidden_contact",
+          "geoms": [
+            "g389",
+            "glb_col_TRUSS_Rachis_04"
+          ],
+          "max_single_normal_N": 0.908206448879742,
+          "max_penetration_m": 0.0,
+          "peak_time_s": 16.662499999999376
+        }
+      ],
+      "seat_max_tcp_speed_m_s": 0.03723708576824325,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.010599959854343033,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 277,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 14.97969579285647,
+          "maximum_nearest_rear_gap_mm": 34.13590742752357
+        },
+        "hold": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        },
+        "verify": {
+          "samples": 0,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": null,
+          "maximum_nearest_rear_gap_mm": null
+        }
+      }
+    },
+    {
+      "name": "slow18_00_f5_d20",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "slow18",
+      "complete": true,
+      "stop": [],
+      "simulated_s": 55.73333333335072,
+      "last_phase": "verify",
+      "force_live_N": 0.8988146067622468,
+      "force_private_N": 0.898811769290081,
+      "pedicel_force_N": 0.0,
+      "forbidden_force_N": 0.0,
+      "target_displacement_mm": 10.672590664799353,
+      "fruit_penetration_mm": 0.0,
+      "global_penetration_mm": 0.22795559258460135,
+      "seated_samples": 0,
+      "seated_with_force_samples": 0,
+      "authorized": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.429166666667804,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 399,
+          "elapsed_s": 1.658333333334653,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "legacy": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.429166666667804,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 399,
+          "elapsed_s": 1.658333333334653,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "forbidden_pair_peaks": [],
+      "seat_max_tcp_speed_m_s": 0.002807013144696529,
+      "max_lift_error_mm": 3.664819154458321,
+      "max_revolute_error_rad": 0.008800511987481385,
+      "physics_valid_until_stop": true,
+      "phase_geometry": {
+        "seat": {
+          "samples": 8855,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 1.518584430098991,
+          "maximum_nearest_rear_gap_mm": 34.68171116038644
+        },
+        "hold": {
+          "samples": 344,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 1.5186157253266963,
+          "maximum_nearest_rear_gap_mm": 1.5186179972397396
+        },
+        "verify": {
+          "samples": 399,
+          "geometric_positive_samples": 0,
+          "all_geometric": false,
+          "positive_adjacent_elapsed_s": 0,
+          "minimum_rear_gap_mm": 1.5174267530895054,
+          "maximum_nearest_rear_gap_mm": 1.62222928943842
+        }
+      }
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null
+}

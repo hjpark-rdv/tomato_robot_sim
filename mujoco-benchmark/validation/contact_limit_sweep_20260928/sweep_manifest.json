@@ -1,0 +1,104 @@
+{
+  "jobs": [
+    {
+      "name": "original_00_f2_d5",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 2,
+      "displacement_m": 0.005,
+      "speed": "original"
+    },
+    {
+      "name": "original_00_f1_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 1,
+      "displacement_m": 0.01,
+      "speed": "original"
+    },
+    {
+      "name": "original_00_f2_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 2,
+      "displacement_m": 0.01,
+      "speed": "original"
+    },
+    {
+      "name": "slow18_00_f2_d5",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 2,
+      "displacement_m": 0.005,
+      "speed": "slow18"
+    },
+    {
+      "name": "slow18_00_f1_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 1,
+      "displacement_m": 0.01,
+      "speed": "slow18"
+    },
+    {
+      "name": "slow18_00_f2_d10",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 2,
+      "displacement_m": 0.01,
+      "speed": "slow18"
+    },
+    {
+      "name": "original_00_f5_d20",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original"
+    },
+    {
+      "name": "original_03_f5_d20",
+      "candidate": "seating_03_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original"
+    },
+    {
+      "name": "original_04_f5_d20",
+      "candidate": "seating_04_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original"
+    },
+    {
+      "name": "original_05_f5_d20",
+      "candidate": "seating_05_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original"
+    },
+    {
+      "name": "original_06_f5_d20",
+      "candidate": "seating_06_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "original"
+    },
+    {
+      "name": "slow18_00_f5_d20",
+      "candidate": "seating_00_under",
+      "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "force": 5,
+      "displacement_m": 0.02,
+      "speed": "slow18"
+    }
+  ],
+  "max_physics_executions": 12,
+  "base_commit": "b75e6bc29e5106a81c918a949f2cae76d30f9dc2",
+  "training_eligible": false,
+  "hook_success": null
+}

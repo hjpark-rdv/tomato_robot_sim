@@ -1,5 +1,15 @@
 # Farmily Tomato 작업 인수인계
 
+## 힘·변위 중단값 비교 (2026-09-28 추가)
+
+- 사용자 요청으로 제한값을 변경한 추가12회. 기준b75e6bc, 별도 `codex/contact-limit-sweep-20260928`. 모델/경로/물성/운영정책 유지.
+- 00번 원래 속도·감속에서2N/5mm,1N/10mm,2N/10mm 비교, 기존5경로+감속00에서5N/20mm 비교.
+- 전체 검사12/12 통과. 실제 전체 동작 완료3, 목표 힘 중단1, 변위 중단5, Rachis 비허용 접촉 중단3. 꼭지 접촉 기반 안착·유지 확인0.
+- 5N/20mm에서00·04·감속00 완료. 실제 최대 과실 힘1.577/1.585/0.899N, 최대 변위10.951/10.628/10.673mm. 기존1N/5mm는 완주 관찰을 막았으나 실물 안전 기준은 미검증.
+- 04번 hold1.429초 기하 안착 범위 유지(간격약1.4mm), 목표 꼭지 접촉력0. verify는 일부 기하 범위 이탈. 다음 검토 출발점이며 hook_success로 승격하지 않음.
+- 원본해시/timestamp 연속성/종전 기준과 공통 저장 상태 qpos 차이0 확인. 목표 과실 침투0, 전체 최대0.228mm. training_eligible=false, hook_success=null.
+- [결과 보고서](mujoco-benchmark/CONTACT_LIMIT_SWEEP_RESULTS_KO.md), [GPT-6 Pro 전달문](mujoco-benchmark/CONTACT_LIMIT_SWEEP_PRO_HANDOFF_KO.md). 결과 `20260928_contact_limit_sweep/index.html`, 실제 상태 영상4개와240Hz 원자료 보존.
+
 ## 목표 과실 접촉 허용 재시험 (2026-09-28)
 
 - 기준 `804e40c`, 별도 브랜치 `codex/server-target-fruit-contact-20260928`. 마지막 under5개 원본 경로를 재계획 없이 검사했고 모두 전체 완료·통과.

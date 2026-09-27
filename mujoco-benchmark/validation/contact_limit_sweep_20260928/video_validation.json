@@ -1,0 +1,62 @@
+[
+  {
+    "file": "slow18_00_f5_d20.mp4",
+    "sha256": "7ef9b9d75ebc575bcc104a91b95df48497364e01ed7f57a37930ad1af034ed09",
+    "full_decode": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "nb_read_frames": "280"
+        }
+      ]
+    }
+  },
+  {
+    "file": "original_03_f5_d20.mp4",
+    "sha256": "b88f9e7e27d66b73e0440a91edce203f211f99fd5bd0c0deb3d58233f642a4bb",
+    "full_decode": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "nb_read_frames": "85"
+        }
+      ]
+    }
+  },
+  {
+    "file": "original_04_f5_d20.mp4",
+    "sha256": "a26c71762ff2ec3e6bb4034cbdd65b984527282b7240ee7c2ff3c97eb8a62676",
+    "full_decode": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "nb_read_frames": "105"
+        }
+      ]
+    }
+  },
+  {
+    "file": "original_00_f5_d20.mp4",
+    "sha256": "c4fa916961934029bc84ec96a5127093ca5f209a63ff9b7bc92df88f4cbe10c6",
+    "full_decode": true,
+    "info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "nb_read_frames": "104"
+        }
+      ]
+    }
+  }
+]

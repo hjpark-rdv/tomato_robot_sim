@@ -1,0 +1,12 @@
+original_00_f2_d5 ['target_displacement_limit'] 16.2125 F 1.3086 D 5.096 other 0.0 seat 0
+original_00_f1_d10 ['target_force_limit'] 16.1125 F 1.0735 D 2.968 other 0.0 seat 0
+original_00_f2_d10 ['target_displacement_limit'] 16.4333 F 1.5771 D 10.06 other 0.0 seat 0
+slow18_00_f2_d5 ['target_displacement_limit'] 28.3 F 0.6041 D 5.015 other 0.0 seat 0
+slow18_00_f1_d10 ['target_displacement_limit'] 32.4625 F 0.8988 D 10.002 other 0.0 seat 0
+slow18_00_f2_d10 ['target_displacement_limit'] 32.4625 F 0.8988 D 10.002 other 0.0 seat 0
+original_00_f5_d20 [] 20.6 F 1.5771 D 10.951 other 0.0 seat 51
+original_03_f5_d20 ['forbidden_force'] 16.7667 F 1.5052 D 10.025 other 0.6383 seat 0
+original_04_f5_d20 [] 20.6667 F 1.5851 D 10.628 other 0.0 seat 750
+original_05_f5_d20 ['forbidden_force'] 16.5958 F 1.5387 D 11.141 other 1.0166 seat 0
+original_06_f5_d20 ['forbidden_force'] 16.6625 F 1.5568 D 11.063 other 0.9782 seat 0
+slow18_00_f5_d20 [] 55.7333 F 0.8988 D 10.673 other 0.0 seat 0

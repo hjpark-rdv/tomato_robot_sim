@@ -1,0 +1,828 @@
+<meta charset="utf-8"><title>Environment preflight</title><h1>Nominal path / environment check</h1><p>GT, frozen environment; discrete samples. NOT a physics replay, CCD guarantee, or harvest result.</p><p>Inspect first_violation for time, phase, geom pair and robot command. A sampled_clear result does not guarantee a collision-free rollout.</p><pre>{
+  &quot;schema&quot;: &quot;environment_preflight_v1&quot;,
+  &quot;checker_revision&quot;: &quot;audit_completion_v2&quot;,
+  &quot;status&quot;: &quot;sampled_clear&quot;,
+  &quot;passed&quot;: true,
+  &quot;complete&quot;: true,
+  &quot;policy&quot;: {
+    &quot;schema&quot;: &quot;environment_preflight_v1&quot;,
+    &quot;settings&quot;: {
+      &quot;clearance_m&quot;: 0.0,
+      &quot;max_revolute_step_rad&quot;: 0.01,
+      &quot;max_prismatic_step_m&quot;: 0.001,
+      &quot;max_time_step_s&quot;: 0.008333333333333333,
+      &quot;max_samples&quot;: 50000,
+      &quot;max_distance_queries&quot;: 12000000,
+      &quot;timeout_s&quot;: 240,
+      &quot;allowed_contacts&quot;: [
+        {
+          &quot;robot_geom&quot;: &quot;g384&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g384&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g385&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g385&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g386&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g386&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g387&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g387&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g388&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g388&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g389&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g389&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g390&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g390&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g391&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g391&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g392&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g392&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g393&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g393&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g394&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g394&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g395&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g395&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g396&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g396&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g397&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g397&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g398&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g398&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g399&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Attachment_01&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g399&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g376&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g377&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g378&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g379&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g380&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g381&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g382&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g383&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g384&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g385&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g386&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g387&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g388&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g389&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g390&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g391&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g392&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g393&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g394&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g395&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g396&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g397&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g398&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g399&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g400&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g401&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g402&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g403&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g404&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g405&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g406&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        },
+        {
+          &quot;robot_geom&quot;: &quot;g407&quot;,
+          &quot;environment_geom&quot;: &quot;glb_col_Tomato_02&quot;,
+          &quot;phases&quot;: [
+            &quot;hold&quot;,
+            &quot;insert&quot;,
+            &quot;seat&quot;,
+            &quot;verify&quot;
+          ]
+        }
+      ]
+    },
+    &quot;sha256&quot;: &quot;ea7993e4d25557b21350130eb0e120e1bf5e2c79b13ec9c25e728062bf7b4196&quot;
+  },
+  &quot;samples_checked&quot;: 7459,
+  &quot;distance_queries&quot;: 5291448,
+  &quot;last_sample_time_s&quot;: 55.733333333333334,
+  &quot;last_completed_sample_time_s&quot;: 55.733333333333334,
+  &quot;first_violation&quot;: null,
+  &quot;violations&quot;: [],
+  &quot;violation_summary&quot;: {
+    &quot;sample_hits_by_environment_class&quot;: {},
+    &quot;minimum_distance_m_by_environment_class&quot;: {},
+    &quot;first_by_environment_class&quot;: {},
+    &quot;worst_by_environment_class&quot;: {},
+    &quot;observed_unique_pair_phase_count&quot;: 0,
+    &quot;reported_unique_pair_phase_count&quot;: 0,
+    &quot;omitted_unique_pair_phase_count&quot;: 0,
+    &quot;details_truncated&quot;: false,
+    &quot;reported_limit&quot;: 64,
+    &quot;full_path_requested&quot;: true,
+    &quot;full_path_collected&quot;: true,
+    &quot;counts_scope&quot;: &quot;visited samples only; pair/phase keys and sampled pair hits, not physical contact events&quot;
+  },
+  &quot;scan_stop_reason&quot;: &quot;end_of_path&quot;,
+  &quot;minimum_queried_distance_m&quot;: 0.001304525622341741,
+  &quot;scope&quot;: &quot;GT initial environment; nominal commands; discrete screening only&quot;,
+  &quot;exclusions&quot;: [
+    &quot;visual-only geoms&quot;,
+    &quot;environment/environment pairs&quot;,
+    &quot;robot self-collision&quot;
+  ],
+  &quot;warnings&quot;: [
+    &quot;No continuous collision guarantee&quot;,
+    &quot;No plant deformation or actuator tracking simulated&quot;,
+    &quot;No real-observation collision model&quot;,
+    &quot;Missing visual-only colliders remain untested&quot;
+  ],
+  &quot;inventory&quot;: {
+    &quot;robot_collision_geoms&quot;: [
+      &quot;robot_geom_3&quot;,
+      &quot;robot_geom_4&quot;,
+      &quot;robot_geom_6&quot;,
+      &quot;robot_geom_8&quot;,
+      &quot;robot_geom_10&quot;,
+      &quot;robot_geom_12&quot;,
+      &quot;robot_geom_14&quot;,
+      &quot;robot_geom_18&quot;,
+      &quot;robot_geom_19&quot;,
+      &quot;g376&quot;,
+      &quot;g377&quot;,
+      &quot;g378&quot;,
+      &quot;g379&quot;,
+      &quot;g380&quot;,
+      &quot;g381&quot;,
+      &quot;g382&quot;,
+      &quot;g383&quot;,
+      &quot;g384&quot;,
+      &quot;g385&quot;,
+      &quot;g386&quot;,
+      &quot;g387&quot;,
+      &quot;g388&quot;,
+      &quot;g389&quot;,
+      &quot;g390&quot;,
+      &quot;g391&quot;,
+      &quot;g392&quot;,
+      &quot;g393&quot;,
+      &quot;g394&quot;,
+      &quot;g395&quot;,
+      &quot;g396&quot;,
+      &quot;g397&quot;,
+      &quot;g398&quot;,
+      &quot;g399&quot;,
+      &quot;g400&quot;,
+      &quot;g401&quot;,
+      &quot;g402&quot;,
+      &quot;g403&quot;,
+      &quot;g404&quot;,
+      &quot;g405&quot;,
+      &quot;g406&quot;,
+      &quot;g407&quot;,
+      &quot;g408&quot;,
+      &quot;g409&quot;,
+      &quot;g410&quot;
+    ],
+    &quot;environment_collision_geoms&quot;: [
+      &quot;gutter_collision_Gutter_SlabSupportRib_003&quot;,
+      &quot;gutter_collision_Gutter_SlabSupportRib_002&quot;,
+      &quot;gutter_collision_Gutter_SlabSupportRib_001&quot;,
+      &quot;gutter_collision_Gutter_SlabSupportRib&quot;,
+      &quot;gutter_collision_GutterEndCap_003&quot;,
+      &quot;gutter_collision_GutterEndCap_002&quot;,
+      &quot;gutter_collision_GutterFoldedLip_003&quot;,
+      &quot;gutter_collision_Gutter_1_Sidewall_001&quot;,
+      &quot;gutter_collision_GutterFoldedLip_002&quot;,
+      &quot;gutter_collision_Gutter_1_Sidewall&quot;,
+      &quot;gutter_collision_Gutter_1_Base&quot;,
+      &quot;gutter_collision_GutterEndCap_001&quot;,
+      &quot;gutter_collision_GutterEndCap&quot;,
+      &quot;gutter_collision_GutterFoldedLip_001&quot;,
+      &quot;gutter_collision_Gutter_1_Sidewall_001_2&quot;,
+      &quot;gutter_collision_GutterFoldedLip&quot;,
+      &quot;gutter_collision_Gutter_1_Sidewall_2&quot;,
+      &quot;gutter_collision_Gutter_1_Base_2&quot;,
+      &quot;g0&quot;,
+      &quot;g6&quot;,
+      &quot;g10&quot;,
+      &quot;g14&quot;,
+      &quot;g18&quot;,
+      &quot;g22&quot;,
+      &quot;g26&quot;,
+      &quot;g30&quot;,
+      &quot;g34&quot;,
+      &quot;g50&quot;,
+      &quot;g78&quot;,
+      &quot;g106&quot;,
+      &quot;g137&quot;,
+      &quot;g165&quot;,
+      &quot;g205&quot;,
+      &quot;g241&quot;,
+      &quot;glb_col_TRUSS_Truss_01_Peduncle_00&quot;,
+      &quot;glb_col_TRUSS_Truss_01_Peduncle_01&quot;,
+      &quot;glb_col_TRUSS_Truss_01_Peduncle_02&quot;,
+      &quot;glb_col_TRUSS_Truss_01_Peduncle_03&quot;,
+      &quot;glb_col_TRUSS_Truss_01_Peduncle_04&quot;,
+      &quot;glb_col_TRUSS_Rachis_00&quot;,
+      &quot;glb_col_TRUSS_Rachis_01&quot;,
+      &quot;glb_col_TRUSS_Rachis_02&quot;,
+      &quot;glb_col_TRUSS_Rachis_03&quot;,
+      &quot;glb_col_TRUSS_Rachis_04&quot;,
+      &quot;glb_col_TRUSS_Rachis_05&quot;,
+      &quot;glb_col_TRUSS_Rachis_06&quot;,
+      &quot;glb_col_TRUSS_Rachis_07&quot;,
+      &quot;glb_col_TRUSS_Rachis_08&quot;,
+      &quot;glb_col_TRUSS_Rachis_09&quot;,
+      &quot;glb_col_TRUSS_Rachis_10&quot;,
+      &quot;glb_col_TRUSS_Rachis_11&quot;,
+      &quot;glb_col_TRUSS_Rachis_12&quot;,
+      &quot;glb_col_TRUSS_Rachis_13&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_11_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_11_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_11_02&quot;,
+      &quot;glb_col_Attachment_10&quot;,
+      &quot;glb_col_Tomato_11&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_10_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_10_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_10_02&quot;,
+      &quot;glb_col_Attachment_09&quot;,
+      &quot;glb_col_Tomato_10&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_08_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_08_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_08_02&quot;,
+      &quot;glb_col_Attachment_07&quot;,
+      &quot;glb_col_Tomato_08&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_09_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_09_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_09_02&quot;,
+      &quot;glb_col_Attachment_08&quot;,
+      &quot;glb_col_Tomato_09&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_07_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_07_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_07_02&quot;,
+      &quot;glb_col_Attachment_06&quot;,
+      &quot;glb_col_Tomato_07&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_06_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_06_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_06_02&quot;,
+      &quot;glb_col_Attachment_05&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_05_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_05_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_05_02&quot;,
+      &quot;glb_col_Attachment_04&quot;,
+      &quot;glb_col_Tomato_05&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_04_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_04_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_04_02&quot;,
+      &quot;glb_col_Attachment_03&quot;,
+      &quot;glb_col_Tomato_04&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_03_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_03_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_03_02&quot;,
+      &quot;glb_col_Attachment_02&quot;,
+      &quot;glb_col_Tomato_03&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_02_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_02_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_02_02&quot;,
+      &quot;glb_col_Attachment_01&quot;,
+      &quot;glb_col_Tomato_02&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_01_00&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_01_01&quot;,
+      &quot;glb_col_TRUSS_Pedicel_proximal_01_02&quot;,
+      &quot;glb_col_Attachment_00&quot;,
+      &quot;glb_col_Tomato_01&quot;
+    ],
+    &quot;ignored_visual_geom_count&quot;: 3558,
+    &quot;mesh_semantics&quot;: &quot;MuJoCo collision mesh (convex), not visual mesh triangles&quot;,
+    &quot;native_convex_distance&quot;: true
+  },
+  &quot;backend&quot;: &quot;MuJoCo 3.13.0&quot;,
+  &quot;distance_query_horizon_m&quot;: 0.01,
+  &quot;reason&quot;: &quot;all_samples_passed&quot;,
+  &quot;wall_s&quot;: 51.16469790041447
+}</pre>

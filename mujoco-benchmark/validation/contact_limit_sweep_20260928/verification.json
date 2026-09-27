@@ -1,0 +1,79 @@
+{
+  "all_audits_complete_clear": true,
+  "all_source_hashes_unchanged": true,
+  "all_samples_continuous": true,
+  "threshold_only_prefix_comparison": [
+    {
+      "name": "original_00_f2_d5",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_00_under",
+      "matching_stored_timestamps": 484,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_00_f1_d10",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_00_under",
+      "matching_stored_timestamps": 485,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_00_f2_d10",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_00_under",
+      "matching_stored_timestamps": 484,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "slow18_00_f2_d5",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_slow_seating_00_under",
+      "matching_stored_timestamps": 850,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "slow18_00_f1_d10",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_slow_seating_00_under",
+      "matching_stored_timestamps": 850,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "slow18_00_f2_d10",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_slow_seating_00_under",
+      "matching_stored_timestamps": 850,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_00_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_00_under",
+      "matching_stored_timestamps": 484,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_03_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_03_under",
+      "matching_stored_timestamps": 493,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_04_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_04_under",
+      "matching_stored_timestamps": 487,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_05_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_05_under",
+      "matching_stored_timestamps": 485,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "original_06_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_seating_06_under",
+      "matching_stored_timestamps": 489,
+      "max_qpos_prefix_error": 0.0
+    },
+    {
+      "name": "slow18_00_f5_d20",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/trial_slow_seating_00_under",
+      "matching_stored_timestamps": 850,
+      "max_qpos_prefix_error": 0.0
+    }
+  ]
+}

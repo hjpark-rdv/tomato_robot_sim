@@ -1,0 +1,1352 @@
+[
+  {
+    "name": "original_00_f2_d5",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 2,
+    "displacement_m": 0.005,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 40.90113760344684,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_00_f2_d5",
+      "--execute",
+      "--max-target-force-n",
+      "2",
+      "--max-target-displacement-m",
+      "0.005"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 2.0,
+        "max_target_displacement_m": 0.005,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_displacement_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.1095971311850779,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.2124999999994,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_00_f1_d10",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 1,
+    "displacement_m": 0.01,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 39.96530018001795,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_00_f1_d10",
+      "--execute",
+      "--max-target-force-n",
+      "1",
+      "--max-target-displacement-m",
+      "0.01"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 1.0,
+        "max_target_displacement_m": 0.01,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_force_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.3752599970885626,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.112499999999407,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_00_f2_d10",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 2,
+    "displacement_m": 0.01,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 40.88775764219463,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_00_f2_d10",
+      "--execute",
+      "--max-target-force-n",
+      "2",
+      "--max-target-displacement-m",
+      "0.01"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 2.0,
+        "max_target_displacement_m": 0.01,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_displacement_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.3142093380113273,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.433333333332723,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "slow18_00_f2_d5",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+    "force": 2,
+    "displacement_m": 0.005,
+    "speed": "slow18",
+    "exit_code": 2,
+    "wall_s": 92.00078703835607,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/slow18_00_f2_d5",
+      "--execute",
+      "--max-target-force-n",
+      "2",
+      "--max-target-displacement-m",
+      "0.005"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 2.0,
+        "max_target_displacement_m": 0.005,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_displacement_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.5372113223516548,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 28.299999999998715,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "slow18_00_f1_d10",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+    "force": 1,
+    "displacement_m": 0.01,
+    "speed": "slow18",
+    "exit_code": 2,
+    "wall_s": 101.48262332007289,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/slow18_00_f1_d10",
+      "--execute",
+      "--max-target-force-n",
+      "1",
+      "--max-target-displacement-m",
+      "0.01"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 1.0,
+        "max_target_displacement_m": 0.01,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_displacement_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 32.46249999999887,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "slow18_00_f2_d10",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+    "force": 2,
+    "displacement_m": 0.01,
+    "speed": "slow18",
+    "exit_code": 2,
+    "wall_s": 101.92929543182254,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/slow18_00_f2_d10",
+      "--execute",
+      "--max-target-force-n",
+      "2",
+      "--max-target-displacement-m",
+      "0.01"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 2.0,
+        "max_target_displacement_m": 0.01,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "target_displacement_limit"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 32.46249999999887,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_00_f5_d20",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "original",
+    "exit_code": 0,
+    "wall_s": 51.45028107240796,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_00_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": true,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "physics_metrics": {
+        "control_s": 0.013627158477902412,
+        "physics_s": 4.013058677315712,
+        "evaluation_s": 1.3361685294657946,
+        "recording_s": 0.0,
+        "reset_s": 0.00244755856692791,
+        "command_prepare_s": 0.10053553804755211,
+        "rollout_wall_s": 26.73634223267436,
+        "process_cpu_s": 26.730800629999997,
+        "simulated_s": 20.6,
+        "requested_s": 20.6,
+        "steps": 4944,
+        "rtf": 0.7704868459839221,
+        "unstable": false,
+        "max_target_displacement_m": 0.010951133614402789,
+        "max_hook_contact_penetration_m": -0.0,
+        "hook_contact_steps": 1086,
+        "max_tracking_error_m_or_rad": 0.008800511987463983,
+        "warning_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "hook_final_xyz": [
+          -0.7022477376040034,
+          0.7884195737823412,
+          0.49965560722752467
+        ],
+        "break_enabled": false,
+        "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+        "max_gutter_penetration_m": 0.0,
+        "gutter_contact_steps": 0,
+        "gutter_contact_pairs": [],
+        "max_neighbor_stem_penetration_m": 0.0,
+        "neighbor_stem_contact_steps": 0,
+        "neighbor_stem_contact_pairs": [],
+        "initial_glb_penetration_m": 0.00022795559258460135,
+        "max_glb_penetration_m": 0.00022795559258460135,
+        "glb_physics_valid": true,
+        "physics_guard_version": "glb_hook_gutter_v3",
+        "physics_penetration_limit_m": 0.0005
+      },
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.3142093380113273,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 51,
+        "legacy_seated_samples": 47,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 20.599999999999152,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_03_f5_d20",
+    "candidate": "seating_03_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 42.05818026326597,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_03_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_03_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "forbidden_force"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.9561099452420099,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.010213013619221112,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.638337457128859,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.766666666666037,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_04_f5_d20",
+    "candidate": "seating_04_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "original",
+    "exit_code": 0,
+    "wall_s": 50.20899271592498,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_04_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_04_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": true,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "physics_metrics": {
+        "control_s": 0.014106955379247665,
+        "physics_s": 4.013674691319466,
+        "evaluation_s": 1.3267481457442045,
+        "recording_s": 0.0,
+        "reset_s": 0.0023618731647729874,
+        "command_prepare_s": 0.10007535666227341,
+        "rollout_wall_s": 27.128953156992793,
+        "process_cpu_s": 27.123366442,
+        "simulated_s": 20.666666666666668,
+        "requested_s": 20.666666666666668,
+        "steps": 4960,
+        "rtf": 0.7617937392228348,
+        "unstable": false,
+        "max_target_displacement_m": 0.010628439276411918,
+        "max_hook_contact_penetration_m": -0.0,
+        "hook_contact_steps": 1074,
+        "max_tracking_error_m_or_rad": 0.008800511987463983,
+        "warning_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "hook_final_xyz": [
+          -0.703265407272022,
+          0.7884067619477344,
+          0.49659244783782075
+        ],
+        "break_enabled": false,
+        "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+        "max_gutter_penetration_m": 0.0,
+        "gutter_contact_steps": 0,
+        "gutter_contact_pairs": [],
+        "max_neighbor_stem_penetration_m": 0.0,
+        "neighbor_stem_contact_steps": 0,
+        "neighbor_stem_contact_pairs": [],
+        "initial_glb_penetration_m": 0.00022795559258460135,
+        "max_glb_penetration_m": 0.00022795559258460135,
+        "glb_physics_valid": true,
+        "physics_guard_version": "glb_hook_gutter_v3",
+        "physics_penetration_limit_m": 0.0005
+      },
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.2390081183881265,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 750,
+        "legacy_seated_samples": 681,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.005846093453740736,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.4291666666665854,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 398,
+          "elapsed_s": 1.6541666666665726,
+          "max_sample_gap_s": 0.00416666666666643,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 20.666666666665815,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_05_f5_d20",
+    "candidate": "seating_05_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 42.285506373271346,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_05_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_05_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "forbidden_force"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.2201261189299069,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.01057345921673336,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.0166034165156164,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.595833333332713,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "original_06_f5_d20",
+    "candidate": "seating_06_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "original",
+    "exit_code": 2,
+    "wall_s": 41.860006069764495,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "--candidate",
+      "seating_06_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/original_06_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": false,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "stop_reasons": [
+        "forbidden_force"
+      ],
+      "stopped_before_next_sim_step": true,
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 1.322796436392434,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.010599959854343033,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 0,
+          "elapsed_s": 0.0,
+          "max_sample_gap_s": null,
+          "continuous": false,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.9781682812239577,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 16.662499999999376,
+      "source_unchanged": true
+    }
+  },
+  {
+    "name": "slow18_00_f5_d20",
+    "candidate": "seating_00_under",
+    "run": "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+    "force": 5,
+    "displacement_m": 0.02,
+    "speed": "slow18",
+    "exit_code": 0,
+    "wall_s": 147.39305625110865,
+    "command": [
+      "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+      "/root/farmily_tomato/mujoco-benchmark/scripts/target_fruit_contact_trial.py",
+      "/root/docker_share/mujoko_debugging_data/20260928_target_fruit_contact_server/slow_run",
+      "--candidate",
+      "seating_00_under",
+      "--base-policy",
+      "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/diagnostic_policy.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20260928_contact_limit_sweep/slow18_00_f5_d20",
+      "--execute",
+      "--max-target-force-n",
+      "5",
+      "--max-target-displacement-m",
+      "0.02"
+    ],
+    "result": {
+      "physics_executed": true,
+      "completed": true,
+      "training_eligible": false,
+      "hook_success": null,
+      "audit_status": "sampled_clear",
+      "audit_complete": true,
+      "limits": {
+        "max_target_force_N": 5.0,
+        "max_target_displacement_m": 0.02,
+        "max_forbidden_force_N": 0.01
+      },
+      "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+      "physics_metrics": {
+        "control_s": 0.03590881638228893,
+        "physics_s": 14.09382219798863,
+        "evaluation_s": 3.7300631627440453,
+        "recording_s": 0.0,
+        "reset_s": 0.002333860844373703,
+        "command_prepare_s": 0.38339635729789734,
+        "rollout_wall_s": 89.89149712584913,
+        "process_cpu_s": 89.875316136,
+        "simulated_s": 55.733333333333334,
+        "requested_s": 55.733333333333334,
+        "steps": 13376,
+        "rtf": 0.6200067316189654,
+        "unstable": false,
+        "max_target_displacement_m": 0.010672590664799354,
+        "max_hook_contact_penetration_m": -0.0,
+        "hook_contact_steps": 7179,
+        "max_tracking_error_m_or_rad": 0.008800511987463983,
+        "warning_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "hook_final_xyz": [
+          -0.7022477378902848,
+          0.7884195739409086,
+          0.4996556054941046
+        ],
+        "break_enabled": false,
+        "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+        "max_gutter_penetration_m": 0.0,
+        "gutter_contact_steps": 0,
+        "gutter_contact_pairs": [],
+        "max_neighbor_stem_penetration_m": 0.0,
+        "neighbor_stem_contact_steps": 0,
+        "neighbor_stem_contact_pairs": [],
+        "initial_glb_penetration_m": 0.00022795559258460135,
+        "max_glb_penetration_m": 0.00022795559258460135,
+        "glb_physics_valid": true,
+        "physics_guard_version": "glb_hook_gutter_v3",
+        "physics_penetration_limit_m": 0.0005
+      },
+      "legacy_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.429166666667804,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 399,
+          "elapsed_s": 1.658333333334653,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.8336099370718174,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+        "sample_hz": 240.0,
+        "seated_samples": 0,
+        "legacy_seated_samples": 0,
+        "intended_contact_samples": 0,
+        "max_penetration_m": -0.0,
+        "max_prismatic_error_m": 0.003664819154458321,
+        "max_revolute_error_rad": 0.008800511987481385,
+        "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+      },
+      "authorized_contact_evidence": {
+        "initially_seated": false,
+        "entered_after_start": false,
+        "hold": {
+          "samples": 344,
+          "elapsed_s": 1.429166666667804,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "verify": {
+          "samples": 399,
+          "elapsed_s": 1.658333333334653,
+          "max_sample_gap_s": 0.0041666666666699825,
+          "continuous": true,
+          "seated_with_force": false
+        },
+        "contact_retention_evidence": false,
+        "max_non_target_force_N": 0.0,
+        "physics_valid": true,
+        "hook_success": null,
+        "training_eligible": false,
+        "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+      },
+      "simulated_s": 55.73333333335072,
+      "source_unchanged": true
+    }
+  }
+]

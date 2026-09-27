@@ -1,0 +1,25 @@
+START original_00_f2_d5
+END original_00_f2_d5 ['target_displacement_limit'] 16.2124999999994
+START original_00_f1_d10
+END original_00_f1_d10 ['target_force_limit'] 16.112499999999407
+START original_00_f2_d10
+END original_00_f2_d10 ['target_displacement_limit'] 16.433333333332723
+START slow18_00_f2_d5
+END slow18_00_f2_d5 ['target_displacement_limit'] 28.299999999998715
+START slow18_00_f1_d10
+END slow18_00_f1_d10 ['target_displacement_limit'] 32.46249999999887
+START slow18_00_f2_d10
+END slow18_00_f2_d10 ['target_displacement_limit'] 32.46249999999887
+START original_00_f5_d20
+END original_00_f5_d20 None 20.599999999999152
+START original_03_f5_d20
+END original_03_f5_d20 ['forbidden_force'] 16.766666666666037
+START original_04_f5_d20
+END original_04_f5_d20 None 20.666666666665815
+START original_05_f5_d20
+END original_05_f5_d20 ['forbidden_force'] 16.595833333332713
+START original_06_f5_d20
+END original_06_f5_d20 ['forbidden_force'] 16.662499999999376
+START slow18_00_f5_d20
+END slow18_00_f5_d20 None 55.73333333335072
+DONE 12
