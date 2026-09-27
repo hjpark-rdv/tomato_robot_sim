@@ -119,7 +119,10 @@ def make_candidate(family, p, *, center, radius, heading, targets, rear_wires,
     h[2] = 0.; h /= np.linalg.norm(h)
     up = np.array([0., 0., 1.]); side = np.cross(h, up)
     travel = math.cos(math.radians(p['elevation_deg']))*h + math.sin(math.radians(p['elevation_deg']))*up
-    final_r = orientation(h, p['roll_deg'], p['pitch_deg'])
+    if 'robot_facing_mouth' in p and not isinstance(p['robot_facing_mouth'], bool):
+        raise ValueError('robot_facing_mouth must be an explicit boolean')
+    robot_facing_mouth = family == 'side_mouth' and p.get('robot_facing_mouth', False)
+    final_r = orientation(-h if robot_facing_mouth else h, p['roll_deg'], p['pitch_deg'])
     target = targets[min(int(p['target_selector']*len(targets)), len(targets)-1)]
     wire = rear_wires[min(int(p['wire_selector']*len(rear_wires)), len(rear_wires)-1)]
     goal = seating_goal(target, wire, final_r, fraction=p['target_fraction'], surface_gap_m=p['seat_gap_m'])
@@ -133,7 +136,10 @@ def make_candidate(family, p, *, center, radius, heading, targets, rear_wires,
         entry_r = final_r * Rotation.from_euler('x', p['entry_twist_deg'], degrees=True)
         point = np.array(goal['target_point_world'])
         gate = point-entry_r.apply([ring_radius+radius+.015, 0., 0.])
-        start = gate-travel*p['pre_distance_m']
+        # +X is the open mouth. Point it toward the target (-h), while
+        # preparing on the robot side (+h). Flipping only start would
+        # approach through the closed rear arc. Default geometry is retained.
+        start = gate + (travel if robot_facing_mouth else -travel)*p['pre_distance_m']
         rows = [pose('preapproach', start, entry_r)]
         _timed_append(rows, 'approach', gate, entry_r, .020)
         # The target moves from the +X opening toward the -X rear arc.
@@ -183,9 +189,18 @@ def make_candidate(family, p, *, center, radius, heading, targets, rear_wires,
                 scope='SIM-GT search proposal; sampled path; requires full robot check and forward execution')
 
 
-def generate_candidates(geometry, per_family, seed, *, parents=()):
+def generate_candidates(geometry, per_family, seed, *, parents=(), families=FAMILIES,
+                        robot_facing_mouth=False):
     """Round-robin family order protects diversity under early budgets."""
-    configs = [(family, p, None) for p in parameters(per_family, seed) for family in FAMILIES]
+    if not families or len(set(families)) != len(families) or not set(families) <= set(FAMILIES):
+        raise ValueError('Choose unique, known motion families')
+    configs = []
+    for p in parameters(per_family, seed):
+        for family in families:
+            values = copy.deepcopy(p)
+            if robot_facing_mouth and family == 'side_mouth':
+                values['robot_facing_mouth'] = True
+            configs.append((family, values, None))
     for parent in parents:
         if parent.get('family') not in FAMILIES:
             continue

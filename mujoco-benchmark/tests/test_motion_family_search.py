@@ -114,3 +114,31 @@ def test_geometric_candidate_not_failed_or_certified_capture():
 def test_complete_motion_is_not_capture():
     assert mf.trial_outcome(dict(physics_executed=True,completed=True),[])=='motion_completed_no_capture_evidence'
     assert mf.trial_outcome(dict(physics_executed=False,audit_status='sampled_clear'),[])=='audit_only_clear'
+
+
+def test_robot_facing_mouth_starts_robot_side_with_opening_toward_target():
+    g=geometry();p=config();p['robot_facing_mouth']=True
+    c=mf.make_candidate('side_mouth',p,**g,candidate_id='front')
+    first=c['pose_waypoints'][0]
+    h=Rotation.from_euler('z',p['azimuth_deg'],degrees=True).apply(g['heading'])
+    assert np.dot(np.array(first['ring_position_xyz'])-g['center'],h)>.1
+    rotation=Rotation.from_quat(first['orientation_xyzw'])
+    assert np.dot(rotation.apply([1.,0.,0.]),h)<-.5
+    t=g['targets'][0];point=t.a+(t.b-t.a)*p['target_fraction']
+    mouth=[r for r in c['pose_waypoints'] if r['phase']=='insert'][-1]
+    local=Rotation.from_quat(mouth['orientation_xyzw']).inv().apply(point-np.array(mouth['ring_position_xyz']))
+    np.testing.assert_allclose(local,[.004,0,0],atol=1e-10)
+
+
+def test_robot_facing_option_preserves_other_families_exactly():
+    a,ra=mf.generate_candidates(geometry(),4,22)
+    b,rb=mf.generate_candidates(geometry(),4,22,robot_facing_mouth=True)
+    assert [c for c in a if c['family']!='side_mouth']==[c for c in b if c['family']!='side_mouth']
+    assert [c for c in ra if c['family']!='side_mouth']==[c for c in rb if c['family']!='side_mouth']
+
+
+def test_family_subset_is_bounded_and_invalid_selection_rejected():
+    cs,rs=mf.generate_candidates(geometry(),4,22,families=['side_mouth'],robot_facing_mouth=True)
+    assert len(cs)+len(rs)==4 and {c['family'] for c in cs+rs}=={'side_mouth'}
+    for families in ([],['bogus'],['side_mouth','side_mouth']):
+        with pytest.raises(ValueError):mf.generate_candidates(geometry(),4,22,families=families)

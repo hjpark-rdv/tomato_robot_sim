@@ -219,7 +219,9 @@ def run_case(case, config, output):
             attach(run, Path(case['source_run'])/'replay_assets/model.mjb',
                    case['hashes']['replay_assets/model.mjb'], config['model_cache'])
         geometry, policy = native_geometry(run); write(out/'base_policy.json',policy)
-        candidates, rejected = generate_candidates(geometry, config['samples_per_family'], config['seed'])
+        generation_options = dict(families=config.get('families',FAMILIES),
+                                  robot_facing_mouth=config.get('robot_facing_mouth',False))
+        candidates, rejected = generate_candidates(geometry, config['samples_per_family'], config['seed'], **generation_options)
         records.extend(dict(x, outcome='proposal_rejected') for x in rejected)
         write(out/'proposal_rejections.json',rejected)
         by_id = {x['candidate_id']: x for x in candidates}
@@ -282,7 +284,7 @@ def run_case(case, config, output):
                 if row['outcome'] not in score or row['family'] in families: continue
                 chosen.append(by_id[row['candidate_id']]);families.add(row['family'])
                 if len(chosen)>=config['refine_parents']:break
-            more, failed = generate_candidates(geometry,config['samples_per_family'],config['seed'],parents=chosen)
+            more, failed = generate_candidates(geometry,config['samples_per_family'],config['seed'],parents=chosen, **generation_options)
             more = [x for x in more if x['parent_id'] is not None]
             records.extend(dict(x,outcome='proposal_rejected') for x in failed if x.get('parent_id'))
             candidates += more; wave(more,config['physics_per_target'])
@@ -366,6 +368,8 @@ def main():
     p.add_argument('--manifest-output',type=Path)
     p.add_argument('--output',type=Path)
     p.add_argument('--samples-per-family',type=int,default=4)
+    p.add_argument('--families',nargs='+',choices=FAMILIES,default=list(FAMILIES))
+    p.add_argument('--robot-facing-mouth',action='store_true',help='Opt-in side-mouth preparation from the robot side; unchanged parameters for other families')
     p.add_argument('--seed',type=int,default=20260928)
     p.add_argument('--case-workers',type=int,default=1)
     p.add_argument('--planning-workers',type=int,default=2)
@@ -389,11 +393,14 @@ def main():
     if not a.manifest or not a.output:p.error('--manifest and --output required')
     from motion_family_search import parameters
     parameters(a.samples_per_family,a.seed)
+    if len(set(a.families))!=len(a.families):p.error('Duplicate family selection')
+    if a.robot_facing_mouth and 'side_mouth' not in a.families:p.error('--robot-facing-mouth requires side_mouth')
     if not 1<=a.case_workers<=8 or not 1<=a.planning_workers<=8:p.error('worker counts must be 1..8')
     if not 1<=a.physics_per_target<=128 or not 0<=a.refine_parents<=4 or not 0<=a.render_budget<=20:p.error('Invalid declared budget')
     if any(not math.isfinite(v) or v<=0 for v in (a.planning_timeout_s,a.trial_timeout_s,a.case_timeout_s)):p.error('Invalid time budget')
     if a.execute and (a.max_target_force_n is None or a.max_target_displacement_m is None):p.error('Explicit experimental limits required for --execute')
     config=dict(samples_per_family=a.samples_per_family,seed=a.seed,planning_workers=a.planning_workers,
+                families=a.families,robot_facing_mouth=a.robot_facing_mouth,
                 planning_python=a.planning_python,native_python=a.native_python,physics_per_target=a.physics_per_target,
                 refine_parents=a.refine_parents,planning_timeout_s=a.planning_timeout_s,trial_timeout_s=a.trial_timeout_s,
                 case_timeout_s=a.case_timeout_s,render_budget=a.render_budget,execute=a.execute,

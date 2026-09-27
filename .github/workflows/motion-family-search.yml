@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'pytest>=8,<10' 'mujoco==${{ matrix.mujoco }}' psutil
+      - run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'pytest>=8,<10' 'mujoco==${{ matrix.mujoco }}' psutil pillow imageio
       - run: >-
           python -m pytest -v -rs
           mujoco-benchmark/tests/test_environment_preflight.py
@@ -41,4 +41,8 @@ jobs:
           mujoco-benchmark/tests/test_motion_family_search.py
           mujoco-benchmark/tests/test_search_contact_policy.py
           mujoco-benchmark/tests/test_motion_search_runner.py
+          mujoco-benchmark/tests/test_motion_search_summary.py
+          mujoco-benchmark/tests/test_search_model_cache.py
+          mujoco-benchmark/tests/test_search_legacy_baseline.py
+          mujoco-benchmark/tests/test_search_render_caption.py
       - run: python -m compileall -q mujoco-benchmark/scripts/motion_family_search.py mujoco-benchmark/scripts/run_motion_family_search.py mujoco-benchmark/scripts/target_truss_identity.py
