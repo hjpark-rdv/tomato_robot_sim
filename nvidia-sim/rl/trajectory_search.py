@@ -24,7 +24,7 @@ def candidates(count, seed):
     low, high = BOUNDS['approach_azimuth_deg']
     angles = low + (high-low)*unit
     return [dict(approach_azimuth_deg=float(angle), **FIXED,
-                 candidate_id=f'candidate_{i:05d}', sampling=SAMPLING, lift_profile='diagonal_45_return',
+                 candidate_id=f'candidate_{i:05d}', sampling=SAMPLING, lift_profile='diagonal_75_return',
                  trajectory_mode='staged6d', stage='coarse', parent_id=None, seed=seed, sobol_index=i,
                  pre_hook_distance_m=.17, hook_roll_deg=0., approach_elevation_deg=0.)
             for i, angle in enumerate(angles)]
@@ -46,10 +46,12 @@ def waypoints(center, neck, params, radius):
     tilt = np.deg2rad(params['lift_forward_angle_deg'])
     lift = insert + params['lift_distance_m']*(up*np.cos(tilt)-outward*np.sin(tilt))
     points=[('preapproach', pre), ('entry', entry), ('insert', insert)]
-    if params.get('lift_profile')=='diagonal_45_return':
+    if params.get('lift_profile') in ('diagonal_45_return','diagonal_15_return','diagonal_75_return'):
         if abs(params['lift_forward_angle_deg'])>1e-12:
-            raise ValueError('45-degree return lift requires a vertical net endpoint')
-        mid=insert+params['lift_distance_m']*.5*(up-outward)
+            raise ValueError('Diagonal return lift requires a vertical net endpoint')
+        # Angle above horizontal; preserve total rise and return to the same endpoint.
+        angle={'diagonal_15_return':15.,'diagonal_45_return':45.,'diagonal_75_return':75.}[params['lift_profile']]
+        mid=insert+params['lift_distance_m']*.5*(up-outward/np.tan(np.deg2rad(angle)))
         points.append(('rise_mid',mid))
     points.append(('rise',lift))
     return r, points, -outward

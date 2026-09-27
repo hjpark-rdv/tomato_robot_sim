@@ -26,11 +26,30 @@ def initialize(root):
  RUN=Path(root);RULE=json.loads((RUN/'manifest.json').read_text()).get('classification_rule','displacement_first_v1');ENGINE=RobotEngine(RUN/'replay_assets/model.mjb',RUN/'replay_assets/initial_trace.json',json.loads((RUN/'manifest.json').read_text())['hz'],reference=RUN/'replay_assets/reference.json',target=json.loads((RUN/'manifest.json').read_text()).get('target','Tomato_05'))
 
 
-def execute(candidate):
+def execute(candidate,gui=False):
  folder=RUN/'candidates'/candidate['candidate_id'];info=json.loads((folder/'plan.json').read_text())
  if not info['preflight'].get('passed'):return dict(info,result='ik_or_planning_failure')
  e=ENGINE;rows=json.loads((folder/'trace.json').read_text());e.commands=np.array([r['command'] for r in rows]);e.ts=np.arange(len(rows))/60
- started=time.perf_counter();r=e.rollout(seconds=info['seconds'],record=True);arrays=r.pop('_arrays');contacts=r.pop('_contacts')
+ started=time.perf_counter()
+ if gui:
+  import mujoco as mj
+  import mujoco.viewer
+  from view_camera import target_camera
+  # Display a separate state: mouse interactions cannot change the physics run.
+  display=mj.MjData(e.model);e.reset();display.qpos[:]=e.data.qpos;mj.mj_forward(e.model,display)
+  with mj.viewer.launch_passive(e.model,display) as view:
+   target_camera(e.model,display,view.cam,e.target)
+   view.sync();began=time.perf_counter();last=[-1.]
+   def show(model,data):
+    if not view.is_running():return
+    if data.time-last[0]<1/30:return
+    time.sleep(max(0.,began+data.time-time.perf_counter()))
+    display.qpos[:]=data.qpos;mj.mj_forward(model,display);view.sync();last[0]=data.time
+   r=e.rollout(seconds=info['seconds'],record=True,on_step=show)
+  # Allow the passive viewer render thread to finish before child process exit.
+  time.sleep(.5)
+ else:r=e.rollout(seconds=info['seconds'],record=True)
+ arrays=r.pop('_arrays');contacts=r.pop('_contacts')
  from replay_storage import compact_states
  np.savez_compressed(folder/'states.npz',**compact_states(arrays,30))
  (folder/'contacts.json').write_text(json.dumps(contacts))

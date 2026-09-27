@@ -13,6 +13,7 @@ PLANNING_PY=Path('/root/isaaclab_env/bin/python')
 
 
 def run(command,log):
+    print('[단계 시작]', Path(log), flush=True)
     with Path(log).open('w') as stream:
         subprocess.run([str(x) for x in command],stdout=stream,stderr=subprocess.STDOUT,check=True)
 
@@ -22,7 +23,7 @@ def direct_candidate(angle,seed):
     return dict(candidate_id='predicted_00000',approach_azimuth_deg=float(angle),
                 entry_clearance_m=.002,lateral_offset_m=0.,insertion_distance_m=.0425,
                 lift_forward_angle_deg=0.,lift_distance_m=.0325,
-                sampling='direct_rgbd_angle_v1',lift_profile='diagonal_45_return',
+                sampling='direct_rgbd_angle_v1',lift_profile='diagonal_75_return',
                 trajectory_mode='staged6d',stage='coarse',parent_id=None,seed=seed,
                 sobol_index=None,pre_hook_distance_m=.17,hook_roll_deg=0.,approach_elevation_deg=0.)
 
@@ -347,7 +348,7 @@ def render_test_report(output_dir: Path, data: dict):
 
 
 
-def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None):
+def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None,gui=False):
     training=Path(training).resolve();output=Path(output).resolve()
     meta=json.loads((training/'manifest.json').read_text())
     if meta.get('schema')!='direct_rgbd_angle_training_v1':raise ValueError('Use a direct RGB-D angle model')
@@ -429,9 +430,9 @@ def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,gl
               'from candidate_experiment import initialize,execute,report;'
               'root=Path(sys.argv[1]);initialize(root);'
               "plan=json.loads((root/'candidates/predicted_00000/plan.json').read_text());"
-              "result=execute({'candidate_id':'predicted_00000'}) if plan['preflight'].get('passed') else dict(plan,result='ik_or_planning_failure');"
+              "result=execute({'candidate_id':'predicted_00000'},gui=sys.argv[3]=='1') if plan['preflight'].get('passed') else dict(plan,result='ik_or_planning_failure');"
               "(root/'candidates/predicted_00000/result.json').write_text(json.dumps(result,indent=2));report(root,[result])")
-        run([PHYSICS_PY,'-c',code,physics,HOME/'scripts'],folder/'execution.log')
+        run([PHYSICS_PY,'-c',code,physics,HOME/'scripts','1' if gui else '0'],folder/'execution.log')
         result=json.loads((physics/'candidates/predicted_00000/result.json').read_text())
         outcomes.append(dict(**decision,planning_passed=bool(plan['preflight'].get('passed')),
                              result=result['result'],physics_run=str(physics),
@@ -460,6 +461,7 @@ if __name__=='__main__':
     p.add_argument('--angle-min',type=float,default=0.,help='Y축 최소 회전각 (기본: 0)')
     p.add_argument('--angle-max',type=float,default=90.,help='Y축 최대 회전각 (기본: 90)')
     p.add_argument('--max-targets',type=int,help='테스트할 최대 열매 수 (기본: 전체 10개)')
+    p.add_argument('--gui',action='store_true',help='실제 물리 실행을 실시간 뷰어로 표시')
     p.add_argument('--repeat',type=int,default=1,help='새 장면 생성 및 테스트 반복 횟수')
     p.add_argument('--output',type=Path,default=Path('/root/docker_share/mujoko_debugging_data')/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_direct_angle_test'))
     a=p.parse_args()
@@ -470,11 +472,11 @@ if __name__=='__main__':
 
     if a.repeat<1:p.error('--repeat must be positive')
     if a.repeat==1:
-        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb),indent=2))
+        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui),indent=2))
     else:
         a.output.mkdir(parents=True,exist_ok=False);summaries=[]
         for index in range(a.repeat):
-            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb)
+            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui)
             summaries.append(dict(test=index,seed=a.seed+index,status=result['status'],
                                   targets_attempted=result.get('targets_attempted',0),
                                   center_entries=result.get('center_entries',0),

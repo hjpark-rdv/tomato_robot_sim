@@ -170,3 +170,4 @@ cd /root/farmily_tomato && \
 4. **최종 수확(Hook & Pull) 단계 연동**:
    - 현재 파이프라인은 '고리 중심 진입(Center Entry)'까지 검증됨.
    - 고리 진입 후 위로 들어 올려 당기는 최종 수확 분리(Separation) 동역학과의 결합 설계.
+

@@ -39,7 +39,7 @@ class RobotEngine:
   mj.mj_resetData(self.model,self.data);self.data.qpos[self.qids]=self.initial;self.data.ctrl[self.aids]=self.initial;self.data.qfrc_applied[:]=self.preload;mj.mj_forward(self.model,self.data)
  def command(self,t):return np.array([np.interp(t,self.ts,self.commands[:,i]) for i in range(7)])
  def poses(self):return np.column_stack([self.data.xpos[self.ids],self.data.xquat[self.ids][:,[1,2,3,0]]])
- def rollout(self,seconds=None,record=False):
+ def rollout(self,seconds=None,record=False,on_step=None):
   seconds=self.ts[-1] if seconds is None else seconds
   if seconds>self.ts[-1]+1e-6:raise ValueError('Requested duration exceeds recorded commands')
   steps=round(seconds/self.model.opt.timestep);times=np.arange(steps+1)*self.model.opt.timestep
@@ -66,6 +66,7 @@ class RobotEngine:
    out['evaluation_s']+=time.perf_counter()-t
    if record:
     t=time.perf_counter();trace.append(self.data.qpos.copy());poses.append(self.poses());pairs.append([[self.model.geom(int(a)).name,self.model.geom(int(b)).name] for a,b in contacts.geom[sel]]);out['recording_s']+=time.perf_counter()-t
+   if on_step is not None:on_step(self.model,self.data)
    if unstable:break
   wall=time.perf_counter()-begin
   out.update(rollout_wall_s=wall,process_cpu_s=time.process_time()-cpu,simulated_s=(i+1)*self.model.opt.timestep,requested_s=seconds,steps=i+1,rtf=(i+1)*self.model.opt.timestep/wall,unstable=unstable,max_target_displacement_m=maxdisp,max_hook_contact_penetration_m=-mincontact,hook_contact_steps=contactsteps,max_tracking_error_m_or_rad=maxerror,warning_counts=self.data.warning.number.tolist(),hook_final_xyz=self.data.xpos[self.hook].tolist(),break_enabled=False,success_evaluator='contact/displacement diagnostics only; no harvest success claim')
