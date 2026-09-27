@@ -1,0 +1,155 @@
+{
+  "trial": {
+    "physics_executed": false,
+    "completed": false,
+    "training_eligible": false,
+    "hook_success": null,
+    "baseline_evaluation": {
+      "source_trajectory_mode": "staged6d",
+      "phase_aliases": {
+        "ready": "ready",
+        "preapproach": "preapproach",
+        "approach": "approach",
+        "entry": "approach",
+        "insert": "insert",
+        "rise": "seat",
+        "rise_mid": "seat",
+        "hold": "hold",
+        "pull": "verify"
+      },
+      "commands_changed": false,
+      "seconds_changed": false,
+      "scope": "Evaluation phase aliases only; original saved azimuth-only commands are unchanged; no action14 labels"
+    },
+    "audit_status": "blocked",
+    "audit_complete": true,
+    "limits": {
+      "max_target_force_N": 5.0,
+      "max_target_displacement_m": 0.02,
+      "max_forbidden_force_N": 0.01
+    },
+    "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+    "reason": "conditional_audit_not_complete_and_clear",
+    "source_unchanged": true
+  },
+  "audit": {
+    "passed": false,
+    "complete": true,
+    "status": "blocked",
+    "samples_checked": 5682,
+    "last_sample_time_s": 41.85,
+    "first_violation": {
+      "time_s": 21.85,
+      "phases": [
+        "seat"
+      ],
+      "robot_geom": "g391",
+      "environment_geom": "glb_col_TRUSS_Pedicel_proximal_03_00",
+      "environment_class": "glb_plant",
+      "distance_m": -5.007396058710799e-06,
+      "command": [
+        0.020524970210111,
+        3.2644336549499697,
+        -0.5402751122048356,
+        -1.2060114665233783,
+        0.17390956665648896,
+        -1.5706014711123366,
+        -0.12265657144698469
+      ],
+      "segment_world": [
+        [
+          -0.6950893051315872,
+          0.9368859466216177,
+          0.4685461635583907
+        ],
+        [
+          -0.6950894388331819,
+          0.9368832147827126,
+          0.4685419691340716
+        ]
+      ]
+    },
+    "violation_summary": {
+      "sample_hits_by_environment_class": {
+        "glb_plant": 809
+      },
+      "minimum_distance_m_by_environment_class": {
+        "glb_plant": -0.001671107922173981
+      },
+      "first_by_environment_class": {
+        "glb_plant": {
+          "time_s": 21.85,
+          "phases": [
+            "seat"
+          ],
+          "robot_geom": "g391",
+          "environment_geom": "glb_col_TRUSS_Pedicel_proximal_03_00",
+          "environment_class": "glb_plant",
+          "distance_m": -5.007396058710799e-06,
+          "command": [
+            0.020524970210111,
+            3.2644336549499697,
+            -0.5402751122048356,
+            -1.2060114665233783,
+            0.17390956665648896,
+            -1.5706014711123366,
+            -0.12265657144698469
+          ],
+          "segment_world": [
+            [
+              -0.6950893051315872,
+              0.9368859466216177,
+              0.4685461635583907
+            ],
+            [
+              -0.6950894388331819,
+              0.9368832147827126,
+              0.4685419691340716
+            ]
+          ]
+        }
+      },
+      "worst_by_environment_class": {
+        "glb_plant": {
+          "time_s": 22.733333333333334,
+          "phases": [
+            "seat"
+          ],
+          "robot_geom": "g391",
+          "environment_geom": "glb_col_TRUSS_Pedicel_proximal_03_00",
+          "environment_class": "glb_plant",
+          "distance_m": -0.001671107922173981,
+          "command": [
+            0.02194419157063585,
+            3.2638010067961303,
+            -0.5398395570714428,
+            -1.2059625327663632,
+            0.17342495504903685,
+            -1.5706024707142041,
+            -0.12202392199392233
+          ],
+          "segment_world": [
+            [
+              -0.6950552364519753,
+              0.9362464299454345,
+              0.4685722716459483
+            ],
+            [
+              -0.6950106164971632,
+              0.937158120888707,
+              0.46997206819228643
+            ]
+          ]
+        }
+      },
+      "observed_unique_pair_phase_count": 5,
+      "reported_unique_pair_phase_count": 5,
+      "omitted_unique_pair_phase_count": 0,
+      "details_truncated": false,
+      "reported_limit": 64,
+      "full_path_requested": true,
+      "full_path_collected": true,
+      "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+    }
+  }
+}

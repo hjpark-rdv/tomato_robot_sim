@@ -1,0 +1,1674 @@
+{
+  "first_blocked_phase": {
+    "side_mouth": {
+      "preapproach": 22,
+      "approach": 11
+    }
+  },
+  "first_obstacle_category": {
+    "side_mouth": {
+      "other_fruit": 9,
+      "non_authorized_pedicel": 3,
+      "main_stem": 16,
+      "target_fruit": 4,
+      "peduncle": 1
+    }
+  },
+  "rows": [
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 7.45,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_05",
+        "body": "truss_01__Tomato_05",
+        "ancestors": [
+          "truss_01__Tomato_05",
+          "truss_01__Attachment_04",
+          "truss_01__TRUSS_Pedicel_proximal_05_02",
+          "truss_01__TRUSS_Pedicel_proximal_05_01",
+          "truss_01__TRUSS_Pedicel_proximal_05_00",
+          "truss_01__TRUSS_Rachis_06",
+          "truss_01__TRUSS_Rachis_05",
+          "truss_01__TRUSS_Rachis_04",
+          "truss_01__TRUSS_Rachis_03",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_09",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 13.658333333333333,
+      "category": "non_authorized_pedicel",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Attachment_05",
+        "body": "Attachment_05",
+        "ancestors": [
+          "Attachment_05",
+          "TRUSS_Pedicel_proximal_06_02",
+          "TRUSS_Pedicel_proximal_06_01",
+          "TRUSS_Pedicel_proximal_06_00",
+          "TRUSS_Rachis_07",
+          "TRUSS_Rachis_06",
+          "TRUSS_Rachis_05",
+          "TRUSS_Rachis_04",
+          "TRUSS_Rachis_03",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 10.775,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 6.8,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 15.988888888888889,
+      "category": "target_fruit",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_08",
+        "body": "Tomato_08",
+        "ancestors": [
+          "Tomato_08",
+          "Attachment_07",
+          "TRUSS_Pedicel_proximal_08_02",
+          "TRUSS_Pedicel_proximal_08_01",
+          "TRUSS_Pedicel_proximal_08_00",
+          "TRUSS_Rachis_09",
+          "TRUSS_Rachis_08",
+          "TRUSS_Rachis_07",
+          "TRUSS_Rachis_06",
+          "TRUSS_Rachis_05",
+          "TRUSS_Rachis_04",
+          "TRUSS_Rachis_03",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": true
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 10.394444444444444,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_10",
+        "body": "Robot_link3",
+        "ancestors": [
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_01",
+        "body": "Tomato_01",
+        "ancestors": [
+          "Tomato_01",
+          "Attachment_00",
+          "TRUSS_Pedicel_proximal_01_02",
+          "TRUSS_Pedicel_proximal_01_01",
+          "TRUSS_Pedicel_proximal_01_00",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 12.225,
+      "category": "target_fruit",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_08",
+        "body": "Tomato_08",
+        "ancestors": [
+          "Tomato_08",
+          "Attachment_07",
+          "TRUSS_Pedicel_proximal_08_02",
+          "TRUSS_Pedicel_proximal_08_01",
+          "TRUSS_Pedicel_proximal_08_00",
+          "TRUSS_Rachis_09",
+          "TRUSS_Rachis_08",
+          "TRUSS_Rachis_07",
+          "TRUSS_Rachis_06",
+          "TRUSS_Rachis_05",
+          "TRUSS_Rachis_04",
+          "TRUSS_Rachis_03",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": true
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 16.77777777777778,
+      "category": "target_fruit",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_08",
+        "body": "Tomato_08",
+        "ancestors": [
+          "Tomato_08",
+          "Attachment_07",
+          "TRUSS_Pedicel_proximal_08_02",
+          "TRUSS_Pedicel_proximal_08_01",
+          "TRUSS_Pedicel_proximal_08_00",
+          "TRUSS_Rachis_09",
+          "TRUSS_Rachis_08",
+          "TRUSS_Rachis_07",
+          "TRUSS_Rachis_06",
+          "TRUSS_Rachis_05",
+          "TRUSS_Rachis_04",
+          "TRUSS_Rachis_03",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": true
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 10.766666666666667,
+      "category": "non_authorized_pedicel",
+      "robot": {
+        "geom": "robot_geom_10",
+        "body": "Robot_link3",
+        "ancestors": [
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Attachment_01",
+        "body": "Attachment_01",
+        "ancestors": [
+          "Attachment_01",
+          "TRUSS_Pedicel_proximal_02_02",
+          "TRUSS_Pedicel_proximal_02_01",
+          "TRUSS_Pedicel_proximal_02_00",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 7.824999999999999,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g18",
+        "body": "STEM_MainStem_04",
+        "ancestors": [
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 14.322222222222223,
+      "category": "non_authorized_pedicel",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Attachment_05",
+        "body": "Attachment_05",
+        "ancestors": [
+          "Attachment_05",
+          "TRUSS_Pedicel_proximal_06_02",
+          "TRUSS_Pedicel_proximal_06_01",
+          "TRUSS_Pedicel_proximal_06_00",
+          "TRUSS_Rachis_07",
+          "TRUSS_Rachis_06",
+          "TRUSS_Rachis_05",
+          "TRUSS_Rachis_04",
+          "TRUSS_Rachis_03",
+          "TRUSS_Rachis_02",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 11.033333333333333,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_10",
+        "body": "Robot_link3",
+        "ancestors": [
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_04",
+        "body": "truss_01__Tomato_04",
+        "ancestors": [
+          "truss_01__Tomato_04",
+          "truss_01__Attachment_03",
+          "truss_01__TRUSS_Pedicel_proximal_04_02",
+          "truss_01__TRUSS_Pedicel_proximal_04_01",
+          "truss_01__TRUSS_Pedicel_proximal_04_00",
+          "truss_01__TRUSS_Rachis_05",
+          "truss_01__TRUSS_Rachis_04",
+          "truss_01__TRUSS_Rachis_03",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_09",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 7.591666666666667,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 16.25,
+      "category": "target_fruit",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_01",
+        "body": "Tomato_01",
+        "ancestors": [
+          "Tomato_01",
+          "Attachment_00",
+          "TRUSS_Pedicel_proximal_01_02",
+          "TRUSS_Pedicel_proximal_01_01",
+          "TRUSS_Pedicel_proximal_01_00",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": true
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 9.677777777777777,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_10",
+        "body": "Robot_link3",
+        "ancestors": [
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g30",
+        "body": "STEM_MainStem_07",
+        "ancestors": [
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 6.45,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g26",
+        "body": "STEM_MainStem_06",
+        "ancestors": [
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 14.55,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_18",
+        "body": "Robot_link6",
+        "ancestors": [
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_02",
+        "body": "truss_01__Tomato_02",
+        "ancestors": [
+          "truss_01__Tomato_02",
+          "truss_01__Attachment_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_02",
+          "truss_01__TRUSS_Pedicel_proximal_02_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_00",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 7.966666666666667,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g34",
+        "body": "STEM_MainStem_08",
+        "ancestors": [
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 5.175000000000001,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g30",
+        "body": "STEM_MainStem_07",
+        "ancestors": [
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 15.016666666666667,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "glb_col_Tomato_01",
+        "body": "Tomato_01",
+        "ancestors": [
+          "Tomato_01",
+          "Attachment_00",
+          "TRUSS_Pedicel_proximal_01_02",
+          "TRUSS_Pedicel_proximal_01_01",
+          "TRUSS_Pedicel_proximal_01_00",
+          "TRUSS_Rachis_01",
+          "TRUSS_Rachis_00",
+          "TRUSS_Truss_01_Peduncle_04",
+          "TRUSS_Truss_01_Peduncle_03",
+          "TRUSS_Truss_01_Peduncle_02",
+          "TRUSS_Truss_01_Peduncle_01",
+          "TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 9.308333333333334,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 6.291666666666666,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 16.55,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_18",
+        "body": "Robot_link6",
+        "ancestors": [
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_02",
+        "body": "truss_01__Tomato_02",
+        "ancestors": [
+          "truss_01__Tomato_02",
+          "truss_01__Attachment_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_02",
+          "truss_01__TRUSS_Pedicel_proximal_02_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_00",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_09",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 10.166666666666666,
+      "category": "peduncle",
+      "robot": {
+        "geom": "robot_geom_10",
+        "body": "Robot_link3",
+        "ancestors": [
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_04",
+        "body": "truss_01__TRUSS_Truss_01_Peduncle_04",
+        "ancestors": [
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_09",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 6.9,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g26",
+        "body": "STEM_MainStem_06",
+        "ancestors": [
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 5.916666666666667,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_18",
+        "body": "Robot_link6",
+        "ancestors": [
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_04",
+        "body": "truss_01__Tomato_04",
+        "ancestors": [
+          "truss_01__Tomato_04",
+          "truss_01__Attachment_03",
+          "truss_01__TRUSS_Pedicel_proximal_04_02",
+          "truss_01__TRUSS_Pedicel_proximal_04_01",
+          "truss_01__TRUSS_Pedicel_proximal_04_00",
+          "truss_01__TRUSS_Rachis_05",
+          "truss_01__TRUSS_Rachis_04",
+          "truss_01__TRUSS_Rachis_03",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 6.1,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g26",
+        "body": "STEM_MainStem_06",
+        "ancestors": [
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 16.816666666666666,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_18",
+        "body": "Robot_link6",
+        "ancestors": [
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_02",
+        "body": "truss_01__Tomato_02",
+        "ancestors": [
+          "truss_01__Tomato_02",
+          "truss_01__Attachment_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_02",
+          "truss_01__TRUSS_Pedicel_proximal_02_01",
+          "truss_01__TRUSS_Pedicel_proximal_02_00",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 9.558333333333334,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g30",
+        "body": "STEM_MainStem_07",
+        "ancestors": [
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 5.958333333333334,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g26",
+        "body": "STEM_MainStem_06",
+        "ancestors": [
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00000",
+      "family": "side_mouth",
+      "phase": "approach",
+      "time_s": 9.7,
+      "category": "other_fruit",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "truss_01__glb_col_Tomato_08",
+        "body": "truss_01__Tomato_08",
+        "ancestors": [
+          "truss_01__Tomato_08",
+          "truss_01__Attachment_07",
+          "truss_01__TRUSS_Pedicel_proximal_08_02",
+          "truss_01__TRUSS_Pedicel_proximal_08_01",
+          "truss_01__TRUSS_Pedicel_proximal_08_00",
+          "truss_01__TRUSS_Rachis_09",
+          "truss_01__TRUSS_Rachis_08",
+          "truss_01__TRUSS_Rachis_07",
+          "truss_01__TRUSS_Rachis_06",
+          "truss_01__TRUSS_Rachis_05",
+          "truss_01__TRUSS_Rachis_04",
+          "truss_01__TRUSS_Rachis_03",
+          "truss_01__TRUSS_Rachis_02",
+          "truss_01__TRUSS_Rachis_01",
+          "truss_01__TRUSS_Rachis_00",
+          "truss_01__TRUSS_Truss_01_Peduncle_04",
+          "truss_01__TRUSS_Truss_01_Peduncle_03",
+          "truss_01__TRUSS_Truss_01_Peduncle_02",
+          "truss_01__TRUSS_Truss_01_Peduncle_01",
+          "truss_01__TRUSS_Truss_01_Peduncle_00",
+          "STEM_MainStem_08",
+          "STEM_MainStem_07",
+          "STEM_MainStem_06",
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 15,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00001",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 8.25,
+      "category": "main_stem",
+      "robot": {
+        "geom": "robot_geom_14",
+        "body": "Robot_link5",
+        "ancestors": [
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 8,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00002",
+      "family": "side_mouth",
+      "phase": "preapproach",
+      "time_s": 5.716666666666667,
+      "category": "main_stem",
+      "robot": {
+        "geom": "g410",
+        "body": "Hook",
+        "ancestors": [
+          "Hook",
+          "Robot_link6",
+          "Robot_link5",
+          "Robot_link4",
+          "Robot_link3",
+          "Robot_link2",
+          "Robot_link1",
+          "Robot_farmily_lift_platform",
+          "Robot_world"
+        ],
+        "contype": 4,
+        "conaffinity": 3,
+        "wire_member": false
+      },
+      "obstacle": {
+        "geom": "g22",
+        "body": "STEM_MainStem_05",
+        "ancestors": [
+          "STEM_MainStem_05",
+          "STEM_MainStem_04",
+          "STEM_MainStem_03",
+          "STEM_MainStem_02",
+          "STEM_MainStem_01",
+          "STEM_MainStem_00"
+        ],
+        "contype": 1,
+        "conaffinity": 7,
+        "target_authorized_geometry": false
+      }
+    }
+  ],
+  "notes": "First violation per complete audit; later collisions remain in raw preflight. Category uses actual native body ancestry; names of Attachment and Tomato need not have equal numeric suffix."
+}

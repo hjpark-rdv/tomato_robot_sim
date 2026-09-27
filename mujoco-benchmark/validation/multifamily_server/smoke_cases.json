@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "scene_id": "gutter02",
+      "target": "Tomato_02",
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "split": "pilot"
+    },
+    {
+      "scene_id": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    }
+  ],
+  "source_scene_failures": []
+}

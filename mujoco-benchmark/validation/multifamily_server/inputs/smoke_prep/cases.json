@@ -1,0 +1,117 @@
+{
+  "schema": "motion_family_search_v1",
+  "cases": [
+    {
+      "scene_id": "scene_0000",
+      "target": "Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0000",
+      "target": "truss_01__Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    }
+  ],
+  "source_scene_failures": [],
+  "unselected_targets": [
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_11",
+      "reason": "declared_target_budget"
+    }
+  ],
+  "requested_scenes": 1,
+  "generated_scenes": 1,
+  "generator_manifest_sha256": "07ed50be8c682d4237c2a3865b8e70370bb1b98061c4d8dc8c6aadd84487602e",
+  "scope": "Pilot generation, no physics motion labels; scene geometry may vary, physical settings retained",
+  "rgbd_collection": "Not performed here. Reuse existing RGB-D collector after rollout results exist; no mask/label format changes."
+}

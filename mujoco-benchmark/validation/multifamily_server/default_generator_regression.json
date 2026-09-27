@@ -1,0 +1,7 @@
+{
+  "default_generation_identical": true,
+  "samples_per_family": 4,
+  "source_sha256": "9bee676d16b10c5f4a2b8662860cf713c2b27d5cfc60a84e81b05594ca150371",
+  "proposals": 20,
+  "scope": "Pure geometry default regression against frozen pilot source; robot-facing option is opt-in"
+}

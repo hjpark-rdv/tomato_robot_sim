@@ -1,0 +1,2313 @@
+{
+  "prefix_blocked_groups": 23,
+  "groups": 48,
+  "complete_four_family_groups": 48,
+  "identical_groups": 48,
+  "rows": [
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 878,
+          "command_sha256": "ec7f6726b3707760ed4522f0839142da211c8c087230eb300d040ae9cbe7a18c"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 878,
+          "command_sha256": "ec7f6726b3707760ed4522f0839142da211c8c087230eb300d040ae9cbe7a18c"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 878,
+          "command_sha256": "ec7f6726b3707760ed4522f0839142da211c8c087230eb300d040ae9cbe7a18c"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 878,
+          "command_sha256": "ec7f6726b3707760ed4522f0839142da211c8c087230eb300d040ae9cbe7a18c"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1247,
+          "command_sha256": "d737977730a5810d5eb3b7fe61a3459428cf1a13539c918577d8589d92687088"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1247,
+          "command_sha256": "d737977730a5810d5eb3b7fe61a3459428cf1a13539c918577d8589d92687088"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1247,
+          "command_sha256": "d737977730a5810d5eb3b7fe61a3459428cf1a13539c918577d8589d92687088"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1247,
+          "command_sha256": "d737977730a5810d5eb3b7fe61a3459428cf1a13539c918577d8589d92687088"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1243,
+          "command_sha256": "15e14e1c962941f75a83253bb818993f3c4ce352a145ede9e9700dee8b3fa386"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1243,
+          "command_sha256": "15e14e1c962941f75a83253bb818993f3c4ce352a145ede9e9700dee8b3fa386"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1243,
+          "command_sha256": "15e14e1c962941f75a83253bb818993f3c4ce352a145ede9e9700dee8b3fa386"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1243,
+          "command_sha256": "15e14e1c962941f75a83253bb818993f3c4ce352a145ede9e9700dee8b3fa386"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 1037,
+          "command_sha256": "3cf19a11ada90aaca3f89e98a4724bad55b29619008169214bc0a1b7cb278f19"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 1037,
+          "command_sha256": "3cf19a11ada90aaca3f89e98a4724bad55b29619008169214bc0a1b7cb278f19"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 1037,
+          "command_sha256": "3cf19a11ada90aaca3f89e98a4724bad55b29619008169214bc0a1b7cb278f19"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 1037,
+          "command_sha256": "3cf19a11ada90aaca3f89e98a4724bad55b29619008169214bc0a1b7cb278f19"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 737,
+          "command_sha256": "f9d8f6c20c620aafd11d5303a73aa24a4e8eebd050deab74707b16cdf92c1b76"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 737,
+          "command_sha256": "f9d8f6c20c620aafd11d5303a73aa24a4e8eebd050deab74707b16cdf92c1b76"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 737,
+          "command_sha256": "f9d8f6c20c620aafd11d5303a73aa24a4e8eebd050deab74707b16cdf92c1b76"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 737,
+          "command_sha256": "f9d8f6c20c620aafd11d5303a73aa24a4e8eebd050deab74707b16cdf92c1b76"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1236,
+          "command_sha256": "c5fe8307047d864d235676890c7770992d9589120d47eb0ed15c51f6934d8149"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1236,
+          "command_sha256": "c5fe8307047d864d235676890c7770992d9589120d47eb0ed15c51f6934d8149"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1236,
+          "command_sha256": "c5fe8307047d864d235676890c7770992d9589120d47eb0ed15c51f6934d8149"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1236,
+          "command_sha256": "c5fe8307047d864d235676890c7770992d9589120d47eb0ed15c51f6934d8149"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1116,
+          "command_sha256": "57ce2ee81399e7abb970f13657bf88fec7e34eaaf1a90bfe93832ceeab18e36b"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1116,
+          "command_sha256": "57ce2ee81399e7abb970f13657bf88fec7e34eaaf1a90bfe93832ceeab18e36b"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1116,
+          "command_sha256": "57ce2ee81399e7abb970f13657bf88fec7e34eaaf1a90bfe93832ceeab18e36b"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1116,
+          "command_sha256": "57ce2ee81399e7abb970f13657bf88fec7e34eaaf1a90bfe93832ceeab18e36b"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 865,
+          "command_sha256": "b203a1ab54d1f44de0272a76e1bf9915a364b05027528cc5481fa19b33939d85"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 865,
+          "command_sha256": "b203a1ab54d1f44de0272a76e1bf9915a364b05027528cc5481fa19b33939d85"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 865,
+          "command_sha256": "b203a1ab54d1f44de0272a76e1bf9915a364b05027528cc5481fa19b33939d85"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 865,
+          "command_sha256": "b203a1ab54d1f44de0272a76e1bf9915a364b05027528cc5481fa19b33939d85"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 731,
+          "command_sha256": "65520ca2f5806e44b5a5abd646d6640b036cf62789e227c958f18b8ec026cdaf"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 731,
+          "command_sha256": "65520ca2f5806e44b5a5abd646d6640b036cf62789e227c958f18b8ec026cdaf"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 731,
+          "command_sha256": "65520ca2f5806e44b5a5abd646d6640b036cf62789e227c958f18b8ec026cdaf"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 731,
+          "command_sha256": "65520ca2f5806e44b5a5abd646d6640b036cf62789e227c958f18b8ec026cdaf"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1221,
+          "command_sha256": "26579e83835a3125637691475040213a3c4e4e4ed90cb6ce624990e02ee9b730"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1221,
+          "command_sha256": "26579e83835a3125637691475040213a3c4e4e4ed90cb6ce624990e02ee9b730"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1221,
+          "command_sha256": "26579e83835a3125637691475040213a3c4e4e4ed90cb6ce624990e02ee9b730"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1221,
+          "command_sha256": "26579e83835a3125637691475040213a3c4e4e4ed90cb6ce624990e02ee9b730"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1077,
+          "command_sha256": "5eacc3f8715e534b1b93a27bed7a3d809f7800531230cf069c2bdcd3aabbeec7"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1077,
+          "command_sha256": "5eacc3f8715e534b1b93a27bed7a3d809f7800531230cf069c2bdcd3aabbeec7"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1077,
+          "command_sha256": "5eacc3f8715e534b1b93a27bed7a3d809f7800531230cf069c2bdcd3aabbeec7"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1077,
+          "command_sha256": "5eacc3f8715e534b1b93a27bed7a3d809f7800531230cf069c2bdcd3aabbeec7"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 774,
+          "command_sha256": "903277d9b05cc761993b71879cf8cbf5aaa0e0b34da8adaa9d6b8b7c67d982da"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 774,
+          "command_sha256": "903277d9b05cc761993b71879cf8cbf5aaa0e0b34da8adaa9d6b8b7c67d982da"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 774,
+          "command_sha256": "903277d9b05cc761993b71879cf8cbf5aaa0e0b34da8adaa9d6b8b7c67d982da"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 774,
+          "command_sha256": "903277d9b05cc761993b71879cf8cbf5aaa0e0b34da8adaa9d6b8b7c67d982da"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 917,
+          "command_sha256": "0c86a6176592b65a5dfef35465af2cd3e7a2cb92345df2952a2f7cb14eb1b6b3"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 917,
+          "command_sha256": "0c86a6176592b65a5dfef35465af2cd3e7a2cb92345df2952a2f7cb14eb1b6b3"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 917,
+          "command_sha256": "0c86a6176592b65a5dfef35465af2cd3e7a2cb92345df2952a2f7cb14eb1b6b3"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 917,
+          "command_sha256": "0c86a6176592b65a5dfef35465af2cd3e7a2cb92345df2952a2f7cb14eb1b6b3"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1255,
+          "command_sha256": "ca43be4b2b5e127cff85aa94b67de6b2d62e5573cfc95d07f2a421ae44fbc351"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1255,
+          "command_sha256": "ca43be4b2b5e127cff85aa94b67de6b2d62e5573cfc95d07f2a421ae44fbc351"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1255,
+          "command_sha256": "ca43be4b2b5e127cff85aa94b67de6b2d62e5573cfc95d07f2a421ae44fbc351"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1255,
+          "command_sha256": "ca43be4b2b5e127cff85aa94b67de6b2d62e5573cfc95d07f2a421ae44fbc351"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1218,
+          "command_sha256": "b92d544cb8099e3fb2c992c256c1726a03ff0a4c3478418e8a272849f28cec53"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1218,
+          "command_sha256": "b92d544cb8099e3fb2c992c256c1726a03ff0a4c3478418e8a272849f28cec53"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1218,
+          "command_sha256": "b92d544cb8099e3fb2c992c256c1726a03ff0a4c3478418e8a272849f28cec53"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1218,
+          "command_sha256": "b92d544cb8099e3fb2c992c256c1726a03ff0a4c3478418e8a272849f28cec53"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 1023,
+          "command_sha256": "7ed70d3457549d1b34f28b5dfd726263986d9940fc0553c2ccc9efd75e73c4d4"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 1023,
+          "command_sha256": "7ed70d3457549d1b34f28b5dfd726263986d9940fc0553c2ccc9efd75e73c4d4"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 1023,
+          "command_sha256": "7ed70d3457549d1b34f28b5dfd726263986d9940fc0553c2ccc9efd75e73c4d4"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 1023,
+          "command_sha256": "7ed70d3457549d1b34f28b5dfd726263986d9940fc0553c2ccc9efd75e73c4d4"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 737,
+          "command_sha256": "b8d6ace28c85cbf8e7a196eb3531e6456ad8605dd6ee3809f997be74f4c3bc5c"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 737,
+          "command_sha256": "b8d6ace28c85cbf8e7a196eb3531e6456ad8605dd6ee3809f997be74f4c3bc5c"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 737,
+          "command_sha256": "b8d6ace28c85cbf8e7a196eb3531e6456ad8605dd6ee3809f997be74f4c3bc5c"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 737,
+          "command_sha256": "b8d6ace28c85cbf8e7a196eb3531e6456ad8605dd6ee3809f997be74f4c3bc5c"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1252,
+          "command_sha256": "a7308e6118732ee049cf22d8f99660a898124f47338bc977293d9a7e21125945"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1252,
+          "command_sha256": "a7308e6118732ee049cf22d8f99660a898124f47338bc977293d9a7e21125945"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1252,
+          "command_sha256": "a7308e6118732ee049cf22d8f99660a898124f47338bc977293d9a7e21125945"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1252,
+          "command_sha256": "a7308e6118732ee049cf22d8f99660a898124f47338bc977293d9a7e21125945"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1123,
+          "command_sha256": "5afc2610ec20b8b3bfe22cf11aab87cee7fa4f20e18473503339d22ef3cd22c5"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1123,
+          "command_sha256": "5afc2610ec20b8b3bfe22cf11aab87cee7fa4f20e18473503339d22ef3cd22c5"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1123,
+          "command_sha256": "5afc2610ec20b8b3bfe22cf11aab87cee7fa4f20e18473503339d22ef3cd22c5"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1123,
+          "command_sha256": "5afc2610ec20b8b3bfe22cf11aab87cee7fa4f20e18473503339d22ef3cd22c5"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 898,
+          "command_sha256": "c7990f9ed3141d6cd7297d94d4279834035686decf7defc8529f276f6bde0723"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 898,
+          "command_sha256": "c7990f9ed3141d6cd7297d94d4279834035686decf7defc8529f276f6bde0723"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 898,
+          "command_sha256": "c7990f9ed3141d6cd7297d94d4279834035686decf7defc8529f276f6bde0723"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 898,
+          "command_sha256": "c7990f9ed3141d6cd7297d94d4279834035686decf7defc8529f276f6bde0723"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 780,
+          "command_sha256": "9cdbbdadc6e2c7e31dba0489ec53139379301f80fe2c7dc5fbb9ae983dab547a"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 780,
+          "command_sha256": "9cdbbdadc6e2c7e31dba0489ec53139379301f80fe2c7dc5fbb9ae983dab547a"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 780,
+          "command_sha256": "9cdbbdadc6e2c7e31dba0489ec53139379301f80fe2c7dc5fbb9ae983dab547a"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 780,
+          "command_sha256": "9cdbbdadc6e2c7e31dba0489ec53139379301f80fe2c7dc5fbb9ae983dab547a"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1221,
+          "command_sha256": "5890c5ef566258b645f3e485e2d1794855dd8748d04b95bf1beee9e61c72ca8f"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1221,
+          "command_sha256": "5890c5ef566258b645f3e485e2d1794855dd8748d04b95bf1beee9e61c72ca8f"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1221,
+          "command_sha256": "5890c5ef566258b645f3e485e2d1794855dd8748d04b95bf1beee9e61c72ca8f"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1221,
+          "command_sha256": "5890c5ef566258b645f3e485e2d1794855dd8748d04b95bf1beee9e61c72ca8f"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1086,
+          "command_sha256": "4c51dfab72fb82b4813dc7b86d9e0630bed25ce57a64ad8c4c5bac2d22f27204"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1086,
+          "command_sha256": "4c51dfab72fb82b4813dc7b86d9e0630bed25ce57a64ad8c4c5bac2d22f27204"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1086,
+          "command_sha256": "4c51dfab72fb82b4813dc7b86d9e0630bed25ce57a64ad8c4c5bac2d22f27204"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1086,
+          "command_sha256": "4c51dfab72fb82b4813dc7b86d9e0630bed25ce57a64ad8c4c5bac2d22f27204"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 685,
+          "command_sha256": "70a8cd3db1d79558a255b16da5fd1bbd6e44901cd6dd0b53ce80eb298869457b"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 685,
+          "command_sha256": "70a8cd3db1d79558a255b16da5fd1bbd6e44901cd6dd0b53ce80eb298869457b"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 685,
+          "command_sha256": "70a8cd3db1d79558a255b16da5fd1bbd6e44901cd6dd0b53ce80eb298869457b"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 685,
+          "command_sha256": "70a8cd3db1d79558a255b16da5fd1bbd6e44901cd6dd0b53ce80eb298869457b"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 790,
+          "command_sha256": "efe7906bb79a5607384d8d2b37c4c74b21fb4d94b6907d4e5489cd0eb580524b"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 790,
+          "command_sha256": "efe7906bb79a5607384d8d2b37c4c74b21fb4d94b6907d4e5489cd0eb580524b"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 790,
+          "command_sha256": "efe7906bb79a5607384d8d2b37c4c74b21fb4d94b6907d4e5489cd0eb580524b"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 790,
+          "command_sha256": "efe7906bb79a5607384d8d2b37c4c74b21fb4d94b6907d4e5489cd0eb580524b"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1253,
+          "command_sha256": "82a83f31a22a1502f292006c5d9486ffbec8d1154d0897a78de105f820f43e4b"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1253,
+          "command_sha256": "82a83f31a22a1502f292006c5d9486ffbec8d1154d0897a78de105f820f43e4b"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1253,
+          "command_sha256": "82a83f31a22a1502f292006c5d9486ffbec8d1154d0897a78de105f820f43e4b"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1253,
+          "command_sha256": "82a83f31a22a1502f292006c5d9486ffbec8d1154d0897a78de105f820f43e4b"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1145,
+          "command_sha256": "551efd3a05834f87a7b34aca57722e6df4e200d7795bbec5477f7ee511aaf5a9"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1145,
+          "command_sha256": "551efd3a05834f87a7b34aca57722e6df4e200d7795bbec5477f7ee511aaf5a9"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1145,
+          "command_sha256": "551efd3a05834f87a7b34aca57722e6df4e200d7795bbec5477f7ee511aaf5a9"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1145,
+          "command_sha256": "551efd3a05834f87a7b34aca57722e6df4e200d7795bbec5477f7ee511aaf5a9"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 945,
+          "command_sha256": "5c130b21933a91292b51fe0873e0df92cb68ac31cecef8064a54f291a134929d"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 945,
+          "command_sha256": "5c130b21933a91292b51fe0873e0df92cb68ac31cecef8064a54f291a134929d"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 945,
+          "command_sha256": "5c130b21933a91292b51fe0873e0df92cb68ac31cecef8064a54f291a134929d"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 945,
+          "command_sha256": "5c130b21933a91292b51fe0873e0df92cb68ac31cecef8064a54f291a134929d"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 706,
+          "command_sha256": "a63ecf658baf45312eb4987cf34c4135c2b7ed0f11409da8ff6e68c90236e4a2"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 706,
+          "command_sha256": "a63ecf658baf45312eb4987cf34c4135c2b7ed0f11409da8ff6e68c90236e4a2"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 706,
+          "command_sha256": "a63ecf658baf45312eb4987cf34c4135c2b7ed0f11409da8ff6e68c90236e4a2"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 706,
+          "command_sha256": "a63ecf658baf45312eb4987cf34c4135c2b7ed0f11409da8ff6e68c90236e4a2"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1238,
+          "command_sha256": "94f49a45f654183b1fb4dd1e5c5c71aad6c119cd92167f99d3c2d3dd297619dc"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1238,
+          "command_sha256": "94f49a45f654183b1fb4dd1e5c5c71aad6c119cd92167f99d3c2d3dd297619dc"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1238,
+          "command_sha256": "94f49a45f654183b1fb4dd1e5c5c71aad6c119cd92167f99d3c2d3dd297619dc"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1238,
+          "command_sha256": "94f49a45f654183b1fb4dd1e5c5c71aad6c119cd92167f99d3c2d3dd297619dc"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1107,
+          "command_sha256": "4c1d5894a11230c7cb857060375932b006321292936d0d69b9457498fcbb9cea"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1107,
+          "command_sha256": "4c1d5894a11230c7cb857060375932b006321292936d0d69b9457498fcbb9cea"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1107,
+          "command_sha256": "4c1d5894a11230c7cb857060375932b006321292936d0d69b9457498fcbb9cea"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1107,
+          "command_sha256": "4c1d5894a11230c7cb857060375932b006321292936d0d69b9457498fcbb9cea"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 844,
+          "command_sha256": "a8e0f11a544c27af34e3a93a2753bca3569fe487c81235720d12dcfb09240922"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 844,
+          "command_sha256": "a8e0f11a544c27af34e3a93a2753bca3569fe487c81235720d12dcfb09240922"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 844,
+          "command_sha256": "a8e0f11a544c27af34e3a93a2753bca3569fe487c81235720d12dcfb09240922"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 844,
+          "command_sha256": "a8e0f11a544c27af34e3a93a2753bca3569fe487c81235720d12dcfb09240922"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 750,
+          "command_sha256": "eb9d9260683495b11a003e408154075324d92f0749f0e0c31f5d4bef1610e16c"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 750,
+          "command_sha256": "eb9d9260683495b11a003e408154075324d92f0749f0e0c31f5d4bef1610e16c"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 750,
+          "command_sha256": "eb9d9260683495b11a003e408154075324d92f0749f0e0c31f5d4bef1610e16c"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 750,
+          "command_sha256": "eb9d9260683495b11a003e408154075324d92f0749f0e0c31f5d4bef1610e16c"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1195,
+          "command_sha256": "8df5b2558424a21b41b8f21bc24c51d3a843b2708c441e73bd36e196467f5e7d"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1195,
+          "command_sha256": "8df5b2558424a21b41b8f21bc24c51d3a843b2708c441e73bd36e196467f5e7d"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1195,
+          "command_sha256": "8df5b2558424a21b41b8f21bc24c51d3a843b2708c441e73bd36e196467f5e7d"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1195,
+          "command_sha256": "8df5b2558424a21b41b8f21bc24c51d3a843b2708c441e73bd36e196467f5e7d"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1062,
+          "command_sha256": "d46bfc374af85ce35cc5482a640427295e1ffbca16e80623301e94ada50a33d1"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1062,
+          "command_sha256": "d46bfc374af85ce35cc5482a640427295e1ffbca16e80623301e94ada50a33d1"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1062,
+          "command_sha256": "d46bfc374af85ce35cc5482a640427295e1ffbca16e80623301e94ada50a33d1"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1062,
+          "command_sha256": "d46bfc374af85ce35cc5482a640427295e1ffbca16e80623301e94ada50a33d1"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 743,
+          "command_sha256": "43ae7d2861b78fc6a4d77cf9345806dfc5da3d309af9239e8071f1179318fe93"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 743,
+          "command_sha256": "43ae7d2861b78fc6a4d77cf9345806dfc5da3d309af9239e8071f1179318fe93"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 743,
+          "command_sha256": "43ae7d2861b78fc6a4d77cf9345806dfc5da3d309af9239e8071f1179318fe93"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 743,
+          "command_sha256": "43ae7d2861b78fc6a4d77cf9345806dfc5da3d309af9239e8071f1179318fe93"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 843,
+          "command_sha256": "b9978f16ad5ecde8b7fa523a3d81d5cba70a2dfae7edeb905da73f671e9f2206"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 843,
+          "command_sha256": "b9978f16ad5ecde8b7fa523a3d81d5cba70a2dfae7edeb905da73f671e9f2206"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 843,
+          "command_sha256": "b9978f16ad5ecde8b7fa523a3d81d5cba70a2dfae7edeb905da73f671e9f2206"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 843,
+          "command_sha256": "b9978f16ad5ecde8b7fa523a3d81d5cba70a2dfae7edeb905da73f671e9f2206"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1238,
+          "command_sha256": "7e4a3219be660f551982f7d623678c30c422b8296b4d76326c7630987425af1f"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1238,
+          "command_sha256": "7e4a3219be660f551982f7d623678c30c422b8296b4d76326c7630987425af1f"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1238,
+          "command_sha256": "7e4a3219be660f551982f7d623678c30c422b8296b4d76326c7630987425af1f"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1238,
+          "command_sha256": "7e4a3219be660f551982f7d623678c30c422b8296b4d76326c7630987425af1f"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1215,
+          "command_sha256": "d86fdb641c4fe517eef0a2c531f21fe623ac5db52c5b4493d4046d298e9f5e6d"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1215,
+          "command_sha256": "d86fdb641c4fe517eef0a2c531f21fe623ac5db52c5b4493d4046d298e9f5e6d"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1215,
+          "command_sha256": "d86fdb641c4fe517eef0a2c531f21fe623ac5db52c5b4493d4046d298e9f5e6d"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1215,
+          "command_sha256": "d86fdb641c4fe517eef0a2c531f21fe623ac5db52c5b4493d4046d298e9f5e6d"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 1029,
+          "command_sha256": "05d16d3058823b39fb40f6a2bdbf8d8ad3a8372155cc28969d957c284922cf88"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 1029,
+          "command_sha256": "05d16d3058823b39fb40f6a2bdbf8d8ad3a8372155cc28969d957c284922cf88"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 1029,
+          "command_sha256": "05d16d3058823b39fb40f6a2bdbf8d8ad3a8372155cc28969d957c284922cf88"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 1029,
+          "command_sha256": "05d16d3058823b39fb40f6a2bdbf8d8ad3a8372155cc28969d957c284922cf88"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 715,
+          "command_sha256": "eb8f74f4c7efbc47d50f0fcec26ab838d881cf2fcd14f827f1b8f9dce5e97578"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 715,
+          "command_sha256": "eb8f74f4c7efbc47d50f0fcec26ab838d881cf2fcd14f827f1b8f9dce5e97578"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 715,
+          "command_sha256": "eb8f74f4c7efbc47d50f0fcec26ab838d881cf2fcd14f827f1b8f9dce5e97578"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 715,
+          "command_sha256": "eb8f74f4c7efbc47d50f0fcec26ab838d881cf2fcd14f827f1b8f9dce5e97578"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1243,
+          "command_sha256": "4920ee6b7dd5a2e25d8f124d3f301823922a5a1cdf29a332f67a0753783decfd"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1243,
+          "command_sha256": "4920ee6b7dd5a2e25d8f124d3f301823922a5a1cdf29a332f67a0753783decfd"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1243,
+          "command_sha256": "4920ee6b7dd5a2e25d8f124d3f301823922a5a1cdf29a332f67a0753783decfd"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1243,
+          "command_sha256": "4920ee6b7dd5a2e25d8f124d3f301823922a5a1cdf29a332f67a0753783decfd"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1115,
+          "command_sha256": "6e1484cad7f5873d5ba444a661f4c6ba733b0f6b71eafd6323839219fb9620c1"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1115,
+          "command_sha256": "6e1484cad7f5873d5ba444a661f4c6ba733b0f6b71eafd6323839219fb9620c1"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1115,
+          "command_sha256": "6e1484cad7f5873d5ba444a661f4c6ba733b0f6b71eafd6323839219fb9620c1"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1115,
+          "command_sha256": "6e1484cad7f5873d5ba444a661f4c6ba733b0f6b71eafd6323839219fb9620c1"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 924,
+          "command_sha256": "1fd8a96077b04a8611298aba4b15fd7b28b24f4e02158a268b5307bbefce0dd0"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 924,
+          "command_sha256": "1fd8a96077b04a8611298aba4b15fd7b28b24f4e02158a268b5307bbefce0dd0"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 924,
+          "command_sha256": "1fd8a96077b04a8611298aba4b15fd7b28b24f4e02158a268b5307bbefce0dd0"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 924,
+          "command_sha256": "1fd8a96077b04a8611298aba4b15fd7b28b24f4e02158a268b5307bbefce0dd0"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -82.13316526263952,
+        "elevation_deg": 7.198331952095032,
+        "entry_twist_deg": -11.57606840133667,
+        "lateral_m": -0.0048982671797275544,
+        "pitch_deg": -28.4146059025079,
+        "pre_distance_m": 0.13960205927491187,
+        "roll_deg": 36.69820190407336,
+        "seat_gap_m": 0.000968370697274804,
+        "sweep_m": 0.03260787196457386,
+        "target_fraction": 0.712424143217504,
+        "target_selector": 0.4251005593687296,
+        "under_clearance_m": 0.016786812871694565,
+        "verify_m": 0.004074502632021904,
+        "wire_selector": 0.9051943402737379
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00014",
+          "samples": 742,
+          "command_sha256": "680356f75cb82aa045a85a655d2f429915b2b32f369d242c17c2b6ff437c69ad"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00010",
+          "samples": 742,
+          "command_sha256": "680356f75cb82aa045a85a655d2f429915b2b32f369d242c17c2b6ff437c69ad"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00012",
+          "samples": 742,
+          "command_sha256": "680356f75cb82aa045a85a655d2f429915b2b32f369d242c17c2b6ff437c69ad"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00013",
+          "samples": 742,
+          "command_sha256": "680356f75cb82aa045a85a655d2f429915b2b32f369d242c17c2b6ff437c69ad"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": true
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 78.95136959850788,
+        "elevation_deg": -27.082315888255835,
+        "entry_twist_deg": 41.42233029007912,
+        "lateral_m": 0.007327413663268091,
+        "pitch_deg": 34.3708329834044,
+        "pre_distance_m": 0.17798815041780472,
+        "roll_deg": -47.27622657082975,
+        "seat_gap_m": 0.00023380286879837514,
+        "sweep_m": 0.05180801190435887,
+        "target_fraction": 0.4120632284320891,
+        "target_selector": 0.6127230767160654,
+        "under_clearance_m": 0.011132736220955848,
+        "verify_m": 0.002391870528459549,
+        "wire_selector": 0.242649813182652
+      },
+      "members": [
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00019",
+          "samples": 1204,
+          "command_sha256": "178377e9bbdf471184acee261dbc34ae2ff6daae23f1ec500d7b336a2e05fe74"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00017",
+          "samples": 1204,
+          "command_sha256": "178377e9bbdf471184acee261dbc34ae2ff6daae23f1ec500d7b336a2e05fe74"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00018",
+          "samples": 1204,
+          "command_sha256": "178377e9bbdf471184acee261dbc34ae2ff6daae23f1ec500d7b336a2e05fe74"
+        },
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00015",
+          "samples": 1204,
+          "command_sha256": "178377e9bbdf471184acee261dbc34ae2ff6daae23f1ec500d7b336a2e05fe74"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": 43.41874096542597,
+        "elevation_deg": 16.913489755243063,
+        "entry_twist_deg": 6.3628993928432465,
+        "lateral_m": -0.011459219992160798,
+        "pitch_deg": -1.1557922791689634,
+        "pre_distance_m": 0.19453825354576113,
+        "roll_deg": 9.493285026401281,
+        "seat_gap_m": 0.0005414809592068194,
+        "sweep_m": 0.0605883419699967,
+        "target_fraction": 0.36283222306519747,
+        "target_selector": 0.18042751215398312,
+        "under_clearance_m": 0.005455894023180008,
+        "verify_m": 0.003477602768689394,
+        "wire_selector": 0.7365262871608138
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00000",
+          "samples": 1067,
+          "command_sha256": "9da1933fec8125d3be2ec93aba6692ecb880e9fa15042ed6b072220c5485c6f8"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00004",
+          "samples": 1067,
+          "command_sha256": "9da1933fec8125d3be2ec93aba6692ecb880e9fa15042ed6b072220c5485c6f8"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00003",
+          "samples": 1067,
+          "command_sha256": "9da1933fec8125d3be2ec93aba6692ecb880e9fa15042ed6b072220c5485c6f8"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00002",
+          "samples": 1067,
+          "command_sha256": "9da1933fec8125d3be2ec93aba6692ecb880e9fa15042ed6b072220c5485c6f8"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "parameters": {
+        "azimuth_deg": -47.085403725504875,
+        "elevation_deg": -8.687815926969051,
+        "entry_twist_deg": -56.82898312807083,
+        "lateral_m": 1.6294732689856734e-05,
+        "pitch_deg": 17.709180749952793,
+        "pre_distance_m": 0.15302777096629144,
+        "roll_deg": -4.0241349674761295,
+        "seat_gap_m": 0.0008074212156236171,
+        "sweep_m": 0.046392774898558864,
+        "target_fraction": 0.5156101514585316,
+        "target_selector": 0.8680491354316473,
+        "under_clearance_m": 0.014609907701611519,
+        "verify_m": 0.005050889406353235,
+        "wire_selector": 0.39514733478426933
+      },
+      "members": [
+        {
+          "family": "under_center",
+          "candidate": "mf_20260928_00005",
+          "samples": 813,
+          "command_sha256": "83d51b5acc4cad76721d9fde7f681d44f34689a57e61ffb6b574e48248db8f72"
+        },
+        {
+          "family": "pivot_sweep",
+          "candidate": "mf_20260928_00009",
+          "samples": 813,
+          "command_sha256": "83d51b5acc4cad76721d9fde7f681d44f34689a57e61ffb6b574e48248db8f72"
+        },
+        {
+          "family": "flank_left",
+          "candidate": "mf_20260928_00007",
+          "samples": 813,
+          "command_sha256": "83d51b5acc4cad76721d9fde7f681d44f34689a57e61ffb6b574e48248db8f72"
+        },
+        {
+          "family": "flank_right",
+          "candidate": "mf_20260928_00008",
+          "samples": 813,
+          "command_sha256": "83d51b5acc4cad76721d9fde7f681d44f34689a57e61ffb6b574e48248db8f72"
+        }
+      ],
+      "identical": true,
+      "all_four_blocked_in_prefix": false
+    }
+  ],
+  "scope": "Actual saved preapproach+approach joint command arrays; no physics. These four families diverge after this prefix."
+}

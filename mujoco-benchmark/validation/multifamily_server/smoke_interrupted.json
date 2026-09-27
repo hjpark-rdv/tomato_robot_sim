@@ -1,0 +1,11 @@
+{
+  "reason": "First audit hit 120s budget; optimize repeated exact permission lookup before rerunning unchanged plans.",
+  "physics_attempts": 0,
+  "partial_results_preserved": true,
+  "pids": [
+    641779,
+    641968,
+    641969,
+    644619
+  ]
+}

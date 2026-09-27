@@ -1,0 +1,930 @@
+{
+  "generated_scenes": 6,
+  "initial_pass": 4,
+  "fruit_counts": {
+    "selected": 12,
+    "declared_target_budget": 68,
+    "initial_scene_screen_failed": 40
+  },
+  "scenes": [
+    {
+      "scene": "scene_0000",
+      "initial_screen": {
+        "initial_penetration_m": 0.0002227474354025566,
+        "max_penetration_m": 0.0002227474354025566,
+        "worst_contact": {
+          "a": "truss_01__glb_col_TRUSS_Rachis_04",
+          "b": "truss_01__glb_col_Tomato_02",
+          "penetration_m": 0.0002227474354025566,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.002968691248814359,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 7,
+          "stem_fraction": 0.2858393508174153,
+          "y_deg": 16.19590129628405,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7571798303265509,
+            1.0303528140479281,
+            0.8082251685528341
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 8,
+          "stem_fraction": 0.5021890987344442,
+          "y_deg": 97.0921680495979,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7653238100445621,
+            1.0470834615147318,
+            0.8779781152424401
+          ]
+        }
+      ],
+      "model_sha256": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "selected"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "declared_target_budget"
+        }
+      ]
+    },
+    {
+      "scene": "scene_0001",
+      "initial_screen": {
+        "initial_penetration_m": 0.004118543895052729,
+        "max_penetration_m": 0.004118543895052729,
+        "worst_contact": {
+          "a": "truss_01__glb_col_Tomato_10",
+          "b": "glb_col_Tomato_01",
+          "penetration_m": 0.004118543895052729,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.013599412601588147,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 6,
+          "stem_fraction": 0.15,
+          "y_deg": 107.05361843656469,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.762204789954595,
+            1.0055451757751355,
+            0.7324332451384734
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 9,
+          "stem_fraction": 0.46740279467122825,
+          "y_deg": 177.8064886843723,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7796046975832276,
+            1.0541164852611455,
+            0.9714427594333623
+          ]
+        }
+      ],
+      "model_sha256": "3a3fd141f7f2b8ce9ed40ea54d9c31e9e2c1b34c596e7132d38c7198010fc815",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "initial_scene_screen_failed"
+        }
+      ]
+    },
+    {
+      "scene": "scene_0002",
+      "initial_screen": {
+        "initial_penetration_m": 0.0024348995207783934,
+        "max_penetration_m": 0.0024348995207783934,
+        "worst_contact": {
+          "a": "g30",
+          "b": "glb_col_TRUSS_Truss_01_Peduncle_00",
+          "penetration_m": 0.0024348995207783934,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.03884107247665919,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 6,
+          "stem_fraction": 0.15,
+          "y_deg": 89.7143579887533,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.758944157452824,
+            0.9971240107925217,
+            0.7374130497814217
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 10,
+          "stem_fraction": 0.3537032898007624,
+          "y_deg": 127.77136650598763,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7861139986924846,
+            1.0716176227417147,
+            1.071670143223404
+          ]
+        }
+      ],
+      "model_sha256": "96fd1c95207dce91e10ab97c67fe32b68faa8419449292de49bf7595f1e87bdd",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "initial_scene_screen_failed"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "initial_scene_screen_failed"
+        }
+      ]
+    },
+    {
+      "scene": "scene_0003",
+      "initial_screen": {
+        "initial_penetration_m": 0.00022795580412284227,
+        "max_penetration_m": 0.00022795580412284227,
+        "worst_contact": {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "penetration_m": 0.00022795580412284227,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.002969143609860274,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 6,
+          "stem_fraction": 0.6742550621505172,
+          "y_deg": 20.12640750527536,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7575905975573753,
+            0.9732191632905912,
+            0.6958596444512186
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 9,
+          "stem_fraction": 0.2003716001821214,
+          "y_deg": 133.60628097031474,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7809817428657927,
+            1.059153200790258,
+            0.9954710367409773
+          ]
+        }
+      ],
+      "model_sha256": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "selected"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "declared_target_budget"
+        }
+      ]
+    },
+    {
+      "scene": "scene_0004",
+      "initial_screen": {
+        "initial_penetration_m": 0.00022795652088397102,
+        "max_penetration_m": 0.00022795652088397102,
+        "worst_contact": {
+          "a": "truss_01__glb_col_TRUSS_Rachis_04",
+          "b": "truss_01__glb_col_Tomato_02",
+          "penetration_m": 0.00022795652088397102,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.002891839049476111,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 6,
+          "stem_fraction": 0.4878820850012664,
+          "y_deg": 0.13300643367334608,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7561743031861575,
+            0.9832109549413025,
+            0.7097866146827234
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 9,
+          "stem_fraction": 0.85,
+          "y_deg": 15.038982290668581,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7679801598648116,
+            1.0483242026621276,
+            0.9379830970614229
+          ]
+        }
+      ],
+      "model_sha256": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "selected"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "declared_target_budget"
+        }
+      ]
+    },
+    {
+      "scene": "scene_0005",
+      "initial_screen": {
+        "initial_penetration_m": 0.0002279559778250004,
+        "max_penetration_m": 0.0002279559778250004,
+        "worst_contact": {
+          "a": "truss_01__glb_col_TRUSS_Rachis_04",
+          "b": "truss_01__glb_col_Tomato_02",
+          "penetration_m": 0.0002279559778250004,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.0028991349966747764,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": true,
+        "idle_motion_screen_passed": true,
+        "scene_screen_passed": true,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      },
+      "placements": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 6,
+          "stem_fraction": 0.85,
+          "y_deg": 99.65128719041432,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7605235690405076,
+            0.9733323926846877,
+            0.6771203684022138
+          ]
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 8,
+          "stem_fraction": 0.5408729670030681,
+          "y_deg": 51.309887231678154,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "truss_scale": 0.5,
+          "attachment_world_m": [
+            -0.7610103084783431,
+            1.0425895544293573,
+            0.8753414268654586
+          ]
+        }
+      ],
+      "model_sha256": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+      "targets": [
+        {
+          "target": "Tomato_01",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_04",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_08",
+          "status": "selected"
+        },
+        {
+          "target": "Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "Tomato_11",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_01",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_02",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_03",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_04",
+          "status": "selected"
+        },
+        {
+          "target": "truss_01__Tomato_05",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_07",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_08",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_09",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_10",
+          "status": "declared_target_budget"
+        },
+        {
+          "target": "truss_01__Tomato_11",
+          "status": "declared_target_budget"
+        }
+      ]
+    }
+  ],
+  "training_eligible": false
+}

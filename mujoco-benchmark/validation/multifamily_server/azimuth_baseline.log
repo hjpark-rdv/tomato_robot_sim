@@ -1,0 +1,33 @@
+{
+  "physics_executed": false,
+  "completed": false,
+  "training_eligible": false,
+  "hook_success": null,
+  "baseline_evaluation": {
+    "source_trajectory_mode": "staged6d",
+    "phase_aliases": {
+      "ready": "ready",
+      "preapproach": "preapproach",
+      "approach": "approach",
+      "entry": "approach",
+      "insert": "insert",
+      "rise": "seat",
+      "rise_mid": "seat",
+      "hold": "hold",
+      "pull": "verify"
+    },
+    "commands_changed": false,
+    "seconds_changed": false,
+    "scope": "Evaluation phase aliases only; original saved azimuth-only commands are unchanged; no action14 labels"
+  },
+  "audit_status": "blocked",
+  "audit_complete": true,
+  "limits": {
+    "max_target_force_N": 5.0,
+    "max_target_displacement_m": 0.02,
+    "max_forbidden_force_N": 0.01
+  },
+  "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+  "reason": "conditional_audit_not_complete_and_clear",
+  "source_unchanged": true
+}

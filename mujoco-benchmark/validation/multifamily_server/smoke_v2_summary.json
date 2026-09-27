@@ -1,0 +1,4501 @@
+{
+  "source": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2",
+  "expected_cases": 2,
+  "reported_cases": 2,
+  "completed_cases": 2,
+  "families": {
+    "under_center": {
+      "proposed": 4,
+      "outcome:path_blocked": 4,
+      "ik_and_robot_check_pass": 4,
+      "full_audit_complete": 4,
+      "full_audit_pass": 0,
+      "executed": 0,
+      "completed": 0,
+      "geometric_any": 0,
+      "retention_evidence": 0
+    },
+    "side_mouth": {
+      "proposed": 4,
+      "outcome:path_blocked": 4,
+      "ik_and_robot_check_pass": 4,
+      "full_audit_complete": 4,
+      "full_audit_pass": 0,
+      "executed": 0,
+      "completed": 0,
+      "geometric_any": 0,
+      "retention_evidence": 0
+    },
+    "flank_left": {
+      "proposed": 4,
+      "outcome:path_blocked": 4,
+      "ik_and_robot_check_pass": 4,
+      "full_audit_complete": 4,
+      "full_audit_pass": 0,
+      "executed": 0,
+      "completed": 0,
+      "geometric_any": 0,
+      "retention_evidence": 0
+    },
+    "flank_right": {
+      "proposed": 4,
+      "outcome:path_blocked": 4,
+      "ik_and_robot_check_pass": 4,
+      "full_audit_complete": 4,
+      "full_audit_pass": 0,
+      "executed": 0,
+      "completed": 0,
+      "geometric_any": 0,
+      "retention_evidence": 0
+    },
+    "pivot_sweep": {
+      "proposed": 4,
+      "outcome:path_blocked": 4,
+      "ik_and_robot_check_pass": 4,
+      "full_audit_complete": 4,
+      "full_audit_pass": 0,
+      "executed": 0,
+      "completed": 0,
+      "geometric_any": 0,
+      "retention_evidence": 0
+    }
+  },
+  "candidates": [
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00000",
+      "family": "under_center",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00000",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 22.916666666666668,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g386",
+        "environment_geom": "glb_col_Attachment_02",
+        "environment_class": "glb_plant",
+        "distance_m": -3.548396638532788e-05,
+        "command": [
+          0.02378718165532728,
+          2.918398439065584,
+          -0.22477759727140717,
+          -1.6886485808162413,
+          0.3438753339044143,
+          -1.5717889538726924,
+          2.4686860377125135
+        ],
+        "segment_world": [
+          [
+            -0.6963977589960667,
+            0.9499195212724688,
+            0.45810284323842115
+          ],
+          [
+            -0.6963635854437368,
+            0.9499241536652657,
+            0.4580944873346066
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3583,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 55.416666666666664,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7418,
+          "last_sample_time_s": 55.416666666666664,
+          "first_violation": {
+            "time_s": 22.916666666666668,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_Attachment_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.548396638532788e-05,
+            "command": [
+              0.02378718165532728,
+              2.918398439065584,
+              -0.22477759727140717,
+              -1.6886485808162413,
+              0.3438753339044143,
+              -1.5717889538726924,
+              2.4686860377125135
+            ],
+            "segment_world": [
+              [
+                -0.6963977589960667,
+                0.9499195212724688,
+                0.45810284323842115
+              ],
+              [
+                -0.6963635854437368,
+                0.9499241536652657,
+                0.4580944873346066
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 43323
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.014621399274449222
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 22.916666666666668,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g386",
+                "environment_geom": "glb_col_Attachment_02",
+                "environment_class": "glb_plant",
+                "distance_m": -3.548396638532788e-05,
+                "command": [
+                  0.02378718165532728,
+                  2.918398439065584,
+                  -0.22477759727140717,
+                  -1.6886485808162413,
+                  0.3438753339044143,
+                  -1.5717889538726924,
+                  2.4686860377125135
+                ],
+                "segment_world": [
+                  [
+                    -0.6963977589960667,
+                    0.9499195212724688,
+                    0.45810284323842115
+                  ],
+                  [
+                    -0.6963635854437368,
+                    0.9499241536652657,
+                    0.4580944873346066
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 28.983333333333334,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_09",
+                "environment_class": "glb_plant",
+                "distance_m": -0.014621399274449222,
+                "command": [
+                  0.0401497134915327,
+                  2.976514419058707,
+                  -0.3168951507026559,
+                  -1.612520809210355,
+                  0.3598053582621692,
+                  -1.571859626034767,
+                  2.4105700584543888
+                ],
+                "segment_world": [
+                  [
+                    -0.6785409400290505,
+                    0.949307371768703,
+                    0.35188732198028766
+                  ],
+                  [
+                    -0.6671344060266557,
+                    0.9584317356180201,
+                    0.35253715514376177
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 112,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 48,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00001",
+      "family": "side_mouth",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00001",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 5.308333333333334,
+        "phases": [
+          "preapproach"
+        ],
+        "robot_geom": "g410",
+        "environment_geom": "g18",
+        "environment_class": "other",
+        "distance_m": -0.00045174914700366053,
+        "command": [
+          0.19640297792980563,
+          3.2453424844844005,
+          -0.48441038781497225,
+          -1.1986258504429876,
+          0.15428949688516017,
+          -1.6730509166328105,
+          1.6639456543791677
+        ],
+        "segment_world": [
+          [
+            -0.7591777907224404,
+            0.8692008692064503,
+            0.5480121258218733
+          ],
+          [
+            -0.7590522940982485,
+            0.8688560068363351,
+            0.5482755605098198
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3385,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 52.06666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 6990,
+          "last_sample_time_s": 52.06666666666667,
+          "first_violation": {
+            "time_s": 5.308333333333334,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g18",
+            "environment_class": "other",
+            "distance_m": -0.00045174914700366053,
+            "command": [
+              0.19640297792980563,
+              3.2453424844844005,
+              -0.48441038781497225,
+              -1.1986258504429876,
+              0.15428949688516017,
+              -1.6730509166328105,
+              1.6639456543791677
+            ],
+            "segment_world": [
+              [
+                -0.7591777907224404,
+                0.8692008692064503,
+                0.5480121258218733
+              ],
+              [
+                -0.7590522940982485,
+                0.8688560068363351,
+                0.5482755605098198
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 4027,
+              "glb_plant": 116562
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.05410966477786933,
+              "glb_plant": -0.055395457462857914
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 5.308333333333334,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g18",
+                "environment_class": "other",
+                "distance_m": -0.00045174914700366053,
+                "command": [
+                  0.19640297792980563,
+                  3.2453424844844005,
+                  -0.48441038781497225,
+                  -1.1986258504429876,
+                  0.15428949688516017,
+                  -1.6730509166328105,
+                  1.6639456543791677
+                ],
+                "segment_world": [
+                  [
+                    -0.7591777907224404,
+                    0.8692008692064503,
+                    0.5480121258218733
+                  ],
+                  [
+                    -0.7590522940982485,
+                    0.8688560068363351,
+                    0.5482755605098198
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 7.533333333333333,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "robot_geom_10",
+                "environment_geom": "glb_col_TRUSS_Rachis_00",
+                "environment_class": "glb_plant",
+                "distance_m": -0.0001266638758751137,
+                "command": [
+                  0.06214678299730181,
+                  3.2426033057322385,
+                  -0.746221593911757,
+                  -1.001570002627974,
+                  0.3002717630391425,
+                  -1.7934659055097983,
+                  2.0903818669294933
+                ],
+                "segment_world": [
+                  [
+                    -0.7102369235789391,
+                    0.9239981321061057,
+                    0.5402067400052838
+                  ],
+                  [
+                    -0.7101149168151748,
+                    0.9240080865593003,
+                    0.5402392822226189
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 5.983333333333333,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g14",
+                "environment_class": "other",
+                "distance_m": -0.05410966477786933,
+                "command": [
+                  0.1472287321697397,
+                  3.244339200805705,
+                  -0.5803044253140616,
+                  -1.126449868591385,
+                  0.20775867077375615,
+                  -1.7171555202170956,
+                  1.8201371740888077
+                ],
+                "segment_world": [
+                  [
+                    -0.7142779449787804,
+                    0.8446149683141457,
+                    0.4929819678899183
+                  ],
+                  [
+                    -0.766234040878995,
+                    0.8336749972751178,
+                    0.5034096692112227
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 22.97222222222222,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_05",
+                "environment_class": "glb_plant",
+                "distance_m": -0.055395457462857914,
+                "command": [
+                  1.9429909522503975e-07,
+                  3.08865799703503,
+                  -0.34504489149716716,
+                  -1.4436882399982043,
+                  0.3912088879425823,
+                  -1.7906365647142075,
+                  2.3204220688076136
+                ],
+                "segment_world": [
+                  [
+                    -0.7285803713260319,
+                    0.9221993287500546,
+                    0.40944566193988485
+                  ],
+                  [
+                    -0.6848339447851167,
+                    0.9560121456275789,
+                    0.4128515813791298
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 326,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 262,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00002",
+      "family": "flank_left",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00002",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 32.141666666666666,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g410",
+        "environment_geom": "glb_col_Tomato_09",
+        "environment_class": "glb_plant",
+        "distance_m": -2.9657645778061245e-05,
+        "command": [
+          2.2358917967333432e-05,
+          3.025180265510473,
+          -0.2058536472128848,
+          -1.6876740615338026,
+          0.4541852518149025,
+          -1.7190367637819686,
+          2.3736751289790607
+        ],
+        "segment_world": [
+          [
+            -0.667157998936337,
+            0.9584138497597292,
+            0.3525354096813399
+          ],
+          [
+            -0.6671344060266562,
+            0.9584317356180205,
+            0.35253715514376194
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 4277,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 66.98333333333333,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8887,
+          "last_sample_time_s": 66.98333333333333,
+          "first_violation": {
+            "time_s": 32.141666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_09",
+            "environment_class": "glb_plant",
+            "distance_m": -2.9657645778061245e-05,
+            "command": [
+              2.2358917967333432e-05,
+              3.025180265510473,
+              -0.2058536472128848,
+              -1.6876740615338026,
+              0.4541852518149025,
+              -1.7190367637819686,
+              2.3736751289790607
+            ],
+            "segment_world": [
+              [
+                -0.667157998936337,
+                0.9584138497597292,
+                0.3525354096813399
+              ],
+              [
+                -0.6671344060266562,
+                0.9584317356180205,
+                0.35253715514376194
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 20873
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.01001212160092668
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 32.141666666666666,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_09",
+                "environment_class": "glb_plant",
+                "distance_m": -2.9657645778061245e-05,
+                "command": [
+                  2.2358917967333432e-05,
+                  3.025180265510473,
+                  -0.2058536472128848,
+                  -1.6876740615338026,
+                  0.4541852518149025,
+                  -1.7190367637819686,
+                  2.3736751289790607
+                ],
+                "segment_world": [
+                  [
+                    -0.667157998936337,
+                    0.9584138497597292,
+                    0.3525354096813399
+                  ],
+                  [
+                    -0.6671344060266562,
+                    0.9584317356180205,
+                    0.35253715514376194
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 37.225,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_09",
+                "environment_class": "glb_plant",
+                "distance_m": -0.01001212160092668,
+                "command": [
+                  7.949648335109259e-07,
+                  3.01118218243372,
+                  -0.26442421404574457,
+                  -1.6304008805894266,
+                  0.5046061502991542,
+                  -1.7670757981833316,
+                  2.3964207042708923
+                ],
+                "segment_world": [
+                  [
+                    -0.6757406022043401,
+                    0.9530097415398063,
+                    0.3523319293234461
+                  ],
+                  [
+                    -0.6695747666110009,
+                    0.9607154140561283,
+                    0.3540194308668092
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 80,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 16,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00003",
+      "family": "flank_right",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00003",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 27.91111111111111,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g401",
+        "environment_geom": "glb_col_Tomato_03",
+        "environment_class": "glb_plant",
+        "distance_m": -6.523653277246784e-06,
+        "command": [
+          0.008065779220330204,
+          2.898946941701869,
+          -0.28460087096716313,
+          -1.5947447818508065,
+          0.39766664689089454,
+          -1.6493617749371074,
+          2.492833201430276
+        ],
+        "segment_world": [
+          [
+            -0.7006939460507962,
+            0.9522635928123562,
+            0.45427046845604335
+          ],
+          [
+            -0.700693691509607,
+            0.9522664005225605,
+            0.4542763514845384
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 4277,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 66.98333333333333,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8887,
+          "last_sample_time_s": 66.98333333333333,
+          "first_violation": {
+            "time_s": 27.91111111111111,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g401",
+            "environment_geom": "glb_col_Tomato_03",
+            "environment_class": "glb_plant",
+            "distance_m": -6.523653277246784e-06,
+            "command": [
+              0.008065779220330204,
+              2.898946941701869,
+              -0.28460087096716313,
+              -1.5947447818508065,
+              0.39766664689089454,
+              -1.6493617749371074,
+              2.492833201430276
+            ],
+            "segment_world": [
+              [
+                -0.7006939460507962,
+                0.9522635928123562,
+                0.45427046845604335
+              ],
+              [
+                -0.700693691509607,
+                0.9522664005225605,
+                0.4542763514845384
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 21434
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.009157000467160148
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 27.91111111111111,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g401",
+                "environment_geom": "glb_col_Tomato_03",
+                "environment_class": "glb_plant",
+                "distance_m": -6.523653277246784e-06,
+                "command": [
+                  0.008065779220330204,
+                  2.898946941701869,
+                  -0.28460087096716313,
+                  -1.5947447818508065,
+                  0.39766664689089454,
+                  -1.6493617749371074,
+                  2.492833201430276
+                ],
+                "segment_world": [
+                  [
+                    -0.7006939460507962,
+                    0.9522635928123562,
+                    0.45427046845604335
+                  ],
+                  [
+                    -0.700693691509607,
+                    0.9522664005225605,
+                    0.4542763514845384
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 38.7,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_09",
+                "environment_class": "glb_plant",
+                "distance_m": -0.009157000467160148,
+                "command": [
+                  3.066821854162957e-05,
+                  3.0072872004438724,
+                  -0.2762596373621893,
+                  -1.618564929614059,
+                  0.5145748831021958,
+                  -1.7759076929672952,
+                  2.40229172245794
+                ],
+                "segment_world": [
+                  [
+                    -0.6755828135536903,
+                    0.9539867880261791,
+                    0.35244173383961064
+                  ],
+                  [
+                    -0.670707406301577,
+                    0.9614817037773683,
+                    0.35441842288045333
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 89,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 25,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00004",
+      "family": "pivot_sweep",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00004",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 22.916666666666668,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g386",
+        "environment_geom": "glb_col_Attachment_02",
+        "environment_class": "glb_plant",
+        "distance_m": -3.548396638532788e-05,
+        "command": [
+          0.02378718165532728,
+          2.918398439065584,
+          -0.22477759727140717,
+          -1.6886485808162413,
+          0.3438753339044143,
+          -1.5717889538726924,
+          2.4686860377125135
+        ],
+        "segment_world": [
+          [
+            -0.6963977589960667,
+            0.9499195212724688,
+            0.45810284323842115
+          ],
+          [
+            -0.6963635854437368,
+            0.9499241536652657,
+            0.4580944873346066
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3784,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 58.766666666666666,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7847,
+          "last_sample_time_s": 58.766666666666666,
+          "first_violation": {
+            "time_s": 22.916666666666668,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_Attachment_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.548396638532788e-05,
+            "command": [
+              0.02378718165532728,
+              2.918398439065584,
+              -0.22477759727140717,
+              -1.6886485808162413,
+              0.3438753339044143,
+              -1.5717889538726924,
+              2.4686860377125135
+            ],
+            "segment_world": [
+              [
+                -0.6963977589960667,
+                0.9499195212724688,
+                0.45810284323842115
+              ],
+              [
+                -0.6963635854437368,
+                0.9499241536652657,
+                0.4580944873346066
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 26000
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.014621399274449222
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 22.916666666666668,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g386",
+                "environment_geom": "glb_col_Attachment_02",
+                "environment_class": "glb_plant",
+                "distance_m": -3.548396638532788e-05,
+                "command": [
+                  0.02378718165532728,
+                  2.918398439065584,
+                  -0.22477759727140717,
+                  -1.6886485808162413,
+                  0.3438753339044143,
+                  -1.5717889538726924,
+                  2.4686860377125135
+                ],
+                "segment_world": [
+                  [
+                    -0.6963977589960667,
+                    0.9499195212724688,
+                    0.45810284323842115
+                  ],
+                  [
+                    -0.6963635854437368,
+                    0.9499241536652657,
+                    0.4580944873346066
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 28.983333333333334,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_09",
+                "environment_class": "glb_plant",
+                "distance_m": -0.014621399274449222,
+                "command": [
+                  0.0401497134915327,
+                  2.976514419058707,
+                  -0.3168951507026559,
+                  -1.612520809210355,
+                  0.3598053582621692,
+                  -1.571859626034767,
+                  2.4105700584543888
+                ],
+                "segment_world": [
+                  [
+                    -0.6785409400290505,
+                    0.949307371768703,
+                    0.35188732198028766
+                  ],
+                  [
+                    -0.6671344060266557,
+                    0.9584317356180201,
+                    0.35253715514376177
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 92,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 28,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00005",
+      "family": "under_center",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00005",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 21.977777777777778,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g386",
+        "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+        "environment_class": "glb_plant",
+        "distance_m": -2.6195450534475194e-05,
+        "command": [
+          0.03791509657664732,
+          3.2671791186878556,
+          -0.37231164249442744,
+          -1.5535146435634184,
+          0.3536641859391815,
+          -1.5716155954334703,
+          0.5403088272635911
+        ],
+        "segment_world": [
+          [
+            -0.6833799324783719,
+            0.9225722600765055,
+            0.44796456166830084
+          ],
+          [
+            -0.6833777480612276,
+            0.9225550062139486,
+            0.4479841508024653
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3542,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 54.31666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7278,
+          "last_sample_time_s": 54.31666666666667,
+          "first_violation": {
+            "time_s": 21.977777777777778,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+            "environment_class": "glb_plant",
+            "distance_m": -2.6195450534475194e-05,
+            "command": [
+              0.03791509657664732,
+              3.2671791186878556,
+              -0.37231164249442744,
+              -1.5535146435634184,
+              0.3536641859391815,
+              -1.5716155954334703,
+              0.5403088272635911
+            ],
+            "segment_world": [
+              [
+                -0.6833799324783719,
+                0.9225722600765055,
+                0.44796456166830084
+              ],
+              [
+                -0.6833777480612276,
+                0.9225550062139486,
+                0.4479841508024653
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 12324
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.008194111499889734
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 21.977777777777778,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g386",
+                "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+                "environment_class": "glb_plant",
+                "distance_m": -2.6195450534475194e-05,
+                "command": [
+                  0.03791509657664732,
+                  3.2671791186878556,
+                  -0.37231164249442744,
+                  -1.5535146435634184,
+                  0.3536641859391815,
+                  -1.5716155954334703,
+                  0.5403088272635911
+                ],
+                "segment_world": [
+                  [
+                    -0.6833799324783719,
+                    0.9225722600765055,
+                    0.44796456166830084
+                  ],
+                  [
+                    -0.6833777480612276,
+                    0.9225550062139486,
+                    0.4479841508024653
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 33.75,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g390",
+                "environment_geom": "glb_col_Tomato_01",
+                "environment_class": "glb_plant",
+                "distance_m": -0.008194111499889734,
+                "command": [
+                  0.08694237900998865,
+                  3.231465972365822,
+                  -0.3954699425401329,
+                  -1.521977072645018,
+                  0.34531503692662424,
+                  -1.5716638340120295,
+                  0.5760219741616556
+                ],
+                "segment_world": [
+                  [
+                    -0.7098446974152438,
+                    0.9403323098983046,
+                    0.497935293311971
+                  ],
+                  [
+                    -0.7073482819657252,
+                    0.9359541322897263,
+                    0.49147441612665216
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 44,
+            "reported_unique_pair_phase_count": 44,
+            "omitted_unique_pair_phase_count": 0,
+            "details_truncated": false,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00006",
+      "family": "side_mouth",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00006",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 5.258333333333333,
+        "phases": [
+          "preapproach"
+        ],
+        "robot_geom": "g410",
+        "environment_geom": "glb_col_TRUSS_Truss_01_Peduncle_00",
+        "environment_class": "glb_plant",
+        "distance_m": -0.00032476014668309937,
+        "command": [
+          0.2093520349265895,
+          3.059297281762684,
+          -0.31073258971816664,
+          -1.4538144832419913,
+          0.696109829360166,
+          -1.1363582929217726,
+          0.7159504503592558
+        ],
+        "segment_world": [
+          [
+            -0.7444513224153476,
+            0.9180097850492177,
+            0.6289987989369288
+          ],
+          [
+            -0.7443497663252595,
+            0.9177356733350673,
+            0.6291402849136374
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3364,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 51.35,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 6898,
+          "last_sample_time_s": 51.35,
+          "first_violation": {
+            "time_s": 5.258333333333333,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_TRUSS_Truss_01_Peduncle_00",
+            "environment_class": "glb_plant",
+            "distance_m": -0.00032476014668309937,
+            "command": [
+              0.2093520349265895,
+              3.059297281762684,
+              -0.31073258971816664,
+              -1.4538144832419913,
+              0.696109829360166,
+              -1.1363582929217726,
+              0.7159504503592558
+            ],
+            "segment_world": [
+              [
+                -0.7444513224153476,
+                0.9180097850492177,
+                0.6289987989369288
+              ],
+              [
+                -0.7443497663252595,
+                0.9177356733350673,
+                0.6291402849136374
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 72493,
+              "other": 821
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.04839509443973169,
+              "other": -0.05699906178101511
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 5.258333333333333,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_TRUSS_Truss_01_Peduncle_00",
+                "environment_class": "glb_plant",
+                "distance_m": -0.00032476014668309937,
+                "command": [
+                  0.2093520349265895,
+                  3.059297281762684,
+                  -0.31073258971816664,
+                  -1.4538144832419913,
+                  0.696109829360166,
+                  -1.1363582929217726,
+                  0.7159504503592558
+                ],
+                "segment_world": [
+                  [
+                    -0.7444513224153476,
+                    0.9180097850492177,
+                    0.6289987989369288
+                  ],
+                  [
+                    -0.7443497663252595,
+                    0.9177356733350673,
+                    0.6291402849136374
+                  ]
+                ]
+              },
+              "other": {
+                "time_s": 5.377777777777778,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g391",
+                "environment_geom": "g30",
+                "environment_class": "other",
+                "distance_m": -0.0003258319897039815,
+                "command": [
+                  0.19995485223068774,
+                  3.0531556947558256,
+                  -0.32431786978472527,
+                  -1.4475642528509431,
+                  0.724080656366487,
+                  -1.1280180898831615,
+                  0.7168375203566675
+                ],
+                "segment_world": [
+                  [
+                    -0.7578491417810619,
+                    1.008580176718404,
+                    0.7571846023154654
+                  ],
+                  [
+                    -0.7576032942680563,
+                    1.0083779339273378,
+                    0.7572540525805846
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 20.708333333333332,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.04839509443973169,
+                "command": [
+                  2.506948948953239e-07,
+                  3.083236562668816,
+                  -0.46194380424544257,
+                  -1.6314033563829229,
+                  1.5392675690925481,
+                  -1.0850392023374837,
+                  0.6320205399000384
+                ],
+                "segment_world": [
+                  [
+                    -0.7188549094105054,
+                    0.9404057326511309,
+                    0.48728658022319876
+                  ],
+                  [
+                    -0.6887839041239977,
+                    0.9049798537732916,
+                    0.473765229971762
+                  ]
+                ]
+              },
+              "other": {
+                "time_s": 6.15,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g22",
+                "environment_class": "other",
+                "distance_m": -0.05699906178101511,
+                "command": [
+                  0.14134659666410732,
+                  3.0148519060001457,
+                  -0.40904640937475345,
+                  -1.4085828781173944,
+                  0.8985288320213043,
+                  -1.076001994529682,
+                  0.7223699896930817
+                ],
+                "segment_world": [
+                  [
+                    -0.7705007480141024,
+                    0.8908535176329656,
+                    0.6538495088051794
+                  ],
+                  [
+                    -0.7588216243912658,
+                    0.9367106072977189,
+                    0.6220750152168113
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 177,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 113,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00007",
+      "family": "flank_left",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00007",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 30.116666666666667,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g408",
+        "environment_geom": "glb_col_Tomato_04",
+        "environment_class": "glb_plant",
+        "distance_m": -5.03602629114714e-06,
+        "command": [
+          5.587120299503795e-10,
+          3.210606735264925,
+          -0.46332630333546193,
+          -1.708214756043767,
+          1.4168963942642012,
+          -1.267274229259019,
+          0.6027750033038115
+        ],
+        "segment_world": [
+          [
+            -0.6946866785179597,
+            0.9098413956831601,
+            0.427977584496028
+          ],
+          [
+            -0.69469036407431,
+            0.9098380605337091,
+            0.42797839382496783
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3988,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 61.75,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8229,
+          "last_sample_time_s": 61.75,
+          "first_violation": {
+            "time_s": 30.116666666666667,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g408",
+            "environment_geom": "glb_col_Tomato_04",
+            "environment_class": "glb_plant",
+            "distance_m": -5.03602629114714e-06,
+            "command": [
+              5.587120299503795e-10,
+              3.210606735264925,
+              -0.46332630333546193,
+              -1.708214756043767,
+              1.4168963942642012,
+              -1.267274229259019,
+              0.6027750033038115
+            ],
+            "segment_world": [
+              [
+                -0.6946866785179597,
+                0.9098413956831601,
+                0.427977584496028
+              ],
+              [
+                -0.69469036407431,
+                0.9098380605337091,
+                0.42797839382496783
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 9138
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.011250715789651452
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 30.116666666666667,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g408",
+                "environment_geom": "glb_col_Tomato_04",
+                "environment_class": "glb_plant",
+                "distance_m": -5.03602629114714e-06,
+                "command": [
+                  5.587120299503795e-10,
+                  3.210606735264925,
+                  -0.46332630333546193,
+                  -1.708214756043767,
+                  1.4168963942642012,
+                  -1.267274229259019,
+                  0.6027750033038115
+                ],
+                "segment_world": [
+                  [
+                    -0.6946866785179597,
+                    0.9098413956831601,
+                    0.427977584496028
+                  ],
+                  [
+                    -0.69469036407431,
+                    0.9098380605337091,
+                    0.42797839382496783
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 31.95,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g408",
+                "environment_geom": "glb_col_Tomato_04",
+                "environment_class": "glb_plant",
+                "distance_m": -0.011250715789651452,
+                "command": [
+                  8.011705777978577e-13,
+                  3.178378362327982,
+                  -0.49400533725711676,
+                  -1.748456727157777,
+                  1.6486032421331902,
+                  -1.186268500230008,
+                  0.5926392071960264
+                ],
+                "segment_world": [
+                  [
+                    -0.6858867546797911,
+                    0.917370642397257,
+                    0.4246239554382639
+                  ],
+                  [
+                    -0.6879973556002483,
+                    0.9197794727088242,
+                    0.4138387106072853
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 34,
+            "reported_unique_pair_phase_count": 34,
+            "omitted_unique_pair_phase_count": 0,
+            "details_truncated": false,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00008",
+      "family": "flank_right",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00008",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 30.183333333333334,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g390",
+        "environment_geom": "glb_col_Tomato_03",
+        "environment_class": "glb_plant",
+        "distance_m": -1.676614647019587e-05,
+        "command": [
+          3.129544135807193e-10,
+          3.165764819028933,
+          -0.38375105130488973,
+          -1.8317361690544822,
+          1.4555765293680558,
+          -1.2329233629514236,
+          0.6344258578666048
+        ],
+        "segment_world": [
+          [
+            -0.6903493121863387,
+            0.9458674851617221,
+            0.4514896402752067
+          ],
+          [
+            -0.6903352984694443,
+            0.9458677053959801,
+            0.45149884195457163
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3988,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 61.75,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8229,
+          "last_sample_time_s": 61.75,
+          "first_violation": {
+            "time_s": 30.183333333333334,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g390",
+            "environment_geom": "glb_col_Tomato_03",
+            "environment_class": "glb_plant",
+            "distance_m": -1.676614647019587e-05,
+            "command": [
+              3.129544135807193e-10,
+              3.165764819028933,
+              -0.38375105130488973,
+              -1.8317361690544822,
+              1.4555765293680558,
+              -1.2329233629514236,
+              0.6344258578666048
+            ],
+            "segment_world": [
+              [
+                -0.6903493121863387,
+                0.9458674851617221,
+                0.4514896402752067
+              ],
+              [
+                -0.6903352984694443,
+                0.9458677053959801,
+                0.45149884195457163
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 11231
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.010725771683634172
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 30.183333333333334,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g390",
+                "environment_geom": "glb_col_Tomato_03",
+                "environment_class": "glb_plant",
+                "distance_m": -1.676614647019587e-05,
+                "command": [
+                  3.129544135807193e-10,
+                  3.165764819028933,
+                  -0.38375105130488973,
+                  -1.8317361690544822,
+                  1.4555765293680558,
+                  -1.2329233629514236,
+                  0.6344258578666048
+                ],
+                "segment_world": [
+                  [
+                    -0.6903493121863387,
+                    0.9458674851617221,
+                    0.4514896402752067
+                  ],
+                  [
+                    -0.6903352984694443,
+                    0.9458677053959801,
+                    0.45149884195457163
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 31.8,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g386",
+                "environment_geom": "glb_col_Tomato_03",
+                "environment_class": "glb_plant",
+                "distance_m": -0.010725771683634172,
+                "command": [
+                  5.875975084407751e-10,
+                  3.16590475977415,
+                  -0.46555805342052214,
+                  -1.7873719956858214,
+                  1.6430200513296251,
+                  -1.180289997369555,
+                  0.6033189037745347
+                ],
+                "segment_world": [
+                  [
+                    -0.6988553852904789,
+                    0.9441169722502563,
+                    0.44468391598334683
+                  ],
+                  [
+                    -0.7044916643071115,
+                    0.9359702784853741,
+                    0.4405722353345922
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 43,
+            "reported_unique_pair_phase_count": 43,
+            "omitted_unique_pair_phase_count": 0,
+            "details_truncated": false,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "candidate_id": "mf_20260928_00009",
+      "family": "pivot_sweep",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00009",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 21.977777777777778,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g386",
+        "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+        "environment_class": "glb_plant",
+        "distance_m": -2.6195450534475194e-05,
+        "command": [
+          0.03791509657664732,
+          3.2671791186878556,
+          -0.37231164249442744,
+          -1.5535146435634184,
+          0.3536641859391815,
+          -1.5716155954334703,
+          0.5403088272635911
+        ],
+        "segment_world": [
+          [
+            -0.6833799324783719,
+            0.9225722600765055,
+            0.44796456166830084
+          ],
+          [
+            -0.6833777480612276,
+            0.9225550062139486,
+            0.4479841508024653
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3911,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 60.1,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8018,
+          "last_sample_time_s": 60.1,
+          "first_violation": {
+            "time_s": 21.977777777777778,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+            "environment_class": "glb_plant",
+            "distance_m": -2.6195450534475194e-05,
+            "command": [
+              0.03791509657664732,
+              3.2671791186878556,
+              -0.37231164249442744,
+              -1.5535146435634184,
+              0.3536641859391815,
+              -1.5716155954334703,
+              0.5403088272635911
+            ],
+            "segment_world": [
+              [
+                -0.6833799324783719,
+                0.9225722600765055,
+                0.44796456166830084
+              ],
+              [
+                -0.6833777480612276,
+                0.9225550062139486,
+                0.4479841508024653
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 27323
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.024753859274821523
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 21.977777777777778,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g386",
+                "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+                "environment_class": "glb_plant",
+                "distance_m": -2.6195450534475194e-05,
+                "command": [
+                  0.03791509657664732,
+                  3.2671791186878556,
+                  -0.37231164249442744,
+                  -1.5535146435634184,
+                  0.3536641859391815,
+                  -1.5716155954334703,
+                  0.5403088272635911
+                ],
+                "segment_world": [
+                  [
+                    -0.6833799324783719,
+                    0.9225722600765055,
+                    0.44796456166830084
+                  ],
+                  [
+                    -0.6833777480612276,
+                    0.9225550062139486,
+                    0.4479841508024653
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 29.283333333333335,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "glb_col_Tomato_08",
+                "environment_class": "glb_plant",
+                "distance_m": -0.024753859274821523,
+                "command": [
+                  4.890500973198644e-16,
+                  3.246804380631299,
+                  -0.39912784916162364,
+                  -1.5772769610739845,
+                  0.6325520697909188,
+                  -1.7931570957904475,
+                  0.5968255692353128
+                ],
+                "segment_world": [
+                  [
+                    -0.6725663581063963,
+                    0.9332257533097843,
+                    0.36930810975271966
+                  ],
+                  [
+                    -0.6625625037063332,
+                    0.9108550842843126,
+                    0.3658110233235896
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 81,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 17,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00000",
+      "family": "under_center",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00000",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 18.758333333333333,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g399",
+        "environment_geom": "truss_01__glb_col_Tomato_02",
+        "environment_class": "glb_plant",
+        "distance_m": -2.1208381388920436e-06,
+        "command": [
+          0.40460861839220674,
+          2.731931892808494,
+          -0.23617699514222523,
+          -1.420355328493895,
+          0.08646286333754255,
+          -1.5722134318028798,
+          2.0447277088701066
+        ],
+        "segment_world": [
+          [
+            -0.7210219086125254,
+            1.110666712236319,
+            0.9352885351278969
+          ],
+          [
+            -0.7210205350081248,
+            1.1106681281971669,
+            0.935289313729361
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3147,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 52.45,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7039,
+          "last_sample_time_s": 52.45,
+          "first_violation": {
+            "time_s": 18.758333333333333,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g399",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1208381388920436e-06,
+            "command": [
+              0.40460861839220674,
+              2.731931892808494,
+              -0.23617699514222523,
+              -1.420355328493895,
+              0.08646286333754255,
+              -1.5722134318028798,
+              2.0447277088701066
+            ],
+            "segment_world": [
+              [
+                -0.7210219086125254,
+                1.110666712236319,
+                0.9352885351278969
+              ],
+              [
+                -0.7210205350081248,
+                1.1106681281971669,
+                0.935289313729361
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 37561
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.024542600204581818
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 18.758333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g399",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -2.1208381388920436e-06,
+                "command": [
+                  0.40460861839220674,
+                  2.731931892808494,
+                  -0.23617699514222523,
+                  -1.420355328493895,
+                  0.08646286333754255,
+                  -1.5722134318028798,
+                  2.0447277088701066
+                ],
+                "segment_world": [
+                  [
+                    -0.7210219086125254,
+                    1.110666712236319,
+                    0.9352885351278969
+                  ],
+                  [
+                    -0.7210205350081248,
+                    1.1106681281971669,
+                    0.935289313729361
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 26.633333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_Tomato_08",
+                "environment_class": "glb_plant",
+                "distance_m": -0.024542600204581818,
+                "command": [
+                  0.44259541548966774,
+                  2.77152747509066,
+                  -0.37837256154577426,
+                  -1.3287822175258395,
+                  0.13702865732419933,
+                  -1.5722410977599217,
+                  2.0051320894172373
+                ],
+                "segment_world": [
+                  [
+                    -0.7223603347532641,
+                    1.1222039322983555,
+                    0.8202825213706992
+                  ],
+                  [
+                    -0.6979124041033035,
+                    1.1240638425759786,
+                    0.8213681757797298
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 83,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 19,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00001",
+      "family": "side_mouth",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00001",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 3.875,
+        "phases": [
+          "preapproach"
+        ],
+        "robot_geom": "robot_geom_10",
+        "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_02",
+        "environment_class": "glb_plant",
+        "distance_m": -0.00014493281989680232,
+        "command": [
+          0.6016928584055106,
+          2.98768679467097,
+          -0.8994049196096724,
+          -0.7651701316953111,
+          0.11361144390169711,
+          -1.7543555848148182,
+          1.6308490466529928
+        ],
+        "segment_world": [
+          [
+            -0.7585552508113242,
+            1.088735633340912,
+            1.065067899999531
+          ],
+          [
+            -0.7584151015127354,
+            1.0887139315119814,
+            1.0650977785371345
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 2919,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 48.65,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 6552,
+          "last_sample_time_s": 48.65,
+          "first_violation": {
+            "time_s": 3.875,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_02",
+            "environment_class": "glb_plant",
+            "distance_m": -0.00014493281989680232,
+            "command": [
+              0.6016928584055106,
+              2.98768679467097,
+              -0.8994049196096724,
+              -0.7651701316953111,
+              0.11361144390169711,
+              -1.7543555848148182,
+              1.6308490466529928
+            ],
+            "segment_world": [
+              [
+                -0.7585552508113242,
+                1.088735633340912,
+                1.065067899999531
+              ],
+              [
+                -0.7584151015127354,
+                1.0887139315119814,
+                1.0650977785371345
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 113760,
+              "other": 3998
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.04640648224884271,
+              "other": -0.049943560799281306
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 3.875,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "robot_geom_10",
+                "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.00014493281989680232,
+                "command": [
+                  0.6016928584055106,
+                  2.98768679467097,
+                  -0.8994049196096724,
+                  -0.7651701316953111,
+                  0.11361144390169711,
+                  -1.7543555848148182,
+                  1.6308490466529928
+                ],
+                "segment_world": [
+                  [
+                    -0.7585552508113242,
+                    1.088735633340912,
+                    1.065067899999531
+                  ],
+                  [
+                    -0.7584151015127354,
+                    1.0887139315119814,
+                    1.0650977785371345
+                  ]
+                ]
+              },
+              "other": {
+                "time_s": 4.016666666666667,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "robot_geom_12",
+                "environment_geom": "g78",
+                "environment_class": "other",
+                "distance_m": -0.0007499272562992553,
+                "command": [
+                  0.6055037421467515,
+                  2.9774325651329674,
+                  -0.9388046790025584,
+                  -0.730810083983424,
+                  0.12500932788321506,
+                  -1.7682198451040188,
+                  1.6674748601763638
+                ],
+                "segment_world": [
+                  [
+                    -0.7821247388411815,
+                    1.061765795404389,
+                    1.0514385305587137
+                  ],
+                  [
+                    -0.7819257125067768,
+                    1.0610560713069417,
+                    1.051576628760933
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 19.1,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_Tomato_01",
+                "environment_class": "glb_plant",
+                "distance_m": -0.04640648224884271,
+                "command": [
+                  0.3893334027643383,
+                  2.8536481374250204,
+                  -0.5284982769436949,
+                  -0.9291807910318374,
+                  -0.033623425128988624,
+                  -1.8385638232812704,
+                  1.9365491559032024
+                ],
+                "segment_world": [
+                  [
+                    -0.7508367542940679,
+                    1.0839293731103137,
+                    0.9457923861688754
+                  ],
+                  [
+                    -0.7615357609352057,
+                    1.1275935249316207,
+                    0.9573047576591845
+                  ]
+                ]
+              },
+              "other": {
+                "time_s": 4.833333333333333,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "robot_geom_12",
+                "environment_geom": "g50",
+                "environment_class": "other",
+                "distance_m": -0.049943560799281306,
+                "command": [
+                  0.621999131962517,
+                  2.9330471876261206,
+                  -1.109346326022569,
+                  -0.5820828019196296,
+                  0.17434500750926984,
+                  -1.8282312213374814,
+                  1.8260094973917198
+                ],
+                "segment_world": [
+                  [
+                    -0.7837490407504558,
+                    1.060454561430898,
+                    0.9683733653609348
+                  ],
+                  [
+                    -0.7804220892190809,
+                    1.057903794616957,
+                    1.0181406663474288
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 294,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 230,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00002",
+      "family": "flank_left",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00002",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 18.522222222222222,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g398",
+        "environment_geom": "truss_01__glb_col_Tomato_02",
+        "environment_class": "glb_plant",
+        "distance_m": -7.491318836356066e-06,
+        "command": [
+          0.40315094238079274,
+          2.7335824176536234,
+          -0.23162221462398008,
+          -1.4226120254085006,
+          0.08534858604563139,
+          -1.5750406534679464,
+          2.043113224810615
+        ],
+        "segment_world": [
+          [
+            -0.7206343173749447,
+            1.1102656632434882,
+            0.935230278933405
+          ],
+          [
+            -0.7206291538704557,
+            1.1102703583369693,
+            0.9352330018319528
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3799,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 63.31666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8430,
+          "last_sample_time_s": 63.31666666666667,
+          "first_violation": {
+            "time_s": 18.522222222222222,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g398",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -7.491318836356066e-06,
+            "command": [
+              0.40315094238079274,
+              2.7335824176536234,
+              -0.23162221462398008,
+              -1.4226120254085006,
+              0.08534858604563139,
+              -1.5750406534679464,
+              2.043113224810615
+            ],
+            "segment_world": [
+              [
+                -0.7206343173749447,
+                1.1102656632434882,
+                0.935230278933405
+              ],
+              [
+                -0.7206291538704557,
+                1.1102703583369693,
+                0.9352330018319528
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 36741
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.016515357373351077
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 18.522222222222222,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g398",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -7.491318836356066e-06,
+                "command": [
+                  0.40315094238079274,
+                  2.7335824176536234,
+                  -0.23162221462398008,
+                  -1.4226120254085006,
+                  0.08534858604563139,
+                  -1.5750406534679464,
+                  2.043113224810615
+                ],
+                "segment_world": [
+                  [
+                    -0.7206343173749447,
+                    1.1102656632434882,
+                    0.935230278933405
+                  ],
+                  [
+                    -0.7206291538704557,
+                    1.1102703583369693,
+                    0.9352330018319528
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 33.36666666666667,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_Tomato_08",
+                "environment_class": "glb_plant",
+                "distance_m": -0.016515357373351077,
+                "command": [
+                  0.4106678875178306,
+                  2.8287781491229635,
+                  -0.3391155594710239,
+                  -1.3236084188974488,
+                  0.16474107481894323,
+                  -1.796756932413087,
+                  1.958542687661924
+                ],
+                "segment_world": [
+                  [
+                    -0.7141905157042927,
+                    1.1220803253099962,
+                    0.8207472142165408
+                  ],
+                  [
+                    -0.6983670033684951,
+                    1.1261597078484178,
+                    0.8231413998053343
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 84,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 20,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00003",
+      "family": "flank_right",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00003",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 33.34166666666667,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g410",
+        "environment_geom": "truss_01__glb_col_Tomato_02",
+        "environment_class": "glb_plant",
+        "distance_m": -3.387837131188056e-05,
+        "command": [
+          0.41386294522531386,
+          2.76997315312153,
+          -0.3641950297470157,
+          -1.3010090797308957,
+          0.18036692211679675,
+          -1.791642422075578,
+          2.018613432251453
+        ],
+        "segment_world": [
+          [
+            -0.71963666274463,
+            1.1095723671864561,
+            0.9340538626445816
+          ],
+          [
+            -0.7196105374350139,
+            1.109592377022524,
+            0.9340619136507754
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3799,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 63.31666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 8430,
+          "last_sample_time_s": 63.31666666666667,
+          "first_violation": {
+            "time_s": 33.34166666666667,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.387837131188056e-05,
+            "command": [
+              0.41386294522531386,
+              2.76997315312153,
+              -0.3641950297470157,
+              -1.3010090797308957,
+              0.18036692211679675,
+              -1.791642422075578,
+              2.018613432251453
+            ],
+            "segment_world": [
+              [
+                -0.71963666274463,
+                1.1095723671864561,
+                0.9340538626445816
+              ],
+              [
+                -0.7196105374350139,
+                1.109592377022524,
+                0.9340619136507754
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 17605
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.013663333556908564
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 33.34166666666667,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -3.387837131188056e-05,
+                "command": [
+                  0.41386294522531386,
+                  2.76997315312153,
+                  -0.3641950297470157,
+                  -1.3010090797308957,
+                  0.18036692211679675,
+                  -1.791642422075578,
+                  2.018613432251453
+                ],
+                "segment_world": [
+                  [
+                    -0.71963666274463,
+                    1.1095723671864561,
+                    0.9340538626445816
+                  ],
+                  [
+                    -0.7196105374350139,
+                    1.109592377022524,
+                    0.9340619136507754
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 38.63333333333333,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g409",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.013663333556908564,
+                "command": [
+                  0.412836723453145,
+                  2.806348303512139,
+                  -0.3594812715273065,
+                  -1.302035801285507,
+                  0.180266528181953,
+                  -1.8284042568010253,
+                  1.9846745013397205
+                ],
+                "segment_world": [
+                  [
+                    -0.7307094145963744,
+                    1.1018206237468349,
+                    0.9313536016389283
+                  ],
+                  [
+                    -0.7312454286757979,
+                    1.112969982235352,
+                    0.9234738060775871
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 56,
+            "reported_unique_pair_phase_count": 56,
+            "omitted_unique_pair_phase_count": 0,
+            "details_truncated": false,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00004",
+      "family": "pivot_sweep",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00004",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 18.758333333333333,
+        "phases": [
+          "insert"
+        ],
+        "robot_geom": "g399",
+        "environment_geom": "truss_01__glb_col_Tomato_02",
+        "environment_class": "glb_plant",
+        "distance_m": -2.1208381388920436e-06,
+        "command": [
+          0.40460861839220674,
+          2.731931892808494,
+          -0.23617699514222523,
+          -1.420355328493895,
+          0.08646286333754255,
+          -1.5722134318028798,
+          2.0447277088701066
+        ],
+        "segment_world": [
+          [
+            -0.7210219086125254,
+            1.110666712236319,
+            0.9352885351278969
+          ],
+          [
+            -0.7210205350081248,
+            1.1106681281971669,
+            0.935289313729361
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3289,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 54.81666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7342,
+          "last_sample_time_s": 54.81666666666667,
+          "first_violation": {
+            "time_s": 18.758333333333333,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g399",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1208381388920436e-06,
+            "command": [
+              0.40460861839220674,
+              2.731931892808494,
+              -0.23617699514222523,
+              -1.420355328493895,
+              0.08646286333754255,
+              -1.5722134318028798,
+              2.0447277088701066
+            ],
+            "segment_world": [
+              [
+                -0.7210219086125254,
+                1.110666712236319,
+                0.9352885351278969
+              ],
+              [
+                -0.7210205350081248,
+                1.1106681281971669,
+                0.935289313729361
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "glb_plant": 33251
+            },
+            "minimum_distance_m_by_environment_class": {
+              "glb_plant": -0.024542600204581818
+            },
+            "first_by_environment_class": {
+              "glb_plant": {
+                "time_s": 18.758333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g399",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -2.1208381388920436e-06,
+                "command": [
+                  0.40460861839220674,
+                  2.731931892808494,
+                  -0.23617699514222523,
+                  -1.420355328493895,
+                  0.08646286333754255,
+                  -1.5722134318028798,
+                  2.0447277088701066
+                ],
+                "segment_world": [
+                  [
+                    -0.7210219086125254,
+                    1.110666712236319,
+                    0.9352885351278969
+                  ],
+                  [
+                    -0.7210205350081248,
+                    1.1106681281971669,
+                    0.935289313729361
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "glb_plant": {
+                "time_s": 26.633333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_Tomato_08",
+                "environment_class": "glb_plant",
+                "distance_m": -0.024542600204581818,
+                "command": [
+                  0.44259541548966774,
+                  2.77152747509066,
+                  -0.37837256154577426,
+                  -1.3287822175258395,
+                  0.13702865732419933,
+                  -1.5722410977599217,
+                  2.0051320894172373
+                ],
+                "segment_world": [
+                  [
+                    -0.7223603347532641,
+                    1.1222039322983555,
+                    0.8202825213706992
+                  ],
+                  [
+                    -0.6979124041033035,
+                    1.1240638425759786,
+                    0.8213681757797298
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 80,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 16,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00005",
+      "family": "under_center",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00005",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 7.533333333333333,
+        "phases": [
+          "approach"
+        ],
+        "robot_geom": "g396",
+        "environment_geom": "g34",
+        "environment_class": "other",
+        "distance_m": -0.00011145175078056384,
+        "command": [
+          0.47654913588961023,
+          3.1098699952983537,
+          -0.6132968534886805,
+          -1.1068995743972831,
+          0.14781348138559586,
+          -1.5709345216534312,
+          0.08719542509817003
+        ],
+        "segment_world": [
+          [
+            -0.7666746823090357,
+            1.043451678712759,
+            0.9167538955449729
+          ],
+          [
+            -0.766607631733245,
+            1.0433642411881277,
+            0.916770640464336
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 2723,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 45.38333333333333,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 6134,
+          "last_sample_time_s": 45.38333333333333,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 18606,
+              "glb_plant": 5928
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.03922348151197383,
+              "glb_plant": -0.013133703977206456
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 7.533333333333333,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g396",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.00011145175078056384,
+                "command": [
+                  0.47654913588961023,
+                  3.1098699952983537,
+                  -0.6132968534886805,
+                  -1.1068995743972831,
+                  0.14781348138559586,
+                  -1.5709345216534312,
+                  0.08719542509817003
+                ],
+                "segment_world": [
+                  [
+                    -0.7666746823090357,
+                    1.043451678712759,
+                    0.9167538955449729
+                  ],
+                  [
+                    -0.766607631733245,
+                    1.0433642411881277,
+                    0.916770640464336
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 13.633333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g384",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -2.677194955837906e-05,
+                "command": [
+                  0.48374454263316174,
+                  3.0420213083533874,
+                  -0.6087740611971659,
+                  -1.1080816036403889,
+                  0.14448579106309978,
+                  -1.5710422743490646,
+                  0.15504223214070378
+                ],
+                "segment_world": [
+                  [
+                    -0.7374392259047556,
+                    1.092517916243614,
+                    0.9267266926482441
+                  ],
+                  [
+                    -0.7374556354055242,
+                    1.0924976588797737,
+                    0.9267206012791093
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 45.05,
+                "phases": [
+                  "verify"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.03922348151197383,
+                "command": [
+                  0.4382647504027809,
+                  3.044542044007568,
+                  -0.5851184433963283,
+                  -1.0677049202819915,
+                  0.20130422840729,
+                  -1.864527707966335,
+                  0.1808843626339399
+                ],
+                "segment_world": [
+                  [
+                    -0.7960636010167131,
+                    1.027501973856959,
+                    0.8524417955829515
+                  ],
+                  [
+                    -0.7593310977996819,
+                    1.0411480149741656,
+                    0.854171035635241
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 21.466666666666665,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g408",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.013133703977206456,
+                "command": [
+                  0.4895102388928907,
+                  2.9807729561779794,
+                  -0.6139437975047225,
+                  -1.103608158911306,
+                  0.1452000901944105,
+                  -1.5711381277141716,
+                  0.2162905284744162
+                ],
+                "segment_world": [
+                  [
+                    -0.729750793916627,
+                    1.1008436344726593,
+                    0.9309544622065309
+                  ],
+                  [
+                    -0.7169712685467862,
+                    1.101555516030893,
+                    0.9280097829150749
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 64,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 0,
+            "details_truncated": false,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00006",
+      "family": "side_mouth",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00006",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 2.5611111111111113,
+        "phases": [
+          "preapproach"
+        ],
+        "robot_geom": "g410",
+        "environment_geom": "g50",
+        "environment_class": "other",
+        "distance_m": -0.00027562066094012194,
+        "command": [
+          0.392220623527718,
+          2.941762759399733,
+          -0.301868901276595,
+          -1.190485881800601,
+          0.43425744074593703,
+          -1.3260247116474315,
+          0.5948010132865789
+        ],
+        "segment_world": [
+          [
+            -0.7697950474284969,
+            1.0452009014078671,
+            0.9307127170314724
+          ],
+          [
+            -0.769714209036085,
+            1.0449402576145161,
+            0.9307514044459239
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 2828,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 46.0,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 6213,
+          "last_sample_time_s": 46.0,
+          "first_violation": {
+            "time_s": 2.5611111111111113,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g50",
+            "environment_class": "other",
+            "distance_m": -0.00027562066094012194,
+            "command": [
+              0.392220623527718,
+              2.941762759399733,
+              -0.301868901276595,
+              -1.190485881800601,
+              0.43425744074593703,
+              -1.3260247116474315,
+              0.5948010132865789
+            ],
+            "segment_world": [
+              [
+                -0.7697950474284969,
+                1.0452009014078671,
+                0.9307127170314724
+              ],
+              [
+                -0.769714209036085,
+                1.0449402576145161,
+                0.9307514044459239
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 13827,
+              "glb_plant": 52368
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.05869557137035913,
+              "glb_plant": -0.047330040004521186
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 2.5611111111111113,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g50",
+                "environment_class": "other",
+                "distance_m": -0.00027562066094012194,
+                "command": [
+                  0.392220623527718,
+                  2.941762759399733,
+                  -0.301868901276595,
+                  -1.190485881800601,
+                  0.43425744074593703,
+                  -1.3260247116474315,
+                  0.5948010132865789
+                ],
+                "segment_world": [
+                  [
+                    -0.7697950474284969,
+                    1.0452009014078671,
+                    0.9307127170314724
+                  ],
+                  [
+                    -0.769714209036085,
+                    1.0449402576145161,
+                    0.9307514044459239
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 2.8,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_03",
+                "environment_class": "glb_plant",
+                "distance_m": -0.0010140791292378945,
+                "command": [
+                  0.37725493776601254,
+                  2.900132649791051,
+                  -0.35783325815400435,
+                  -1.1288102731848748,
+                  0.516753147661281,
+                  -1.3164192278112847,
+                  0.5822557999184562
+                ],
+                "segment_world": [
+                  [
+                    -0.7514857953212526,
+                    1.0931398102313494,
+                    1.0277165018136827
+                  ],
+                  [
+                    -0.7510834821982321,
+                    1.0922155340619877,
+                    1.0276059839682856
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 34.09166666666667,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.05869557137035913,
+                "command": [
+                  0.3410952897030999,
+                  3.0058238407976976,
+                  -0.510455407561255,
+                  -1.0743727261234903,
+                  0.6118554113832235,
+                  -1.7293140692092663,
+                  0.3266435264991163
+                ],
+                "segment_world": [
+                  [
+                    -0.7993583976223233,
+                    1.0002182325598816,
+                    0.8835762839118824
+                  ],
+                  [
+                    -0.7633702455999095,
+                    1.0465299986867085,
+                    0.8812864518834034
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 3.0833333333333335,
+                "phases": [
+                  "preapproach"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "truss_01__glb_col_TRUSS_Rachis_00",
+                "environment_class": "glb_plant",
+                "distance_m": -0.047330040004521186,
+                "command": [
+                  0.36014512502036694,
+                  2.8525382133364343,
+                  -0.42181560295594656,
+                  -1.0582984282088823,
+                  0.6110679769391304,
+                  -1.3054375706801202,
+                  0.5679132395439769
+                ],
+                "segment_world": [
+                  [
+                    -0.7641033161483376,
+                    1.139692948951838,
+                    1.0127732449542868
+                  ],
+                  [
+                    -0.7485664263720225,
+                    1.0955192398788502,
+                    1.005886941908148
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 169,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 105,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00007",
+      "family": "flank_left",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00007",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 7.533333333333333,
+        "phases": [
+          "approach"
+        ],
+        "robot_geom": "g396",
+        "environment_geom": "g34",
+        "environment_class": "other",
+        "distance_m": -0.00011145175078056384,
+        "command": [
+          0.47654913588961023,
+          3.1098699952983537,
+          -0.6132968534886805,
+          -1.1068995743972831,
+          0.14781348138559586,
+          -1.5709345216534312,
+          0.08719542509817003
+        ],
+        "segment_world": [
+          [
+            -0.7666746823090357,
+            1.043451678712759,
+            0.9167538955449729
+          ],
+          [
+            -0.766607631733245,
+            1.0433642411881277,
+            0.916770640464336
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3379,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 56.31666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7534,
+          "last_sample_time_s": 56.31666666666667,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 22700,
+              "glb_plant": 7822
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.06073244545863343,
+              "glb_plant": -0.011567226039131143
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 7.533333333333333,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g396",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.00011145175078056384,
+                "command": [
+                  0.47654913588961023,
+                  3.1098699952983537,
+                  -0.6132968534886805,
+                  -1.1068995743972831,
+                  0.14781348138559586,
+                  -1.5709345216534312,
+                  0.08719542509817003
+                ],
+                "segment_world": [
+                  [
+                    -0.7666746823090357,
+                    1.043451678712759,
+                    0.9167538955449729
+                  ],
+                  [
+                    -0.766607631733245,
+                    1.0433642411881277,
+                    0.916770640464336
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 24.41111111111111,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g376",
+                "environment_geom": "truss_01__glb_col_Tomato_03",
+                "environment_class": "glb_plant",
+                "distance_m": -2.1571789478375862e-05,
+                "command": [
+                  0.17562571047235617,
+                  2.9857206223440653,
+                  -0.5898231129030024,
+                  -0.7328832838646481,
+                  0.6580623189330755,
+                  -1.5511637743351723,
+                  0.34858915064819973
+                ],
+                "segment_world": [
+                  [
+                    -0.7567858042181885,
+                    1.1187802572173695,
+                    0.9061402032530852
+                  ],
+                  [
+                    -0.7567992824549316,
+                    1.1187714950106995,
+                    0.9061545873752297
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 39.625,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.06073244545863343,
+                "command": [
+                  0.25803977060369876,
+                  3.010926005338522,
+                  -0.5293034643406664,
+                  -0.8837341394522684,
+                  0.4266682165631507,
+                  -1.7363460743018333,
+                  0.3202838552300825
+                ],
+                "segment_world": [
+                  [
+                    -0.8001901055550704,
+                    0.9977573467745631,
+                    0.8728238708838145
+                  ],
+                  [
+                    -0.7623375117971671,
+                    1.0451970574215954,
+                    0.870568891746247
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 39.36666666666667,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g408",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.011567226039131143,
+                "command": [
+                  0.2527115901223755,
+                  3.009689473138893,
+                  -0.529522234791348,
+                  -0.8770831936144593,
+                  0.4363318046372629,
+                  -1.7304195606925308,
+                  0.3239126009848029
+                ],
+                "segment_world": [
+                  [
+                    -0.7316891383892544,
+                    1.10263869345812,
+                    0.930907239066283
+                  ],
+                  [
+                    -0.7429218066269414,
+                    1.1012513530076793,
+                    0.9332953699205252
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 70,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 6,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00008",
+      "family": "flank_right",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00008",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 7.533333333333333,
+        "phases": [
+          "approach"
+        ],
+        "robot_geom": "g396",
+        "environment_geom": "g34",
+        "environment_class": "other",
+        "distance_m": -0.00011145175078056384,
+        "command": [
+          0.47654913588961023,
+          3.1098699952983537,
+          -0.6132968534886805,
+          -1.1068995743972831,
+          0.14781348138559586,
+          -1.5709345216534312,
+          0.08719542509817003
+        ],
+        "segment_world": [
+          [
+            -0.7666746823090357,
+            1.043451678712759,
+            0.9167538955449729
+          ],
+          [
+            -0.766607631733245,
+            1.0433642411881277,
+            0.916770640464336
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3379,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 56.31666666666667,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7534,
+          "last_sample_time_s": 56.31666666666667,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 23876,
+              "glb_plant": 15752
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.06127365751833009,
+              "glb_plant": -0.01304484126748749
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 7.533333333333333,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g396",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.00011145175078056384,
+                "command": [
+                  0.47654913588961023,
+                  3.1098699952983537,
+                  -0.6132968534886805,
+                  -1.1068995743972831,
+                  0.14781348138559586,
+                  -1.5709345216534312,
+                  0.08719542509817003
+                ],
+                "segment_world": [
+                  [
+                    -0.7666746823090357,
+                    1.043451678712759,
+                    0.9167538955449729
+                  ],
+                  [
+                    -0.766607631733245,
+                    1.0433642411881277,
+                    0.916770640464336
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 13.15,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g388",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -3.1991228433834984e-05,
+                "command": [
+                  0.40846907301465973,
+                  3.0507408282953112,
+                  -0.5235276639448883,
+                  -1.1014091893060107,
+                  0.19052521794893537,
+                  -1.5851993769733375,
+                  0.16819430599069007
+                ],
+                "segment_world": [
+                  [
+                    -0.7337862367937935,
+                    1.0905209985901525,
+                    0.9265972413455685
+                  ],
+                  [
+                    -0.7337956298329602,
+                    1.0904922139191169,
+                    0.9265869140891427
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 25.191666666666666,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.06127365751833009,
+                "command": [
+                  0.1400551806359111,
+                  2.9715528648518514,
+                  -0.5297118228568591,
+                  -0.7684444461591008,
+                  0.7088002976192787,
+                  -1.5322615364942789,
+                  0.3661028186055747
+                ],
+                "segment_world": [
+                  [
+                    -0.7820848008101431,
+                    0.9869120886755415,
+                    0.8666983780015236
+                  ],
+                  [
+                    -0.7629748029047974,
+                    1.0448919102407872,
+                    0.8614439154225758
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 16.866666666666667,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g392",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.01304484126748749,
+                "command": [
+                  0.3015232465027691,
+                  3.0312487735714786,
+                  -0.43961308618643496,
+                  -1.049060669769053,
+                  0.28546863094301456,
+                  -1.5947192357657072,
+                  0.22652268087950597
+                ],
+                "segment_world": [
+                  [
+                    -0.7274589590080811,
+                    1.1025812784541655,
+                    0.9292754352339391
+                  ],
+                  [
+                    -0.7399574854881075,
+                    1.1059902403670563,
+                    0.9308030798910785
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 90,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 26,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    },
+    {
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "candidate_id": "mf_20260928_00009",
+      "family": "pivot_sweep",
+      "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00009",
+      "returncode": 2,
+      "physics_executed": false,
+      "training_eligible": false,
+      "outcome": "path_blocked",
+      "completed": false,
+      "stop_reasons": [],
+      "audit_status": "blocked",
+      "audit_complete": true,
+      "first_violation": {
+        "time_s": 7.533333333333333,
+        "phases": [
+          "approach"
+        ],
+        "robot_geom": "g396",
+        "environment_geom": "g34",
+        "environment_class": "other",
+        "distance_m": -0.00011145175078056384,
+        "command": [
+          0.47654913588961023,
+          3.1098699952983537,
+          -0.6132968534886805,
+          -1.1068995743972831,
+          0.14781348138559586,
+          -1.5709345216534312,
+          0.08719542509817003
+        ],
+        "segment_world": [
+          [
+            -0.7666746823090357,
+            1.043451678712759,
+            0.9167538955449729
+          ],
+          [
+            -0.766607631733245,
+            1.0433642411881277,
+            0.916770640464336
+          ]
+        ]
+      },
+      "geometric_samples": 0,
+      "observed_samples": 0,
+      "simulated_s": 0.0,
+      "source_unchanged": true,
+      "contact_retention_evidence": false,
+      "planning_preflight": {
+        "passed": true,
+        "samples": 3254,
+        "max_arm_sample_rad": 0.015,
+        "max_lift_sample_m": 0.001
+      },
+      "planned_seconds": 54.233333333333334,
+      "evidence": {
+        "trial": {
+          "physics_executed": false,
+          "completed": false,
+          "training_eligible": false,
+          "hook_success": null,
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "limits": {
+            "max_target_force_N": 5.0,
+            "max_target_displacement_m": 0.02,
+            "max_forbidden_force_N": 0.01
+          },
+          "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+          "reason": "conditional_audit_not_complete_and_clear",
+          "source_unchanged": true
+        },
+        "audit": {
+          "passed": false,
+          "complete": true,
+          "status": "blocked",
+          "samples_checked": 7267,
+          "last_sample_time_s": 54.233333333333334,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "violation_summary": {
+            "sample_hits_by_environment_class": {
+              "other": 25757,
+              "glb_plant": 13067
+            },
+            "minimum_distance_m_by_environment_class": {
+              "other": -0.03922348151248747,
+              "glb_plant": -0.013718735304402511
+            },
+            "first_by_environment_class": {
+              "other": {
+                "time_s": 7.533333333333333,
+                "phases": [
+                  "approach"
+                ],
+                "robot_geom": "g396",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.00011145175078056384,
+                "command": [
+                  0.47654913588961023,
+                  3.1098699952983537,
+                  -0.6132968534886805,
+                  -1.1068995743972831,
+                  0.14781348138559586,
+                  -1.5709345216534312,
+                  0.08719542509817003
+                ],
+                "segment_world": [
+                  [
+                    -0.7666746823090357,
+                    1.043451678712759,
+                    0.9167538955449729
+                  ],
+                  [
+                    -0.766607631733245,
+                    1.0433642411881277,
+                    0.916770640464336
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 13.633333333333333,
+                "phases": [
+                  "insert"
+                ],
+                "robot_geom": "g384",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -2.677194955837906e-05,
+                "command": [
+                  0.48374454263316174,
+                  3.0420213083533874,
+                  -0.6087740611971659,
+                  -1.1080816036403889,
+                  0.14448579106309978,
+                  -1.5710422743490646,
+                  0.15504223214070378
+                ],
+                "segment_world": [
+                  [
+                    -0.7374392259047556,
+                    1.092517916243614,
+                    0.9267266926482441
+                  ],
+                  [
+                    -0.7374556354055242,
+                    1.0924976588797737,
+                    0.9267206012791093
+                  ]
+                ]
+              }
+            },
+            "worst_by_environment_class": {
+              "other": {
+                "time_s": 53.9,
+                "phases": [
+                  "verify"
+                ],
+                "robot_geom": "g410",
+                "environment_geom": "g34",
+                "environment_class": "other",
+                "distance_m": -0.03922348151248747,
+                "command": [
+                  0.4383689668653131,
+                  3.0445420440075672,
+                  -0.5851414104670641,
+                  -1.0679349119386228,
+                  0.2015571871346567,
+                  -1.864527707966335,
+                  0.18088436263394078
+                ],
+                "segment_world": [
+                  [
+                    -0.7960636010180068,
+                    1.0275019738578495,
+                    0.8524417955917496
+                  ],
+                  [
+                    -0.7593310978004943,
+                    1.0411480149752346,
+                    0.8541710356440616
+                  ]
+                ]
+              },
+              "glb_plant": {
+                "time_s": 28.905555555555555,
+                "phases": [
+                  "seat"
+                ],
+                "robot_geom": "g408",
+                "environment_geom": "truss_01__glb_col_Tomato_02",
+                "environment_class": "glb_plant",
+                "distance_m": -0.013718735304402511,
+                "command": [
+                  0.4146294308317238,
+                  3.0094248953424585,
+                  -0.5900791888182475,
+                  -1.0647581325965576,
+                  0.21377636771677647,
+                  -1.8601659736801548,
+                  0.2172650510839145
+                ],
+                "segment_world": [
+                  [
+                    -0.7293063415707961,
+                    1.101939483928673,
+                    0.9306762240536532
+                  ],
+                  [
+                    -0.7422961827654777,
+                    1.102687014427497,
+                    0.9263277849954921
+                  ]
+                ]
+              }
+            },
+            "observed_unique_pair_phase_count": 90,
+            "reported_unique_pair_phase_count": 64,
+            "omitted_unique_pair_phase_count": 26,
+            "details_truncated": true,
+            "reported_limit": 64,
+            "full_path_requested": true,
+            "full_path_collected": true,
+            "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+          }
+        }
+      }
+    }
+  ],
+  "count_notes": "IK column requires both IK and existing robot self/speed checks. Geometric_any includes stopped trajectories; not retention.",
+  "hook_success": null,
+  "training_eligible": false,
+  "impossible": null
+}

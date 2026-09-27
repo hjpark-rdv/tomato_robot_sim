@@ -1,0 +1,1087 @@
+{
+  "schema": "motion_family_search_v1",
+  "expected_cases": 2,
+  "reported_cases": 2,
+  "completed_cases": 2,
+  "case_statuses": {
+    "unresolved_within_budget": 2
+  },
+  "candidate_outcomes": {
+    "path_blocked": 20
+  },
+  "physics_attempts": 0,
+  "physics_budget_charged": 0,
+  "success_definition": "No calibrated binary harvest label; evidence levels are separate",
+  "reports": [
+    {
+      "case": {
+        "scene_id": "gutter02",
+        "target": "Tomato_02",
+        "split": "pilot",
+        "source_run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+        "hashes": {
+          "manifest.json": "7799e59480df23e1aa9532e8882fd5cacec346e75744c2507244ef8b5c516efe",
+          "planning_inputs.json": "06183fadcf78c4476d8c1eb5c15f0a19bd9d5e8f7841a99bb653866c0f14c61e",
+          "replay_assets/model.mjb": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+          "replay_assets/reference.json": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "unreviewed"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "under_center",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 22.916666666666668,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_Attachment_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.548396638532788e-05,
+            "command": [
+              0.02378718165532728,
+              2.918398439065584,
+              -0.22477759727140717,
+              -1.6886485808162413,
+              0.3438753339044143,
+              -1.5717889538726924,
+              2.4686860377125135
+            ],
+            "segment_world": [
+              [
+                -0.6963977589960667,
+                0.9499195212724688,
+                0.45810284323842115
+              ],
+              [
+                -0.6963635854437368,
+                0.9499241536652657,
+                0.4580944873346066
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.308333333333334,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g18",
+            "environment_class": "other",
+            "distance_m": -0.00045174914700366053,
+            "command": [
+              0.19640297792980563,
+              3.2453424844844005,
+              -0.48441038781497225,
+              -1.1986258504429876,
+              0.15428949688516017,
+              -1.6730509166328105,
+              1.6639456543791677
+            ],
+            "segment_world": [
+              [
+                -0.7591777907224404,
+                0.8692008692064503,
+                0.5480121258218733
+              ],
+              [
+                -0.7590522940982485,
+                0.8688560068363351,
+                0.5482755605098198
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "flank_left",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 32.141666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_09",
+            "environment_class": "glb_plant",
+            "distance_m": -2.9657645778061245e-05,
+            "command": [
+              2.2358917967333432e-05,
+              3.025180265510473,
+              -0.2058536472128848,
+              -1.6876740615338026,
+              0.4541852518149025,
+              -1.7190367637819686,
+              2.3736751289790607
+            ],
+            "segment_world": [
+              [
+                -0.667157998936337,
+                0.9584138497597292,
+                0.3525354096813399
+              ],
+              [
+                -0.6671344060266562,
+                0.9584317356180205,
+                0.35253715514376194
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "flank_right",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00003",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 27.91111111111111,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g401",
+            "environment_geom": "glb_col_Tomato_03",
+            "environment_class": "glb_plant",
+            "distance_m": -6.523653277246784e-06,
+            "command": [
+              0.008065779220330204,
+              2.898946941701869,
+              -0.28460087096716313,
+              -1.5947447818508065,
+              0.39766664689089454,
+              -1.6493617749371074,
+              2.492833201430276
+            ],
+            "segment_world": [
+              [
+                -0.7006939460507962,
+                0.9522635928123562,
+                0.45427046845604335
+              ],
+              [
+                -0.700693691509607,
+                0.9522664005225605,
+                0.4542763514845384
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00004",
+          "family": "pivot_sweep",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00004",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 22.916666666666668,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_Attachment_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.548396638532788e-05,
+            "command": [
+              0.02378718165532728,
+              2.918398439065584,
+              -0.22477759727140717,
+              -1.6886485808162413,
+              0.3438753339044143,
+              -1.5717889538726924,
+              2.4686860377125135
+            ],
+            "segment_world": [
+              [
+                -0.6963977589960667,
+                0.9499195212724688,
+                0.45810284323842115
+              ],
+              [
+                -0.6963635854437368,
+                0.9499241536652657,
+                0.4580944873346066
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00005",
+          "family": "under_center",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00005",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 21.977777777777778,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+            "environment_class": "glb_plant",
+            "distance_m": -2.6195450534475194e-05,
+            "command": [
+              0.03791509657664732,
+              3.2671791186878556,
+              -0.37231164249442744,
+              -1.5535146435634184,
+              0.3536641859391815,
+              -1.5716155954334703,
+              0.5403088272635911
+            ],
+            "segment_world": [
+              [
+                -0.6833799324783719,
+                0.9225722600765055,
+                0.44796456166830084
+              ],
+              [
+                -0.6833777480612276,
+                0.9225550062139486,
+                0.4479841508024653
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00006",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00006",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.258333333333333,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_TRUSS_Truss_01_Peduncle_00",
+            "environment_class": "glb_plant",
+            "distance_m": -0.00032476014668309937,
+            "command": [
+              0.2093520349265895,
+              3.059297281762684,
+              -0.31073258971816664,
+              -1.4538144832419913,
+              0.696109829360166,
+              -1.1363582929217726,
+              0.7159504503592558
+            ],
+            "segment_world": [
+              [
+                -0.7444513224153476,
+                0.9180097850492177,
+                0.6289987989369288
+              ],
+              [
+                -0.7443497663252595,
+                0.9177356733350673,
+                0.6291402849136374
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00007",
+          "family": "flank_left",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00007",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 30.116666666666667,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g408",
+            "environment_geom": "glb_col_Tomato_04",
+            "environment_class": "glb_plant",
+            "distance_m": -5.03602629114714e-06,
+            "command": [
+              5.587120299503795e-10,
+              3.210606735264925,
+              -0.46332630333546193,
+              -1.708214756043767,
+              1.4168963942642012,
+              -1.267274229259019,
+              0.6027750033038115
+            ],
+            "segment_world": [
+              [
+                -0.6946866785179597,
+                0.9098413956831601,
+                0.427977584496028
+              ],
+              [
+                -0.69469036407431,
+                0.9098380605337091,
+                0.42797839382496783
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00008",
+          "family": "flank_right",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00008",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 30.183333333333334,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g390",
+            "environment_geom": "glb_col_Tomato_03",
+            "environment_class": "glb_plant",
+            "distance_m": -1.676614647019587e-05,
+            "command": [
+              3.129544135807193e-10,
+              3.165764819028933,
+              -0.38375105130488973,
+              -1.8317361690544822,
+              1.4555765293680558,
+              -1.2329233629514236,
+              0.6344258578666048
+            ],
+            "segment_world": [
+              [
+                -0.6903493121863387,
+                0.9458674851617221,
+                0.4514896402752067
+              ],
+              [
+                -0.6903352984694443,
+                0.9458677053959801,
+                0.45149884195457163
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00009",
+          "family": "pivot_sweep",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/gutter02/Tomato_02/trials/mf_20260928_00009",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 21.977777777777778,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g386",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_04_01",
+            "environment_class": "glb_plant",
+            "distance_m": -2.6195450534475194e-05,
+            "command": [
+              0.03791509657664732,
+              3.2671791186878556,
+              -0.37231164249442744,
+              -1.5535146435634184,
+              0.3536641859391815,
+              -1.5716155954334703,
+              0.5403088272635911
+            ],
+            "segment_world": [
+              [
+                -0.6833799324783719,
+                0.9225722600765055,
+                0.44796456166830084
+              ],
+              [
+                -0.6833777480612276,
+                0.9225550062139486,
+                0.4479841508024653
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 10
+        },
+        "candidates": 10,
+        "physics_attempts": 0,
+        "families": [
+          "flank_left",
+          "flank_right",
+          "pivot_sweep",
+          "side_mouth",
+          "under_center"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 442.83369443006814,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "two_trusses",
+        "target": "truss_01__Tomato_01",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics",
+        "hashes": {
+          "manifest.json": "b4851c99b50cd52bd2892dbd4a4789be5fd6dd7d103cf80934f70f177b104b6c",
+          "planning_inputs.json": "000ded6185903e875304fb3811f1576ea357c812b5ebb74e52479abbf55059d9",
+          "replay_assets/model.mjb": "1e731037bc489d07799a5e0d1d4972e96791a8a49f37ea57768958bd75e96ea5",
+          "replay_assets/reference.json": "9ce0731a7485e5fbff7b14c7155adda55cb07d6257c4cfe29bb16ce61b607d62",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "under_center",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 18.758333333333333,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g399",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1208381388920436e-06,
+            "command": [
+              0.40460861839220674,
+              2.731931892808494,
+              -0.23617699514222523,
+              -1.420355328493895,
+              0.08646286333754255,
+              -1.5722134318028798,
+              2.0447277088701066
+            ],
+            "segment_world": [
+              [
+                -0.7210219086125254,
+                1.110666712236319,
+                0.9352885351278969
+              ],
+              [
+                -0.7210205350081248,
+                1.1106681281971669,
+                0.935289313729361
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 3.875,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_02",
+            "environment_class": "glb_plant",
+            "distance_m": -0.00014493281989680232,
+            "command": [
+              0.6016928584055106,
+              2.98768679467097,
+              -0.8994049196096724,
+              -0.7651701316953111,
+              0.11361144390169711,
+              -1.7543555848148182,
+              1.6308490466529928
+            ],
+            "segment_world": [
+              [
+                -0.7585552508113242,
+                1.088735633340912,
+                1.065067899999531
+              ],
+              [
+                -0.7584151015127354,
+                1.0887139315119814,
+                1.0650977785371345
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "flank_left",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 18.522222222222222,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g398",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -7.491318836356066e-06,
+            "command": [
+              0.40315094238079274,
+              2.7335824176536234,
+              -0.23162221462398008,
+              -1.4226120254085006,
+              0.08534858604563139,
+              -1.5750406534679464,
+              2.043113224810615
+            ],
+            "segment_world": [
+              [
+                -0.7206343173749447,
+                1.1102656632434882,
+                0.935230278933405
+              ],
+              [
+                -0.7206291538704557,
+                1.1102703583369693,
+                0.9352330018319528
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "flank_right",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00003",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 33.34166666666667,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -3.387837131188056e-05,
+            "command": [
+              0.41386294522531386,
+              2.76997315312153,
+              -0.3641950297470157,
+              -1.3010090797308957,
+              0.18036692211679675,
+              -1.791642422075578,
+              2.018613432251453
+            ],
+            "segment_world": [
+              [
+                -0.71963666274463,
+                1.1095723671864561,
+                0.9340538626445816
+              ],
+              [
+                -0.7196105374350139,
+                1.109592377022524,
+                0.9340619136507754
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00004",
+          "family": "pivot_sweep",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00004",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 18.758333333333333,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g399",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1208381388920436e-06,
+            "command": [
+              0.40460861839220674,
+              2.731931892808494,
+              -0.23617699514222523,
+              -1.420355328493895,
+              0.08646286333754255,
+              -1.5722134318028798,
+              2.0447277088701066
+            ],
+            "segment_world": [
+              [
+                -0.7210219086125254,
+                1.110666712236319,
+                0.9352885351278969
+              ],
+              [
+                -0.7210205350081248,
+                1.1106681281971669,
+                0.935289313729361
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00005",
+          "family": "under_center",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00005",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00006",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00006",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 2.5611111111111113,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g50",
+            "environment_class": "other",
+            "distance_m": -0.00027562066094012194,
+            "command": [
+              0.392220623527718,
+              2.941762759399733,
+              -0.301868901276595,
+              -1.190485881800601,
+              0.43425744074593703,
+              -1.3260247116474315,
+              0.5948010132865789
+            ],
+            "segment_world": [
+              [
+                -0.7697950474284969,
+                1.0452009014078671,
+                0.9307127170314724
+              ],
+              [
+                -0.769714209036085,
+                1.0449402576145161,
+                0.9307514044459239
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00007",
+          "family": "flank_left",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00007",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00008",
+          "family": "flank_right",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00008",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00009",
+          "family": "pivot_sweep",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/trials/mf_20260928_00009",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.533333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g396",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -0.00011145175078056384,
+            "command": [
+              0.47654913588961023,
+              3.1098699952983537,
+              -0.6132968534886805,
+              -1.1068995743972831,
+              0.14781348138559586,
+              -1.5709345216534312,
+              0.08719542509817003
+            ],
+            "segment_world": [
+              [
+                -0.7666746823090357,
+                1.043451678712759,
+                0.9167538955449729
+              ],
+              [
+                -0.766607631733245,
+                1.0433642411881277,
+                0.916770640464336
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 10
+        },
+        "candidates": 10,
+        "physics_attempts": 0,
+        "families": [
+          "flank_left",
+          "flank_right",
+          "pivot_sweep",
+          "side_mouth",
+          "under_center"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 530.7544459998608,
+      "source_unchanged": true
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null
+}

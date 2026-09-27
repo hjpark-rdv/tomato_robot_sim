@@ -1,0 +1,530 @@
+[
+  {
+    "scene": "gutter02",
+    "target": "Tomato_02",
+    "scope": {
+      "fruit": "glb_col_Tomato_02",
+      "wires": [
+        "g376",
+        "g377",
+        "g378",
+        "g379",
+        "g380",
+        "g381",
+        "g382",
+        "g383",
+        "g384",
+        "g385",
+        "g386",
+        "g387",
+        "g388",
+        "g389",
+        "g390",
+        "g391",
+        "g392",
+        "g393",
+        "g394",
+        "g395",
+        "g396",
+        "g397",
+        "g398",
+        "g399",
+        "g400",
+        "g401",
+        "g402",
+        "g403",
+        "g404",
+        "g405",
+        "g406",
+        "g407"
+      ],
+      "pedicels": [
+        "glb_col_Attachment_01",
+        "glb_col_TRUSS_Pedicel_proximal_02_02"
+      ],
+      "rear_wires": [
+        "g384",
+        "g385",
+        "g386",
+        "g387",
+        "g388",
+        "g389",
+        "g390",
+        "g391",
+        "g392",
+        "g393",
+        "g394",
+        "g395",
+        "g396",
+        "g397",
+        "g398",
+        "g399"
+      ],
+      "rachis": [
+        "glb_col_TRUSS_Rachis_00",
+        "glb_col_TRUSS_Rachis_01",
+        "glb_col_TRUSS_Rachis_02",
+        "glb_col_TRUSS_Rachis_03",
+        "glb_col_TRUSS_Rachis_04",
+        "glb_col_TRUSS_Rachis_05",
+        "glb_col_TRUSS_Rachis_06",
+        "glb_col_TRUSS_Rachis_07",
+        "glb_col_TRUSS_Rachis_08",
+        "glb_col_TRUSS_Rachis_09",
+        "glb_col_TRUSS_Rachis_10",
+        "glb_col_TRUSS_Rachis_11",
+        "glb_col_TRUSS_Rachis_12",
+        "glb_col_TRUSS_Rachis_13"
+      ],
+      "search_policy": true,
+      "truss_root": "TRUSS_Truss_01_Peduncle_00"
+    },
+    "checks": [
+      {
+        "geom": "glb_col_TRUSS_Rachis_00",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_00"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_01",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_01"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_02",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_02"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_03",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_03"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_04",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_04"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_05",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_05"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_06",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_06"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_07",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_07"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_08",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_08"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_09",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_09"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_10",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_10"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_11",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_11"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_12",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_12"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_13",
+        "category": "target_rachis_touch",
+        "body": "TRUSS_Rachis_13"
+      },
+      {
+        "geom": "glb_col_Tomato_11",
+        "category": "forbidden_contact",
+        "body": "Tomato_11"
+      },
+      {
+        "geom": "glb_col_Tomato_10",
+        "category": "forbidden_contact",
+        "body": "Tomato_10"
+      },
+      {
+        "geom": "glb_col_Tomato_08",
+        "category": "forbidden_contact",
+        "body": "Tomato_08"
+      },
+      {
+        "geom": "glb_col_Tomato_09",
+        "category": "forbidden_contact",
+        "body": "Tomato_09"
+      },
+      {
+        "geom": "glb_col_Tomato_07",
+        "category": "forbidden_contact",
+        "body": "Tomato_07"
+      },
+      {
+        "geom": "glb_col_Tomato_05",
+        "category": "forbidden_contact",
+        "body": "Tomato_05"
+      },
+      {
+        "geom": "glb_col_Tomato_04",
+        "category": "forbidden_contact",
+        "body": "Tomato_04"
+      },
+      {
+        "geom": "glb_col_Tomato_03",
+        "category": "forbidden_contact",
+        "body": "Tomato_03"
+      },
+      {
+        "geom": "glb_col_Tomato_02",
+        "category": "target_fruit_touch",
+        "body": "Tomato_02"
+      },
+      {
+        "geom": "glb_col_Tomato_01",
+        "category": "forbidden_contact",
+        "body": "Tomato_01"
+      }
+    ],
+    "passed": true
+  },
+  {
+    "scene": "two_trusses",
+    "target": "truss_01__Tomato_01",
+    "scope": {
+      "fruit": "truss_01__glb_col_Tomato_01",
+      "wires": [
+        "g376",
+        "g377",
+        "g378",
+        "g379",
+        "g380",
+        "g381",
+        "g382",
+        "g383",
+        "g384",
+        "g385",
+        "g386",
+        "g387",
+        "g388",
+        "g389",
+        "g390",
+        "g391",
+        "g392",
+        "g393",
+        "g394",
+        "g395",
+        "g396",
+        "g397",
+        "g398",
+        "g399",
+        "g400",
+        "g401",
+        "g402",
+        "g403",
+        "g404",
+        "g405",
+        "g406",
+        "g407"
+      ],
+      "pedicels": [
+        "truss_01__glb_col_Attachment_00",
+        "truss_01__glb_col_TRUSS_Pedicel_proximal_01_02"
+      ],
+      "rear_wires": [
+        "g384",
+        "g385",
+        "g386",
+        "g387",
+        "g388",
+        "g389",
+        "g390",
+        "g391",
+        "g392",
+        "g393",
+        "g394",
+        "g395",
+        "g396",
+        "g397",
+        "g398",
+        "g399"
+      ],
+      "rachis": [
+        "truss_01__glb_col_TRUSS_Rachis_00",
+        "truss_01__glb_col_TRUSS_Rachis_01",
+        "truss_01__glb_col_TRUSS_Rachis_02",
+        "truss_01__glb_col_TRUSS_Rachis_03",
+        "truss_01__glb_col_TRUSS_Rachis_04",
+        "truss_01__glb_col_TRUSS_Rachis_05",
+        "truss_01__glb_col_TRUSS_Rachis_06",
+        "truss_01__glb_col_TRUSS_Rachis_07",
+        "truss_01__glb_col_TRUSS_Rachis_08",
+        "truss_01__glb_col_TRUSS_Rachis_09",
+        "truss_01__glb_col_TRUSS_Rachis_10",
+        "truss_01__glb_col_TRUSS_Rachis_11",
+        "truss_01__glb_col_TRUSS_Rachis_12",
+        "truss_01__glb_col_TRUSS_Rachis_13"
+      ],
+      "search_policy": true,
+      "truss_root": "truss_01__TRUSS_Truss_01_Peduncle_00"
+    },
+    "checks": [
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_00",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_00"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_01",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_01"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_02",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_02"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_03",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_03"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_04",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_04"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_05",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_05"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_06",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_06"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_07",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_07"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_08",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_08"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_09",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_09"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_10",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_10"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_11",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_11"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_12",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_12"
+      },
+      {
+        "geom": "truss_01__glb_col_TRUSS_Rachis_13",
+        "category": "target_rachis_touch",
+        "body": "truss_01__TRUSS_Rachis_13"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_11",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_11"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_10",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_10"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_08",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_08"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_09",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_09"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_07",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_07"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_05",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_05"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_04",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_04"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_03",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_03"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_02",
+        "category": "forbidden_contact",
+        "body": "truss_01__Tomato_02"
+      },
+      {
+        "geom": "truss_01__glb_col_Tomato_01",
+        "category": "target_fruit_touch",
+        "body": "truss_01__Tomato_01"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_00",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_00"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_01",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_01"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_02",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_02"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_03",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_03"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_04",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_04"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_05",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_05"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_06",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_06"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_07",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_07"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_08",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_08"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_09",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_09"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_10",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_10"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_11",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_11"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_12",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_12"
+      },
+      {
+        "geom": "glb_col_TRUSS_Rachis_13",
+        "category": "forbidden_contact",
+        "body": "TRUSS_Rachis_13"
+      },
+      {
+        "geom": "glb_col_Tomato_11",
+        "category": "forbidden_contact",
+        "body": "Tomato_11"
+      },
+      {
+        "geom": "glb_col_Tomato_10",
+        "category": "forbidden_contact",
+        "body": "Tomato_10"
+      },
+      {
+        "geom": "glb_col_Tomato_08",
+        "category": "forbidden_contact",
+        "body": "Tomato_08"
+      },
+      {
+        "geom": "glb_col_Tomato_09",
+        "category": "forbidden_contact",
+        "body": "Tomato_09"
+      },
+      {
+        "geom": "glb_col_Tomato_07",
+        "category": "forbidden_contact",
+        "body": "Tomato_07"
+      },
+      {
+        "geom": "glb_col_Tomato_05",
+        "category": "forbidden_contact",
+        "body": "Tomato_05"
+      },
+      {
+        "geom": "glb_col_Tomato_04",
+        "category": "forbidden_contact",
+        "body": "Tomato_04"
+      },
+      {
+        "geom": "glb_col_Tomato_03",
+        "category": "forbidden_contact",
+        "body": "Tomato_03"
+      },
+      {
+        "geom": "glb_col_Tomato_02",
+        "category": "forbidden_contact",
+        "body": "Tomato_02"
+      },
+      {
+        "geom": "glb_col_Tomato_01",
+        "category": "forbidden_contact",
+        "body": "Tomato_01"
+      }
+    ],
+    "passed": true
+  }
+]

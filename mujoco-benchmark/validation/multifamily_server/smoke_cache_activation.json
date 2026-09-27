@@ -1,0 +1,22 @@
+{
+  "start_unix": 1790531017.266814,
+  "end_unix": 1790531026.1713037,
+  "helper_sha256": "57f00d8c718ab908034bb4922d3d5ab0d598ee132d087670d614827983e988fe",
+  "case": {
+    "scene_id": "two_trusses",
+    "target": "truss_01__Tomato_01",
+    "split": "pilot",
+    "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics",
+    "hashes": {
+      "manifest.json": "b4851c99b50cd52bd2892dbd4a4789be5fd6dd7d103cf80934f70f177b104b6c",
+      "planning_inputs.json": "000ded6185903e875304fb3811f1576ea357c812b5ebb74e52479abbf55059d9",
+      "replay_assets/model.mjb": "1e731037bc489d07799a5e0d1d4972e96791a8a49f37ea57768958bd75e96ea5",
+      "replay_assets/reference.json": "9ce0731a7485e5fbff7b14c7155adda55cb07d6257c4cfe29bb16ce61b607d62",
+      "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+    },
+    "observation_path": null,
+    "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+  },
+  "scope": "Only model symlink in newly created smoke run changed; identical binary checked; source assets untouched"
+}

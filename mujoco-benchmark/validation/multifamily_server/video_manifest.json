@@ -1,0 +1,42 @@
+[
+  {
+    "path": "smoke_videos/actual_executor_control.mp4",
+    "kind": "recorded_physics",
+    "name": "actual_executor_control"
+  },
+  {
+    "path": "smoke_videos/nominal_side_mouth_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_side_mouth_blocked"
+  },
+  {
+    "path": "smoke_videos/nominal_flank_left_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_flank_left_blocked"
+  },
+  {
+    "path": "pilot_supplement_videos/nominal_flank_left_seat_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_flank_left_seat_blocked"
+  },
+  {
+    "path": "pilot_supplement_videos/nominal_flank_right_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_flank_right_blocked"
+  },
+  {
+    "path": "pilot_supplement_videos/nominal_pivot_sweep_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_pivot_sweep_blocked"
+  },
+  {
+    "path": "pilot_supplement_videos/nominal_under_center_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_under_center_blocked"
+  },
+  {
+    "path": "pilot_supplement_videos/nominal_side_robot_facing_blocked.mp4",
+    "kind": "nominal_only",
+    "name": "nominal_side_robot_facing_blocked"
+  }
+]

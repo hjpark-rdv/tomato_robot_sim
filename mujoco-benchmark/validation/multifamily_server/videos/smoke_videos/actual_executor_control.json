@@ -1,0 +1,13 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+  "states": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/executor_control/trial_states.npz",
+  "samples": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_videos/actual_executor_control.samples.json",
+  "frames": 70,
+  "fps": 10,
+  "speed": 3,
+  "label": "EXISTING CONTROL / completed, no retention",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "ACTUAL stored qpos (executor control)",
+  "highlights": null
+}

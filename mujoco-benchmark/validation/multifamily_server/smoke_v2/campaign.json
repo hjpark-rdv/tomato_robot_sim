@@ -1,0 +1,72 @@
+{
+  "schema": "motion_family_search_v1",
+  "cases": [
+    {
+      "scene_id": "gutter02",
+      "target": "Tomato_02",
+      "split": "pilot",
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260927_hook_seating_server/robot_under",
+      "hashes": {
+        "manifest.json": "7799e59480df23e1aa9532e8882fd5cacec346e75744c2507244ef8b5c516efe",
+        "planning_inputs.json": "06183fadcf78c4476d8c1eb5c15f0a19bd9d5e8f7841a99bb653866c0f14c61e",
+        "replay_assets/model.mjb": "e62e5211b5ac3646cd82e42f9b8a1e869d07d30b513f3e82068ec19c607b7fef",
+        "replay_assets/reference.json": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "unreviewed"
+    },
+    {
+      "scene_id": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics",
+      "hashes": {
+        "manifest.json": "b4851c99b50cd52bd2892dbd4a4789be5fd6dd7d103cf80934f70f177b104b6c",
+        "planning_inputs.json": "000ded6185903e875304fb3811f1576ea357c812b5ebb74e52479abbf55059d9",
+        "replay_assets/model.mjb": "1e731037bc489d07799a5e0d1d4972e96791a8a49f37ea57768958bd75e96ea5",
+        "replay_assets/reference.json": "9ce0731a7485e5fbff7b14c7155adda55cb07d6257c4cfe29bb16ce61b607d62",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    }
+  ],
+  "config": {
+    "samples_per_family": 2,
+    "seed": 20260928,
+    "planning_workers": 2,
+    "planning_python": "/root/isaaclab_env/bin/python",
+    "native_python": "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "physics_per_target": 6,
+    "refine_parents": 0,
+    "planning_timeout_s": 600.0,
+    "trial_timeout_s": 600.0,
+    "case_timeout_s": 3600.0,
+    "render_budget": 3,
+    "execute": true,
+    "max_target_force_N": 5.0,
+    "max_target_displacement_m": 0.02
+  },
+  "signature": "1ed4b679e356ff8249212c50d4835c5e7e9a96dbfeb4e5c5f897c1de39ac8f0e",
+  "source_manifest": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_cases.json",
+  "source_manifest_sha256": "af1fe6ba4a872fa894b1981e79542d233bcf908423b29b10a261164d1624542b",
+  "code_sha256": {
+    "run_motion_family_search.py": "ce0a8805eae6b115ab3748549423be49761dcf945c57dca2c93acdb388a816bc",
+    "motion_family_search.py": "9bee676d16b10c5f4a2b8662860cf713c2b27d5cfc60a84e81b05594ca150371",
+    "target_fruit_contact_trial.py": "559bfcedc01a0ac3ebdc16d796607b5d6aa1f8149e0e8adc0d4828c58dd8f864",
+    "target_truss_identity.py": "c70a3bf26970b3e20ccde080fc7bf1d67a7fd304422dadc47010aceeabbeccf8",
+    "hook_retention_diagnostic.py": "042ff5af0323d6b25bac47719c311e8ba0f5b323e5cf7d8b9c56dc1f76afadb0",
+    "environment_preflight.py": "e77ca91a60274935734008d06ab030252910399aee52b1f2657effa9ef17d1ef",
+    "plan_candidates.py": "4cf3a27c9d2983ce3fbd9335e91e0fa819b24f87e9e97622f2eff98fdc283644",
+    "robot_engine.py": "4423385a0654073a66800b82d93274638d830507e7352af41cfb18d050a3547d",
+    "measure_seating_rollout.py": "61d99d586828acb2e67ee3040f60aca89213c5764a88f1116e0af646b57526a1",
+    "hook_seating_geometry.py": "c81a09cca47191173ee7d6cd42efef9325ad756951b5d5963b3ff3c0060438ac",
+    "seating_evaluation.py": "e9ba9630ebf236fc8e21f15040643437617fec4eca3835fb1f09dd4c62435c47",
+    "render_contact_diagnostic.py": "de91adb76ed329d4793b6558967eabd890feed54e15b23e058cedc6333d8f84c",
+    "nvidia-sim/rl/dataset_motion.py": "92adf8f53085897824aa89d83849bb96d1be42329f42c60ba013443b81965354"
+  },
+  "source_scene_failures": []
+}

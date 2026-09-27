@@ -1,0 +1,13 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_08/run",
+  "states": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot_supplement_videos/nominal_flank_left_seat_blocked.nominal_states.npz",
+  "samples": "None",
+  "frames": 209,
+  "fps": 10,
+  "speed": 3,
+  "label": "NOMINAL / nominal_flank_left_seat_blocked / hit glb_col_TRUSS_Pedicel_proximal_11_00 @ 38.36s",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "NOMINAL ONLY; blocked, NO PHYSICS",
+  "highlights": null
+}

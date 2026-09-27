@@ -1,0 +1,13 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_01/run",
+  "states": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot_supplement_videos/nominal_under_center_blocked.nominal_states.npz",
+  "samples": "None",
+  "frames": 185,
+  "fps": 10,
+  "speed": 3,
+  "label": "NOMINAL / nominal_under_center_blocked / hit glb_col_TRUSS_Rachis_03 @ 25.59s",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "NOMINAL ONLY; blocked, NO PHYSICS",
+  "highlights": null
+}

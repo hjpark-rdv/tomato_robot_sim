@@ -1,0 +1,22 @@
+{
+  "branch": "codex/server-multifamily-20260928",
+  "source_head": "d8db76d2d3a7e62081cf15c1f26a32c538676eed",
+  "git_status": "?? farmily_mjlab-performance.bundle\n",
+  "native": {
+    "executable": "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "python": "3.11.14",
+    "mujoco": "3.13.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "native_test": "234 passed",
+  "planning_test": "5 passed",
+  "pytest_env": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; avoids unrelated ROS launch_testing plugin import",
+  "data_storage": "New large assets on mounted NAS; existing data unchanged",
+  "planning": {
+    "executable": "/root/isaaclab_env/bin/python",
+    "python": "3.11.14",
+    "torch": "2.7.0+cu126",
+    "fcl": "/root/isaaclab_env/lib/python3.11/site-packages/fcl/__init__.py"
+  }
+}

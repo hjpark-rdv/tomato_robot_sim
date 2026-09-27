@@ -1,0 +1,119 @@
+{
+  "physics_executed": true,
+  "completed": true,
+  "training_eligible": false,
+  "hook_success": null,
+  "baseline_evaluation": null,
+  "audit_status": "sampled_clear",
+  "audit_complete": true,
+  "limits": {
+    "max_target_force_N": 5.0,
+    "max_target_displacement_m": 0.02,
+    "max_forbidden_force_N": 0.01
+  },
+  "scope": "Offline target-contact test; no calibrated skin-damage or real-safety claim",
+  "physics_metrics": {
+    "control_s": 0.014666896313428879,
+    "physics_s": 4.094801282510161,
+    "evaluation_s": 1.336199039593339,
+    "recording_s": 0.0,
+    "reset_s": 0.002474796026945114,
+    "command_prepare_s": 0.10242473520338535,
+    "rollout_wall_s": 27.36418497003615,
+    "process_cpu_s": 27.361768309000002,
+    "simulated_s": 20.816666666666666,
+    "requested_s": 20.816666666666666,
+    "steps": 4996,
+    "rtf": 0.7607267195957406,
+    "unstable": false,
+    "max_target_displacement_m": 0.010376525385765528,
+    "max_hook_contact_penetration_m": -0.0,
+    "hook_contact_steps": 1061,
+    "max_tracking_error_m_or_rad": 0.010213013619357447,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hook_final_xyz": [
+      -0.7045566392034684,
+      0.7925204411078907,
+      0.4658837055116443
+    ],
+    "break_enabled": false,
+    "success_evaluator": "contact/displacement diagnostics only; no harvest success claim",
+    "max_gutter_penetration_m": 0.0,
+    "gutter_contact_steps": 0,
+    "gutter_contact_pairs": [],
+    "max_neighbor_stem_penetration_m": 0.0,
+    "neighbor_stem_contact_steps": 0,
+    "neighbor_stem_contact_pairs": [],
+    "initial_glb_penetration_m": 0.00022795559258460135,
+    "max_glb_penetration_m": 0.00022795559258460135,
+    "glb_physics_valid": true,
+    "physics_guard_version": "glb_hook_gutter_v3",
+    "physics_penetration_limit_m": 0.0005
+  },
+  "legacy_evidence": {
+    "initially_seated": false,
+    "entered_after_start": false,
+    "hold": {
+      "samples": 344,
+      "elapsed_s": 1.4291666666665854,
+      "max_sample_gap_s": 0.00416666666666643,
+      "continuous": true,
+      "seated_with_force": false
+    },
+    "verify": {
+      "samples": 398,
+      "elapsed_s": 1.6541666666665726,
+      "max_sample_gap_s": 0.00416666666666643,
+      "continuous": true,
+      "seated_with_force": false
+    },
+    "contact_retention_evidence": false,
+    "max_non_target_force_N": 1.3041834667889753,
+    "physics_valid": true,
+    "hook_success": null,
+    "training_eligible": false,
+    "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor",
+    "sample_hz": 240.0,
+    "seated_samples": 853,
+    "legacy_seated_samples": 853,
+    "intended_contact_samples": 0,
+    "max_penetration_m": -0.0,
+    "max_prismatic_error_m": 0.003664819154458321,
+    "max_revolute_error_rad": 0.010213013619221112,
+    "contact_timing": "live previous solve vs private forward at poststep timestamp; geometry at poststep"
+  },
+  "authorized_contact_evidence": {
+    "initially_seated": false,
+    "entered_after_start": false,
+    "hold": {
+      "samples": 344,
+      "elapsed_s": 1.4291666666665854,
+      "max_sample_gap_s": 0.00416666666666643,
+      "continuous": true,
+      "seated_with_force": false
+    },
+    "verify": {
+      "samples": 398,
+      "elapsed_s": 1.6541666666665726,
+      "max_sample_gap_s": 0.00416666666666643,
+      "continuous": true,
+      "seated_with_force": false
+    },
+    "contact_retention_evidence": false,
+    "max_non_target_force_N": 0.0,
+    "physics_valid": true,
+    "hook_success": null,
+    "training_eligible": false,
+    "scope": "Continuous measured seating/contact evidence; not detachment or mechanical escape proof; .01N reporting floor"
+  },
+  "simulated_s": 20.816666666665807,
+  "source_unchanged": true
+}

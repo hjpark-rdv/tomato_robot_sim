@@ -1,0 +1,2348 @@
+{
+  "schema": "motion_family_search_v1",
+  "expected_cases": 12,
+  "reported_cases": 12,
+  "completed_cases": 12,
+  "case_statuses": {
+    "unresolved_within_budget": 12
+  },
+  "candidate_outcomes": {
+    "ik_not_found": 3,
+    "path_blocked": 33,
+    "planning_rejected": 12
+  },
+  "physics_attempts": 0,
+  "physics_budget_charged": 0,
+  "success_definition": "No calibrated binary harvest label; evidence levels are separate",
+  "reports": [
+    {
+      "case": {
+        "scene_id": "scene_0003",
+        "target": "truss_01__Tomato_04",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/truss_01__Tomato_04/physics",
+        "hashes": {
+          "manifest.json": "936c113e1f1329c0cc902979ab384bb707ec3486352f9d3ce29ec46a7455c82a",
+          "planning_inputs.json": "80479ad25f8b5865a1a9f3ed0be996b079741927697ccef5757cde492a3767d5",
+          "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+          "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "outcome": "ik_not_found",
+          "reason": {
+            "reason": "endpoint_ik",
+            "phase": "seat",
+            "position_error_m": 0.0073140878949424105,
+            "rotation_error_rad": 0.018134495428638774
+          },
+          "physics_executed": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "outcome": "ik_not_found",
+          "reason": {
+            "reason": "endpoint_ik",
+            "phase": "preapproach",
+            "position_error_m": 0.0029051907660049238,
+            "rotation_error_rad": 0.010596090316634174
+          },
+          "physics_executed": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/truss_01__Tomato_04/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.45,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "truss_01__glb_col_Tomato_05",
+            "environment_class": "glb_plant",
+            "distance_m": -0.00017448687652376845,
+            "command": [
+              0.45658932030958477,
+              3.0537106446694344,
+              -0.7478112090694654,
+              -0.9103790234813692,
+              0.3221111234799563,
+              -2.043443797280381,
+              2.6434705606480087
+            ],
+            "segment_world": [
+              [
+                -0.8306899351078361,
+                1.0857752512075711,
+                0.8057254391496042
+              ],
+              [
+                -0.8307303062601733,
+                1.085605528102392,
+                0.8057285868005328
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 447,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "ik_not_found": 2,
+          "path_blocked": 1,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 46.535983296111226,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0003",
+        "target": "Tomato_01",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics",
+        "hashes": {
+          "manifest.json": "41ee3250fa5000ea926855a32423a77cca3e7c60c7079e93420809e2520c111f",
+          "planning_inputs.json": "1dc1a1fb498def5d65aa1060d379ca61d2ed26dfe692d7ec39e1d3249f49e5a4",
+          "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+          "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_01/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 13.658333333333333,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Attachment_05",
+            "environment_class": "glb_plant",
+            "distance_m": -6.073602664700506e-05,
+            "command": [
+              0.20569521174124794,
+              2.9149029533502038,
+              -0.4222258754578459,
+              -1.420528032136265,
+              0.14148293379955934,
+              -1.3234256311979986,
+              -1.0055385201120073
+            ],
+            "segment_world": [
+              [
+                -0.6702274043016454,
+                0.9801923559174133,
+                0.489148870593491
+              ],
+              [
+                -0.6701679177755452,
+                0.9801926010289693,
+                0.48916112449351157
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_01/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 10.775,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -2.9119834648538845e-05,
+            "command": [
+              0.389028009941618,
+              3.1465525674829973,
+              -0.9158963687092869,
+              -1.0697011215335248,
+              -0.6274106122143668,
+              -1.6833638058805718,
+              3.4350537621260626
+            ],
+            "segment_world": [
+              [
+                -0.7574789930745931,
+                0.9163357930503749,
+                0.610493421363732
+              ],
+              [
+                -0.7574658285394528,
+                0.9163144364865178,
+                0.6105082050359655
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_01/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 6.8,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -2.4778859142371434e-05,
+            "command": [
+              0.20074389923318697,
+              3.1966684340279103,
+              -0.38044552586329256,
+              -1.2480406151148373,
+              0.2626230761195623,
+              -1.9706320169282867,
+              2.4559842775524663
+            ],
+            "segment_world": [
+              [
+                -0.7564875876119659,
+                0.9340967646983018,
+                0.6350332151498719
+              ],
+              [
+                -0.7564719450841526,
+                0.9340809617166262,
+                0.635044149908862
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 800,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 127.40566108375788,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0004",
+        "target": "Tomato_08",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics",
+        "hashes": {
+          "manifest.json": "dee153e868ea74f1141d193c221496980fd09807e8317ed00b0758fd30b59423",
+          "planning_inputs.json": "0f44bd1a34b5ab2b57bab3c039b5be7e65d4ce8d2a140ea03e7a15e7a21ef1a6",
+          "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+          "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_08/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 15.988888888888889,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_08",
+            "environment_class": "glb_plant",
+            "distance_m": -1.1121271045467718e-05,
+            "command": [
+              0.10692221670900269,
+              2.954936690435109,
+              -0.1844434736436266,
+              -1.73497756980429,
+              0.24415903470393202,
+              -1.3115676678312442,
+              -1.1092364680408373
+            ],
+            "segment_world": [
+              [
+                -0.591041821273544,
+                0.9567578692991439,
+                0.4946291331010395
+              ],
+              [
+                -0.5910310920169756,
+                0.9567558803452255,
+                0.4946312801421361
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_08/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 10.394444444444444,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "glb_col_Tomato_01",
+            "environment_class": "glb_plant",
+            "distance_m": -6.29066898332134e-05,
+            "command": [
+              0.27275514743394635,
+              3.194909512162973,
+              -0.6817389155506147,
+              -1.4198150975792523,
+              -0.5057646026281731,
+              -1.5874527150056017,
+              3.3569500043888914
+            ],
+            "segment_world": [
+              [
+                -0.6409849840607229,
+                0.991943290829324,
+                0.6280206795750097
+              ],
+              [
+                -0.6409311951313482,
+                0.9919444035304377,
+                0.6280532796455423
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_08/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 12.225,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_08",
+            "environment_class": "glb_plant",
+            "distance_m": -3.1540251221322338e-06,
+            "command": [
+              2.43466825299548e-12,
+              3.202890969161319,
+              -0.2693005102967495,
+              -1.4646645780805625,
+              0.42297570651278726,
+              -2.1742743058478022,
+              2.912639415350096
+            ],
+            "segment_world": [
+              [
+                -0.6134808222819634,
+                0.9497129288194777,
+                0.49271313384659365
+              ],
+              [
+                -0.6134834582818012,
+                0.9497111975679347,
+                0.49271318018686483
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 540,
+            "phase": "preapproach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 134.19339592009783,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0003",
+        "target": "Tomato_08",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_08/physics",
+        "hashes": {
+          "manifest.json": "894deb3e17592872761abd8b14a6fba6a935ae7f7480a9ed8156bddd9d644762",
+          "planning_inputs.json": "814fdbba65aaddb129e7b830d16ae93486f966083b5a8b8f30f560f9a76bc375",
+          "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+          "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_08/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 16.77777777777778,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_08",
+            "environment_class": "glb_plant",
+            "distance_m": -3.297776503736071e-05,
+            "command": [
+              0.09195440662170606,
+              2.9370905860954855,
+              -0.35713599837150595,
+              -1.5773637434437937,
+              0.23772943258118634,
+              -1.3211389506123297,
+              -1.0238360439116863
+            ],
+            "segment_world": [
+              [
+                -0.6555940401594393,
+                0.9797036660854908,
+                0.4534016449883357
+              ],
+              [
+                -0.6555613247468116,
+                0.9797053335332792,
+                0.45340544688014567
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_08/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 10.766666666666667,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "glb_col_Attachment_01",
+            "environment_class": "glb_plant",
+            "distance_m": -6.026353163286703e-05,
+            "command": [
+              0.25227531404398096,
+              3.1652188232942455,
+              -0.8200698418837586,
+              -1.238052932911057,
+              -0.556746340462074,
+              -1.670742212370338,
+              3.4313164627602197
+            ],
+            "segment_world": [
+              [
+                -0.6886490580345859,
+                0.9725276863662063,
+                0.577334684709073
+              ],
+              [
+                -0.6886025529124199,
+                0.9725279603166969,
+                0.5773730108334313
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0003/Tomato_08/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.824999999999999,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g18",
+            "environment_class": "other",
+            "distance_m": -0.00010589523149402962,
+            "command": [
+              0.05444134399937903,
+              3.215372823055388,
+              -0.3848616799343688,
+              -1.3629563701247542,
+              0.4264828636395091,
+              -2.0762599385341973,
+              2.7314895149005567
+            ],
+            "segment_world": [
+              [
+                -0.7552097572996165,
+                0.867014197126045,
+                0.5362239042334295
+              ],
+              [
+                -0.755104215260328,
+                0.8670202423648389,
+                0.5362177290343288
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 799,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_07",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 134.36054100096226,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0004",
+        "target": "Tomato_01",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics",
+        "hashes": {
+          "manifest.json": "658e9415abb3dc8ec9488175023398b6c367e40e9faf87e939969d9771539f4f",
+          "planning_inputs.json": "9ef5d4fbccf8b16c52325ee830479320d7f4b2c4b107d23a3e5275c88ea11010",
+          "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+          "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_01/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 14.322222222222223,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Attachment_05",
+            "environment_class": "glb_plant",
+            "distance_m": -3.5017946526335535e-05,
+            "command": [
+              0.19504663195642438,
+              2.913605860607726,
+              -0.25261221968871955,
+              -1.5377065742472473,
+              0.11475393243489776,
+              -1.3116875753448491,
+              -1.1080547976654913
+            ],
+            "segment_world": [
+              [
+                -0.6144601610506583,
+                0.960478056819594,
+                0.5277502343390726
+              ],
+              [
+                -0.6144265020168165,
+                0.9604868744245857,
+                0.5277541809657295
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_01/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 11.033333333333333,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "truss_01__glb_col_Tomato_04",
+            "environment_class": "glb_plant",
+            "distance_m": -2.8637957202043218e-05,
+            "command": [
+              0.4001448083766203,
+              3.148942287139379,
+              -0.8095654714547491,
+              -1.245044908921856,
+              -0.5820607831082663,
+              -1.5979578140942297,
+              3.4471337492344403
+            ],
+            "segment_world": [
+              [
+                -0.6902781530220661,
+                1.0314989952717215,
+                0.7544020041575086
+              ],
+              [
+                -0.6902643946202592,
+                1.0314740552919426,
+                0.7544049767626038
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/Tomato_01/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.591666666666667,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -0.00011382988804820547,
+            "command": [
+              0.15976858887866222,
+              3.1998006707329454,
+              -0.3654450242295631,
+              -1.2724119744223192,
+              0.26906661630435136,
+              -2.1071841442699295,
+              2.666536140488402
+            ],
+            "segment_world": [
+              [
+                -0.7545974840362515,
+                0.9247663489290443,
+                0.613890219472997
+              ],
+              [
+                -0.7544837125839206,
+                0.924769305172214,
+                0.6138880838995585
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 425,
+            "phase": "preapproach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 135.58362875133753,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0000",
+        "target": "Tomato_01",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics",
+        "hashes": {
+          "manifest.json": "8cca6a7fd9a5c880b57ada474ebbc3018cf04f682ffa5007f34124b794a6a234",
+          "planning_inputs.json": "2203218d60afff55ab8c815a3243ec71d4b8d3dafe2222ae4b127713da4f1ade",
+          "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+          "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_01/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 16.25,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "glb_col_Tomato_01",
+            "environment_class": "glb_plant",
+            "distance_m": -1.5050481826061866e-05,
+            "command": [
+              0.2719726285539944,
+              2.8790028454245884,
+              -0.5417231006214661,
+              -1.2626565350176053,
+              0.11167939216130947,
+              -1.3191585817476477,
+              -1.040245169324355
+            ],
+            "segment_world": [
+              [
+                -0.739075312374354,
+                1.0410216722393837,
+                0.649831479674774
+              ],
+              [
+                -0.7390603762007866,
+                1.041021202847483,
+                0.6498332705945391
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_01/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 9.677777777777777,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "g30",
+            "environment_class": "other",
+            "distance_m": -0.00010609131631334791,
+            "command": [
+              0.46612126179829905,
+              3.103432416558509,
+              -0.9457082742597577,
+              -0.9357774399590552,
+              -0.6637564803242331,
+              -1.652250123961747,
+              3.2210258928145796
+            ],
+            "segment_world": [
+              [
+                -0.7572283649115366,
+                1.0367599566695402,
+                0.8338916100949365
+              ],
+              [
+                -0.7571228871819853,
+                1.0367535179858576,
+                0.8339010100586742
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_01/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 6.45,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g26",
+            "environment_class": "other",
+            "distance_m": -0.00023177637001610234,
+            "command": [
+              0.28553522974502665,
+              3.1573666611782127,
+              -0.436194234491618,
+              -1.1981158869458663,
+              0.24465690769684761,
+              -1.9422317067367203,
+              2.3516809269307988
+            ],
+            "segment_world": [
+              [
+                -0.7576186005326406,
+                0.9796908664597249,
+                0.7061964255620228
+              ],
+              [
+                -0.7574864309891833,
+                0.9795274432441321,
+                0.7062941207516964
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 631,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 136.66284386441112,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0000",
+        "target": "truss_01__Tomato_04",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/truss_01__Tomato_04/physics",
+        "hashes": {
+          "manifest.json": "1014ea28f3d1b802892b688b8e42a16f1e08d5dd76687d42862685506ee16160",
+          "planning_inputs.json": "f24eebbfe18844d9888e23ad4af172e042e390f1b2f0efd3a9d8b238b8d17d51",
+          "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+          "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/truss_01__Tomato_04/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 14.55,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "robot_geom_18",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -1.149148068882126e-06,
+            "command": [
+              0.3392310460079486,
+              2.7174310814292677,
+              -0.5711473794800834,
+              -1.2183164699833704,
+              0.13200792359702465,
+              -1.3052130241561848,
+              -1.1778531167939417
+            ],
+            "segment_world": [
+              [
+                -0.7438015707559007,
+                1.1598421415499067,
+                0.7662503326521136
+              ],
+              [
+                -0.7438004890925194,
+                1.159842516871385,
+                0.7662504310360627
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/truss_01__Tomato_04/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 7.966666666666667,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "g34",
+            "environment_class": "other",
+            "distance_m": -1.4822421628178824e-05,
+            "command": [
+              0.5398131823213439,
+              2.9982837624761958,
+              -0.8995077778145266,
+              -0.8300637430388685,
+              -0.6765521984387135,
+              -1.5325988046072845,
+              2.7488074916913794
+            ],
+            "segment_world": [
+              [
+                -0.765995856437642,
+                1.0371333390406938,
+                0.8726904908615313
+              ],
+              [
+                -0.7659978136298814,
+                1.0371187323224194,
+                0.8726920774814322
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/truss_01__Tomato_04/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.175000000000001,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g30",
+            "environment_class": "other",
+            "distance_m": -0.00046601240678063177,
+            "command": [
+              0.3995412565576916,
+              3.0745574278933017,
+              -0.41464094699416254,
+              -1.217706336806919,
+              0.13409737922228504,
+              -1.8596570370170387,
+              1.9561911513961643
+            ],
+            "segment_world": [
+              [
+                -0.7587499112701237,
+                1.0225250375091597,
+                0.800117594207916
+              ],
+              [
+                -0.7584457431059589,
+                1.022190856590403,
+                0.8002314906728348
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 303,
+            "phase": "preapproach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_10",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 134.87660116516054,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0000",
+        "target": "Tomato_08",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics",
+        "hashes": {
+          "manifest.json": "62983a79d797012f581c33809c92cb578d2b343aaf725d4349ee89a1d2384db3",
+          "planning_inputs.json": "e37d6871b8ac3f433680899529d24cbda73c09eb1ce68927868b6343720b9635",
+          "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+          "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_08/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 15.016666666666667,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "glb_col_Tomato_01",
+            "environment_class": "glb_plant",
+            "distance_m": -7.216530854726389e-06,
+            "command": [
+              0.1729288633329497,
+              2.9110330488958565,
+              -0.5261061459447909,
+              -1.3826453025401573,
+              0.20224139745096917,
+              -1.3262195398780783,
+              -0.9840237679020052
+            ],
+            "segment_world": [
+              [
+                -0.739404153325572,
+                1.0441484187433825,
+                0.648411078015956
+              ],
+              [
+                -0.7393972275183524,
+                1.0441504177230478,
+                0.6484107380273816
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_08/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 9.308333333333334,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -8.336297745526518e-05,
+            "command": [
+              0.3493657067311744,
+              3.141427909973706,
+              -0.859618387546934,
+              -1.0457866644769847,
+              -0.6009833712919135,
+              -1.6782542716325088,
+              3.130750506401736
+            ],
+            "segment_world": [
+              [
+                -0.7571913917908528,
+                0.9212664792679721,
+                0.617230843764411
+              ],
+              [
+                -0.7571489289137795,
+                0.9212074928099809,
+                0.6172716713023544
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_08/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 6.291666666666666,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -0.00016234505374728217,
+            "command": [
+              0.1932003924781842,
+              3.191804787493785,
+              -0.3691704549492621,
+              -1.2598938764283716,
+              0.2393846958786359,
+              -1.9016986516677215,
+              2.29079214002343
+            ],
+            "segment_world": [
+              [
+                -0.7569725357825271,
+                0.9241247792891875,
+                0.6209537931641369
+              ],
+              [
+                -0.756881961654044,
+                0.9240139930911475,
+                0.6210304655975768
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 1028,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 137.76766558364034,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0004",
+        "target": "truss_01__Tomato_04",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/truss_01__Tomato_04/physics",
+        "hashes": {
+          "manifest.json": "c3a5eb76a90027c66bc0f13ef8cdc86bcee751bb1ee4ac47668a0bc69f520b16",
+          "planning_inputs.json": "436f73b5973e5f8ce910d64925db58156d662ac43857cd2e90fecbf997dd061a",
+          "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+          "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/truss_01__Tomato_04/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 16.55,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "robot_geom_18",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -1.8275878070965037e-06,
+            "command": [
+              0.3202498254396185,
+              2.864615504231446,
+              -0.369686070373953,
+              -1.3770164461109116,
+              0.0803346011844661,
+              -1.3082245612624188,
+              -1.1437131329627743
+            ],
+            "segment_world": [
+              [
+                -0.6943621352141094,
+                1.0439221714830693,
+                0.8061158658085116
+              ],
+              [
+                -0.694360351725756,
+                1.0439224744364097,
+                0.8061161255502296
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/truss_01__Tomato_04/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 10.166666666666666,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_10",
+            "environment_geom": "truss_01__glb_col_TRUSS_Truss_01_Peduncle_04",
+            "environment_class": "glb_plant",
+            "distance_m": -0.0001626099197901186,
+            "command": [
+              0.537127405671296,
+              3.081152311253541,
+              -0.8747795435669311,
+              -1.0850918677743464,
+              -0.6339237191662932,
+              -1.5838417908375293,
+              3.3161111498844935
+            ],
+            "segment_world": [
+              [
+                -0.7268875481646477,
+                1.0499790759948984,
+                0.8967999526411479
+              ],
+              [
+                -0.7267282199033804,
+                1.049965883089738,
+                0.8968296585063792
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0004/truss_01__Tomato_04/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 6.9,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g26",
+            "environment_class": "other",
+            "distance_m": -0.0002234297809018621,
+            "command": [
+              0.31908381522764473,
+              3.1436108472581528,
+              -0.42829246226199236,
+              -1.212194060564662,
+              0.23795821553876118,
+              -2.053273643483226,
+              2.499032673501894
+            ],
+            "segment_world": [
+              [
+                -0.7581105699168683,
+                1.0019918657435793,
+                0.7441839545685924
+              ],
+              [
+                -0.7579792794548181,
+                1.0018367320388142,
+                0.744276783525359
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 313,
+            "phase": "preapproach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 132.00639396347106,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0005",
+        "target": "Tomato_01",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics",
+        "hashes": {
+          "manifest.json": "ee451a206891f9e3ef022f6839997594127477ee03123b043055a6148c1f19e9",
+          "planning_inputs.json": "312d48c074a828113279ffc71217b94568e978cee60ca030e8a4d23e24a40001",
+          "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+          "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/Tomato_01/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.916666666666667,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_18",
+            "environment_geom": "truss_01__glb_col_Tomato_04",
+            "environment_class": "glb_plant",
+            "distance_m": -6.377064459625015e-05,
+            "command": [
+              0.21998949224330167,
+              2.826547083179987,
+              -0.37750153885179355,
+              -1.401094983790625,
+              0.05784777104467062,
+              -1.338356436152551,
+              -0.8313851764858897
+            ],
+            "segment_world": [
+              [
+                -0.6869725663157376,
+                1.0798928581222802,
+                0.6895624723068491
+              ],
+              [
+                -0.686909228911129,
+                1.0798857921719496,
+                0.6895602050098707
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "outcome": "ik_not_found",
+          "reason": {
+            "reason": "endpoint_ik",
+            "phase": "insert",
+            "position_error_m": 0.015258762160425023,
+            "rotation_error_rad": 0.04823607538330928
+          },
+          "physics_executed": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/Tomato_01/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 6.1,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g26",
+            "environment_class": "other",
+            "distance_m": -0.00015908114070310904,
+            "command": [
+              0.2813821100792848,
+              3.1590905633816626,
+              -0.45366809078273873,
+              -1.1802969644961434,
+              0.23182160657387757,
+              -1.8785748677466576,
+              2.2237745432293528
+            ],
+            "segment_world": [
+              [
+                -0.7576246989824678,
+                0.9710364059581398,
+                0.6918757763679914
+              ],
+              [
+                -0.7575425205959616,
+                0.970919408737448,
+                0.6919455271562954
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 842,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 2,
+          "ik_not_found": 1,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 95.14026822522283,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0005",
+        "target": "truss_01__Tomato_04",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/truss_01__Tomato_04/physics",
+        "hashes": {
+          "manifest.json": "48d9002a53f276fdaffcccd2c168b69988883c66bc9c03976cc1cb0695c53413",
+          "planning_inputs.json": "cf67020ebaf579253d0aac25ab845b4eaaaeb3265566eae7e0d2541c8cbb429c",
+          "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+          "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/truss_01__Tomato_04/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 16.816666666666666,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "robot_geom_18",
+            "environment_geom": "truss_01__glb_col_Tomato_02",
+            "environment_class": "glb_plant",
+            "distance_m": -6.469123716552945e-05,
+            "command": [
+              0.2616951895728935,
+              2.809785238482987,
+              -0.3850093923325306,
+              -1.3699604171809814,
+              0.10221405908180725,
+              -1.3037569634281003,
+              -1.1957121947279452
+            ],
+            "segment_world": [
+              [
+                -0.6957313344777254,
+                1.0768869094807472,
+                0.7431212540001136
+              ],
+              [
+                -0.6956699993059087,
+                1.0769060672709105,
+                0.7431287327660728
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/truss_01__Tomato_04/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 9.558333333333334,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "g30",
+            "environment_class": "other",
+            "distance_m": -0.0001676170867352493,
+            "command": [
+              0.4891441007480914,
+              3.0336192967932347,
+              -0.8723478492885757,
+              -1.056545984201538,
+              -0.6274531887164999,
+              -1.5412683151463424,
+              3.1855929786525228
+            ],
+            "segment_world": [
+              [
+                -0.7603556790363329,
+                1.0083436246435684,
+                0.7615087357666164
+              ],
+              [
+                -0.760324620503678,
+                1.0081874325398386,
+                0.7615610318663498
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/truss_01__Tomato_04/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.958333333333334,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g26",
+            "environment_class": "other",
+            "distance_m": -0.00016354688085079387,
+            "command": [
+              0.31266859998604746,
+              3.112896664901114,
+              -0.3843871516492958,
+              -1.2593854597352843,
+              0.1787632284409425,
+              -1.9747461008184697,
+              2.2257979548799987
+            ],
+            "segment_world": [
+              [
+                -0.7558424355110501,
+                0.997680433067426,
+                0.7298523786471977
+              ],
+              [
+                -0.7556796602551364,
+                0.9976679531940431,
+                0.729862179211396
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 334,
+            "phase": "preapproach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_10",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 130.56150909513235,
+      "source_unchanged": true
+    },
+    {
+      "case": {
+        "scene_id": "scene_0005",
+        "target": "Tomato_08",
+        "split": "pilot",
+        "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_08/physics",
+        "hashes": {
+          "manifest.json": "81913e1a3ade76fc04cf50d31cb4eab40a3be843056417827deb8cf3e609cbf0",
+          "planning_inputs.json": "17e215ffc122e1d62997097745d13e6a46bdc89d58948e16ede7b472c3fafbfa",
+          "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+          "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+          "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+          "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+        },
+        "observation_path": null,
+        "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+      },
+      "records": [
+        {
+          "candidate_id": "mf_20260928_00000",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/Tomato_08/trials/mf_20260928_00000",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 9.7,
+            "phases": [
+              "approach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "truss_01__glb_col_Tomato_08",
+            "environment_class": "glb_plant",
+            "distance_m": -8.897056330958868e-05,
+            "command": [
+              0.11663828814865553,
+              2.81336712874539,
+              -0.3948477738504803,
+              -1.555718485151496,
+              0.24288153375508115,
+              -1.3268640742290063,
+              -0.9791702695928527
+            ],
+            "segment_world": [
+              [
+                -0.6761641634064604,
+                1.097743890469409,
+                0.6275088287775706
+              ],
+              [
+                -0.6760837315482764,
+                1.0977713925650858,
+                0.6274825587935952
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00001",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/Tomato_08/trials/mf_20260928_00001",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 8.25,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "robot_geom_14",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -0.00021940001303989796,
+            "command": [
+              0.327215444534371,
+              3.120735363423176,
+              -0.8152928262705795,
+              -1.009160843474164,
+              -0.5922418007069541,
+              -1.6138932557668482,
+              2.8298024538662134
+            ],
+            "segment_world": [
+              [
+                -0.7577670695643562,
+                0.9359561506875781,
+                0.6387072007873171
+              ],
+              [
+                -0.7576772921570041,
+                0.9357915536187821,
+                0.6388211489676219
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00002",
+          "family": "side_mouth",
+          "trial_dir": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0005/Tomato_08/trials/mf_20260928_00002",
+          "returncode": 2,
+          "physics_executed": false,
+          "training_eligible": false,
+          "outcome": "path_blocked",
+          "completed": false,
+          "stop_reasons": [],
+          "audit_status": "blocked",
+          "audit_complete": true,
+          "first_violation": {
+            "time_s": 5.716666666666667,
+            "phases": [
+              "preapproach"
+            ],
+            "robot_geom": "g410",
+            "environment_geom": "g22",
+            "environment_class": "other",
+            "distance_m": -0.00018678153828402717,
+            "command": [
+              0.19915937733352035,
+              3.1677566133030712,
+              -0.36862242940148243,
+              -1.2685379107936825,
+              0.19991745119326065,
+              -1.8628540912136167,
+              2.1086674250213493
+            ],
+            "segment_world": [
+              [
+                -0.7546617273860707,
+                0.9339965030317577,
+                0.6279030762097836
+              ],
+              [
+                -0.7544751116766937,
+                0.9339899678116275,
+                0.6279074592401623
+              ]
+            ]
+          },
+          "geometric_samples": 0,
+          "observed_samples": 0,
+          "simulated_s": 0.0,
+          "source_unchanged": true,
+          "contact_retention_evidence": false
+        },
+        {
+          "candidate_id": "mf_20260928_00003",
+          "family": "side_mouth",
+          "outcome": "planning_rejected",
+          "reason": {
+            "reason": "self_collision",
+            "step": 767,
+            "phase": "approach",
+            "pair": [
+              "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_08",
+              "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+            ]
+          },
+          "physics_executed": false
+        }
+      ],
+      "render_queue": [],
+      "complete": true,
+      "summary": {
+        "status": "unresolved_within_budget",
+        "candidate_outcomes": {
+          "path_blocked": 3,
+          "planning_rejected": 1
+        },
+        "candidates": 4,
+        "physics_attempts": 0,
+        "families": [
+          "side_mouth"
+        ],
+        "impossible": null,
+        "impossibility_claim": "none; numerical IK/search failures are not certificates",
+        "hook_success": null,
+        "training_eligible": false
+      },
+      "physics_budget_charged": 0,
+      "wall_s": 137.57104170322418,
+      "source_unchanged": true
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null
+}

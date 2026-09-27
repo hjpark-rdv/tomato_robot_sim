@@ -1,0 +1,302 @@
+{
+  "schema": "motion_family_search_v1",
+  "cases": [
+    {
+      "scene_id": "scene_0000",
+      "target": "Tomato_01",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics",
+      "hashes": {
+        "manifest.json": "8cca6a7fd9a5c880b57ada474ebbc3018cf04f682ffa5007f34124b794a6a234",
+        "planning_inputs.json": "2203218d60afff55ab8c815a3243ec71d4b8d3dafe2222ae4b127713da4f1ade",
+        "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+        "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0000",
+      "target": "Tomato_08",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics",
+      "hashes": {
+        "manifest.json": "62983a79d797012f581c33809c92cb578d2b343aaf725d4349ee89a1d2384db3",
+        "planning_inputs.json": "e37d6871b8ac3f433680899529d24cbda73c09eb1ce68927868b6343720b9635",
+        "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+        "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/truss_01__Tomato_04/physics",
+      "hashes": {
+        "manifest.json": "1014ea28f3d1b802892b688b8e42a16f1e08d5dd76687d42862685506ee16160",
+        "planning_inputs.json": "f24eebbfe18844d9888e23ad4af172e042e390f1b2f0efd3a9d8b238b8d17d51",
+        "replay_assets/model.mjb": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+        "replay_assets/reference.json": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "Tomato_01",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics",
+      "hashes": {
+        "manifest.json": "41ee3250fa5000ea926855a32423a77cca3e7c60c7079e93420809e2520c111f",
+        "planning_inputs.json": "1dc1a1fb498def5d65aa1060d379ca61d2ed26dfe692d7ec39e1d3249f49e5a4",
+        "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+        "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "Tomato_08",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_08/physics",
+      "hashes": {
+        "manifest.json": "894deb3e17592872761abd8b14a6fba6a935ae7f7480a9ed8156bddd9d644762",
+        "planning_inputs.json": "814fdbba65aaddb129e7b830d16ae93486f966083b5a8b8f30f560f9a76bc375",
+        "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+        "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/truss_01__Tomato_04/physics",
+      "hashes": {
+        "manifest.json": "936c113e1f1329c0cc902979ab384bb707ec3486352f9d3ce29ec46a7455c82a",
+        "planning_inputs.json": "80479ad25f8b5865a1a9f3ed0be996b079741927697ccef5757cde492a3767d5",
+        "replay_assets/model.mjb": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+        "replay_assets/reference.json": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "Tomato_01",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics",
+      "hashes": {
+        "manifest.json": "658e9415abb3dc8ec9488175023398b6c367e40e9faf87e939969d9771539f4f",
+        "planning_inputs.json": "9ef5d4fbccf8b16c52325ee830479320d7f4b2c4b107d23a3e5275c88ea11010",
+        "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+        "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "Tomato_08",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics",
+      "hashes": {
+        "manifest.json": "dee153e868ea74f1141d193c221496980fd09807e8317ed00b0758fd30b59423",
+        "planning_inputs.json": "0f44bd1a34b5ab2b57bab3c039b5be7e65d4ce8d2a140ea03e7a15e7a21ef1a6",
+        "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+        "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/truss_01__Tomato_04/physics",
+      "hashes": {
+        "manifest.json": "c3a5eb76a90027c66bc0f13ef8cdc86bcee751bb1ee4ac47668a0bc69f520b16",
+        "planning_inputs.json": "436f73b5973e5f8ce910d64925db58156d662ac43857cd2e90fecbf997dd061a",
+        "replay_assets/model.mjb": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+        "replay_assets/reference.json": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "Tomato_01",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics",
+      "hashes": {
+        "manifest.json": "ee451a206891f9e3ef022f6839997594127477ee03123b043055a6148c1f19e9",
+        "planning_inputs.json": "312d48c074a828113279ffc71217b94568e978cee60ca030e8a4d23e24a40001",
+        "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+        "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "Tomato_08",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_08/physics",
+      "hashes": {
+        "manifest.json": "81913e1a3ade76fc04cf50d31cb4eab40a3be843056417827deb8cf3e609cbf0",
+        "planning_inputs.json": "17e215ffc122e1d62997097745d13e6a46bdc89d58948e16ede7b472c3fafbfa",
+        "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+        "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "split": "pilot",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/truss_01__Tomato_04/physics",
+      "hashes": {
+        "manifest.json": "48d9002a53f276fdaffcccd2c168b69988883c66bc9c03976cc1cb0695c53413",
+        "planning_inputs.json": "cf67020ebaf579253d0aac25ab845b4eaaaeb3265566eae7e0d2541c8cbb429c",
+        "replay_assets/model.mjb": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+        "replay_assets/reference.json": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+        "replay_assets/initial_trace.json": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+        "replay_assets/planning_model.pkl": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46"
+      },
+      "observation_path": null,
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    }
+  ],
+  "config": {
+    "samples_per_family": 4,
+    "seed": 20260928,
+    "planning_workers": 2,
+    "planning_python": "/root/isaaclab_env/bin/python",
+    "native_python": "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "physics_per_target": 12,
+    "refine_parents": 2,
+    "planning_timeout_s": 600.0,
+    "trial_timeout_s": 600.0,
+    "case_timeout_s": 3600.0,
+    "render_budget": 5,
+    "execute": true,
+    "max_target_force_N": 5.0,
+    "max_target_displacement_m": 0.02,
+    "model_cache": "/dev/shm/tomato_multifamily_20260928"
+  },
+  "signature": "9b9308383aa069a6c753d4e4103bac3e251f22f0b692f5a29d4142ded1e912f9",
+  "source_manifest": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/cases.json",
+  "source_manifest_sha256": "e0ced151ac9bdc5dc1b6058e2bf62db15ab0617621f18ae79b2e070e70b60cc7",
+  "code_sha256": {
+    "run_motion_family_search.py": "eab41121851b27aaede0f2330184f5ae129e8c4d0c1e039f8449bd8560a6311d",
+    "motion_family_search.py": "9bee676d16b10c5f4a2b8662860cf713c2b27d5cfc60a84e81b05594ca150371",
+    "target_fruit_contact_trial.py": "b489bb0e9e86d818c066656276329cf2082e94b14e7f8f33029f98b9b09766cb",
+    "target_truss_identity.py": "c70a3bf26970b3e20ccde080fc7bf1d67a7fd304422dadc47010aceeabbeccf8",
+    "hook_retention_diagnostic.py": "042ff5af0323d6b25bac47719c311e8ba0f5b323e5cf7d8b9c56dc1f76afadb0",
+    "environment_preflight.py": "e77ca91a60274935734008d06ab030252910399aee52b1f2657effa9ef17d1ef",
+    "plan_candidates.py": "4cf3a27c9d2983ce3fbd9335e91e0fa819b24f87e9e97622f2eff98fdc283644",
+    "robot_engine.py": "4423385a0654073a66800b82d93274638d830507e7352af41cfb18d050a3547d",
+    "measure_seating_rollout.py": "61d99d586828acb2e67ee3040f60aca89213c5764a88f1116e0af646b57526a1",
+    "hook_seating_geometry.py": "c81a09cca47191173ee7d6cd42efef9325ad756951b5d5963b3ff3c0060438ac",
+    "seating_evaluation.py": "e9ba9630ebf236fc8e21f15040643437617fec4eca3835fb1f09dd4c62435c47",
+    "render_contact_diagnostic.py": "de91adb76ed329d4793b6558967eabd890feed54e15b23e058cedc6333d8f84c",
+    "search_model_cache.py": "57f00d8c718ab908034bb4922d3d5ab0d598ee132d087670d614827983e988fe",
+    "search_legacy_baseline.py": "38eb9358fcef235abe06e4186bc44acd9b6506ecaa99dbb0117a4b12e5b0b85a",
+    "nvidia-sim/rl/dataset_motion.py": "92adf8f53085897824aa89d83849bb96d1be42329f42c60ba013443b81965354"
+  },
+  "source_scene_failures": [
+    {
+      "scene": "scene_0001",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.004118543895052729,
+        "max_penetration_m": 0.004118543895052729,
+        "worst_contact": {
+          "a": "truss_01__glb_col_Tomato_10",
+          "b": "glb_col_Tomato_01",
+          "penetration_m": 0.004118543895052729,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.013599412601588147,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    },
+    {
+      "scene": "scene_0002",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.0024348995207783934,
+        "max_penetration_m": 0.0024348995207783934,
+        "worst_contact": {
+          "a": "g30",
+          "b": "glb_col_TRUSS_Truss_01_Peduncle_00",
+          "penetration_m": 0.0024348995207783934,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.03884107247665919,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "cohorts": {
+    "smoke_v2": {
+      "cases": 2,
+      "records": 20,
+      "outcomes": {
+        "path_blocked": 20
+      },
+      "physics": 0,
+      "sources_unchanged": true
+    },
+    "pilot": {
+      "cases": 12,
+      "records": 240,
+      "outcomes": {
+        "path_blocked": 239,
+        "ik_not_found": 1
+      },
+      "physics": 0,
+      "sources_unchanged": true
+    },
+    "side_repair": {
+      "cases": 12,
+      "records": 48,
+      "outcomes": {
+        "ik_not_found": 3,
+        "path_blocked": 33,
+        "planning_rejected": 12
+      },
+      "physics": 0,
+      "sources_unchanged": true
+    }
+  },
+  "durable_model_links": [
+    {
+      "cohort": "smoke_v2",
+      "scene": "gutter02",
+      "target": "Tomato_02",
+      "durable_model": "/root/docker_share/mujoko_debugging_data/20260927_gutter_collision_scene/robot_checks/Tomato_02/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "smoke_v2",
+      "scene": "two_trusses",
+      "target": "truss_01__Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/smoke_prep/scene_0000/targets/truss_01__Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "pilot",
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/truss_01__Tomato_04/physics/replay_assets/model.mjb"
+    },
+    {
+      "cohort": "side_repair",
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "durable_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_08/physics/replay_assets/model.mjb"
+    }
+  ],
+  "budget_verified": true,
+  "video_full_decode": [
+    {
+      "path": "smoke_videos/actual_executor_control.mp4",
+      "kind": "recorded_physics",
+      "decoded_frames": 70,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "7ff2db097c1f089249579ef79c70748feb6d27b09ddcb47d1d76be56fcd3318e"
+    },
+    {
+      "path": "smoke_videos/nominal_side_mouth_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 175,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "81142a6ac76f7e44044c4e3a64524233999f09429c571f382a381c98b4264735"
+    },
+    {
+      "path": "smoke_videos/nominal_flank_left_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 212,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "e6f7533fa03724b03f58f0e9a047f1f6a10be0545eab3ac044dd0bab27f7e590"
+    },
+    {
+      "path": "pilot_supplement_videos/nominal_flank_left_seat_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 209,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "edcc227ff6df34934465bf6a825d11f8836cbaa32a5aa94121e43a770788270c"
+    },
+    {
+      "path": "pilot_supplement_videos/nominal_flank_right_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 219,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "2f013ad2832f5976c90099958d52f729d2bc33b3f624eea001e251ce954a46ec"
+    },
+    {
+      "path": "pilot_supplement_videos/nominal_pivot_sweep_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 178,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "2bf316e28a5aef64946ad46e450dfc2da7e477bd25ece456242ae8bf3e9c0512"
+    },
+    {
+      "path": "pilot_supplement_videos/nominal_under_center_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 185,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "b0ee55df05ed915e732537a4e8d4501185e1a5bad1d5d5430714a19ddf678d80"
+    },
+    {
+      "path": "pilot_supplement_videos/nominal_side_robot_facing_blocked.mp4",
+      "kind": "nominal_only",
+      "decoded_frames": 169,
+      "shape": [
+        672,
+        960,
+        3
+      ],
+      "sha256": "7a99a098e8d500ee2d6a71fbda693fadf7123497a55ac85ba0efb88305fd27cd"
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null
+}

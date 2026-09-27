@@ -1,0 +1,160 @@
+{
+  "command": [
+    "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/monitor_command.py",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair",
+    "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "-u",
+    "mujoco-benchmark/scripts/run_motion_family_search.py",
+    "--manifest",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair_cases.json",
+    "--output",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair",
+    "--samples-per-family",
+    "4",
+    "--families",
+    "side_mouth",
+    "--robot-facing-mouth",
+    "--physics-per-target",
+    "4",
+    "--refine-parents",
+    "0",
+    "--case-workers",
+    "8",
+    "--planning-workers",
+    "2",
+    "--execute",
+    "--max-target-force-n",
+    "5",
+    "--max-target-displacement-m",
+    "0.020",
+    "--render-budget",
+    "2",
+    "--model-cache",
+    "/dev/shm/tomato_multifamily_20260928"
+  ],
+  "code_commit": "664f699",
+  "budget_ledger": [
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 4,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_08",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 2,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 2,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 4,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_08",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 4,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "original_physics": 0,
+      "original_proposals": 20,
+      "side_preparation_blocks": 3,
+      "repair_proposals": 4,
+      "physics_cap_with_repair": 4,
+      "reason": "Same four Sobol parameter vectors; robot-facing mouth comparison"
+    }
+  ],
+  "original_campaign": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot"
+}

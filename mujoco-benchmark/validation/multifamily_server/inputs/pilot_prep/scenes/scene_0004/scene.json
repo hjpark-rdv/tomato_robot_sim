@@ -1,0 +1,80 @@
+{
+  "scene": "scene_0004",
+  "seed": 20260929,
+  "scene_id": 4,
+  "house_visual": true,
+  "gutter_collisions": true,
+  "stem_glb": null,
+  "placements": [
+    {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+      "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+      "stem_segment": 6,
+      "stem_fraction": 0.4878820850012664,
+      "y_deg": 0.13300643367334608,
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5,
+      "attachment_world_m": [
+        -0.7561743031861575,
+        0.9832109549413025,
+        0.7097866146827234
+      ]
+    },
+    {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+      "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+      "stem_segment": 9,
+      "stem_fraction": 0.85,
+      "y_deg": 15.038982290668581,
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5,
+      "attachment_world_m": [
+        -0.7679801598648116,
+        1.0483242026621276,
+        0.9379830970614229
+      ]
+    }
+  ],
+  "validation": {
+    "initial_penetration_m": 0.00022795652088397102,
+    "max_penetration_m": 0.00022795652088397102,
+    "worst_contact": {
+      "a": "truss_01__glb_col_TRUSS_Rachis_04",
+      "b": "truss_01__glb_col_Tomato_02",
+      "penetration_m": 0.00022795652088397102,
+      "step": 0
+    },
+    "max_idle_motion_m": 0.002891839049476111,
+    "warnings": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "finite_and_warning_free": true,
+    "collision_screen_passed": true,
+    "idle_motion_screen_passed": true,
+    "scene_screen_passed": true,
+    "thresholds_m": {
+      "collision": 0.0005,
+      "idle_motion": 0.005
+    },
+    "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+  },
+  "preview": null,
+  "model_sha256": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+  "generator_sha256": "ae93a23dede577585ccd26e4d60bda0871e4f1ca6924fe10b8937f1fa0eceafd",
+  "physics_ready": false,
+  "note": "Idle screen only; robot motion and labels require a separate rollout"
+}

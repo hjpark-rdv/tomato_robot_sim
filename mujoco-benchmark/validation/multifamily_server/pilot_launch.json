@@ -1,0 +1,105 @@
+{
+  "command": [
+    "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/monitor_command.py",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot",
+    "/root/farmily_tomato/mujoco-benchmark/.venv/bin/python",
+    "-u",
+    "mujoco-benchmark/scripts/run_motion_family_search.py",
+    "--manifest",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/assets/pilot_prep/cases.json",
+    "--output",
+    "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot",
+    "--samples-per-family",
+    "4",
+    "--physics-per-target",
+    "12",
+    "--refine-parents",
+    "2",
+    "--case-workers",
+    "8",
+    "--planning-workers",
+    "2",
+    "--execute",
+    "--max-target-force-n",
+    "5",
+    "--max-target-displacement-m",
+    "0.020",
+    "--render-budget",
+    "5",
+    "--model-cache",
+    "/dev/shm/tomato_multifamily_20260928"
+  ],
+  "code_commit": "65fb0e55cfa922f396c5f4d2f46bbe89ef1a637e",
+  "threads": 1,
+  "requested_cases": 18,
+  "prepared_cases": 12,
+  "source_scene_failures": [
+    {
+      "scene": "scene_0001",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.004118543895052729,
+        "max_penetration_m": 0.004118543895052729,
+        "worst_contact": {
+          "a": "truss_01__glb_col_Tomato_10",
+          "b": "glb_col_Tomato_01",
+          "penetration_m": 0.004118543895052729,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.013599412601588147,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    },
+    {
+      "scene": "scene_0002",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.0024348995207783934,
+        "max_penetration_m": 0.0024348995207783934,
+        "worst_contact": {
+          "a": "g30",
+          "b": "glb_col_TRUSS_Truss_01_Peduncle_00",
+          "penetration_m": 0.0024348995207783934,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.03884107247665919,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    }
+  ]
+}

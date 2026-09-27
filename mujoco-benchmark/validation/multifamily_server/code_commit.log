@@ -1,0 +1,10 @@
+[codex/server-multifamily-20260928 3104eff] fix(search): validate server integration and preserve contact search evidence
+ 14 files changed, 343 insertions(+), 7 deletions(-)
+ create mode 100644 mujoco-benchmark/scripts/search_legacy_baseline.py
+ create mode 100644 mujoco-benchmark/scripts/search_model_cache.py
+ create mode 100644 mujoco-benchmark/scripts/summarize_motion_search.py
+ create mode 100644 mujoco-benchmark/scripts/verify_motion_search_fk.py
+ create mode 100644 mujoco-benchmark/tests/test_motion_search_summary.py
+ create mode 100644 mujoco-benchmark/tests/test_search_legacy_baseline.py
+ create mode 100644 mujoco-benchmark/tests/test_search_model_cache.py
+ create mode 100644 mujoco-benchmark/tests/test_search_render_caption.py

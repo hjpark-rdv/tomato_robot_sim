@@ -1,0 +1,13 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_v2/cases/two_trusses/truss_01__Tomato_01/run",
+  "states": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/smoke_videos/nominal_flank_left_blocked.nominal_states.npz",
+  "samples": "None",
+  "frames": 212,
+  "fps": 10,
+  "speed": 3,
+  "label": "NOMINAL / nominal_flank_left_blocked / hit truss_01__glb_col_Tomato_02 @ 18.52s",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "NOMINAL ONLY; blocked, NO PHYSICS",
+  "highlights": null
+}

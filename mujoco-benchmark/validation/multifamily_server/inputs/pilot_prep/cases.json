@@ -1,0 +1,504 @@
+{
+  "schema": "motion_family_search_v1",
+  "cases": [
+    {
+      "scene_id": "scene_0000",
+      "target": "Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0000",
+      "target": "Tomato_08",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0000",
+      "target": "truss_01__Tomato_04",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/truss_01__Tomato_04/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "Tomato_08",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_08/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0003",
+      "target": "truss_01__Tomato_04",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/truss_01__Tomato_04/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "Tomato_08",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0004",
+      "target": "truss_01__Tomato_04",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/truss_01__Tomato_04/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "Tomato_01",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "Tomato_08",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_08/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    },
+    {
+      "scene_id": "scene_0005",
+      "target": "truss_01__Tomato_04",
+      "source_run": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/truss_01__Tomato_04/physics",
+      "split": "pilot",
+      "collision_coverage": "Existing generator collider coverage only; visual-only objects untested"
+    }
+  ],
+  "source_scene_failures": [
+    {
+      "scene": "scene_0001",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.004118543895052729,
+        "max_penetration_m": 0.004118543895052729,
+        "worst_contact": {
+          "a": "truss_01__glb_col_Tomato_10",
+          "b": "glb_col_Tomato_01",
+          "penetration_m": 0.004118543895052729,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.013599412601588147,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    },
+    {
+      "scene": "scene_0002",
+      "reason": "initial_scene_screen_failed",
+      "validation": {
+        "initial_penetration_m": 0.0024348995207783934,
+        "max_penetration_m": 0.0024348995207783934,
+        "worst_contact": {
+          "a": "g30",
+          "b": "glb_col_TRUSS_Truss_01_Peduncle_00",
+          "penetration_m": 0.0024348995207783934,
+          "step": 0
+        },
+        "max_idle_motion_m": 0.03884107247665919,
+        "warnings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "finite_and_warning_free": true,
+        "collision_screen_passed": false,
+        "idle_motion_screen_passed": false,
+        "scene_screen_passed": false,
+        "thresholds_m": {
+          "collision": 0.0005,
+          "idle_motion": 0.005
+        },
+        "scope": "idle 2s at 240Hz; no robot trajectory or force pulse"
+      }
+    }
+  ],
+  "unselected_targets": [
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_01",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0000",
+      "target": "truss_01__Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_01",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0003",
+      "target": "truss_01__Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_01",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0004",
+      "target": "truss_01__Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_04",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "Tomato_11",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_01",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_02",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_03",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_05",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_07",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_08",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_09",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_10",
+      "reason": "declared_target_budget"
+    },
+    {
+      "scene": "scene_0005",
+      "target": "truss_01__Tomato_11",
+      "reason": "declared_target_budget"
+    }
+  ],
+  "requested_scenes": 6,
+  "generated_scenes": 6,
+  "generator_manifest_sha256": "0066cbaff36fe77e6e8b324e9928bb0ca694fc10c8d3dcc0f748a577dde0417e",
+  "scope": "Pilot generation, no physics motion labels; scene geometry may vary, physical settings retained",
+  "rgbd_collection": "Not performed here. Reuse existing RGB-D collector after rollout results exist; no mask/label format changes."
+}
