@@ -18,3 +18,15 @@ def test_hook_main_stem_penetration_invalidates_glb_rollout():
  assert valid_glb_physics(.0003470519,.0004,False)
  assert not valid_glb_physics(.0006,0.,False)
  assert not valid_glb_physics(0.,0.,True)
+
+
+def test_gutter_arm_penetration_invalidates_rollout():
+ from robot_engine import valid_glb_physics
+ assert not valid_glb_physics(0.,0.,False,.0006)
+ assert valid_glb_physics(0.,0.,False,.0004)
+
+
+def test_background_stem_arm_contact_invalidates_rollout():
+ from robot_engine import valid_glb_physics
+ assert not valid_glb_physics(0.,0.,False,0.,.0006)
+ assert valid_glb_physics(0.,0.,False,0.,.0004)

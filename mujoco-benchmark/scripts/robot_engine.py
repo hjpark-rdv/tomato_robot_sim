@@ -18,9 +18,9 @@ def forward(ref,q):
    else:t[:3,:3]=t[:3,:3]@R.from_rotvec(axis*q[index]).as_matrix()
  return t
 
-def valid_glb_physics(glb_penetration,hook_penetration,unstable):
+def valid_glb_physics(glb_penetration,hook_penetration,unstable,gutter_penetration=0.,stem_penetration=0.):
  # Original main stem is not named glb_col_; hook contacts must also be screened.
- return not unstable and max(glb_penetration,hook_penetration)<=.0005
+ return not unstable and max(glb_penetration,hook_penetration,gutter_penetration,stem_penetration)<=.0005
 
 class RobotEngine:
  def __init__(self,model=DEFAULT_MODEL,trace=DEFAULT_TRACE,hz=120,reference=None,target="Tomato_05"):
@@ -50,6 +50,16 @@ class RobotEngine:
   def glb_penetration(contacts):
    return max([0.]+[-float(c.dist) for c in contacts if glb_collision(self.model.geom(c.geom1).name) or glb_collision(self.model.geom(c.geom2).name)])
   initial_glb_penetration=glb_penetration(self.data.contact) if glb_reference else 0.
+  gutter_ids=np.array([i for i in range(self.model.ngeom) if (self.model.geom(i).name or '').startswith('gutter_collision_')],dtype=int)
+  def gutter_contacts(contacts):return np.isin(contacts.geom1,gutter_ids)|np.isin(contacts.geom2,gutter_ids)
+  initial_sel=gutter_contacts(self.data.contact)
+  max_gutter_penetration=max(0.,-float(self.data.contact.dist[initial_sel].min())) if initial_sel.any() else 0.
+  gutter_steps=0;gutter_pairs=set()
+  stem_ids=np.array([i for i in range(self.model.ngeom) if (self.model.geom(i).name or '').startswith('neighbor_stem_collision_')],dtype=int)
+  def stem_contacts(contacts):return np.isin(contacts.geom1,stem_ids)|np.isin(contacts.geom2,stem_ids)
+  initial_stem=stem_contacts(self.data.contact)
+  max_stem_penetration=max(0.,-float(self.data.contact.dist[initial_stem].min())) if initial_stem.any() else 0.
+  stem_steps=0;stem_pairs=set()
   max_glb_penetration=initial_glb_penetration
   out={'control_s':0.,'physics_s':0.,'evaluation_s':0.,'recording_s':0.,'reset_s':reset,'command_prepare_s':planning};trace=[];poses=[];pairs=[];maxdisp=0.;mincontact=0.;contactsteps=0;maxerror=0.;unstable=False
   if record:trace.append(self.data.qpos.copy());poses.append(self.poses())
@@ -59,6 +69,16 @@ class RobotEngine:
    t=time.perf_counter();mj.mj_step(self.model,self.data);mj.mj_kinematics(self.model,self.data);out['physics_s']+=time.perf_counter()-t
    t=time.perf_counter();maxdisp=max(maxdisp,float(np.linalg.norm(self.data.xpos[self.fruit]-self.initial_fruit)));maxerror=max(maxerror,float(np.max(abs(self.data.qpos[self.qids]-cmd))))
    contacts=self.data.contact
+   if len(gutter_ids):
+    gs=gutter_contacts(contacts)
+    if gs.any():
+     gutter_steps+=1;max_gutter_penetration=max(max_gutter_penetration,-float(contacts.dist[gs].min()))
+     gutter_pairs.update(tuple(self.model.geom(int(g)).name for g in pair) for pair in contacts.geom[gs])
+   if len(stem_ids):
+    ss=stem_contacts(contacts)
+    if ss.any():
+     stem_steps+=1;max_stem_penetration=max(max_stem_penetration,-float(contacts.dist[ss].min()))
+     stem_pairs.update(tuple(self.model.geom(int(g)).name for g in pair) for pair in contacts.geom[ss])
    if glb_reference:max_glb_penetration=max(max_glb_penetration,glb_penetration(contacts))
    sel=np.isin(contacts.geom1,self.hookgeoms)|np.isin(contacts.geom2,self.hookgeoms);contactsteps+=int(sel.any())
    if sel.any():mincontact=min(mincontact,float(contacts.dist[sel].min()))
@@ -70,9 +90,11 @@ class RobotEngine:
    if unstable:break
   wall=time.perf_counter()-begin
   out.update(rollout_wall_s=wall,process_cpu_s=time.process_time()-cpu,simulated_s=(i+1)*self.model.opt.timestep,requested_s=seconds,steps=i+1,rtf=(i+1)*self.model.opt.timestep/wall,unstable=unstable,max_target_displacement_m=maxdisp,max_hook_contact_penetration_m=-mincontact,hook_contact_steps=contactsteps,max_tracking_error_m_or_rad=maxerror,warning_counts=self.data.warning.number.tolist(),hook_final_xyz=self.data.xpos[self.hook].tolist(),break_enabled=False,success_evaluator='contact/displacement diagnostics only; no harvest success claim')
-  if glb_reference:
-   out['initial_glb_penetration_m']=initial_glb_penetration;out['max_glb_penetration_m']=max_glb_penetration;out['glb_physics_valid']=valid_glb_physics(max_glb_penetration,-mincontact,unstable)
-   out['physics_guard_version']='glb_and_hook_v2'
+  out.update(max_gutter_penetration_m=max_gutter_penetration,gutter_contact_steps=gutter_steps,gutter_contact_pairs=sorted(gutter_pairs))
+  out.update(max_neighbor_stem_penetration_m=max_stem_penetration,neighbor_stem_contact_steps=stem_steps,neighbor_stem_contact_pairs=sorted(stem_pairs))
+  if glb_reference or len(gutter_ids) or len(stem_ids):
+   out['initial_glb_penetration_m']=initial_glb_penetration;out['max_glb_penetration_m']=max_glb_penetration;out['glb_physics_valid']=valid_glb_physics(max_glb_penetration,-mincontact,unstable,max_gutter_penetration,max_stem_penetration)
+   out['physics_guard_version']='glb_hook_environment_v4' if len(stem_ids) else 'glb_hook_gutter_v3' if len(gutter_ids) else 'glb_and_hook_v2'
    out['physics_penetration_limit_m']=.0005
   if record:out['_arrays']=dict(times_s=times[:len(trace)],qpos=np.array(trace),poses=np.array(poses));out['_contacts']=pairs
   return out

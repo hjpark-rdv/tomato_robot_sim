@@ -144,7 +144,9 @@ def inspect(model_path, reference_path, seconds=2., hz=240,
         for contact in data.contact:
             a, b = model.geom(contact.geom1).name, model.geom(contact.geom2).name
             if not (a.startswith("glb_col_") or b.startswith("glb_col_")
-                    or a.startswith("truss_") or b.startswith("truss_")):
+                    or a.startswith("truss_") or b.startswith("truss_")
+                    or a.startswith("gutter_collision_") or b.startswith("gutter_collision_")
+                    or a.startswith("neighbor_stem_collision_") or b.startswith("neighbor_stem_collision_")):
                 continue
             depth = max(0., -float(contact.dist))
             if step == 0:
@@ -192,7 +194,7 @@ def preview(model, data, destination, placements):
 
 def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
              segment_min=4, segment_max=13, angle_min=0., angle_max=180.,
-             idle_seconds=2., render=True, start_scene=0, truss_scale=1., glb=None, house=False, stem_glb=None):
+             idle_seconds=2., render=True, start_scene=0, truss_scale=1., glb=None, house=False, stem_glb=None, gutter_collisions=False):
     if scenes < 1 or trusses < 1:
         raise ValueError("scenes and trusses must be positive")
     if not 0 <= segment_min <= segment_max < 16:
@@ -249,16 +251,19 @@ def generate(output, seed, scenes, trusses, source_dir=GLB_DIR,
             from stem_glb_visual import add_stem
             add_stem(scene / "model.xml", scene / "model.xml", stem_glb)
         house_info = None
-        if house:
+        if house or gutter_collisions:
             from greenhouse_visual import add_house
             house_info = add_house(scene / "model.xml", scene / "model.xml")
+        if gutter_collisions:
+            from greenhouse_visual import add_gutter_collisions
+            add_gutter_collisions(scene / 'model.xml', scene / 'model.xml')
         model = mj.MjModel.from_binary_path(str(scene / "model.mjb"))
         data = mj.MjData(model)
         mj.mj_forward(model, data)
         check = inspect(scene / "model.mjb", scene / "reference.json",
                         seconds=idle_seconds)
         visual = preview(model, data, scene, placements) if render else None
-        record = dict(scene=scene.name, seed=seed, scene_id=scene_id, house_visual=bool(house), stem_glb=str(Path(stem_glb).resolve()) if stem_glb else None,
+        record = dict(scene=scene.name, seed=seed, scene_id=scene_id, house_visual=bool(house or gutter_collisions), gutter_collisions=bool(gutter_collisions), stem_glb=str(Path(stem_glb).resolve()) if stem_glb else None,
                       placements=placements, validation=check, preview=visual,
                       model_sha256=hashlib.sha256((scene / "model.mjb").read_bytes()).hexdigest(),
                       generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -310,6 +315,7 @@ def main():
     parser.add_argument("--truss-scale", type=float, default=.5)
     parser.add_argument("--idle-seconds", type=float, default=2.)
     parser.add_argument("--stem-glb", type=Path, help="기존 골격과 일치하는 줄기 GLB 외형 선택")
+    parser.add_argument("--gutter-collisions", action="store_true", help="하우스 표시 및 거터 패널 충돌 추가")
     parser.add_argument("--house", action="store_true", help="원본 하우스/거터를 충돌 없는 배경으로 표시")
     parser.add_argument("--no-render", action="store_true")
     parser.add_argument("--glb", type=str, default=None,
@@ -318,7 +324,7 @@ def main():
     generate(args.output, args.seed, args.scenes, args.trusses, args.source_dir,
              args.segment_min, args.segment_max, args.angle_min, args.angle_max,
              args.idle_seconds, not args.no_render, truss_scale=args.truss_scale,
-             glb=args.glb, house=args.house, stem_glb=args.stem_glb)
+             glb=args.glb, house=args.house, stem_glb=args.stem_glb, gutter_collisions=args.gutter_collisions)
     print(args.output / "index.html")
 
 

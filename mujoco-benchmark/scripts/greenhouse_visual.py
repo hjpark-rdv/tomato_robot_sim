@@ -65,12 +65,51 @@ def add_house(model_xml,output_xml,source=SOURCE):
     record=dict(source=str(source),source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),source_layers=[dict(path=l.realPath,sha256=hashlib.sha256(Path(l.realPath).read_bytes()).hexdigest()) for l in stage.GetUsedLayers() if l.realPath and Path(l.realPath).is_file()],meshes=len(inventory),triangles=sum(x['triangles'] for x in inventory),visual_geoms=len(ids),collision_geoms=0,hidden=hidden,inventory=inventory,scope='Original greenhouse geometry and diffuse colors; fixed world visuals only, no added joints or collision. USD lighting/shaders are not reproduced exactly.')
     output_xml.with_suffix('.house.json').write_text(json.dumps(record,indent=2));return record
 
+def add_gutter_collisions(model_xml, output_xml, source=SOURCE):
+    """Separate authored convex panels preserve the open gutter channel."""
+    import mujoco as mj
+    model_xml=Path(model_xml).resolve();output_xml=Path(output_xml).resolve()
+    tree=ET.parse(model_xml);root=tree.getroot();world=root.find('worldbody')
+    if any(g.get('name','').startswith('gutter_collision_') for g in world.findall('geom')):
+        raise ValueError('Gutter collisions already present')
+    stage=Usd.Stage.Open(str(source));cache=UsdGeom.XformCache();inventory=[]
+    prefixes=('Gutter_1_Base','Gutter_1_Sidewall','GutterFoldedLip','GutterEndCap','Gutter_SlabSupportRib')
+    for prim in Usd.PrimRange(stage.GetPrimAtPath('/World/Greenhouse'),Usd.TraverseInstanceProxies()):
+        if not prim.IsA(UsdGeom.Mesh) or not prim.GetName().startswith(prefixes):continue
+        mesh=UsdGeom.Mesh(prim);transform=np.asarray(cache.GetLocalToWorldTransform(prim)).T
+        v=np.asarray(mesh.GetPointsAttr().Get(),float)@transform[:3,:3].T+transform[:3,3]
+        lo=v.min(axis=0);hi=v.max(axis=0)
+        name='gutter_collision_'+prim.GetName()
+        attrs=dict(name=name,contype='16',conaffinity='15',density='0',group='3',rgba='.2 .5 1 0',friction='.5 .005 .0001',condim='3',margin='0',gap='0',solref='.004 1',solimp='.99 .999 .001')
+        if np.all(np.minimum(abs(v-lo),abs(v-hi))<1e-6) and len(np.unique(np.round(v,6),axis=0))==8:
+            attrs.update(type='box',pos=nums((lo+hi)/2),size=nums((hi-lo)/2))
+        else:
+            from scipy.spatial import ConvexHull
+            idx=np.asarray(mesh.GetFaceVertexIndicesAttr().Get());faces=[];offset=0
+            for n in mesh.GetFaceVertexCountsAttr().Get():
+                faces.extend([[idx[offset],idx[offset+j],idx[offset+j+1]] for j in range(1,n-1)]);offset+=n
+            f=np.asarray(faces,int);local=v-v.mean(axis=0)
+            volume=abs(np.einsum('ij,ij->i',local[f[:,0]],np.cross(local[f[:,1]],local[f[:,2]])).sum()/6)
+            hull=ConvexHull(local)
+            if not np.isclose(volume,hull.volume,rtol=.001,atol=1e-10):raise ValueError(f'Nonconvex or nonclosed panel: {prim.GetPath()}')
+            ET.SubElement(root.find('asset'),'mesh',name=name,vertex=nums(local),face=' '.join(map(str,f.ravel())))
+            attrs.update(type='mesh',mesh=name,pos=nums(v.mean(axis=0)))
+        ET.SubElement(world,'geom',**attrs)
+        inventory.append(dict(name=name,source_prim=str(prim.GetPath()),shape=attrs['type'],min_m=lo.tolist(),max_m=hi.tolist()))
+    if len(inventory)!=18:raise ValueError(f'Expected 18 gutter panels/ribs, got {len(inventory)}')
+    for node in root.iter():
+        if node.get('file') and not Path(node.get('file')).is_absolute():node.set('file',str(model_xml.parent/node.get('file')))
+    output_xml.parent.mkdir(parents=True,exist_ok=True);tree.write(output_xml,encoding='unicode')
+    m=mj.MjModel.from_xml_path(str(output_xml));mj.mj_saveModel(m,str(output_xml.with_suffix('.mjb')))
+    info=dict(source=str(source),source_sha256=hashlib.sha256(Path(source).read_bytes()).hexdigest(),colliders=len(inventory),inventory=inventory,scope='Two gutter channels: bottom, sidewalls, folded lips, end caps, slab support ribs. Open space preserved. Wires, legs, substrate and other greenhouse parts remain visual-only. Friction is an uncalibrated simulation setting.')
+    output_xml.with_suffix('.gutters.json').write_text(json.dumps(info,indent=2));return info
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('model',type=Path);p.add_argument('--output',type=Path);p.add_argument('--view',action='store_true');p.add_argument('--view-only',action='store_true');p.add_argument('--state',type=Path,help='Optional saved states.npz; show first frame');p.add_argument('--lookat',type=float,nargs=3,default=[0,0,1.5]);p.add_argument('--distance',type=float,default=9);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('model',type=Path);p.add_argument('--output',type=Path);p.add_argument('--view',action='store_true');p.add_argument('--view-only',action='store_true');p.add_argument('--state',type=Path,help='Optional saved states.npz; show first frame');p.add_argument('--lookat',type=float,nargs=3,default=[0,0,1.5]);p.add_argument('--distance',type=float,default=9);p.add_argument('--gutter-collision-only',action='store_true');a=p.parse_args()
     if not a.view_only:
         if a.output is None:p.error('--output is required for conversion')
         if a.output.exists():p.error('Use a new output file')
-        info=add_house(a.model,a.output);print({k:v for k,v in info.items() if k not in ('inventory','source_layers')},flush=True)
+        info=add_gutter_collisions(a.model,a.output) if a.gutter_collision_only else add_house(a.model,a.output);print({k:v for k,v in info.items() if k not in ('inventory','source_layers')},flush=True)
     if a.view or a.view_only:
         import mujoco as mj,mujoco.viewer
         m=mj.MjModel.from_binary_path(str(a.model if a.view_only else a.output.with_suffix('.mjb')));d=mj.MjData(m)

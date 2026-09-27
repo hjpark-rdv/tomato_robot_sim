@@ -31,6 +31,10 @@ def direct_candidate(angle,seed):
 def render_test_report(output_dir: Path, data: dict):
     results = data.get("results", [])
     total = len(results)
+    planned = sum(bool(r.get("planning_passed")) for r in results)
+    skipped = data.get("skipped", 0)
+    background_note = "주변 잎·송이는 시각 배경입니다. 거터·주줄기 충돌 적용 여부는 scene.json을 확인하세요." if data.get("existing_scene") else ""
+    skipped_names = html.escape(", ".join(r["target"] for r in data.get("skipped_targets", [])))
     success = sum(r.get("result") == "partial_center_entry" for r in results)
     invalid = sum(r.get("result") == "invalid_physics" for r in results)
     miss = sum(r.get("result") == "miss" for r in results)
@@ -283,16 +287,17 @@ def render_test_report(output_dir: Path, data: dict):
       후보군(Candidate) 다중 샘플링 및 채점(Scoring) 방식이 아닌, <strong>타깃 열매별 단 1장의 사진(RGB-D)만 입력하여 모델이 직접 진입 방위각(Azimuth)을 1개 출력</strong>하고, 그 각도로 경로를 생성하여 <strong>단 1회 물리 시도</strong>를 진행한 결과입니다. (재시도 없음)
     </div>
 
+    <div class="banner">관측 불가로 미시도: {skipped}개 {skipped_names}. 중심 진입 판정이며 수확·분리 성공을 뜻하지 않습니다. {background_note}</div>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">시험 열매 수</div>
         <div class="stat-value">{total} <span style="font-size: 18px; font-weight: 400; color: var(--subtext);">개</span></div>
-        <div class="stat-desc">계획 통과: <strong>100%</strong> ({total}/{total})</div>
+        <div class="stat-desc">계획 통과: <strong>{planned}/{total}</strong></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">진입 성공 (Center Entry)</div>
         <div class="stat-value success">{success} <span style="font-size: 18px; font-weight: 400;">개</span></div>
-        <div class="stat-desc">성공률: <strong>{succ_rate:.1f}%</strong> (4알 진입 성공)</div>
+        <div class="stat-desc">성공률: <strong>{succ_rate:.1f}%</strong> (실제 시도 {total}개 기준)</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">물리 오류 (Invalid Physics)</div>
@@ -348,7 +353,7 @@ def render_test_report(output_dir: Path, data: dict):
 
 
 
-def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None,gui=False,house=False,stem_glb=None):
+def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,glb=None,gui=False,house=False,stem_glb=None,existing_scene=None,physics_hz=120,gutter_collisions=False):
     training=Path(training).resolve();output=Path(output).resolve()
     meta=json.loads((training/'manifest.json').read_text())
     if meta.get('schema')!='direct_rgbd_angle_training_v1':raise ValueError('Use a direct RGB-D angle model')
@@ -358,30 +363,46 @@ def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,gl
     output.mkdir(parents=True,exist_ok=False);started=time.perf_counter()
     scene_root=output/'scenes'
     
-    # 장면 물리 검사 통과할 때까지 최대 5회 시도 (seed offset)
-    record = None
-    MAX_ATTEMPTS = 5
-    for attempt in range(MAX_ATTEMPTS):
-        attempt_seed = seed + attempt * 1000
-        cmd = [PHYSICS_PY, HOME/'scripts/generate_random_glb_scenes.py', '--seed', attempt_seed,
-               '--scenes', 1, '--trusses', 1, '--truss-scale', .5,
-               '--angle-min', angle_min, '--angle-max', angle_max, '--output', scene_root]
-        if stem_glb is not None:
-            cmd.extend(["--stem-glb", str(stem_glb)])
-        if house:
-            cmd.append("--house")
-        if glb:
-            cmd.extend(['--glb', glb])
-        if scene_root.exists():
-            import shutil
-            shutil.rmtree(scene_root)
-        run(cmd, output/'scene_generation.log')
-        scene = scene_root / 'scene_0000'
-        cur_rec = json.loads((scene/'scene.json').read_text())
-        if cur_rec['validation']['scene_screen_passed']:
-            record = cur_rec
-            break
-        print(f"[장면 물리검사 재시도] 시도 {attempt+1}/{MAX_ATTEMPTS} 실패, 다음 시드로 재시도...", flush=True)
+    if physics_hz < 1:raise ValueError('physics_hz must be positive')
+    if existing_scene is not None:
+        import shutil,hashlib
+        original=Path(existing_scene).resolve()
+        for filename in ('model.mjb','reference.json','scene.json'):
+            if not (original/filename).is_file():raise ValueError(f'Missing {original/filename}')
+        scene=scene_root/'scene_0000';scene.mkdir(parents=True)
+        for filename in ('model.mjb','reference.json','scene.json'):
+            shutil.copy2(original/filename,scene/filename)
+        record=json.loads((scene/'scene.json').read_text())
+        if not record.get('validation',{}).get('scene_screen_passed'):
+            raise ValueError('Existing scene needs a documented initial physics screen')
+        (output/'existing_scene.json').write_text(json.dumps(dict(source=str(original),model_sha256=hashlib.sha256((scene/'model.mjb').read_bytes()).hexdigest(),physics_hz=physics_hz,background_physics=record.get('background_physics')),indent=2))
+    else:
+        # 장면 물리 검사 통과할 때까지 최대 5회 시도 (seed offset)
+        record = None
+        MAX_ATTEMPTS = 5
+        for attempt in range(MAX_ATTEMPTS):
+            attempt_seed = seed + attempt * 1000
+            cmd = [PHYSICS_PY, HOME/'scripts/generate_random_glb_scenes.py', '--seed', attempt_seed,
+                   '--scenes', 1, '--trusses', 1, '--truss-scale', .5,
+                   '--angle-min', angle_min, '--angle-max', angle_max, '--output', scene_root]
+            if stem_glb is not None:
+                cmd.extend(["--stem-glb", str(stem_glb)])
+            if gutter_collisions:
+                cmd.append("--gutter-collisions")
+            if house:
+                cmd.append("--house")
+            if glb:
+                cmd.extend(['--glb', glb])
+            if scene_root.exists():
+                import shutil
+                shutil.rmtree(scene_root)
+            run(cmd, output/'scene_generation.log')
+            scene = scene_root / 'scene_0000'
+            cur_rec = json.loads((scene/'scene.json').read_text())
+            if cur_rec['validation']['scene_screen_passed']:
+                record = cur_rec
+                break
+            print(f"[장면 물리검사 재시도] 시도 {attempt+1}/{MAX_ATTEMPTS} 실패, 다음 시드로 재시도...", flush=True)
 
     if record is None:
         summary=dict(status='scene_screen_failed',seed=seed,scene=cur_rec,results=[])
@@ -389,13 +410,16 @@ def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,gl
         (output/'index.html').write_text('<meta charset="utf-8"><h1>장면 초기 물리 검사 실패</h1><p>5회 시도 모두 물리 검사 통과 실패</p>')
         return summary
     reference=json.loads((scene/'reference.json').read_text())
-    specs=reference['fruit_specs'][:max_targets] if max_targets else reference['fruit_specs']
+    specs=reference['fruit_specs']
+    if 'eligible_targets' in record:
+        specs=[x for x in specs if x['name'] in record['eligible_targets']]
+    specs=specs[:max_targets] if max_targets else specs
     captures=[];input_root=output/'single_images';(input_root/'observations').mkdir(parents=True)
     for spec in specs:
         target=spec['name'];folder=output/'targets'/target;folder.mkdir(parents=True)
         physics=folder/'physics';observation=folder/'observation'
         run([PHYSICS_PY,HOME/'scripts/candidate_experiment.py','--model',scene/'model.mjb',
-             '--reference',scene/'reference.json','--target',target,'--scene-only',
+             '--reference',scene/'reference.json','--target',target,'--hz',physics_hz,'--scene-only',
              '--link-model','--output',physics],folder/'scene_setup.log')
         run([PHYSICS_PY,HOME/'scripts/prepare_observations.py',physics,'--views',1,
              '--seed',seed,'--output',observation],folder/'capture.log')
@@ -445,7 +469,8 @@ def evaluate(training,output,seed,angle_min=0.,angle_max=90.,max_targets=None,gl
         print('[사진→각도→물리]',target,f"{decision['predicted_approach_azimuth_deg']:+.2f}°",result['result'],flush=True)
         (output/'summary.json').write_text(json.dumps(dict(status='running',seed=seed,results=outcomes),indent=2))
     summary=dict(schema='direct_rgbd_angle_test_v1',status='complete',seed=seed,
-                 truss_y_range_deg=[angle_min,angle_max],truss_y_deg=record['placements'][0]['y_deg'],
+                 physics_hz=physics_hz,existing_scene=str(existing_scene) if existing_scene else None,
+                 truss_y_range_deg=None if existing_scene else [angle_min,angle_max],truss_y_deg=record['placements'][0]['y_deg'],
                  trained_model=str(ck),targets_in_scene=len(reference['fruit_specs']),targets_attempted=len(outcomes),
                  skipped=len(specs)-len(outcomes),skipped_targets=[dict(target=c['target'],reason=c['status']) for c in captures if c['status']!='captured'],
                  center_entries=sum(x['result']=='partial_center_entry' for x in outcomes),
@@ -466,7 +491,10 @@ if __name__=='__main__':
     p.add_argument('--angle-max',type=float,default=90.,help='Y축 최대 회전각 (기본: 90)')
     p.add_argument('--max-targets',type=int,help='테스트할 최대 열매 수 (기본: 전체 10개)')
     p.add_argument('--stem-glb',type=Path,help='기존 골격과 일치하는 줄기 GLB 외형 선택')
+    p.add_argument('--gutter-collisions',action='store_true',help='새 장면에 거터 충돌 추가')
     p.add_argument('--house',action='store_true',help='충돌 없는 원본 하우스/거터 배경 추가')
+    p.add_argument('--existing-scene',type=Path,help='검증된 model.mjb/reference.json/scene.json 장면을 그대로 사용')
+    p.add_argument('--physics-hz',type=int,default=120)
     p.add_argument('--gui',action='store_true',help='실제 물리 실행을 실시간 뷰어로 표시')
     p.add_argument('--repeat',type=int,default=1,help='새 장면 생성 및 테스트 반복 횟수')
     p.add_argument('--output',type=Path,default=Path('/root/docker_share/mujoko_debugging_data')/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_direct_angle_test'))
@@ -476,13 +504,14 @@ if __name__=='__main__':
         a.angle_min = a.angle
         a.angle_max = a.angle
 
+    if a.existing_scene and (a.repeat!=1 or a.house or a.gutter_collisions or a.stem_glb or a.glb or a.angle is not None):p.error('--existing-scene cannot be combined with scene generation options or repeat')
     if a.repeat<1:p.error('--repeat must be positive')
     if a.repeat==1:
-        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb),indent=2))
+        print(json.dumps(evaluate(a.training,a.output,a.seed,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb,existing_scene=a.existing_scene,physics_hz=a.physics_hz,gutter_collisions=a.gutter_collisions),indent=2))
     else:
         a.output.mkdir(parents=True,exist_ok=False);summaries=[]
         for index in range(a.repeat):
-            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb)
+            result=evaluate(a.training,a.output/f'test_{index:04d}',a.seed+index,a.angle_min,a.angle_max,a.max_targets,glb=a.glb,gui=a.gui,house=a.house,stem_glb=a.stem_glb,existing_scene=a.existing_scene,physics_hz=a.physics_hz,gutter_collisions=a.gutter_collisions)
             summaries.append(dict(test=index,seed=a.seed+index,status=result['status'],
                                   targets_attempted=result.get('targets_attempted',0),
                                   center_entries=result.get('center_entries',0),

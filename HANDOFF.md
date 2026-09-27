@@ -1,5 +1,32 @@
 # Farmily Tomato 작업 인수인계
 
+## 로봇 쪽 타깃·주변 주줄기 장애물
+
+- `preview_neighbor_plants.py --stem-obstacles-layout`로 양측 주변68줄기를 고정 캡슐1088개로 충돌 처리. 기존 수확 줄기 탄성 유지.
+- 통로 쪽 뿌리 위치 기준 타깃 적격 구분. 실제 실행 대상은 `eligible_targets`의 기존10열매. 주변 복제 송이는 아직 물리 타깃 아님.
+- `20260927_stem_obstacle_scene/index.html`: 초기 검사 통과, 저장01/02/09 경로 모두 주줄기 침투1.18/1.49/1.62mm로 invalid_physics. 자동 회피·비관통 해결 완료가 아님.
+- 관련9테스트 통과. 주줄기 접촉/침투 metrics 및0.5mm invalid 판정 연결.
+
+## 거터 충돌 추가
+
+- `--gutter-collisions`(새 장면/직접 테스트), `greenhouse_visual.py --gutter-collision-only`(기존 XML) 추가. 원본 USD의 두 거터 판/리브18개를 별도 고정 충돌체로 구성해 열린 내부 유지.
+- 거터–팔/고리/식물 관통0.5mm 초과는 invalid_physics. 초기 검사 및 rollout metrics에 거터 포함. FCL 자동 회피는 미연결.
+- `20260927_gutter_collision_scene/index.html`: 제어된 옆판/바닥 접촉0.250mm, 기존 경로3개 재실행 완료. 09에서 실제 거터 접촉 발생. 자유낙하 고속 시험은3.328mm로 실패 기록 보존.
+- 주변 식물·철사·거터 다리·배지는 여전히 시각 전용. 상세는 GREENHOUSE_VISUAL.md.
+
+## 복잡한 하우스 배경 직접 각도 테스트 완료
+
+- `test_direct_angle.py --existing-scene DIR --physics-hz 240 --gui` 추가. 현재 배경을 그대로 새 RGB-D 촬영→각도 예측→독립 물리 실행에 사용.
+- `20260927_dense_house_harvest_test`: 10열매 중 중심진입6/미진입2/가림 미시도2(03,11), 실행8개 물리오류0. GUI 포함620.16초.
+- 예측은 모두 -90° 부근에 몰림. 주변106송이는 충돌 없는 외형이므로 장애물 회피/수확 분리 검증 아님. 보고서 미시도/실제 계획 집계 수정.
+- 재실행 명령과 범위는 `mujoco-benchmark/GREENHOUSE_VISUAL.md` 마지막 절.
+
+## 주변 식물 랜덤 송이 미리보기
+
+- 양측 배치 커밋 `0317ce6`. 후속 `--random-trusses`로 주변 줄기당 송이 1개를 기존 GLB 규칙으로 랜덤 부착.
+- 5종/0.5배/Y회전0~180°/segment4~13/6번 제외/white보정 유지. 기존 부착 계산 공유. 주변은 정적 외형 전용.
+- 결과 `/root/docker_share/mujoko_debugging_data/20260927_mixed_house_random_trusses/index.html`.
+
 ## 거터 양측 줄기 혼합 배치
 
 - `preview_neighbor_plants.py --paired-gutters --alternate-model` 추가. 거터 양쪽에서 줄기가 서로 반대 방향(0°/180°)으로 휘어 올라가도록 배치.

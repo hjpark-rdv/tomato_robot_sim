@@ -17,6 +17,20 @@ def junction_neighbors(points,radii,root,root_radius,parent_index):
  distance=np.linalg.norm(points[:-1]+t[:,None]*delta-root,axis=1)
  return [i for i in range(len(delta)) if abs(i-parent_index)==1 and distance[i]<=max(radii[i:i+2])+root_radius]
 
+def attachment_frame(model,data,gid,ped,stem_fraction,y_deg):
+ rotation=R.from_euler('x',90,degrees=True).as_matrix()@R.from_euler('y',y_deg,degrees=True).as_matrix()
+ stemaxis=data.geom_xmat[gid].reshape(3,3)[:,2];heading=rotation@(ped[3]-ped[0]);normal=heading-stemaxis*np.dot(stemaxis,heading)
+ if np.linalg.norm(normal)<1e-9:
+  # A branch exactly parallel to the stem has no unique radial side. Use the
+  # transformed GLB X axis to choose a side without rotating the branch.
+  normal=rotation[:,0]-stemaxis*np.dot(stemaxis,rotation[:,0])
+ if np.linalg.norm(normal)<1e-9:raise ValueError('Cannot determine a radial stem attachment side')
+ normal/=np.linalg.norm(normal)
+ # Anchor the actual proximal cross-section on the stem surface; no extra rotation.
+ stem_center=data.geom_xpos[gid]+(2*stem_fraction-1)*model.geom_size[gid,1]*stemaxis
+ attachment=stem_center+normal*model.geom_size[gid,0]
+ return rotation,attachment
+
 def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fruit_offsets=None,rachis_stiffness_scale=1.,stem_fraction=.5,truss_scale=1.):
  if not np.isfinite(rachis_stiffness_scale) or rachis_stiffness_scale<=0:raise ValueError("Invalid rachis stiffness scale")
  if not np.isfinite(truss_scale) or truss_scale<=0:raise ValueError('truss_scale must be finite and positive')
@@ -61,18 +75,9 @@ def build(glb,output,y_deg=90,segment=11,target='Tomato_05',remove_fruits=(),fru
   for item in root.findall(tag):root.remove(item)
  assets=root.find('asset');positions={};nodes={n.get('name'):n for n in root.iter('body')};chains={};joints={j['child'].split('/')[-1]:j for j in reference['joints']};bodies={b['name']:b for b in reference['bodies']};exclusions=set();rod_bodies=[]
  name=f'STEM_MainStem_{segment:02d}';parent=nodes[name];bid=old.body(name).id;gid=next(g for g in range(old.ngeom) if old.geom_bodyid[g]==bid and old.geom_type[g]==mj.mjtGeom.mjGEOM_CAPSULE)
- rotation=R.from_euler('x',90,degrees=True).as_matrix()@R.from_euler('y',y_deg,degrees=True).as_matrix()
  ped,rped=tube_centerline(meshes['Truss_01_Peduncle'][0],14);ped0=ped[0].copy()
- stemaxis=od.geom_xmat[gid].reshape(3,3)[:,2];heading=rotation@(ped[3]-ped[0]);normal=heading-stemaxis*np.dot(stemaxis,heading)
- if np.linalg.norm(normal)<1e-9:
-  # A branch exactly parallel to the stem has no unique radial side. Use the
-  # transformed GLB X axis to choose a side without rotating the branch.
-  normal=rotation[:,0]-stemaxis*np.dot(stemaxis,rotation[:,0])
- if np.linalg.norm(normal)<1e-9:raise ValueError('Cannot determine a radial stem attachment side')
- normal/=np.linalg.norm(normal)
- # Anchor the actual proximal cross-section on the stem surface; no extra rotation.
- stem_center=od.geom_xpos[gid]+(2*stem_fraction-1)*old.geom_size[gid,1]*stemaxis
- attachment=stem_center+normal*old.geom_size[gid,0];tf=lambda v:(np.asarray(v)-ped0)@rotation.T+attachment
+ rotation,attachment=attachment_frame(old,od,gid,ped,stem_fraction,y_deg)
+ tf=lambda v:(np.asarray(v)-ped0)@rotation.T+attachment
  for n in nodes:positions[n]=od.xpos[old.body(n).id].copy()
  def exclude(a,b):
   pair=tuple(sorted([a,b]))
