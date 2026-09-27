@@ -22,7 +22,9 @@ def classify_result(unstable,entry,displacement,rule=CLASSIFICATION_RULE):
  return 'excessive_displacement' if displacement>.020 else 'partial_center_entry' if entry else 'miss'
 
 def initialize(root):
- global ENGINE,RUN,RULE
+ global ENGINE,RUN,RULE,PREFLIGHT_POLICY
+ from environment_preflight import load_policy
+ PREFLIGHT_POLICY=load_policy(json.loads((Path(root)/'manifest.json').read_text()))
  RUN=Path(root);RULE=json.loads((RUN/'manifest.json').read_text()).get('classification_rule','displacement_first_v1');ENGINE=RobotEngine(RUN/'replay_assets/model.mjb',RUN/'replay_assets/initial_trace.json',json.loads((RUN/'manifest.json').read_text())['hz'],reference=RUN/'replay_assets/reference.json',target=json.loads((RUN/'manifest.json').read_text()).get('target','Tomato_05'))
 
 
@@ -31,6 +33,21 @@ def execute(candidate,gui=False):
  if not info['preflight'].get('passed'):return dict(info,result='ik_or_planning_failure')
  e=ENGINE;rows=json.loads((folder/'trace.json').read_text());e.commands=np.array([r['command'] for r in rows]);e.ts=np.arange(len(rows))/60
  started=time.perf_counter()
+ preflight=None
+ if PREFLIGHT_POLICY is not None:
+  # Do not overwrite results from a previous physical experiment.
+  if any((folder/name).exists() for name in ('result.json','states.npz')):
+   raise ValueError('Preflight-enabled execution requires a new candidate output; use audit_environment_preflight.py for existing runs')
+  from environment_preflight import check_engine,save_report
+  preflight=check_engine(e,rows,info['seconds'],PREFLIGHT_POLICY)
+  preflight['trace_sha256']=hashlib.sha256((folder/'trace.json').read_bytes()).hexdigest()
+  preflight['model_sha256']=json.loads((RUN/'manifest.json').read_text()).get('model_sha256')
+  save_report(folder,preflight)
+  if not preflight['passed']:
+   result=dict(info,result='environment_preflight_blocked' if preflight['status']=='blocked' else 'environment_preflight_inconclusive',
+               environment_preflight=preflight,physics_executed=False,training_eligible=False,
+               center_entered=None,hook_success=None,scope='not physically executed; environment preflight only')
+   (folder/'result.json').write_text(json.dumps(result,indent=2));return result
  if gui:
   import mujoco as mj
   import mujoco.viewer
@@ -67,6 +84,7 @@ def execute(candidate,gui=False):
  path_by_name={shape['name']:shape['path'] for shape in e.ref['shapes']}
  first=next(({'step':i+1,'objects':pair,'prim_paths':[path_by_name.get(name,name) for name in pair]} for i,pairs in enumerate(contacts) for pair in pairs),None)
  result=dict(info,result=label,classification_rule=RULE,partial_entry_success=label=='partial_center_entry',target_displacement_exceeded=displacement>.020,center_entered=entry,target_center_max_displacement_m=displacement,first_contact_candidate=first,metrics=r,execution_and_save_wall_s=time.perf_counter()-started,training_eligible=label not in ('invalid_physics','execution_error'),hook_success=None,scope='partial geometry/contact diagnostics; no validated hook-success evaluator')
+ if preflight is not None:result.update(environment_preflight=preflight,physics_executed=True)
  hits=np.flatnonzero(entry_mask)
  result['center_entry_diagnostics']=dict(first_time_s=float(arrays['times_s'][hits[0]]) if len(hits) else None,last_time_s=float(arrays['times_s'][hits[-1]]) if len(hits) else None,matching_steps=int(entry_mask.sum()),scope='geometric occupancy only; physics validity takes precedence')
  result['state_storage']=dict(format='qpos_only',max_fps=30,diagnostics_hz=1/e.model.opt.timestep,final_frame_preserved=True)
@@ -86,6 +104,8 @@ def report(root,results):
    if 'action_camera' in r:w.writerow([r['candidate_id'],*r['action_camera']['features'],r.get('center_entered'),r.get('target_center_max_displacement_m'),r['result']])
  from candidate_report import generate
  generate(root,results)
+ from environment_preflight import save_run_summary
+ save_run_summary(root,results)
 
 
 def main():
@@ -113,6 +133,9 @@ def main():
  legacy=assets/'isaac_planner_sources';legacy.mkdir()
  for source in (ROOT/'nvidia-sim/rl').glob('*.py'):shutil.copy2(source,legacy/source.name)
  manifest=dict(classification_rule=CLASSIFICATION_RULE,sampling=SAMPLING,bounds=BOUNDS,hz=a.hz,workers=a.workers,planning_workers=a.planning_workers,seed=a.seed,count=a.candidates,mujoco=mujoco.__version__,target=a.target,model_sha256=hashlib.sha256((assets/'model.mjb').read_bytes()).hexdigest(),physics='optimized plant; break disabled' if a.model.resolve()==DEFAULT_MODEL.resolve() else 'custom supplied model; break/validity require independent validation',scope='Sobol staged6d, existing IK/FCL planner; no physics rollout or labels' if a.plan_only else 'Sobol staged6d, existing IK/FCL planner, CPU MuJoCo execution; no RL/perception/randomization',plan_only=a.plan_only,arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()})
+ from environment_preflight import load_policy
+ preflight_policy=load_policy()
+ if preflight_policy is not None:manifest['environment_preflight_policy']=preflight_policy.snapshot()
  manifest['action_schema']=SCHEMA
  manifest['action_frame']='action_frame.json'
  manifest['legacy_parameters']='world-axis Sobol parameters for reproduction; use action_camera.features for model input'
