@@ -143,6 +143,14 @@ def classify_environment_geom(name):
         return "gutter"
     if name.startswith("neighbor_stem_collision_"):
         return "neighbor_stem"
+    if name.startswith("neighbor_truss_collision_fruit_"):
+        return "neighbor_fruit"
+    if name.startswith("neighbor_truss_collision_rachis_"):
+        return "neighbor_rachis"
+    if name.startswith("neighbor_truss_collision_pedicel_"):
+        return "neighbor_pedicel"
+    if name.startswith("neighbor_truss_collision_peduncle_"):
+        return "neighbor_peduncle"
     if name.startswith("glb_col_") or "__glb_col_" in name:
         return "glb_plant"
     return "other"
