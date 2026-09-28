@@ -90,8 +90,10 @@ def deterministic_candidates(original, space, *, radii=(.01, .025, .05, .1, .2, 
 
     sampler = qmc.Sobol(d=space.n, scramble=True, seed=seed)
     total = len(radii) * samples_per_radius
-    # random() accepts arbitrary n and is deterministic for a fixed seed.
-    points = sampler.random(total)
+    # Preserve Sobol balance properties: generate a power-of-two block, then
+    # take the deterministic prefix needed by this bounded search.
+    power = int(math.ceil(math.log2(max(1, total))))
+    points = sampler.random_base2(power)[:total]
     cursor = 0
     for radius in radii:
         for axis in range(space.n):
