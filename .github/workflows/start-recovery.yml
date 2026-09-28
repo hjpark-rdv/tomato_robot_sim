@@ -7,6 +7,7 @@ on:
       - 'mujoco-benchmark/scripts/recover_initial_configuration.py'
       - 'mujoco-benchmark/scripts/materialize_new_start_run.py'
       - 'mujoco-benchmark/scripts/run_new_start_d1.py'
+      - 'mujoco-benchmark/scripts/run_start_recovery_pipeline.py'
       - 'mujoco-benchmark/scripts/plan_approach_connection.py'
       - 'mujoco-benchmark/tests/test_start_recovery.py'
       - 'mujoco-benchmark/tests/test_approach_connection.py'
@@ -51,3 +52,4 @@ jobs:
           mujoco-benchmark/scripts/recover_initial_configuration.py
           mujoco-benchmark/scripts/materialize_new_start_run.py
           mujoco-benchmark/scripts/run_new_start_d1.py
+          mujoco-benchmark/scripts/run_start_recovery_pipeline.py
