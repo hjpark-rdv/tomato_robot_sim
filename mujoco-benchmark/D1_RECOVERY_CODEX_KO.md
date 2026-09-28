@@ -18,6 +18,17 @@
 - 계획 환경에는 기존 Torch/FCL, 해당 MJB와 호환되는 MuJoCo, OMPL2.0.1이 함께 필요하다. 기존 가상환경을 임의로 업그레이드하지 말고 필요하면 격리 환경을 쓴다.
 - 기존 native 회귀 + 별도 Torch/FCL 계획 회귀 + 새 테스트를 실행한다. CI 통과를 실제 온실 검증으로 간주하지 않는다.
 
+
+## 1.5. dense 장면 장애물 커버리지 gate
+
+대규모 복구 비교나 RL로 넘어가기 전에 [OBSTACLE_COVERAGE_KO.md](OBSTACLE_COVERAGE_KO.md)를 읽고 장면의 collision coverage를 확인한다.
+
+- 현재 d1의 새6장면에 직접 들어간2송이는 이미 물리 GLB라서 fruit/Rachis/pedicel collision을 가진다. 이 경로의 기존 차단 결과를 새 도구 때문에 무효라고 해석하지 않는다.
+- 반면 `preview_neighbor_plants.py`로 만든 추가 주변 송이는 visual-only일 수 있다. 이런 dense 장면을 planner/RL에 사용할 때는 `add_neighbor_truss_obstacles.py`로 other fruit/Rachis/pedicel/peduncle fixed collision을 추가한다.
+- 기존 `neighbor_stem_collision_*`과 필요한 `gutter_collision_*`도 audit에 포함한다.
+- coverage audit 또는 새 collision을 포함한 초기 penetration/idle screen이 실패하면 해당 dense 장면으로 motion-family 증액, 성공률 계산, RL 학습을 시작하지 않는다.
+- 잎은 이번 obstacle contract에서 임의의 hard obstacle로 승격하지 않는다.
+
 ## 2. 저장된 증거로 비교 목록 고정
 
 예시:
