@@ -53,6 +53,7 @@ python mujoco-benchmark/scripts/preview_neighbor_plants.py \
 # 2) scene.json에 기록된 모든 주변 송이의 물리 obstacle 추가
 python mujoco-benchmark/scripts/add_neighbor_truss_obstacles.py \
   "$STEM_SCENE" \
+  --layout "$VISUAL_LAYOUT" \
   --output "$COVERED_SCENE"
 
 # 3) planner/RL 전에 fail-closed coverage audit
@@ -61,6 +62,8 @@ python mujoco-benchmark/scripts/add_neighbor_truss_obstacles.py \
   --require-neighbor-stems \
   --require-gutter
 ```
+
+활성 물리 장면의 `scene.json`과 visual-neighbor layout이 다른 경우에는 `--layout`을 반드시 명시한다. 도구는 일반 랜덤 물리 장면의 `placements`를 주변 visual 송이로 오인해 중복 collider를 만들지 않도록 fail-closed한다.
 
 거터가 없는 의도적 단순 장면이면 `--require-gutter`를 사용하지 않는다. 주변 stem이 없는 단일 식물 장면이면 `--require-neighbor-stems`를 사용하지 않는다. 요구한 항목이 하나라도 빠지면 audit는 exit code 2를 반환한다.
 
