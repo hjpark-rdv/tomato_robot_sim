@@ -1,0 +1,20 @@
+name: Access planning decision experiment
+on:
+  push:
+    branches: ['codex/access-planning-decision-20260928']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy scipy pytest 'mujoco==3.13.0' 'ompl==2.0.1'
+      - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pytest -v -rs mujoco-benchmark/tests/test_access_route.py mujoco-benchmark/tests/test_access_route_native.py mujoco-benchmark/tests/test_diagnostic_pose_planner.py
+      - run: python -m compileall -q mujoco-benchmark/scripts/access_route.py mujoco-benchmark/scripts/plan_access_candidate.py mujoco-benchmark/scripts/access_sampling.py
