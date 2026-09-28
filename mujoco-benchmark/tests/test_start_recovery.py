@@ -86,7 +86,7 @@ def test_search_exhaustion_is_not_infeasibility():
     space = JointSpace([[-.5], [.5]], [.01])
     evaluator = StartStateEvaluator(
         scene, NoSelfCollision(), space,
-        StartSearchBudget(max_candidates=3, max_distance_queries=1000, seconds=10.),
+        StartSearchBudget(max_candidates=2, max_distance_queries=1000, seconds=10.),
         probe_horizon_m=.5)
     result = search_start(
         [0.], space, evaluator, radii=(.1,), samples_per_radius=4,
