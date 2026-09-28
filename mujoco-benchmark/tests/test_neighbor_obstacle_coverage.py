@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 
 import mujoco as mj
 import numpy as np
+import pytest
 from scipy.spatial.transform import Rotation
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -17,6 +18,7 @@ from add_neighbor_truss_obstacles import (
     collision_template,
     coverage_from_names,
     obstacle_kind,
+    _neighbor_layout_metadata,
 )
 from environment_preflight import classify_environment_geom
 
@@ -145,3 +147,19 @@ def test_environment_diagnostics_identify_new_obstacle_classes():
     assert classify_environment_geom("neighbor_truss_collision_rachis_p00_t00_g000") == "neighbor_rachis"
     assert classify_environment_geom("neighbor_truss_collision_pedicel_p00_t00_g000") == "neighbor_pedicel"
     assert classify_environment_geom("neighbor_truss_collision_peduncle_p00_t00_g000") == "neighbor_peduncle"
+
+
+def test_neighbor_layout_is_explicit_and_active_scene_placements_are_not_duplicated(tmp_path):
+    active = tmp_path / "active"; active.mkdir()
+    (active / "scene.json").write_text('{"placements":[{"stem_segment":4}]}')
+    with pytest.raises(ValueError, match="Neighbor layout is ambiguous"):
+        _neighbor_layout_metadata(active)
+
+    layout = tmp_path / "layout"; layout.mkdir()
+    payload = {"neighbors": 1, "physics_added": False,
+               "placements": [{"id": 7, "yaw_deg": 0, "trusses": []}]}
+    (layout / "scene.json").write_text(__import__("json").dumps(payload))
+    scene_meta, layout_meta, layout_path = _neighbor_layout_metadata(active, layout)
+    assert "placements" in scene_meta
+    assert layout_meta["placements"][0]["id"] == 7
+    assert layout_path == layout.resolve()
