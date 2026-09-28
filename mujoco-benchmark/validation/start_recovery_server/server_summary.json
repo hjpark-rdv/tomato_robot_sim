@@ -1,0 +1,1838 @@
+{
+  "schema": "start_recovery_server_summary_v1",
+  "source_code": "30facc9",
+  "compatibility_fix": "3c11d41",
+  "branch": "codex/start-recovery-20260928",
+  "case": "CASE2_LOCAL_MANIPULATION",
+  "canonical": {
+    "schema": "canonical_robot_start_v1",
+    "q": [
+      0.5036082863807678,
+      3.251610279083252,
+      0.11466656625270844,
+      -1.6495294570922852,
+      -0.17974743247032166,
+      -1.5231807947158813,
+      0.6881734132766724
+    ],
+    "original_q": [
+      0.5036082863807678,
+      3.251610279083252,
+      0.11466656625270844,
+      -1.6495294570922852,
+      -0.17974743247032166,
+      -1.3975170850753784,
+      0.6881734132766724
+    ],
+    "source_run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_02",
+    "covered_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+    "selection": {
+      "q": [
+        0.5036082863807678,
+        3.251610279083252,
+        0.11466656625270844,
+        -1.6495294570922852,
+        -0.17974743247032166,
+        -1.5231807947158813,
+        0.6881734132766724
+      ],
+      "valid": true,
+      "cached": false,
+      "joint_bounds": true,
+      "self_collision": null,
+      "minimum_distance_m": 0.013652963702665985,
+      "minimum_distance_is_lower_bound": false,
+      "closest_pair": [
+        "g410",
+        "neighbor_truss_collision_fruit_p19_t02_g062"
+      ],
+      "closest_segment_world": [
+        [
+          -0.4526477198015843,
+          0.8196222583652901,
+          1.030663178363827
+        ],
+        [
+          -0.4604560603589721,
+          0.8084349923316805,
+          1.0301356233435568
+        ]
+      ],
+      "status": "valid",
+      "source": "axis",
+      "radius": 0.01,
+      "sample_index": 10,
+      "normalized_change": 0.009999999999999997,
+      "axis": 5,
+      "sign": -1.0
+    },
+    "hold": {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    "validation_runs": [],
+    "training_eligible": false,
+    "hook_success": null,
+    "impossible": null
+  },
+  "unique_queries": 11,
+  "adapter_invocations": 15,
+  "pre_IK_compatibility_errors": 4,
+  "prefix_queries": 6,
+  "audited_prefixes": 18,
+  "attempt_counts": {
+    "prefix_clear_suffix_environment_rejected": 17,
+    "audit_blocked": 14,
+    "prefix_clear_suffix_planning_rejected": 1,
+    "audit_inconclusive": 3
+  },
+  "whole_paths": 0,
+  "manipulation_physics_executions": 0,
+  "physics_budget": 8,
+  "hold_validation_count": 6,
+  "additional_recorded_hold_count": 1,
+  "physics_scope": "Only covered-scene initial hold was executed. No D1 manipulation or approach-only physics.",
+  "model_scope": "Canonical q: dense covered MJB. D1: supplied historical scene models, not dense covered MJB.",
+  "models": [
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_01/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__e0a6173d",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+      "selected_reference_sha256": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "c209d89e107e11be3ab95ee170dfc8b3c326fb35f2fcfa4c6c022b7eb8923cff",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0003/Tomato_01/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0003__Tomato_01__435a11fa",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "12d5dbe2e24e19d3e103f5e4f6c5419166eaa4704ad1b45a9253d76f54f0f996",
+      "selected_reference_sha256": "a22eac341a4109ffd3785f6d843e7744cb87d9fbfbfb3febf4cfe9ec879a5674",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "00ed1c3ceada6a5f6a82dda8b7270bf2f87829f97072fed409827b0c7fdcb98c",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_01/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+      "selected_reference_sha256": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "a325f861f5ddea3ce78303d416d000448ef9a11cceffd8a92cc0577fe6fdb6d0",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0005/Tomato_01/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0005__Tomato_01__0d47d50d",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "cd360a6b06c78fcaab85ceacf128af5372d0ac05f39fe6ce17ad323ecf843a9a",
+      "selected_reference_sha256": "a36131f10e00e643f157ad9143d5aefed6a0151aad8191ba1c71af8ebd6bc94b",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "1ed86b255f3e288d6daefb4245d5390697b1779b62c9110421c0ca30c61bd756",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_08/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "69dc49a6cfa611bb24eb93a9a573220c648223b5e32312cc24d444f2cb103ea7",
+      "selected_reference_sha256": "8b162731415747db1c2a35373d11df5a07a0513b735caf115ad682731aa89e6f",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "f30a2b308a867ffd77022d2e78f8fe38f86b85f02fbaa4ffbbb862ec37dae308",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_08/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+      "selected_reference_sha256": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "6c77673229dd4293ecbd395fc5c5b360c6d1ded3cdd95e62a3602be991c7d415",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "source_run": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_01/run",
+      "destination": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__267690e4",
+      "selected_model": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb",
+      "selected_model_sha256": "dbcf1f00ed3344f5fb138e802ec2d78a660384fe71acefb0bca7a100b95620dd",
+      "selected_reference_sha256": "ba56d07b53cb4bcdea1b49ef12367865427c0f38e2ef00aec9e4f665afa59e09",
+      "planning_model_sha256": "3020a6d2b9890090f90274a30744788cb0fc41e6c25538af94ce7cd7e5e5bc46",
+      "source_candidates_sha256": "286b77cba7abe62f31b56a7be34cb92d7b1a4133f7832f3e6d5b82f53d77cdd8",
+      "source_initial_trace_sha256": "e934cff2903f473975b4d4c8ed378e03ddc6df06f1a2b9d8fd63e3303fbe868b",
+      "derived_initial_trace_sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    }
+  ],
+  "rows": [
+    {
+      "query_id": "q00_scene_0000_Tomato_01_recorded",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "design": "recorded",
+      "status": "no_valid_ik_goal_found",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "goal_collision": 5,
+        "ik_not_found": 3
+      },
+      "goal_collisions": [
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_19",
+            "g22"
+          ],
+          "distance_m": -0.000979995219624872
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_19",
+            "g22"
+          ],
+          "distance_m": -0.0009816318172136016
+        },
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_19",
+            "g22"
+          ],
+          "distance_m": -0.0009805482722192995
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_19",
+            "g22"
+          ],
+          "distance_m": -0.000981161844694707
+        }
+      ],
+      "approach_passes": 0,
+      "attempts": [],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q01_scene_0003_Tomato_01_recorded",
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "design": "recorded",
+      "status": "no_valid_ik_goal_found",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "goal_collision": 7,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g385",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0015581149943451487
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g385",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0015677287357707698
+        },
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g385",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0015661435698721142
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g22"
+          ],
+          "distance_m": -0.052144963484050344
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g385",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0015662207288157288
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g22"
+          ],
+          "distance_m": -0.05237807891184046
+        }
+      ],
+      "approach_passes": 0,
+      "attempts": [],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q02_scene_0004_Tomato_01_recorded",
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "design": "recorded",
+      "status": "no_valid_ik_goal_found",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "goal_collision": 7,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g388",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0008445166331070577
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g388",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0008543278244849087
+        },
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g388",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0008532936750467532
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g22"
+          ],
+          "distance_m": -0.01351322800954892
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "g388",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0008529808967890783
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g22"
+          ],
+          "distance_m": -0.013554191644095676
+        }
+      ],
+      "approach_passes": 0,
+      "attempts": [],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q03_scene_0005_Tomato_01_recorded",
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "design": "recorded",
+      "status": "no_valid_ik_goal_found",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "goal_collision": 5,
+        "ik_not_found": 3
+      },
+      "goal_collisions": [
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_14",
+            "g18"
+          ],
+          "distance_m": -0.015299602890237884
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_14",
+            "g18"
+          ],
+          "distance_m": -0.015314476863991993
+        },
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_14",
+            "g18"
+          ],
+          "distance_m": -0.015313271340936081
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_14",
+            "g18"
+          ],
+          "distance_m": -0.015313693513702178
+        }
+      ],
+      "approach_passes": 0,
+      "attempts": [],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q04_scene_0004_Tomato_08_recorded",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "design": "recorded",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0012466081938188834
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.001077798857789116
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            1.9437645678786644e-06,
+            3.3010453867378597,
+            -0.23194574514897853,
+            -1.5964607493920377,
+            0.25602192903720505,
+            -1.570938633412095,
+            0.09020031137421022
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 9.45,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2778,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 31.858333333333334,
+            "phases": [
+              "seat"
+            ],
+            "robot_geom": "g383",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_11_00",
+            "environment_class": "glb_plant",
+            "distance_m": -1.7763208929864253e-05,
+            "command": [
+              0.08494775379820708,
+              3.2139398901004226,
+              -0.4505401615386877,
+              -1.9695054682096038,
+              1.716139397968203,
+              -1.6440177947192307,
+              0.3475745348871192
+            ],
+            "segment_world": [
+              [
+                -0.5942060208987703,
+                0.9777318145168898,
+                0.46690555642464227
+              ],
+              [
+                -0.594220351118385,
+                0.9777288619767817,
+                0.46689548374355994
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 31.85
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.2504147822230075e-05,
+            0.5319629572775793,
+            1.7456784923267201,
+            -1.596545822525488,
+            1.4231965998950251,
+            -4.711944600515256,
+            -0.2823174913090508
+          ],
+          "status": "prefix_clear_suffix_planning_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.666666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "reason": "self_collision",
+            "step": 1143,
+            "phase": "seat",
+            "pair": [
+              "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+              "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+            ]
+          }
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            1.5060573638633183e-06,
+            0.5319617419606399,
+            0.23195238847602548,
+            1.5964678878258998,
+            -0.2560905347049623,
+            1.5712360754888086,
+            -0.2823118130908441
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.916666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2778,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 36.325,
+            "phases": [
+              "seat"
+            ],
+            "robot_geom": "g383",
+            "environment_geom": "glb_col_TRUSS_Pedicel_proximal_11_00",
+            "environment_class": "glb_plant",
+            "distance_m": -1.6089749882997983e-05,
+            "command": [
+              0.09474227650958589,
+              0.49529439084871485,
+              0.45042145745949236,
+              1.9882082909069712,
+              -1.6668240546812962,
+              1.182340287893088,
+              0.05645772511742179
+            ],
+            "segment_world": [
+              [
+                -0.5942077795986576,
+                0.9777291867554926,
+                0.46690587760269253
+              ],
+              [
+                -0.5942207597230094,
+                0.9777265123266051,
+                0.4668967537957438
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 36.31666666666667
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q05_scene_0004_Tomato_08_neutral",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "design": "neutral",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0012466081861234265
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.001077798990609262
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            1.9419262740469894e-06,
+            3.3010453867378873,
+            -0.2319457440462899,
+            -1.5964607459300346,
+            0.25602192447293703,
+            -1.5709386334118425,
+            0.09020031137402301
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 9.45,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2862,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 21.108333333333334,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g381",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1078184488610915e-05,
+            "command": [
+              0.014358779359202226,
+              3.233682893753432,
+              -0.30018354116841545,
+              -1.5460326170087582,
+              0.2738469045321274,
+              -1.5710462352487475,
+              0.15755996494709965
+            ],
+            "segment_world": [
+              [
+                -0.6066810562860628,
+                0.9565051893834563,
+                0.46473103314923087
+              ],
+              [
+                -0.6066956664905733,
+                0.9564904555382883,
+                0.4647347406540604
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 21.1
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.248858587626476e-05,
+            0.531962957277338,
+            1.745678456107117,
+            -1.596545793215955,
+            1.4231966068047617,
+            -4.711944600515361,
+            -0.2823174913087614
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.666666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2862,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 25.325,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g381",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1035618306784222e-05,
+            "command": [
+              0.014201304193976041,
+              0.44907377194252085,
+              1.767091084458049,
+              -1.5457518327148991,
+              1.3510181576885052,
+              -4.712073474128369,
+              -0.1994231199084444
+            ],
+            "segment_world": [
+              [
+                -0.6066809814647909,
+                0.9565050394259292,
+                0.4647309740585284
+              ],
+              [
+                -0.6066955621647393,
+                0.9564903353348759,
+                0.46473467407648195
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 25.316666666666666
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            1.5063393172581296e-06,
+            0.5319617419607314,
+            0.23195238864513978,
+            1.5964678883572774,
+            -0.25609053540516286,
+            1.5712360754888601,
+            -0.2823118130911589
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.916666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2862,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 25.575,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g381",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.105793541701327e-05,
+            "command": [
+              0.01433074913073063,
+              0.44907377200638554,
+              0.3001664316349547,
+              1.5459845938424353,
+              -0.27379360842904293,
+              1.5711118330336853,
+              -0.19942311954849617
+            ],
+            "segment_world": [
+              [
+                -0.6066810646393989,
+                0.9565051686821424,
+                0.46473103308443403
+              ],
+              [
+                -0.6066956608083055,
+                0.9564904489912236,
+                0.4647347370278096
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 25.566666666666666
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q06_scene_0004_Tomato_08_neutral_pitch15",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "design": "neutral_pitch15",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.0012466081861234265
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "glb_col_Tomato_02"
+          ],
+          "distance_m": -0.001077798990609262
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            1.9419262740469894e-06,
+            3.3010453867378873,
+            -0.2319457440462899,
+            -1.5964607459300346,
+            0.25602192447293703,
+            -1.5709386334118425,
+            0.09020031137402301
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 9.45,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2664,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 21.233333333333334,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g380",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.208383862295363e-05,
+            "command": [
+              0.00033511298043810645,
+              3.256356359183408,
+              -0.306732079130371,
+              -1.5628441996716087,
+              0.3220363883819257,
+              -1.7521253169358924,
+              0.13685675772959804
+            ],
+            "segment_world": [
+              [
+                -0.6058018677482725,
+                0.9566180234689664,
+                0.46689680656055427
+              ],
+              [
+                -0.605814901840773,
+                0.9566021320455002,
+                0.4669048856088416
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 21.227777777777778
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.248858587626476e-05,
+            0.531962957277338,
+            1.745678456107117,
+            -1.596545793215955,
+            1.4231966068047617,
+            -4.711944600515361,
+            -0.2823174913087614
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.666666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2664,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 25.45,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g380",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.238858351054059e-05,
+            "command": [
+              0.0014003425212692781,
+              0.47172882519419623,
+              1.7752481113758836,
+              -1.5517600772938644,
+              1.3895742517632466,
+              -4.890286867462298,
+              -0.22599567805970588
+            ],
+            "segment_world": [
+              [
+                -0.6058009886200779,
+                0.9566178966240174,
+                0.4668971423618011
+              ],
+              [
+                -0.605814202575922,
+                0.9566017859076038,
+                0.4669053328965335
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 25.441666666666666
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            1.5063393172581296e-06,
+            0.5319617419607314,
+            0.23195238864513978,
+            1.5964678883572774,
+            -0.25609053540516286,
+            1.5712360754888601,
+            -0.2823118130911589
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.916666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2664,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 25.7,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g380",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.2395200487431918e-05,
+            "command": [
+              0.008293139030545103,
+              0.4717288258239844,
+              0.30737666875251196,
+              1.5638635714074876,
+              -0.2581779437087595,
+              1.3928984386330387,
+              -0.22599567822299227
+            ],
+            "segment_world": [
+              [
+                -0.6058009704564903,
+                0.9566179055722892,
+                0.46689717117935503
+              ],
+              [
+                -0.6058141883177373,
+                0.9566017900943311,
+                0.4669053641348113
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 25.691666666666666
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q07_scene_0000_Tomato_08_recorded",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "design": "recorded",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.023701987552515333
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.023699313994147438
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            0.04602527077003973,
+            3.1955669665854156,
+            -0.4929288825879738,
+            -1.3051775642549823,
+            0.22577567573361562,
+            -1.5712263502834254,
+            0.273911573869399
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 8.583333333333334,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2159,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 14.166666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.0774911923920154e-05,
+            "command": [
+              0.04914623223728924,
+              3.1571882902006396,
+              -0.5037241343119724,
+              -1.2968196825022353,
+              0.22823124885943585,
+              -1.5712852647940954,
+              0.3122889280172545
+            ],
+            "segment_world": [
+              [
+                -0.7463894077487643,
+                1.0024106369246644,
+                0.4831893129673395
+              ],
+              [
+                -0.7463779910841174,
+                1.0023933272165135,
+                0.4831905899706764
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 14.158333333333333
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.460384865149412e-09,
+            0.3704496586976421,
+            1.6326656310863688,
+            -1.215437320276658,
+            1.1551628062138068,
+            -4.712320908296515,
+            -0.04257219747223911
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.683333333333334,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2159,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 19.266666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.1741186736160857e-05,
+            "command": [
+              0.0034854686136695217,
+              0.33037001646115466,
+              1.636725525230739,
+              -1.2085303946650547,
+              1.1441957201845239,
+              -4.7123849436364935,
+              -0.0024896831507087358
+            ],
+            "segment_world": [
+              [
+                -0.7463920328493873,
+                1.0024100287378463,
+                0.4831888181237108
+              ],
+              [
+                -0.7463800851771709,
+                1.0023919139271251,
+                0.48319015452254177
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 19.258333333333333
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            2.2224285716136157e-10,
+            0.3704487499776989,
+            0.47340161188857394,
+            1.215436642587792,
+            -0.1164476734619716,
+            1.5708595251377901,
+            -0.0425664714601933
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "OMPL_RRTConnect",
+          "resolution_fraction": 0.0003007745625928941,
+          "impossible": null,
+          "prefix_seconds": 26.9,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2159,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "inconclusive",
+          "first_violation": null,
+          "audit_complete": false,
+          "audit_error": "LimitReached: overall_planning_deadline",
+          "last_completed_sample_time_s": 31.7
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q08_scene_0000_Tomato_08_neutral",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "design": "neutral",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.02370198762103493
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.02369931400399925
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            0.04179386249614571,
+            3.195566967290602,
+            -0.4906609823787001,
+            -1.2975708157115198,
+            0.21590110481471875,
+            -1.571226371292862,
+            0.27391158966860424
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 8.666666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2089,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 14.25,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.187205852717121e-05,
+            "command": [
+              0.044942838062565674,
+              3.15718840723427,
+              -0.5014363198794973,
+              -1.2893342358065434,
+              0.21845802869126754,
+              -1.5712852740399497,
+              0.31228881959310667
+            ],
+            "segment_world": [
+              [
+                -0.7463915356270263,
+                1.002410522548647,
+                0.4831889373481174
+              ],
+              [
+                -0.7463795160354026,
+                1.0023922986952247,
+                0.4831902817914453
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 14.244444444444444
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.44803114221545e-09,
+            0.37044965869762053,
+            1.6326656310579248,
+            -1.2154373202500857,
+            1.155162806215469,
+            -4.712320908296395,
+            -0.04257219747237966
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.683333333333334,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2089,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 19.266666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.174118683936628e-05,
+            "command": [
+              0.003485452986941515,
+              0.3303700164610031,
+              1.6367254894598293,
+              -1.2085303617025387,
+              1.1441957229927242,
+              -4.712384943636338,
+              -0.002489683150669119
+            ],
+            "segment_world": [
+              [
+                -0.7463920328494731,
+                1.0024100287379138,
+                0.48318881812371595
+              ],
+              [
+                -0.7463800851772,
+                1.0023919139271065,
+                0.48319015452255326
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 19.258333333333333
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            2.2259178614558533e-10,
+            0.37044874997800953,
+            0.4734016118890828,
+            1.2154366425877507,
+            -0.1164476734627125,
+            1.5708595251377788,
+            -0.04256647146051118
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "OMPL_RRTConnect",
+          "resolution_fraction": 0.0003007745625928941,
+          "impossible": null,
+          "prefix_seconds": 26.9,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2089,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "inconclusive",
+          "first_violation": null,
+          "audit_complete": false,
+          "audit_error": "LimitReached: overall_planning_deadline",
+          "last_completed_sample_time_s": 21.47222222222222
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q09_scene_0000_Tomato_08_neutral_pitch15",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "design": "neutral_pitch15",
+      "status": "prefix_clear_suffix_environment_rejected",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "valid_goal": 4,
+        "goal_collision": 3,
+        "ik_not_found": 1
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.02370198762103493
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_10",
+            "g18"
+          ],
+          "distance_m": -0.02369931400399925
+        }
+      ],
+      "approach_passes": 3,
+      "attempts": [
+        {
+          "branch_index": 0,
+          "qgoal": [
+            0.04179386249614571,
+            3.195566967290602,
+            -0.4906609823787001,
+            -1.2975708157115198,
+            0.21590110481471875,
+            -1.571226371292862,
+            0.27391158966860424
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 8.666666666666666,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2149,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 14.25,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.187205852717121e-05,
+            "command": [
+              0.044942838062565674,
+              3.15718840723427,
+              -0.5014363198794973,
+              -1.2893342358065434,
+              0.21845802869126754,
+              -1.5712852740399497,
+              0.31228881959310667
+            ],
+            "segment_world": [
+              [
+                -0.7463915356270263,
+                1.002410522548647,
+                0.4831889373481174
+              ],
+              [
+                -0.7463795160354026,
+                1.0023922986952247,
+                0.4831902817914453
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 14.244444444444444
+        },
+        {
+          "branch_index": 1,
+          "qgoal": [
+            4.44803114221545e-09,
+            0.37044965869762053,
+            1.6326656310579248,
+            -1.2154373202500857,
+            1.155162806215469,
+            -4.712320908296395,
+            -0.04257219747237966
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "direct_checked",
+          "impossible": null,
+          "prefix_seconds": 13.683333333333334,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2149,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "blocked",
+          "first_violation": {
+            "time_s": 19.266666666666666,
+            "phases": [
+              "insert"
+            ],
+            "robot_geom": "g394",
+            "environment_geom": "glb_col_Tomato_10",
+            "environment_class": "glb_plant",
+            "distance_m": -2.174118683936628e-05,
+            "command": [
+              0.003485452986941515,
+              0.3303700164610031,
+              1.6367254894598293,
+              -1.2085303617025387,
+              1.1441957229927242,
+              -4.712384943636338,
+              -0.002489683150669119
+            ],
+            "segment_world": [
+              [
+                -0.7463920328494731,
+                1.0024100287379138,
+                0.48318881812371595
+              ],
+              [
+                -0.7463800851772,
+                1.0023919139271065,
+                0.48319015452255326
+              ]
+            ]
+          },
+          "audit_complete": false,
+          "audit_error": null,
+          "last_completed_sample_time_s": 19.258333333333333
+        },
+        {
+          "branch_index": 2,
+          "qgoal": [
+            2.2259178614558533e-10,
+            0.37044874997800953,
+            0.4734016118890828,
+            1.2154366425877507,
+            -0.1164476734627125,
+            1.5708595251377788,
+            -0.04256647146051118
+          ],
+          "status": "prefix_clear_suffix_environment_rejected",
+          "method": "OMPL_RRTConnect",
+          "resolution_fraction": 0.0003007745625928941,
+          "impossible": null,
+          "prefix_seconds": 26.9,
+          "arrival_self_check": {
+            "passed": true
+          },
+          "arrival_audit": "sampled_clear",
+          "suffix_planner": {
+            "passed": true,
+            "samples": 2149,
+            "max_arm_sample_rad": 0.015,
+            "max_lift_sample_m": 0.001
+          },
+          "whole_self_check": {
+            "passed": true
+          },
+          "whole_environment_check": "inconclusive",
+          "first_violation": null,
+          "audit_complete": false,
+          "audit_error": "LimitReached: overall_planning_deadline",
+          "last_completed_sample_time_s": 25.91111111111111
+        }
+      ],
+      "physics_executed": false
+    },
+    {
+      "query_id": "q10_scene_0000_Tomato_01_side_control",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "design": "recorded",
+      "status": "no_valid_ik_goal_found",
+      "source_unchanged": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "ik_status_counts": {
+        "goal_collision": 5,
+        "ik_not_found": 3
+      },
+      "goal_collisions": [
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link6/tcp/tomato_gripper/RingCollision/segment_07",
+            "/World/envs/env_0/Robot/link3/collisions/link3/node_STL_BINARY_/mesh"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_12",
+            "g26"
+          ],
+          "distance_m": -0.010383456828315082
+        },
+        {
+          "kind": "self_collision",
+          "pair": [
+            "/World/envs/env_0/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+            "/World/envs/env_0/Robot/farmily_lift_platform/collisions/mesh_0/box"
+          ]
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_12",
+            "g26"
+          ],
+          "distance_m": -0.010380869826807861
+        },
+        {
+          "kind": "environment_collision",
+          "pair": [
+            "robot_geom_12",
+            "g26"
+          ],
+          "distance_m": -0.010383726391916141
+        }
+      ],
+      "approach_passes": 0,
+      "attempts": [],
+      "physics_executed": false
+    }
+  ],
+  "training_eligible": false,
+  "hook_success": null,
+  "impossible": null
+}

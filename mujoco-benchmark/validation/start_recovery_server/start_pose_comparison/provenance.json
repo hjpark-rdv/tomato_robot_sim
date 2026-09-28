@@ -1,0 +1,7 @@
+{
+  "left_states": "/root/docker_share/mujoko_debugging_data/20260928_covered_d1_server/covered_idle.npz",
+  "right_states": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/canonical_hold_video/states.npz",
+  "left": "historical actual invalid-start idle, not rerun this round",
+  "right": "fresh canonical-start idle, no manipulation",
+  "model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+}

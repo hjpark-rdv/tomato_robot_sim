@@ -1,0 +1,13 @@
+{
+  "python": "3.11.14 (main, Oct 10 2025, 08:54:03) [GCC 11.4.0]",
+  "executable": "/root/farmily_tomato/mujoco-benchmark/.recovery-venv/bin/python",
+  "packages": {
+    "mujoco": "3.13.0",
+    "torch": "2.7.0+cu128",
+    "python-fcl": "0.7.0.11",
+    "ompl": "2.0.1",
+    "numpy": "2.4.3",
+    "scipy": "1.15.3",
+    "pytest": "8.4.2"
+  }
+}

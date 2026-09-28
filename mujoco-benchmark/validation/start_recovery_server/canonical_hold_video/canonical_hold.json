@@ -1,0 +1,13 @@
+{
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/canonical_hold_video/run",
+  "states": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/canonical_hold_video/states.npz",
+  "samples": "None",
+  "frames": 11,
+  "fps": 10,
+  "speed": 2,
+  "label": "CANONICAL START HOLD ONLY - no approach or manipulation",
+  "physics_executed_by_renderer": false,
+  "pair": null,
+  "right_caption": "recorded fresh rollout qpos",
+  "highlights": null
+}

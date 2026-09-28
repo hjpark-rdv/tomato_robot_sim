@@ -1,0 +1,2026 @@
+{
+  "schema": "initial_configuration_recovery_v1",
+  "status": "canonical_start_found",
+  "impossible": null,
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_02",
+  "covered_scene": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene",
+  "source_model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+  "covered_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+  "original_q": [
+    0.5036082863807678,
+    3.251610279083252,
+    0.11466656625270844,
+    -1.6495294570922852,
+    -0.17974743247032166,
+    -1.3975170850753784,
+    0.6881734132766724
+  ],
+  "search_contract": {
+    "q_only": true,
+    "robot_base_fixed": true,
+    "collision_geometry_unchanged": true,
+    "contact_masks_unchanged": true,
+    "materials_unchanged": true,
+    "margins_unchanged": true,
+    "actuators_unchanged": true,
+    "radii": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "samples_per_radius": 24,
+    "seed": 20260928
+  },
+  "search": {
+    "status": "valid_candidates_found",
+    "impossible": null,
+    "stop_reason": "valid_candidate_target",
+    "evaluated_candidates": 28,
+    "valid_candidates": 12,
+    "records": [
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.002234416577480796,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.444026639659173,
+            0.7962100363296102,
+            1.0048786223777486
+          ],
+          [
+            -0.44313470809315275,
+            0.7982568382670553,
+            1.0047910018771316
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "original",
+        "radius": 0.0,
+        "sample_index": 0,
+        "normalized_change": 0.0
+      },
+      {
+        "q": [
+          0.4961082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0019383291469017583,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.443604795226974,
+            0.7963474391744098,
+            1.0048824915561287
+          ],
+          [
+            -0.44282060864831596,
+            0.7981183805864339,
+            1.0048054343905977
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 0,
+        "normalized_change": 0.010000000000000009,
+        "axis": 0,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5111082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.002528521876040809,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4441440402379923,
+            0.7959406258262277,
+            1.0048901554346343
+          ],
+          [
+            -0.4431347080931528,
+            0.7982568382670555,
+            1.0047910018771318
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 1,
+        "normalized_change": 0.009999999999999934,
+        "axis": 0,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.125946569442749,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 2,
+        "normalized_change": 0.010000000000000014,
+        "axis": 1,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.377273988723755,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.005377014547662581,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_19",
+          "neighbor_truss_collision_fruit_p19_t02_g062"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4615693616384305,
+            0.7951938895112506,
+            1.0301244388646442
+          ],
+          [
+            -0.4574274695986788,
+            0.7919811812960436,
+            1.0313225714536172
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 3,
+        "normalized_change": 0.010000000000000014,
+        "axis": 1,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          -0.010997143387794506,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.002547976815648719,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_14",
+          "neighbor_truss_collision_rachis_p19_t02_g008"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4999311492572253,
+            0.7992490068391053,
+            1.0558886485442427
+          ],
+          [
+            -0.4982376598727464,
+            0.8011102680061897,
+            1.0562886315759377
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 4,
+        "normalized_change": 0.01,
+        "axis": 2,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.24033027589321138,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.014976626214988378,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4298892841438177,
+            0.8071511249843197,
+            1.0035337156554325
+          ],
+          [
+            -0.4403872103270049,
+            0.7965690234015164,
+            1.0049869894517487
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 5,
+        "normalized_change": 0.01,
+        "axis": 2,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.7071253156661987,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.004604266920530519,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4385481793842652,
+            0.8010309145292558,
+            1.0057122101082712
+          ],
+          [
+            -0.4412586504270053,
+            0.7973096783699254,
+            1.0057830765209816
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 6,
+        "normalized_change": 0.010000000000000002,
+        "axis": 3,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.5919335985183716,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.006850678029180485,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.445928685832593,
+            0.7919525014802065,
+            1.005043009358224
+          ],
+          [
+            -0.4441740526273378,
+            0.7985688115609104,
+            1.0047646342686631
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 7,
+        "normalized_change": 0.010000000000000002,
+        "axis": 3,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.3054111421108246,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.012484102924483624,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.43391579760690047,
+            0.8073988097019299,
+            1.0061635594469316
+          ],
+          [
+            -0.4412586504270053,
+            0.7973096783699253,
+            1.0057830765209814
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 8,
+        "normalized_change": 0.01,
+        "axis": 4,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.054083722829818714,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0011569879481861335,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g043"
+        ],
+        "closest_segment_world": [
+          [
+            -0.43033247113554907,
+            0.7848332608447947,
+            0.9807791937932059
+          ],
+          [
+            -0.4303497524615414,
+            0.7859879970726031,
+            0.9807091458652824
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 9,
+        "normalized_change": 0.01,
+        "axis": 4,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.5231807947158813,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.013652963702665985,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g062"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4526477198015843,
+            0.8196222583652901,
+            1.030663178363827
+          ],
+          [
+            -0.4604560603589721,
+            0.8084349923316805,
+            1.0301356233435568
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 10,
+        "normalized_change": 0.009999999999999997,
+        "axis": 5,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.2718533754348755,
+          0.6881734132766724
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0024910800566871035,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_pedicel_p19_t02_g036"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4124359639117823,
+            0.7623284275688951,
+            0.9730943258249717
+          ],
+          [
+            -0.41240049612986446,
+            0.7647827155985333,
+            0.9726692468289662
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 11,
+        "normalized_change": 0.009999999999999997,
+        "axis": 5,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.5625097036361695
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.0005955431183437264,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4429385320958214,
+            0.7988514641784762,
+            1.0056767813669594
+          ],
+          [
+            -0.44316133774412814,
+            0.7982991788669289,
+            1.005673590201307
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 12,
+        "normalized_change": 0.009999999999999997,
+        "axis": 6,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.8138371229171752
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.004860489040431215,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.44422397277891884,
+            0.7934442819298334,
+            1.0052232685938562
+          ],
+          [
+            -0.4421421921161321,
+            0.79781932886544,
+            1.004836606861281
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 13,
+        "normalized_change": 0.009999999999999997,
+        "axis": 6,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5067083598980369,
+          3.3258007341775593,
+          0.1338859398453263,
+          -1.6510785758792503,
+          -0.06612176506799296,
+          -1.5051627146064928,
+          0.5625097036361695
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.007475331018016728,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g043"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4277262301769146,
+            0.7779836793922469,
+            0.9817245493285701
+          ],
+          [
+            -0.42548685187073665,
+            0.7851099623639332,
+            0.9820106430862754
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 0,
+        "normalized_change": 0.017592339442531673
+      },
+      {
+        "q": [
+          0.49702482094979406,
+          3.1663036127751796,
+          -0.010997143387794506,
+          -1.6138000364285745,
+          -0.18287445864480437,
+          -1.3233324982287713,
+          0.70194963058845
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.007636245322987916,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_14",
+          "neighbor_truss_collision_fruit_p19_t02_g072"
+        ],
+        "closest_segment_world": [
+          [
+            -0.5029383564093932,
+            0.8270744532197795,
+            1.065327502676038
+          ],
+          [
+            -0.5009017522429356,
+            0.8338079041883344,
+            1.0682982137283097
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 1,
+        "normalized_change": 0.017254947977968078
+      },
+      {
+        "q": [
+          0.5016321903048888,
+          3.3322248749700014,
+          0.22123640934318295,
+          -1.7010696960302263,
+          -0.3054111421108246,
+          -1.2869892216745613,
+          0.6080578478495633
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.012041286598581264,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g023"
+        ],
+        "closest_segment_world": [
+          [
+            -0.3863013769767009,
+            0.7720217536171446,
+            0.9372079781688658
+          ],
+          [
+            -0.39461788415901033,
+            0.7687830805182668,
+            0.9291247060718513
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 2,
+        "normalized_change": 0.020447494177542522
+      },
+      {
+        "q": [
+          0.5111082863807678,
+          3.196883309536657,
+          0.08226986849127096,
+          -1.6005994936699908,
+          -0.1287388927653337,
+          -1.39801258238197,
+          0.7655117005453589
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.0009895576852712634,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g072"
+        ],
+        "closest_segment_world": [
+          [
+            -0.49706908541085104,
+            0.833927891912601,
+            1.0619581374232634
+          ],
+          [
+            -0.4976260920244853,
+            0.8331175196701628,
+            1.0620688843127586
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 3,
+        "normalized_change": 0.015878883903378323
+      },
+      {
+        "q": [
+          0.509054416733398,
+          3.2850015559030044,
+          -0.007268770861636589,
+          -1.5919335985183716,
+          -0.14007542112821736,
+          -1.485457540366782,
+          0.6852871136594647
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.004558712049687091,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_18",
+          "neighbor_truss_collision_rachis_p19_t02_g008"
+        ],
+        "closest_segment_world": [
+          [
+            -0.5038985652838642,
+            0.8011182915766292,
+            1.055168397601081
+          ],
+          [
+            -0.5012488026247818,
+            0.8021966326928849,
+            1.0587177346996794
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 4,
+        "normalized_change": 0.017690019836295617
+      },
+      {
+        "q": [
+          0.5010218105051354,
+          3.2314880243698743,
+          0.16104255947352336,
+          -1.699400410640209,
+          -0.30401795898587225,
+          -1.376057982184496,
+          0.8138371229171752
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.021802451558703216,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g023"
+        ],
+        "closest_segment_world": [
+          [
+            -0.397695795895951,
+            0.7985950671308158,
+            0.9244446051881109
+          ],
+          [
+            -0.4009757631310977,
+            0.7771028611350442,
+            0.9228094323100081
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 5,
+        "normalized_change": 0.017428777752430114
+      },
+      {
+        "q": [
+          0.4971759500271965,
+          3.3617282117676965,
+          0.08919954554429034,
+          -1.6447814461149348,
+          -0.22635573060611333,
+          -1.2718533754348755,
+          0.6186406330559608
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.001954027720865429,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_19",
+          "neighbor_truss_collision_rachis_p19_t02_g012"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4526924987501178,
+            0.771233021169837,
+            1.0103041862603235
+          ],
+          [
+            -0.45134053814499214,
+            0.7726438430070841,
+            1.0103071187755164
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 6,
+        "normalized_change": 0.017306181718581434
+      },
+      {
+        "q": [
+          0.5045921856042079,
+          3.128370387495825,
+          0.24033027589321138,
+          -1.6782557765490427,
+          -0.1014607492685658,
+          -1.4476590375529774,
+          0.7514589066155825
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 7,
+        "normalized_change": 0.01740319655346395
+      },
+      {
+        "q": [
+          0.5055729223343879,
+          3.3030877117128568,
+          0.103876786533811,
+          -1.7071253156661987,
+          -0.21422225864110436,
+          -1.4227160341195741,
+          0.658123990454292
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0015358846462200314,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g043"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4236373859509214,
+            0.7826021282194882,
+            0.9818222965154021
+          ],
+          [
+            -0.4228479175378062,
+            0.7839181925334495,
+            0.9818827613209098
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 8,
+        "normalized_change": 0.01190149172171258
+      },
+      {
+        "q": [
+          0.4961098786193093,
+          3.214294543345486,
+          0.24033027589321138,
+          -1.6136103185933819,
+          -0.060670200397048846,
+          -1.327001924644247,
+          0.7990954706481515
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0003343821927086374,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_pedicel_p19_t02_g061"
+        ],
+        "closest_segment_world": [
+          [
+            -0.46914020969489256,
+            0.8030774913895967,
+            1.0391754529190278
+          ],
+          [
+            -0.4689346427073667,
+            0.8033255230105691,
+            1.0390858204503686
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 9,
+        "normalized_change": 0.021139119302433063
+      },
+      {
+        "q": [
+          0.4991345598258846,
+          3.3732995527235765,
+          0.013066826770648993,
+          -1.6725835243681035,
+          -0.11543436354916328,
+          -1.3372435871773465,
+          0.5625097036361695
+        ],
+        "valid": false,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": -0.0005935411750631387,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_14",
+          "neighbor_truss_collision_fruit_p19_t02_g062"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4637777489867049,
+            0.793865359246026,
+            1.0393924076617034
+          ],
+          [
+            -0.4635756291227565,
+            0.7936320711205899,
+            1.039899374463006
+          ]
+        ],
+        "status": "environment_collision",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 10,
+        "normalized_change": 0.01897217523968605
+      },
+      {
+        "q": [
+          0.5085789600170623,
+          3.1713855000946922,
+          0.17370262110519075,
+          -1.63711334219188,
+          -0.2467441385521678,
+          -1.5231807947158813,
+          0.7336808458597462
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 11,
+        "normalized_change": 0.01590400548497962
+      },
+      {
+        "q": [
+          0.5100695741442087,
+          3.377273988723755,
+          0.17942589221664645,
+          -1.629388823297737,
+          -0.28758041337910534,
+          -1.4604749703827888,
+          0.5895120485751103
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.009184670110312211,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g043"
+        ],
+        "closest_segment_world": [
+          [
+            -0.41582424920368516,
+            0.7900526737596962,
+            0.9825560259654117
+          ],
+          [
+            -0.42205299607242136,
+            0.7833390219015862,
+            0.9818576305125566
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 12,
+        "normalized_change": 0.019323085203845257
+      }
+    ],
+    "ranked_valid": [
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.5231807947158813,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.013652963702665985,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g062"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4526477198015843,
+            0.8196222583652901,
+            1.030663178363827
+          ],
+          [
+            -0.4604560603589721,
+            0.8084349923316805,
+            1.0301356233435568
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 10,
+        "normalized_change": 0.009999999999999997,
+        "axis": 5,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.5625097036361695
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.0005955431183437264,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4429385320958214,
+            0.7988514641784762,
+            1.0056767813669594
+          ],
+          [
+            -0.44316133774412814,
+            0.7982991788669289,
+            1.005673590201307
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 12,
+        "normalized_change": 0.009999999999999997,
+        "axis": 6,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.24033027589321138,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.014976626214988378,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4298892841438177,
+            0.8071511249843197,
+            1.0035337156554325
+          ],
+          [
+            -0.4403872103270049,
+            0.7965690234015164,
+            1.0049869894517487
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 5,
+        "normalized_change": 0.01,
+        "axis": 2,
+        "sign": 1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.3054111421108246,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.012484102924483624,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.43391579760690047,
+            0.8073988097019299,
+            1.0061635594469316
+          ],
+          [
+            -0.4412586504270053,
+            0.7973096783699253,
+            1.0057830765209814
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 8,
+        "normalized_change": 0.01,
+        "axis": 4,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.251610279083252,
+          0.11466656625270844,
+          -1.7071253156661987,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.004604266920530519,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g052"
+        ],
+        "closest_segment_world": [
+          [
+            -0.4385481793842652,
+            0.8010309145292558,
+            1.0057122101082712
+          ],
+          [
+            -0.4412586504270053,
+            0.7973096783699254,
+            1.0057830765209816
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 6,
+        "normalized_change": 0.010000000000000002,
+        "axis": 3,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5036082863807678,
+          3.125946569442749,
+          0.11466656625270844,
+          -1.6495294570922852,
+          -0.17974743247032166,
+          -1.3975170850753784,
+          0.6881734132766724
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "axis",
+        "radius": 0.01,
+        "sample_index": 2,
+        "normalized_change": 0.010000000000000014,
+        "axis": 1,
+        "sign": -1.0
+      },
+      {
+        "q": [
+          0.5111082863807678,
+          3.196883309536657,
+          0.08226986849127096,
+          -1.6005994936699908,
+          -0.1287388927653337,
+          -1.39801258238197,
+          0.7655117005453589
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.0009895576852712634,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g072"
+        ],
+        "closest_segment_world": [
+          [
+            -0.49706908541085104,
+            0.833927891912601,
+            1.0619581374232634
+          ],
+          [
+            -0.4976260920244853,
+            0.8331175196701628,
+            1.0620688843127586
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 3,
+        "normalized_change": 0.015878883903378323
+      },
+      {
+        "q": [
+          0.5085789600170623,
+          3.1713855000946922,
+          0.17370262110519075,
+          -1.63711334219188,
+          -0.2467441385521678,
+          -1.5231807947158813,
+          0.7336808458597462
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 11,
+        "normalized_change": 0.01590400548497962
+      },
+      {
+        "q": [
+          0.5045921856042079,
+          3.128370387495825,
+          0.24033027589321138,
+          -1.6782557765490427,
+          -0.1014607492685658,
+          -1.4476590375529774,
+          0.7514589066155825
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.03,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "robot_geom_3",
+          "gutter_collision_Gutter_SlabSupportRib_003"
+        ],
+        "closest_segment_world": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 7,
+        "normalized_change": 0.01740319655346395
+      },
+      {
+        "q": [
+          0.5010218105051354,
+          3.2314880243698743,
+          0.16104255947352336,
+          -1.699400410640209,
+          -0.30401795898587225,
+          -1.376057982184496,
+          0.8138371229171752
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.021802451558703216,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g023"
+        ],
+        "closest_segment_world": [
+          [
+            -0.397695795895951,
+            0.7985950671308158,
+            0.9244446051881109
+          ],
+          [
+            -0.4009757631310977,
+            0.7771028611350442,
+            0.9228094323100081
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 5,
+        "normalized_change": 0.017428777752430114
+      },
+      {
+        "q": [
+          0.5100695741442087,
+          3.377273988723755,
+          0.17942589221664645,
+          -1.629388823297737,
+          -0.28758041337910534,
+          -1.4604749703827888,
+          0.5895120485751103
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.009184670110312211,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g043"
+        ],
+        "closest_segment_world": [
+          [
+            -0.41582424920368516,
+            0.7900526737596962,
+            0.9825560259654117
+          ],
+          [
+            -0.42205299607242136,
+            0.7833390219015862,
+            0.9818576305125566
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 12,
+        "normalized_change": 0.019323085203845257
+      },
+      {
+        "q": [
+          0.5016321903048888,
+          3.3322248749700014,
+          0.22123640934318295,
+          -1.7010696960302263,
+          -0.3054111421108246,
+          -1.2869892216745613,
+          0.6080578478495633
+        ],
+        "valid": true,
+        "cached": false,
+        "joint_bounds": true,
+        "self_collision": null,
+        "minimum_distance_m": 0.012041286598581264,
+        "minimum_distance_is_lower_bound": false,
+        "closest_pair": [
+          "g410",
+          "neighbor_truss_collision_fruit_p19_t02_g023"
+        ],
+        "closest_segment_world": [
+          [
+            -0.3863013769767009,
+            0.7720217536171446,
+            0.9372079781688658
+          ],
+          [
+            -0.39461788415901033,
+            0.7687830805182668,
+            0.9291247060718513
+          ]
+        ],
+        "status": "valid",
+        "source": "sobol",
+        "radius": 0.01,
+        "sample_index": 2,
+        "normalized_change": 0.020447494177542522
+      }
+    ],
+    "budget": {
+      "candidates": 28,
+      "distance_queries": 17073,
+      "wall_s": 0.3600684739649296
+    }
+  },
+  "hold_results": [
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    }
+  ],
+  "canonical": {
+    "q": [
+      0.5036082863807678,
+      3.251610279083252,
+      0.11466656625270844,
+      -1.6495294570922852,
+      -0.17974743247032166,
+      -1.5231807947158813,
+      0.6881734132766724
+    ],
+    "search": {
+      "q": [
+        0.5036082863807678,
+        3.251610279083252,
+        0.11466656625270844,
+        -1.6495294570922852,
+        -0.17974743247032166,
+        -1.5231807947158813,
+        0.6881734132766724
+      ],
+      "valid": true,
+      "cached": false,
+      "joint_bounds": true,
+      "self_collision": null,
+      "minimum_distance_m": 0.013652963702665985,
+      "minimum_distance_is_lower_bound": false,
+      "closest_pair": [
+        "g410",
+        "neighbor_truss_collision_fruit_p19_t02_g062"
+      ],
+      "closest_segment_world": [
+        [
+          -0.4526477198015843,
+          0.8196222583652901,
+          1.030663178363827
+        ],
+        [
+          -0.4604560603589721,
+          0.8084349923316805,
+          1.0301356233435568
+        ]
+      ],
+      "status": "valid",
+      "source": "axis",
+      "radius": 0.01,
+      "sample_index": 10,
+      "normalized_change": 0.009999999999999997,
+      "axis": 5,
+      "sign": -1.0
+    },
+    "hold": {
+      "finite": true,
+      "warning_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135
+        }
+      ],
+      "worst_contacts": [
+        {
+          "a": "glb_col_TRUSS_Rachis_04",
+          "b": "glb_col_Tomato_02",
+          "categories": [
+            "active_plant",
+            "active_plant"
+          ],
+          "penetration_m": 0.00022795559258460135,
+          "time_s": 0.0
+        }
+      ],
+      "max_body_displacement_m": 0.0029677807355517026,
+      "max_robot_body_displacement_m": 0.0,
+      "max_robot_joint_drift": 0.0,
+      "seconds": 2.0,
+      "hz": 240.0,
+      "validity": {
+        "passed": true,
+        "reasons": [],
+        "violations": [],
+        "displacement_is_diagnostic": true,
+        "penetration_limit_m": 0.0005
+      }
+    },
+    "selection_rule": "minimum normalized joint change; native clearance secondary",
+    "all_requested_validation_runs_passed": true
+  },
+  "requested_validation_runs": [],
+  "diagnostic_if_unresolved": {
+    "original_closest_pair": [
+      "g410",
+      "neighbor_truss_collision_fruit_p19_t02_g052"
+    ],
+    "original_signed_distance_m": -0.002234416577480796,
+    "closest_segment_world": [
+      [
+        -0.444026639659173,
+        0.7962100363296102,
+        1.0048786223777486
+      ],
+      [
+        -0.44313470809315275,
+        0.7982568382670553,
+        1.0047910018771316
+      ]
+    ],
+    "witness_delta_m": [
+      0.0008919315660202431,
+      0.0020468019374451085,
+      -8.762050061705828e-05
+    ],
+    "note": "Witness vector is diagnostic only; it is not permission to move the robot base."
+  },
+  "wall_s": 18.162300545722246,
+  "training_eligible": false,
+  "hook_success": null
+}

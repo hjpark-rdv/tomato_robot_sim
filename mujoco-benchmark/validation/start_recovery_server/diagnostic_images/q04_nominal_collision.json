@@ -1,0 +1,20 @@
+{
+  "query": "q04_scene_0004_Tomato_08_recorded",
+  "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69",
+  "q": [
+    0.08494775379820708,
+    3.2139398901004226,
+    -0.4505401615386877,
+    -1.9695054682096038,
+    1.716139397968203,
+    -1.6440177947192307,
+    0.3475745348871192
+  ],
+  "pair": [
+    "g383",
+    "glb_col_TRUSS_Pedicel_proximal_11_00"
+  ],
+  "signed_distance_m": -1.7763208929864253e-05,
+  "physics_executed": false,
+  "caption": "Nominal seat pose: non-target pedicel collision (NOT executed)"
+}

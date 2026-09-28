@@ -1,0 +1,16 @@
+{
+  "robot_geom": "g410",
+  "robot_body": "Hook",
+  "neighbor_geom": "neighbor_truss_collision_fruit_p19_t02_g052",
+  "robot_geom_center": [
+    -0.43361730785196545,
+    0.8601306395850035,
+    1.017022219766216
+  ],
+  "neighbor_geom_center": [
+    -0.44824048720583315,
+    0.7880243461564633,
+    1.005436229931699
+  ],
+  "scope": "recorded idle physics, no approach/manipulation"
+}

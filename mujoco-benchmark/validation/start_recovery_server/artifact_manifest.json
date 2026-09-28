@@ -1,0 +1,2676 @@
+{
+  "files": [
+    {
+      "path": "START_RECOVERY_SERVER_REPORT_KO.md",
+      "bytes": 10534,
+      "sha256": "a70102b9a22e44669f31090804c32e2dcb2c537284d7121067559716c234155f"
+    },
+    {
+      "path": "canonical_hold_render.log",
+      "bytes": 124,
+      "sha256": "2bc5f2194c23303eb7391f4b7be9daf6524d4b83339187e4e5fb6cd8e9ef62e1"
+    },
+    {
+      "path": "canonical_hold_video/canonical_hold.json",
+      "bytes": 506,
+      "sha256": "433cf0af7163f92bbe8a3d7231f00170d7a155af1167fe949004ba198ca61dfe"
+    },
+    {
+      "path": "canonical_hold_video/canonical_hold.mp4",
+      "bytes": 234170,
+      "sha256": "d7a3355fb58b24899cd9db8f9220ae080b5d1d9c6f2f08763fe9055c6600f996"
+    },
+    {
+      "path": "canonical_hold_video/canonical_hold_frame0.png",
+      "bytes": 317404,
+      "sha256": "137012cab5d9381c99061146443959df9227483982f3afe802c522b2dc53d397"
+    },
+    {
+      "path": "canonical_hold_video/canonical_hold_frame10.png",
+      "bytes": 325736,
+      "sha256": "a5486781e14c33cd37f187f349e88167eea17346ba40b4df7090a4a3bbbd0612"
+    },
+    {
+      "path": "canonical_hold_video/canonical_hold_frame5.png",
+      "bytes": 325757,
+      "sha256": "fa5a488a122707dccf81413c1298ba837492d06dbde8701f16e4bcc9e20e818c"
+    },
+    {
+      "path": "canonical_hold_video/contacts.json",
+      "bytes": 1920,
+      "sha256": "80aee7539c112cbb13dfa895954cc099b6150b14ba48f2bb10f2444d1d9b08e0"
+    },
+    {
+      "path": "canonical_hold_video/result.json",
+      "bytes": 1312,
+      "sha256": "e266d03d6c72deb795df7f7d84c16ee515359675504f313c2c3c2b33a4e8992e"
+    },
+    {
+      "path": "canonical_hold_video/run/action_frame.json",
+      "bytes": 1032,
+      "sha256": "54d96477d999df32d2e802f91b99e83bd97df1f2db2f173413be223d3960e57b"
+    },
+    {
+      "path": "canonical_hold_video/run/candidates/canonical_hold/plan.json",
+      "bytes": 167,
+      "sha256": "9d5ec568c0dd05dd13439551895e154fd84d83e7a229d34000836f4bfe124a3d"
+    },
+    {
+      "path": "canonical_hold_video/run/candidates/canonical_hold/trace.json",
+      "bytes": 40293,
+      "sha256": "f5a453afd2090cd98cb1106bd2294cc04822741d78d3406dafee1ea547c990c9"
+    },
+    {
+      "path": "canonical_hold_video/run/candidates.json",
+      "bytes": 560,
+      "sha256": "d488e41fbf79653aa93803f3b22d8d873f9c92eff343ef863ded8be2cbd01325"
+    },
+    {
+      "path": "canonical_hold_video/run/manifest.json",
+      "bytes": 3932,
+      "sha256": "b611ed8a0d249139c825a33bfae955de53b2f1b0fce1ccb9d32f316e55e2ee99"
+    },
+    {
+      "path": "canonical_hold_video/run/new_start_provenance.json",
+      "bytes": 1678,
+      "sha256": "3323b002b33e723c6d4ef84b686767281ebfae4e5dc8cb1422025edc44b9dad8"
+    },
+    {
+      "path": "canonical_hold_video/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "05fc82be782292b9a422ea9faef4c2afed0f54b83b6a2e91804a0e69f0786420"
+    },
+    {
+      "path": "canonical_hold_video/run/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "canonical_hold_video/states.npz",
+      "bytes": 2575662,
+      "sha256": "12e878bc01211a3d6a03661df998572f9fb60d3441ed89b79e56643198ac88b6"
+    },
+    {
+      "path": "canonical_hold_video.log",
+      "bytes": 1220,
+      "sha256": "a18abd8ce0c70cfee6602dda83dc555c8f2d998a15a9fffd7afb77e0c3aa05c6"
+    },
+    {
+      "path": "compat_recovery/effective_plan_results.json",
+      "bytes": 18213,
+      "sha256": "78bdb817ac0574b93d86ff776141d31cb5edc8c69d56c23bb837c3bdea1c3913"
+    },
+    {
+      "path": "compat_recovery/effective_queries.json",
+      "bytes": 39997,
+      "sha256": "d7c5b0d14bb3b764e2cae882bab54396cab1f598094e768354e03a3d7dfdd0a1"
+    },
+    {
+      "path": "compat_recovery/new_start_physics_results.json",
+      "bytes": 167,
+      "sha256": "d4e762c735fe7e051a44e3ac00815b4fc8fc2d59da755830104659dd76e306e1"
+    },
+    {
+      "path": "compat_recovery/new_start_plan_results.json",
+      "bytes": 8840,
+      "sha256": "e41c0fca144cbbf9da85830ac6f61eb512349f7de75272ff009000f8bcd36a4a"
+    },
+    {
+      "path": "compat_recovery/pipeline_summary.json",
+      "bytes": 919,
+      "sha256": "b272b2e4181eda2fedb8717169b6b15e372c44c408dad3f22debdd9f0d85db94"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_audit.json",
+      "bytes": 113977,
+      "sha256": "d60d3fdc483866a568aa2592ce2731d0c2527f1ae31dab04cb1c765466ac45f6"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3498,
+      "sha256": "994a0fe3231683f305509c71c345ce286c152fb50f56c93f43be30d80ddf7353"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 284937,
+      "sha256": "20e95b32883f5ead696cb78f5f4519426bd3a49a4f582955fe180106314bd36a"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/candidates.json",
+      "bytes": 3217,
+      "sha256": "6929ca3656b05943daa4cd943782d6a71bc7b3ef7db3cee7c4796d5ab72f56dc"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/environment_preflight.html",
+      "bytes": 228899,
+      "sha256": "c86934d45f67679dacabbfe081d5edaa85c6870cda4f7e074a3f9d497fc9311f"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/environment_preflight.json",
+      "bytes": 165161,
+      "sha256": "1f366753e3802e37150f6764ae9e2695603ef04a096a6d385a0d7cdb48c7119a"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/prefix_joint_path.json",
+      "bytes": 276198,
+      "sha256": "f9de69b548dcf997df786a2d0233851f94dd582ea30c72c42b6c56817cfd00bb"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "48ef64f75850d0b88576473bcf195af9c410e9a25fcad7c172a68aef2ff3da45"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3519,
+      "sha256": "5546046de6db515efbb4e38b409e3fd7995c25b8fc749f9993596c64fb5ecb34"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 397716,
+      "sha256": "6d6b6171857dedf454685b3e931935abe25d0cd2ccd437802bdec6bee7ff0ef1"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/candidates.json",
+      "bytes": 3225,
+      "sha256": "b94ca8f555a7f1dd51287bce9fbdd3ca9d72d3d30fed23d47d3c960328a6ba12"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/environment_preflight.html",
+      "bytes": 228821,
+      "sha256": "fa96d3dbff325d4910de06902b2d83885d69be36e17e421956f1b5bd5c79ef67"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/environment_preflight.json",
+      "bytes": 165083,
+      "sha256": "7fcdd5135a1f5a1ef7063cdfa910174c241506edc7b38a321c3d79591b005122"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/prefix_joint_path.json",
+      "bytes": 329682,
+      "sha256": "7add3d1eb27f3c4e96b308812d0a651ccd94141dd4eef1a9849372fa928daa81"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "39f4a827156acf885d5f949b5ba67f7348f4e6216409fedbc8b6a5a5374940e4"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3515,
+      "sha256": "83fb1dd94acf594b0b84282a29fbf673962082428be51dc55786dd4899a52c55"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 406165,
+      "sha256": "e36d66c548fb8890c0f9f4f8a6b9d0a00a27154c39b529b03ed34c9b07527859"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/candidates.json",
+      "bytes": 3221,
+      "sha256": "2ce3baa87e44b85442cd8ba92d6664899e3c233921d51e06be1f7dff2e0e2607"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/environment_preflight.html",
+      "bytes": 228822,
+      "sha256": "543efd9a2eb1ae9db3f53ea39bae8b08bd481a60003472c0f6d66f2d16d43bf7"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/environment_preflight.json",
+      "bytes": 165084,
+      "sha256": "18d39f0b03d146cb326bc2809bbe71185796bb7ac9de1d16505f0c8c2677d3fd"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/prefix_joint_path.json",
+      "bytes": 334237,
+      "sha256": "f2f5dacdeaff9272dac5abf4dcf0b46856f5b1b26a48b3e6ee497ad30be37e2e"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/connection_result.json",
+      "bytes": 189057,
+      "sha256": "73415876b811d9edd0811c1693980e5ff93d13fbdc52e5bef9acd9d036948b83"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/native_geometry.json",
+      "bytes": 7161,
+      "sha256": "7e6721a5212af54274606e5f5ea7b88d8addb0cb7ea8809c232bd9486cb3f713"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/candidates.json",
+      "bytes": 6984,
+      "sha256": "15a0882f07298f2129c5abe332aa187d09c6fab478bf23d94333b19f68814649"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "59189795fb12a8190be96ebfdcc96d19df724fa1be7a7724318a7a7ae5f53af0"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_audit.json",
+      "bytes": 113976,
+      "sha256": "f4966a689e31d23eb047c11b5e4019fcaf25be75a8760058eed17d11b82ad9c8"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3508,
+      "sha256": "49170a6e5607c0b86853f71d34b6308442ee096acf6692d28917458deb52e1ac"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 284937,
+      "sha256": "20e95b32883f5ead696cb78f5f4519426bd3a49a4f582955fe180106314bd36a"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates.json",
+      "bytes": 3227,
+      "sha256": "c9076968b72698cf729b6c04ae826f7ce7c652d37db1b8f18b037851632471da"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/environment_preflight.html",
+      "bytes": 228902,
+      "sha256": "3c448e6630cc1fef5a0b8738f29ed95446c2507c2ea3e63074d626184a5e7e79"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/environment_preflight.json",
+      "bytes": 165164,
+      "sha256": "248e4f876563f2784471654a7f667b9539d1f96a5e1cc83feb02135217497660"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/prefix_joint_path.json",
+      "bytes": 276198,
+      "sha256": "f9de69b548dcf997df786a2d0233851f94dd582ea30c72c42b6c56817cfd00bb"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "6c489c560403da3ec1eacfa6e94954f576a187d5333e5a04ed01f41d03854d36"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3529,
+      "sha256": "30ddef8fcdcc8f699b9fe61f13bba34eab2c9a2b7629d1cd254245daab243d09"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 397716,
+      "sha256": "6d6b6171857dedf454685b3e931935abe25d0cd2ccd437802bdec6bee7ff0ef1"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates.json",
+      "bytes": 3235,
+      "sha256": "e901494765255b93bade538e1ba94a7dd4fe2a3f1b62692ae56f4cacad920928"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/environment_preflight.html",
+      "bytes": 228811,
+      "sha256": "5350ee7ccb5dc17b52366df53c7055c8828f20396aca067dc413e1bf15f1abc5"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/environment_preflight.json",
+      "bytes": 165073,
+      "sha256": "a5620906a0b2c38b0a6fdb351773b30c92c71032681e742c9ceb544eed6941b0"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/prefix_joint_path.json",
+      "bytes": 329682,
+      "sha256": "7add3d1eb27f3c4e96b308812d0a651ccd94141dd4eef1a9849372fa928daa81"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "c0842d5aac49fd1badc5cde47f795423bf92adf308087168a0b86cefe87744cf"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 3525,
+      "sha256": "a6e34a085de72169d8e0276e374c5dd8601771013b08d99fc6674d47ec50d89a"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 406165,
+      "sha256": "e36d66c548fb8890c0f9f4f8a6b9d0a00a27154c39b529b03ed34c9b07527859"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates.json",
+      "bytes": 3231,
+      "sha256": "78607b9764574332cc2247248fbce11c63d7488fb041377f69acb5c408cd9210"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/environment_preflight.html",
+      "bytes": 228815,
+      "sha256": "245605306bb2ca2c59c1ae369d4dde1baa11e00554e52988e2b29654e5912cb2"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/environment_preflight.json",
+      "bytes": 165077,
+      "sha256": "2e0f8f1e641806a9ee27f19467ce3426f9cf409f73d4216d2069310e3910d935"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/prefix_joint_path.json",
+      "bytes": 334237,
+      "sha256": "f2f5dacdeaff9272dac5abf4dcf0b46856f5b1b26a48b3e6ee497ad30be37e2e"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/connection_result.json",
+      "bytes": 189087,
+      "sha256": "1e4549f7f753c90047b888c54ed9feb6c2ac9502e424b76005260f72f28790f5"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/native_geometry.json",
+      "bytes": 7161,
+      "sha256": "7e6721a5212af54274606e5f5ea7b88d8addb0cb7ea8809c232bd9486cb3f713"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/candidates.json",
+      "bytes": 6981,
+      "sha256": "f9ee64e31c175f7a7070a586592e06240e89749c1ea7e73cfa5ef2c2468edc5d"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "59189795fb12a8190be96ebfdcc96d19df724fa1be7a7724318a7a7ae5f53af0"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_audit.json",
+      "bytes": 114001,
+      "sha256": "2747daa2604375a114f32c024887d5069c8b78db57bcfaaf7efcdb0bef12f5cf"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3514,
+      "sha256": "9567a48b0604eeaaea94efc0289995d0673000b142cb1cf0548cdadd75040973"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 263063,
+      "sha256": "fb08d727f515a051ba1eb3aab4df852533c10eddd6aa140df8fc5fbd18798a70"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/candidates.json",
+      "bytes": 3221,
+      "sha256": "d281ad5a9fd160caffdb4748163428b79750f739cc14ea02d1da56ddd5df63ec"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/environment_preflight.html",
+      "bytes": 228801,
+      "sha256": "e6f9a71c4cd8c00ad0254ec326a621c3e7eb7b8e64d2a000f2f886231fcb9a36"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/environment_preflight.json",
+      "bytes": 165063,
+      "sha256": "9befd3fe5c3cf21075edfc6c65fd6eab780100a7bd788f8b962b0d6d8d7ebf32"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/prefix_joint_path.json",
+      "bytes": 265711,
+      "sha256": "701e1ccff96b7eaf4ca602aec7f8d1061ad32d15eb4561ac8df8587f79cef00c"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_audit.json",
+      "bytes": 114003,
+      "sha256": "ea06c04eaae1074a0c161b3c7fd663bfc1a94fe3071b1ef0f23af090d8853787"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3519,
+      "sha256": "6ddb5be1968194b095fa15eae21a5b7d799586360bbb7ab86e1ae3767043715d"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 398356,
+      "sha256": "bf5983633633dbe5d6d5b77ccb06955a6f6ef15d4bc3e53462ced43a683370ed"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/candidates.json",
+      "bytes": 3225,
+      "sha256": "9e1da4a76c56d188f5280aedb95a848290bda8cd1e3bc6e60775708d83d1e976"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/environment_preflight.html",
+      "bytes": 228898,
+      "sha256": "2db77050792242ab0055834e3bde76945466aed46dd1a119a77cd643d263825b"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/environment_preflight.json",
+      "bytes": 165160,
+      "sha256": "67517742ff4975353dba195db7a90514716f1b38ba513589f066f44d5d1bd016"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/prefix_joint_path.json",
+      "bytes": 329909,
+      "sha256": "86f00b1d67589dde407298e8e078882141add655b8e46e527136465a40424ecb"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_audit.json",
+      "bytes": 113977,
+      "sha256": "0062d04c03a0e5261b2843a0de6a118311034d77c60e51d86916e8a466c1c1b1"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3501,
+      "sha256": "31c9a1d241f52ae377e7b2e22f01b4f53aade475506f45e078223d7443800046"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 759611,
+      "sha256": "d467007ca6ecbc4346cbee2b94995d47e6f67f7b682fc3fd546beec86c58f17e"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/candidates.json",
+      "bytes": 3221,
+      "sha256": "2383868136766c3725cb0c4836026519d535c117303b6946b4eca1716b96e58a"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/environment_preflight.html",
+      "bytes": 225120,
+      "sha256": "5d9bba65566cb590b0f06cf44d47e0cc0a86b5efa29119093d319645cd59db47"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/environment_preflight.json",
+      "bytes": 161922,
+      "sha256": "e7710f4a66715b48c55462749970420572712653892dc26c24b6eb13770af8ce"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/prefix_joint_path.json",
+      "bytes": 506025,
+      "sha256": "9791d0112c2b2f973f3fccce4e3d803064b3ea07ead7a0e465d716c1a09882a8"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/connection_result.json",
+      "bytes": 189339,
+      "sha256": "43be06c3379e6e227f979879234a9220402777ce46a16d8f6a71787cf3d034fa"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/native_geometry.json",
+      "bytes": 7167,
+      "sha256": "e9002834008e8a16351c17cafcd70f3ae17829c26b5db6a583901e25000c9fc5"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/candidates.json",
+      "bytes": 5792,
+      "sha256": "31e7dfe68a6c6ef9652fda812a364c67ccab9aa6429f196c53a0c7a6d139dc13"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "0a40e4cd0523e37562ab41789987b8e4ba86d950975fa6d8a9dc9dff17c8ad28"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_audit.json",
+      "bytes": 114001,
+      "sha256": "49169e54b1eee2fff4c787ef0a0202bf8c075a674a30fe89ecc9d8b6b8b20d68"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3524,
+      "sha256": "a3b7a494f50c39fc353355c93552a272be52267ca35d73df8658eb5628cf8fb2"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 263063,
+      "sha256": "fb08d727f515a051ba1eb3aab4df852533c10eddd6aa140df8fc5fbd18798a70"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/candidates.json",
+      "bytes": 3231,
+      "sha256": "fba16c17867a1d71232f75f8dd0d41acaa7353efa3a9fdbd1e60b5d6f7127fee"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/environment_preflight.html",
+      "bytes": 228802,
+      "sha256": "8395f1ea91169c5e1818a1e1aa53610e747d46ec696a2e3666b1e891f05ac6c7"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/environment_preflight.json",
+      "bytes": 165064,
+      "sha256": "47b56dcf7dae968c04e495aa8a24f0a9a532578c47318873f3d1138a282c2d34"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/prefix_joint_path.json",
+      "bytes": 265711,
+      "sha256": "701e1ccff96b7eaf4ca602aec7f8d1061ad32d15eb4561ac8df8587f79cef00c"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "ef0b76d81d3a0834df6b12d05850cad29f85527e3fcc5d10ff02558586317151"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3529,
+      "sha256": "df967da6c7ab0295d9bab1fc9715666989139741440cb1ae2f7d737c076144a7"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 398356,
+      "sha256": "bf5983633633dbe5d6d5b77ccb06955a6f6ef15d4bc3e53462ced43a683370ed"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/candidates.json",
+      "bytes": 3235,
+      "sha256": "4c6e54cd7cc6f1f9cce6dd53df9d42d43365b98ca53e82128f680bfbd85b9c73"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/environment_preflight.html",
+      "bytes": 228898,
+      "sha256": "45c381b0d7cf424dcaa90a9193bf1a747cd2da45f671ef656f0cdc146f21e82b"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/environment_preflight.json",
+      "bytes": 165160,
+      "sha256": "76306649a67620a70064b6d5de69f0309ee7694b2407bd237d97f935b15c01f4"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/prefix_joint_path.json",
+      "bytes": 329909,
+      "sha256": "86f00b1d67589dde407298e8e078882141add655b8e46e527136465a40424ecb"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_audit.json",
+      "bytes": 113976,
+      "sha256": "75da950ddf6fe9f42a310a29af07d273fc25c9ece3b31bdfecb5ec242c141543"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 3511,
+      "sha256": "d00049effc09b0dfd729fc1088f0cec9385dc54deb370716bcc6fb0c045f0dfe"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 759611,
+      "sha256": "d467007ca6ecbc4346cbee2b94995d47e6f67f7b682fc3fd546beec86c58f17e"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/candidates.json",
+      "bytes": 3231,
+      "sha256": "0f824c28a218b89a238a8f9cd8d3f41fac0d97799c436df834fb2ecc0a4c64c3"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/environment_preflight.html",
+      "bytes": 225121,
+      "sha256": "6b3c1877071dde0cb102687397cfb0b18c8515272ae2ad57df33ebf121697461"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/environment_preflight.json",
+      "bytes": 161923,
+      "sha256": "2bb30dbd638f30e1019ede0abceef4a6c6fd82237416ef9085158eef563842a4"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/prefix_joint_path.json",
+      "bytes": 506025,
+      "sha256": "9791d0112c2b2f973f3fccce4e3d803064b3ea07ead7a0e465d716c1a09882a8"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/connection_result.json",
+      "bytes": 189372,
+      "sha256": "0478a6858a7fbb9c7148209b7d9b6b8c516e5e1eebc82a5068fd1530c04a75a9"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/native_geometry.json",
+      "bytes": 7167,
+      "sha256": "e9002834008e8a16351c17cafcd70f3ae17829c26b5db6a583901e25000c9fc5"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/candidates.json",
+      "bytes": 5806,
+      "sha256": "cb6c4a06ef27011000bdf5fb040ccfb226cb8628df0612eed61fba5451d7959a"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "0a40e4cd0523e37562ab41789987b8e4ba86d950975fa6d8a9dc9dff17c8ad28"
+    },
+    {
+      "path": "compat_recovery/q05_scene_0004_Tomato_08_neutral.log",
+      "bytes": 199,
+      "sha256": "6424240cbd685121fb4a91b3cc183986a6a13f7d31ec0c5268a2f9e58c27474a"
+    },
+    {
+      "path": "compat_recovery/q06_scene_0004_Tomato_08_neutral_pitch15.log",
+      "bytes": 200,
+      "sha256": "0d45870919c682f76ae07f185ba0e233c39a055bd0c7d1e808ba219139815913"
+    },
+    {
+      "path": "compat_recovery/q08_scene_0000_Tomato_08_neutral.log",
+      "bytes": 381,
+      "sha256": "6a1b2da7cf9610de3f9cd18ee7abe1c6f0318f7592f5033a8fdc49737e0465b7"
+    },
+    {
+      "path": "compat_recovery/q09_scene_0000_Tomato_08_neutral_pitch15.log",
+      "bytes": 381,
+      "sha256": "b0b069f086847b8b80effa9b721cdcbbdfda333305198645b849453653fc7fd6"
+    },
+    {
+      "path": "compat_recovery/retry_queries.json",
+      "bytes": 25688,
+      "sha256": "11f9963b1590804053148c2f588788e3d5afeea12583c3dec6996b13999decfd"
+    },
+    {
+      "path": "compat_recovery.log",
+      "bytes": 920,
+      "sha256": "a7fd3469d36fef582d51ce4d2ffc2e4bae0ccdc5c3433382258a1ca77ac9dd2d"
+    },
+    {
+      "path": "d1/historical_selection/recovery_queries.json",
+      "bytes": 20949,
+      "sha256": "09e93d7f51d9afa42f331ea24b82545e07614e8cb435b876032a8348310e2d7c"
+    },
+    {
+      "path": "d1/new_start_physics_results.json",
+      "bytes": 167,
+      "sha256": "d4e762c735fe7e051a44e3ac00815b4fc8fc2d59da755830104659dd76e306e1"
+    },
+    {
+      "path": "d1/new_start_plan_results.json",
+      "bytes": 13717,
+      "sha256": "9c1d401f1d2379e981ad7b50dd367fce02a5af5ec2c695a1c796e062da5a7786"
+    },
+    {
+      "path": "d1/new_start_queries.json",
+      "bytes": 39326,
+      "sha256": "a4620769e96f766719c37a4a4e19a3dd35a2b48ae3f195906cdb32316b2730d6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/action_frame.json",
+      "bytes": 1030,
+      "sha256": "8fdeb574d2747bd3736fba885786da22b12ee3c2820b77ee7869bda7ad955473"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/candidates.json",
+      "bytes": 20343,
+      "sha256": "286b77cba7abe62f31b56a7be34cb92d7b1a4133f7832f3e6d5b82f53d77cdd8"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/manifest.json",
+      "bytes": 3495,
+      "sha256": "9f13ec8078993c9efd4eb2a846a71e7d79f45a8f02e7e14141c0e5ac15d3f8ec"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/new_start_provenance.json",
+      "bytes": 1854,
+      "sha256": "4ae2288ae6524da108eb31a5982192f33e98dc3c0d6c94348f26ce9b8f0f0841"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/planning_inputs.json",
+      "bytes": 1082,
+      "sha256": "e42d940f9688ce2426e9c76ced7d9834fedb3b809bb8681423309a9d6323be27"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/action_frame.json",
+      "bytes": 1030,
+      "sha256": "8fdeb574d2747bd3736fba885786da22b12ee3c2820b77ee7869bda7ad955473"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/candidates.json",
+      "bytes": 118570,
+      "sha256": "c209d89e107e11be3ab95ee170dfc8b3c326fb35f2fcfa4c6c022b7eb8923cff"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/manifest.json",
+      "bytes": 3489,
+      "sha256": "6930617bb72bfe92b86745bde2aa4420f1b731a479599b5ed9705c4e82e2bfd7"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "09fc8e8ba12d1e83a715fa4db2713fe4ab8a1376016c099728e6420c3d7d3cbe"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/planning_inputs.json",
+      "bytes": 1082,
+      "sha256": "e42d940f9688ce2426e9c76ced7d9834fedb3b809bb8681423309a9d6323be27"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/candidates.json",
+      "bytes": 119038,
+      "sha256": "6c77673229dd4293ecbd395fc5c5b360c6d1ded3cdd95e62a3602be991c7d415"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/manifest.json",
+      "bytes": 3489,
+      "sha256": "4b25fd776413f3db538e8349b0a4beb43cac39d5c609a346fa903f9aacfd36b8"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "fe6e5a0c3e81cf95e1e99235589b913e495c6908fe3ff2e9e91f87bd702fd462"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/action_frame.json",
+      "bytes": 1031,
+      "sha256": "0a24059ea11fb204050585f1ed10943c86d764895f2fdb872e4494dab74589d0"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/candidates.json",
+      "bytes": 118594,
+      "sha256": "00ed1c3ceada6a5f6a82dda8b7270bf2f87829f97072fed409827b0c7fdcb98c"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/manifest.json",
+      "bytes": 3489,
+      "sha256": "59bd3fa0e51621f3f928a8cc207ef5bdc5614038b4ff54a7f0ce5797047c0ded"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "601b89e0b314e2228605ff98e4e1bda993c0ca8f715d03d670d2af572340b15f"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "d662196c6c7c360740915ecf7817a6ed6868d28e2be30bfedb82ef44fee0bce3"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/action_frame.json",
+      "bytes": 1031,
+      "sha256": "e9488af2f55ba199f7d4d9f613dab1986dca3d1986f9a2083532acaab3f64d98"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/candidates.json",
+      "bytes": 118608,
+      "sha256": "a325f861f5ddea3ce78303d416d000448ef9a11cceffd8a92cc0577fe6fdb6d0"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/manifest.json",
+      "bytes": 3489,
+      "sha256": "0bcc0dde5f16bc16e269456cebb50016733177e082fab6f8f5bf569eeaf867a5"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "0da1de0d28e37c03510d8a0cb2d9d7ff47076a45495b489b63f1f35ea47376de"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "2f15a525079d96f4908d6b4a28b419cfcbe7713c98f7db1e4f97cada0d0ff6f0"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/candidates.json",
+      "bytes": 118731,
+      "sha256": "f30a2b308a867ffd77022d2e78f8fe38f86b85f02fbaa4ffbbb862ec37dae308"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/manifest.json",
+      "bytes": 3489,
+      "sha256": "30da5802c72802c99fefea06120b7456d201ea8ac8214a421202c007594bbde5"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "98db3dfda917c2ad3b663dbc65e7c7bc6668ca80fd061e91ba19d3aa47a81219"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/action_frame.json",
+      "bytes": 1033,
+      "sha256": "885e8209345f05947b365b436aa4a6172756fafe439e6ea32619b4c493293484"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/candidates.json",
+      "bytes": 118341,
+      "sha256": "1ed86b255f3e288d6daefb4245d5390697b1779b62c9110421c0ca30c61bd756"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/manifest.json",
+      "bytes": 3489,
+      "sha256": "194260e540cd8522f9fa58270f6627d32ae0d2aa75365875468f13cf1dd373d6"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/new_start_provenance.json",
+      "bytes": 1848,
+      "sha256": "52b0ed06387fe722c77e1e0d6f2108d79e8ca7bd876411bf465218abe9140ad7"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "2886c67505562a2fd88e3ad7a28cb7a3d493db1207cc5427d96b1ab88c6643e4"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/replay_assets/initial_trace.json",
+      "bytes": 54090,
+      "sha256": "2d4baeb2394fb6c2d8721a6c1617234474459262622dac94cdfa3aa281be67e6"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/connection_result.json",
+      "bytes": 183956,
+      "sha256": "b9fe9d1187f831fda6c761cc6a89515c6bc62c8481d3d78b9a78dd317de1fb4e"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/action_frame.json",
+      "bytes": 1030,
+      "sha256": "8fdeb574d2747bd3736fba885786da22b12ee3c2820b77ee7869bda7ad955473"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/candidates.json",
+      "bytes": 5055,
+      "sha256": "d0a3fe7a8f2869c1de17819348e80d562db021e88121b8f40f33c735bd5fe536"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "8e4754ceeb6c88e3ac1ad9c7ddd8af202dd5ec1a56db7ba3804a04a4a8f20427"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/planning_inputs.json",
+      "bytes": 1082,
+      "sha256": "e42d940f9688ce2426e9c76ced7d9834fedb3b809bb8681423309a9d6323be27"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "7d93e460f5606a1c5fc508befd1f8500eee7979b394ecbb997cee69c63b88b10"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/connection_result.json",
+      "bytes": 184738,
+      "sha256": "89885d95c6210ddb9a84e9ebda4247d8155cafc5a663092f9d3672c749cee182"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "0a24059ea11fb204050585f1ed10943c86d764895f2fdb872e4494dab74589d0"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/candidates.json",
+      "bytes": 5060,
+      "sha256": "f9e5291b8d26f3878c82875940931dd8bdf74ee26ea3a884d9c58f8745ca5536"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "bd3c0bec8076ba7b88b9e70cd776f3c9dcc1ea4894f81ba51ae8e85970fdb5e8"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "d662196c6c7c360740915ecf7817a6ed6868d28e2be30bfedb82ef44fee0bce3"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "47c72eb61658c69f647d084b30cb298135d666d470e4679d54066f47745615dd"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/connection_result.json",
+      "bytes": 184729,
+      "sha256": "4298f2cb9b6544f5372ade9508b77ae5a0772cc8b5d75603a4418bb696ad66bc"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "e9488af2f55ba199f7d4d9f613dab1986dca3d1986f9a2083532acaab3f64d98"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/candidates.json",
+      "bytes": 5068,
+      "sha256": "725984bce8c262a4743ee84eff7580be8f60c98e629dd15d0d52b6a0c74c9cf2"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "a58772f3fea494fa87455a54789c4c95e566404618f2203da81c7ab9d69a198d"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "2f15a525079d96f4908d6b4a28b419cfcbe7713c98f7db1e4f97cada0d0ff6f0"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "46d976df35856101e11c358417dcdab4ecf581076bae4093f49e395c2ed4a8e9"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/connection_result.json",
+      "bytes": 183960,
+      "sha256": "f871fc2465dec2ded5329b142b00c8fcb7a6bce10a0871414a3211efc2f92960"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "885e8209345f05947b365b436aa4a6172756fafe439e6ea32619b4c493293484"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/candidates.json",
+      "bytes": 4693,
+      "sha256": "9bf7dba7022559b2da11fef940d5c794015507d3d99de2da20417c9caa932a6e"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "87d91127ae05539003021777c697cb6c6a0ee2dd63db175d3ee5cf5e3c3a02ee"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "2886c67505562a2fd88e3ad7a28cb7a3d493db1207cc5427d96b1ab88c6643e4"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "3593d620c01d4f0f50e14200a49baab8fb9c893f609703136bcbdfcc8f836aeb"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_audit.json",
+      "bytes": 113977,
+      "sha256": "82596eaca2b57cde48a01d4796c40556df5937c80133305f3a2fb570b6ab29be"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 2735,
+      "sha256": "80dd74838504d9b49fc28897f9db7348e00266c9d4ce601d1a7faa39a10da2e7"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 284912,
+      "sha256": "4fbd5fcce74de26a7ca16b896aa6ba6cf49cb7f117b5f5f80a8ead612b3a7a28"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/candidates.json",
+      "bytes": 2454,
+      "sha256": "9e2e21bfa86549096b1d2a9d0d7c3372358d6ed12584e29fb0483d3d9959de65"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/environment_preflight.html",
+      "bytes": 228956,
+      "sha256": "c49136c7af97f21c31c0a9f0edbbe1a7a2fcfe029f169475086fc199f41f1fe0"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/environment_preflight.json",
+      "bytes": 165218,
+      "sha256": "857a63956fcc8fa9d581fd13734b475f1e1ae95fb63e404e31b52af6db1c594c"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/prefix_joint_path.json",
+      "bytes": 276173,
+      "sha256": "cab82a9a9b1450c675ac41ada5000fcb1b2a98ce7782f8c08b53165abaeb4535"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_audit.json",
+      "bytes": 114003,
+      "sha256": "6f2e048b7e9e8c4520d8dd209c79ba8206aae369d08b836ac0cb363fc9eb6f24"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 2744,
+      "sha256": "2fd2d4c1cc30285669385b8cefaa1d4cde53f4911b465152f81027c6d762d418"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 397918,
+      "sha256": "1b5d59fa8ceefbca6c05db81cba4f7100c902fa38f2e2028d1e23c37a8b00351"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/candidates.json",
+      "bytes": 2450,
+      "sha256": "dca2b3eb316fe2f409efbfe48bc246546c6744ea2cd84898d537b64ead310a0c"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/prefix_joint_path.json",
+      "bytes": 329707,
+      "sha256": "58430d931c41c1f951c748bacec453e073a3d2e13bf2b28e1988a14cf0071154"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_audit.json",
+      "bytes": 114004,
+      "sha256": "a58dd29234e942ebe80525804636f50cf9d68c48e50b7b2d8bd927f1b107b5f9"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/plan.json",
+      "bytes": 2746,
+      "sha256": "75918d5bf662c912bc586748b6c43e74eb24bb5bb978b082a8b7f8f262ca018a"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/candidates/mf_20260928_00007_approach/trace.json",
+      "bytes": 406170,
+      "sha256": "bf79891ae0870967f438b53587bc14b3a6d7bef2a82afc1802f1d9f599e27e5d"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/candidates.json",
+      "bytes": 2452,
+      "sha256": "6462a2fe1c675df4168d9478d98d6c49e2915c5268b0b3e758dab71a13942a34"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/environment_preflight.html",
+      "bytes": 228888,
+      "sha256": "a3ebdef3cbc19719d75e2a05d1882bb8b8e584e46137a2de95af39383ba4c152"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/environment_preflight.json",
+      "bytes": 165150,
+      "sha256": "4b74dffdf0d4b87a60d199e951132fc002e64354b3de0e6fb36c37eaf7707cad"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/prefix_joint_path.json",
+      "bytes": 334301,
+      "sha256": "3dafa6f60a80cfed650aabf2eedf489bdf7a0a94409540c8bfc12948ff329cc1"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/connection_result.json",
+      "bytes": 188340,
+      "sha256": "fd78481fe4c381f9001a899aced9d156622e1052d6c5ccb8a6b6d8292789adfd"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/candidates.json",
+      "bytes": 6200,
+      "sha256": "6723dee064cfd92e560e504cf12b1cd26613cf0ea02603468860f45bd910ca78"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "59189795fb12a8190be96ebfdcc96d19df724fa1be7a7724318a7a7ae5f53af0"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/connection_result.json",
+      "bytes": 3122,
+      "sha256": "57163c5dc4706adbdaf745d7253d5c4406f25be4ac75efbaf5d2124e28ee6d09"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/native_geometry.json",
+      "bytes": 6957,
+      "sha256": "ee26c0d8440b1298c6839a9dd676133566a03205fc2be50ef7778d8e345b4033"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "59189795fb12a8190be96ebfdcc96d19df724fa1be7a7724318a7a7ae5f53af0"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/connection_result.json",
+      "bytes": 3129,
+      "sha256": "0831389499500dcccad30afc2ee05c65fe5cad11b0bdef56f0b2d1b8468302fb"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/native_geometry.json",
+      "bytes": 6957,
+      "sha256": "ee26c0d8440b1298c6839a9dd676133566a03205fc2be50ef7778d8e345b4033"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/action_frame.json",
+      "bytes": 1031,
+      "sha256": "6cccfaa4554967e53eb54c54fdb5ecda8889f373afaacf54b690e4ae4b157300"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "c53b501f556b1a6169f2c07eb9d73f4a61907dde513591f9a60b7b129d714791"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/planning_inputs.json",
+      "bytes": 1084,
+      "sha256": "4155aeb2387926d2e0cd4b86b6bf3e57bb639a49029e2c6fb8d4c305847489ef"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "59189795fb12a8190be96ebfdcc96d19df724fa1be7a7724318a7a7ae5f53af0"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_audit.json",
+      "bytes": 114001,
+      "sha256": "8e89c9a14859d6944feb9bdc04d670fe072c2b22cf2f112498ca309893ea94c3"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 2753,
+      "sha256": "aacd6e759d80fb79697af94cd9954e62f5921051a5d8523c5cf7482ff66249f0"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 260820,
+      "sha256": "a82bbf2d162f98896282c2bac24c402c186816953bf4ceb601e6a024a00ff680"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/candidates.json",
+      "bytes": 2460,
+      "sha256": "4cb5c421b11af4a849671dc77e245a1744b04f586a37214e6d998b6b7856cc09"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/environment_preflight.html",
+      "bytes": 228904,
+      "sha256": "4304312e3e5ba7088d4985fe63678c828a7a1ef0441a945296e447201fe67492"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/environment_preflight.json",
+      "bytes": 165166,
+      "sha256": "c1150310146d79a850f26e40f724d3e9714150492dec4db3593ca19915255f95"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/prefix_joint_path.json",
+      "bytes": 264648,
+      "sha256": "e9fdd1a507d659d5684f22def151b9b57454acbe74aba226782065da303071f0"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_audit.json",
+      "bytes": 114003,
+      "sha256": "bfb4d32bb59d70abc2b65617e298cef45ec435bbb2446d62878c6f01ce421bba"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 2750,
+      "sha256": "32caed19b7ddf68e14536b732bedc6a94c6f696cb06b3e536761116d16976a26"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 398400,
+      "sha256": "9aaaf24d880fb8bceb99a702f918a919a61b473643bc4dcb854a0b27cdfd74c3"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/candidates.json",
+      "bytes": 2456,
+      "sha256": "28ba7ec9d1d122fe5562b4bde080892783e1a01cc99a4c6e8d901754f940c975"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/environment_preflight.html",
+      "bytes": 228925,
+      "sha256": "7e355d76a4e07f15b0a6c23fd70c34c4fa025f746b3a5120bb229ee7fce8359a"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/environment_preflight.json",
+      "bytes": 165187,
+      "sha256": "e15e96bd8e0229e2c078dc425971328aeab33b15d98188bdf2c39a75c5b0496e"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/prefix_joint_path.json",
+      "bytes": 329953,
+      "sha256": "9bb7ad3570dcd489dde0931a1ccd0f1d9c8d31fc7a8aab0547a793e9647acbc0"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_audit.json",
+      "bytes": 113977,
+      "sha256": "8a37dac6f906e0bcaa6e22a341bbf62c96acf9a7c46ee60bdd3f47d1257c0444"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/plan.json",
+      "bytes": 2730,
+      "sha256": "d37bc53377245d00aa47be1f1979f481e4ad92a53580d6103f42f6450735a937"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/candidates/mf_20260928_00005_approach/trace.json",
+      "bytes": 759576,
+      "sha256": "6d896f62a87340ef6969924e04c7e40af5be16d5a7565780aedca2b6398bd79a"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/candidates.json",
+      "bytes": 2450,
+      "sha256": "af6ab3b0f9cef0f3e482256546fcf8f60d710533035a34c680deaf13b2243bf7"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/environment_preflight.html",
+      "bytes": 225124,
+      "sha256": "f0b842c57073c54f35ca4a108c06f8b2d0a9f86a1d8daf73c7d981ec46fdf26d"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/environment_preflight.json",
+      "bytes": 161926,
+      "sha256": "52a801dd43dab1792116cc21efe38b1f1378d9d47b368a6428844e312d6f41e7"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/prefix_joint_path.json",
+      "bytes": 506107,
+      "sha256": "df1efae46d1739993aa9502cbe1dc778f1142e041bfa645d1ba05d470d5696c4"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/connection_result.json",
+      "bytes": 189366,
+      "sha256": "532206aeb1d26840e0fd4171e66e916420e9af4c0d05bbce7589b77fb3667708"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/candidates.json",
+      "bytes": 5041,
+      "sha256": "329020a608c56adf72c41e5f9d6759a8b74dafeaf620e1e93121ebd093d371ab"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "0a40e4cd0523e37562ab41789987b8e4ba86d950975fa6d8a9dc9dff17c8ad28"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/connection_result.json",
+      "bytes": 3122,
+      "sha256": "60167b3a66830ef946ae00eb7b03ff6d5a68df6462de1798f82ab441314e32f2"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/native_geometry.json",
+      "bytes": 6963,
+      "sha256": "29f30e37ff6536fa7e002cd06b1100a4961cc2b24ea831821b5c127627b5303a"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "0a40e4cd0523e37562ab41789987b8e4ba86d950975fa6d8a9dc9dff17c8ad28"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/connection_result.json",
+      "bytes": 3130,
+      "sha256": "d72e5c5e8354b9aa0cccb0403aa7eb62de4672aa4eafc80743be4590a1da694d"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/native_geometry.json",
+      "bytes": 6963,
+      "sha256": "29f30e37ff6536fa7e002cd06b1100a4961cc2b24ea831821b5c127627b5303a"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/action_frame.json",
+      "bytes": 1033,
+      "sha256": "3a6ed2003ae23c3c392412033b6dbad2b7ce835c64c735e04978abb36df34526"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "08a090f4038d5396636bcb5f5355022c7bb2893ee3d750d0e16dac3043295d47"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/planning_inputs.json",
+      "bytes": 1083,
+      "sha256": "6df58d6779a7f0fbd1d20386f064704eb3caffb1479c9fe737f466fa5e6db713"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "0a40e4cd0523e37562ab41789987b8e4ba86d950975fa6d8a9dc9dff17c8ad28"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/connection_result.json",
+      "bytes": 184143,
+      "sha256": "fd72b05ece7316b728baa56e8e1b16e082b27919c7a4f4fb413694880ac27d6b"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/original_prefix_check.json",
+      "bytes": 77,
+      "sha256": "1c68ad83beecdb2bc6d73c980461f6f8ccc3410aa0e80d1d4280b11d4820fad6"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/action_frame.json",
+      "bytes": 1030,
+      "sha256": "8fdeb574d2747bd3736fba885786da22b12ee3c2820b77ee7869bda7ad955473"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/candidates.json",
+      "bytes": 5100,
+      "sha256": "cc92b6a843028c926b05e2c3463b0efd1acbd31873764c5c88a1ac5730274a5c"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/manifest.json",
+      "bytes": 3511,
+      "sha256": "9c4409d32bf4fa2755a2ff0263b1a756799520c61d64816c59e91300cb99af00"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/planning_inputs.json",
+      "bytes": 1082,
+      "sha256": "e42d940f9688ce2426e9c76ced7d9834fedb3b809bb8681423309a9d6323be27"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/replay_assets/model_cache.json",
+      "bytes": 372,
+      "sha256": "7d93e460f5606a1c5fc508befd1f8500eee7979b394ecbb997cee69c63b88b10"
+    },
+    {
+      "path": "d1/q00_scene_0000_Tomato_01_recorded.log",
+      "bytes": 182,
+      "sha256": "503fd08027d48ebae3e16fb4be3cbb6edfd6c5941a887a2b224b5d965d5f7804"
+    },
+    {
+      "path": "d1/q01_scene_0003_Tomato_01_recorded.log",
+      "bytes": 181,
+      "sha256": "25d862ab34e00e7ee380c99eae0b7faed940024bb0ae26771a1e3f4df44f8ad4"
+    },
+    {
+      "path": "d1/q02_scene_0004_Tomato_01_recorded.log",
+      "bytes": 183,
+      "sha256": "13a4221ab43ceab20f7c785af76ff027b4580f371649f40dc4cfe203ff0ed242"
+    },
+    {
+      "path": "d1/q03_scene_0005_Tomato_01_recorded.log",
+      "bytes": 183,
+      "sha256": "08a7e249bc94bfb27bda316a6506c3ac0cdf82aac01cf741a65adea284251012"
+    },
+    {
+      "path": "d1/q04_scene_0004_Tomato_08_recorded.log",
+      "bytes": 200,
+      "sha256": "c44d129c92548afd67903c973871b7c2e678ab6adcf8a74af96a491170b5718c"
+    },
+    {
+      "path": "d1/q05_scene_0004_Tomato_08_neutral.log",
+      "bytes": 176,
+      "sha256": "45f390dbd425ea8cf9c720699e062b1ec9ce3853f93e0d114f171b680b257dea"
+    },
+    {
+      "path": "d1/q06_scene_0004_Tomato_08_neutral_pitch15.log",
+      "bytes": 175,
+      "sha256": "b3cb9be9b8036eac233e9826c7ae14a7e8083ea75622c5125c4d5378e675f12c"
+    },
+    {
+      "path": "d1/q07_scene_0000_Tomato_08_recorded.log",
+      "bytes": 381,
+      "sha256": "77c5396e230e1f453fbfb168d2399dd9da5dda3d0cf2c9fc911717914d59fd89"
+    },
+    {
+      "path": "d1/q08_scene_0000_Tomato_08_neutral.log",
+      "bytes": 176,
+      "sha256": "271b0542486d238b7cb3457613b980aadf120b76ded6c17b14eec112edeb0b07"
+    },
+    {
+      "path": "d1/q09_scene_0000_Tomato_08_neutral_pitch15.log",
+      "bytes": 176,
+      "sha256": "7bdd357d9216535ad7e42e94c0448059d8b7a2023a88ba9b2a45bf4386236b6d"
+    },
+    {
+      "path": "d1/q10_scene_0000_Tomato_01_side_control.log",
+      "bytes": 183,
+      "sha256": "849649d452a89098b8ce242a28be74c2325d9228d9f14355dc4ce21290d49659"
+    },
+    {
+      "path": "d1.log",
+      "bytes": 85,
+      "sha256": "287e4bf0e8c71ef2a0062da22c5bd656cfca4976b8520705988dc57f38145dee"
+    },
+    {
+      "path": "diagnostic_images/q00_nominal_collision.json",
+      "bytes": 566,
+      "sha256": "57c8232cb36e3d6e79de56813e08ca857d611909fb60d6287224d805d27fd1ec"
+    },
+    {
+      "path": "diagnostic_images/q00_nominal_collision.png",
+      "bytes": 115294,
+      "sha256": "952eb42c6f4483083d87636cdc61ba8d8dd27fe0b8611498a1690098377626ce"
+    },
+    {
+      "path": "diagnostic_images/q04_nominal_collision.json",
+      "bytes": 599,
+      "sha256": "a1864e8fc4de2ee52d18e8bdc26ffe6ab9b69b46d0db9c5e3f9abb51263c24b7"
+    },
+    {
+      "path": "diagnostic_images/q04_nominal_collision.png",
+      "bytes": 53095,
+      "sha256": "95bc85e500dfee8b5bb5b37b83a497bf7b98f6b4c8c4ea63bafd58545b5841a3"
+    },
+    {
+      "path": "environment.json",
+      "bytes": 342,
+      "sha256": "3b86add57282c8d49b7237da19ddd0d0556d89362187022cce6c99a79df3ec8f"
+    },
+    {
+      "path": "execution_scripts/package_start_recovery_server.py",
+      "bytes": 3945,
+      "sha256": "df6d44872b719abc2f0962a31f5deb1c388d44bc30e90c5b0b417c44394615e5"
+    },
+    {
+      "path": "execution_scripts/record_recovered_hold.py",
+      "bytes": 1793,
+      "sha256": "f9061c18bf8561f08b438fd052918641ee35a52aa7e0865bf24268b784658f47"
+    },
+    {
+      "path": "execution_scripts/render_start_recovery_diagnostics.py",
+      "bytes": 2438,
+      "sha256": "015a455469111a1c3ba3570f3f5c88a16632d94cdb8d73da914f8015825806ca"
+    },
+    {
+      "path": "execution_scripts/resume_start_recovery_compat.py",
+      "bytes": 2716,
+      "sha256": "d47124b036fca966189a1a77041a86bff8beb400e3d934b7c0c4a03ee5605210"
+    },
+    {
+      "path": "execution_scripts/run_start_recovery_server.sh",
+      "bytes": 1054,
+      "sha256": "825bb0f3bb1ffb55bd134981c349426a5d8bdabd1f0167e0212b18738ecdc2ab"
+    },
+    {
+      "path": "execution_scripts/summarize_start_recovery_server.py",
+      "bytes": 7208,
+      "sha256": "47fe9573fc351ca89c1f5d54f7439f7f4bcda9236acb1b97358e1c156cb776d2"
+    },
+    {
+      "path": "index.html",
+      "bytes": 4823,
+      "sha256": "55a0211b082eeb922a77560a0a7b1fc2b1052f17db5278ba783ec706ed072870"
+    },
+    {
+      "path": "new_prefix_hash_comparison.json",
+      "bytes": 8145,
+      "sha256": "07fef6cbaaa9d50201ad092554f7ea473d69dc85f5d735d51c291e43ec361080"
+    },
+    {
+      "path": "pipeline_summary.json",
+      "bytes": 1016,
+      "sha256": "1d963cdb8736ce13933a193d0bf019d66fb69a2c7a7f27cb2dbbc8b11a4da8d5"
+    },
+    {
+      "path": "server_environment.json",
+      "bytes": 308,
+      "sha256": "3d511ee2452b6444de9e63742918e2bb8c6907d39c6b8d02cd6a4231aa04300d"
+    },
+    {
+      "path": "server_summary.json",
+      "bytes": 58956,
+      "sha256": "36f31da2be4eafef2db5aa94d383b14c51e3c9441ff742a2ff385970187e866f"
+    },
+    {
+      "path": "start_pose_comparison/blocker_mapping.json",
+      "bytes": 385,
+      "sha256": "6fe0874dd639ffa88891c88fe1f86d48f2d7425760795a1699227475a3288db3"
+    },
+    {
+      "path": "start_pose_comparison/covered_idle.npz",
+      "bytes": 2575662,
+      "sha256": "12e878bc01211a3d6a03661df998572f9fb60d3441ed89b79e56643198ac88b6"
+    },
+    {
+      "path": "start_pose_comparison/idle_ab.mp4",
+      "bytes": 195878,
+      "sha256": "325467db61819763b9c9a256119f3bdab55cb5af8880f4086717c760f0a6d26a"
+    },
+    {
+      "path": "start_pose_comparison/idle_ab_00.png",
+      "bytes": 129705,
+      "sha256": "bbabfd637ae6a22aa2bd01c5c424cd295b7c5fd7b51fa5891fee2560b5bfc371"
+    },
+    {
+      "path": "start_pose_comparison/idle_ab_10.png",
+      "bytes": 166675,
+      "sha256": "6985440b8988920915172ce307d9415587d4a8825f0624d4fa68a8e0fd3984de"
+    },
+    {
+      "path": "start_pose_comparison/idle_ab_20.png",
+      "bytes": 167337,
+      "sha256": "286a124a34c3a23aeb4329c9502dfaa7a6cf740b0a85f45d1a7fdedcd4827b5d"
+    },
+    {
+      "path": "start_pose_comparison/initial_full_visual.png",
+      "bytes": 290827,
+      "sha256": "09fb47014b3ec80d80946370e3d4072b06d042a08c1c57a6d5643d5996823bc5"
+    },
+    {
+      "path": "start_pose_comparison/original_idle.npz",
+      "bytes": 850496,
+      "sha256": "05eabb2bcea877deea8857e7fb38d6f3d9b190e5f34f4b4967068d1d167b7421"
+    },
+    {
+      "path": "start_pose_comparison/provenance.json",
+      "bytes": 451,
+      "sha256": "9a2e7db1a8b94b4d0443e6df11898a7cf064df53041875046c3bef829c0522b0"
+    },
+    {
+      "path": "start_pose_comparison/render.log",
+      "bytes": 340,
+      "sha256": "c2068116965f624d3bddc8ace89a54aeb47902dd66e411d18569c131b20057f1"
+    },
+    {
+      "path": "start_pose_comparison/render_comparison.py",
+      "bytes": 3731,
+      "sha256": "2bb9f11cc6f8c83b9f04c3b1c93e1a5beb951f15c7c3428b7e872acad0fbc5a2"
+    },
+    {
+      "path": "start_recovery/canonical_start.json",
+      "bytes": 2644,
+      "sha256": "a89f583a4088cb6bfd291620295d326f754056f9e30c0cf13104e8b0592f4dc2"
+    },
+    {
+      "path": "start_recovery/start_recovery.json",
+      "bytes": 52456,
+      "sha256": "cd679b6809ab7ce8de645c01925e7b211fb27b7f065041cb0749fa082b4a6911"
+    },
+    {
+      "path": "start_recovery.log",
+      "bytes": 153,
+      "sha256": "d5700f0d39f0fb5d49d3bdfc44c09a67643eabb2ecb3b317502cfde27dfb0773"
+    },
+    {
+      "path": "validation_logs/initial_missing_fcl_20260928_164744_start_recovery_d1.launch.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation_logs/initial_missing_fcl_start_recovery.log",
+      "bytes": 918,
+      "sha256": "ffd148b056b06aaee99b8667abf89e01a7fd16150c73fec775b7afaee845e406"
+    },
+    {
+      "path": "validation_logs/one_command_launch.log",
+      "bytes": 1016,
+      "sha256": "1d963cdb8736ce13933a193d0bf019d66fb69a2c7a7f27cb2dbbc8b11a4da8d5"
+    },
+    {
+      "path": "validation_logs/start_recovery_compat_tests.log",
+      "bytes": 99,
+      "sha256": "45cf26b0d54f97b969e1d55b9946e605e35d8dfb69debd47f475d006e77a74ff"
+    },
+    {
+      "path": "validation_logs/start_recovery_diagnostic_render.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation_logs/start_recovery_tests.log",
+      "bytes": 180,
+      "sha256": "f72823f4d1f60ca3f0bcc8ff9f2696ce20cfa3794ec45167938435894c31f2b7"
+    },
+    {
+      "path": "validation_logs/start_recovery_tests_final.log",
+      "bytes": 180,
+      "sha256": "2ab206c950591ecae23919f1f71e571c4526891ff91a582fbd8cea8907b0f93d"
+    },
+    {
+      "path": "video_validation.json",
+      "bytes": 675,
+      "sha256": "faec9e7f73dbeadeebdc16ee306ecd54c4a25fb0e68e330ad9df8c62c9586634"
+    }
+  ],
+  "external_symlinks": [
+    {
+      "path": "canonical_hold_video/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/model.mjb"
+    },
+    {
+      "path": "canonical_hold_video/run/replay_assets/planning_model.pkl",
+      "target": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_02/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "canonical_hold_video/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__267690e4/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0003__Tomato_01__435a11fa/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__e0a6173d/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q00_scene_0000_Tomato_01_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0003__Tomato_01__435a11fa/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q01_scene_0003_Tomato_01_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0003/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q02_scene_0004_Tomato_01_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0005__Tomato_01__0d47d50d/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q03_scene_0005_Tomato_01_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0005/targets/Tomato_01/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q04_scene_0004_Tomato_08_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q05_scene_0004_Tomato_08_neutral/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q06_scene_0004_Tomato_08_neutral_pitch15/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0004/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q07_scene_0000_Tomato_08_recorded/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q08_scene_0000_Tomato_08_neutral/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q09_scene_0000_Tomato_08_neutral_pitch15/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_08/physics/replay_assets/reference.json"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/replay_assets/initial_trace.json",
+      "target": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__267690e4/replay_assets/initial_trace.json"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/replay_assets/model.mjb",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/model.mjb"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/replay_assets/planning_model.pkl",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/planning_model.pkl"
+    },
+    {
+      "path": "d1/plans/q10_scene_0000_Tomato_01_side_control/run/replay_assets/reference.json",
+      "target": "/mnt/nas_rdv_md3/tomato_robot_sim_20260928_multifamily/pilot_prep/scene_0000/targets/Tomato_01/physics/replay_assets/reference.json"
+    }
+  ],
+  "training_eligible": false
+}

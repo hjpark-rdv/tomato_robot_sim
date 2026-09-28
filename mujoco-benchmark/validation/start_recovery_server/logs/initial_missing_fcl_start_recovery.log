@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/root/farmily_tomato/mujoco-benchmark/scripts/recover_initial_configuration.py", line 321, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/root/farmily_tomato/mujoco-benchmark/scripts/recover_initial_configuration.py", line 220, in main
+    planner.initialize(str(source))
+  File "/root/farmily_tomato/mujoco-benchmark/scripts/plan_candidates.py", line 23, in initialize
+    MODEL=restore_model(model);START=np.array(values['inputs']['start'])
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/root/farmily_tomato/nvidia-sim/rl/gpu_planning.py", line 55, in restore_model
+    return env,kin,SelfCollisionCheck.from_model(model['collision'])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/farmily_tomato/nvidia-sim/rl/pose_collision.py", line 118, in from_model
+    import fcl
+ModuleNotFoundError: No module named 'fcl'

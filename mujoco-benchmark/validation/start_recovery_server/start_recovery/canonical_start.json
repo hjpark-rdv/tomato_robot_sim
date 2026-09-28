@@ -1,0 +1,114 @@
+{
+  "schema": "canonical_robot_start_v1",
+  "q": [
+    0.5036082863807678,
+    3.251610279083252,
+    0.11466656625270844,
+    -1.6495294570922852,
+    -0.17974743247032166,
+    -1.5231807947158813,
+    0.6881734132766724
+  ],
+  "original_q": [
+    0.5036082863807678,
+    3.251610279083252,
+    0.11466656625270844,
+    -1.6495294570922852,
+    -0.17974743247032166,
+    -1.3975170850753784,
+    0.6881734132766724
+  ],
+  "source_run": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/robot_checks/Tomato_02",
+  "covered_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+  "selection": {
+    "q": [
+      0.5036082863807678,
+      3.251610279083252,
+      0.11466656625270844,
+      -1.6495294570922852,
+      -0.17974743247032166,
+      -1.5231807947158813,
+      0.6881734132766724
+    ],
+    "valid": true,
+    "cached": false,
+    "joint_bounds": true,
+    "self_collision": null,
+    "minimum_distance_m": 0.013652963702665985,
+    "minimum_distance_is_lower_bound": false,
+    "closest_pair": [
+      "g410",
+      "neighbor_truss_collision_fruit_p19_t02_g062"
+    ],
+    "closest_segment_world": [
+      [
+        -0.4526477198015843,
+        0.8196222583652901,
+        1.030663178363827
+      ],
+      [
+        -0.4604560603589721,
+        0.8084349923316805,
+        1.0301356233435568
+      ]
+    ],
+    "status": "valid",
+    "source": "axis",
+    "radius": 0.01,
+    "sample_index": 10,
+    "normalized_change": 0.009999999999999997,
+    "axis": 5,
+    "sign": -1.0
+  },
+  "hold": {
+    "finite": true,
+    "warning_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "initial_contacts": [
+      {
+        "a": "glb_col_TRUSS_Rachis_04",
+        "b": "glb_col_Tomato_02",
+        "categories": [
+          "active_plant",
+          "active_plant"
+        ],
+        "penetration_m": 0.00022795559258460135
+      }
+    ],
+    "worst_contacts": [
+      {
+        "a": "glb_col_TRUSS_Rachis_04",
+        "b": "glb_col_Tomato_02",
+        "categories": [
+          "active_plant",
+          "active_plant"
+        ],
+        "penetration_m": 0.00022795559258460135,
+        "time_s": 0.0
+      }
+    ],
+    "max_body_displacement_m": 0.0029677807355517026,
+    "max_robot_body_displacement_m": 0.0,
+    "max_robot_joint_drift": 0.0,
+    "seconds": 2.0,
+    "hz": 240.0,
+    "validity": {
+      "passed": true,
+      "reasons": [],
+      "violations": [],
+      "displacement_is_diagnostic": true,
+      "penetration_limit_m": 0.0005
+    }
+  },
+  "validation_runs": [],
+  "training_eligible": false,
+  "hook_success": null,
+  "impossible": null
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "path": "start_pose_comparison/idle_ab.mp4",
+    "decode_returncode": 0,
+    "error": "",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 540,
+          "nb_read_frames": "21"
+        }
+      ],
+      "format": {
+        "duration": "2.100000"
+      }
+    }
+  },
+  {
+    "path": "canonical_hold_video/canonical_hold.mp4",
+    "decode_returncode": 0,
+    "error": "",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 672,
+          "nb_read_frames": "11"
+        }
+      ],
+      "format": {
+        "duration": "1.100000"
+      }
+    }
+  }
+]

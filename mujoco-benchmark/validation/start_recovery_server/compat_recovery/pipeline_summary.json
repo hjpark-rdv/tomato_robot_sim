@@ -1,0 +1,18 @@
+{
+  "schema": "start_recovery_server_completion_v1",
+  "original_pipeline": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/pipeline_summary.json",
+  "status": "completed_with_server_heading_compatibility_fix",
+  "final": {
+    "case": "CASE2_LOCAL_MANIPULATION",
+    "bottleneck": "at least one staging prefix passed audit; no complete local path passed",
+    "evidence_level": "planning/audit only; not physical staging success",
+    "impossible": null
+  },
+  "planning_results": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/effective_plan_results.json",
+  "physics_results": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/new_start_physics_results.json",
+  "unique_design_queries": 11,
+  "preplanning_error_retries": 4,
+  "training_eligible": false,
+  "hook_success": null,
+  "impossible": null
+}

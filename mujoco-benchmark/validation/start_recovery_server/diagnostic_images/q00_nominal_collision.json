@@ -1,0 +1,20 @@
+{
+  "query": "q00_scene_0000_Tomato_01_recorded",
+  "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__e0a6173d",
+  "q": [
+    0.1776807408819851,
+    3.153514464386022,
+    -0.5368410582451368,
+    -1.221843603536791,
+    0.1863366189445352,
+    -1.571157143313453,
+    0.22897954902473847
+  ],
+  "pair": [
+    "robot_geom_19",
+    "g22"
+  ],
+  "signed_distance_m": -0.000979995219624872,
+  "physics_executed": false,
+  "caption": "IK preparation pose: environment collision (NOT executed)"
+}

@@ -1,0 +1,372 @@
+{
+  "rows": [
+    {
+      "query_id": "q00_scene_0000_Tomato_01_recorded",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00005",
+      "design": "recorded",
+      "historical_cohort": "prefix_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__e0a6173d",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_01/base_policy.json",
+      "returncode": 2,
+      "status": "no_valid_ik_goal_found",
+      "classification": "ik_not_found_within_budget",
+      "prefix_found": false,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q00_scene_0000_Tomato_01_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q01_scene_0003_Tomato_01_recorded",
+      "scene": "scene_0003",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00005",
+      "design": "recorded",
+      "historical_cohort": "prefix_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0003__Tomato_01__435a11fa",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0003/Tomato_01/base_policy.json",
+      "returncode": 2,
+      "status": "no_valid_ik_goal_found",
+      "classification": "ik_not_found_within_budget",
+      "prefix_found": false,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q01_scene_0003_Tomato_01_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q02_scene_0004_Tomato_01_recorded",
+      "scene": "scene_0004",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00005",
+      "design": "recorded",
+      "historical_cohort": "prefix_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_01__1b2ccc93",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_01/base_policy.json",
+      "returncode": 2,
+      "status": "no_valid_ik_goal_found",
+      "classification": "ik_not_found_within_budget",
+      "prefix_found": false,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q02_scene_0004_Tomato_01_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q03_scene_0005_Tomato_01_recorded",
+      "scene": "scene_0005",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00005",
+      "design": "recorded",
+      "historical_cohort": "prefix_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0005__Tomato_01__0d47d50d",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0005/Tomato_01/base_policy.json",
+      "returncode": 2,
+      "status": "no_valid_ik_goal_found",
+      "classification": "ik_not_found_within_budget",
+      "prefix_found": false,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q03_scene_0005_Tomato_01_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q04_scene_0004_Tomato_08_recorded",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00007",
+      "design": "recorded",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "seat_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q04_scene_0004_Tomato_08_recorded/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q04_scene_0004_Tomato_08_recorded/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q04_scene_0004_Tomato_08_recorded/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q04_scene_0004_Tomato_08_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q05_scene_0004_Tomato_08_neutral",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00007",
+      "design": "neutral",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "insert_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q05_scene_0004_Tomato_08_neutral/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q06_scene_0004_Tomato_08_neutral_pitch15",
+      "scene": "scene_0004",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00007",
+      "design": "neutral_pitch15",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0004__Tomato_08__33af9f69",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0004/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "insert_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00007_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q06_scene_0004_Tomato_08_neutral_pitch15/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q07_scene_0000_Tomato_08_recorded",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00005",
+      "design": "recorded",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "insert_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q07_scene_0000_Tomato_08_recorded/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q07_scene_0000_Tomato_08_recorded/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q07_scene_0000_Tomato_08_recorded/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q07_scene_0000_Tomato_08_recorded/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q08_scene_0000_Tomato_08_neutral",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00005",
+      "design": "neutral",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "insert_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q08_scene_0000_Tomato_08_neutral/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q09_scene_0000_Tomato_08_neutral_pitch15",
+      "scene": "scene_0000",
+      "target": "Tomato_08",
+      "candidate": "mf_20260928_00005",
+      "design": "neutral_pitch15",
+      "historical_cohort": "local_blocked",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_08__e4ef97d0",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/pilot/cases/scene_0000/Tomato_08/base_policy.json",
+      "returncode": 2,
+      "status": "prefix_clear_suffix_environment_rejected",
+      "classification": "insert_environment_blocked",
+      "prefix_found": true,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_00/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 0,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_01/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 1,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        },
+        {
+          "run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/branch_02/approach_only_run",
+          "candidate": "mf_20260928_00005_approach",
+          "branch_index": 2,
+          "manipulation_attempt": false,
+          "prefix_reused": false
+        }
+      ],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/compat_recovery/plans/q09_scene_0000_Tomato_08_neutral_pitch15/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    },
+    {
+      "query_id": "q10_scene_0000_Tomato_01_side_control",
+      "scene": "scene_0000",
+      "target": "Tomato_01",
+      "candidate": "mf_20260928_00003",
+      "design": "recorded",
+      "historical_cohort": "side_self_collision",
+      "new_start_run": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/new_start_runs/scene_0000__Tomato_01__267690e4",
+      "base_policy": "/root/docker_share/mujoko_debugging_data/20260928_multifamily_server/side_repair/cases/scene_0000/Tomato_01/base_policy.json",
+      "returncode": 2,
+      "status": "no_valid_ik_goal_found",
+      "classification": "ik_not_found_within_budget",
+      "prefix_found": false,
+      "prefix_reused": false,
+      "whole_path_passed": false,
+      "runnable_run": null,
+      "approach_only_runs": [],
+      "connection_result": "/root/docker_share/mujoko_debugging_data/20260928_164835_start_recovery_d1/d1/plans/q10_scene_0000_Tomato_01_side_control/connection_result.json",
+      "source_unchanged": true,
+      "physics_executed": false
+    }
+  ],
+  "reported_queries": 11,
+  "evaluated_queries": 11,
+  "whole_paths": 0,
+  "compatibility_retries": 4,
+  "original_failed_invocations_preserved": true
+}
