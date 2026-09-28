@@ -11,6 +11,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from pathlib import Path
 import time
 
@@ -154,6 +155,44 @@ def classify_environment_geom(name):
     if name.startswith("glb_col_") or "__glb_col_" in name:
         return "glb_plant"
     return "other"
+
+
+def neighbor_visual_coverage(geom_names):
+    """Detect visible neighboring trusses that still have no collision group.
+
+    This is a fail-closed guard for scenes created by preview_neighbor_plants.
+    Exact source/layout completeness is checked by add_neighbor_truss_obstacles;
+    here we can at least reject a planner run when a plant has more visible
+    truss groups than modeled fixed truss obstacle groups.
+    """
+    visible = {}
+    modeled = {}
+    standard = re.compile(r"^neighbor_(?P<plant>[0-9]+)_truss_mesh_")
+    extra = re.compile(r"^neighbor_(?P<plant>[0-9]+)_extra_(?P<extra>[0-9]+)_mesh_")
+    collision = re.compile(
+        r"^neighbor_truss_collision_(?:fruit|rachis|pedicel|peduncle)_p(?P<plant>[0-9]+)_t(?P<truss>[0-9]+)_")
+    for name in geom_names:
+        match = standard.match(name)
+        if match:
+            visible.setdefault(int(match.group("plant")), set()).add(("standard", 0))
+            continue
+        match = extra.match(name)
+        if match:
+            visible.setdefault(int(match.group("plant")), set()).add(("extra", int(match.group("extra"))))
+            continue
+        match = collision.match(name)
+        if match:
+            modeled.setdefault(int(match.group("plant")), set()).add(int(match.group("truss")))
+    missing = []
+    for plant, groups in visible.items():
+        have = len(modeled.get(plant, ()))
+        if have < len(groups):
+            missing.append(dict(plant_id=plant, visible_truss_groups=len(groups),
+                                modeled_truss_groups=have))
+    return dict(passed=not missing,
+                visible_neighbor_truss_groups=sum(len(v) for v in visible.values()),
+                modeled_neighbor_truss_groups=sum(len(v) for v in modeled.values()),
+                missing=missing)
 
 
 def require_native_distance_pipeline(mj, model):
@@ -333,6 +372,15 @@ class MuJoCoScene:
             name = m.body(bid).name or ""
             if name.startswith("Robot_") or name == "Hook" or int(m.body_parentid[bid]) in robot_bodies:
                 robot_bodies.add(bid)
+        # A dense scene must not silently show neighboring trusses that are
+        # absent from collision. Leaves are intentionally outside this guard.
+        all_geom_names = [m.geom(i).name or f"#geom_{i}" for i in range(m.ngeom)]
+        neighbor_coverage = neighbor_visual_coverage(all_geom_names)
+        if not neighbor_coverage["passed"]:
+            raise ValueError(
+                "Visible neighboring trusses lack collision coverage; "
+                "run add_neighbor_truss_obstacles before planning: "
+                f"{neighbor_coverage['missing'][:4]}")
         # Include explicitly paired geoms even if their contact masks are zero.
         paired = set(map(int, np.r_[m.pair_geom1, m.pair_geom2]))
         active = [i for i in range(m.ngeom) if int(m.geom_contype[i]) or int(m.geom_conaffinity[i]) or i in paired]
@@ -368,6 +416,7 @@ class MuJoCoScene:
         # still a geometric obstacle unless explicitly allowed in our policy.
         self.inventory = dict(robot_collision_geoms=self.robot_names, environment_collision_geoms=self.environment_names,
                               ignored_visual_geom_count=m.ngeom - len(active),
+                              neighbor_visual_coverage=neighbor_coverage,
                               mesh_semantics="MuJoCo collision mesh (convex), not visual mesh triangles",
                               native_convex_distance=True)
         self.segment = np.empty(6)
