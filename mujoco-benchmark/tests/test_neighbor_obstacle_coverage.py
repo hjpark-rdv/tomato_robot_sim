@@ -20,7 +20,7 @@ from add_neighbor_truss_obstacles import (
     obstacle_kind,
     _neighbor_layout_metadata,
 )
-from environment_preflight import classify_environment_geom
+from environment_preflight import classify_environment_geom, neighbor_visual_coverage
 
 
 def tiny_model():
@@ -163,3 +163,26 @@ def test_neighbor_layout_is_explicit_and_active_scene_placements_are_not_duplica
     assert "placements" in scene_meta
     assert layout_meta["placements"][0]["id"] == 7
     assert layout_path == layout.resolve()
+
+
+def test_preflight_rejects_visual_neighbor_truss_groups_without_matching_colliders():
+    names = [
+        "neighbor_02_truss_mesh_0",
+        "neighbor_02_truss_mesh_1",
+        "neighbor_02_extra_0_mesh_0",
+        "neighbor_05_truss_mesh_0",
+        "neighbor_truss_collision_fruit_p02_t00_g000",
+        "neighbor_truss_collision_rachis_p02_t00_g001",
+        "neighbor_truss_collision_pedicel_p02_t00_g002",
+        "neighbor_truss_collision_peduncle_p02_t00_g003",
+    ]
+    result = neighbor_visual_coverage(names)
+    assert not result["passed"]
+    assert result["visible_neighbor_truss_groups"] == 3
+    assert {m["plant_id"] for m in result["missing"]} == {2, 5}
+
+    names += [
+        "neighbor_truss_collision_fruit_p02_t01_g000",
+        "neighbor_truss_collision_fruit_p05_t00_g000",
+    ]
+    assert neighbor_visual_coverage(names)["passed"]
