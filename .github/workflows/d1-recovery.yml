@@ -1,0 +1,55 @@
+name: D1 evidence-grounded recovery regression
+on:
+  push:
+    branches: ['codex/d1-recovery-20260928']
+    paths:
+      - 'mujoco-benchmark/scripts/**'
+      - 'mujoco-benchmark/tests/**'
+      - '.github/workflows/d1-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-and-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        mujoco: ['3.13.0', '3.14.0']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'pytest>=8,<10' 'mujoco==${{ matrix.mujoco }}' 'ompl==2.0.1' psutil pillow imageio
+      - name: Server regressions and native connector tests
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+        run: >-
+          python -m pytest -v -rs --junitxml=recovery-tests.xml
+          mujoco-benchmark/tests/test_environment_preflight.py
+          mujoco-benchmark/tests/test_environment_preflight_native_extended.py
+          mujoco-benchmark/tests/test_environment_preflight_review.py
+          mujoco-benchmark/tests/test_contact_diagnostics.py
+          mujoco-benchmark/tests/test_hook_seating_geometry.py
+          mujoco-benchmark/tests/test_hook_seating_native.py
+          mujoco-benchmark/tests/test_hook_seating_diversity.py
+          mujoco-benchmark/tests/test_seating_timeline.py
+          mujoco-benchmark/tests/test_aperture_transit.py
+          mujoco-benchmark/tests/test_target_fruit_contact_trial.py
+          mujoco-benchmark/tests/test_target_fruit_contact_native.py
+          mujoco-benchmark/tests/test_retime_seating_trace.py
+          mujoco-benchmark/tests/test_target_contact_summary.py
+          mujoco-benchmark/tests/test_motion_family_search.py
+          mujoco-benchmark/tests/test_search_contact_policy.py
+          mujoco-benchmark/tests/test_motion_search_runner.py
+          mujoco-benchmark/tests/test_motion_search_summary.py
+          mujoco-benchmark/tests/test_search_model_cache.py
+          mujoco-benchmark/tests/test_search_legacy_baseline.py
+          mujoco-benchmark/tests/test_search_render_caption.py
+          mujoco-benchmark/tests/test_approach_connection.py
+          mujoco-benchmark/tests/test_d1_recovery.py
+      - name: Reject skipped integration contracts
+        run: python -c "import xml.etree.ElementTree as E; r=E.parse('recovery-tests.xml'); assert sum(int(t.get('skipped',0)) for t in r.iter('testsuite')) == 0"
+      - run: python -m compileall -q mujoco-benchmark/scripts/approach_connection.py mujoco-benchmark/scripts/plan_approach_connection.py mujoco-benchmark/scripts/recovery_design.py mujoco-benchmark/scripts/prepare_recovery_batch.py
