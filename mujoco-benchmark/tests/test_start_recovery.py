@@ -15,6 +15,7 @@ from initial_configuration_recovery import (
     deterministic_candidates, hold_rows, search_start)
 import materialize_new_start_run as materializer
 import run_new_start_d1 as newd1
+import run_start_recovery_pipeline as pipeline
 
 
 class FakeScene:
@@ -209,3 +210,35 @@ def test_new_start_prepare_removes_old_recorded_prefix_requirement(tmp_path, mon
     assert q["prefix_mode"] == "new_start_replanned_prefix"
     assert "--require-recorded-prefix" not in q["command"]
     assert q["historical_cohort"] == "local_blocked"
+
+
+def test_pipeline_summary_distinguishes_start_approach_local_and_physics():
+    no_start = pipeline.summarize(dict(canonical=None))
+    assert no_start["case"] == "CASE0_INITIAL_CONFIGURATION"
+
+    start = dict(canonical=dict(q=[0.]))
+    approach = pipeline.summarize(start, dict(rows=[
+        dict(status="no_valid_ik_goal_found", classification="ik_not_found_within_budget",
+             prefix_found=False, whole_path_passed=False)
+    ]))
+    assert approach["case"] == "CASE1_APPROACH_PLANNING"
+
+    local = pipeline.summarize(start, dict(rows=[
+        dict(status="prefix_clear_suffix_environment_rejected",
+             classification="insert_environment_blocked",
+             prefix_found=True, whole_path_passed=False)
+    ]))
+    assert local["case"] == "CASE2_LOCAL_MANIPULATION"
+    assert "not physical staging success" in local["evidence_level"]
+
+    runtime = pipeline.summarize(start, dict(rows=[
+        dict(status="whole_path_passed", classification="whole_path_audit_passed",
+             prefix_found=True, whole_path_passed=True)
+    ]), dict(trials=[]))
+    assert runtime["case"] == "CASE4_RUNTIME_VALIDATION_PENDING"
+
+    completed = pipeline.summarize(start, dict(rows=[
+        dict(status="whole_path_passed", classification="whole_path_audit_passed",
+             prefix_found=True, whole_path_passed=True)
+    ]), dict(trials=[dict(physics_executed=True, completed=True)]))
+    assert completed["case"] == "CASE3_LOCAL_PHYSICS_EVIDENCE_AVAILABLE"
