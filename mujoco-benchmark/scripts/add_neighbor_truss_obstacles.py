@@ -224,12 +224,33 @@ def coverage_from_names(metadata, geom_names, require_neighbor_stems=False,
                 missing=missing)
 
 
-def add_neighbor_truss_obstacles(scene, output):
-    """Add fixed colliders for every visual neighboring truss recorded in scene.json."""
+def _neighbor_layout_metadata(scene, layout=None):
+    scene = Path(scene).resolve()
+    scene_meta = json.loads((scene / "scene.json").read_text())
+    if layout is not None:
+        layout_path = Path(layout).resolve()
+        layout_meta = json.loads((layout_path / "scene.json").read_text())
+    elif "neighbor_placements" in scene_meta:
+        layout_path = scene
+        layout_meta = dict(placements=scene_meta["neighbor_placements"],
+                           neighbors=len(scene_meta["neighbor_placements"]),
+                           physics_added=False)
+    elif "neighbors" in scene_meta and scene_meta.get("physics_added") is False:
+        layout_path = scene
+        layout_meta = scene_meta
+    else:
+        raise ValueError("Neighbor layout is ambiguous; pass --layout pointing to preview_neighbor_plants scene")
+    if not isinstance(layout_meta.get("placements"), list):
+        raise ValueError("Neighbor layout has no placements list")
+    return scene_meta, layout_meta, layout_path
+
+
+def add_neighbor_truss_obstacles(scene, output, layout=None):
+    """Add fixed colliders for every visual neighboring truss recorded by the layout."""
     scene = Path(scene).resolve(); output = Path(output).resolve()
     if output.exists():
         raise FileExistsError(f"Output exists: {output}")
-    metadata = json.loads((scene / "scene.json").read_text())
+    scene_meta, metadata, layout_path = _neighbor_layout_metadata(scene, layout)
     expected = _expected_trusses(metadata)
     if not expected:
         raise ValueError("scene.json contains no neighboring truss placements")
@@ -274,8 +295,10 @@ def add_neighbor_truss_obstacles(scene, output):
         raise ValueError(f"Incomplete neighboring truss collision coverage: {coverage['missing'][:4]}")
     source_sha = hashlib.sha256((scene / "model.mjb").read_bytes()).hexdigest()
     output_sha = hashlib.sha256((output / "model.mjb").read_bytes()).hexdigest()
-    record = copy.deepcopy(metadata)
-    record.update(parent_scene=str(scene), parent_model_sha256=source_sha,
+    record = copy.deepcopy(scene_meta)
+    record.update(parent_scene=str(scene), neighbor_layout=str(layout_path),
+                  neighbor_placements=copy.deepcopy(metadata["placements"]),
+                  parent_model_sha256=source_sha,
                   model_sha256=output_sha,
                   background_truss_physics="fixed collision proxies; no background bending",
                   background_truss_collision_geoms=len(inventories),
@@ -285,6 +308,7 @@ def add_neighbor_truss_obstacles(scene, output):
                               "note": "Collision coverage changed; rerun initial screen before planning/physics"})
     (output / "scene.json").write_text(json.dumps(record, indent=2))
     report = dict(schema="neighbor_truss_obstacles_v1", source_scene=str(scene),
+                  neighbor_layout=str(layout_path),
                   source_model_sha256=source_sha, output_model_sha256=output_sha,
                   policy=dict(non_target_fruit="obstacle", non_target_rachis="obstacle",
                               non_target_pedicel="obstacle", non_target_peduncle="obstacle",
@@ -296,9 +320,9 @@ def add_neighbor_truss_obstacles(scene, output):
     return report
 
 
-def audit_scene(scene, require_neighbor_stems=False, require_gutter=False):
+def audit_scene(scene, require_neighbor_stems=False, require_gutter=False, layout=None):
     scene = Path(scene).resolve()
-    metadata = json.loads((scene / "scene.json").read_text())
+    _, metadata, _ = _neighbor_layout_metadata(scene, layout)
     model = mj.MjModel.from_binary_path(str(scene / "model.mjb"))
     names = [model.geom(i).name or f"#geom_{i}" for i in range(model.ngeom)]
     result = coverage_from_names(metadata, names, require_neighbor_stems, require_gutter)
@@ -311,17 +335,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("scene", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--layout", type=Path, help="preview_neighbor_plants scene providing background placements")
     parser.add_argument("--audit", action="store_true")
     parser.add_argument("--require-neighbor-stems", action="store_true")
     parser.add_argument("--require-gutter", action="store_true")
     args = parser.parse_args()
     if args.audit:
-        result = audit_scene(args.scene, args.require_neighbor_stems, args.require_gutter)
+        result = audit_scene(args.scene, args.require_neighbor_stems, args.require_gutter, args.layout)
         print(json.dumps(result, indent=2))
         return 0 if result["passed"] else 2
     if args.output is None:
         parser.error("--output is required unless --audit is used")
-    result = add_neighbor_truss_obstacles(args.scene, args.output)
+    result = add_neighbor_truss_obstacles(args.scene, args.output, args.layout)
     print(json.dumps({k: v for k, v in result.items() if k != "inventory"}, indent=2))
     return 0
 
