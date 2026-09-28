@@ -22,7 +22,9 @@ import mujoco as mj
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from greenhouse_visual import nums
+def nums(values):
+    return " ".join(format(float(v), ".10g") for v in np.asarray(values).ravel())
+
 
 COLLISION_PREFIX = "neighbor_truss_collision_"
 COLLISION_CONTYPE = 32
