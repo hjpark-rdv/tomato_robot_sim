@@ -1,0 +1,3446 @@
+{
+  "scene": "scene_0000",
+  "seed": 2026,
+  "scene_id": 0,
+  "placements": [
+    {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+      "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+      "stem_segment": 5,
+      "stem_fraction": 0.789348136754362,
+      "y_deg": 20.0,
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5,
+      "attachment_world_m": [
+        -0.7574295377239482,
+        0.9168356388118041,
+        0.611228528645769
+      ]
+    }
+  ],
+  "validation": {
+    "scene_screen_passed": false,
+    "note": "Collision coverage changed; rerun initial screen before planning/physics"
+  },
+  "preview": "preview.png",
+  "model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+  "generator_sha256": "3304e3c24feafebde4517fdb654e1e9b991b99b953107c8076ba82b7126077d1",
+  "physics_ready": false,
+  "note": "Idle screen only; robot motion and labels require a separate rollout",
+  "background_scene": "/root/docker_share/mujoko_debugging_data/20260927_robot_side_dense_trusses",
+  "background_physics": false,
+  "gutter_collisions": true,
+  "eligible_targets": [
+    "Tomato_01",
+    "Tomato_02",
+    "Tomato_03",
+    "Tomato_04",
+    "Tomato_05",
+    "Tomato_07",
+    "Tomato_08",
+    "Tomato_09",
+    "Tomato_10",
+    "Tomato_11"
+  ],
+  "target_policy": "robot-side stem roots relative to aisle x=0; opposite-side fruits excluded",
+  "background_stem_physics": "fixed capsules; no background bending",
+  "background_stem_colliders": 1088,
+  "parent_scene": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene",
+  "neighbor_layout": "/root/docker_share/mujoko_debugging_data/20260927_robot_side_dense_trusses",
+  "neighbor_placements": [
+    {
+      "id": 0,
+      "position": [
+        -0.8805855718333271,
+        0.38105985494308137,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 7,
+          "stem_fraction": 0.23591521614127586,
+          "y_deg": 167.61813576761406,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.8969534959581088,
+            0.8614230714829438,
+            0.8129514924121577
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 9,
+          "stem_fraction": 0.5175695826824338,
+          "y_deg": 8.865537130537671,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9018884448720691,
+            0.8837236540626789,
+            0.9679249399624323
+          ],
+          "fruit_centroid_world_m": [
+            -0.678497136424248,
+            0.9143012351786158,
+            0.8844007144783357
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 12,
+          "stem_fraction": 0.4112256575183899,
+          "y_deg": 0.8306791346861697,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9117228474333875,
+            0.9258997553866324,
+            1.2478586821149869
+          ],
+          "fruit_centroid_world_m": [
+            -0.8480864582281069,
+            0.9227506895281797,
+            1.0472337362004547
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 1,
+      "position": [
+        -0.8896994262811905,
+        0.8849466608593238,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 6,
+          "stem_fraction": 0.85,
+          "y_deg": 169.8148280934093,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9048140778085608,
+            1.3028800121461592,
+            0.6802106489510247
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 10,
+          "stem_fraction": 0.4592170231449799,
+          "y_deg": 36.4361314588158,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9197576878156131,
+            1.4027999122879264,
+            1.0628791963481758
+          ],
+          "fruit_centroid_world_m": [
+            -0.8089215559703823,
+            1.4795595050876946,
+            0.8771517510406384
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 8,
+          "stem_fraction": 0.20767538182396805,
+          "y_deg": 60.316433485971274,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9048202890440507,
+            1.3839659327967615,
+            0.9049964454184798
+          ],
+          "fruit_centroid_world_m": [
+            -0.7895200921440015,
+            1.5777300413198343,
+            0.8214722199343831
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 2,
+      "position": [
+        -0.8845455171029579,
+        1.1680193956172256,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 13,
+          "stem_fraction": 0.15,
+          "y_deg": 54.3146355784216,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9086418006158622,
+            1.7263053926421055,
+            1.362246956183366
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 10,
+          "stem_fraction": 0.7289102514126569,
+          "y_deg": 3.5245776474542545,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9130714756850362,
+            1.6796102330453362,
+            1.0389626994258383
+          ],
+          "fruit_centroid_world_m": [
+            -0.7783165547033617,
+            1.6838285834838673,
+            0.8532352541183008
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 12,
+          "stem_fraction": 0.85,
+          "y_deg": 9.208802448544624,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9184117695498788,
+            1.706099808771452,
+            1.2083198322496682
+          ],
+          "fruit_centroid_world_m": [
+            -0.8445669510556716,
+            1.7139445944915996,
+            0.9981440693357704
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 3,
+      "position": [
+        -0.8673934287150232,
+        1.3884171056637693,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 11,
+          "stem_fraction": 0.85,
+          "y_deg": 81.15118098224761,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9024588701860499,
+            1.9178899223092274,
+            1.117242137388286
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 4,
+      "position": [
+        -0.8631451845125595,
+        1.6264658806724897,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 7,
+          "stem_fraction": 0.449132425611384,
+          "y_deg": 138.66790284985956,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.8786012547090948,
+            2.1029639278447023,
+            0.7937155297582733
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 5,
+      "position": [
+        -0.8866607427725377,
+        1.9195081666781182,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 13,
+          "stem_fraction": 0.700691484026434,
+          "y_deg": 2.4871511989484874,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9141673527694963,
+            2.471429055576317,
+            1.312320901906636
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 6,
+      "position": [
+        -0.8795347693318085,
+        2.1699972430665966,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 4,
+          "stem_fraction": 0.41494885520929703,
+          "y_deg": 153.90573304730705,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8923837672567234,
+            2.502657000935412,
+            0.5656514956823047
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 7,
+      "position": [
+        -0.887318444699204,
+        2.3982286192367592,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 6,
+          "stem_fraction": 0.85,
+          "y_deg": 100.70987791513662,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8979064501017353,
+            2.821555206371036,
+            0.6771227727099184
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 8,
+      "position": [
+        -0.8601596119237881,
+        2.6451548143145827,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 10,
+          "stem_fraction": 0.47300286434395744,
+          "y_deg": 56.05692086761613,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8915546740801594,
+            3.1647166215162597,
+            1.0612103088460272
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 9,
+      "position": [
+        -0.8648173421965465,
+        2.922517665451806,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 10,
+          "stem_fraction": 0.22510207424086914,
+          "y_deg": 31.960144283579947,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.8961265054395018,
+            3.443992012920073,
+            1.0839675813059098
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 10,
+      "position": [
+        -0.8883142485753357,
+        3.1573017065898648,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 13,
+          "stem_fraction": 0.19677925086467418,
+          "y_deg": 3.6582091610349954,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.9124341176848694,
+            3.7139498902407526,
+            1.3580866105002247
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 11,
+      "position": [
+        -0.8628344891461621,
+        3.4143073054113686,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 4,
+          "stem_fraction": 0.85,
+          "y_deg": 97.71362411649216,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8729863719980595,
+            3.722253487376908,
+            0.5343903965872974
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 12,
+      "position": [
+        -0.8782352480886798,
+        3.6591926713681033,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 6,
+          "stem_fraction": 0.85,
+          "y_deg": 81.87986823985905,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8867507771828931,
+            4.0823526962486465,
+            0.6772520430442237
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 13,
+      "position": [
+        -0.8716663776610595,
+        3.9118776498730656,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 8,
+          "stem_fraction": 0.15,
+          "y_deg": 24.315040795780973,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.886278060230523,
+            4.410082942326723,
+            0.9104750110506321
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 14,
+      "position": [
+        -0.8671834897538576,
+        4.152809738164304,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 10,
+          "stem_fraction": 0.15,
+          "y_deg": 130.24829050806474,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9047443585444933,
+            4.677466061615934,
+            1.090017149222501
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 15,
+      "position": [
+        -0.8701009727755794,
+        4.400890410617269,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 9,
+          "stem_fraction": 0.6899610204413342,
+          "y_deg": 93.28945995851687,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.8925747179017395,
+            4.905837233243341,
+            0.9515510238451039
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 16,
+      "position": [
+        -0.8832729407041736,
+        4.67162413226848,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 9,
+          "stem_fraction": 0.15,
+          "y_deg": 132.8255468678407,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.9145449328638752,
+            5.181463971031286,
+            1.0000296250917162
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": -1
+    },
+    {
+      "id": 17,
+      "position": [
+        -0.6890334454333393,
+        0.9236625227971338,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 4,
+          "stem_fraction": 0.15,
+          "y_deg": 117.31930408007202,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6760057825878866,
+            0.5683454028869449,
+            0.5788179416228162
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 10,
+          "stem_fraction": 0.85,
+          "y_deg": 174.92999685510546,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6539039480537281,
+            0.414193471175727,
+            1.027657220768837
+          ],
+          "fruit_centroid_world_m": [
+            -0.5804055728703985,
+            0.4035827819027359,
+            0.8174814578549392
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 11,
+          "stem_fraction": 0.15,
+          "y_deg": 175.01176077234751,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6484791984480386,
+            0.38697483530288224,
+            1.180918143074643
+          ],
+          "fruit_centroid_world_m": [
+            -0.5854899766673471,
+            0.3773902337811865,
+            0.9802931971601109
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 18,
+      "position": [
+        -0.6699217397034614,
+        1.1739697833857492,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 5,
+          "stem_fraction": 0.85,
+          "y_deg": 179.61018161980314,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6551282513398016,
+            0.8083182400258874,
+            0.6052991228688959
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 8,
+          "stem_fraction": 0.21630382317629682,
+          "y_deg": 178.45696309818223,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6469555773884965,
+            0.6779569511059144,
+            0.9038403647471602
+          ],
+          "fruit_centroid_world_m": [
+            -0.5835042181735688,
+            0.6721749392895113,
+            0.7032154188326282
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 7,
+          "stem_fraction": 0.6633419694140379,
+          "y_deg": 146.61834382118096,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6541766073260137,
+            0.7044897955104533,
+            0.7754242331125915
+          ],
+          "fruit_centroid_world_m": [
+            -0.54389081809665,
+            0.6269415659803346,
+            0.5896967878050541
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 19,
+      "position": [
+        -0.6785616529764157,
+        1.4177863399000912,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 6,
+          "stem_fraction": 0.15,
+          "y_deg": 91.24405887510169,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6691142556086982,
+            0.9622611623692042,
+            0.7324872058894766
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 9,
+          "stem_fraction": 0.6484726502169451,
+          "y_deg": 102.03292074051168,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6548509792421788,
+            0.9123192405102377,
+            0.9551942065969183
+          ],
+          "fruit_centroid_world_m": [
+            -0.6119770422476557,
+            0.6909586959601285,
+            0.8716699811128217
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 10,
+          "stem_fraction": 0.2895625158541719,
+          "y_deg": 148.51503694251187,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6408000606351891,
+            0.8963858717811756,
+            1.0775827724194855
+          ],
+          "fruit_centroid_world_m": [
+            -0.450756187087264,
+            0.7750516586183932,
+            0.9940585469353889
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 20,
+      "position": [
+        -0.6828840718385544,
+        1.673639760372804,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 11,
+          "stem_fraction": 0.18633283035753578,
+          "y_deg": 159.98523521964105,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6423536395233295,
+            1.137570509848917,
+            1.1776484832262444
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 9,
+          "stem_fraction": 0.7528225662439851,
+          "y_deg": 120.2699828024494,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6588763186754202,
+            1.1694550322816695,
+            0.9456299695176387
+          ],
+          "fruit_centroid_world_m": [
+            -0.5488813094294016,
+            0.9726308389062118,
+            0.862105744033542
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 12,
+          "stem_fraction": 0.85,
+          "y_deg": 164.24468182679445,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6432006552243781,
+            1.132724276143119,
+            1.208260446901948
+          ],
+          "fruit_centroid_world_m": [
+            -0.514610384090608,
+            1.0922122362173994,
+            1.0225330015944105
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 21,
+      "position": [
+        -0.6677858885519324,
+        1.9028887729498367,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 12,
+          "stem_fraction": 0.15,
+          "y_deg": 97.67771533500958,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6346931840536237,
+            1.3513994057903322,
+            1.2712484382527132
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 7,
+          "stem_fraction": 0.15,
+          "y_deg": 144.36168905171942,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6518397386797614,
+            1.4182080094377811,
+            0.8197897266360084
+          ],
+          "fruit_centroid_world_m": [
+            -0.4710827293271931,
+            1.2834283050055233,
+            0.7362655011519117
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 11,
+          "stem_fraction": 0.8186232270433571,
+          "y_deg": 109.59422874711638,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6305986933152221,
+            1.3728375149035843,
+            1.1200346244716244
+          ],
+          "fruit_centroid_world_m": [
+            -0.5892442407160607,
+            1.24451568332601,
+            0.9343071791640869
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 22,
+      "position": [
+        -0.6829321912460355,
+        2.1348887491231294,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 10,
+          "stem_fraction": 0.337425139039226,
+          "y_deg": 8.55963316035874,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.65231699385335,
+            1.6167591060527489,
+            1.074140844110415
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 9,
+          "stem_fraction": 0.1705670532639214,
+          "y_deg": 157.00666955637394,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6505803432293709,
+            1.6266968626730343,
+            0.998181788380903
+          ],
+          "fruit_centroid_world_m": [
+            -0.5281189344613301,
+            1.5703063796839123,
+            0.8124543430733655
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 11,
+          "stem_fraction": 0.5508950754899384,
+          "y_deg": 163.0694971827752,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6428949721802549,
+            1.6034564163893674,
+            1.144596963178018
+          ],
+          "fruit_centroid_world_m": [
+            -0.4284584528901776,
+            1.5337739627034679,
+            1.0610727376939213
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 23,
+      "position": [
+        -0.6833876277847972,
+        2.397782926540402,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 10,
+          "stem_fraction": 0.6983511992619853,
+          "y_deg": 147.35587661129165,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6475864012699025,
+            1.8834463444350287,
+            1.0408781632469908
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 24,
+      "position": [
+        -0.6720852805116068,
+        2.653754584845358,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 7,
+          "stem_fraction": 0.5634040875616311,
+          "y_deg": 144.49944849404633,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6575202969857542,
+            2.179656286296763,
+            0.7835189544923615
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 25,
+      "position": [
+        -0.6632904271161207,
+        2.875359688885547,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 12,
+          "stem_fraction": 0.85,
+          "y_deg": 65.24518602595955,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6296720022807786,
+            2.3337474083590783,
+            1.2078523933225511
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 26,
+      "position": [
+        -0.6896276714698182,
+        3.159814922556008,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 4,
+          "stem_fraction": 0.30326762160045284,
+          "y_deg": 38.51627276028323,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6849610365075358,
+            2.817666697722127,
+            0.5711297920100229
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 27,
+      "position": [
+        -0.6766327206062671,
+        3.3773602874530537,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 8,
+          "stem_fraction": 0.24267369451120757,
+          "y_deg": 126.11382138835305,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6564601164258704,
+            2.8779030341329794,
+            0.901242358281114
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 28,
+      "position": [
+        -0.6646531359943395,
+        3.674163263414068,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 13,
+          "stem_fraction": 0.6948400750432864,
+          "y_deg": 155.49206844008228,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6315761052357263,
+            3.120210540678788,
+            1.3130811772563848
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 29,
+      "position": [
+        -0.6734686170799814,
+        3.91354437035554,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 9,
+          "stem_fraction": 0.4655957590021771,
+          "y_deg": 149.7697924854088,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6445557796836149,
+            3.407828694933334,
+            0.9715116581771202
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 30,
+      "position": [
+        -0.673129371098835,
+        4.129677004835311,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 8,
+          "stem_fraction": 0.85,
+          "y_deg": 126.91354015494075,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6576809595939644,
+            3.637039272438245,
+            0.8463421576277368
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 31,
+      "position": [
+        -0.6876283929112389,
+        4.375703161159829,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 10,
+          "stem_fraction": 0.15,
+          "y_deg": 141.20094930036166,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            -0.6495291544888833,
+            3.8515222158669786,
+            1.0900686799768462
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 32,
+      "position": [
+        -0.6601295187970153,
+        4.638616858582795,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 7,
+          "stem_fraction": 0.7859215846728613,
+          "y_deg": 7.393244904300071,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            -0.6534359729680173,
+            4.1754575696051335,
+            0.765802763480928
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": -0.775,
+      "side": 1
+    },
+    {
+      "id": 33,
+      "position": [
+        0.6638662433742547,
+        0.423253006078217,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 9,
+          "stem_fraction": 0.3918454532780924,
+          "y_deg": 99.0900748774824,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.637815351417778,
+            0.931296022496521,
+            0.9784216126737082
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 9,
+          "stem_fraction": 0.85,
+          "y_deg": 125.63329162296982,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6405787026942167,
+            0.9263307639892453,
+            0.936829783682253
+          ],
+          "fruit_centroid_world_m": [
+            0.5653796523852882,
+            1.0382315505898536,
+            0.7511023383747155
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 7,
+          "stem_fraction": 0.4946037380993067,
+          "y_deg": 164.30709779826498,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6476891884192635,
+            0.896188985365866,
+            0.7905175502382166
+          ],
+          "fruit_centroid_world_m": [
+            0.5190548612278886,
+            0.936560919642315,
+            0.6047901049306792
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 34,
+      "position": [
+        0.6816663393681113,
+        0.8996247146106842,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 11,
+          "stem_fraction": 0.15,
+          "y_deg": 176.52383921432516,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6411250405400265,
+            1.4351889328359073,
+            1.181095075151227
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 11,
+          "stem_fraction": 0.15,
+          "y_deg": 151.0302840250499,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.641631080746425,
+            1.4376749146473622,
+            1.1807097196249847
+          ],
+          "fruit_centroid_world_m": [
+            0.5879748612848877,
+            1.4720335636307282,
+            0.9800847737104527
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 7,
+          "stem_fraction": 0.15,
+          "y_deg": 170.4385744103912,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6652415854828465,
+            1.3820527336237376,
+            0.8205361684491674
+          ],
+          "fruit_centroid_world_m": [
+            0.533030982772752,
+            1.4084542438122316,
+            0.63480872314163
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 35,
+      "position": [
+        0.6782327856484045,
+        1.1527473307798,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 7,
+          "stem_fraction": 0.85,
+          "y_deg": 152.503416550199,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.6625236900657925,
+            1.6165624038668729,
+            0.7593379078096443
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 10,
+          "stem_fraction": 0.85,
+          "y_deg": 169.63125640386386,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6429985822994186,
+            1.663704888684769,
+            1.0273866606222046
+          ],
+          "fruit_centroid_world_m": [
+            0.5111730982007083,
+            1.6919666110551463,
+            0.8416592153146671
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 12,
+          "stem_fraction": 0.6742247460949606,
+          "y_deg": 170.06411492518018,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6392785846123346,
+            1.6950080683819566,
+            1.2242943471228207
+          ],
+          "fruit_centroid_world_m": [
+            0.5669451358100028,
+            1.7118149141835313,
+            1.0141185842089229
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 36,
+      "position": [
+        0.6895217385650979,
+        1.3767527220771152,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 8,
+          "stem_fraction": 0.6935636741124718,
+          "y_deg": 22.32884383095874,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.6797571516731667,
+            1.867864598783206,
+            0.8615154015375086
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 37,
+      "position": [
+        0.6727836297724816,
+        1.6553901742479213,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 9,
+          "stem_fraction": 0.85,
+          "y_deg": 127.71266670658108,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6489699418761606,
+            2.1581827379384233,
+            0.9368003236795459
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 38,
+      "position": [
+        0.6620800734148062,
+        1.8765748181513087,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 7,
+          "stem_fraction": 0.8357889566550671,
+          "y_deg": 118.95286270949778,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6483140436032723,
+            2.343244700970634,
+            0.7597716760527966
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 39,
+      "position": [
+        0.686886784487976,
+        2.1371658028796783,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 13,
+          "stem_fraction": 0.85,
+          "y_deg": 52.035049342386124,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6582219868392559,
+            2.689472026648792,
+            1.298608906884843
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 40,
+      "position": [
+        0.6746558575768911,
+        2.3854205217472733,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 10,
+          "stem_fraction": 0.15,
+          "y_deg": 143.65320004119923,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6366704947968211,
+            2.9097179213702877,
+            1.09005495789381
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 41,
+      "position": [
+        0.678539815206422,
+        2.642495481798039,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 13,
+          "stem_fraction": 0.6163125775288183,
+          "y_deg": 158.43581761778918,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6457743403639397,
+            3.1966192005686307,
+            1.3202804947745428
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 42,
+      "position": [
+        0.6644480857293678,
+        2.921763816789802,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 5,
+          "stem_fraction": 0.26757378399627996,
+          "y_deg": 123.94007264847743,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.6496587708117803,
+            3.321726250244629,
+            0.6464014610386436
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 43,
+      "position": [
+        0.6646506764480821,
+        3.168499075691469,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 9,
+          "stem_fraction": 0.8053040391509967,
+          "y_deg": 114.29175626597615,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.644259300047786,
+            3.6719647438970253,
+            0.9412679542015525
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 44,
+      "position": [
+        0.679599526056919,
+        3.4134065645218294,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 12,
+          "stem_fraction": 0.649319585622564,
+          "y_deg": 6.464051013644589,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6473440105073769,
+            3.9557896891409716,
+            1.2262286844302193
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 45,
+      "position": [
+        0.6751947395879211,
+        3.673144187007927,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 4,
+          "stem_fraction": 0.510207929220206,
+          "y_deg": 178.77891864177954,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6597243687072204,
+            4.002436276330438,
+            0.5572811260229311
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 46,
+      "position": [
+        0.6727680011339724,
+        3.90415850018766,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 11,
+          "stem_fraction": 0.15,
+          "y_deg": 169.2648272749943,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.6322249722028349,
+            4.440914802446844,
+            1.1809074753597437
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 47,
+      "position": [
+        0.6765787388440276,
+        4.166428617487409,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 10,
+          "stem_fraction": 0.6100778833048714,
+          "y_deg": 146.42381135523544,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6407752054340283,
+            4.682993569621639,
+            1.0487050237454467
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 48,
+      "position": [
+        0.6639765143467579,
+        4.393143129044435,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 10,
+          "stem_fraction": 0.5236633524061585,
+          "y_deg": 1.9686189097267515,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.6343334458021301,
+            4.908049993325293,
+            1.0574243861621122
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 49,
+      "position": [
+        0.6695173359221833,
+        4.650165121809133,
+        0.3199999980244
+      ],
+      "yaw_deg": 0.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 11,
+          "stem_fraction": 0.8318603978361985,
+          "y_deg": 19.524591788148633,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.6365179074237377,
+            5.177749509180817,
+            1.1192442114368781
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": -1
+    },
+    {
+      "id": 50,
+      "position": [
+        0.8882843141817861,
+        0.392934864579331,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 12,
+          "stem_fraction": 0.6223017551250027,
+          "y_deg": 117.1219145998692,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9251557635892598,
+            -0.15271986030222817,
+            1.2285470772193252
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 51,
+      "position": [
+        0.8652497633396379,
+        0.6275137249359861,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 5,
+          "stem_fraction": 0.5560111249082009,
+          "y_deg": 178.9533637438277,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8802069892563531,
+            0.24620434867459673,
+            0.627196985886627
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 7,
+          "stem_fraction": 0.43472191569254903,
+          "y_deg": 25.90693942680146,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8722328171335023,
+            0.1517067337917165,
+            0.7954048901389491
+          ],
+          "fruit_centroid_world_m": [
+            0.813259858487001,
+            0.12758834256541637,
+            0.594779944224417
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 9,
+          "stem_fraction": 0.85,
+          "y_deg": 21.031519362601554,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8831637161727842,
+            0.1269817552908864,
+            0.937743114511469
+          ],
+          "fruit_centroid_world_m": [
+            0.8223543210434597,
+            0.10796270928766885,
+            0.7371181685969369
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 52,
+      "position": [
+        0.8861897003249993,
+        0.891980719224972,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 11,
+          "stem_fraction": 0.5956508355463015,
+          "y_deg": 122.43052660357529,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.9244977495129375,
+            0.3590992734765933,
+            1.1402409765666652
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 8,
+          "stem_fraction": 0.15,
+          "y_deg": 51.59994872677203,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.9013302267220857,
+            0.39285926319259457,
+            0.9103155416741966
+          ],
+          "fruit_centroid_world_m": [
+            0.757997685649013,
+            0.21880626026972858,
+            0.8267913161900999
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 6,
+          "stem_fraction": 0.26111657488529083,
+          "y_deg": 76.96622393290764,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8932773108623049,
+            0.44272608578080674,
+            0.7244164371152191
+          ],
+          "fruit_centroid_world_m": [
+            0.8383286916539732,
+            0.2240498081372795,
+            0.6408922116311224
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 53,
+      "position": [
+        0.8786644206685471,
+        1.1472981885141673,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 10,
+          "stem_fraction": 0.15,
+          "y_deg": 169.38814582819435,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9175031600910386,
+            0.6242722323743665,
+            1.0902285573666302
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 9,
+          "stem_fraction": 0.8060287502425094,
+          "y_deg": 31.559503719200425,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8970891665227189,
+            0.6461560020872762,
+            0.9416911930404042
+          ],
+          "fruit_centroid_world_m": [
+            0.7027902015704435,
+            0.5317594227004532,
+            0.8581669675563075
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 13,
+          "stem_fraction": 0.7637662477135816,
+          "y_deg": 40.550092998813916,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.906554909441807,
+            0.5951420254380783,
+            1.3065140237911381
+          ],
+          "fruit_centroid_world_m": [
+            0.8475655613453172,
+            0.5500326617472813,
+            1.0963382608772403
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 54,
+      "position": [
+        0.8761285320454006,
+        1.4121880245178586,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 11,
+          "stem_fraction": 0.3277035630076668,
+          "y_deg": 20.95099015297555,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9098171439949063,
+            0.8800494313284316,
+            1.1652438143829293
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 10,
+          "stem_fraction": 0.1890117080203737,
+          "y_deg": 10.213129676996083,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9080875059950015,
+            0.8930720911751798,
+            1.08770825336953
+          ],
+          "fruit_centroid_world_m": [
+            0.834391534739224,
+            0.8839341645993607,
+            0.8775324904556321
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 7,
+          "stem_fraction": 0.632416950946503,
+          "y_deg": 57.41343811357718,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8834072101579163,
+            0.9411355067075945,
+            0.7779496751788293
+          ],
+          "fruit_centroid_world_m": [
+            0.807396835538212,
+            0.829784232986223,
+            0.5922222298712918
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 55,
+      "position": [
+        0.8633120023868421,
+        1.6618905812312026,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 6,
+          "stem_fraction": 0.350897144492353,
+          "y_deg": 145.5389859997648,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8791361044963109,
+            1.2197389582589078,
+            0.7189244428449348
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 9,
+          "stem_fraction": 0.15,
+          "y_deg": 49.410431926699204,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8895163065998494,
+            1.1526110177044329,
+            1.000684445791518
+          ],
+          "fruit_centroid_world_m": [
+            0.845054528498726,
+            1.1069748814201976,
+            0.8000594998769859
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 12,
+          "stem_fraction": 0.15,
+          "y_deg": 39.79288475474252,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8932110167245377,
+            1.1140526414490188,
+            1.2715505874811466
+          ],
+          "fruit_centroid_world_m": [
+            0.8336306820605702,
+            1.0697267844040943,
+            1.0613748245672487
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 56,
+      "position": [
+        0.8732815176803025,
+        1.9200745210741097,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+          "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+          "stem_segment": 12,
+          "stem_fraction": 0.5257788596757642,
+          "y_deg": 139.43495371529968,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9106026571781881,
+            1.373944494318649,
+            1.237430242661517
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 8,
+          "stem_fraction": 0.85,
+          "y_deg": 10.882739374534784,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8817069647647168,
+            1.431659004500554,
+            0.8474990148703201
+          ],
+          "fruit_centroid_world_m": [
+            0.7486020079275497,
+            1.410217137171063,
+            0.6617715695627826
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 10,
+          "stem_fraction": 0.85,
+          "y_deg": 17.148061451870603,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.9010348160164057,
+            1.4094802526223633,
+            1.0279074260613763
+          ],
+          "fruit_centroid_world_m": [
+            0.6843783641741837,
+            1.3470411059908614,
+            0.9443832005772796
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 57,
+      "position": [
+        0.8744409658148679,
+        2.1652769525420874,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 13,
+          "stem_fraction": 0.6834768062344345,
+          "y_deg": 4.3157192699622815,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9018319390465765,
+            1.6132048457278878,
+            1.313885294694947
+          ],
+          "truss_scale": 0.5
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 10,
+          "stem_fraction": 0.7150382434477685,
+          "y_deg": 61.99151032306127,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9039456084487733,
+            1.6500606300929603,
+            1.03955171981927
+          ],
+          "fruit_centroid_world_m": [
+            0.8370655185460985,
+            1.532997669324792,
+            0.8538242745117326
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        },
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 5,
+          "stem_fraction": 0.275331914616884,
+          "y_deg": 59.74757554388156,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8790353405205941,
+            1.7666662738388763,
+            0.646465877270053
+          ],
+          "fruit_centroid_world_m": [
+            0.7618170818669318,
+            1.5740564480377652,
+            0.5629416517859563
+          ],
+          "truss_scale": 0.5,
+          "placement_policy": "aisle_facing_height_bias",
+          "robot_ik_checked": false
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 58,
+      "position": [
+        0.883386007361949,
+        2.4031913997275565,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 13,
+          "stem_fraction": 0.3285916105268356,
+          "y_deg": 147.93645521204246,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9136106574095784,
+            1.845609172229047,
+            1.3462979698521635
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 59,
+      "position": [
+        0.8858417159892182,
+        2.6309508596052242,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 4,
+          "stem_fraction": 0.40594014132765466,
+          "y_deg": 54.41181510116115,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8905492520107101,
+            2.293590955183883,
+            0.5629588623233643
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 60,
+      "position": [
+        0.8822474727997812,
+        2.904510132187281,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 11,
+          "stem_fraction": 0.21641291092990755,
+          "y_deg": 137.55061196333122,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9218074497768831,
+            2.36689091099659,
+            1.1746280026812397
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 61,
+      "position": [
+        0.8848769182767072,
+        3.1610174808955205,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 6,
+          "stem_fraction": 0.85,
+          "y_deg": 113.66151654085438,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8983679226180601,
+            2.738812040509918,
+            0.6777346109463761
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 62,
+      "position": [
+        0.888628294339642,
+        3.393687586314049,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+          "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+          "stem_segment": 8,
+          "stem_fraction": 0.5364772518991394,
+          "y_deg": 109.23009776039126,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.9047996608776678,
+            2.8969745151173205,
+            0.8747742917262917
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 63,
+      "position": [
+        0.8773607107838894,
+        3.6352425691059294,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+          "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+          "stem_segment": 8,
+          "stem_fraction": 0.16707099874386522,
+          "y_deg": 25.37842478156537,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {
+            "2": [
+              -0.0005066500582317888,
+              -0.0008218853535071469,
+              0.002840389090280442
+            ]
+          },
+          "rachis_stiffness_scale": 2.0,
+          "attachment_world_m": [
+            0.8915427725129368,
+            3.13814837132067,
+            0.909070366333538
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 64,
+      "position": [
+        0.8654685544109118,
+        3.9089302465797826,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+          "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+          "stem_segment": 13,
+          "stem_fraction": 0.85,
+          "y_deg": 162.8870495890276,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8995990851849248,
+            3.356310363856575,
+            1.2989790098521727
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 65,
+      "position": [
+        0.8879660494125785,
+        4.143435138849421,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 10,
+          "stem_fraction": 0.15,
+          "y_deg": 164.0131443240407,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.927069736687959,
+            3.6219978633364325,
+            1.090494349357524
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 66,
+      "position": [
+        0.8826020455791674,
+        4.391505955701636,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 4,
+          "stem_fraction": 0.85,
+          "y_deg": 148.52498659622458,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8957802079810594,
+            4.0831655583171615,
+            0.5341309312858679
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 0,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_color_matched/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    },
+    {
+      "id": 67,
+      "position": [
+        0.8734792659234994,
+        4.673760393124173,
+        0.3199999980244
+      ],
+      "yaw_deg": 180.0,
+      "trusses": [
+        {
+          "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+          "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+          "stem_segment": 4,
+          "stem_fraction": 0.8174574735060522,
+          "y_deg": 154.23129429989703,
+          "remove_fruits": [
+            6
+          ],
+          "fruit_offsets": {},
+          "rachis_stiffness_scale": 1.0,
+          "attachment_world_m": [
+            0.8867568036198867,
+            4.363553573917351,
+            0.5364541363409818
+          ],
+          "truss_scale": 0.5
+        }
+      ],
+      "stem_variant": 1,
+      "source": "/root/docker_share/mujoko_debugging_data/20260927_stem_leaves_v9/model.xml",
+      "gutter_center_x": 0.775,
+      "side": 1
+    }
+  ],
+  "parent_model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+  "background_truss_physics": "fixed collision proxies; no background bending",
+  "background_truss_collision_geoms": 7738,
+  "background_truss_collision_kinds": [
+    "fruit",
+    "rachis",
+    "pedicel",
+    "peduncle"
+  ],
+  "leaves_collision": false
+}

@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "expected_neighbor_trusses": 106,
+  "truss_collision_geom_counts": {
+    "fruit": 1060,
+    "rachis": 1484,
+    "pedicel": 4664,
+    "peduncle": 530
+  },
+  "neighbor_stem_required": true,
+  "gutter_required": true,
+  "gutter_colliders": 18,
+  "leaves_collision": false,
+  "leaves_policy": "visual_only_not_part_of_this_obstacle_contract",
+  "missing": [],
+  "inactive_or_incompatible_obstacles": [],
+  "missing_inventory_geoms": [],
+  "scene": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene",
+  "model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+}

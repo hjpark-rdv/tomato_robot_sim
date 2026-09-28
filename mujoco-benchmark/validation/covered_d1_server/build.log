@@ -1,0 +1,95 @@
+GLB physics model /tmp/neighbor_truss_obstacles_t_trknb4/25b0b2b3793a07cd 241 655
+GLB physics model /tmp/neighbor_truss_obstacles_t_trknb4/5ad0f6aff34eec3c 241 655
+GLB physics model /tmp/neighbor_truss_obstacles_t_trknb4/a30e1dc97c9ae7b2 241 655
+GLB physics model /tmp/neighbor_truss_obstacles_t_trknb4/6598b8203e07e134 241 655
+GLB physics model /tmp/neighbor_truss_obstacles_t_trknb4/4287570df8dc0c83 241 655
+{
+  "schema": "neighbor_truss_obstacles_v1",
+  "source_scene": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene",
+  "neighbor_layout": "/root/docker_share/mujoko_debugging_data/20260927_robot_side_dense_trusses",
+  "source_model_sha256": "712e80f4f9b13d8428b130d29b29b0a006504c487510170e9372b5370561ed31",
+  "output_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+  "policy": {
+    "non_target_fruit": "obstacle",
+    "non_target_rachis": "obstacle",
+    "non_target_pedicel": "obstacle",
+    "non_target_peduncle": "obstacle",
+    "main_stem": "handled_by_neighbor_stem_collision_stage",
+    "gutter": "handled_by_gutter_collision_stage",
+    "leaves": "visual_only_not_in_obstacle_contract"
+  },
+  "variants": {
+    "25b0b2b3793a07cd": {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_white.glb",
+      "source_sha256": "d5d2b18bc8bec5cb8a35a4dfd66ba43c7f7cf80891d5b9bfb09f350544c03ea2",
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {
+        "2": [
+          -0.0005066500582317888,
+          -0.0008218853535071469,
+          0.002840389090280442
+        ]
+      },
+      "rachis_stiffness_scale": 2.0,
+      "truss_scale": 0.5
+    },
+    "5ad0f6aff34eec3c": {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_rotated90.glb",
+      "source_sha256": "10133bd8e1c6a11a13a48f747a5afba3ead3fe3c2defeca0a7a755f69f9a3197",
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5
+    },
+    "a30e1dc97c9ae7b2": {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_green.glb",
+      "source_sha256": "b36da9ea331b8fc8e250cb053231c95618d01a6fa3d1d85e9589b5c271ef2f56",
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5
+    },
+    "6598b8203e07e134": {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_red.glb",
+      "source_sha256": "2ef7b1fa69ef2d5d95cd55f769f44bb4d89ff15ee2a274038f44a1714fc81669",
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5
+    },
+    "4287570df8dc0c83": {
+      "source_glb": "/root/farmily_tomato/nvidia-sim/env_usd/tomato_rotate_glb/tomato_master_v10_cluster_curve_cyan.glb",
+      "source_sha256": "7e6ea22a07e7d8b870f2959058a0d9e3df3486723c1d4f279c077adf86a8b7e1",
+      "remove_fruits": [
+        6
+      ],
+      "fruit_offsets": {},
+      "rachis_stiffness_scale": 1.0,
+      "truss_scale": 0.5
+    }
+  },
+  "coverage": {
+    "passed": true,
+    "expected_neighbor_trusses": 106,
+    "truss_collision_geom_counts": {
+      "fruit": 1060,
+      "rachis": 1484,
+      "pedicel": 4664,
+      "peduncle": 530
+    },
+    "neighbor_stem_required": false,
+    "gutter_required": false,
+    "gutter_colliders": 18,
+    "leaves_collision": false,
+    "leaves_policy": "visual_only_not_part_of_this_obstacle_contract",
+    "missing": []
+  }
+}

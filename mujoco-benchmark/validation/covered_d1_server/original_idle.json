@@ -1,0 +1,41 @@
+{
+  "model": "/root/docker_share/mujoko_debugging_data/20260927_stem_obstacle_scene/model.mjb",
+  "target": "Tomato_02",
+  "hz": 240,
+  "initial_contacts": [
+    {
+      "a": "glb_col_TRUSS_Rachis_04",
+      "b": "glb_col_Tomato_02",
+      "categories": [
+        "active_plant",
+        "active_plant"
+      ],
+      "penetration_m": 0.00022795559258460135
+    }
+  ],
+  "worst_contacts": [
+    {
+      "a": "glb_col_TRUSS_Rachis_04",
+      "b": "glb_col_Tomato_02",
+      "categories": [
+        "active_plant",
+        "active_plant"
+      ],
+      "penetration_m": 0.00022795559258460135,
+      "time_s": 0.0
+    }
+  ],
+  "max_body_displacement_m": 0.0029677807355517026,
+  "warning_counts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "finite": true,
+  "wall_s": 1.3586853239685297,
+  "load_s": 0.8521027620881796
+}

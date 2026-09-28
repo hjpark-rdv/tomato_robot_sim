@@ -289,8 +289,8 @@ def add_neighbor_truss_obstacles(scene, output, layout=None):
         np.testing.assert_array_equal(getattr(source_model, attr), getattr(new_model, attr))
     if (scene / "reference.json").is_file():
         shutil.copy2(scene / "reference.json", output / "reference.json")
-    names = [new_model.geom(i).name or f"#geom_{i}" for i in range(new_model.ngeom)]
-    coverage = coverage_from_names(metadata, names)
+    coverage = coverage_from_model(metadata, new_model,
+                                   expected_names=[r['name'] for r in inventories])
     if not coverage["passed"]:
         raise ValueError(f"Incomplete neighboring truss collision coverage: {coverage['missing'][:4]}")
     source_sha = hashlib.sha256((scene / "model.mjb").read_bytes()).hexdigest()
@@ -324,10 +324,39 @@ def audit_scene(scene, require_neighbor_stems=False, require_gutter=False, layou
     scene = Path(scene).resolve()
     _, metadata, _ = _neighbor_layout_metadata(scene, layout)
     model = mj.MjModel.from_binary_path(str(scene / "model.mjb"))
-    names = [model.geom(i).name or f"#geom_{i}" for i in range(model.ngeom)]
-    result = coverage_from_names(metadata, names, require_neighbor_stems, require_gutter)
+    inventory_path = scene / 'truss_obstacles.json'
+    expected_names = [r['name'] for r in json.loads(inventory_path.read_text())['inventory']] if inventory_path.exists() else []
+    result = coverage_from_model(metadata, model, require_neighbor_stems, require_gutter,
+                                 expected_names=expected_names)
     result.update(scene=str(scene),
                   model_sha256=hashlib.sha256((scene / "model.mjb").read_bytes()).hexdigest())
+    return result
+
+
+def coverage_from_model(metadata, model, require_neighbor_stems=False, require_gutter=False,
+                        expected_names=()):
+    """A semantic name alone does not make a physical obstacle.
+
+    Require mask compatibility with at least one articulated robot/plant geom;
+    otherwise a visual-only or isolated collider must not count as coverage.
+    """
+    moving = [i for i in range(model.ngeom)
+              if model.body_dofnum[model.geom_bodyid[i]] > 0
+              and (model.geom_contype[i] or model.geom_conaffinity[i])]
+    names, inactive = [], []
+    for i in range(model.ngeom):
+        name = model.geom(i).name or f"#geom_{i}"
+        compatible = any((int(model.geom_contype[i]) & int(model.geom_conaffinity[j]))
+                         or (int(model.geom_conaffinity[i]) & int(model.geom_contype[j]))
+                         for j in moving)
+        if compatible:
+            names.append(name)
+        elif name.startswith((COLLISION_PREFIX, 'neighbor_stem_collision_', 'gutter_collision_')):
+            inactive.append(name)
+    result = coverage_from_names(metadata, names, require_neighbor_stems, require_gutter)
+    result['inactive_or_incompatible_obstacles'] = inactive
+    result['missing_inventory_geoms'] = sorted(set(expected_names) - set(names))
+    result['passed'] = result['passed'] and not inactive and not result['missing_inventory_geoms']
     return result
 
 

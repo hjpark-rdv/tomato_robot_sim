@@ -1,0 +1,12 @@
+{
+  "original": {
+    "active_plant_max_displacement_m": 0.0029677807355517026,
+    "robot_max_displacement_m": 0.0,
+    "target_max_displacement_m": 0.0029677807355517026
+  },
+  "covered": {
+    "active_plant_max_displacement_m": 0.0029677807355517026,
+    "robot_max_displacement_m": 0.003727016393609349,
+    "target_max_displacement_m": 0.0029677807355517026
+  }
+}

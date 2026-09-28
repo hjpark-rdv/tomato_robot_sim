@@ -17,6 +17,7 @@ from add_neighbor_truss_obstacles import (
     append_fixed_colliders,
     collision_template,
     coverage_from_names,
+    coverage_from_model,
     obstacle_kind,
     _neighbor_layout_metadata,
 )
@@ -147,6 +148,27 @@ def test_environment_diagnostics_identify_new_obstacle_classes():
     assert classify_environment_geom("neighbor_truss_collision_rachis_p00_t00_g000") == "neighbor_rachis"
     assert classify_environment_geom("neighbor_truss_collision_pedicel_p00_t00_g000") == "neighbor_pedicel"
     assert classify_environment_geom("neighbor_truss_collision_peduncle_p00_t00_g000") == "neighbor_peduncle"
+
+
+@pytest.mark.parametrize('mask', [0, 64])
+def test_named_but_inactive_or_incompatible_obstacle_fails(mask):
+    names = complete_names(dict(placements=[dict(id=0, trusses=[{}])]), False, False)
+    geoms = ''.join(f'<geom name="{n}" type="sphere" size=".01" contype="32" conaffinity="1"/>' for n in names)
+    model = mj.MjModel.from_xml_string('<mujoco><worldbody>' + geoms +
+        '<body><freejoint/><geom size=".01" contype="1" conaffinity="32"/></body>'
+        '</worldbody></mujoco>')
+    meta = dict(placements=[dict(id=0, trusses=[{}])])
+    assert coverage_from_model(meta, model)['passed']
+    # A second missing fruit cannot hide behind another fruit of the same class.
+    missing_name = 'neighbor_truss_collision_fruit_p00_t00_g999'
+    incomplete = coverage_from_model(meta, model, expected_names=names+[missing_name])
+    assert not incomplete['passed']
+    assert incomplete['missing_inventory_geoms'] == [missing_name]
+    model.geom_contype[0] = mask
+    model.geom_conaffinity[0] = mask
+    result = coverage_from_model(meta, model)
+    assert not result['passed']
+    assert result['inactive_or_incompatible_obstacles'] == [names[0]]
 
 
 def test_neighbor_layout_is_explicit_and_active_scene_placements_are_not_duplicated(tmp_path):

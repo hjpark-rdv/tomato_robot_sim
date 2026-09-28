@@ -1,0 +1,1170 @@
+[
+  {
+    "kind": "intersection",
+    "obstacle": "neighbor_truss_collision_fruit_p00_t00_g023",
+    "probe": "g376",
+    "points": [
+      [
+        -1.1651507642848755,
+        0.9069118585689792,
+        0.6569868646710477
+      ],
+      [
+        -1.1650507642848755,
+        0.9069118585689792,
+        0.6569868646710477
+      ]
+    ],
+    "signed_distances_m": [
+      0.0,
+      -0.011345383786299346,
+      -0.011354107431220393,
+      -0.011362830902422323,
+      -0.01137155419980902
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "blocked",
+      "passed": false,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 3,
+      "distance_queries": 3,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": {
+        "time_s": 0.0,
+        "phases": [
+          "ready"
+        ],
+        "robot_geom": "g376",
+        "environment_geom": "neighbor_truss_collision_fruit_p00_t00_g023",
+        "environment_class": "neighbor_fruit",
+        "distance_m": 0.0,
+        "command": [
+          -1.1651507642848755,
+          0.9069118585689792,
+          0.6569868646710477
+        ],
+        "segment_world": [
+          [
+            -1.1651507642848755,
+            0.9069118585689792,
+            0.6569868646710477
+          ],
+          [
+            -1.1651507642848755,
+            0.9069118585689792,
+            0.6569868646710477
+          ]
+        ]
+      },
+      "violations": [
+        {
+          "time_s": 0.0,
+          "phases": [
+            "ready"
+          ],
+          "robot_geom": "g376",
+          "environment_geom": "neighbor_truss_collision_fruit_p00_t00_g023",
+          "environment_class": "neighbor_fruit",
+          "distance_m": 0.0,
+          "command": [
+            -1.1651507642848755,
+            0.9069118585689792,
+            0.6569868646710477
+          ],
+          "segment_world": [
+            [
+              -1.1651507642848755,
+              0.9069118585689792,
+              0.6569868646710477
+            ],
+            [
+              -1.1651507642848755,
+              0.9069118585689792,
+              0.6569868646710477
+            ]
+          ],
+          "last_time_s": 0.016666666666666666,
+          "sample_hit_count": 3,
+          "minimum_distance_m": -0.01137155419980902,
+          "minimum_time_s": 0.016666666666666666
+        }
+      ],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {
+          "neighbor_fruit": 3
+        },
+        "minimum_distance_m_by_environment_class": {
+          "neighbor_fruit": -0.01137155419980902
+        },
+        "first_by_environment_class": {
+          "neighbor_fruit": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_fruit_p00_t00_g023",
+            "environment_class": "neighbor_fruit",
+            "distance_m": 0.0,
+            "command": [
+              -1.1651507642848755,
+              0.9069118585689792,
+              0.6569868646710477
+            ],
+            "segment_world": [
+              [
+                -1.1651507642848755,
+                0.9069118585689792,
+                0.6569868646710477
+              ],
+              [
+                -1.1651507642848755,
+                0.9069118585689792,
+                0.6569868646710477
+              ]
+            ]
+          }
+        },
+        "worst_by_environment_class": {
+          "neighbor_fruit": {
+            "time_s": 0.016666666666666666,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_fruit_p00_t00_g023",
+            "environment_class": "neighbor_fruit",
+            "distance_m": -0.01137155419980902,
+            "command": [
+              -1.1650507642848755,
+              0.9069118585689792,
+              0.6569868646710477
+            ],
+            "segment_world": [
+              [
+                -1.163469352193803,
+                0.9069092169281441,
+                0.6579167599415405
+              ],
+              [
+                -1.1674388470275208,
+                0.9069508020094443,
+                0.6472606055523954
+              ]
+            ]
+          }
+        },
+        "observed_unique_pair_phase_count": 1,
+        "reported_unique_pair_phase_count": 1,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": -0.01137155419980902,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "clearance_violation",
+      "wall_s": 0.0003238338977098465
+    }
+  },
+  {
+    "kind": "nonintersection",
+    "obstacle": "neighbor_truss_collision_fruit_p00_t00_g023",
+    "probe": "g376",
+    "points": [
+      [
+        -1.1381985520351863,
+        0.9069118585689792,
+        0.6569868646710477
+      ],
+      [
+        -1.1361985520351863,
+        0.9069118585689792,
+        0.6569868646710477
+      ]
+    ],
+    "signed_distances_m": [
+      0.013414131811512933,
+      0.013913805270743578,
+      0.01441349957732747,
+      0.014913212767367283,
+      0.015412943116069906
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "sampled_clear",
+      "passed": true,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 4,
+      "distance_queries": 4,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": null,
+      "violations": [],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {},
+        "minimum_distance_m_by_environment_class": {},
+        "first_by_environment_class": {},
+        "worst_by_environment_class": {},
+        "observed_unique_pair_phase_count": 0,
+        "reported_unique_pair_phase_count": 0,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": null,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "all_samples_passed",
+      "wall_s": 0.00023163668811321259
+    }
+  },
+  {
+    "kind": "intersection",
+    "obstacle": "neighbor_truss_collision_rachis_p00_t00_g005",
+    "probe": "g376",
+    "points": [
+      [
+        -1.0063892240999999,
+        0.8947147244,
+        0.81755753345
+      ],
+      [
+        -1.0062892240999999,
+        0.8947147244,
+        0.81755753345
+      ]
+    ],
+    "signed_distances_m": [
+      -0.002429347113684313,
+      -0.00242859636850133,
+      -0.0024278456233185223,
+      -0.002427094878135607,
+      -0.0024263441329527118
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "blocked",
+      "passed": false,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 3,
+      "distance_queries": 3,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": {
+        "time_s": 0.0,
+        "phases": [
+          "ready"
+        ],
+        "robot_geom": "g376",
+        "environment_geom": "neighbor_truss_collision_rachis_p00_t00_g005",
+        "environment_class": "neighbor_rachis",
+        "distance_m": -0.002429347113684313,
+        "command": [
+          -1.0063892240999999,
+          0.8947147244,
+          0.81755753345
+        ],
+        "segment_world": [
+          [
+            -1.0063591942926842,
+            0.8939248478207249,
+            0.8169450032873263
+          ],
+          [
+            -1.0064321471184112,
+            0.8958437322087538,
+            0.8184330516700623
+          ]
+        ]
+      },
+      "violations": [
+        {
+          "time_s": 0.0,
+          "phases": [
+            "ready"
+          ],
+          "robot_geom": "g376",
+          "environment_geom": "neighbor_truss_collision_rachis_p00_t00_g005",
+          "environment_class": "neighbor_rachis",
+          "distance_m": -0.002429347113684313,
+          "command": [
+            -1.0063892240999999,
+            0.8947147244,
+            0.81755753345
+          ],
+          "segment_world": [
+            [
+              -1.0063591942926842,
+              0.8939248478207249,
+              0.8169450032873263
+            ],
+            [
+              -1.0064321471184112,
+              0.8958437322087538,
+              0.8184330516700623
+            ]
+          ],
+          "last_time_s": 0.016666666666666666,
+          "sample_hit_count": 3,
+          "minimum_distance_m": -0.002429347113684313,
+          "minimum_time_s": 0.0
+        }
+      ],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {
+          "neighbor_rachis": 3
+        },
+        "minimum_distance_m_by_environment_class": {
+          "neighbor_rachis": -0.002429347113684313
+        },
+        "first_by_environment_class": {
+          "neighbor_rachis": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_rachis_p00_t00_g005",
+            "environment_class": "neighbor_rachis",
+            "distance_m": -0.002429347113684313,
+            "command": [
+              -1.0063892240999999,
+              0.8947147244,
+              0.81755753345
+            ],
+            "segment_world": [
+              [
+                -1.0063591942926842,
+                0.8939248478207249,
+                0.8169450032873263
+              ],
+              [
+                -1.0064321471184112,
+                0.8958437322087538,
+                0.8184330516700623
+              ]
+            ]
+          }
+        },
+        "worst_by_environment_class": {
+          "neighbor_rachis": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_rachis_p00_t00_g005",
+            "environment_class": "neighbor_rachis",
+            "distance_m": -0.002429347113684313,
+            "command": [
+              -1.0063892240999999,
+              0.8947147244,
+              0.81755753345
+            ],
+            "segment_world": [
+              [
+                -1.0063591942926842,
+                0.8939248478207249,
+                0.8169450032873263
+              ],
+              [
+                -1.0064321471184112,
+                0.8958437322087538,
+                0.8184330516700623
+              ]
+            ]
+          }
+        },
+        "observed_unique_pair_phase_count": 1,
+        "reported_unique_pair_phase_count": 1,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": -0.002429347113684313,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "clearance_violation",
+      "wall_s": 0.00020024552941322327
+    }
+  },
+  {
+    "kind": "nonintersection",
+    "obstacle": "neighbor_truss_collision_rachis_p00_t00_g005",
+    "probe": "g376",
+    "points": [
+      [
+        -0.9886810368184031,
+        0.8947147244,
+        0.81755753345
+      ],
+      [
+        -0.9866810368184031,
+        0.8947147244,
+        0.81755753345
+      ]
+    ],
+    "signed_distances_m": [
+      0.0063627163761678105,
+      0.006825092313298094,
+      0.007291193910650914,
+      0.007760509926720224,
+      0.008232615895160614
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "sampled_clear",
+      "passed": true,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 4,
+      "distance_queries": 4,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": null,
+      "violations": [],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {},
+        "minimum_distance_m_by_environment_class": {},
+        "first_by_environment_class": {},
+        "worst_by_environment_class": {},
+        "observed_unique_pair_phase_count": 0,
+        "reported_unique_pair_phase_count": 0,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": 0.0063627163761678105,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "all_samples_passed",
+      "wall_s": 0.0002102963626384735
+    }
+  },
+  {
+    "kind": "intersection",
+    "obstacle": "neighbor_truss_collision_pedicel_p00_t00_g019",
+    "probe": "g376",
+    "points": [
+      [
+        -1.1575641815000002,
+        0.9219588741,
+        0.6825095531
+      ],
+      [
+        -1.1574641815000002,
+        0.9219588741,
+        0.6825095531
+      ]
+    ],
+    "signed_distances_m": [
+      -0.0016750000256077718,
+      -0.0016739211252881196,
+      -0.0016728422249684865,
+      -0.0016717633246488785,
+      -0.0016706844243292358
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "blocked",
+      "passed": false,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 3,
+      "distance_queries": 3,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": {
+        "time_s": 0.0,
+        "phases": [
+          "ready"
+        ],
+        "robot_geom": "g376",
+        "environment_geom": "neighbor_truss_collision_pedicel_p00_t00_g019",
+        "environment_class": "neighbor_pedicel",
+        "distance_m": -0.0016750000256077718,
+        "command": [
+          -1.1575641815000002,
+          0.9219588741,
+          0.6825095531
+        ],
+        "segment_world": [
+          [
+            -1.157607337512786,
+            0.9214816160889058,
+            0.6833872559821913
+          ],
+          [
+            -1.1575350511902645,
+            0.9222810232697102,
+            0.6819171036320449
+          ]
+        ]
+      },
+      "violations": [
+        {
+          "time_s": 0.0,
+          "phases": [
+            "ready"
+          ],
+          "robot_geom": "g376",
+          "environment_geom": "neighbor_truss_collision_pedicel_p00_t00_g019",
+          "environment_class": "neighbor_pedicel",
+          "distance_m": -0.0016750000256077718,
+          "command": [
+            -1.1575641815000002,
+            0.9219588741,
+            0.6825095531
+          ],
+          "segment_world": [
+            [
+              -1.157607337512786,
+              0.9214816160889058,
+              0.6833872559821913
+            ],
+            [
+              -1.1575350511902645,
+              0.9222810232697102,
+              0.6819171036320449
+            ]
+          ],
+          "last_time_s": 0.016666666666666666,
+          "sample_hit_count": 3,
+          "minimum_distance_m": -0.0016750000256077718,
+          "minimum_time_s": 0.0
+        }
+      ],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {
+          "neighbor_pedicel": 3
+        },
+        "minimum_distance_m_by_environment_class": {
+          "neighbor_pedicel": -0.0016750000256077718
+        },
+        "first_by_environment_class": {
+          "neighbor_pedicel": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_pedicel_p00_t00_g019",
+            "environment_class": "neighbor_pedicel",
+            "distance_m": -0.0016750000256077718,
+            "command": [
+              -1.1575641815000002,
+              0.9219588741,
+              0.6825095531
+            ],
+            "segment_world": [
+              [
+                -1.157607337512786,
+                0.9214816160889058,
+                0.6833872559821913
+              ],
+              [
+                -1.1575350511902645,
+                0.9222810232697102,
+                0.6819171036320449
+              ]
+            ]
+          }
+        },
+        "worst_by_environment_class": {
+          "neighbor_pedicel": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_pedicel_p00_t00_g019",
+            "environment_class": "neighbor_pedicel",
+            "distance_m": -0.0016750000256077718,
+            "command": [
+              -1.1575641815000002,
+              0.9219588741,
+              0.6825095531
+            ],
+            "segment_world": [
+              [
+                -1.157607337512786,
+                0.9214816160889058,
+                0.6833872559821913
+              ],
+              [
+                -1.1575350511902645,
+                0.9222810232697102,
+                0.6819171036320449
+              ]
+            ]
+          }
+        },
+        "observed_unique_pair_phase_count": 1,
+        "reported_unique_pair_phase_count": 1,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": -0.0016750000256077718,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "clearance_violation",
+      "wall_s": 0.00018855556845664978
+    }
+  },
+  {
+    "kind": "nonintersection",
+    "obstacle": "neighbor_truss_collision_pedicel_p00_t00_g019",
+    "probe": "g376",
+    "points": [
+      [
+        -1.144954016956033,
+        0.9219588741,
+        0.6825095531
+      ],
+      [
+        -1.142954016956033,
+        0.9219588741,
+        0.6825095531
+      ]
+    ],
+    "signed_distances_m": [
+      0.008787843850647629,
+      0.009251793579002736,
+      0.009715743856930938,
+      0.010180542602695068,
+      0.010648016909054443
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "sampled_clear",
+      "passed": true,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 4,
+      "distance_queries": 4,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": null,
+      "violations": [],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {},
+        "minimum_distance_m_by_environment_class": {},
+        "first_by_environment_class": {},
+        "worst_by_environment_class": {},
+        "observed_unique_pair_phase_count": 0,
+        "reported_unique_pair_phase_count": 0,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": 0.008787843850647629,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "all_samples_passed",
+      "wall_s": 0.00020292028784751892
+    }
+  },
+  {
+    "kind": "intersection",
+    "obstacle": "neighbor_truss_collision_peduncle_p00_t00_g000",
+    "probe": "g376",
+    "points": [
+      [
+        -0.9061347720999999,
+        0.86439780785,
+        0.81796689715
+      ],
+      [
+        -0.9060347720999999,
+        0.86439780785,
+        0.81796689715
+      ]
+    ],
+    "signed_distances_m": [
+      -0.002947972464751795,
+      -0.0029473839676276816,
+      -0.0029467954705035145,
+      -0.0029462069733793565,
+      -0.00294561847625519
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "blocked",
+      "passed": false,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 3,
+      "distance_queries": 3,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": {
+        "time_s": 0.0,
+        "phases": [
+          "ready"
+        ],
+        "robot_geom": "g376",
+        "environment_geom": "neighbor_truss_collision_peduncle_p00_t00_g000",
+        "environment_class": "neighbor_peduncle",
+        "distance_m": -0.002947972464751795,
+        "command": [
+          -0.9061347720999999,
+          0.86439780785,
+          0.81796689715
+        ],
+        "segment_world": [
+          [
+            -0.9061112322150341,
+            0.8652759784601086,
+            0.8174891291588607
+          ],
+          [
+            -0.9061806271477367,
+            0.8626871556821541,
+            0.8188975760412792
+          ]
+        ]
+      },
+      "violations": [
+        {
+          "time_s": 0.0,
+          "phases": [
+            "ready"
+          ],
+          "robot_geom": "g376",
+          "environment_geom": "neighbor_truss_collision_peduncle_p00_t00_g000",
+          "environment_class": "neighbor_peduncle",
+          "distance_m": -0.002947972464751795,
+          "command": [
+            -0.9061347720999999,
+            0.86439780785,
+            0.81796689715
+          ],
+          "segment_world": [
+            [
+              -0.9061112322150341,
+              0.8652759784601086,
+              0.8174891291588607
+            ],
+            [
+              -0.9061806271477367,
+              0.8626871556821541,
+              0.8188975760412792
+            ]
+          ],
+          "last_time_s": 0.016666666666666666,
+          "sample_hit_count": 3,
+          "minimum_distance_m": -0.002947972464751795,
+          "minimum_time_s": 0.0
+        }
+      ],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {
+          "neighbor_peduncle": 3
+        },
+        "minimum_distance_m_by_environment_class": {
+          "neighbor_peduncle": -0.002947972464751795
+        },
+        "first_by_environment_class": {
+          "neighbor_peduncle": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_peduncle_p00_t00_g000",
+            "environment_class": "neighbor_peduncle",
+            "distance_m": -0.002947972464751795,
+            "command": [
+              -0.9061347720999999,
+              0.86439780785,
+              0.81796689715
+            ],
+            "segment_world": [
+              [
+                -0.9061112322150341,
+                0.8652759784601086,
+                0.8174891291588607
+              ],
+              [
+                -0.9061806271477367,
+                0.8626871556821541,
+                0.8188975760412792
+              ]
+            ]
+          }
+        },
+        "worst_by_environment_class": {
+          "neighbor_peduncle": {
+            "time_s": 0.0,
+            "phases": [
+              "ready"
+            ],
+            "robot_geom": "g376",
+            "environment_geom": "neighbor_truss_collision_peduncle_p00_t00_g000",
+            "environment_class": "neighbor_peduncle",
+            "distance_m": -0.002947972464751795,
+            "command": [
+              -0.9061347720999999,
+              0.86439780785,
+              0.81796689715
+            ],
+            "segment_world": [
+              [
+                -0.9061112322150341,
+                0.8652759784601086,
+                0.8174891291588607
+              ],
+              [
+                -0.9061806271477367,
+                0.8626871556821541,
+                0.8188975760412792
+              ]
+            ]
+          }
+        },
+        "observed_unique_pair_phase_count": 1,
+        "reported_unique_pair_phase_count": 1,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": -0.002947972464751795,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "clearance_violation",
+      "wall_s": 0.00019625015556812286
+    }
+  },
+  {
+    "kind": "nonintersection",
+    "obstacle": "neighbor_truss_collision_peduncle_p00_t00_g000",
+    "probe": "g376",
+    "points": [
+      [
+        -0.8859608963103354,
+        0.86439780785,
+        0.81796689715
+      ],
+      [
+        -0.8839608963103354,
+        0.86439780785,
+        0.81796689715
+      ]
+    ],
+    "signed_distances_m": [
+      0.008293362667606202,
+      0.008725179618732318,
+      0.009162244030848733,
+      0.009604007760554523,
+      0.010049991667474611
+    ],
+    "result": {
+      "schema": "environment_preflight_v1",
+      "checker_revision": "audit_completion_v2",
+      "status": "sampled_clear",
+      "passed": true,
+      "complete": true,
+      "policy": {
+        "schema": "environment_preflight_v1",
+        "settings": {
+          "clearance_m": 0,
+          "max_revolute_step_rad": 0.01,
+          "max_prismatic_step_m": 0.001,
+          "max_time_step_s": 0.008333333333333333,
+          "max_samples": 50000,
+          "max_distance_queries": 2000000,
+          "timeout_s": 120.0,
+          "allowed_contacts": []
+        },
+        "sha256": "5eabdbfb8b91cc514d06ffe6ab6b2a1dbdef80552893e071972c51a01ce67690"
+      },
+      "samples_checked": 4,
+      "distance_queries": 4,
+      "last_sample_time_s": 0.016666666666666666,
+      "last_completed_sample_time_s": 0.016666666666666666,
+      "first_violation": null,
+      "violations": [],
+      "violation_summary": {
+        "sample_hits_by_environment_class": {},
+        "minimum_distance_m_by_environment_class": {},
+        "first_by_environment_class": {},
+        "worst_by_environment_class": {},
+        "observed_unique_pair_phase_count": 0,
+        "reported_unique_pair_phase_count": 0,
+        "omitted_unique_pair_phase_count": 0,
+        "details_truncated": false,
+        "reported_limit": 64,
+        "full_path_requested": true,
+        "full_path_collected": true,
+        "counts_scope": "visited samples only; pair/phase keys and sampled pair hits, not physical contact events"
+      },
+      "scan_stop_reason": "end_of_path",
+      "minimum_queried_distance_m": 0.008293362667606202,
+      "scope": "GT initial environment; nominal commands; discrete screening only",
+      "exclusions": [
+        "visual-only geoms",
+        "environment/environment pairs",
+        "robot self-collision"
+      ],
+      "warnings": [
+        "No continuous collision guarantee",
+        "No plant deformation or actuator tracking simulated",
+        "No real-observation collision model",
+        "Missing visual-only colliders remain untested"
+      ],
+      "inventory": {
+        "control": "geometric wire probe; no IK, no physical robot motion",
+        "source_model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724"
+      },
+      "backend": "MuJoCo 3.13.0",
+      "distance_query_horizon_m": 0.01,
+      "reason": "all_samples_passed",
+      "wall_s": 0.00021086819469928741
+    }
+  }
+]

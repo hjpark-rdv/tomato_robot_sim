@@ -1,0 +1,32 @@
+[
+  {
+    "path": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/model.mjb",
+    "bytes": 877843333,
+    "sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+    "stored_in_git": false
+  },
+  {
+    "path": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/model.xml",
+    "bytes": 321928899,
+    "sha256": "99f636d6841ab9297f90ad6bf4992fa38b6abbcd9c57550e9719b96844fd2f9a",
+    "stored_in_git": false
+  },
+  {
+    "path": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/scene.json",
+    "bytes": 109496,
+    "sha256": "286619c26f2c012f6229eb6a9a8ca51a00fbe98a9c309867d080e695a13294cb",
+    "stored_in_git": false
+  },
+  {
+    "path": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/reference.json",
+    "bytes": 142894,
+    "sha256": "2c1192c12bda883142c89ee6b68ae195e398874f1f5a1865be82bae1db00ebea",
+    "stored_in_git": false
+  },
+  {
+    "path": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene/truss_obstacles.json",
+    "bytes": 2089856,
+    "sha256": "2270b59598d43587e334dc04d2a850cdc399033b70dc10227db4b47e3e64e1c7",
+    "stored_in_git": false
+  }
+]

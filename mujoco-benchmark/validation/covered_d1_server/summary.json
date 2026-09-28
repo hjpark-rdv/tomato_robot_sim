@@ -1,0 +1,114 @@
+{
+  "schema": "covered_d1_server_v1",
+  "phase1": "FAIL",
+  "checks": {
+    "collision_coverage": "PASS",
+    "transform_consistency": "PASS",
+    "initial_robot_collision": "FAIL",
+    "target_plant_stability": "PASS",
+    "positive_control_detection": "PASS",
+    "negative_control_false_positive": "PASS",
+    "model_hash_consistency": "PASS",
+    "runtime_validation": "FAIL"
+  },
+  "blocker": "initial robot Hook mounting geom g410 overlaps background p19/t02 Tomato_05 before any command",
+  "source_code_base": "43cce2761eb9f33a531ac0529130a56358e7eceb",
+  "previous_server_result": "d1fdc7c",
+  "branch": "codex/server-covered-d1-20260928",
+  "model_sha256": "6eaf5178c99be858a89a3c6f1d3dc39d578c9d5196a5a4e2be537d7f7543d724",
+  "covered_scene": "/mnt/nas_rdv_md3/covered_d1_20260928/covered_scene",
+  "geometry_counts": {
+    "fruit": 1060,
+    "rachis": 1484,
+    "pedicel": 4664,
+    "peduncle": 530
+  },
+  "neighbor_trusses": 106,
+  "neighbor_stem_colliders": 1088,
+  "gutter_colliders": 18,
+  "penetration_m": 0.0022343994627186847,
+  "initial_native_signed_distance_m": -0.002234416577480796,
+  "initial_robot_q": [
+    0.5036082863807678,
+    3.251610279083252,
+    0.11466656625270844,
+    -1.6495294570922852,
+    -0.17974743247032166,
+    -1.3975170850753784,
+    0.6881734132766724
+  ],
+  "initial_audit": {
+    "samples": 3,
+    "queries": 2082,
+    "complete": true
+  },
+  "idle_metrics": {
+    "original": {
+      "active_plant_max_displacement_m": 0.0029677807355517026,
+      "robot_max_displacement_m": 0.0,
+      "target_max_displacement_m": 0.0029677807355517026
+    },
+    "covered": {
+      "active_plant_max_displacement_m": 0.0029677807355517026,
+      "robot_max_displacement_m": 0.003727016393609349,
+      "target_max_displacement_m": 0.0029677807355517026
+    }
+  },
+  "original_idle_validity": {
+    "passed": true,
+    "reasons": [],
+    "violations": [],
+    "displacement_is_diagnostic": true,
+    "penetration_limit_m": 0.0005
+  },
+  "covered_idle_validity": {
+    "passed": false,
+    "reasons": [
+      "robot_or_active_plant_penetration"
+    ],
+    "violations": [
+      {
+        "a": "neighbor_truss_collision_fruit_p19_t02_g052",
+        "b": "g410",
+        "categories": [
+          "background_obstacle",
+          "robot"
+        ],
+        "penetration_m": 0.0022343994627186847,
+        "time_s": 0.0
+      }
+    ],
+    "displacement_is_diagnostic": true,
+    "penetration_limit_m": 0.0005
+  },
+  "simulator_health": {
+    "finite": true,
+    "warnings": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "recovery_planning_queries": 0,
+  "recovery_physics_executions": 0,
+  "idle_validation_executions": 2,
+  "actual_approach_video_count": 0,
+  "actual_idle_video_count": 1,
+  "phase2_5": "NOT_EXECUTED_PHASE1_FAIL",
+  "training_eligible": false,
+  "hook_success": null,
+  "impossible": null,
+  "scope": "Dense gutter02/Tomato_02 environment screen. Not the 11-query D1 campaign, not a test of all targets.",
+  "next_action": "Repair the normal robot initial configuration/placement contract with all obstacles retained; verify new start, then resume frozen D1 groups. No RL or local seat tuning now.",
+  "original_assets_unchanged": true,
+  "limitations": [
+    "Geometric positive/negative controls are native ring-wire probe fixtures, not IK-reachable robot trajectories.",
+    "Source transform reproduction is not a biological accuracy certificate.",
+    "No D1 planner/physics rollout ran, so planner/runtime agreement for a new D1 trace is not yet verified.",
+    "No target force/retention/harvest outcome from this idle validation."
+  ]
+}

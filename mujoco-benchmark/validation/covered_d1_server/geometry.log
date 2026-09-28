@@ -1,0 +1,13 @@
+GLB physics model /tmp/covered_transform_zr2n8x1k/25b0b2b3793a07cd 241 655
+GLB physics model /tmp/covered_transform_zr2n8x1k/5ad0f6aff34eec3c 241 655
+GLB physics model /tmp/covered_transform_zr2n8x1k/a30e1dc97c9ae7b2 241 655
+GLB physics model /tmp/covered_transform_zr2n8x1k/6598b8203e07e134 241 655
+GLB physics model /tmp/covered_transform_zr2n8x1k/4287570df8dc0c83 241 655
+Traceback (most recent call last):
+  File "/root/farmily_tomato/mujoco-benchmark/scripts/validate_covered_scene.py", line 99, in <module>
+    p=argparse.ArgumentParser();p.add_argument('source',type=Path);p.add_argument('covered',type=Path);p.add_argument('layout',type=Path);p.add_argument('output',type=Path);a=p.parse_args();validate(a.source,a.covered,a.layout,a.output)
+                                                                                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/farmily_tomato/mujoco-benchmark/scripts/validate_covered_scene.py", line 70, in validate
+    wire=next(i for i in range(m.ngeom) if 'segment_' in (m.geom(i).name or '') and m.geom_type[i]==mj.mjtGeom.mjGEOM_CAPSULE and m.geom_contype[i])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
