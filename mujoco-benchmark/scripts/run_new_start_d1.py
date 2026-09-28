@@ -67,7 +67,8 @@ def prepare(campaign, prefix_report, start_file, output, planning_python, *,
         root = source_root(campaign, side_campaign, old_query)
         key = str(root.resolve())
         if key not in materialized:
-            identity = f"{old_query['scene']}__{old_query['target']}"
+            root_tag = hashlib.sha256(key.encode()).hexdigest()[:8]
+            identity = f"{old_query['scene']}__{old_query['target']}__{root_tag}"
             derived = start_runs / identity
             provenance = materialize(root, start_file, derived)
             materialized[key] = dict(run=str(derived), provenance=provenance)
@@ -134,8 +135,10 @@ def classify_connection(result):
         return "initial_state_invalid"
     if status == "no_valid_ik_goal_found":
         return "ik_not_found_within_budget"
-    if status in ("budget_exhausted", "no_complete_connection_found"):
+    if status == "budget_exhausted":
         return "unresolved_within_budget"
+    if status == "no_complete_connection_found":
+        return "route_not_found_within_budget"
     if status in ("retimed_prefix_environment_rejected",):
         return "approach_environment_blocked"
     if status == "whole_path_passed":
