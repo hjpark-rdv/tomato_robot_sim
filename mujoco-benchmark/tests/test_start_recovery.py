@@ -242,3 +242,32 @@ def test_pipeline_summary_distinguishes_start_approach_local_and_physics():
              prefix_found=True, whole_path_passed=True)
     ]), dict(trials=[dict(physics_executed=True, completed=True)]))
     assert completed["case"] == "CASE3_LOCAL_PHYSICS_EVIDENCE_AVAILABLE"
+
+
+def test_new_start_local_design_uses_historical_heading_without_mutating_reset():
+    import mujoco as mj
+    from types import SimpleNamespace
+    from scipy.spatial.transform import Rotation
+    from run_motion_family_search import approach_reference_heading
+    from test_d1_recovery import geometry_and_parameters
+    from recovery_design import matched_local_variant
+    from approach_connection import handoff_index
+    m=mj.MjModel.from_xml_string('<mujoco><worldbody><body name="arm"><joint axis="0 0 1"/><geom size=".01"/><body name="ring" pos="1 0 0"/></body></worldbody></mujoco>')
+    d=mj.MjData(m);d.qpos[0]=.4;mj.mj_forward(m,d)
+    e=SimpleNamespace(model=m,data=d,qids=np.array([0]),initial=np.array([.4]))
+    probe=SimpleNamespace(frame=lambda data:(data.xpos[m.body('ring').id].copy(),Rotation.identity()))
+    mf,geometry,values=geometry_and_parameters()
+    before=d.qpos.copy();new_heading=approach_reference_heading(e,probe,geometry['center'])
+    old_heading=approach_reference_heading(e,probe,geometry['center'],[0.])
+    np.testing.assert_array_equal(d.qpos,before)
+    np.testing.assert_allclose(old_heading,[1.,0.,0.],atol=1e-15)
+    assert not np.allclose(new_heading,old_heading)
+    original=mf.make_candidate('under_center',values,**geometry,candidate_id='same')
+    with pytest.raises(ValueError,match='changed approach'):
+        matched_local_variant(original,dict(geometry,heading=new_heading),'neutral')
+    fixed=matched_local_variant(original,dict(geometry,heading=old_heading),'neutral')
+    end=handoff_index(original)
+    assert fixed['pose_waypoints'][:end+1]==original['pose_waypoints'][:end+1]
+    assert fixed['pose_waypoints'][end+1:]!=original['pose_waypoints'][end+1:]
+    with pytest.raises(ValueError,match='reference q'):
+        approach_reference_heading(e,probe,geometry['center'],[float('nan')])

@@ -223,7 +223,8 @@ def main(argv=None):
     try:
         if args.model_cache:
             search_model_cache.attach(run, root/'replay_assets/model.mjb', manifest['model_sha256'], args.model_cache)
-        geometry = native_geometry(run)[0] if args.local_design != 'recorded' else None
+        geometry = native_geometry(
+            run, heading_reference_q=manifest.get('historical_initial_q'))[0] if args.local_design != 'recorded' else None
         params = matched_local_variant(original, geometry, args.local_design)
         diagnostic_poses(params)
         write(run/'candidates.json', [params])

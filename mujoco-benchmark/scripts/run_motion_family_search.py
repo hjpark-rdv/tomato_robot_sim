@@ -142,7 +142,31 @@ def prepare_snapshot(case, destination):
     return manifest
 
 
-def native_geometry(run):
+def approach_reference_heading(engine, probe, center, reference_q=None):
+    """A new start must not rotate historical candidate geometry.
+
+    Only the heading reference uses the old q. Native obstacles and planning
+    still use the new start. A private MjData keeps the live reset untouched.
+    """
+    import mujoco as mj
+    import numpy as np
+    data = engine.data
+    if reference_q is not None:
+        q = np.asarray(reference_q, dtype=float)
+        if q.shape != engine.initial.shape or not np.isfinite(q).all():
+            raise ValueError('Invalid approach heading reference q')
+        data = mj.MjData(engine.model)
+        data.qpos[:] = engine.data.qpos
+        data.qpos[engine.qids] = q
+        mj.mj_kinematics(engine.model, data)
+    heading = np.asarray(probe.frame(data)[0], dtype=float) - np.asarray(center)
+    heading[2] = 0.
+    if np.linalg.norm(heading) < 1e-8:
+        raise ValueError('Undefined horizontal approach reference')
+    return heading / np.linalg.norm(heading)
+
+
+def native_geometry(run, *, heading_reference_q=None):
     import numpy as np
     from robot_engine import RobotEngine
     from hook_retention_diagnostic import HookProbe, capsule_endpoints
@@ -159,9 +183,7 @@ def native_geometry(run):
     expected = np.asarray(read(run/'planning_inputs.json')['inputs']['geometry'][0])
     if np.linalg.norm(center-expected) > 1e-5:
         raise ValueError('Planner target center does not match this reset model')
-    heading = ring-center; heading[2] = 0.
-    if np.linalg.norm(heading) < 1e-8: raise ValueError('Undefined horizontal approach reference')
-    heading /= np.linalg.norm(heading)
+    heading = approach_reference_heading(e, probe, center, heading_reference_q)
     targets = [Capsule(e.model.geom(g).name, *capsule_endpoints(e.model,e.data,g)) for g in probe.target_ids]
     wires = []
     for g in probe.rear_ids:
@@ -176,7 +198,9 @@ def native_geometry(run):
     from dataclasses import asdict
     write(run.parent/'native_geometry.json', dict(center=center.tolist(), radius=geometry['radius'],
           heading=heading.tolist(), targets=[t.json() for t in targets], rear_wires=[w.json() for w in wires],
-          contact_scope=asdict(scope), state_source='unchanged reset model', geometric_ground_truth=True))
+          contact_scope=asdict(scope), state_source='unchanged reset model',
+          heading_reference_q=heading_reference_q,
+          geometric_ground_truth=True))
     return geometry, policy
 
 
