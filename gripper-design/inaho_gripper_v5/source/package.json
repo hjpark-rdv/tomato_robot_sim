@@ -1,0 +1,7 @@
+{
+  "name": "farmily-inaho-gripper-v5-validation",
+  "private": true,
+  "version": "5.1.0",
+  "scripts": {"test": "node test_viewer.cjs"},
+  "devDependencies": {"playwright": "1.62.1"}
+}

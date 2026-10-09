@@ -1,0 +1,385 @@
+{
+  "scope": "Nominal rigid CAD and interface stacks; no physical assembly or strength/friction verification.",
+  "interfaces": [
+    {
+      "joint": "rail M3x14",
+      "length": 14,
+      "stack_to_thread": 9.6,
+      "available_thread": 4.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.0
+    },
+    {
+      "joint": "stop M3x28",
+      "length": 28,
+      "stack_to_thread": 21.6,
+      "available_thread": 6.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 4.0
+    },
+    {
+      "joint": "tower M4x18",
+      "length": 18,
+      "stack_to_thread": 11.8,
+      "available_thread": 6.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "tower cap M3x10",
+      "length": 10,
+      "stack_to_thread": 5,
+      "available_thread": 5,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.6
+    },
+    {
+      "joint": "MGN12H M3x8",
+      "length": 8,
+      "stack_to_thread": 5,
+      "available_thread": 3,
+      "nut_thickness": null,
+      "blind_depth": 3.5,
+      "pass_check": true,
+      "bottom_margin": 0.5
+    },
+    {
+      "joint": "cassette lower M4x18",
+      "length": 18,
+      "stack_to_thread": 12.8,
+      "available_thread": 5.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.0
+    },
+    {
+      "joint": "independent upper deck + motor bracket M4x25",
+      "length": 25,
+      "stack_to_thread": 17.8,
+      "available_thread": 7.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 4.0
+    },
+    {
+      "joint": "motor plate/front M3x12",
+      "length": 12,
+      "stack_to_thread": 6.6,
+      "available_thread": 5.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "independent hood M3x12",
+      "length": 12,
+      "stack_to_thread": 8.6,
+      "available_thread": 3.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.0
+    },
+    {
+      "joint": "guide lower M3x14",
+      "length": 14,
+      "stack_to_thread": 10.6,
+      "available_thread": 3.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.0
+    },
+    {
+      "joint": "guide upper M3x14",
+      "length": 14,
+      "stack_to_thread": 11.2,
+      "available_thread": 2.8,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 0.4
+    },
+    {
+      "joint": "root cap lower M3x8",
+      "length": 8,
+      "stack_to_thread": 5.2,
+      "available_thread": 2.8,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 0.4
+    },
+    {
+      "joint": "root cap upper ISO7380 M3x10",
+      "length": 10,
+      "stack_to_thread": 5.4,
+      "available_thread": 4.6,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.2
+    },
+    {
+      "joint": "split drum M3x20",
+      "length": 20,
+      "stack_to_thread": 16,
+      "available_thread": 4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.6
+    },
+    {
+      "joint": "nose axle lock ISO4026 M3x6 headless; no washer",
+      "length": 6,
+      "stack_to_thread": 2.1,
+      "available_thread": 3.9,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.5,
+      "head_seating_limit": false,
+      "verified_adjustment_mm": 1.0,
+      "adjustment_check": "See repair_audit.json: actual nut engagement and shaft-clearance take-up."
+    },
+    {
+      "joint": "nose lower clamp M4x14+t1",
+      "length": 14,
+      "stack_to_thread": 10.2,
+      "available_thread": 3.8,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 0.6
+    },
+    {
+      "joint": "nose upper clamp M4x14+t1",
+      "length": 14,
+      "stack_to_thread": 9.8,
+      "available_thread": 4.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.0
+    },
+    {
+      "joint": "keyed top arm M3x16",
+      "length": 16,
+      "stack_to_thread": 10.6,
+      "available_thread": 5.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "tension jack ISO4762 M3x25 fully threaded",
+      "length": 25,
+      "stack_to_thread": 13.6,
+      "available_thread": 11.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 9.0
+    },
+    {
+      "joint": "outer cover lower M3x10",
+      "length": 10,
+      "stack_to_thread": 5.2,
+      "available_thread": 4.8,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.4
+    },
+    {
+      "joint": "outer cover upper M3x10",
+      "length": 10,
+      "stack_to_thread": 6.1,
+      "available_thread": 3.9,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.5
+    },
+    {
+      "joint": "NEMA11 M2.5x8+t0.5",
+      "length": 8,
+      "stack_to_thread": 4.5,
+      "available_thread": 3.5,
+      "nut_thickness": null,
+      "blind_depth": 4,
+      "pass_check": true,
+      "bottom_margin": 0.5
+    },
+    {
+      "joint": "NEMA17 M3x10+t0.5",
+      "length": 10,
+      "stack_to_thread": 6.5,
+      "available_thread": 3.5,
+      "nut_thickness": null,
+      "blind_depth": 4.5,
+      "pass_check": true,
+      "bottom_margin": 1.0
+    },
+    {
+      "joint": "opening motor yoke M4x20",
+      "length": 20,
+      "stack_to_thread": 13.8,
+      "available_thread": 6.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "crank hub M3x20",
+      "length": 20,
+      "stack_to_thread": 17,
+      "available_thread": 3,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 0.6
+    },
+    {
+      "joint": "crank pivot M5 thread9.5",
+      "length": 9.5,
+      "stack_to_thread": 4,
+      "available_thread": 5.5,
+      "nut_thickness": 4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.5
+    },
+    {
+      "joint": "slider pivot M5 thread9.5; neck clearance2.5",
+      "length": 9.5,
+      "stack_to_thread": 2.5,
+      "available_thread": 7.0,
+      "nut_thickness": 4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "tray posts M3x16",
+      "length": 16,
+      "stack_to_thread": 11.6,
+      "available_thread": 4.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.0
+    },
+    {
+      "joint": "fixture M4x22",
+      "length": 22,
+      "stack_to_thread": 16.8,
+      "available_thread": 5.2,
+      "nut_thickness": 3.2,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 2.0
+    },
+    {
+      "joint": "home bracket M3x16",
+      "length": 16,
+      "stack_to_thread": 10.6,
+      "available_thread": 5.4,
+      "nut_thickness": 2.4,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 3.0
+    },
+    {
+      "joint": "home sensor M2x12+t0.5",
+      "length": 12,
+      "stack_to_thread": 8.8,
+      "available_thread": 3.2,
+      "nut_thickness": 1.6,
+      "blind_depth": null,
+      "pass_check": true,
+      "protrusion": 1.6
+    }
+  ],
+  "tension_positions": [
+    {
+      "travel_mm": -3.0,
+      "collisions": [],
+      "geometric_strain_percent": -1.1630271956660554,
+      "belt_state": "slack installation envelope; sag not simulated"
+    },
+    {
+      "travel_mm": 0.0,
+      "collisions": [],
+      "geometric_strain_percent": 0.42292987620990985,
+      "belt_state": "tensioned geometric envelope; force not calculated"
+    },
+    {
+      "travel_mm": 3.0,
+      "collisions": [],
+      "geometric_strain_percent": 2.0089665586880745,
+      "belt_state": "tensioned geometric envelope; force not calculated"
+    }
+  ],
+  "timing_adjustment_positions": [
+    {
+      "motor_travel_mm": -3.0,
+      "collisions": [],
+      "belt_removed": true
+    },
+    {
+      "motor_travel_mm": 0.0,
+      "collisions": [],
+      "belt_removed": true
+    },
+    {
+      "motor_travel_mm": 3.0,
+      "collisions": [],
+      "belt_removed": true
+    }
+  ],
+  "tool_access": [
+    {
+      "side": -1,
+      "tool": "2.5 AF L hex, vertical leg at Y73, horizontal reach20",
+      "collisions": []
+    },
+    {
+      "side": 1,
+      "tool": "2.5 AF L hex, vertical leg at Y73, horizontal reach20",
+      "collisions": []
+    }
+  ],
+  "all_thread_stacks_pass": true,
+  "all_tension_positions_clear": true,
+  "all_timing_adjustment_positions_clear": true,
+  "all_tool_paths_clear": true,
+  "running_clearances_mm": {
+    "root_pulley_to_button_head": 0.95,
+    "timing_belt_groove_margin_32T": 0.5,
+    "timing_belt_groove_margin_20T": 0.75,
+    "pulley20_top_to_hood": 2.5,
+    "root_axial_endplay": 0.2,
+    "nose_axial_endplay": 0.15,
+    "guide_to_belt_inner_face": 0.6,
+    "belt_to_roller_flange_axial": 1.0,
+    "nose_spacer_to_deck_slot_radial": 0.3,
+    "MGN12H_screw_bottom_margin": 0.5,
+    "NEMA11_screw_bottom_margin_min": 0.5,
+    "NEMA17_screw_bottom_margin": 1.0
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "revision": "V5.1",
+  "body_height_difference_mm": 0,
+  "belt_width_mm": 52,
+  "belt_L_z_mm": [
+    9,
+    61
+  ],
+  "belt_R_z_mm": [
+    13,
+    65
+  ],
+  "belt_end_offset_mm": 4,
+  "belt_height_overlap_mm": 48,
+  "belt_offset_basis": "V5 design choice. User observation: bodies same height, belt ends asymmetric. Exact original dimensions unavailable.",
+  "fore_aft_offset_mm": 14,
+  "pulley_groove_common_Z_mm": 86.75,
+  "cover_fasteners": "Three M3x12 per hood, mechanically independent of deck M4x25 and all four motor-slide M3x12",
+  "nose_axle_lock": "Four ISO4026 M3x6 flat-point set screws, AF1.5, in existing captured M3 nuts. No washers. Upper lock fitted only after removable top arm is installed. Final shaft retention and free roller rotation require bench verification.",
+  "tension_jack_threads": "Both M3x25 tension jack screws must be fully threaded, Bossard BN3 or equivalent, including the thread span under the head-side locknut. Partially threaded substitutes are unsuitable.",
+  "saddle_pivot_nut_pockets": "V5.1 moves both saddle-side M5 nuts and C01 nut pockets rearward by 1.5 mm to avoid the ISO7379 maximum 2 mm unthreaded neck behind the shoulder. Both C01 saddles must be printed from V5.1 files.",
+  "physical_build_verified": false
+}

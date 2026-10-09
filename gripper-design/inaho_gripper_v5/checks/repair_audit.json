@@ -1,0 +1,2921 @@
+{
+  "scope": "Measured nominal CAD: all independently modeled threaded fasteners and washers. Purchased integral screws, unmodeled threads, material behavior, force, wear, and physical assembly are not certified.",
+  "revision": "V5.1",
+  "inventory": {
+    "instances": 356,
+    "kinds": {
+      "print": 66,
+      "buy": 290
+    },
+    "valid_shapes": true,
+    "single_solid_prints": true
+  },
+  "threaded_joints": [
+    {
+      "screw": "F02_rail_bolt_0",
+      "receiver": "F02_rail_nut_0",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_1",
+      "receiver": "F02_rail_nut_1",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_2",
+      "receiver": "F02_rail_nut_2",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_3",
+      "receiver": "F02_rail_nut_3",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_4",
+      "receiver": "F02_rail_nut_4",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_5",
+      "receiver": "F02_rail_nut_5",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_6",
+      "receiver": "F02_rail_nut_6",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F02_rail_bolt_7",
+      "receiver": "F02_rail_nut_7",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C01_rail_bolt_-10_22",
+      "receiver": "L_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C01_rail_bolt_-10_42",
+      "receiver": "L_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C01_rail_bolt_10_22",
+      "receiver": "L_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C01_rail_bolt_10_42",
+      "receiver": "L_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C01_rail_bolt_-10_22",
+      "receiver": "R_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C01_rail_bolt_-10_42",
+      "receiver": "R_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C01_rail_bolt_10_22",
+      "receiver": "R_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C01_rail_bolt_10_42",
+      "receiver": "R_H01_MGN12H",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 3.5,
+      "engagement_mm": 3.0,
+      "purchase_thread_engagement_mm": 3.0,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "F03_stop_closed_bolt_-5",
+      "receiver": "F03_stop_closed_nut_-5",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 28.0,
+      "modeled_major_diameter_span_mm": 28.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 10.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F03_stop_closed_bolt_5",
+      "receiver": "F03_stop_closed_nut_5",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 28.0,
+      "modeled_major_diameter_span_mm": 28.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 10.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F03_stop_open_L_bolt_-93.7",
+      "receiver": "F03_stop_open_L_nut_-93.7",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 28.0,
+      "modeled_major_diameter_span_mm": 28.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 10.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F03_stop_open_R_bolt_93.7",
+      "receiver": "F03_stop_open_R_nut_93.7",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 28.0,
+      "modeled_major_diameter_span_mm": 28.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 10.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F04_tower_bolt_-25",
+      "receiver": "F04_tower_nut_-25",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F04_tower_bolt_25",
+      "receiver": "F04_tower_nut_25",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F05_rear_bolt_-15",
+      "receiver": "F05_rear_nut_-15",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F05_rear_bolt_15",
+      "receiver": "F05_rear_nut_15",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F05_front_bolt_-15",
+      "receiver": "F05_front_nut_-15",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F05_front_bolt_15",
+      "receiver": "F05_front_nut_15",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_yoke_bolt_-26_-42",
+      "receiver": "F07_yoke_nut_-26_-42",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 17.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_yoke_bolt_-26_6",
+      "receiver": "F07_yoke_nut_-26_6",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 17.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_yoke_bolt_26_-42",
+      "receiver": "F07_yoke_nut_26_-42",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 17.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_yoke_bolt_26_6",
+      "receiver": "F07_yoke_nut_26_6",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 17.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_motor_bolt_-15.5_-33.5",
+      "receiver": "H06_opening_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.5,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 1.0,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_motor_bolt_-15.5_-2.5",
+      "receiver": "H06_opening_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.5,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 1.0,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_motor_bolt_15.5_-33.5",
+      "receiver": "H06_opening_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.5,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 1.0,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "F07_motor_bolt_15.5_-2.5",
+      "receiver": "H06_opening_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.5,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 1.0,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C02_lower_root_bolt_0",
+      "receiver": "L_C02_lower_root_nut_0",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C02_lower_root_bolt_1",
+      "receiver": "L_C02_lower_root_nut_1",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C03_lower_bolt_35",
+      "receiver": "L_C03_lower_nut_35",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C03_upper_bolt_35",
+      "receiver": "L_C03_upper_nut_35",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C03_lower_bolt_65",
+      "receiver": "L_C03_lower_nut_65",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C03_upper_bolt_65",
+      "receiver": "L_C03_upper_nut_65",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C05_lower_bolt_-13",
+      "receiver": "L_C05_lower_nut_-13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C05_lower_bolt_13",
+      "receiver": "L_C05_lower_nut_13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C05_upper_bolt_-13",
+      "receiver": "L_C05_upper_nut_-13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C05_upper_bolt_13",
+      "receiver": "L_C05_upper_nut_13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C06_clamp_bolt_-7_18",
+      "receiver": "L_C06_clamp_nut_-7_18",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C06_clamp_bolt_-7_56",
+      "receiver": "L_C06_clamp_nut_-7_56",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C06_clamp_bolt_7_18",
+      "receiver": "L_C06_clamp_nut_7_18",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C06_clamp_bolt_7_56",
+      "receiver": "L_C06_clamp_nut_7_56",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_axle_lock_-5",
+      "receiver": "L_C10_axle_nut_-5",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 6.0,
+      "modeled_major_diameter_span_mm": 5.25,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 5.25,
+        "basis": "ISO4026 fully threaded major envelope with modeled end chamfers"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_axle_lock_80",
+      "receiver": "L_C10_axle_nut_80",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 6.0,
+      "modeled_major_diameter_span_mm": 5.25,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 5.25,
+        "basis": "ISO4026 fully threaded major envelope with modeled end chamfers"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_top_arm_joint_bolt",
+      "receiver": "L_C10_top_arm_joint_nut",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_clamp_lower",
+      "receiver": "L_C10_clamp_nut_lower",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 11.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_clamp_upper",
+      "receiver": "L_C10_clamp_nut_upper",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 11.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_jack_screw",
+      "receiver": "L_C10_jack_captive",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 23.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "Fully threaded requirement including3P runout"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_jack_screw",
+      "receiver": "L_C10_jack_locknut",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 23.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "Fully threaded requirement including3P runout"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_plate_bolt_-20_-105.91",
+      "receiver": "L_C11_plate_nut_-20_-105.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_plate_bolt_20_-105.91",
+      "receiver": "L_C11_plate_nut_20_-105.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_plate_bolt_-20_-61.91",
+      "receiver": "L_C11_plate_nut_-20_-61.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_plate_bolt_20_-61.91",
+      "receiver": "L_C11_plate_nut_20_-61.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_root_bolt_0",
+      "receiver": "L_C02_upper_root_nut_0",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 20.0,
+        "maximum_underhead_unthreaded_mm": 5.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C11_root_bolt_1",
+      "receiver": "L_C02_upper_root_nut_1",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 20.0,
+        "maximum_underhead_unthreaded_mm": 5.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C12_motor_bolt_-11.5_-95.41",
+      "receiver": "L_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C12_motor_bolt_-11.5_-72.41",
+      "receiver": "L_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C12_motor_bolt_11.5_-95.41",
+      "receiver": "L_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C12_motor_bolt_11.5_-72.41",
+      "receiver": "L_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C02_lower_root_bolt_0",
+      "receiver": "R_C02_lower_root_nut_0",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C02_lower_root_bolt_1",
+      "receiver": "R_C02_lower_root_nut_1",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 18.0,
+      "modeled_major_diameter_span_mm": 18.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 15.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C03_lower_bolt_35",
+      "receiver": "R_C03_lower_nut_35",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C03_upper_bolt_35",
+      "receiver": "R_C03_upper_nut_35",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C03_lower_bolt_65",
+      "receiver": "R_C03_lower_nut_65",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C03_upper_bolt_65",
+      "receiver": "R_C03_upper_nut_65",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 12.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C05_lower_bolt_-13",
+      "receiver": "R_C05_lower_nut_-13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C05_lower_bolt_13",
+      "receiver": "R_C05_lower_nut_13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C05_upper_bolt_-13",
+      "receiver": "R_C05_upper_nut_-13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C05_upper_bolt_13",
+      "receiver": "R_C05_upper_nut_13",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C06_clamp_bolt_-7_18",
+      "receiver": "R_C06_clamp_nut_-7_18",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C06_clamp_bolt_-7_56",
+      "receiver": "R_C06_clamp_nut_-7_56",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C06_clamp_bolt_7_18",
+      "receiver": "R_C06_clamp_nut_7_18",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C06_clamp_bolt_7_56",
+      "receiver": "R_C06_clamp_nut_7_56",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_axle_lock_-5",
+      "receiver": "R_C10_axle_nut_-5",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 6.0,
+      "modeled_major_diameter_span_mm": 5.25,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 5.25,
+        "basis": "ISO4026 fully threaded major envelope with modeled end chamfers"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_axle_lock_80",
+      "receiver": "R_C10_axle_nut_80",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 6.0,
+      "modeled_major_diameter_span_mm": 5.25,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 5.25,
+        "basis": "ISO4026 fully threaded major envelope with modeled end chamfers"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_top_arm_joint_bolt",
+      "receiver": "R_C10_top_arm_joint_nut",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_clamp_lower",
+      "receiver": "R_C10_clamp_nut_lower",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 11.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_clamp_upper",
+      "receiver": "R_C10_clamp_nut_upper",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 14.0,
+      "modeled_major_diameter_span_mm": 14.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 11.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_jack_screw",
+      "receiver": "R_C10_jack_captive",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 23.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "Fully threaded requirement including3P runout"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_jack_screw",
+      "receiver": "R_C10_jack_locknut",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 23.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "Fully threaded requirement including3P runout"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_plate_bolt_-20_-105.91",
+      "receiver": "R_C11_plate_nut_-20_-105.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_plate_bolt_20_-105.91",
+      "receiver": "R_C11_plate_nut_20_-105.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_plate_bolt_-20_-61.91",
+      "receiver": "R_C11_plate_nut_-20_-61.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_plate_bolt_20_-61.91",
+      "receiver": "R_C11_plate_nut_20_-61.91",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_root_bolt_0",
+      "receiver": "R_C02_upper_root_nut_0",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 20.0,
+        "maximum_underhead_unthreaded_mm": 5.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C11_root_bolt_1",
+      "receiver": "R_C02_upper_root_nut_1",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 25.0,
+      "modeled_major_diameter_span_mm": 25.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 20.0,
+        "maximum_underhead_unthreaded_mm": 5.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C12_motor_bolt_-11.5_-95.41",
+      "receiver": "R_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C12_motor_bolt_-11.5_-72.41",
+      "receiver": "R_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C12_motor_bolt_11.5_-95.41",
+      "receiver": "R_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C12_motor_bolt_11.5_-72.41",
+      "receiver": "R_H15_NEMA11_belt_motor",
+      "receiver_type": "blind",
+      "diameter_mm": 2.5,
+      "nominal_length_mm": 8.0,
+      "modeled_major_diameter_span_mm": 8.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 6.65,
+        "maximum_underhead_unthreaded_mm": 1.35,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "blind_bore_depth_mm": 4.0,
+      "engagement_mm": 3.5,
+      "purchase_thread_engagement_mm": 3.5,
+      "bottom_margin_mm": 0.5,
+      "coaxial": true,
+      "pass_check": true
+    },
+    {
+      "screw": "K01_hub_bolt",
+      "receiver": "K01_hub_nut",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 20.0,
+      "modeled_major_diameter_span_mm": 20.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 18.0,
+        "maximum_underhead_unthreaded_mm": 2.0,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "K03_shoulder_-1_0",
+      "receiver": "K03_nut_-1_0",
+      "receiver_type": "nut",
+      "diameter_mm": 5.0,
+      "nominal_length_mm": 9.5,
+      "modeled_major_diameter_span_mm": 7.5,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 7.25,
+        "shoulder_thread_region_min_mm": 9.25,
+        "maximum_thread_relief_mm": 2.0,
+        "basis": "ISO7379 M5 bmin9.25 and g2max2; specified Ganter \u00d86 variant and actual relief must be checked"
+      },
+      "nut_thickness_mm": 4.0,
+      "full_diameter_engagement_mm": 4.0,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 4.0,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "K03_shoulder_-1_1",
+      "receiver": "K03_nut_-1_1",
+      "receiver_type": "nut",
+      "diameter_mm": 5.0,
+      "nominal_length_mm": 9.5,
+      "modeled_major_diameter_span_mm": 7.5,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 7.25,
+        "shoulder_thread_region_min_mm": 9.25,
+        "maximum_thread_relief_mm": 2.0,
+        "basis": "ISO7379 M5 bmin9.25 and g2max2; specified Ganter \u00d86 variant and actual relief must be checked"
+      },
+      "nut_thickness_mm": 4.0,
+      "full_diameter_engagement_mm": 4.0,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 4.0,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "K03_shoulder_1_0",
+      "receiver": "K03_nut_1_0",
+      "receiver_type": "nut",
+      "diameter_mm": 5.0,
+      "nominal_length_mm": 9.5,
+      "modeled_major_diameter_span_mm": 7.5,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 7.25,
+        "shoulder_thread_region_min_mm": 9.25,
+        "maximum_thread_relief_mm": 2.0,
+        "basis": "ISO7379 M5 bmin9.25 and g2max2; specified Ganter \u00d86 variant and actual relief must be checked"
+      },
+      "nut_thickness_mm": 4.0,
+      "full_diameter_engagement_mm": 4.0,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 4.0,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "K03_shoulder_1_1",
+      "receiver": "K03_nut_1_1",
+      "receiver_type": "nut",
+      "diameter_mm": 5.0,
+      "nominal_length_mm": 9.5,
+      "modeled_major_diameter_span_mm": 7.5,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 7.25,
+        "shoulder_thread_region_min_mm": 9.25,
+        "maximum_thread_relief_mm": 2.0,
+        "basis": "ISO7379 M5 bmin9.25 and g2max2; specified Ganter \u00d86 variant and actual relief must be checked"
+      },
+      "nut_thickness_mm": 4.0,
+      "full_diameter_engagement_mm": 4.0,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 4.0,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_T01_post_bolt_32",
+      "receiver": "L_T01_post_nut_32",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_T01_post_bolt_130",
+      "receiver": "L_T01_post_nut_130",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "A01_bolt_-78_2",
+      "receiver": "A01_nut_-78_2",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 22.0,
+      "modeled_major_diameter_span_mm": 22.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 19.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "A01_bolt_-78_12",
+      "receiver": "A01_nut_-78_12",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 22.0,
+      "modeled_major_diameter_span_mm": 22.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 19.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "A01_bolt_78_2",
+      "receiver": "A01_nut_78_2",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 22.0,
+      "modeled_major_diameter_span_mm": 22.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 19.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "A01_bolt_78_12",
+      "receiver": "A01_nut_78_12",
+      "receiver_type": "nut",
+      "diameter_mm": 4.0,
+      "nominal_length_mm": 22.0,
+      "modeled_major_diameter_span_mm": 22.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 19.9,
+        "maximum_underhead_unthreaded_mm": 2.1,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 3.2,
+      "full_diameter_engagement_mm": 3.2,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 3.2,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F08_mount_bolt_14",
+      "receiver": "F08_mount_nut_14",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F08_mount_bolt_22",
+      "receiver": "F08_mount_nut_22",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 16.0,
+      "modeled_major_diameter_span_mm": 16.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 14.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F08_sensor_bolt_-43.85",
+      "receiver": "F08_sensor_nut_-43.85",
+      "receiver_type": "nut",
+      "diameter_mm": 2.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.8,
+        "maximum_underhead_unthreaded_mm": 1.2,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 1.6,
+      "full_diameter_engagement_mm": 1.6,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 1.6,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "F08_sensor_bolt_-37.35",
+      "receiver": "F08_sensor_nut_-37.35",
+      "receiver_type": "nut",
+      "diameter_mm": 2.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.8,
+        "maximum_underhead_unthreaded_mm": 1.2,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 1.6,
+      "full_diameter_engagement_mm": 1.6,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 1.6,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C13_lower_cover_bolt_45",
+      "receiver": "L_C13_lower_cover_nut_45",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C13_lower_cover_bolt_100",
+      "receiver": "L_C13_lower_cover_nut_100",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C13_upper_cover_bolt_45",
+      "receiver": "L_C13_upper_cover_nut_45",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C13_upper_cover_bolt_100",
+      "receiver": "L_C13_upper_cover_nut_100",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C14_service_bolt_24_-38",
+      "receiver": "L_C14_service_nut_24_-38",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C14_service_bolt_-20_-123",
+      "receiver": "L_C14_service_nut_-20_-123",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "L_C14_service_bolt_20_-123",
+      "receiver": "L_C14_service_nut_20_-123",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C13_lower_cover_bolt_45",
+      "receiver": "R_C13_lower_cover_nut_45",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C13_lower_cover_bolt_100",
+      "receiver": "R_C13_lower_cover_nut_100",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C13_upper_cover_bolt_45",
+      "receiver": "R_C13_upper_cover_nut_45",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C13_upper_cover_bolt_100",
+      "receiver": "R_C13_upper_cover_nut_100",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 10.0,
+      "modeled_major_diameter_span_mm": 10.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 8.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C14_service_bolt_24_-38",
+      "receiver": "R_C14_service_nut_24_-38",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C14_service_bolt_-20_-123",
+      "receiver": "R_C14_service_nut_-20_-123",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    },
+    {
+      "screw": "R_C14_service_bolt_20_-123",
+      "receiver": "R_C14_service_nut_20_-123",
+      "receiver_type": "nut",
+      "diameter_mm": 3.0,
+      "nominal_length_mm": 12.0,
+      "modeled_major_diameter_span_mm": 12.0,
+      "purchase_thread_rule": {
+        "minimum_purchase_thread_span_mm": 10.5,
+        "maximum_underhead_unthreaded_mm": 1.5,
+        "basis": "ISO4762 supplier b table; conservative3P runout for short screws"
+      },
+      "nut_thickness_mm": 2.4,
+      "full_diameter_engagement_mm": 2.4,
+      "coaxial": true,
+      "purchase_thread_engagement_mm": 2.4,
+      "screw_to_nut_clearance_mm": 0.02,
+      "pass_check": true
+    }
+  ],
+  "washers": [
+    {
+      "washer": "F07_motor_washer_-15.5_-33.5",
+      "screw": "F07_motor_bolt_-15.5_-33.5",
+      "bore_mm": 3.3,
+      "mating_shaft_mm": 3.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "F07_motor_washer_-15.5_-2.5",
+      "screw": "F07_motor_bolt_-15.5_-2.5",
+      "bore_mm": 3.3,
+      "mating_shaft_mm": 3.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "F07_motor_washer_15.5_-33.5",
+      "screw": "F07_motor_bolt_15.5_-33.5",
+      "bore_mm": 3.3,
+      "mating_shaft_mm": 3.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "F07_motor_washer_15.5_-2.5",
+      "screw": "F07_motor_bolt_15.5_-2.5",
+      "bore_mm": 3.3,
+      "mating_shaft_mm": 3.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C10_clamp_washer_lower",
+      "screw": "L_C10_clamp_lower",
+      "bore_mm": 4.3,
+      "mating_shaft_mm": 4.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C10_clamp_washer_upper",
+      "screw": "L_C10_clamp_upper",
+      "bore_mm": 4.3,
+      "mating_shaft_mm": 4.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C12_motor_washer_-11.5_-95.41",
+      "screw": "L_C12_motor_bolt_-11.5_-95.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C12_motor_washer_-11.5_-72.41",
+      "screw": "L_C12_motor_bolt_-11.5_-72.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C12_motor_washer_11.5_-95.41",
+      "screw": "L_C12_motor_bolt_11.5_-95.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "L_C12_motor_washer_11.5_-72.41",
+      "screw": "L_C12_motor_bolt_11.5_-72.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C10_clamp_washer_lower",
+      "screw": "R_C10_clamp_lower",
+      "bore_mm": 4.3,
+      "mating_shaft_mm": 4.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C10_clamp_washer_upper",
+      "screw": "R_C10_clamp_upper",
+      "bore_mm": 4.3,
+      "mating_shaft_mm": 4.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C12_motor_washer_-11.5_-95.41",
+      "screw": "R_C12_motor_bolt_-11.5_-95.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C12_motor_washer_-11.5_-72.41",
+      "screw": "R_C12_motor_bolt_-11.5_-72.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C12_motor_washer_11.5_-95.41",
+      "screw": "R_C12_motor_bolt_11.5_-95.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "R_C12_motor_washer_11.5_-72.41",
+      "screw": "R_C12_motor_bolt_11.5_-72.41",
+      "bore_mm": 2.8,
+      "mating_shaft_mm": 2.5,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_rear_washer_-1_0",
+      "screw": "K03_shoulder_-1_0",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_front_washer_-1_0",
+      "screw": "K03_shoulder_-1_0",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_rear_washer_-1_1",
+      "screw": "K03_shoulder_-1_1",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_front_washer_-1_1",
+      "screw": "K03_shoulder_-1_1",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_rear_washer_1_0",
+      "screw": "K03_shoulder_1_0",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_front_washer_1_0",
+      "screw": "K03_shoulder_1_0",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_rear_washer_1_1",
+      "screw": "K03_shoulder_1_1",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "K03_front_washer_1_1",
+      "screw": "K03_shoulder_1_1",
+      "bore_mm": 6.3,
+      "mating_shaft_mm": 6.0,
+      "axial_overlap_mm": 1.0,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "F08_sensor_washer_-43.85",
+      "screw": "F08_sensor_bolt_-43.85",
+      "bore_mm": 2.3,
+      "mating_shaft_mm": 2.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    },
+    {
+      "washer": "F08_sensor_washer_-37.35",
+      "screw": "F08_sensor_bolt_-37.35",
+      "bore_mm": 2.3,
+      "mating_shaft_mm": 2.0,
+      "axial_overlap_mm": 0.5,
+      "intersection_mm3": 0.0,
+      "pass_check": true
+    }
+  ],
+  "nose_lock_adjustment": [
+    {
+      "screw": "L_C10_axle_lock_-5",
+      "receiver": "L_C10_axle_nut_-5",
+      "carrier": "L_C10_internal_nose_carrier",
+      "shaft_diameter_mm": 5.0,
+      "bore_diameter_mm": 5.15,
+      "head_seating_limit": false,
+      "nominal_screw_shaft_gap_mm": 0.0,
+      "nominal_screw_shaft_intersection_mm3": 0.0,
+      "samples": [
+        {
+          "insertion_mm": 0.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 0.075,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 1.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        }
+      ],
+      "clearance_take_up": {
+        "shaft_shift_mm": 0.075,
+        "screw_shift_mm": 0.075,
+        "shaft_to_bore_gap_mm": 0.0,
+        "screw_to_shaft_gap_mm": 0.0,
+        "screw_shaft_intersection_mm3": 0.0,
+        "shaft_carrier_intersection_mm3": 0.0
+      },
+      "pass_check": true
+    },
+    {
+      "screw": "L_C10_axle_lock_80",
+      "receiver": "L_C10_axle_nut_80",
+      "carrier": "L_C10_removable_top_arm",
+      "shaft_diameter_mm": 5.0,
+      "bore_diameter_mm": 5.15,
+      "head_seating_limit": false,
+      "nominal_screw_shaft_gap_mm": 0.0,
+      "nominal_screw_shaft_intersection_mm3": 0.0,
+      "samples": [
+        {
+          "insertion_mm": 0.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 0.075,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 1.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        }
+      ],
+      "clearance_take_up": {
+        "shaft_shift_mm": 0.075,
+        "screw_shift_mm": 0.075,
+        "shaft_to_bore_gap_mm": 0.0,
+        "screw_to_shaft_gap_mm": 0.0,
+        "screw_shaft_intersection_mm3": 0.0,
+        "shaft_carrier_intersection_mm3": 0.0
+      },
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_axle_lock_-5",
+      "receiver": "R_C10_axle_nut_-5",
+      "carrier": "R_C10_internal_nose_carrier",
+      "shaft_diameter_mm": 5.0,
+      "bore_diameter_mm": 5.15,
+      "head_seating_limit": false,
+      "nominal_screw_shaft_gap_mm": 0.0,
+      "nominal_screw_shaft_intersection_mm3": 0.0,
+      "samples": [
+        {
+          "insertion_mm": 0.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 0.075,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 1.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        }
+      ],
+      "clearance_take_up": {
+        "shaft_shift_mm": 0.075,
+        "screw_shift_mm": 0.075,
+        "shaft_to_bore_gap_mm": 0.0,
+        "screw_to_shaft_gap_mm": 0.0,
+        "screw_shaft_intersection_mm3": 0.0,
+        "shaft_carrier_intersection_mm3": 0.0
+      },
+      "pass_check": true
+    },
+    {
+      "screw": "R_C10_axle_lock_80",
+      "receiver": "R_C10_axle_nut_80",
+      "carrier": "R_C10_removable_top_arm",
+      "shaft_diameter_mm": 5.0,
+      "bore_diameter_mm": 5.15,
+      "head_seating_limit": false,
+      "nominal_screw_shaft_gap_mm": 0.0,
+      "nominal_screw_shaft_intersection_mm3": 0.0,
+      "samples": [
+        {
+          "insertion_mm": 0.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 0.075,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        },
+        {
+          "insertion_mm": 1.0,
+          "full_diameter_nut_engagement_mm": 2.4,
+          "intersection_mm3": {
+            "carrier": 0.0,
+            "nut": 0.0
+          },
+          "pass_check": true
+        }
+      ],
+      "clearance_take_up": {
+        "shaft_shift_mm": 0.075,
+        "screw_shift_mm": 0.075,
+        "shaft_to_bore_gap_mm": 0.0,
+        "screw_to_shaft_gap_mm": 0.0,
+        "screw_shaft_intersection_mm3": 0.0,
+        "shaft_carrier_intersection_mm3": 0.0
+      },
+      "pass_check": true
+    }
+  ],
+  "pivot_stacks": [
+    {
+      "pivot": "K03_shoulder_-1_0",
+      "shoulder_length_mm": 12.0,
+      "sleeve_plus_washers_mm": 12.0,
+      "link_axial_float_mm": 2.0,
+      "nut_gap_from_shoulder_mm": 4.0,
+      "pocket_axial_float_mm": 0.3,
+      "minimum_nut_gap_mm": 3.7,
+      "maximum_thread_relief_mm": 2.0,
+      "interpretation": "Bushing is located by washers; link is 2mm thinner and has nominal 1mm per-face axial float. Verify printed fit and free pivot movement.",
+      "pass_check": true
+    },
+    {
+      "pivot": "K03_shoulder_-1_1",
+      "shoulder_length_mm": 12.0,
+      "sleeve_plus_washers_mm": 12.0,
+      "link_axial_float_mm": 2.0,
+      "nut_gap_from_shoulder_mm": 2.5,
+      "pocket_axial_float_mm": 0.3,
+      "minimum_nut_gap_mm": 2.2,
+      "maximum_thread_relief_mm": 2.0,
+      "interpretation": "Bushing is located by washers; link is 2mm thinner and has nominal 1mm per-face axial float. Verify printed fit and free pivot movement.",
+      "pass_check": true
+    },
+    {
+      "pivot": "K03_shoulder_1_0",
+      "shoulder_length_mm": 12.0,
+      "sleeve_plus_washers_mm": 12.0,
+      "link_axial_float_mm": 2.0,
+      "nut_gap_from_shoulder_mm": 4.0,
+      "pocket_axial_float_mm": 0.3,
+      "minimum_nut_gap_mm": 3.7,
+      "maximum_thread_relief_mm": 2.0,
+      "interpretation": "Bushing is located by washers; link is 2mm thinner and has nominal 1mm per-face axial float. Verify printed fit and free pivot movement.",
+      "pass_check": true
+    },
+    {
+      "pivot": "K03_shoulder_1_1",
+      "shoulder_length_mm": 12.0,
+      "sleeve_plus_washers_mm": 12.0,
+      "link_axial_float_mm": 2.0,
+      "nut_gap_from_shoulder_mm": 2.5,
+      "pocket_axial_float_mm": 0.3,
+      "minimum_nut_gap_mm": 2.2,
+      "maximum_thread_relief_mm": 2.0,
+      "interpretation": "Bushing is located by washers; link is 2mm thinner and has nominal 1mm per-face axial float. Verify printed fit and free pivot movement.",
+      "pass_check": true
+    }
+  ],
+  "physical_testing_performed": false,
+  "original_purchase_spec_risks": [
+    {
+      "screw": "L_C10_jack_screw",
+      "receiver": "L_C10_jack_locknut",
+      "original_standard_minimum_thread_length_mm": 18.0,
+      "original_underhead_unthreaded_mm": 7.0,
+      "nut_distance_from_underhead_mm": [
+        5.6,
+        8.0
+      ],
+      "original_thread_engagement_mm": 1.0,
+      "required_nut_thickness_mm": 2.4,
+      "repair": "Explicit fully threaded M3x25 variant; envelope unchanged."
+    },
+    {
+      "screw": "R_C10_jack_screw",
+      "receiver": "R_C10_jack_locknut",
+      "original_standard_minimum_thread_length_mm": 18.0,
+      "original_underhead_unthreaded_mm": 7.0,
+      "nut_distance_from_underhead_mm": [
+        5.6,
+        8.0
+      ],
+      "original_thread_engagement_mm": 1.0,
+      "required_nut_thickness_mm": 2.4,
+      "repair": "Explicit fully threaded M3x25 variant; envelope unchanged."
+    },
+    {
+      "screw": "K03_shoulder_-1_1",
+      "receiver": "K03_nut_-1_1",
+      "original_nut_gap_mm": 1.0,
+      "maximum_thread_relief_mm": 2.0,
+      "original_thread_engagement_envelope_mm": 3.0,
+      "required_nut_thickness_mm": 4.0,
+      "repair": "Nut and saddle pocket moved rearward1.5mm; minimum gap2.2mm includes0.3mm pocket float."
+    },
+    {
+      "screw": "K03_shoulder_1_1",
+      "receiver": "K03_nut_1_1",
+      "original_nut_gap_mm": 1.0,
+      "maximum_thread_relief_mm": 2.0,
+      "original_thread_engagement_envelope_mm": 3.0,
+      "required_nut_thickness_mm": 4.0,
+      "repair": "Nut and saddle pocket moved rearward1.5mm; minimum gap2.2mm includes0.3mm pocket float."
+    }
+  ],
+  "reviewed_threaded_screw_instances": 123,
+  "reviewed_threaded_joint_instances": 125,
+  "reviewed_threaded_families": 33,
+  "all_checks_pass": true
+}

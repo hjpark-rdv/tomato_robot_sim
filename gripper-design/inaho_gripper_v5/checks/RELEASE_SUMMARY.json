@@ -1,0 +1,65 @@
+{
+  "revision": "V5.1",
+  "packaged_utc": "2026-10-09T08:41:04.737248+00:00",
+  "units_CAD_STL": "mm",
+  "units_GLTF": "m / Y-up",
+  "assembly_instances": 356,
+  "installed_printed_components": 66,
+  "fit_coupons": 5,
+  "STL_count": 71,
+  "STEP_count": 76,
+  "body_height_difference_mm": 0,
+  "belt_z_ranges_mm": [
+    [
+      9,
+      61
+    ],
+    [
+      13,
+      65
+    ]
+  ],
+  "belt_offset_is_design_value_not_original_measurement": true,
+  "gap_samples": 39,
+  "gap_range_mm": [
+    28,
+    96
+  ],
+  "interference_threshold_mm3": 0.01,
+  "exact_intersection_tests": 2640,
+  "rotation_samples": 16,
+  "nose_travel_samples_mm": [
+    -3,
+    0,
+    3
+  ],
+  "motor_plate_travel_samples_mm": [
+    -3,
+    0,
+    3
+  ],
+  "motor_travel_checked_with_belt_removed": true,
+  "thread_stacks_checked": 31,
+  "assembly_path_samples": 66,
+  "browser_render_paths_tested": [
+    "WebGL",
+    "Canvas"
+  ],
+  "browser_external_requests": 0,
+  "browser_orthographic_views": [
+    "top",
+    "front",
+    "rear",
+    "side"
+  ],
+  "guide_pages": 12,
+  "guide_visual_reviewed": true,
+  "physical_print_assembly_tested": false,
+  "native_SolidWorks_tested": false,
+  "FEA_fatigue_thermal_tested": false,
+  "belt_tracking_tension_life_tested": false,
+  "crop_grip_damage_tested": false,
+  "CAD_source_sha256": "af0e850faa66a0b7843d2f2965d81ec7f9a10a784167162583131eac3fcd474b",
+  "viewer_sha256": "d89f5f067197ddfb2ae492a7e374ba0551b3a4dac82accf9829e969798785e16",
+  "scope": "Original-form inspired mechanical prototype. Purchased hardware required. Original production dimensions unavailable. Host robot interface/electronics excluded."
+}

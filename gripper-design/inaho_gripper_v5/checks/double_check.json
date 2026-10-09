@@ -1,0 +1,265 @@
+{
+  "exported_step_measurements": {
+    "L_C02_lower_deck": [
+      -2.0,
+      6.0
+    ],
+    "R_C02_lower_deck": [
+      -2.0,
+      6.0
+    ],
+    "L_C02_upper_deck": [
+      69.0,
+      77.0
+    ],
+    "R_C02_upper_deck": [
+      69.0,
+      77.0
+    ],
+    "L_C13_outer_finger_cover": [
+      -4.0,
+      79.0
+    ],
+    "R_C13_outer_finger_cover": [
+      -4.0,
+      79.0
+    ],
+    "L_C14_rear_drive_cover": [
+      48.0,
+      104.0
+    ],
+    "R_C14_rear_drive_cover": [
+      48.0,
+      104.0
+    ],
+    "L_C07_contact_belt_TPU": [
+      9.0,
+      61.0
+    ],
+    "R_C07_contact_belt_TPU": [
+      13.0,
+      65.0
+    ],
+    "L_C08_nose_roller": [
+      6.0,
+      64.0
+    ],
+    "R_C08_nose_roller": [
+      10.0,
+      68.0
+    ]
+  },
+  "assertions": [
+    {
+      "check": "equal body datum C02_lower_deck",
+      "pass_check": true,
+      "detail": [
+        [
+          -2.0,
+          6.0
+        ],
+        [
+          -2.0,
+          6.0
+        ]
+      ]
+    },
+    {
+      "check": "equal body datum C02_upper_deck",
+      "pass_check": true,
+      "detail": [
+        [
+          69.0,
+          77.0
+        ],
+        [
+          69.0,
+          77.0
+        ]
+      ]
+    },
+    {
+      "check": "equal body datum C13_outer_finger_cover",
+      "pass_check": true,
+      "detail": [
+        [
+          -4.0,
+          79.0
+        ],
+        [
+          -4.0,
+          79.0
+        ]
+      ]
+    },
+    {
+      "check": "equal body datum C14_rear_drive_cover",
+      "pass_check": true,
+      "detail": [
+        [
+          48.0,
+          104.0
+        ],
+        [
+          48.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "check": "independent belt height L",
+      "pass_check": true,
+      "detail": [
+        9,
+        61
+      ]
+    },
+    {
+      "check": "independent belt height R",
+      "pass_check": true,
+      "detail": [
+        13,
+        65
+      ]
+    },
+    {
+      "check": "invalid 20T MISUMI code removed",
+      "pass_check": true,
+      "detail": "RobotDigg20T, MISUMI32T"
+    },
+    {
+      "check": "L independent structural fasteners",
+      "pass_check": true,
+      "detail": "2x M4x25 root and 4x M3x12 slide remain with cover removed"
+    },
+    {
+      "check": "L three hood-only fasteners",
+      "pass_check": true,
+      "detail": "3x M3x12"
+    },
+    {
+      "check": "R independent structural fasteners",
+      "pass_check": true,
+      "detail": "2x M4x25 root and 4x M3x12 slide remain with cover removed"
+    },
+    {
+      "check": "R three hood-only fasteners",
+      "pass_check": true,
+      "detail": "3x M3x12"
+    },
+    {
+      "check": "motor 20T shaft set screw overlap",
+      "pass_check": true,
+      "detail": "M3 screw Z95.5 +/-1.5; motor shaft tip98; 1mm end margin"
+    },
+    {
+      "check": "timing grooves share one plane",
+      "pass_check": true,
+      "detail": "Z86.75, nominal width6; side margins0.5 /0.75"
+    },
+    {
+      "check": "L nose axle and both bearings concentric",
+      "pass_check": true,
+      "detail": "Actual CAD axes and shaft span, no interference with bearing rings."
+    },
+    {
+      "check": "R nose axle and both bearings concentric",
+      "pass_check": true,
+      "detail": "Actual CAD axes and shaft span, no interference with bearing rings."
+    }
+  ],
+  "rotation_samples": [
+    {
+      "gap": 28,
+      "root_angle_deg": 0,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 30,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 60,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 90,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 120,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 150,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 180,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 210,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 240,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 270,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 300,
+      "collisions": []
+    },
+    {
+      "gap": 28,
+      "root_angle_deg": 330,
+      "collisions": []
+    },
+    {
+      "gap": 96,
+      "root_angle_deg": 0,
+      "collisions": []
+    },
+    {
+      "gap": 96,
+      "root_angle_deg": 90,
+      "collisions": []
+    },
+    {
+      "gap": 96,
+      "root_angle_deg": 180,
+      "collisions": []
+    },
+    {
+      "gap": 96,
+      "root_angle_deg": 270,
+      "collisions": []
+    }
+  ],
+  "clearances_mm": {
+    "L_32T_flange_to_cap_button": 0.95,
+    "L_20T_top_to_cover": 2.5,
+    "R_32T_flange_to_cap_button": 0.95,
+    "R_20T_top_to_cover": 2.5,
+    "home_bracket_to_block_at96": 0.8,
+    "home_body_to_carriage_at96": 0.3
+  },
+  "all_assertions_pass": true,
+  "all_rotations_clear": true,
+  "source_sha256": "af0e850faa66a0b7843d2f2965d81ec7f9a10a784167162583131eac3fcd474b",
+  "physical_testing_performed": false
+}

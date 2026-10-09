@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "Current HTML, STEP, GLB, ZIP and PDF are served byte-for-byte; HEAD and nested entry work; outside and missing files return 404",
+    "V5.1 with 356 parts and four headless nose locks is live; upper locks follow both top arms at 100% explosion",
+    "Home card opens every model part; gap, opening playback, explosion and assembly filtering work",
+    "Browser STEP, GLB and printable ZIP downloads preserve original filenames and file contents",
+    "Desktop and mobile layout, preview, home return and downloads have no browser/HTTP errors"
+  ],
+  "browserErrors": [],
+  "httpErrors": []
+}

@@ -1,0 +1,19 @@
+{
+  "revision": "V5.1",
+  "date": "2026-10-09",
+  "timezone": "Asia/Seoul",
+  "all_checks_pass": true,
+  "changed_explosion_instances": 60,
+  "mechanical_changes": {
+    "headless_nose_locks": 4,
+    "fully_threaded_tension_jacks": 2,
+    "saddle_nut_pockets": 2,
+    "shoulder_thread_necks": 4,
+    "removed_nose_lock_washers": 4
+  },
+  "must_reprint": [
+    "L_C01_carriage_saddle.stl",
+    "R_C01_carriage_saddle.stl"
+  ],
+  "physical_testing_performed": false
+}

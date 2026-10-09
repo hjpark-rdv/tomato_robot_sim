@@ -1,0 +1,72 @@
+﻿file,qty,material,print_X_mm,print_Y_mm,print_Z_mm,note
+F01_rear_rail_backbone.stl,1,PETG,210.0,89.0,8.0,Vertical rear backbone. No bench legs. Motors clear the upper cutouts.
+L_C01_carriage_saddle.stl,1,PETG,97.0,57.0,51.5,5 mm rail pad. Outboard spine carries both cassette plates. V5.1 M5 pocket moved rearward1.5mm so the nut clears the shoulder thread relief; reprint both saddles when upgrading.
+R_C01_carriage_saddle.stl,1,PETG,97.0,51.0,51.5,5 mm rail pad. Outboard spine carries both cassette plates. V5.1 M5 pocket moved rearward1.5mm so the nut clears the shoulder thread relief; reprint both saddles when upgrading.
+F03_stop_closed.stl,1,PETG,18.6,10.0,16.0,Nominal gap end stop; not a load-rated crash stop.
+F03_stop_open_L.stl,1,PETG,10.0,44.0,16.0,Nominal gap end stop; not a load-rated crash stop.
+F03_stop_open_R.stl,1,PETG,10.0,44.0,16.0,Nominal gap end stop; not a load-rated crash stop.
+F04_opening_bearing_tower.stl,1,PETG,66.0,32.0,24.0,
+F05_bearing_cap_rear.stl,1,PETG,36.0,36.0,2.0,
+F05_bearing_cap_front.stl,1,PETG,36.0,36.0,2.0,
+F06_inner_spacer_-75.stl,1,PETG,10.0,10.0,1.0,
+F06_inner_spacer_-50.stl,1,PETG,10.0,10.0,1.0,
+F07_opening_motor_yoke.stl,1,PETG,62.0,62.0,77.0,
+L_C02_lower_deck.stl,1,PETG,44.5,183.0,8.0,
+L_C02_upper_deck.stl,1,PETG,44.5,183.0,8.0,
+L_C03_inner_belt_backing.stl,1,PETG,63.0,88.0,14.4,0.6 mm nominal backing clearance. Tension jack uses a top service window and an L hex key.
+L_C04_root_spacer_lower_outer.stl,1,PETG,8.0,8.0,2.0,
+L_C04_root_spacer_lower_inner.stl,1,PETG,8.0,8.0,1.0,
+L_C04_root_spacer_upper_inner.stl,1,PETG,8.0,8.0,6.0,
+L_C04_root_spacer_upper_outer.stl,1,PETG,8.0,8.0,6.4,
+L_C05_root_bearing_cap_lower.stl,1,PETG,34.0,34.0,4.0,
+L_C05_root_bearing_cap_upper.stl,1,PETG,34.0,34.0,4.0,
+L_C06_drive_drum_inner.stl,1,PETG,58.0,36.0,17.75,
+L_C06_drive_drum_outer.stl,1,PETG,58.0,36.0,17.75,
+L_C07_contact_belt_TPU.stl,1,TPU 95A,36.0,174.2,52.0,"52 mm wide; assembled Z 9.0 to 61.0. V5 design datum, not original measurement. Print free loop C143.2; install C144; verify friction and tracking on bench."
+L_C08_nose_roller.stl,1,PETG,26.0,26.0,58.0,
+L_C09_nose_spacer_lower.stl,1,PETG,8.0,8.0,10.0,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+L_C09_nose_spacer_centre.stl,1,PETG,8.0,8.0,44.0,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+L_C09_nose_spacer_upper.stl,1,PETG,8.0,8.0,14.85,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+L_C10_internal_nose_carrier.stl,1,PETG,87.0,34.0,18.0,Keyed removable top arm enables upper-deck insertion. The assembled carrier moves both axle ends together.
+L_C10_removable_top_arm.stl,1,PETG,18.0,34.0,6.0,
+L_C11_rear_motor_bracket.stl,1,PETG,41.0,132.5,55.0,
+L_C12_motor_slide_plate.stl,1,PETG,50.0,60.0,4.0,
+R_C02_lower_deck.stl,1,PETG,44.5,183.0,8.0,
+R_C02_upper_deck.stl,1,PETG,44.5,183.0,8.0,
+R_C03_inner_belt_backing.stl,1,PETG,63.0,88.0,14.4,0.6 mm nominal backing clearance. Tension jack uses a top service window and an L hex key.
+R_C04_root_spacer_lower_outer.stl,1,PETG,8.0,8.0,2.0,
+R_C04_root_spacer_lower_inner.stl,1,PETG,8.0,8.0,5.0,
+R_C04_root_spacer_upper_inner.stl,1,PETG,8.0,8.0,2.0,
+R_C04_root_spacer_upper_outer.stl,1,PETG,8.0,8.0,6.4,
+R_C05_root_bearing_cap_lower.stl,1,PETG,34.0,34.0,4.0,
+R_C05_root_bearing_cap_upper.stl,1,PETG,34.0,34.0,4.0,
+R_C06_drive_drum_inner.stl,1,PETG,58.0,36.0,17.75,
+R_C06_drive_drum_outer.stl,1,PETG,58.0,36.0,17.75,
+R_C07_contact_belt_TPU.stl,1,TPU 95A,36.0,174.2,52.0,"52 mm wide; assembled Z 13.0 to 65.0. V5 design datum, not original measurement. Print free loop C143.2; install C144; verify friction and tracking on bench."
+R_C08_nose_roller.stl,1,PETG,26.0,26.0,58.0,
+R_C09_nose_spacer_lower.stl,1,PETG,8.0,8.0,14.0,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+R_C09_nose_spacer_centre.stl,1,PETG,8.0,8.0,44.0,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+R_C09_nose_spacer_upper.stl,1,PETG,8.0,8.0,10.85,Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.
+R_C10_internal_nose_carrier.stl,1,PETG,87.0,34.0,18.0,Keyed removable top arm enables upper-deck insertion. The assembled carrier moves both axle ends together.
+R_C10_removable_top_arm.stl,1,PETG,18.0,34.0,6.0,
+R_C11_rear_motor_bracket.stl,1,PETG,41.0,132.5,55.0,
+R_C12_motor_slide_plate.stl,1,PETG,50.0,60.0,4.0,
+K01_opening_crank.stl,1,PETG,24.0,63.94,10.0,25 mm radius. Independent Ø8 bearing shaft. Split hub clamp; links in front of rear rail.
+K02_link_-1.stl,1,PETG,55.5,42.87,8.0,45 mm pin spacing. Replaceable 10 OD /6.15 ID bushes. 1 mm axial float on each link face.
+K04_bush_-1_0.stl,1,PETG,10.0,10.0,10.0,
+K04_bush_-1_1.stl,1,PETG,10.0,10.0,10.0,
+K02_link_1.stl,1,PETG,55.5,42.87,8.0,45 mm pin spacing. Replaceable 10 OD /6.15 ID bushes. 1 mm axial float on each link face.
+K04_bush_1_0.stl,1,PETG,10.0,10.0,10.0,
+K04_bush_1_1.stl,1,PETG,10.0,10.0,10.0,
+L_T01_sloped_receiver.stl,1,PETG,146.0,83.43,194.0,Left cassette mounted; 10 degree downhill toward rear outlet. Front closed. Printed front-cap down. Fruit-flow tests still required.
+A01_rear_fixture_adapter.stl,1,PETG,170.0,88.0,137.0,"Custom 4xØ6.6 on 50 PCD, Ø26 centre opening. Host robot plate and its fasteners are application-specific; not supplied."
+F08_adjustable_home_bracket.stl,1,PETG,14.5,18.0,33.5,D2F-01F mount above rail. Calibrate measured transition at gap95.6; stop and retreat. Hard stop96 leaves0.2 nominal post-trip travel; verify actual switch overtravel before power. Slots +/-0.8 mm.
+L_C13_outer_finger_cover.stl,1,PETG,83.0,129.0,21.5,Removable outer shield. Inner fruit-contact belt surface stays open.
+L_C14_rear_drive_cover.stl,1,PETG,61.0,148.0,56.0,Remove only three M3x12 hood screws. Deck M4x25 and four slide M3x12 bolts remain fixed. Structural tie saddles retain motor wires.
+R_C13_outer_finger_cover.stl,1,PETG,83.0,129.0,21.5,Removable outer shield. Inner fruit-contact belt surface stays open.
+R_C14_rear_drive_cover.stl,1,PETG,61.0,148.0,56.0,Remove only three M3x12 hood screws. Deck M4x25 and four slide M3x12 bolts remain fixed. Structural tie saddles retain motor wires.
+FIT_625.stl,1,same material/profile as main parts,,,,"Increasing X hole diameters: [16, 16.1, 16.15, 16.2, 16.3]"
+FIT_shaft5.stl,1,same material/profile as main parts,,,,"Increasing X hole diameters: [5, 5.1, 5.15, 5.2, 5.3]"
+FIT_608.stl,1,same material/profile as main parts,,,,"Increasing X hole diameters: [22, 22.1, 22.15, 22.2, 22.3]"
+FIT_pivot6.stl,1,same material/profile as main parts,,,,"Increasing X hole diameters: [6, 6.1, 6.15, 6.2, 6.3]"
+FIT_nut_pockets.stl,1,same material/profile as main parts,,,,"M3, M4, M5 nut-pocket and clearance-hole coupon."

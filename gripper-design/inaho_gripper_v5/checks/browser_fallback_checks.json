@@ -1,0 +1,951 @@
+{
+  "errors": [],
+  "ortho": [
+    {
+      "view": "top",
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        0,
+        5.000000000000049,
+        802
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 17,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 44,
+      "crank_deg": 84.26082952273322,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    },
+    {
+      "view": "front",
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        9.797174393178821e-14,
+        804.9999999999997,
+        2
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 17,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 44,
+      "crank_deg": 84.26082952273322,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    },
+    {
+      "view": "rear",
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        0,
+        -794.9999999999997,
+        2
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 17,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 44,
+      "crank_deg": 84.26082952273322,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    },
+    {
+      "view": "side",
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        799.9999999999997,
+        4.999999999999951,
+        2.000000000000049
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 17,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 44,
+      "crank_deg": 84.26082952273322,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    }
+  ],
+  "states": [
+    {
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        369.9999999999948,
+        494.9999999999928,
+        301.99999999999517
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 10,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          8,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          8,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          -8,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          -8,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 28,
+      "crank_deg": 103.59162277394788,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    },
+    {
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        369.9999999999948,
+        494.9999999999928,
+        301.99999999999517
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 10,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 44,
+      "crank_deg": 84.26082952273322,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    },
+    {
+      "renderer": "Canvas",
+      "webgl_version": null,
+      "projection": "OrthographicCamera",
+      "cameraPosition": [
+        369.9999999999948,
+        494.9999999999928,
+        301.99999999999517
+      ],
+      "cameraTarget": [
+        0,
+        5,
+        2
+      ],
+      "body_height_difference_mm": 0,
+      "belt_z_ranges_mm": [
+        [
+          9,
+          61
+        ],
+        [
+          13,
+          65
+        ]
+      ],
+      "renderFrames": 10,
+      "phase": 0,
+      "rotor_matrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          -26,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          -26,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          26,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          26,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gap": 96,
+      "crank_deg": 26.394095590147106,
+      "parts": 356,
+      "visible": 356,
+      "explode": 0,
+      "selected": null,
+      "link_length": 45
+    }
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "visible": 51
+    },
+    {
+      "stage": 2,
+      "visible": 92
+    },
+    {
+      "stage": 3,
+      "visible": 129
+    },
+    {
+      "stage": 4,
+      "visible": 191
+    },
+    {
+      "stage": 5,
+      "visible": 231
+    },
+    {
+      "stage": 6,
+      "visible": 269
+    },
+    {
+      "stage": 7,
+      "visible": 319
+    },
+    {
+      "stage": 8,
+      "visible": 351
+    },
+    {
+      "stage": 9,
+      "visible": 356
+    }
+  ],
+  "isolate": {
+    "renderer": "Canvas",
+    "webgl_version": null,
+    "projection": "OrthographicCamera",
+    "cameraPosition": [
+      369.9999999999992,
+      494.9999999999983,
+      301.999999999999
+    ],
+    "cameraTarget": [
+      0,
+      5,
+      2
+    ],
+    "body_height_difference_mm": 0,
+    "belt_z_ranges_mm": [
+      [
+        9,
+        61
+      ],
+      [
+        13,
+        65
+      ]
+    ],
+    "renderFrames": 23,
+    "phase": 0,
+    "rotor_matrices": [
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "gap": 44,
+    "crank_deg": 84.26082952273322,
+    "parts": 356,
+    "visible": 1,
+    "explode": 0,
+    "selected": "L_C12_motor_slide_plate",
+    "link_length": 45
+  },
+  "explosion_states": [
+    {
+      "fraction": 0,
+      "parts": 356
+    },
+    {
+      "fraction": 0.25,
+      "parts": 356
+    },
+    {
+      "fraction": 0.5,
+      "parts": 356
+    },
+    {
+      "fraction": 1,
+      "parts": 356
+    }
+  ],
+  "hardware_toggle_pass": true,
+  "cover_ownership_toggle_pass": true,
+  "upper_deck_ownership_toggle_pass": true,
+  "cycle_changed": true,
+  "belt_rotation_changed": true,
+  "belt_mode_changed": true,
+  "idle_render_frames": 0,
+  "external_requests": [],
+  "render_path": "Canvas",
+  "webgl_version": null,
+  "snapshot_download_pass": true,
+  "viewer_sha256": "d89f5f067197ddfb2ae492a7e374ba0551b3a4dac82accf9829e969798785e16"
+}

@@ -1,0 +1,1790 @@
+{
+  "stl": [
+    {
+      "file": "A01_rear_fixture_adapter.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        170.0,
+        87.9838,
+        137.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F01_rear_rail_backbone.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        210.0,
+        89.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F03_stop_closed.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        18.6,
+        10.0,
+        16.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F03_stop_open_L.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        10.0,
+        44.0,
+        16.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F03_stop_open_R.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        10.0,
+        44.0,
+        16.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F04_opening_bearing_tower.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        66.0,
+        32.0,
+        24.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F05_bearing_cap_front.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        35.9919,
+        35.996,
+        2.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F05_bearing_cap_rear.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        35.9919,
+        35.996,
+        2.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F06_inner_spacer_-50.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        1.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F06_inner_spacer_-75.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        1.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F07_opening_motor_yoke.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        62.0,
+        62.0,
+        77.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "F08_adjustable_home_bracket.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        14.5,
+        18.0,
+        33.5
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "FIT_608.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        142.0,
+        30.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "FIT_625.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        142.0,
+        30.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "FIT_nut_pockets.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        90.0,
+        30.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "FIT_pivot6.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        142.0,
+        30.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "FIT_shaft5.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        142.0,
+        30.0,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K01_opening_crank.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        23.9966,
+        63.9378,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K02_link_-1.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        55.4994,
+        42.8695,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K02_link_1.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        55.4994,
+        42.8695,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K04_bush_-1_0.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K04_bush_-1_1.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K04_bush_1_0.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "K04_bush_1_1.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        9.9978,
+        9.9989,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C01_carriage_saddle.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        97.0,
+        57.0,
+        51.5
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C02_lower_deck.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        44.5,
+        182.9999,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C02_upper_deck.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        44.5,
+        182.9999,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C03_inner_belt_backing.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        63.0,
+        88.0,
+        14.4
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C04_root_spacer_lower_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        1.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C04_root_spacer_lower_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        2.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C04_root_spacer_upper_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        6.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C04_root_spacer_upper_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        6.4
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C05_root_bearing_cap_lower.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        33.9924,
+        33.9962,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C05_root_bearing_cap_upper.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        33.9924,
+        33.9962,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C06_drive_drum_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        58.0,
+        35.9965,
+        17.75
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C06_drive_drum_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        58.0,
+        35.9965,
+        17.75
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C07_contact_belt_TPU.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        35.999,
+        174.1908,
+        52.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C08_nose_roller.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        25.9942,
+        25.9971,
+        58.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C09_nose_spacer_centre.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        44.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C09_nose_spacer_lower.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        10.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C09_nose_spacer_upper.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        14.85
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C10_internal_nose_carrier.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        87.0,
+        34.0,
+        18.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C10_removable_top_arm.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        18.0,
+        34.0,
+        6.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C11_rear_motor_bracket.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        41.0,
+        132.5,
+        55.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C12_motor_slide_plate.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        50.0,
+        60.0,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C13_outer_finger_cover.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        83.0,
+        129.0,
+        21.5
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_C14_rear_drive_cover.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        61.0,
+        148.0,
+        56.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "L_T01_sloped_receiver.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        146.0,
+        83.402,
+        194.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C01_carriage_saddle.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        97.0,
+        51.0,
+        51.5
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C02_lower_deck.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        44.5,
+        182.9999,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C02_upper_deck.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        44.5,
+        182.9999,
+        8.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C03_inner_belt_backing.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        63.0,
+        88.0,
+        14.4
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C04_root_spacer_lower_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        5.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C04_root_spacer_lower_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        2.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C04_root_spacer_upper_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        2.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C04_root_spacer_upper_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        6.4
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C05_root_bearing_cap_lower.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        33.9924,
+        33.9962,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C05_root_bearing_cap_upper.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        33.9924,
+        33.9962,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C06_drive_drum_inner.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        58.0,
+        35.9965,
+        17.75
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C06_drive_drum_outer.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        58.0,
+        35.9965,
+        17.75
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C07_contact_belt_TPU.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        35.999,
+        174.1908,
+        52.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C08_nose_roller.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        25.9942,
+        25.9971,
+        58.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C09_nose_spacer_centre.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        44.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C09_nose_spacer_lower.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        14.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C09_nose_spacer_upper.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        7.9982,
+        7.9991,
+        10.85
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C10_internal_nose_carrier.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        87.0,
+        34.0,
+        18.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C10_removable_top_arm.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        18.0,
+        34.0,
+        6.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C11_rear_motor_bracket.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        41.0,
+        132.5,
+        55.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C12_motor_slide_plate.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        50.0,
+        60.0,
+        4.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C13_outer_finger_cover.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        83.0,
+        129.0,
+        21.5
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    },
+    {
+      "file": "R_C14_rear_drive_cover.stl",
+      "watertight": true,
+      "winding_consistent": true,
+      "positive_volume": true,
+      "bounds_mm": [
+        61.0,
+        148.0,
+        56.0
+      ],
+      "fits_220mm": true,
+      "connected_bodies": 1
+    }
+  ],
+  "step": [
+    {
+      "file": "V5_L.step",
+      "bytes": 2613180,
+      "valid": true,
+      "solids": 127,
+      "bbox_mm": [
+        153.0,
+        317.7290210540534,
+        198.89096596988986
+      ]
+    },
+    {
+      "file": "V5_R.step",
+      "bytes": 2465885,
+      "valid": true,
+      "solids": 122,
+      "bbox_mm": [
+        61.0,
+        289.0,
+        135.0
+      ]
+    },
+    {
+      "file": "V5_fixed.step",
+      "bytes": 1747908,
+      "valid": true,
+      "solids": 92,
+      "bbox_mm": [
+        210.0,
+        164.0,
+        108.8
+      ]
+    },
+    {
+      "file": "V5_linkage.step",
+      "bytes": 246367,
+      "valid": true,
+      "solids": 15,
+      "bbox_mm": [
+        98.0,
+        26.5000001,
+        67.74937185532501
+      ]
+    },
+    {
+      "file": "inaho_gripper_v5_assembly.step",
+      "bytes": 7394811,
+      "valid": true,
+      "solids": 356,
+      "bbox_mm": [
+        210.0,
+        395.7290210540534,
+        198.89096596988986
+      ]
+    },
+    {
+      "file": "A01_rear_fixture_adapter.step",
+      "bytes": 100611,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        170.0,
+        137.0,
+        88.0
+      ]
+    },
+    {
+      "file": "F01_rear_rail_backbone.step",
+      "bytes": 199097,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        210.0,
+        8.0,
+        89.0
+      ]
+    },
+    {
+      "file": "F03_stop_closed.step",
+      "bytes": 9895,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        18.6,
+        16.0,
+        10.0
+      ]
+    },
+    {
+      "file": "F03_stop_open_L.step",
+      "bytes": 10958,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        16.0,
+        44.0
+      ]
+    },
+    {
+      "file": "F03_stop_open_R.step",
+      "bytes": 10914,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        16.0,
+        44.0
+      ]
+    },
+    {
+      "file": "F04_opening_bearing_tower.step",
+      "bytes": 104226,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        66.0,
+        24.0,
+        32.0
+      ]
+    },
+    {
+      "file": "F05_bearing_cap_front.step",
+      "bytes": 8021,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        36.0,
+        2.0,
+        36.0
+      ]
+    },
+    {
+      "file": "F05_bearing_cap_rear.step",
+      "bytes": 8021,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        36.0,
+        2.0,
+        36.0
+      ]
+    },
+    {
+      "file": "F06_inner_spacer_-50.step",
+      "bytes": 5084,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        1.0,
+        10.0
+      ]
+    },
+    {
+      "file": "F06_inner_spacer_-75.step",
+      "bytes": 5084,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        1.0,
+        10.0
+      ]
+    },
+    {
+      "file": "F07_opening_motor_yoke.step",
+      "bytes": 102787,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        62.0,
+        77.0,
+        62.0
+      ]
+    },
+    {
+      "file": "F08_adjustable_home_bracket.step",
+      "bytes": 26759,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        14.5,
+        18.0,
+        33.5
+      ]
+    },
+    {
+      "file": "FIT_608.step",
+      "bytes": 19764,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        142.0,
+        30.0,
+        8.0
+      ]
+    },
+    {
+      "file": "FIT_625.step",
+      "bytes": 19743,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        142.0,
+        30.0,
+        8.0
+      ]
+    },
+    {
+      "file": "FIT_nut_pockets.step",
+      "bytes": 42028,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        90.0,
+        30.0,
+        8.0
+      ]
+    },
+    {
+      "file": "FIT_pivot6.step",
+      "bytes": 19746,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        142.0,
+        30.0,
+        8.0
+      ]
+    },
+    {
+      "file": "FIT_shaft5.step",
+      "bytes": 19752,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        142.0,
+        30.0,
+        8.0
+      ]
+    },
+    {
+      "file": "K01_opening_crank.step",
+      "bytes": 108331,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        24.000000200000002,
+        10.000000200000002,
+        63.939346729542
+      ]
+    },
+    {
+      "file": "K02_link_-1.step",
+      "bytes": 11879,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        55.5,
+        8.000000000000007,
+        42.87468592766
+      ]
+    },
+    {
+      "file": "K02_link_1.step",
+      "bytes": 11852,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        55.5,
+        8.00000000000001,
+        42.874685927665
+      ]
+    },
+    {
+      "file": "K04_bush_-1_0.step",
+      "bytes": 5269,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "file": "K04_bush_-1_1.step",
+      "bytes": 5124,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "file": "K04_bush_1_0.step",
+      "bytes": 5247,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        10.0,
+        10.000000000001
+      ]
+    },
+    {
+      "file": "K04_bush_1_1.step",
+      "bytes": 5110,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "file": "L_C01_carriage_saddle.step",
+      "bytes": 98082,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        51.5,
+        57.0,
+        97.0
+      ]
+    },
+    {
+      "file": "L_C02_lower_deck.step",
+      "bytes": 145943,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        44.50000000000436,
+        183.0,
+        8.0
+      ]
+    },
+    {
+      "file": "L_C02_upper_deck.step",
+      "bytes": 132107,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        44.50000000000214,
+        183.0,
+        8.0
+      ]
+    },
+    {
+      "file": "L_C03_inner_belt_backing.step",
+      "bytes": 105893,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        14.399999999999999,
+        88.0,
+        63.0
+      ]
+    },
+    {
+      "file": "L_C04_root_spacer_lower_inner.step",
+      "bytes": 4940,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        1.0
+      ]
+    },
+    {
+      "file": "L_C04_root_spacer_lower_outer.step",
+      "bytes": 4949,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        2.0
+      ]
+    },
+    {
+      "file": "L_C04_root_spacer_upper_inner.step",
+      "bytes": 4954,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        6.0
+      ]
+    },
+    {
+      "file": "L_C04_root_spacer_upper_outer.step",
+      "bytes": 4959,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        6.400000000000006
+      ]
+    },
+    {
+      "file": "L_C05_root_bearing_cap_lower.step",
+      "bytes": 9570,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        34.0,
+        34.0,
+        4.0
+      ]
+    },
+    {
+      "file": "L_C05_root_bearing_cap_upper.step",
+      "bytes": 9576,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        34.0,
+        34.0,
+        4.0
+      ]
+    },
+    {
+      "file": "L_C06_drive_drum_inner.step",
+      "bytes": 56368,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        17.750000000000007,
+        35.99652761031264,
+        58.0
+      ]
+    },
+    {
+      "file": "L_C06_drive_drum_outer.step",
+      "bytes": 46955,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        17.7500001,
+        35.99652761031264,
+        58.0
+      ]
+    },
+    {
+      "file": "L_C07_contact_belt_TPU.step",
+      "bytes": 13393,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        36.0,
+        175.0,
+        52.0
+      ]
+    },
+    {
+      "file": "L_C08_nose_roller.step",
+      "bytes": 15167,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        26.0,
+        26.0,
+        58.0
+      ]
+    },
+    {
+      "file": "L_C09_nose_spacer_centre.step",
+      "bytes": 4968,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        44.0
+      ]
+    },
+    {
+      "file": "L_C09_nose_spacer_lower.step",
+      "bytes": 4963,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        10.0
+      ]
+    },
+    {
+      "file": "L_C09_nose_spacer_upper.step",
+      "bytes": 4978,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        14.849999999999994
+      ]
+    },
+    {
+      "file": "L_C10_internal_nose_carrier.step",
+      "bytes": 60074,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        18.0,
+        34.0,
+        87.0000001
+      ]
+    },
+    {
+      "file": "L_C10_removable_top_arm.step",
+      "bytes": 45568,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        18.0,
+        34.0,
+        6.000000199999988
+      ]
+    },
+    {
+      "file": "L_C11_rear_motor_bracket.step",
+      "bytes": 169559,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        55.0,
+        132.5,
+        41.0
+      ]
+    },
+    {
+      "file": "L_C12_motor_slide_plate.step",
+      "bytes": 43730,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        50.0,
+        60.0,
+        4.0
+      ]
+    },
+    {
+      "file": "L_C13_outer_finger_cover.step",
+      "bytes": 40934,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        21.500000000001492,
+        129.0,
+        83.0
+      ]
+    },
+    {
+      "file": "L_C14_rear_drive_cover.step",
+      "bytes": 43601,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        61.0,
+        148.00000000000523,
+        56.0
+      ]
+    },
+    {
+      "file": "L_T01_sloped_receiver.step",
+      "bytes": 62589,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        146.0,
+        203.7290210540535,
+        89.89096596988986
+      ]
+    },
+    {
+      "file": "R_C01_carriage_saddle.step",
+      "bytes": 101715,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        51.5,
+        51.0,
+        97.0
+      ]
+    },
+    {
+      "file": "R_C02_lower_deck.step",
+      "bytes": 130310,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        44.50000000000436,
+        183.0,
+        8.0
+      ]
+    },
+    {
+      "file": "R_C02_upper_deck.step",
+      "bytes": 131223,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        44.500000000002224,
+        183.0,
+        8.0
+      ]
+    },
+    {
+      "file": "R_C03_inner_belt_backing.step",
+      "bytes": 104950,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        14.399999999999999,
+        88.0,
+        63.0
+      ]
+    },
+    {
+      "file": "R_C04_root_spacer_lower_inner.step",
+      "bytes": 4993,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        5.0
+      ]
+    },
+    {
+      "file": "R_C04_root_spacer_lower_outer.step",
+      "bytes": 4997,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        2.0
+      ]
+    },
+    {
+      "file": "R_C04_root_spacer_upper_inner.step",
+      "bytes": 5002,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        2.0
+      ]
+    },
+    {
+      "file": "R_C04_root_spacer_upper_outer.step",
+      "bytes": 5007,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        6.400000000000006
+      ]
+    },
+    {
+      "file": "R_C05_root_bearing_cap_lower.step",
+      "bytes": 9617,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        34.0,
+        34.0,
+        4.0
+      ]
+    },
+    {
+      "file": "R_C05_root_bearing_cap_upper.step",
+      "bytes": 9622,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        34.0,
+        34.0,
+        4.0
+      ]
+    },
+    {
+      "file": "R_C06_drive_drum_inner.step",
+      "bytes": 55996,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        17.750000000000007,
+        35.99652761031264,
+        58.0
+      ]
+    },
+    {
+      "file": "R_C06_drive_drum_outer.step",
+      "bytes": 46790,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        17.7500001,
+        35.99652761031264,
+        58.0
+      ]
+    },
+    {
+      "file": "R_C07_contact_belt_TPU.step",
+      "bytes": 13422,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        36.0,
+        175.0,
+        52.0
+      ]
+    },
+    {
+      "file": "R_C08_nose_roller.step",
+      "bytes": 15030,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        26.0,
+        26.0,
+        58.0
+      ]
+    },
+    {
+      "file": "R_C09_nose_spacer_centre.step",
+      "bytes": 4928,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        44.0
+      ]
+    },
+    {
+      "file": "R_C09_nose_spacer_lower.step",
+      "bytes": 4928,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        14.0
+      ]
+    },
+    {
+      "file": "R_C09_nose_spacer_upper.step",
+      "bytes": 4938,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        8.0,
+        8.0,
+        10.849999999999994
+      ]
+    },
+    {
+      "file": "R_C10_internal_nose_carrier.step",
+      "bytes": 59633,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        18.0,
+        34.0,
+        87.0000001
+      ]
+    },
+    {
+      "file": "R_C10_removable_top_arm.step",
+      "bytes": 45263,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        18.0,
+        34.0,
+        6.000000199999988
+      ]
+    },
+    {
+      "file": "R_C11_rear_motor_bracket.step",
+      "bytes": 168352,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        55.0,
+        132.5,
+        41.0
+      ]
+    },
+    {
+      "file": "R_C12_motor_slide_plate.step",
+      "bytes": 43449,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        50.0,
+        60.0,
+        4.0
+      ]
+    },
+    {
+      "file": "R_C13_outer_finger_cover.step",
+      "bytes": 40554,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        21.500000000001492,
+        129.0,
+        83.0
+      ]
+    },
+    {
+      "file": "R_C14_rear_drive_cover.step",
+      "bytes": 43219,
+      "valid": true,
+      "solids": 1,
+      "bbox_mm": [
+        61.0,
+        148.0000000000052,
+        56.0
+      ]
+    }
+  ],
+  "limits": {
+    "print_volume_mm": [
+      220,
+      220,
+      220
+    ],
+    "physical_test": false
+  },
+  "glb": {
+    "geometry_count": 356,
+    "bounds_m": [
+      [
+        -0.10499999672174454,
+        -0.09189096838235855,
+        -0.20172901451587677
+      ],
+      [
+        0.10499999672174454,
+        0.10700000077486038,
+        0.1940000057220459
+      ]
+    ]
+  },
+  "all_print_meshes_pass": true,
+  "all_step_reopened_valid": true
+}

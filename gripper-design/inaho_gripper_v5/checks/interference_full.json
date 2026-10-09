@@ -1,0 +1,166 @@
+{
+  "method": "OpenCascade exact solid intersections after AABB broad phase; threshold 0.01 mm3",
+  "positions": [
+    {
+      "gap_mm": 28.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 30.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 32.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 34.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 36.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 38.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 40.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 42.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 44.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 46.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 48.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 50.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 52.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 54.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 56.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 58.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 60.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 62.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 64.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 66.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 68.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 70.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 72.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 74.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 76.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 78.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 80.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 82.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 84.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 86.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 88.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 90.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 92.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 94.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 94.6,
+      "collisions": []
+    },
+    {
+      "gap_mm": 95.0,
+      "collisions": []
+    },
+    {
+      "gap_mm": 95.6,
+      "collisions": []
+    },
+    {
+      "gap_mm": 95.8,
+      "collisions": []
+    },
+    {
+      "gap_mm": 96.0,
+      "collisions": []
+    }
+  ],
+  "invalid": [],
+  "multiple_solid_prints": [],
+  "exact_boolean_tests": 2640,
+  "elapsed_seconds": 32.64479947090149,
+  "all_sampled_positions_clear": true
+}

@@ -1,0 +1,18 @@
+{
+  "revision": "V5.1",
+  "validated_tree_files": 211,
+  "backup": "/root/.codex/backups/gripper-design/v5.0-20261009",
+  "public_artifacts": {
+    "inaho_gripper_v5_assembly.glb": "109ea2b23d89a2ff1ba44801d6ed4e1279a398e033f7ab831e9388a0aeb74284",
+    "inaho_gripper_v5_assembly.step": "6bdbf8eb0731370a4dad21337f6c59547b697d6358b9056b513b6efdecc5d0f8",
+    "inaho_gripper_v5_assembly_guide_KO.pdf": "0f593efae18fffa13f21d6566cae0354e294bb227f98edb5acf0eee3313e5e43",
+    "inaho_gripper_v5_printable.zip": "fc8b36aa6b8582324af643884a7c03eed4d1c8590318b992252bc420848b72bc",
+    "inaho_gripper_v5_viewer.html": "d89f5f067197ddfb2ae492a7e374ba0551b3a4dac82accf9829e969798785e16"
+  },
+  "full_tree_hashes_match": true,
+  "original_backup_hashes_match": true,
+  "server_checks_pass": true,
+  "server_checked_utc": "2026-10-09T08:45:11.607782+00:00",
+  "server_url": "http://192.168.222.27:8090/gripper-design/",
+  "server_report": "../../SERVER_CHECKS.json"
+}

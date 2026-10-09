@@ -1,0 +1,8552 @@
+[
+  {
+    "name": "F01_rear_rail_backbone",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "Vertical rear backbone. No bench legs. Motors clear the upper cutouts.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 77768.263,
+    "bbox_mm": [
+      210.0,
+      8.003,
+      89.0
+    ],
+    "centre": [
+      0.0,
+      -53.0,
+      -7.5
+    ],
+    "print_bbox_mm": [
+      210.0,
+      89.0,
+      8.000000000000014
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_0",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      -87.49891292118754,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_0",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -87.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_1",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      -62.49891292118754,
+      -50.49950587326706,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_1",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -62.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      -37.49891292118754,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -37.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_3",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      -12.49891292118754,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_3",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -12.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_4",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      12.50108707881246,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_4",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      12.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      37.50108707881246,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      37.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      62.50108707881246,
+      -50.49950587326706,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      62.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_bolt_7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      17.003,
+      5.503
+    ],
+    "centre": [
+      87.50108707881246,
+      -50.49950587326707,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_rail_nut_7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      87.5,
+      -55.8,
+      32.0
+    ]
+  },
+  {
+    "name": "F02_MGN12R_195",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "HIWIN MGN12R L195, E10, pitch25, eight mounting holes",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 17524.687,
+    "bbox_mm": [
+      195.0,
+      8.004,
+      12.0
+    ],
+    "centre": [
+      0.0,
+      -44.99948610819775,
+      32.0
+    ]
+  },
+  {
+    "name": "L_H01_MGN12H",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "HIWIN MGN12H 45.4x27, installed height13, M3 depth3.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 9376.005,
+    "bbox_mm": [
+      45.4,
+      10.001,
+      27.0
+    ],
+    "centre": [
+      -40.0,
+      -40.99936751778184,
+      32.0
+    ]
+  },
+  {
+    "name": "L_C01_rail_bolt_-10_22",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      -30.00108707881246,
+      -33.49950587326707,
+      22.0
+    ]
+  },
+  {
+    "name": "L_C01_rail_bolt_-10_42",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      -30.00108707881246,
+      -33.49950587326706,
+      42.0
+    ]
+  },
+  {
+    "name": "L_C01_rail_bolt_10_22",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      -50.00108707881246,
+      -33.49950587326706,
+      22.0
+    ]
+  },
+  {
+    "name": "L_C01_rail_bolt_10_42",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      -50.00108707881246,
+      -33.49950587326706,
+      42.0
+    ]
+  },
+  {
+    "name": "L_C01_carriage_saddle",
+    "group": "L",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "5 mm rail pad. Outboard spine carries both cassette plates. V5.1 M5 pocket moved rearward1.5mm so the nut clears the shoulder thread relief; reprint both saddles when upgrading.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 43423.856,
+    "bbox_mm": [
+      51.5,
+      57.001,
+      97.002
+    ],
+    "centre": [
+      -43.25,
+      -7.500672012356789,
+      20.500869663049965
+    ],
+    "print_bbox_mm": [
+      97.00000000000001,
+      57.0,
+      51.50000000000001
+    ]
+  },
+  {
+    "name": "R_H01_MGN12H",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "HIWIN MGN12H 45.4x27, installed height13, M3 depth3.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 9376.005,
+    "bbox_mm": [
+      45.4,
+      10.001,
+      27.0
+    ],
+    "centre": [
+      40.0,
+      -40.99936751778184,
+      32.0
+    ]
+  },
+  {
+    "name": "R_C01_rail_bolt_-10_22",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      30.00108707881246,
+      -33.49950587326707,
+      22.0
+    ]
+  },
+  {
+    "name": "R_C01_rail_bolt_-10_42",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      30.00108707881246,
+      -33.49950587326706,
+      42.0
+    ]
+  },
+  {
+    "name": "R_C01_rail_bolt_10_22",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      50.00108707881246,
+      -33.49950587326706,
+      22.0
+    ]
+  },
+  {
+    "name": "R_C01_rail_bolt_10_42",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      11.003,
+      5.503
+    ],
+    "centre": [
+      50.00108707881246,
+      -33.49950587326706,
+      42.0
+    ]
+  },
+  {
+    "name": "R_C01_carriage_saddle",
+    "group": "R",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "5 mm rail pad. Outboard spine carries both cassette plates. V5.1 M5 pocket moved rearward1.5mm so the nut clears the shoulder thread relief; reprint both saddles when upgrading.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 34747.856,
+    "bbox_mm": [
+      51.5,
+      51.0,
+      97.002
+    ],
+    "centre": [
+      43.25,
+      -18.499999999999996,
+      20.500869663049965
+    ],
+    "print_bbox_mm": [
+      97.00000000000001,
+      51.0,
+      51.50000000000001
+    ]
+  },
+  {
+    "name": "F03_stop_closed_bolt_-5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x28",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 257.883,
+    "bbox_mm": [
+      5.502,
+      31.003,
+      5.503
+    ],
+    "centre": [
+      -4.99891292118754,
+      -45.49950587326707,
+      19.0
+    ]
+  },
+  {
+    "name": "F03_stop_closed_nut_-5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -5.0,
+      -55.8,
+      19.0
+    ]
+  },
+  {
+    "name": "F03_stop_closed_bolt_5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x28",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 257.883,
+    "bbox_mm": [
+      5.502,
+      31.003,
+      5.503
+    ],
+    "centre": [
+      5.00108707881246,
+      -45.49950587326707,
+      19.0
+    ]
+  },
+  {
+    "name": "F03_stop_closed_nut_5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      5.0,
+      -55.8,
+      19.0
+    ]
+  },
+  {
+    "name": "F03_stop_closed",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "Nominal gap end stop; not a load-rated crash stop.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2685.466,
+    "bbox_mm": [
+      18.6,
+      16.003,
+      10.0
+    ],
+    "centre": [
+      0.0,
+      -41.0,
+      21.0
+    ],
+    "print_bbox_mm": [
+      18.6,
+      10.000000000000004,
+      16.0
+    ]
+  },
+  {
+    "name": "F03_stop_open_L_bolt_-93.7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x28",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 257.883,
+    "bbox_mm": [
+      5.502,
+      31.003,
+      5.503
+    ],
+    "centre": [
+      -93.69891292118754,
+      -45.49950587326706,
+      -12.0
+    ]
+  },
+  {
+    "name": "F03_stop_open_L_nut_-93.7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -93.7,
+      -55.8,
+      -12.0
+    ]
+  },
+  {
+    "name": "F03_stop_open_L",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "Nominal gap end stop; not a load-rated crash stop.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 4334.733,
+    "bbox_mm": [
+      10.0,
+      16.003,
+      44.0
+    ],
+    "centre": [
+      -93.7,
+      -41.0,
+      4.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      44.0,
+      16.000000000000004
+    ]
+  },
+  {
+    "name": "F03_stop_open_R_bolt_93.7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x28",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 257.883,
+    "bbox_mm": [
+      5.502,
+      31.003,
+      5.503
+    ],
+    "centre": [
+      93.70108707881246,
+      -45.49950587326706,
+      -12.0
+    ]
+  },
+  {
+    "name": "F03_stop_open_R_nut_93.7",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      93.7,
+      -55.8,
+      -12.0
+    ]
+  },
+  {
+    "name": "F03_stop_open_R",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "Nominal gap end stop; not a load-rated crash stop.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 4334.733,
+    "bbox_mm": [
+      10.0,
+      16.003,
+      44.0
+    ],
+    "centre": [
+      93.7,
+      -41.0,
+      4.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      44.0,
+      16.000000000000004
+    ]
+  },
+  {
+    "name": "F04_tower_bolt_-25",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      22.004,
+      7.004
+    ],
+    "centre": [
+      -24.99861644514778,
+      -55.99940704792048,
+      -18.0
+    ]
+  },
+  {
+    "name": "F04_tower_nut_-25",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      -25.0,
+      -62.4,
+      -18.0
+    ]
+  },
+  {
+    "name": "F04_tower_bolt_25",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      22.004,
+      7.004
+    ],
+    "centre": [
+      25.00138355485222,
+      -55.99940704792048,
+      -18.0
+    ]
+  },
+  {
+    "name": "F04_tower_nut_25",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      25.0,
+      -62.4,
+      -18.0
+    ]
+  },
+  {
+    "name": "F04_opening_bearing_tower",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 27248.867,
+    "bbox_mm": [
+      66.0,
+      24.018,
+      32.0
+    ],
+    "centre": [
+      0.0,
+      -62.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      66.0,
+      32.0,
+      24.0
+    ]
+  },
+  {
+    "name": "H02_opening_608_-74",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "608-2Z 8x22x7",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2309.071,
+    "bbox_mm": [
+      22.009,
+      7.017,
+      22.013
+    ],
+    "centre": [
+      0.004348315249838919,
+      -70.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "H02_opening_608_-57",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "608-2Z 8x22x7",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2309.071,
+    "bbox_mm": [
+      22.009,
+      7.017,
+      22.013
+    ],
+    "centre": [
+      0.004348315249838919,
+      -53.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_rear_bolt_-15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      -14.99891292118754,
+      -72.50049412673295,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_rear_nut_-15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -15.0,
+      -69.8,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_rear_bolt_15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      15.001087078812459,
+      -72.50049412673295,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_rear_nut_15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      15.0,
+      -69.8,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_bearing_cap_rear",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1432.378,
+    "bbox_mm": [
+      36.014,
+      2.028,
+      36.021
+    ],
+    "centre": [
+      0.00711542495428219,
+      -75.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      36.0,
+      36.0,
+      2.0
+    ]
+  },
+  {
+    "name": "F05_front_bolt_-15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      -14.99891292118754,
+      -51.49950587326707,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_front_nut_-15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -15.0,
+      -54.2,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_front_bolt_15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      15.001087078812459,
+      -51.49950587326707,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_front_nut_15",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      15.0,
+      -54.2,
+      -18.0
+    ]
+  },
+  {
+    "name": "F05_bearing_cap_front",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1432.378,
+    "bbox_mm": [
+      36.014,
+      2.028,
+      36.021
+    ],
+    "centre": [
+      0.00711542495428219,
+      -49.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      36.0,
+      36.0,
+      2.0
+    ]
+  },
+  {
+    "name": "H03_opening_shaft",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Ground steel shaft Ø8 h6 L76, deburred ends",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 3820.177,
+    "bbox_mm": [
+      8.005,
+      76.006,
+      8.003
+    ],
+    "centre": [
+      0.0,
+      -69.0,
+      -17.998418794454604
+    ]
+  },
+  {
+    "name": "F06_inner_spacer_-75",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 25.73,
+    "bbox_mm": [
+      10.004,
+      1.008,
+      10.006
+    ],
+    "centre": [
+      0.0019765069317450035,
+      -74.5,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      1.0
+    ]
+  },
+  {
+    "name": "F06_inner_spacer_-50",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 25.73,
+    "bbox_mm": [
+      10.004,
+      1.008,
+      10.006
+    ],
+    "centre": [
+      0.0019765069317450035,
+      -49.5,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      1.0
+    ]
+  },
+  {
+    "name": "H04_opening_collar_-83",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Ganter GN705-8-E / DIN705 collar 8ID x16OD x8, M4x6 screw included",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1232.288,
+    "bbox_mm": [
+      18.001,
+      8.013,
+      16.009
+    ],
+    "centre": [
+      1.0006540363636702,
+      -79.0,
+      -18.0
+    ]
+  },
+  {
+    "name": "H04_opening_collar_-49",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Ganter GN705-8-E / DIN705 collar 8ID x16OD x8, M4x6 screw included",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1232.288,
+    "bbox_mm": [
+      18.001,
+      8.013,
+      16.009
+    ],
+    "centre": [
+      1.0006540363636667,
+      -45.0,
+      -18.0
+    ]
+  },
+  {
+    "name": "H05_opening_coupler",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "STEPPERONLINE ST-FC04 5x8 coupling Ø18x25; included screws",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 5487.663,
+    "bbox_mm": [
+      18.007,
+      25.014,
+      18.011
+    ],
+    "centre": [
+      0.003557712477141095,
+      -109.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "F07_yoke_bolt_-26_-42",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 383.52,
+    "bbox_mm": [
+      7.003,
+      24.004,
+      7.004
+    ],
+    "centre": [
+      -25.99861644514778,
+      -56.99940704792047,
+      -42.0
+    ]
+  },
+  {
+    "name": "F07_yoke_nut_-26_-42",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      -26.0,
+      -64.39999999999999,
+      -42.0
+    ]
+  },
+  {
+    "name": "F07_yoke_bolt_-26_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 383.52,
+    "bbox_mm": [
+      7.003,
+      24.004,
+      7.004
+    ],
+    "centre": [
+      -25.99861644514778,
+      -56.99940704792048,
+      6.000000000000001
+    ]
+  },
+  {
+    "name": "F07_yoke_nut_-26_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      -25.999999999999996,
+      -64.4,
+      5.999999999999998
+    ]
+  },
+  {
+    "name": "F07_yoke_bolt_26_-42",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 383.52,
+    "bbox_mm": [
+      7.003,
+      24.004,
+      7.004
+    ],
+    "centre": [
+      26.00138355485222,
+      -56.99940704792047,
+      -42.0
+    ]
+  },
+  {
+    "name": "F07_yoke_nut_26_-42",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      26.0,
+      -64.39999999999999,
+      -42.0
+    ]
+  },
+  {
+    "name": "F07_yoke_bolt_26_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 383.52,
+    "bbox_mm": [
+      7.003,
+      24.004,
+      7.004
+    ],
+    "centre": [
+      26.00138355485222,
+      -56.99940704792048,
+      6.000000000000001
+    ]
+  },
+  {
+    "name": "F07_yoke_nut_26_6",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      26.000000000000004,
+      -64.4,
+      5.999999999999998
+    ]
+  },
+  {
+    "name": "F07_motor_washer_-15.5_-33.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M3 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 14.966,
+    "bbox_mm": [
+      7.003,
+      0.506,
+      7.004
+    ],
+    "centre": [
+      -15.498616445147778,
+      -127.75,
+      -33.5
+    ]
+  },
+  {
+    "name": "F07_motor_bolt_-15.5_-33.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      -15.49891292118754,
+      -130.99950587326705,
+      -33.5
+    ]
+  },
+  {
+    "name": "F07_motor_washer_-15.5_-2.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M3 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 14.966,
+    "bbox_mm": [
+      7.003,
+      0.506,
+      7.004
+    ],
+    "centre": [
+      -15.498616445147778,
+      -127.75,
+      -2.5
+    ]
+  },
+  {
+    "name": "F07_motor_bolt_-15.5_-2.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      -15.49891292118754,
+      -130.99950587326705,
+      -2.5000000000000004
+    ]
+  },
+  {
+    "name": "F07_motor_washer_15.5_-33.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M3 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 14.966,
+    "bbox_mm": [
+      7.003,
+      0.506,
+      7.004
+    ],
+    "centre": [
+      15.501383554852222,
+      -127.75,
+      -33.5
+    ]
+  },
+  {
+    "name": "F07_motor_bolt_15.5_-33.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      15.50108707881246,
+      -130.99950587326705,
+      -33.5
+    ]
+  },
+  {
+    "name": "F07_motor_washer_15.5_-2.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M3 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 14.966,
+    "bbox_mm": [
+      7.003,
+      0.506,
+      7.004
+    ],
+    "centre": [
+      15.501383554852222,
+      -127.75,
+      -2.5
+    ]
+  },
+  {
+    "name": "F07_motor_bolt_15.5_-2.5",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      13.003,
+      5.503
+    ],
+    "centre": [
+      15.50108707881246,
+      -130.99950587326708,
+      -2.5000000000000004
+    ]
+  },
+  {
+    "name": "F07_opening_motor_yoke",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 37092.919,
+    "bbox_mm": [
+      62.0,
+      77.011,
+      62.0
+    ],
+    "centre": [
+      0.0,
+      -95.50359724261578,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      62.0,
+      62.0,
+      77.0
+    ]
+  },
+  {
+    "name": "H06_opening_motor",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Pololu2267 / SOYO SY42STH38-1684A, 42.3 square, shaft5x24",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 68726.477,
+    "bbox_mm": [
+      42.305,
+      62.005,
+      42.305
+    ],
+    "centre": [
+      0.0,
+      -140.9998287612826,
+      -18.000000000000004
+    ]
+  },
+  {
+    "name": "L_C02_lower_deck",
+    "group": "L",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38736.691,
+    "bbox_mm": [
+      44.516,
+      183.011,
+      8.031
+    ],
+    "centre": [
+      -46.74214454264055,
+      81.5054250772734,
+      2.0
+    ],
+    "print_bbox_mm": [
+      44.5,
+      183.0,
+      8.0
+    ]
+  },
+  {
+    "name": "L_C02_lower_root_bolt_0",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      22.004
+    ],
+    "centre": [
+      -64.00138355485223,
+      -4.0,
+      4.999407047920478
+    ]
+  },
+  {
+    "name": "L_C02_lower_root_nut_0",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -64.0,
+      -4.0,
+      12.4
+    ]
+  },
+  {
+    "name": "L_C02_lower_root_bolt_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      22.004
+    ],
+    "centre": [
+      -64.00138355485223,
+      14.0,
+      4.999407047920478
+    ]
+  },
+  {
+    "name": "L_C02_lower_root_nut_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -64.0,
+      14.0,
+      12.4
+    ]
+  },
+  {
+    "name": "L_C02_upper_deck",
+    "group": "L",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negZ",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 37621.61,
+    "bbox_mm": [
+      44.516,
+      183.011,
+      8.031
+    ],
+    "centre": [
+      -46.74214454264055,
+      81.5054250772734,
+      73.0
+    ],
+    "print_bbox_mm": [
+      44.5,
+      183.0,
+      8.000000000000023
+    ]
+  },
+  {
+    "name": "L_C02_upper_root_nut_0",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -64.0,
+      -3.999999999999999,
+      62.60000000000001
+    ]
+  },
+  {
+    "name": "L_C02_upper_root_nut_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -64.0,
+      14.0,
+      62.60000000000001
+    ]
+  },
+  {
+    "name": "L_C03_lower_bolt_35",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      -34.00108707881246,
+      49.0,
+      3.499505873267063
+    ]
+  },
+  {
+    "name": "L_C03_lower_nut_35",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -34.0,
+      49.0,
+      9.8
+    ]
+  },
+  {
+    "name": "L_C03_upper_bolt_35",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      -34.00108707881246,
+      49.0,
+      71.50049412673295
+    ]
+  },
+  {
+    "name": "L_C03_upper_nut_35",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -34.0,
+      49.0,
+      64.6
+    ]
+  },
+  {
+    "name": "L_C03_lower_bolt_65",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      -34.00108707881246,
+      79.0,
+      3.4995058732670627
+    ]
+  },
+  {
+    "name": "L_C03_lower_nut_65",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -34.0,
+      79.0,
+      9.8
+    ]
+  },
+  {
+    "name": "L_C03_upper_bolt_65",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      -34.00108707881246,
+      79.0,
+      71.50049412673295
+    ]
+  },
+  {
+    "name": "L_C03_upper_nut_65",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -34.0,
+      79.0,
+      64.6
+    ]
+  },
+  {
+    "name": "L_C03_inner_belt_backing",
+    "group": "L",
+    "kind": "print",
+    "color": "#c4cbb9",
+    "note": "0.6 mm nominal backing clearance. Tension jack uses a top service window and an L hex key.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 35256.878,
+    "bbox_mm": [
+      14.4,
+      88.0,
+      63.003
+    ],
+    "centre": [
+      -31.79999999999997,
+      80.0,
+      37.49999999999999
+    ],
+    "print_bbox_mm": [
+      63.0,
+      88.0,
+      14.400000000000007
+    ]
+  },
+  {
+    "name": "L_H10_625_root_lower",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      -40.00316241109079,
+      13.999999999999998,
+      2.5
+    ]
+  },
+  {
+    "name": "L_H10_625_root_upper",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      -40.00316241109079,
+      13.999999999999998,
+      72.5
+    ]
+  },
+  {
+    "name": "L_C04_root_spacer_lower_outer",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 58.057,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      2.006
+    ],
+    "centre": [
+      -40.00158120554539,
+      14.0,
+      -1.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      2.0
+    ]
+  },
+  {
+    "name": "L_C04_root_spacer_lower_inner",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 29.028,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      1.006
+    ],
+    "centre": [
+      -40.00158120554539,
+      14.0,
+      5.5
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      1.0
+    ]
+  },
+  {
+    "name": "L_C04_root_spacer_upper_inner",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 174.17,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      6.006
+    ],
+    "centre": [
+      -40.00158120554539,
+      14.0,
+      67.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      6.0
+    ]
+  },
+  {
+    "name": "L_C04_root_spacer_upper_outer",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 185.781,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      6.406
+    ],
+    "centre": [
+      -40.00158120554539,
+      14.0,
+      78.2
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      6.400000000000006
+    ]
+  },
+  {
+    "name": "L_C05_root_bearing_cap_lower",
+    "group": "L",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1600.579,
+    "bbox_mm": [
+      34.013,
+      34.02,
+      4.02
+    ],
+    "centre": [
+      -40.00672012356794,
+      14.0,
+      -2.003557712477141
+    ],
+    "print_bbox_mm": [
+      34.0,
+      34.0,
+      4.0
+    ]
+  },
+  {
+    "name": "L_C05_lower_bolt_-13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      11.003
+    ],
+    "centre": [
+      -40.00108707881246,
+      1.0,
+      -1.5004941267329355
+    ]
+  },
+  {
+    "name": "L_C05_lower_nut_-13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -40.0,
+      1.0,
+      2.4
+    ]
+  },
+  {
+    "name": "L_C05_lower_bolt_13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      11.003
+    ],
+    "centre": [
+      -40.00108707881246,
+      27.0,
+      -1.5004941267329364
+    ]
+  },
+  {
+    "name": "L_C05_lower_nut_13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -40.0,
+      27.0,
+      2.4
+    ]
+  },
+  {
+    "name": "L_C05_root_bearing_cap_upper",
+    "group": "L",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1600.579,
+    "bbox_mm": [
+      34.013,
+      34.02,
+      4.02
+    ],
+    "centre": [
+      -40.00672012356793,
+      14.0,
+      77.00355771247715
+    ],
+    "print_bbox_mm": [
+      34.0,
+      34.0,
+      4.0
+    ]
+  },
+  {
+    "name": "L_C05_upper_bolt_-13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 7380-1 M3x10 button head; head OD5.7 x1.65, AF2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 108.806,
+    "bbox_mm": [
+      5.702,
+      5.703,
+      11.653
+    ],
+    "centre": [
+      -40.0011266089511,
+      0.9999999999999999,
+      74.82553365687158
+    ]
+  },
+  {
+    "name": "L_C05_upper_nut_-13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -40.0,
+      1.0,
+      72.4
+    ]
+  },
+  {
+    "name": "L_C05_upper_bolt_13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 7380-1 M3x10 button head; head OD5.7 x1.65, AF2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 108.806,
+    "bbox_mm": [
+      5.702,
+      5.703,
+      11.653
+    ],
+    "centre": [
+      -40.0011266089511,
+      27.0,
+      74.82553365687158
+    ]
+  },
+  {
+    "name": "L_C05_upper_nut_13",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -40.0,
+      27.0,
+      72.4
+    ]
+  },
+  {
+    "name": "L_H11_root_shaft",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Ground steel shaft Ø5 h6 L105, custom cut and deburr",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2061.67,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      105.004
+    ],
+    "centre": [
+      -40.00098825346588,
+      14.0,
+      44.5
+    ]
+  },
+  {
+    "name": "L_H12_root_collar",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Ganter GN705-5-E collar 5ID x10OD x6; M3x4 screw included",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 364.434,
+    "bbox_mm": [
+      11.503,
+      10.009,
+      6.011
+    ],
+    "centre": [
+      -40.74979028410231,
+      14.0,
+      -5.0
+    ]
+  },
+  {
+    "name": "L_C06_clamp_bolt_-7_18",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      -39.50049412673293,
+      6.999999999999999,
+      18.00108707881246
+    ]
+  },
+  {
+    "name": "L_C06_clamp_nut_-7_18",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      -30.8,
+      7.0,
+      18.0
+    ]
+  },
+  {
+    "name": "L_C06_clamp_bolt_-7_56",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      -39.50049412673293,
+      7.0,
+      56.00108707881246
+    ]
+  },
+  {
+    "name": "L_C06_clamp_nut_-7_56",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      -30.799999999999997,
+      7.0,
+      56.0
+    ]
+  },
+  {
+    "name": "L_C06_clamp_bolt_7_18",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      -39.50049412673293,
+      21.0,
+      18.00108707881246
+    ]
+  },
+  {
+    "name": "L_C06_clamp_nut_7_18",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      -30.8,
+      21.0,
+      18.0
+    ]
+  },
+  {
+    "name": "L_C06_clamp_bolt_7_56",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      -39.50049412673293,
+      21.0,
+      56.00108707881246
+    ]
+  },
+  {
+    "name": "L_C06_clamp_nut_7_56",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      -30.799999999999997,
+      21.0,
+      56.0
+    ]
+  },
+  {
+    "name": "L_C06_drive_drum_inner",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21749.918,
+    "bbox_mm": [
+      17.766,
+      36.025,
+      58.029
+    ],
+    "centre": [
+      -30.883188259195844,
+      13.999999999999998,
+      35.0
+    ],
+    "print_bbox_mm": [
+      58.0,
+      35.99652761031264,
+      17.750000000000007
+    ]
+  },
+  {
+    "name": "L_C06_drive_drum_outer",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21771.028,
+    "bbox_mm": [
+      17.771,
+      36.025,
+      58.029
+    ],
+    "centre": [
+      -49.11444339018509,
+      14.000000000000002,
+      35.0
+    ],
+    "print_bbox_mm": [
+      58.00000000000001,
+      35.99652761031264,
+      17.75000010000002
+    ]
+  },
+  {
+    "name": "L_C07_contact_belt_TPU",
+    "group": "L",
+    "kind": "print",
+    "color": "#227c7a",
+    "note": "52 mm wide; assembled Z 9.0 to 61.0. V5 design datum, not original measurement. Print free loop C143.2; install C144; verify friction and tracking on bench.",
+    "spec": "",
+    "material": "TPU 95A",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 39463.14,
+    "bbox_mm": [
+      36.027,
+      175.024,
+      52.028
+    ],
+    "centre": [
+      -39.99964349796858,
+      83.4981597256774,
+      35.0
+    ],
+    "print_bbox_mm": [
+      36.0,
+      174.2,
+      52.0
+    ]
+  },
+  {
+    "name": "L_C08_nose_roller",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 17942.339,
+    "bbox_mm": [
+      26.01,
+      26.015,
+      58.021
+    ],
+    "centre": [
+      -35.00513891802254,
+      158.0,
+      35.0
+    ],
+    "print_bbox_mm": [
+      26.0,
+      26.0,
+      58.0
+    ]
+  },
+  {
+    "name": "L_H13_625_nose_lower",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      -35.00316241109079,
+      158.0,
+      10.5
+    ]
+  },
+  {
+    "name": "L_H13_625_nose_upper",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      -35.00316241109079,
+      158.0,
+      59.5
+    ]
+  },
+  {
+    "name": "L_C09_nose_spacer_lower",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 290.283,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      10.006
+    ],
+    "centre": [
+      -35.00158120554539,
+      158.0,
+      3.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      10.0
+    ]
+  },
+  {
+    "name": "L_C09_nose_spacer_centre",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1277.246,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      44.006
+    ],
+    "centre": [
+      -35.00158120554539,
+      158.0,
+      35.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      44.0
+    ]
+  },
+  {
+    "name": "L_C09_nose_spacer_upper",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 431.07,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      14.856
+    ],
+    "centre": [
+      -35.00158120554539,
+      158.0,
+      69.425
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      14.85
+    ]
+  },
+  {
+    "name": "L_C10_axle_lock_-5",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Tighten AF1.5 into the captured M3 nut after carrier/arm installation. Headless screw permits radial clearance take-up. CAD shows first shaft contact; verify shaft retention and free roller rotation on the bench.",
+    "spec": "ISO 4026 M3x6 flat point set screw; tip OD2, AF1.5; no washer",
+    "material": "A2 stainless steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38.163,
+    "bbox_mm": [
+      3.014,
+      6.012,
+      3.015
+    ],
+    "centre": [
+      -35.00059295207952,
+      163.49841534611127,
+      -4.999999999999999
+    ]
+  },
+  {
+    "name": "L_C10_axle_nut_-5",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -35.0,
+      163.2,
+      -5.0
+    ]
+  },
+  {
+    "name": "L_C10_axle_lock_80",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Tighten AF1.5 into the captured M3 nut after carrier/arm installation. Headless screw permits radial clearance take-up. CAD shows first shaft contact; verify shaft retention and free roller rotation on the bench.",
+    "spec": "ISO 4026 M3x6 flat point set screw; tip OD2, AF1.5; no washer",
+    "material": "A2 stainless steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38.163,
+    "bbox_mm": [
+      3.014,
+      6.012,
+      3.015
+    ],
+    "centre": [
+      -35.00059295207952,
+      163.49841534611127,
+      80.0
+    ]
+  },
+  {
+    "name": "L_C10_axle_nut_80",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -35.0,
+      163.2,
+      80.0
+    ]
+  },
+  {
+    "name": "L_C10_internal_nose_carrier",
+    "group": "L",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "Keyed removable top arm enables upper-deck insertion. The assembled carrier moves both axle ends together.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 6752.212,
+    "bbox_mm": [
+      18.0,
+      34.001,
+      87.004
+    ],
+    "centre": [
+      -35.0,
+      149.0006720123568,
+      35.49923535851794
+    ],
+    "print_bbox_mm": [
+      87.0000001,
+      34.0,
+      18.0
+    ]
+  },
+  {
+    "name": "L_C10_removable_top_arm",
+    "group": "L",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2980.607,
+    "bbox_mm": [
+      18.0,
+      34.001,
+      6.006
+    ],
+    "centre": [
+      -35.0,
+      149.0006720123568,
+      80.0
+    ],
+    "print_bbox_mm": [
+      18.0,
+      34.0,
+      6.000000200000001
+    ]
+  },
+  {
+    "name": "L_C10_top_arm_joint_bolt",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      19.003
+    ],
+    "centre": [
+      -35.00108707881246,
+      136.0,
+      76.50049412673295
+    ]
+  },
+  {
+    "name": "L_C10_top_arm_joint_nut",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -35.0,
+      136.0,
+      71.2
+    ]
+  },
+  {
+    "name": "L_H14_nose_axle",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Ground steel shaft Ø5 h6 L90; custom cut and deburr",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1767.146,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      90.004
+    ],
+    "centre": [
+      -35.00098825346588,
+      158.0,
+      37.0
+    ]
+  },
+  {
+    "name": "L_C10_clamp_lower",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 308.121,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      18.004
+    ],
+    "centre": [
+      -35.001383554852225,
+      147.0,
+      -4.0005929520795185
+    ]
+  },
+  {
+    "name": "L_C10_clamp_washer_lower",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M4 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 49.095,
+    "bbox_mm": [
+      9.004,
+      9.005,
+      1.007
+    ],
+    "centre": [
+      -35.00177885623857,
+      147.0,
+      -8.5
+    ]
+  },
+  {
+    "name": "L_C10_clamp_nut_lower",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -35.0,
+      147.0,
+      2.8000000000000003
+    ]
+  },
+  {
+    "name": "L_C10_clamp_upper",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 308.121,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      18.004
+    ],
+    "centre": [
+      -35.001383554852225,
+      147.0,
+      79.00059295207951
+    ]
+  },
+  {
+    "name": "L_C10_clamp_washer_upper",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M4 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 49.095,
+    "bbox_mm": [
+      9.004,
+      9.005,
+      1.007
+    ],
+    "centre": [
+      -35.00177885623857,
+      147.0,
+      83.5
+    ]
+  },
+  {
+    "name": "L_C10_clamp_nut_upper",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      -35.0,
+      147.0,
+      72.6
+    ]
+  },
+  {
+    "name": "L_C10_jack_screw",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Use the fully threaded variant, with complete threads within1.5mm of the head. Standard partial thread length18 leaves an unthreaded shank at the locknut. Verify the locknut travels freely before assembly.",
+    "spec": "ISO 4762 M3x25 fully threaded; Bossard BN3 or equivalent; AF2.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 236.677,
+    "bbox_mm": [
+      5.502,
+      28.003,
+      5.503
+    ],
+    "centre": [
+      -35.00108707881246,
+      118.99950587326705,
+      39.0
+    ]
+  },
+  {
+    "name": "L_C10_jack_captive",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -35.0,
+      122.8,
+      39.0
+    ]
+  },
+  {
+    "name": "L_C10_jack_locknut",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      -35.0,
+      114.8,
+      39.0
+    ]
+  },
+  {
+    "name": "L_C11_plate_bolt_-20_-105.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -20.00108707881246,
+      -91.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "L_C11_plate_nut_-20_-105.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -20.0,
+      -91.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "L_C11_plate_bolt_20_-105.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -60.00108707881246,
+      -91.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "L_C11_plate_nut_20_-105.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -60.0,
+      -91.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "L_C11_plate_bolt_-20_-61.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -20.00108707881246,
+      -47.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "L_C11_plate_nut_-20_-61.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -20.0,
+      -47.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "L_C11_plate_bolt_20_-61.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -60.00108707881246,
+      -47.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "L_C11_plate_nut_20_-61.91",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -60.0,
+      -47.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "L_C11_root_bolt_0",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x25",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 446.351,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      29.004
+    ],
+    "centre": [
+      -64.00138355485223,
+      -4.0,
+      71.50059295207953
+    ]
+  },
+  {
+    "name": "L_C11_root_bolt_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x25",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 446.351,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      29.004
+    ],
+    "centre": [
+      -64.00138355485223,
+      14.0,
+      71.50059295207953
+    ]
+  },
+  {
+    "name": "L_C14_service_nut_24_-38",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -64.0,
+      -24.0,
+      94.2
+    ]
+  },
+  {
+    "name": "L_C14_service_nut_-20_-123",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -20.0,
+      -109.0,
+      94.2
+    ]
+  },
+  {
+    "name": "L_C14_service_nut_20_-123",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -60.0,
+      -109.0,
+      94.2
+    ]
+  },
+  {
+    "name": "L_C11_rear_motor_bracket",
+    "group": "L",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21378.121,
+    "bbox_mm": [
+      55.0,
+      132.5,
+      41.003
+    ],
+    "centre": [
+      -41.500000000000064,
+      -47.25,
+      81.50158120554539
+    ],
+    "print_bbox_mm": [
+      41.00000000000001,
+      132.5,
+      55.00000000000001
+    ]
+  },
+  {
+    "name": "L_C12_motor_washer_-11.5_-95.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      -28.501185904159048,
+      -81.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "L_C12_motor_bolt_-11.5_-95.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      -28.500889428119287,
+      -81.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "L_C12_motor_washer_-11.5_-72.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      -28.501185904159048,
+      -58.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "L_C12_motor_bolt_-11.5_-72.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      -28.500889428119287,
+      -58.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "L_C12_motor_washer_11.5_-95.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      -51.501185904159044,
+      -81.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "L_C12_motor_bolt_11.5_-95.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      -51.50088942811929,
+      -81.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "L_C12_motor_washer_11.5_-72.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      -51.501185904159044,
+      -58.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "L_C12_motor_bolt_11.5_-72.41",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      -51.50088942811929,
+      -58.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "L_C12_motor_slide_plate",
+    "group": "L",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 9811.478,
+    "bbox_mm": [
+      50.003,
+      60.003,
+      4.018
+    ],
+    "centre": [
+      -40.0,
+      -69.91304825860834,
+      80.0
+    ],
+    "print_bbox_mm": [
+      50.0,
+      60.0,
+      4.0
+    ]
+  },
+  {
+    "name": "L_H15_NEMA11_belt_motor",
+    "group": "L",
+    "kind": "buy",
+    "color": "#3a404a",
+    "note": "",
+    "spec": "OMC 11HS12-0674S; 28.2 square x31.5, shaft5x20; M2.5 depth4 min",
+    "material": "motor",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 25571.287,
+    "bbox_mm": [
+      28.203,
+      28.203,
+      33.51
+    ],
+    "centre": [
+      -40.0,
+      -69.91304825860834,
+      63.25357735149056
+    ]
+  },
+  {
+    "name": "L_H15_rotor_shaft",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Included rotor shaft of H15 motor - do not order separately",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 377.371,
+    "bbox_mm": [
+      5.004,
+      5.004,
+      20.005
+    ],
+    "centre": [
+      -40.000565843518345,
+      -69.91304825860834,
+      88.0
+    ]
+  },
+  {
+    "name": "L_H16_2GT_pulley_32T",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "Set BOTH groove centre planes to Z86.75 mm. Different bottom heights are intentional.",
+    "spec": "MISUMI GPA32GT2060-A-P5; bore5; W10.3; groove7; M3x3 screws included",
+    "material": "aluminum",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 3586.079,
+    "bbox_mm": [
+      25.01,
+      25.015,
+      10.32
+    ],
+    "centre": [
+      -40.00494126732936,
+      14.0,
+      86.75
+    ]
+  },
+  {
+    "name": "L_H16_2GT_pulley_20T",
+    "group": "L",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "Set BOTH groove centre planes to Z86.75 mm. Different bottom heights are intentional.",
+    "spec": "RobotDigg GT2-20T-5B-6; bore5; OD18; L17.5; groove7.5; hub8; 2x M3 at90deg, screws included",
+    "material": "aluminum",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1680.299,
+    "bbox_mm": [
+      18.007,
+      18.011,
+      17.515
+    ],
+    "centre": [
+      -40.00355771247714,
+      -69.91304825860834,
+      90.7504407055117
+    ]
+  },
+  {
+    "name": "L_H17_timing_belt_220",
+    "group": "L",
+    "kind": "buy",
+    "color": "#227c7a",
+    "note": "",
+    "spec": "2GT endless timing belt 220mm pitch length x6mm wide, 110 teeth",
+    "material": "rubber",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1808.872,
+    "bbox_mm": [
+      22.577,
+      102.665,
+      6.018
+    ],
+    "centre": [
+      -40.0,
+      -26.04666481220143,
+      86.75
+    ]
+  },
+  {
+    "name": "R_C02_lower_deck",
+    "group": "R",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38595.937,
+    "bbox_mm": [
+      44.516,
+      183.011,
+      8.031
+    ],
+    "centre": [
+      46.742144542640546,
+      67.5054250772734,
+      2.0
+    ],
+    "print_bbox_mm": [
+      44.5,
+      183.0,
+      8.0
+    ]
+  },
+  {
+    "name": "R_C02_lower_root_bolt_0",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      22.004
+    ],
+    "centre": [
+      64.00138355485223,
+      -18.0,
+      4.999407047920478
+    ]
+  },
+  {
+    "name": "R_C02_lower_root_nut_0",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      64.0,
+      -18.0,
+      12.4
+    ]
+  },
+  {
+    "name": "R_C02_lower_root_bolt_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x18",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 358.387,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      22.004
+    ],
+    "centre": [
+      64.00138355485223,
+      0.0,
+      4.999407047920478
+    ]
+  },
+  {
+    "name": "R_C02_lower_root_nut_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      64.0,
+      -6.661338147750939e-16,
+      12.4
+    ]
+  },
+  {
+    "name": "R_C02_upper_deck",
+    "group": "R",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negZ",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 37621.61,
+    "bbox_mm": [
+      44.516,
+      183.011,
+      8.031
+    ],
+    "centre": [
+      46.74214454264055,
+      67.5054250772734,
+      73.0
+    ],
+    "print_bbox_mm": [
+      44.5,
+      183.0,
+      8.000000000000023
+    ]
+  },
+  {
+    "name": "R_C02_upper_root_nut_0",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      64.0,
+      -18.0,
+      62.599999999999994
+    ]
+  },
+  {
+    "name": "R_C02_upper_root_nut_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      64.0,
+      0.0,
+      62.599999999999994
+    ]
+  },
+  {
+    "name": "R_C03_lower_bolt_35",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      34.00108707881246,
+      35.0,
+      3.499505873267063
+    ]
+  },
+  {
+    "name": "R_C03_lower_nut_35",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      34.0,
+      35.0,
+      9.8
+    ]
+  },
+  {
+    "name": "R_C03_upper_bolt_35",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      34.00108707881246,
+      35.0,
+      71.50049412673295
+    ]
+  },
+  {
+    "name": "R_C03_upper_nut_35",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      34.0,
+      35.0,
+      64.6
+    ]
+  },
+  {
+    "name": "R_C03_lower_bolt_65",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      34.00108707881246,
+      65.0,
+      3.499505873267062
+    ]
+  },
+  {
+    "name": "R_C03_lower_nut_65",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      34.0,
+      65.0,
+      9.8
+    ]
+  },
+  {
+    "name": "R_C03_upper_bolt_65",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 158.923,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      17.003
+    ],
+    "centre": [
+      34.00108707881246,
+      65.0,
+      71.50049412673295
+    ]
+  },
+  {
+    "name": "R_C03_upper_nut_65",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      34.0,
+      65.0,
+      64.6
+    ]
+  },
+  {
+    "name": "R_C03_inner_belt_backing",
+    "group": "R",
+    "kind": "print",
+    "color": "#c4cbb9",
+    "note": "0.6 mm nominal backing clearance. Tension jack uses a top service window and an L hex key.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 35256.878,
+    "bbox_mm": [
+      14.4,
+      88.0,
+      63.003
+    ],
+    "centre": [
+      31.79999999999997,
+      66.0,
+      37.49999999999999
+    ],
+    "print_bbox_mm": [
+      63.0,
+      88.0,
+      14.400000000000007
+    ]
+  },
+  {
+    "name": "R_H10_625_root_lower",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      40.00316241109079,
+      0.0,
+      2.5
+    ]
+  },
+  {
+    "name": "R_H10_625_root_upper",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      40.00316241109079,
+      0.0,
+      72.5
+    ]
+  },
+  {
+    "name": "R_C04_root_spacer_lower_outer",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 58.057,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      2.006
+    ],
+    "centre": [
+      40.00158120554539,
+      0.0,
+      -1.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      7.999999999999999,
+      2.0
+    ]
+  },
+  {
+    "name": "R_C04_root_spacer_lower_inner",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 145.142,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      5.006
+    ],
+    "centre": [
+      40.00158120554539,
+      0.0,
+      7.5
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      5.0
+    ]
+  },
+  {
+    "name": "R_C04_root_spacer_upper_inner",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 58.057,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      2.006
+    ],
+    "centre": [
+      40.00158120554539,
+      0.0,
+      69.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      2.0
+    ]
+  },
+  {
+    "name": "R_C04_root_spacer_upper_outer",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 185.781,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      6.406
+    ],
+    "centre": [
+      40.00158120554539,
+      0.0,
+      78.2
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      6.400000000000006
+    ]
+  },
+  {
+    "name": "R_C05_root_bearing_cap_lower",
+    "group": "R",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1600.579,
+    "bbox_mm": [
+      34.013,
+      34.02,
+      4.02
+    ],
+    "centre": [
+      40.00672012356794,
+      0.0,
+      -2.003557712477141
+    ],
+    "print_bbox_mm": [
+      34.0,
+      34.0,
+      4.0
+    ]
+  },
+  {
+    "name": "R_C05_lower_bolt_-13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      11.003
+    ],
+    "centre": [
+      40.00108707881246,
+      -13.0,
+      -1.500494126732936
+    ]
+  },
+  {
+    "name": "R_C05_lower_nut_-13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      40.0,
+      -13.0,
+      2.4
+    ]
+  },
+  {
+    "name": "R_C05_lower_bolt_13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 116.511,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      11.003
+    ],
+    "centre": [
+      40.00108707881246,
+      13.0,
+      -1.500494126732936
+    ]
+  },
+  {
+    "name": "R_C05_lower_nut_13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      40.0,
+      13.0,
+      2.4
+    ]
+  },
+  {
+    "name": "R_C05_root_bearing_cap_upper",
+    "group": "R",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1600.579,
+    "bbox_mm": [
+      34.013,
+      34.02,
+      4.02
+    ],
+    "centre": [
+      40.00672012356793,
+      0.0,
+      77.00355771247715
+    ],
+    "print_bbox_mm": [
+      34.0,
+      34.0,
+      4.0
+    ]
+  },
+  {
+    "name": "R_C05_upper_bolt_-13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 7380-1 M3x10 button head; head OD5.7 x1.65, AF2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 108.806,
+    "bbox_mm": [
+      5.702,
+      5.703,
+      11.653
+    ],
+    "centre": [
+      40.0011266089511,
+      -13.0,
+      74.82553365687158
+    ]
+  },
+  {
+    "name": "R_C05_upper_nut_-13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      40.0,
+      -13.0,
+      72.4
+    ]
+  },
+  {
+    "name": "R_C05_upper_bolt_13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 7380-1 M3x10 button head; head OD5.7 x1.65, AF2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 108.806,
+    "bbox_mm": [
+      5.702,
+      5.703,
+      11.653
+    ],
+    "centre": [
+      40.0011266089511,
+      13.0,
+      74.82553365687158
+    ]
+  },
+  {
+    "name": "R_C05_upper_nut_13",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      40.0,
+      13.0,
+      72.4
+    ]
+  },
+  {
+    "name": "R_H11_root_shaft",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Ground steel shaft Ø5 h6 L105, custom cut and deburr",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2061.67,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      105.004
+    ],
+    "centre": [
+      40.00098825346588,
+      0.0,
+      44.5
+    ]
+  },
+  {
+    "name": "R_H12_root_collar",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Ganter GN705-5-E collar 5ID x10OD x6; M3x4 screw included",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 364.434,
+    "bbox_mm": [
+      11.503,
+      10.009,
+      6.011
+    ],
+    "centre": [
+      40.74979028410231,
+      0.0,
+      -5.0
+    ]
+  },
+  {
+    "name": "R_C06_clamp_bolt_-7_18",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      39.50049412673293,
+      -7.0,
+      18.00108707881246
+    ]
+  },
+  {
+    "name": "R_C06_clamp_nut_-7_18",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      30.8,
+      -7.0,
+      18.0
+    ]
+  },
+  {
+    "name": "R_C06_clamp_bolt_-7_56",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      39.50049412673293,
+      -7.0,
+      56.00108707881246
+    ]
+  },
+  {
+    "name": "R_C06_clamp_nut_-7_56",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      30.799999999999997,
+      -7.0,
+      56.0
+    ]
+  },
+  {
+    "name": "R_C06_clamp_bolt_7_18",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      39.50049412673293,
+      6.999999999999999,
+      18.00108707881246
+    ]
+  },
+  {
+    "name": "R_C06_clamp_nut_7_18",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      30.8,
+      7.0,
+      18.0
+    ]
+  },
+  {
+    "name": "R_C06_clamp_bolt_7_56",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      23.003,
+      5.503,
+      5.502
+    ],
+    "centre": [
+      39.50049412673293,
+      7.0,
+      56.00108707881246
+    ]
+  },
+  {
+    "name": "R_C06_clamp_nut_7_56",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      2.402,
+      5.5,
+      6.351
+    ],
+    "centre": [
+      30.799999999999997,
+      7.0,
+      56.0
+    ]
+  },
+  {
+    "name": "R_C06_drive_drum_inner",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21749.918,
+    "bbox_mm": [
+      17.766,
+      36.025,
+      58.029
+    ],
+    "centre": [
+      30.883188259195848,
+      0.0,
+      39.0
+    ],
+    "print_bbox_mm": [
+      58.0,
+      35.99652761031264,
+      17.750000000000007
+    ]
+  },
+  {
+    "name": "R_C06_drive_drum_outer",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21771.027,
+    "bbox_mm": [
+      17.771,
+      36.025,
+      58.029
+    ],
+    "centre": [
+      49.114483675860384,
+      0.0,
+      39.0
+    ],
+    "print_bbox_mm": [
+      58.00000000000001,
+      35.99652761031264,
+      17.75000010000002
+    ]
+  },
+  {
+    "name": "R_C07_contact_belt_TPU",
+    "group": "R",
+    "kind": "print",
+    "color": "#227c7a",
+    "note": "52 mm wide; assembled Z 13.0 to 65.0. V5 design datum, not original measurement. Print free loop C143.2; install C144; verify friction and tracking on bench.",
+    "spec": "",
+    "material": "TPU 95A",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 39463.14,
+    "bbox_mm": [
+      36.027,
+      175.024,
+      52.028
+    ],
+    "centre": [
+      39.99964349796858,
+      69.4981597256774,
+      39.0
+    ],
+    "print_bbox_mm": [
+      36.0,
+      174.2,
+      52.0
+    ]
+  },
+  {
+    "name": "R_C08_nose_roller",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 17942.339,
+    "bbox_mm": [
+      26.01,
+      26.015,
+      58.021
+    ],
+    "centre": [
+      35.00513891802254,
+      144.0,
+      39.0
+    ],
+    "print_bbox_mm": [
+      26.0,
+      26.0,
+      58.0
+    ]
+  },
+  {
+    "name": "R_H13_625_nose_lower",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      35.00316241109079,
+      144.0,
+      14.5
+    ]
+  },
+  {
+    "name": "R_H13_625_nose_upper",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "625-2Z bearing 5x16x5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 907.135,
+    "bbox_mm": [
+      16.006,
+      16.009,
+      5.013
+    ],
+    "centre": [
+      35.00316241109079,
+      144.0,
+      63.5
+    ]
+  },
+  {
+    "name": "R_C09_nose_spacer_lower",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 406.396,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      14.006
+    ],
+    "centre": [
+      35.00158120554539,
+      144.0,
+      5.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      14.0
+    ]
+  },
+  {
+    "name": "R_C09_nose_spacer_centre",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1277.246,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      44.006
+    ],
+    "centre": [
+      35.00158120554539,
+      144.0,
+      39.0
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      44.0
+    ]
+  },
+  {
+    "name": "R_C09_nose_spacer_upper",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "Upper spacer provides 0.15 mm nominal axial endplay; measure after printing.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 314.957,
+    "bbox_mm": [
+      8.003,
+      8.005,
+      10.856
+    ],
+    "centre": [
+      35.00158120554539,
+      144.0,
+      71.425
+    ],
+    "print_bbox_mm": [
+      8.0,
+      8.0,
+      10.85
+    ]
+  },
+  {
+    "name": "R_C10_axle_lock_-5",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Tighten AF1.5 into the captured M3 nut after carrier/arm installation. Headless screw permits radial clearance take-up. CAD shows first shaft contact; verify shaft retention and free roller rotation on the bench.",
+    "spec": "ISO 4026 M3x6 flat point set screw; tip OD2, AF1.5; no washer",
+    "material": "A2 stainless steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38.163,
+    "bbox_mm": [
+      3.014,
+      6.012,
+      3.015
+    ],
+    "centre": [
+      35.00059295207952,
+      149.49841534611127,
+      -4.999999999999999
+    ]
+  },
+  {
+    "name": "R_C10_axle_nut_-5",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      35.0,
+      149.2,
+      -5.0
+    ]
+  },
+  {
+    "name": "R_C10_axle_lock_80",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Tighten AF1.5 into the captured M3 nut after carrier/arm installation. Headless screw permits radial clearance take-up. CAD shows first shaft contact; verify shaft retention and free roller rotation on the bench.",
+    "spec": "ISO 4026 M3x6 flat point set screw; tip OD2, AF1.5; no washer",
+    "material": "A2 stainless steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 38.163,
+    "bbox_mm": [
+      3.014,
+      6.012,
+      3.015
+    ],
+    "centre": [
+      35.00059295207952,
+      149.49841534611127,
+      80.0
+    ]
+  },
+  {
+    "name": "R_C10_axle_nut_80",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      35.0,
+      149.2,
+      80.0
+    ]
+  },
+  {
+    "name": "R_C10_internal_nose_carrier",
+    "group": "R",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "Keyed removable top arm enables upper-deck insertion. The assembled carrier moves both axle ends together.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 6752.212,
+    "bbox_mm": [
+      18.0,
+      34.001,
+      87.004
+    ],
+    "centre": [
+      35.0,
+      135.0006720123568,
+      35.49923535851793
+    ],
+    "print_bbox_mm": [
+      87.0000001,
+      34.0,
+      18.0
+    ]
+  },
+  {
+    "name": "R_C10_removable_top_arm",
+    "group": "R",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 2980.607,
+    "bbox_mm": [
+      18.0,
+      34.001,
+      6.006
+    ],
+    "centre": [
+      35.0,
+      135.0006720123568,
+      80.0
+    ],
+    "print_bbox_mm": [
+      18.0,
+      34.0,
+      6.000000200000001
+    ]
+  },
+  {
+    "name": "R_C10_top_arm_joint_bolt",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      19.003
+    ],
+    "centre": [
+      35.00108707881246,
+      122.0,
+      76.50049412673295
+    ]
+  },
+  {
+    "name": "R_C10_top_arm_joint_nut",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      35.0,
+      122.0,
+      71.2
+    ]
+  },
+  {
+    "name": "R_H14_nose_axle",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Ground steel shaft Ø5 h6 L90; custom cut and deburr",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1767.146,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      90.004
+    ],
+    "centre": [
+      35.00098825346588,
+      144.0,
+      37.0
+    ]
+  },
+  {
+    "name": "R_C10_clamp_lower",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 308.121,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      18.004
+    ],
+    "centre": [
+      35.001383554852225,
+      133.0,
+      -4.0005929520795185
+    ]
+  },
+  {
+    "name": "R_C10_clamp_washer_lower",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M4 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 49.095,
+    "bbox_mm": [
+      9.004,
+      9.005,
+      1.007
+    ],
+    "centre": [
+      35.00177885623857,
+      133.0,
+      -8.5
+    ]
+  },
+  {
+    "name": "R_C10_clamp_nut_lower",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      35.0,
+      133.0,
+      2.8000000000000003
+    ]
+  },
+  {
+    "name": "R_C10_clamp_upper",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x14",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 308.121,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      18.004
+    ],
+    "centre": [
+      35.001383554852225,
+      133.0,
+      79.00059295207951
+    ]
+  },
+  {
+    "name": "R_C10_clamp_washer_upper",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M4 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 49.095,
+    "bbox_mm": [
+      9.004,
+      9.005,
+      1.007
+    ],
+    "centre": [
+      35.00177885623857,
+      133.0,
+      83.5
+    ]
+  },
+  {
+    "name": "R_C10_clamp_nut_upper",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      7.0,
+      3.203
+    ],
+    "centre": [
+      35.0,
+      133.0,
+      72.6
+    ]
+  },
+  {
+    "name": "R_C10_jack_screw",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "Use the fully threaded variant, with complete threads within1.5mm of the head. Standard partial thread length18 leaves an unthreaded shank at the locknut. Verify the locknut travels freely before assembly.",
+    "spec": "ISO 4762 M3x25 fully threaded; Bossard BN3 or equivalent; AF2.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 236.677,
+    "bbox_mm": [
+      5.502,
+      28.003,
+      5.503
+    ],
+    "centre": [
+      35.00108707881246,
+      104.99950587326705,
+      39.0
+    ]
+  },
+  {
+    "name": "R_C10_jack_captive",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      35.0,
+      108.8,
+      39.0
+    ]
+  },
+  {
+    "name": "R_C10_jack_locknut",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      35.0,
+      100.8,
+      39.0
+    ]
+  },
+  {
+    "name": "R_C11_plate_bolt_-20_-105.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      20.00108707881246,
+      -105.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "R_C11_plate_nut_-20_-105.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      20.0,
+      -105.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "R_C11_plate_bolt_20_-105.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      60.00108707881246,
+      -105.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "R_C11_plate_nut_20_-105.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      60.0,
+      -105.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "R_C11_plate_bolt_-20_-61.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      20.00108707881246,
+      -61.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "R_C11_plate_nut_-20_-61.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      20.0,
+      -61.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "R_C11_plate_bolt_20_-61.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      60.00108707881246,
+      -61.91304825860834,
+      77.50049412673295
+    ]
+  },
+  {
+    "name": "R_C11_plate_nut_20_-61.91",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      60.0,
+      -61.91304825860834,
+      74.2
+    ]
+  },
+  {
+    "name": "R_C11_root_bolt_0",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x25",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 446.351,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      29.004
+    ],
+    "centre": [
+      64.00138355485223,
+      -18.0,
+      71.50059295207953
+    ]
+  },
+  {
+    "name": "R_C11_root_bolt_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x25",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 446.351,
+    "bbox_mm": [
+      7.003,
+      7.004,
+      29.004
+    ],
+    "centre": [
+      64.00138355485223,
+      2.220446049250313e-16,
+      71.50059295207953
+    ]
+  },
+  {
+    "name": "R_C14_service_nut_24_-38",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      64.0,
+      -38.0,
+      94.2
+    ]
+  },
+  {
+    "name": "R_C14_service_nut_-20_-123",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      20.0,
+      -123.0,
+      94.2
+    ]
+  },
+  {
+    "name": "R_C14_service_nut_20_-123",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      60.0,
+      -123.0,
+      94.2
+    ]
+  },
+  {
+    "name": "R_C11_rear_motor_bracket",
+    "group": "R",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 21378.121,
+    "bbox_mm": [
+      55.0,
+      132.5,
+      41.003
+    ],
+    "centre": [
+      41.500000000000064,
+      -61.25,
+      81.50158120554539
+    ],
+    "print_bbox_mm": [
+      41.00000000000001,
+      132.5,
+      55.00000000000001
+    ]
+  },
+  {
+    "name": "R_C12_motor_washer_-11.5_-95.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      28.501185904159048,
+      -95.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "R_C12_motor_bolt_-11.5_-95.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      28.500889428119287,
+      -95.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "R_C12_motor_washer_-11.5_-72.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      28.501185904159048,
+      -72.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "R_C12_motor_bolt_-11.5_-72.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      28.500889428119287,
+      -72.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "R_C12_motor_washer_11.5_-95.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      51.501185904159044,
+      -95.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "R_C12_motor_bolt_11.5_-95.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      51.50088942811929,
+      -95.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "R_C12_motor_washer_11.5_-72.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2.5 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 11.058,
+    "bbox_mm": [
+      6.002,
+      6.004,
+      0.505
+    ],
+    "centre": [
+      51.501185904159044,
+      -72.41304825860834,
+      82.25
+    ]
+  },
+  {
+    "name": "R_C12_motor_bolt_11.5_-72.41",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2.5x8",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 73.003,
+    "bbox_mm": [
+      4.502,
+      4.503,
+      10.503
+    ],
+    "centre": [
+      51.50088942811929,
+      -72.41304825860834,
+      79.75039530138635
+    ]
+  },
+  {
+    "name": "R_C12_motor_slide_plate",
+    "group": "R",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 9811.478,
+    "bbox_mm": [
+      50.003,
+      60.003,
+      4.018
+    ],
+    "centre": [
+      40.0,
+      -83.91304825860834,
+      80.0
+    ],
+    "print_bbox_mm": [
+      50.0,
+      60.0,
+      4.0
+    ]
+  },
+  {
+    "name": "R_H15_NEMA11_belt_motor",
+    "group": "R",
+    "kind": "buy",
+    "color": "#3a404a",
+    "note": "",
+    "spec": "OMC 11HS12-0674S; 28.2 square x31.5, shaft5x20; M2.5 depth4 min",
+    "material": "motor",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 25571.287,
+    "bbox_mm": [
+      28.203,
+      28.203,
+      33.51
+    ],
+    "centre": [
+      40.0,
+      -83.91304825860834,
+      63.25357735149056
+    ]
+  },
+  {
+    "name": "R_H15_rotor_shaft",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "",
+    "spec": "Included rotor shaft of H15 motor - do not order separately",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 377.371,
+    "bbox_mm": [
+      5.004,
+      5.004,
+      20.005
+    ],
+    "centre": [
+      40.000565843518345,
+      -83.91304825860834,
+      88.0
+    ]
+  },
+  {
+    "name": "R_H16_2GT_pulley_32T",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "Set BOTH groove centre planes to Z86.75 mm. Different bottom heights are intentional.",
+    "spec": "MISUMI GPA32GT2060-A-P5; bore5; W10.3; groove7; M3x3 screws included",
+    "material": "aluminum",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 3586.079,
+    "bbox_mm": [
+      25.01,
+      25.015,
+      10.32
+    ],
+    "centre": [
+      40.00494126732936,
+      0.0,
+      86.75
+    ]
+  },
+  {
+    "name": "R_H16_2GT_pulley_20T",
+    "group": "R",
+    "kind": "buy",
+    "color": "#a8b3ba",
+    "note": "Set BOTH groove centre planes to Z86.75 mm. Different bottom heights are intentional.",
+    "spec": "RobotDigg GT2-20T-5B-6; bore5; OD18; L17.5; groove7.5; hub8; 2x M3 at90deg, screws included",
+    "material": "aluminum",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1680.299,
+    "bbox_mm": [
+      18.007,
+      18.011,
+      17.515
+    ],
+    "centre": [
+      40.003557712477146,
+      -83.91304825860834,
+      90.7504407055117
+    ]
+  },
+  {
+    "name": "R_H17_timing_belt_220",
+    "group": "R",
+    "kind": "buy",
+    "color": "#227c7a",
+    "note": "",
+    "spec": "2GT endless timing belt 220mm pitch length x6mm wide, 110 teeth",
+    "material": "rubber",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1808.872,
+    "bbox_mm": [
+      22.577,
+      102.665,
+      6.018
+    ],
+    "centre": [
+      40.0,
+      -40.04666481220143,
+      86.75
+    ]
+  },
+  {
+    "name": "K01_opening_crank",
+    "group": "crank",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "25 mm radius. Independent Ø8 bearing shaft. Split hub clamp; links in front of rear rail.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "motion": {
+      "pivot": [
+        0,
+        -31,
+        -18
+      ],
+      "angle0": 1.4706289056333368
+    },
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 7398.415,
+    "bbox_mm": [
+      24.044,
+      10.047,
+      63.946
+    ],
+    "centre": [
+      -0.001221557300445042,
+      -36.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      24.000000200000002,
+      63.93934672954424,
+      10.000000200000002
+    ]
+  },
+  {
+    "name": "K01_hub_bolt",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x20",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 201.334,
+    "bbox_mm": [
+      6.531,
+      5.502,
+      23.313
+    ],
+    "centre": [
+      -7.187661146550559,
+      -36.00108707881246,
+      -15.644537071996506
+    ]
+  },
+  {
+    "name": "K01_hub_nut",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      5.712,
+      6.351,
+      2.938
+    ],
+    "centre": [
+      -8.77989949685296,
+      -36.0,
+      -25.35889698427428
+    ]
+  },
+  {
+    "name": "K02_link_-1",
+    "group": "linkL",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "45 mm pin spacing. Replaceable 10 OD /6.15 ID bushes. 1 mm axial float on each link face.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "motion": {
+      "a0": [
+        -2.5,
+        -31.0,
+        -42.874685927665496
+      ],
+      "b0": [
+        -40.0,
+        -31.0,
+        -18.0
+      ]
+    },
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 5002.05,
+    "bbox_mm": [
+      55.508,
+      8.014,
+      42.882
+    ],
+    "centre": [
+      -21.25,
+      -24.999999999999996,
+      -30.437342963832748
+    ],
+    "print_bbox_mm": [
+      55.5,
+      42.87468592766551,
+      8.000000000000012
+    ]
+  },
+  {
+    "name": "K03_shoulder_-1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "M5 thread relief is modeled conservatively as2mm. Use the specified Ganter Ø6 variant, not the ISO nominal Ø6.5 substitution. Check actual relief and complete nut engagement before assembly.",
+    "spec": "Ganter ISO7379-6-M5-12 shoulder Ø6x12, M5x9.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 862.666,
+    "bbox_mm": [
+      10.006,
+      26.006,
+      10.004
+    ],
+    "centre": [
+      -2.5,
+      -27.49901174653413,
+      -42.872709420733756
+    ]
+  },
+  {
+    "name": "K03_nut_-1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 141.901,
+    "bbox_mm": [
+      8.422,
+      4.004,
+      9.191
+    ],
+    "centre": [
+      -2.4999999999999987,
+      -37.0,
+      -42.874685927665496
+    ]
+  },
+  {
+    "name": "K03_rear_washer_-1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      -2.4976281916819056,
+      -30.5,
+      -42.874685927665496
+    ]
+  },
+  {
+    "name": "K03_front_washer_-1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      -2.4976281916819056,
+      -19.5,
+      -42.874685927665496
+    ]
+  },
+  {
+    "name": "K04_bush_-1_0",
+    "group": "crank",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 488.341,
+    "bbox_mm": [
+      10.004,
+      10.008,
+      10.006
+    ],
+    "centre": [
+      -2.4980234930682546,
+      -25.0,
+      -42.874685927665496
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      10.0
+    ]
+  },
+  {
+    "name": "K03_shoulder_-1_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "M5 thread relief is modeled conservatively as2mm. Use the specified Ganter Ø6 variant, not the ISO nominal Ø6.5 substitution. Check actual relief and complete nut engagement before assembly.",
+    "spec": "Ganter ISO7379-6-M5-12 shoulder Ø6x12, M5x9.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 862.666,
+    "bbox_mm": [
+      10.006,
+      26.006,
+      10.004
+    ],
+    "centre": [
+      -40.0,
+      -27.49901174653413,
+      -17.998023493068253
+    ]
+  },
+  {
+    "name": "K03_nut_-1_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 141.901,
+    "bbox_mm": [
+      9.238,
+      4.004,
+      8.0
+    ],
+    "centre": [
+      -40.0,
+      -35.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K03_rear_washer_-1_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      -39.997628191681905,
+      -30.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K03_front_washer_-1_1",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      -39.997628191681905,
+      -19.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K04_bush_-1_1",
+    "group": "L",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 488.341,
+    "bbox_mm": [
+      10.004,
+      10.008,
+      10.006
+    ],
+    "centre": [
+      -39.99802349306826,
+      -25.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      10.0
+    ]
+  },
+  {
+    "name": "K02_link_1",
+    "group": "linkR",
+    "kind": "print",
+    "color": "#4c5f68",
+    "note": "45 mm pin spacing. Replaceable 10 OD /6.15 ID bushes. 1 mm axial float on each link face.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "motion": {
+      "a0": [
+        2.5,
+        -31.0,
+        6.8746859276654995
+      ],
+      "b0": [
+        40.0,
+        -31.0,
+        -18.0
+      ]
+    },
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 5002.05,
+    "bbox_mm": [
+      55.508,
+      8.014,
+      42.882
+    ],
+    "centre": [
+      21.250000000000004,
+      -25.0,
+      -5.562657036167249
+    ],
+    "print_bbox_mm": [
+      55.5,
+      42.874685927665496,
+      8.00000000000001
+    ]
+  },
+  {
+    "name": "K03_shoulder_1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "M5 thread relief is modeled conservatively as2mm. Use the specified Ganter Ø6 variant, not the ISO nominal Ø6.5 substitution. Check actual relief and complete nut engagement before assembly.",
+    "spec": "Ganter ISO7379-6-M5-12 shoulder Ø6x12, M5x9.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 862.666,
+    "bbox_mm": [
+      10.006,
+      26.006,
+      10.004
+    ],
+    "centre": [
+      2.5,
+      -27.49901174653413,
+      6.876662434597244
+    ]
+  },
+  {
+    "name": "K03_nut_1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 141.901,
+    "bbox_mm": [
+      8.422,
+      4.004,
+      9.191
+    ],
+    "centre": [
+      2.5,
+      -37.0,
+      6.8746859276654995
+    ]
+  },
+  {
+    "name": "K03_rear_washer_1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      2.5023718083180944,
+      -30.5,
+      6.8746859276654995
+    ]
+  },
+  {
+    "name": "K03_front_washer_1_0",
+    "group": "crank",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      2.5023718083180944,
+      -19.5,
+      6.8746859276654995
+    ]
+  },
+  {
+    "name": "K04_bush_1_0",
+    "group": "crank",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 488.341,
+    "bbox_mm": [
+      10.004,
+      10.008,
+      10.006
+    ],
+    "centre": [
+      2.501976506931745,
+      -25.0,
+      6.8746859276654995
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      10.0
+    ]
+  },
+  {
+    "name": "K03_shoulder_1_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "M5 thread relief is modeled conservatively as2mm. Use the specified Ganter Ø6 variant, not the ISO nominal Ø6.5 substitution. Check actual relief and complete nut engagement before assembly.",
+    "spec": "Ganter ISO7379-6-M5-12 shoulder Ø6x12, M5x9.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 862.666,
+    "bbox_mm": [
+      10.006,
+      26.006,
+      10.004
+    ],
+    "centre": [
+      40.0,
+      -27.49901174653413,
+      -17.998023493068253
+    ]
+  },
+  {
+    "name": "K03_nut_1_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 141.901,
+    "bbox_mm": [
+      9.238,
+      4.004,
+      8.0
+    ],
+    "centre": [
+      40.0,
+      -35.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K03_rear_washer_1_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      40.002371808318095,
+      -30.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K03_front_washer_1_1",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M6 t1",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 81.925,
+    "bbox_mm": [
+      12.005,
+      1.009,
+      12.007
+    ],
+    "centre": [
+      40.002371808318095,
+      -19.5,
+      -18.0
+    ]
+  },
+  {
+    "name": "K04_bush_1_1",
+    "group": "R",
+    "kind": "print",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 488.341,
+    "bbox_mm": [
+      10.004,
+      10.008,
+      10.006
+    ],
+    "centre": [
+      40.00197650693174,
+      -25.0,
+      -18.0
+    ],
+    "print_bbox_mm": [
+      10.0,
+      10.0,
+      10.0
+    ]
+  },
+  {
+    "name": "L_T01_post_bolt_32",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      19.003
+    ],
+    "centre": [
+      -54.00108707881246,
+      46.0,
+      -3.499505873267064
+    ]
+  },
+  {
+    "name": "L_T01_post_nut_32",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -54.0,
+      46.0,
+      -9.8
+    ]
+  },
+  {
+    "name": "L_T01_post_bolt_130",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      19.003
+    ],
+    "centre": [
+      -50.00108707881246,
+      144.0,
+      -3.4995058732670605
+    ]
+  },
+  {
+    "name": "L_T01_post_nut_130",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -50.0,
+      144.0,
+      -9.8
+    ]
+  },
+  {
+    "name": "L_T01_sloped_receiver",
+    "group": "L",
+    "kind": "print",
+    "color": "#43535e",
+    "note": "Left cassette mounted; 10 degree downhill toward rear outlet. Front closed. Printed front-cap down. Fruit-flow tests still required.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "pipe",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 129317.871,
+    "bbox_mm": [
+      146.227,
+      203.956,
+      90.006
+    ],
+    "centre": [
+      8.0,
+      99.86451052702715,
+      -47.00162307309957
+    ],
+    "print_bbox_mm": [
+      146.0,
+      83.43331609220867,
+      194.00000000000009
+    ]
+  },
+  {
+    "name": "A01_bolt_-78_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x22",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 408.652,
+    "bbox_mm": [
+      7.003,
+      26.004,
+      7.004
+    ],
+    "centre": [
+      -77.99861644514777,
+      -57.999407047920485,
+      2.0
+    ]
+  },
+  {
+    "name": "A01_nut_-78_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      -78.0,
+      -67.4,
+      2.0000000000000018
+    ]
+  },
+  {
+    "name": "A01_bolt_-78_12",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x22",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 408.652,
+    "bbox_mm": [
+      7.003,
+      26.004,
+      7.004
+    ],
+    "centre": [
+      -77.99861644514777,
+      -57.999407047920485,
+      12.0
+    ]
+  },
+  {
+    "name": "A01_nut_-78_12",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      -78.0,
+      -67.4,
+      12.000000000000002
+    ]
+  },
+  {
+    "name": "A01_bolt_78_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x22",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 408.652,
+    "bbox_mm": [
+      7.003,
+      26.004,
+      7.004
+    ],
+    "centre": [
+      78.00138355485223,
+      -57.999407047920485,
+      2.0
+    ]
+  },
+  {
+    "name": "A01_nut_78_2",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      78.0,
+      -67.4,
+      2.0000000000000018
+    ]
+  },
+  {
+    "name": "A01_bolt_78_12",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M4x22",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 408.652,
+    "bbox_mm": [
+      7.003,
+      26.004,
+      7.004
+    ],
+    "centre": [
+      78.00138355485223,
+      -57.999407047920485,
+      12.0
+    ]
+  },
+  {
+    "name": "A01_nut_78_12",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M4",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 94.772,
+    "bbox_mm": [
+      8.083,
+      3.203,
+      7.0
+    ],
+    "centre": [
+      78.0,
+      -67.4,
+      12.000000000000002
+    ]
+  },
+  {
+    "name": "A01_rear_fixture_adapter",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#34444d",
+    "note": "Custom 4xØ6.6 on 50 PCD, Ø26 centre opening. Host robot plate and its fasteners are application-specific; not supplied.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Y",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 79797.921,
+    "bbox_mm": [
+      170.0,
+      137.03,
+      88.028
+    ],
+    "centre": [
+      0.0,
+      -125.51335218611433,
+      -11.01422184916429
+    ],
+    "print_bbox_mm": [
+      170.0,
+      88.0,
+      137.0
+    ]
+  },
+  {
+    "name": "F08_mount_bolt_14",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      19.003,
+      5.503
+    ],
+    "centre": [
+      101.00108707881246,
+      -50.49950587326707,
+      14.0
+    ]
+  },
+  {
+    "name": "F08_mount_nut_14",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      101.0,
+      -55.8,
+      14.0
+    ]
+  },
+  {
+    "name": "F08_mount_bolt_22",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x16",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 173.06,
+    "bbox_mm": [
+      5.502,
+      19.003,
+      5.503
+    ],
+    "centre": [
+      101.00108707881246,
+      -50.49950587326707,
+      22.0
+    ]
+  },
+  {
+    "name": "F08_mount_nut_22",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      2.402,
+      5.5
+    ],
+    "centre": [
+      101.0,
+      -55.8,
+      22.0
+    ]
+  },
+  {
+    "name": "F08_sensor_washer_-43.85",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 7.74,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      0.504
+    ],
+    "centre": [
+      93.80098825346587,
+      -43.85,
+      51.55
+    ]
+  },
+  {
+    "name": "F08_sensor_bolt_-43.85",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 57.673,
+    "bbox_mm": [
+      3.802,
+      3.802,
+      14.002
+    ],
+    "centre": [
+      93.80075107263406,
+      -43.85,
+      46.80035577124771
+    ]
+  },
+  {
+    "name": "F08_sensor_nut_-43.85",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 16.941,
+    "bbox_mm": [
+      4.619,
+      4.0,
+      1.602
+    ],
+    "centre": [
+      93.8,
+      -43.849999999999994,
+      42.2
+    ]
+  },
+  {
+    "name": "F08_sensor_washer_-37.35",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "Washer M2 t0.5",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 7.74,
+    "bbox_mm": [
+      5.002,
+      5.003,
+      0.504
+    ],
+    "centre": [
+      93.80098825346587,
+      -37.35,
+      51.55
+    ]
+  },
+  {
+    "name": "F08_sensor_bolt_-37.35",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M2x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 57.673,
+    "bbox_mm": [
+      3.802,
+      3.802,
+      14.002
+    ],
+    "centre": [
+      93.80075107263406,
+      -37.35,
+      46.80035577124771
+    ]
+  },
+  {
+    "name": "F08_sensor_nut_-37.35",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M2",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 16.941,
+    "bbox_mm": [
+      4.619,
+      4.0,
+      1.602
+    ],
+    "centre": [
+      93.8,
+      -37.349999999999994,
+      42.2
+    ]
+  },
+  {
+    "name": "F08_adjustable_home_bracket",
+    "group": "fixed",
+    "kind": "print",
+    "color": "#31a7a0",
+    "note": "D2F-01F mount above rail. Calibrate measured transition at gap95.6; stop and retreat. Hard stop96 leaves0.2 nominal post-trip travel; verify actual switch overtravel before power. Slots +/-0.8 mm.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 1276.351,
+    "bbox_mm": [
+      14.5,
+      18.001,
+      33.501
+    ],
+    "centre": [
+      96.75,
+      -40.000672012356794,
+      28.75042403006759
+    ],
+    "print_bbox_mm": [
+      14.5,
+      18.0,
+      33.5
+    ]
+  },
+  {
+    "name": "H18_home_switch_D2F01F",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#3a404a",
+    "note": "",
+    "spec": "Omron D2F-01F, pin plunger, PCB straight terminals; body and 3 terminals; actuator separate CAD instance",
+    "material": "switch",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 446.162,
+    "bbox_mm": [
+      10.0,
+      12.8,
+      5.802
+    ],
+    "centre": [
+      93.8,
+      -40.6,
+      48.4
+    ]
+  },
+  {
+    "name": "H19_home_switch_actuator",
+    "group": "fixed",
+    "kind": "buy",
+    "color": "#a6b1b9",
+    "note": "",
+    "spec": "Included actuator of H18 D2F-01F - do not order separately",
+    "material": "switch",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 3.48,
+    "bbox_mm": [
+      1.0,
+      1.2,
+      2.9
+    ],
+    "centre": [
+      88.3,
+      -42.55,
+      48.400000000000006
+    ]
+  },
+  {
+    "name": "L_C13_lower_cover_bolt_45",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      -56.00108707881246,
+      59.0,
+      -0.5004941267329368
+    ]
+  },
+  {
+    "name": "L_C13_lower_cover_nut_45",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -56.0,
+      59.0,
+      2.4
+    ]
+  },
+  {
+    "name": "L_C13_lower_cover_bolt_100",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      -52.00108707881246,
+      114.0,
+      -0.5004941267329377
+    ]
+  },
+  {
+    "name": "L_C13_lower_cover_nut_100",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -52.0,
+      114.0,
+      2.3999999999999995
+    ]
+  },
+  {
+    "name": "L_C13_upper_cover_bolt_45",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      -56.00108707881246,
+      59.0,
+      75.50049412673295
+    ]
+  },
+  {
+    "name": "L_C13_upper_cover_nut_45",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -56.0,
+      59.0,
+      71.7
+    ]
+  },
+  {
+    "name": "L_C13_upper_cover_bolt_100",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      -52.00108707881246,
+      114.0,
+      75.50049412673295
+    ]
+  },
+  {
+    "name": "L_C13_upper_cover_nut_100",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      -52.0,
+      114.0,
+      71.7
+    ]
+  },
+  {
+    "name": "L_C13_outer_finger_cover",
+    "group": "L",
+    "kind": "print",
+    "color": "#28343e",
+    "note": "Removable outer shield. Inner fruit-contact belt surface stays open.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negX",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 27667.73,
+    "bbox_mm": [
+      21.5,
+      129.0,
+      83.003
+    ],
+    "centre": [
+      -57.75,
+      98.5,
+      37.5
+    ],
+    "print_bbox_mm": [
+      83.00000000000001,
+      129.0,
+      21.500000000000007
+    ]
+  },
+  {
+    "name": "L_C14_service_bolt_24_-38",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -64.00108707881246,
+      -24.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "L_C14_service_bolt_-20_-123",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -20.00108707881246,
+      -109.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "L_C14_service_bolt_20_-123",
+    "group": "L",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      -60.00108707881246,
+      -109.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "L_C14_rear_drive_cover",
+    "group": "L",
+    "kind": "print",
+    "color": "#28343e",
+    "note": "Remove only three M3x12 hood screws. Deck M4x25 and four slide M3x12 bolts remain fixed. Structural tie saddles retain motor wires.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negZ",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40565.525,
+    "bbox_mm": [
+      61.0,
+      148.0,
+      56.001
+    ],
+    "centre": [
+      -41.5,
+      -42.0,
+      76.00067201235679
+    ],
+    "print_bbox_mm": [
+      61.0,
+      148.0,
+      56.00000000000001
+    ]
+  },
+  {
+    "name": "R_C13_lower_cover_bolt_45",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      56.00108707881246,
+      45.0,
+      -0.5004941267329368
+    ]
+  },
+  {
+    "name": "R_C13_lower_cover_nut_45",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      56.0,
+      45.0,
+      2.4
+    ]
+  },
+  {
+    "name": "R_C13_lower_cover_bolt_100",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      52.00108707881246,
+      100.0,
+      -0.5004941267329377
+    ]
+  },
+  {
+    "name": "R_C13_lower_cover_nut_100",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      52.0,
+      100.0,
+      2.3999999999999995
+    ]
+  },
+  {
+    "name": "R_C13_upper_cover_bolt_45",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      56.00108707881246,
+      45.0,
+      75.50049412673295
+    ]
+  },
+  {
+    "name": "R_C13_upper_cover_nut_45",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      56.0,
+      45.0,
+      71.7
+    ]
+  },
+  {
+    "name": "R_C13_upper_cover_bolt_100",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x10",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 130.648,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      13.003
+    ],
+    "centre": [
+      52.00108707881246,
+      100.0,
+      75.50049412673295
+    ]
+  },
+  {
+    "name": "R_C13_upper_cover_nut_100",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4032 M3",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 45.453,
+    "bbox_mm": [
+      6.351,
+      5.5,
+      2.402
+    ],
+    "centre": [
+      52.0,
+      100.0,
+      71.7
+    ]
+  },
+  {
+    "name": "R_C13_outer_finger_cover",
+    "group": "R",
+    "kind": "print",
+    "color": "#28343e",
+    "note": "Removable outer shield. Inner fruit-contact belt surface stays open.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "X",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 27667.73,
+    "bbox_mm": [
+      21.5,
+      129.0,
+      83.003
+    ],
+    "centre": [
+      57.75,
+      84.5,
+      37.5
+    ],
+    "print_bbox_mm": [
+      83.00000000000001,
+      129.0,
+      21.500000000000007
+    ]
+  },
+  {
+    "name": "R_C14_service_bolt_24_-38",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      64.00108707881246,
+      -38.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "R_C14_service_bolt_-20_-123",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      20.00108707881246,
+      -123.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "R_C14_service_bolt_20_-123",
+    "group": "R",
+    "kind": "buy",
+    "color": "#626e79",
+    "note": "",
+    "spec": "ISO 4762 M3x12",
+    "material": "steel",
+    "print_axis": "Z",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 144.785,
+    "bbox_mm": [
+      5.502,
+      5.503,
+      15.003
+    ],
+    "centre": [
+      60.00108707881246,
+      -123.0,
+      99.50049412673295
+    ]
+  },
+  {
+    "name": "R_C14_rear_drive_cover",
+    "group": "R",
+    "kind": "print",
+    "color": "#28343e",
+    "note": "Remove only three M3x12 hood screws. Deck M4x25 and four slide M3x12 bolts remain fixed. Structural tie saddles retain motor wires.",
+    "spec": "",
+    "material": "PETG",
+    "print_axis": "negZ",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40565.525,
+    "bbox_mm": [
+      61.0,
+      148.0,
+      56.001
+    ],
+    "centre": [
+      41.5,
+      -55.99999999999999,
+      76.00067201235679
+    ],
+    "print_bbox_mm": [
+      61.0,
+      148.0,
+      56.00000000000001
+    ]
+  }
+]

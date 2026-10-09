@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inaho Gripper 디자인 · Farmily</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:#173d33;background:#f7f8f5;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;height:100vh;height:100dvh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 22px;border-bottom:1px solid #dce3da;flex:none}
+    .identity{display:flex;align-items:center;gap:20px;white-space:nowrap}.home{color:#42634f;text-decoration:none;font-size:12px;padding:8px 0}
+    h1{font-size:14px;font-weight:650;margin:0}h1 span{font-size:11px;color:#768772;font-weight:400;margin-left:7px}
+    nav{display:flex;gap:7px;flex-wrap:wrap}nav a{font-size:11px;text-decoration:none;color:#315040;border:1px solid #d4dfd1;border-radius:6px;background:white;padding:8px 11px;white-space:nowrap}
+    nav a:hover,.home:hover{color:#11654a}nav a:hover{background:#eaf1e4}a:focus-visible{outline:3px solid #588a39;outline-offset:3px}
+    main{flex:1;min-height:0}iframe{display:block;width:100%;height:100%;border:0;background:#e9eef0}
+    @media(max-width:740px){header{flex-wrap:wrap;gap:8px;padding:8px 12px}.identity{width:100%;justify-content:space-between;gap:12px}nav{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}nav a{text-align:center;padding:7px 4px;font-size:10px}h1{font-size:12px}h1 span{display:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <a class="home" id="projectHomeLink" href="/">← 프로젝트 목록</a>
+      <h1>Inaho Gripper 디자인 <span>V5.1</span></h1>
+    </div>
+    <nav aria-label="설계 파일 다운로드">
+      <a href="./inaho_gripper/inaho_gripper_v5_assembly.step" download>STEP 설계</a>
+      <a href="./inaho_gripper/inaho_gripper_v5_assembly.glb" download>3D 모델</a>
+      <a href="./inaho_gripper/inaho_gripper_v5_printable.zip" download>출력용 ZIP</a>
+      <a href="./inaho_gripper/inaho_gripper_v5_assembly_guide_KO.pdf" target="_blank" rel="noopener">조립 설명서 ↗</a>
+    </nav>
+  </header>
+  <main>
+    <iframe id="gripperViewer" title="듀얼 벨트 그리퍼 V5.1 3D 설계 뷰어" src="./inaho_gripper/inaho_gripper_v5_viewer.html" allow="fullscreen"></iframe>
+  </main>
+</body>
+</html>
