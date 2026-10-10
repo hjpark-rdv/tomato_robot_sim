@@ -1,5 +1,13 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신: S300 실시간 GUI 미리보기 (2026-10-10)
+
+- 기준 `56c5d01`, 브랜치 `codex/s300-harvest-isaac-20261009`. 기존 물리 실행기/실제 상태 뷰어를 별도 프로세스로 연결하는 `run_motion_live.sh` 추가. VNC `DISPLAY=:0` 화면 준비 후 시작, 완료 시 상태/접촉/HTML 저장. 새 변경의 커밋 여부는 `git status` 확인.
+- 같은 `assembly_v3`의23.5초 진입·유지·복귀: 기존120Hz 동기GUI95.304초 → 분리GUI120Hz40.388초(0.582배), **선택형60Hz23.500초(1.000배)**. full612DOF/전체충돌31,464개/자기충돌/물성/0.5mm관통기준 유지. 로딩·검사·저장시간별도.
+- 60Hz는 다른 수치 동역학이다. 같은0.1N 부하 최대변위15.011→16.095mm(+7.23%), 복원확인. reference120Hz 유지. 120Hz 분리GUI/기존headless 전체2,821표본 bit-exact,60Hz 동설정 재현도일치. 최종GUI 두실행 자기접촉0/실제자세검사PASS, 관련53테스트PASS.
+- 실행 `bash /root/docker_share/mujoko_debugging_data/20261010_145123_s300_realtime_review/run_gui.sh`; `reference`를 붙이면120Hz. 같은폴더index.html에비교/로그/실제화면. 상세 [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md), 요약 `validation/realtime_preview_20261010.json`.
+- 열린 그리퍼 진입·유지·복귀만 검증. 닫기/벨트/분리수확/새GPU병렬은 미검증, 학습제외유지. 초기런처/가상화면시작오류도보존. 원본/별도gripper V6작업은유지.
+
 ## 최신 수정: S300 팔–그리퍼 자기충돌 수정·실제 재검증 (2026-10-10)
 
 - `codex/s300-harvest-isaac-20261009`, 기준 `aad8340` 이후 수정. 코드·테스트·문서·작은 검증 JSON을 함께 커밋하며 실제 상태/영상/대형 USD는 아래 결과 폴더에 보존한다. native 로봇 자기충돌 활성화, 그리퍼 슬라이더 부모를 실제 고정 레일로 수정하고 초기 IK 자세/접근을 다시 선택했다. 목표11번 유지, 수평 대기160mm → 준비60mm → 진입100mm → 유지 → 복귀. 비인접 팔/그리퍼 충돌 제외 추가 없음.

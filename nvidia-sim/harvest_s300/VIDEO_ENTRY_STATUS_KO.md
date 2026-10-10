@@ -5,7 +5,74 @@
 커밋은 `git log -- nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md`로 확인한다.
 검증 JSON의 `uncommitted=true`는 실험 당시 코드 상태이며, 이 기록을 사후에 커밋한 것과 구분한다.
 
-## 최신 수정: 자기충돌을 켠 진입·유지·복귀 재검증
+## 최신: 화면을 보면서 실시간 진입·복귀 (2026-10-10)
+
+기준 커밋 `56c5d01`, 동일한 `assembly_v3`에서 실제 새 물리 실행을 비교했다.
+별도 프로세스의 기존 measured-pose viewer로 표시를 분리하고, **선택형 PGS60 미리보기에서
+23.5초 동작을 실제 23.500초에 완료**했다. 저장 영상의 배속 재생이 아니다.
+
+| 실행 | 물리 설정 | 동작 sim초 / wall초 | 실시간 배율 |
+|---|---|---:|---:|
+| 기존 동기 GUI | PGS64/4 · 120Hz | 23.5 / 95.304 | 0.247배 |
+| 기존 headless | PGS64/4 · 120Hz | 23.5 / 38.621 | 0.608배 |
+| 새 분리 GUI · reference | PGS64/4 · 120Hz | 23.5 / 40.388 | 0.582배 |
+| 새 분리 GUI · interactive | PGS64/4 · 60Hz | 23.5 / 23.500 | **1.000배** |
+
+로딩·사전/사후 검사·저장은 위 시간에 포함하지 않는다. 각 설정 1회 측정이며 서버 부하에 따라 달라진다.
+60Hz headless의 첫 11.5초 구간은 9.350초(1.230배)였다. GUI 실행은 `--realtime`으로
+남는 시간에만 sleep을 넣어 1배속으로 맞췄다(총 sleep 3.334초). 물리 스텝을 생략하지 않는다.
+뷰어는 VNC의 `DISPLAY=:0`에서 실행하고, 첫 실제 상태가 화면에 표시된 다음 물리를 시작한다.
+표시 갱신 상한은 15fps이며 실제 표시율은 렌더링 비용에 따라 더 낮다. 물리 주기와 별개다.
+
+**60Hz는 시간 간격을 바꾼 미리보기이며, 120Hz와 물리적으로 동일하다고 주장하지 않는다.**
+같은 0.1N 외력(+X, 1~2초)·7초 복원 시험의 최대 과실 이동은
+PGS120 15.011mm → PGS60 16.095mm(약 +7.23%), 마지막 이동은 0.0275/0.0266mm였다.
+TGS60도 비교했지만 짧은 진입 0.974배·부하 최대17.610mm로 이번 미리보기에는 채택하지 않았다.
+원래 full 식물612 DOF, 전체충돌31,464개, 마찰·강성·질량·구동게인·자기충돌은 유지했다.
+관통 중단 기준0.5mm도 유지하지만 60Hz는 검사 시간 간격이 더 크다. 빠른 접촉/닫기/벨트 이송의
+유효성까지 보증하지 않으며, 기존 120Hz reference 기본값을 바꾸지 않는다.
+
+새 120Hz 분리 GUI와 이전 headless의 전체2,821개 time/phase/command/관절/body pose는 bit-exact다.
+60Hz 분리 GUI와 같은 설정 headless의 공통691표본, 60Hz 재실행 전체1,411표본도 bit-exact다.
+최종 GUI 두 설정 모두 native 자기접촉0, 실제 자세 교차검사PASS, 파단0, 관통 중단 없음.
+60Hz 실제 진입pitch 최대0.0331°, 진입TCP높이범위0.150mm다.
+관련 기존 자동 테스트53개PASS, 문법검사 및 실제 launcher 종료코드0을 확인했다.
+
+빠른 실행(매번 새 결과 폴더, 완료 후 `index.html`과 실제 상태·접촉 저장):
+
+```bash
+bash /root/docker_share/mujoko_debugging_data/20261010_145123_s300_realtime_review/run_gui.sh
+```
+
+같은 실행기에 `reference`를 붙이면 120Hz 물리로 확인한다. 저장소 코드 직접 실행:
+
+```bash
+cd /root/farmily_tomato
+bash nvidia-sim/harvest_s300/run_motion_live.sh \
+  /root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/assembly_v3 \
+  interactive
+```
+
+일반 실행기의 프로필 생략 기본값은 `reference`다. `S300_MOTION_OUTPUT`으로 새 출력 폴더,
+`S300_DISPLAY`로 화면(기본`:0`), `S300_VIEW_SECONDS`로 표시 시간을 지정할 수 있다.
+기본 표시시간0은 완료 후에도 창을 유지한다. `physics.log`/`viewer.log`와 화면에 진행 상태가 보인다.
+런처는 자기 자식 프로세스만 정리한다. 기존 실행기·뷰어·결과 생성기를 재사용한다.
+
+결과: `/root/docker_share/mujoko_debugging_data/20261010_145123_s300_realtime_review/`.
+`live_pgs60_vnc`/`live_pgs120_vnc`가 최종 실제 VNC 비교다. 처음 `live_pgs60`은 물리는
+완료했지만 실행 중 shell 파일 수정으로 launcher 오류가 났고, `live_pgs60_final`은 상속된
+가상화면`:171`의 viewer 시작에서 멈춰 물리를 시작하지 않았다. 실패 로그를 보존하고
+실행기 오류와 물리 실패를 구분했다. 화면 번호를 명시한 후 재실행했다.
+작은 요약·코드 해시는 `validation/realtime_preview_20261010.json`에 저장한다.
+
+```text
+file:///home/rdv/docker_share/mujoko_debugging_data/20261010_145123_s300_realtime_review/index.html
+```
+
+범위는 **열린 그리퍼의 진입·유지·복귀**다. 과실 포획·분리 수확이나 GPU 병렬 확장은 이번 검증에
+포함하지 않았다. `training_eligible=false`, `harvest_success=null` 유지.
+
+## 이전 수정: 자기충돌을 켠 진입·유지·복귀 재검증
 
 사용자 지적의 그리퍼–RB5 관통을 수정했다. 새 결과는
 `/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/`이며

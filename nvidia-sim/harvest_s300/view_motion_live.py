@@ -20,6 +20,7 @@ p.add_argument('trial', type=Path)
 p.add_argument('--fps', type=float, default=10., help='wall-clock display cap only')
 p.add_argument('--seconds', type=float, default=0., help='0 leaves the window open; otherwise bounded wall time')
 p.add_argument('--camera', default='/World/HarvestCloseCamera')
+p.add_argument('--ready-file', type=Path, help='Publish display readiness after showing the first measured frame; an external launcher may then release the producer start gate')
 p.add_argument('--headless', action='store_true', help='render/capture validation without a display window')
 p.add_argument('--capture', type=Path, help='save a PNG of the final displayed measured frame')
 p.add_argument('--wait-seconds', type=float, default=60., help='wait for the producer to create its live metadata')
@@ -30,6 +31,8 @@ if a.headless and a.seconds == 0:
     p.error('--headless requires a bounded --seconds value')
 if a.capture and (a.capture.exists() or a.capture.with_suffix('.json').exists()):
     raise FileExistsError(a.capture)
+if a.ready_file and a.ready_file.exists():
+    raise FileExistsError(a.ready_file)
 deadline = time.monotonic() + a.wait_seconds
 while not (a.trial / 'live.json').is_file():
     if time.monotonic() >= deadline:
@@ -82,19 +85,33 @@ try:
     report['recorded_display_fixture'] = restore_recorded_display_fixture(stage,a.trial)
     runtime_path = a.trial / 'runtime_settings.json'
     runtime = json.loads(runtime_path.read_text()) if runtime_path.is_file() else {}
+    report['producer_physics_settings'] = {k:runtime.get(k) for k in ('hz','solver','plant_dynamics','realtime_cap')}
     report['fixture_only'] = bool(runtime.get('isolate_background') or report['recorded_display_fixture'])
     report['display_mesh_preparation'] = prepare_display_meshes(stage)
     pose_display = MeasuredPoseDisplay(stage, reader.body_paths)
     visuals = DeformationVisuals(stage, Path(reader.metadata['assembly']), reader.body_paths)
     viewport = vu.get_active_viewport()
     viewport.set_texture_resolution((960, 720))
+    if a.camera == 'entry':
+        from build_scene import camera
+        from scipy.spatial.transform import Rotation
+        snapshot = reader.read()
+        if snapshot is None:
+            raise RuntimeError('Entry camera requires an initial measured frame')
+        pose = snapshot['poses'][reader.body_paths.index('/World/ActuatedTool/fixed')]
+        manifest = json.loads((Path(reader.metadata['assembly'])/'motion_manifest.json').read_text())
+        center = (pose[:3]+np.asarray(manifest['target']['center']))/2+np.array([0.,0.,.18])
+        eye = center-Rotation.from_quat(pose[3:]).as_matrix()[:,0]*1.8+np.array([0.,0.,.30])
+        a.camera = '/World/LiveEntryCamera'
+        camera(stage,a.camera,tuple(eye),tuple(center))
     if not stage.GetPrimAtPath(a.camera):
         raise ValueError('Live camera does not exist: ' + a.camera)
     viewport.set_active_camera(a.camera)
-    window = ui.Window('Measured physics live display', width=410, height=110)
+    window = ui.Window('Measured physics live display', width=450, height=140)
     with window.frame:
         with ui.VStack():
             ui.Label('Separate viewer · measured native poses · physics remains in producer')
+            ui.Label(f"Physics: {runtime.get('solver','?')} / {runtime.get('hz','?')} Hz / {runtime.get('plant_dynamics','?')} plant")
             if report['fixture_only']:
                 ui.Label('COMPONENT FIXTURE — NOT A VALIDATED FARM HARVEST')
             status_label = ui.Label('Waiting for the first completed measured frame')
@@ -103,6 +120,9 @@ try:
     updates = 0
     render_updates = 0
     update_wall = []
+    first_running = None
+    last_notice = -float('inf')
+    ready_written = False
     started = time.monotonic()
     while app.is_running() and (not a.seconds or time.monotonic() - started < a.seconds):
         frame_start = time.monotonic()
@@ -114,12 +134,26 @@ try:
             update_wall.append(time.perf_counter() - update_start)
             last = snapshot
             updates += 1
-            status_label.text = (f"Measured t={last['time']:.4f}s · gap={last['gap']*1000:.2f} mm"
+            now = time.monotonic()
+            if first_running is None and last['time'] > 0:
+                first_running = (now,last['time'])
+            rate = ((last['time']-first_running[1])/max(now-first_running[0],1e-9)
+                    if first_running else 0.)
+            status_label.text = (f"Measured t={last['time']:.3f}s · {rate:.2f}x realtime"
                                  f" · {last['status']}")
-            print(f"[LIVE] measured t={last['time']:.4f}s {last['status']}", flush=True)
+            if now-last_notice >= 1. or last['status'] in ('completed','stopped'):
+                print(f"[LIVE] measured t={last['time']:.3f}s · {rate:.2f}x realtime · {last['status']}", flush=True)
+                last_notice = now
         timeline.stop()
         app.update()
         render_updates += 1
+        if a.ready_file and not ready_written and last is not None:
+            a.ready_file.parent.mkdir(parents=True,exist_ok=True)
+            # This is a readiness signal, not a command or physics step.
+            with a.ready_file.open('x') as stream:
+                json.dump(dict(pid=os.getpid(),model_sha256=reader.metadata['model_sha256'],
+                               measured_time_s=last['time'],physics_steps=0),stream)
+            ready_written = True
         if timeline.get_current_time() != 0.:
             raise RuntimeError('Live display timeline unexpectedly advanced')
         remaining = 1 / a.fps - (time.monotonic() - frame_start)

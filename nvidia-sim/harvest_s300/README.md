@@ -3,6 +3,13 @@
 기준 브랜치: `codex/s300-harvest-isaac-20261009` (시작점 `b890fc6`).
 기존 S300 CAD, 농장 USD, RB5 USD, 그리퍼 CAD는 수정하지 않는다.
 
+**1환경 빠른 확인:** `run_motion_live.sh ASSEMBLY interactive`는 기존 native 실행기와
+실제 상태 뷰어를 별도 프로세스로 연결한다. full 식물/전체충돌을 유지한 PGS60에서
+23.5초 진입·복귀를23.500초에 완료했다. 표시15fps 상한과 물리60Hz는 별개다.
+120Hz와 수치 응답이 달라 부하 최대 변위가 약7.23% 증가했으며 수확 검증용 기본값은 바꾸지 않았다.
+`reference`(생략 기본값)는120Hz, 이번 GUI0.582배속. 명령과 결과는
+[실시간 미리보기 기록](VIDEO_ENTRY_STATUS_KO.md)의 첫 절을 참고한다.
+
 최신 팔–그리퍼 자기관통 수정은 [VIDEO_ENTRY_STATUS_KO.md](VIDEO_ENTRY_STATUS_KO.md)의 맨 위 절을 따른다.
 자기충돌 활성화·슬라이더 부모 수정·새 대기 IK를 적용한 `20261010_142120_s300_self_collision_fix/assembly_v3`에서
 진입·유지·복귀 headless/GUI 모두 완료, 각 2,821개 실제 자세 교차 검사와 native 자기접촉 0건을 확인했다.

@@ -28,6 +28,7 @@ p.add_argument('--isolate-background',action='store_true',help='Component fixtur
 p.add_argument('--performance',choices=['baseline','optimized'],default='optimized',help='Same physical model; control USD/display/callback overhead')
 p.add_argument('--threads',type=int,default=16,help='Explicit native PhysX CPU dispatcher threads; 0 keeps installed setting for historical diagnostics')
 p.add_argument('--display-fps',type=float,default=30.,help='Wall-clock display cap; physics timestep is unchanged')
+p.add_argument('--realtime',action='store_true',help='Cap completed simulated time to 1x wall time by sleeping; never skips physics steps or changes dt')
 p.add_argument('--num-envs',type=int,default=1,help='Identical full dynamic copies, sharing immutable farm obstacles')
 p.add_argument('--replicate',action='store_true',help='Use replicated namespace also for the one-world control')
 p.add_argument('--replication-source-copy',choices=['flatten','reference'],default='flatten',help='Diagnostic USD composition variant; native equivalence must pass before scaling')
@@ -314,7 +315,7 @@ try:
         stage_metrics=actual_stage_metrics,
         native_scene_device=device_settings,
         disabled_background_colliders=isolated_count,performance=a.performance,threads=a.threads,
-        display_fps=a.display_fps,num_envs=a.num_envs,contact_backend=a.contact_backend,collision_filter=a.collision_filter,
+        display_fps=a.display_fps,realtime_cap=a.realtime,num_envs=a.num_envs,contact_backend=a.contact_backend,collision_filter=a.collision_filter,
         buffer_contact_events=a.buffer_contact_events,
         record_contact_frames=a.record_contact_frames,
         fabric_transform_output=carb.settings.get_settings().get('/physics/fabricUpdateTransformations'),
@@ -566,6 +567,10 @@ try:
             profile.checkpoint(tick,'before_app_update')
             with profile.section('app_update'):app.update()
             last_display=time.perf_counter()
+        if a.realtime:
+            remaining=current_time-(time.perf_counter()-started)
+            if remaining>0:
+                with profile.section('realtime_wait'):time.sleep(remaining)
         if tick%(a.hz*2)==0:
             elapsed=time.perf_counter()-started
             print('[MOTION] progress',round(current_time,2),'sim s /',round(elapsed,2),
