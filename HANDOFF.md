@@ -1,5 +1,17 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신 정정: S300 native stage 단위·축 및 SI 재검증 (2026-10-10)
+
+- 첫 118개 성능/수확 연결 trial의 assembly root에 `metersPerUnit`·`upAxis`가 빠져 실제 stage가 0.01m/unit·Y-up fallback으로 동작했다. 아래 이전 속도·변위·힘 기록은 역사적 수치이며 **검증된 SI 농장 성능으로 해석하지 않는다**. 같은 잘못된 stage의 bit-exact PASS도 SI 타당성 증거가 아니다. 기존 결과와 코드2964d4a는 보존했다.
+- builder가 농장 source의 metre/Z/kg metadata를 전파하도록 수정했고 native 실행 전 fail-fast 검사를 추가했다. 올바른 metadata만 씌운 wrapper는 초기 파단에 실패했으므로 원인이 단위 숫자만이라고 단정하지 않는다. 실제 schema/spec을 다시 생성한 `legal_motion_assembly_metre_z_rebuilt`를 새 기준으로 사용한다.
+- 새 full SI 모델은 235바디/612 DOF/605 활성 collider와 배경 전체 충돌을 유지한다. PGS120/64/4의 7초0.1N 부하·복원은10.5246loop초에 완료(0.665sim-s/s), 초기화·관통 통과/파단0, 목표 최대7.018mm/종료0.0104mm다. 이전 24worker7.04sim-s/s를 새 SI 처리량으로 승격하지 않는다.
+- 새 SI 독립 CPU8/24worker의 합산 처리량은5.915/7.019sim-s/s, 준비·저장 포함2.059/2.835sim-s/s다. peak RSS 합29.77/89.23GiB. full 32worker 전부 단일 SI 기준과 pose/native q/명령/접촉 bit-exact였다. 234DOF/TGS60의 별도24worker13.438sim-s/s는 바뀐 동역학이며 full 모델과 동등하지 않다.
+- 새 SI 실제 wide-open 접근은29.917sim초/49.452wall초에 목표 과실–벨트 관통0.536mm로 중단, 최대 밀림43.457mm/파단0이다. 닫기·벨트 구간까지 진행하지 못했고 수확 성공이 아니다. full SI의30mm 합성 구 대조군은40.560mm 이송했지만 D6 guide fixture이며 농장 과실 수확을 입증하지 않는다.
+- cold layer를 새로 여는 CPU namespace clone1은 full SI 기준과 pose/q/명령/12900접촉 bit-exact로 정상화됐다. GPU2는 capacity 오류 및 SDK의 readback reset을 구분·수정한 뒤 실제 자기 식물 접촉2.653mm/파단30개로 중단했고, 마지막 GPU 활성화 지연 대조도 실패했다. 기록된 cross-env 접촉0; native 원인 미확정. GPU8은 입력만 준비, **미실행**이다.
+- 최종 설치 SDK 검사는151개 중150PASS/1skip(21.031초), 최종 보고서20개 추가 검사PASS. Torch 미설치로 skip된 unsigned actor-ID 저장 검사는 별도 Python3.11/Torch에서1PASS했다. 실제 SI 접근 전체/접촉 확대 영상과 guided ball 벨트 대조 영상3개는 저장 pose 재생이며 물리 재실행 없이 전체 디코드를 통과했다. raw 로그/MP4/입력은 `20261010_s300_performance/`, 작은 검증·해시는 `nvidia-sim/harvest_s300/validation/performance_20261010.json`에 보존한다.
+- 새 SI pool/접촉/실제 접근 결과와 제외한 빠른 설정은 [PERFORMANCE_STATUS_KO.md](nvidia-sim/harvest_s300/PERFORMANCE_STATUS_KO.md)의 최신 절과 `20261010_s300_performance/index.html`에서 확인한다. 목표 포획·분리 수확 및 유효한 GPU 병렬 처리량은 아직 미확보다. 원본/실패/학습 제외를 유지한다.
+
+
 ## 최신: S300 Isaac 속도 최적화·24 CPU 환경 검증 (2026-10-10)
 
 - 브랜치 `codex/s300-harvest-isaac-20261009`. 원본 USD/CAD/실험을 보존했다. 상세 [PERFORMANCE_STATUS_KO.md](nvidia-sim/harvest_s300/PERFORMANCE_STATUS_KO.md), 코드/검증의 커밋 여부는 `git status` 확인.

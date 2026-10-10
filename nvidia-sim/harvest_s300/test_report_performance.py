@@ -16,7 +16,8 @@ class ReportTests(unittest.TestCase):
                        num_envs=envs, fixture_only=True, min_contact_separation_m=separation,
                        training_eligible=False, harvest_success=None, model_sha256='abcd')
         (path/'summary.json').write_text(json.dumps(summary))
-        (path/'runtime_settings.json').write_text(json.dumps(dict(device='cpu',plant_dynamics='full',position_iterations=64)))
+        (path/'runtime_settings.json').write_text(json.dumps(dict(device='cpu',plant_dynamics='full',position_iterations=64,
+             stage_metrics=dict(meters_per_unit=1.,up_axis='Z',kilograms_per_unit=1.))))
         (path/'native_metadata.json').write_text(json.dumps(dict(plant_dofs=['a','b'],robot_dofs=['c'],body_paths=['/body'])))
         return path
 
@@ -38,6 +39,22 @@ class ReportTests(unittest.TestCase):
             self.assertIn('failed', (root/'index.html').read_text())
             self.assertEqual(len(generate(root)['trials']),2)
 
+    def test_real_pulse_null_belt_summary_and_loaded_ball_transport(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            pulse=self.fixture(root,'pulse',True)
+            loaded=self.fixture(root,'loaded',True)
+            for folder,mode,control in ((pulse,'pulse',None),
+                                        (loaded,'belt_control',dict(transport_m=.04056))):
+                summary=json.loads((folder/'summary.json').read_text())
+                summary.update(mode=mode,belt_control=control)
+                (folder/'summary.json').write_text(json.dumps(summary))
+            rows={row['name']:row for row in generate(root)['trials']}
+            self.assertIsNone(rows['pulse']['synthetic_sphere_transport_mm'])
+            self.assertFalse(rows['pulse']['synthetic_belt_control'])
+            self.assertAlmostEqual(rows['loaded']['synthetic_sphere_transport_mm'],40.56)
+            self.assertTrue(rows['loaded']['synthetic_belt_control'])
+
     def test_cross_environment_and_group_warnings_exclude_clone_timing(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -58,6 +75,48 @@ class ReportTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 generate(root)
             self.assertEqual((root/'index.html').read_text(),'existing report')
+
+    def test_native_crash_before_physics_is_finished_failure_without_speed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'gpu_bootstrap',False)
+            (folder/'summary.json').unlink()
+            (folder/'runtime_settings.json').unlink()
+            (folder/'native_metadata.json').unlink()
+            (folder/'native_crash_python_stack.txt').write_text('app.update before physics initialization')
+            (root/'cases_results.json').write_text(json.dumps([dict(name='gpu_bootstrap',returncode=-11)]))
+            row=generate(root)['trials'][0]
+            self.assertEqual(row['status'],'runtime_nonzero_exit')
+            self.assertIsNone(row['accepted_aggregate_sim_s_per_wall_s'])
+            self.assertIn('nonzero_process_exit',row['timing_exclusion_reasons'])
+            self.assertIn('native_crash_python_stack.txt',row['files'])
+
+    def test_completed_gpu_capacity_error_is_not_valid_speed_or_collision_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'gpu_capacity',True,envs=2)
+            original=(folder/'summary.json').read_bytes()
+            (root/'gpu_capacity.log').write_text('[Error] [omni.physx.plugin] foundLostAggregatePairsCapacity needs 66371 vs 16384; simulation will miss interactions\n')
+            row=generate(root)['trials'][0]
+            self.assertTrue(row['completed'])
+            self.assertTrue(row['warnings']['missed_interactions_error'])
+            self.assertEqual(row['status'],'completed_but_native_interactions_lost')
+            self.assertFalse(row['timing_comparable'])
+            self.assertIn('native_interaction_capacity_exceeded',row['timing_exclusion_reasons'])
+            self.assertIsNone(row['accepted_aggregate_sim_s_per_wall_s'])
+            self.assertEqual((folder/'summary.json').read_bytes(),original)
+
+    def test_missing_known_reference_contacts_excludes_speed_without_zero_contact_universal_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'readback_lost',True)
+            untouched=self.fixture(root,'legitimate_no_contact',True)
+            original=(folder/'summary.json').read_bytes()
+            (root/'readback_comparison.json').write_text(json.dumps(dict(candidate=str(folder),passed=False,
+                environment_results=[dict(environment=0,contacts=dict(reference_points=5792,actual_points=0))])))
+            rows={row['name']:row for row in generate(root)['trials']}
+            self.assertFalse(rows['readback_lost']['timing_comparable'])
+            self.assertIsNone(rows['readback_lost']['accepted_aggregate_sim_s_per_wall_s'])
+            self.assertEqual(rows['readback_lost']['status'],'completed_but_native_contact_evidence_missing')
+            self.assertTrue(rows['legitimate_no_contact']['timing_comparable'])
+            self.assertEqual((folder/'summary.json').read_bytes(),original)
 
     def test_legacy_warmup_penetration_invalidates_completed_trial_without_rewriting_summary(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -83,6 +142,27 @@ class ReportTests(unittest.TestCase):
             report=generate(root);page=(root/'index.html').read_text()
             self.assertTrue(report['comparisons'][0]['diagnostic_only'])
             self.assertIn('동등성 판정 없음',page);self.assertIn('src="hz_displacement.png"',page)
+
+    def test_comparison_with_null_description_does_not_break_refresh(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.fixture(root,'completed',True)
+            (root/'native_equivalence.json').write_text(json.dumps(dict(passed=True,interpretation=None)))
+            report=generate(root)
+            self.assertTrue(report['comparisons'][0]['passed'])
+            self.assertIn('native_equivalence.json',(root/'index.html').read_text())
+
+    def test_worker_report_cannot_claim_pass_when_comparison_row_is_missing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.fixture(root,'completed',True)
+            entry=dict(completed=True,native_break_events=[],comparison=dict(passed=True,
+                environment_results=[dict(states=dict(poses_exact=True,joint_coordinates=dict(exact=True),
+                    commands_exact=True),contacts=dict(exact_order_independent=True))]))
+            (root/'workers_equivalence.json').write_text(json.dumps(dict(
+                passed=True,workers=2,scope='Matched individual SI references',rows=[entry])))
+            result=generate(root)['comparisons'][0]
+            self.assertFalse(result['passed'])
+            self.assertEqual(result['strict_pass_count'],1)
+            self.assertEqual(result['bit_exact_workers'],1)
 
     def test_minimal_cpu_worker_requires_actual_native_scene_device_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -208,6 +288,43 @@ class ReportTests(unittest.TestCase):
             row=generate(root)['trials'][0]
             self.assertFalse(row['native_device_matches_requested'])
             self.assertFalse(row['timing_comparable'])
+
+    def test_legacy_stage_unit_mismatch_keeps_raw_timing_without_SI_certification(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'legacy',True)
+            runtime=json.loads((folder/'runtime_settings.json').read_text())
+            runtime['stage_metrics']=dict(meters_per_unit=.01,up_axis='Y',kilograms_per_unit=1.)
+            (folder/'runtime_settings.json').write_text(json.dumps(runtime))
+            original=(folder/'summary.json').read_bytes()
+            row=generate(root)['trials'][0]
+            self.assertTrue(row['completed']);self.assertFalse(row['timing_comparable'])
+            self.assertIsNone(row['accepted_aggregate_sim_s_per_wall_s'])
+            self.assertEqual(row['historical_numerical_aggregate_sim_s_per_wall_s'],.5)
+            self.assertIn('legacy_stage_metrics_not_SI',row['timing_exclusion_reasons'])
+            self.assertEqual((folder/'summary.json').read_bytes(),original)
+
+    def test_source_stage_metrics_audit_requires_matching_model_hash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'source_audited',True)
+            runtime=json.loads((folder/'runtime_settings.json').read_text());runtime.pop('stage_metrics')
+            (folder/'runtime_settings.json').write_text(json.dumps(runtime))
+            audit=dict(models=[dict(model_sha256='different',meters_per_unit=1.,up_axis='Z',kilograms_per_unit=1.)])
+            (root/'stage_metrics_source_audit.json').write_text(json.dumps(audit))
+            self.assertFalse(generate(root)['trials'][0]['timing_comparable'])
+            audit['models'][0]['model_sha256']='abcd'
+            (root/'stage_metrics_source_audit.json').write_text(json.dumps(audit))
+            self.assertTrue(generate(root)['trials'][0]['timing_comparable'])
+
+    def test_front_summary_cannot_promote_named_legacy_baseline_to_SI_result(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=self.fixture(root,'legal_metre_z_rebuilt_pulse120',True)
+            generate(root)
+            self.assertIn('현재 metre/Z/kg를 확인한 결과',(root/'index.html').read_text())
+            runtime=json.loads((folder/'runtime_settings.json').read_text())
+            runtime['stage_metrics']['meters_per_unit']=.01
+            (folder/'runtime_settings.json').write_text(json.dumps(runtime))
+            generate(root)
+            self.assertIn('정상 완료한 성능 결과가 아직 없습니다',(root/'index.html').read_text())
 
 
 if __name__ == '__main__':

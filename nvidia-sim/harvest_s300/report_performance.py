@@ -52,11 +52,17 @@ def warning_evidence(log, error):
     text = '\n'.join(errors) + '\n' + (error or '')
     cuda = any(x in text.lower() for x in ('cuda error', 'misaligned address',
                                          'illegal memory access', 'device-side assert'))
+    native_problem_text='\n'.join(warnings+errors)+'\n'+(error or '')
+    lost_interactions=any(token in native_problem_text.lower() for token in (
+        'simulation will miss interactions','simulation may miss interactions',
+        'foundlostaggregatepairscapacity','dropping contacts','contact buffer overflow',
+        'patch buffer overflow'))
     def unique(items):
         # Remove timestamps and elapsed counters before grouping repeated warnings.
         return list(dict.fromkeys(re.sub(r'^.*?\[(?:Warning|Error)\]\s*', '', x) for x in items))[:12]
     return dict(warnings=len(warnings), errors=len(errors), native_physics_warnings=len(physical),
                 collision_group_warnings=groups, cuda_error=cuda,
+                missed_interactions_error=lost_interactions,
                 native_warning_examples=unique(physical), error_examples=unique(errors))
 
 
@@ -176,6 +182,36 @@ def command_option(command, option, default=None):
     return command[index+1] if index+1 < len(command) else default
 
 
+def stage_metrics_evidence(root, folder, summary, runtime):
+    """Preserve measured legacy timings without certifying incorrect SI metadata."""
+    metrics = read_json(folder/'stage_metrics.json') or runtime.get('stage_metrics')
+    source = 'captured runtime stage metrics'
+    if not metrics:
+        native_state = read_json(folder/'native_scene_state.json', {})
+        metrics = native_state.get('stage_metrics')
+    if not metrics:
+        model_hash = summary.get('model_sha256', runtime.get('source_scene_sha256'))
+        audit = read_json(root/'stage_metrics_source_audit.json', {})
+        metrics = next((model for model in audit.get('models', [])
+                        if model.get('model_sha256') == model_hash), None)
+        source = 'read-only preserved source-stage audit matched by SHA'
+    metrics = dict(metrics or {})
+    unit = metrics.get('meters_per_unit')
+    mass = metrics.get('kilograms_per_unit')
+    axis = metrics.get('up_axis')
+    known = all(value is not None for value in (unit, mass, axis))
+    valid = (known and isinstance(unit, (int, float)) and math.isfinite(unit)
+             and math.isclose(unit, 1., rel_tol=0., abs_tol=1e-12)
+             and isinstance(mass, (int, float)) and math.isfinite(mass)
+             and math.isclose(mass, 1., rel_tol=0., abs_tol=1e-12)
+             and str(axis).upper() == 'Z')
+    return dict(metrics=metrics, source=source if metrics else 'not captured or audited',
+                validated_si=bool(valid), known=known,
+                limitation=('legacy stage-unit/up-axis mismatch; numerical timings and states are preserved, '
+                            'but SI distances/forces and physically correct farm performance are not certified'
+                            if known and not valid else 'stage metrics unverified' if not known else None))
+
+
 def case_row(root, folder, campaign):
     s = read_json(folder/'summary.json', {})
     rt = read_json(folder/'runtime_settings.json', {})
@@ -189,10 +225,13 @@ def case_row(root, folder, campaign):
     cross = cross_environment_evidence(folder/'contacts.json') if envs > 1 else dict(
         checked=False, cross_environment_point_records=None, reason='one environment')
     initialization = initialization_evidence(folder,s)
+    stage_metrics = stage_metrics_evidence(root, folder, s, rt)
     if error:
         status = 'runtime_error'
     elif cancelled or campaign.get('timeout'):
         status = 'cancelled_or_timeout'
+    elif not s and campaign.get('returncode') not in (None, 0):
+        status = 'runtime_nonzero_exit'
     elif s and not s.get('completed'):
         status = s.get('stop_reason') or 'incomplete'
     elif s.get('completed'):
@@ -212,12 +251,18 @@ def case_row(root, folder, campaign):
         blockers.append('initialization_invalid')
     if warnings['cuda_error']:
         blockers.append('CUDA_runtime_error')
+    if warnings['missed_interactions_error']:
+        blockers.append('native_interaction_capacity_exceeded')
+        if s.get('completed'):
+            status='completed_but_native_interactions_lost'
     if warnings['collision_group_warnings']:
         blockers.append('collision_group_filtering_warning')
     if cross.get('cross_environment_point_records'):
         blockers.append('cross_environment_contacts')
     if campaign.get('returncode') not in (None, 0):
         blockers.append('nonzero_process_exit')
+    if not stage_metrics['validated_si']:
+        blockers.append('legacy_stage_metrics_not_SI' if stage_metrics['known'] else 'stage_metrics_unverified')
     requested_device=s.get('physics_settings',{}).get('device',rt.get('device'))
     native_scene=rt.get('native_scene_device',{})
     physics_only=bootstrap.get('physics_only','--physics-only' in command)
@@ -258,7 +303,7 @@ def case_row(root, folder, campaign):
     synthetic_belt=mode=='belt_control'
     files = {}
     for file in folder.iterdir():
-        if file.is_file() and file.suffix in ('.json', '.npz', '.mp4', '.png', '.svg'):
+        if file.is_file() and file.suffix in ('.json', '.npz', '.mp4', '.png', '.svg', '.txt'):
             files[file.name] = str(file.relative_to(root))
     for suffix in ('.log', '_resources.json'):
         file = folder.parent/(folder.name+suffix)
@@ -267,6 +312,7 @@ def case_row(root, folder, campaign):
     return dict(name=folder.name, relative_directory=str(folder.relative_to(root)),
         status=status, completed=bool(s.get('completed')),
         timing_comparable=eligible, timing_exclusion_reasons=blockers,
+        stage_metrics=stage_metrics,
         scope='component fixture; background/internal-leaf exclusions' if fixture else 'farm contacts enabled',
         fixture_only=bool(fixture), mode=mode,synthetic_belt_control=synthetic_belt,
         device=settings.get('device'), environments=envs,
@@ -293,9 +339,14 @@ def case_row(root, folder, campaign):
         loop_finished_monotonic_s=s.get('loop_finished_monotonic_s'),
         startup_and_other_s=startup_other, save_wall_s=saved, process_total_wall_s=total,
         accepted_aggregate_sim_s_per_wall_s=throughput if eligible else None,
+        historical_numerical_aggregate_sim_s_per_wall_s=throughput,
         partial_or_unvalidated_aggregate_sim_s_per_wall_s=throughput,
         target_displacement_max_mm=None if s.get('target_displacement_max_m') is None else s['target_displacement_max_m']*1000,
         target_displacement_final_mm=None if s.get('target_displacement_final_m') is None else s['target_displacement_final_m']*1000,
+        target_force_max_n=s.get('target_force_max_n'), force_metric=s.get('force_metric'),
+        native_target_detached=s.get('native_target_detached'),
+        synthetic_sphere_transport_mm=(s['belt_control']['transport_m']*1000
+            if (s.get('belt_control') or {}).get('transport_m') is not None else None),
         min_contact_separation_mm=None if separation is None else separation*1000,
         contact_events=s.get('contact_events'), break_events=len(s.get('native_break_events', [])),
         cross_environment_evidence=cross, initialization_evidence=initialization, warnings=warnings,
@@ -367,6 +418,8 @@ def parallel_group_row(root, file, raw, rows_by_directory):
             if not blockers and isinstance(raw.get('group_total_wall_s'),(int,float))
             and raw['group_total_wall_s']>0 else None),
         diagnostic_aggregate_sim_s_per_wall_s=aggregate/window if window else None,
+        diagnostic_end_to_end_aggregate_sim_s_per_wall_s=(aggregate/raw['group_total_wall_s']
+            if isinstance(raw.get('group_total_wall_s'),(int,float)) and raw['group_total_wall_s']>0 else None),
         group_total_wall_s=raw.get('group_total_wall_s'),
         group_startup_wall_s=raw.get('group_startup_wall_s'), post_loop_wall_s=raw.get('post_loop_wall_s'),
         loop_start_spread_s=max(start for start,end in times)-started if valid_times else None,
@@ -374,10 +427,43 @@ def parallel_group_row(root, file, raw, rows_by_directory):
         device=members[0]['device'] if len(signatures)==1 else None,
         hz=members[0]['hz'] if len(signatures)==1 else None,
         solver=members[0]['solver'] if len(signatures)==1 else None,
+        plant_dofs=members[0]['plant_dofs'] if len(signatures)==1 else None,
+        plant_dynamics=members[0]['plant_dynamics'] if len(signatures)==1 else None,
+        physical_variant=members[0]['physical_variant'] if len(signatures)==1 else None,
         threads_per_worker=sorted(set(row['threads'] for row in members)),
         resources=resources_value,
         resource_file=str(resource_path.relative_to(root)) if resource_path.is_file() else None,
         interpretation='Independent native worker processes; validated child loops share one measured wall window; not GPU scene cloning')
+
+
+def annotate_missing_reference_contacts(root, rows, comparison_paths):
+    """A measured loss of known contacts is not a generic zero-contact gate."""
+    by_path={str((root/row['relative_directory']).resolve()):row for row in rows}
+    for path in comparison_paths:
+        data=read_json(path,{})
+        if not isinstance(data.get('candidate'),str):
+            continue
+        row=by_path.get(str(Path(data['candidate']).resolve()))
+        if row is None:
+            continue
+        missing=[]
+        for environment in data.get('environment_results',[]):
+            contacts=environment.get('contacts',{})
+            expected=contacts.get('reference_points')
+            actual=contacts.get('actual_points')
+            if isinstance(expected,int) and expected>0 and actual==0:
+                missing.append(dict(environment=environment.get('environment'),
+                    reference_points=expected,actual_points=actual))
+        if not missing:
+            continue
+        row.setdefault('reference_contact_evidence_issues',[]).append(dict(
+            comparison_file=str(path.relative_to(root)),missing_contacts=missing))
+        row['timing_exclusion_reasons'].append('known_reference_contacts_not_recorded')
+        row['timing_exclusion_reasons']=list(dict.fromkeys(row['timing_exclusion_reasons']))
+        row['timing_comparable']=False
+        row['accepted_aggregate_sim_s_per_wall_s']=None
+        if row['completed']:
+            row['status']='completed_but_native_contact_evidence_missing'
 
 
 def relative_link(path, output):
@@ -401,6 +487,10 @@ def render_page(report, root, output):
         warning = []
         if row['warnings']['cuda_error']:
             warning.append('CUDA 오류')
+        if row['warnings']['missed_interactions_error']:
+            warning.append('native 용량 초과 · 접촉/상호작용 누락 오류')
+        if row.get('reference_contact_evidence_issues'):
+            warning.append('동일 기준 접촉이 저장되지 않음 · readback 증거 미완료')
         if row['warnings']['collision_group_warnings']:
             warning.append('collision-group 경고 '+str(row['warnings']['collision_group_warnings']))
         cross = row['cross_environment_evidence'].get('cross_environment_point_records')
@@ -412,13 +502,18 @@ def render_page(report, root, output):
             warning.append('native device 불일치')
         elif row['physics_only'] and row['native_device_matches_requested'] is None:
             warning.append('native device 미확인')
+        metrics = row['stage_metrics']['metrics']
+        if not row['stage_metrics']['validated_si']:
+            warning.append('metre/Z/kg 미검증 · 물리 성능 인증 제외')
         cells = [row['name'], row['status'], scope,
                  str(row['environments'])+' / '+str(row['plant_dofs']),
                  str(row['device'])+' / '+str(row['hz'])+'Hz / '+str(row['solver'])+' / '+str(row['contact_backend'])+' / '+str(row['collision_filter'])+' / BP:'+str(row['native_broadphase']),
+                 str(metrics.get('meters_per_unit'))+'m/u / '+str(metrics.get('up_axis'))+' up / '+str(metrics.get('kilograms_per_unit'))+'kg/u',
                  str(row['position_iterations'])+'/'+str(row['velocity_iterations']),
                  number(row['simulated_s']), number(row['loop_wall_s']),
                  number(row['startup_and_other_s'], 2), number(row['save_wall_s']),
                  number(row['accepted_aggregate_sim_s_per_wall_s']),
+                 number(row['historical_numerical_aggregate_sim_s_per_wall_s']),
                  number(row['target_displacement_max_mm']), number(row['min_contact_separation_mm']),
                  number(row['resources'].get('cpu_percent_mean'), 1),
                  number(row['resources'].get('gpu_percent_max'), 1),
@@ -431,6 +526,17 @@ def render_page(report, root, output):
         detail = '<article id="'+esc(row['name'],quote=True)+'"><h2>'+esc(row['name'])+'</h2><p>'+evidence+'</p>'
         detail += '<p>'+esc(row['scope'])+'; '+esc(', '.join(row['timing_exclusion_reasons']) or '동작 완주; 수확 성공 판정 없음')+'</p>'
         detail += '<p>모델 SHA: <code>'+esc(str(row['model_sha256']))+'</code></p>'
+        if row['synthetic_sphere_transport_mm'] is not None:
+            detail += '<p>합성 구 이송 '+number(row['synthetic_sphere_transport_mm'])+'mm (SI 확인 시); D6 guide fixture이며 농장 과실 수확 아님.</p>'
+        if row['target_force_max_n'] is not None:
+            detail += '<p>목표 과실 contact point 최대 힘 '+number(row['target_force_max_n'])+'N (SI 확인 시); '+esc(row['force_metric'] or '저장 측정량 참조')+'.</p>'
+        detail += '<details><summary>stage 단위·up-axis 및 SI 확인</summary><pre>'+esc(json.dumps(
+            row['stage_metrics'],ensure_ascii=False,indent=2))+'</pre></details>'
+        if row.get('reference_contact_evidence_issues'):
+            detail += '<p>이미 접촉이 확인된 동일 기준 실행과 달리 native contact 저장이 누락됐습니다. '
+            detail += '속도·충돌 검증에서 제외합니다. 단순히 접촉0인 모든 장면을 실패 처리하는 기준은 아닙니다.</p>'
+            detail += ' · '.join(link(issue['comparison_file'],'실제 기준 접촉 비교')
+                                  for issue in row['reference_contact_evidence_issues'])
         for filename,path in row['files'].items():
             if filename.endswith('.mp4'):
                 detail += '<video controls preload="metadata" src="'+esc(relative_link(root/path,output),quote=True)+'"></video>'
@@ -450,15 +556,19 @@ def render_page(report, root, output):
         verdict='공통 timestamp 진단 · 동등성 판정 없음' if item.get('diagnostic_only') else str(item.get('passed'))
         if item.get('total_workers') is not None:
             verdict+=' · '+str(item.get('strict_pass_count'))+'/'+str(item['total_workers'])+' worker strict trace PASS'
+            if item.get('bit_exact_workers') is not None:
+                verdict+=' · '+str(item['bit_exact_workers'])+' worker state/native contact bit-exact'
         if item.get('comparisons_total') is not None:
             verdict+=' · '+str(item.get('comparisons_passed'))+'/'+str(item['comparisons_total'])+' strict trace PASS'
         comparison.append('<li>'+link(item['file'], item['file'])+' : '+
-                          esc(verdict)+' / '+esc(item.get('interpretation', ''))+'</li>')
+                          esc(verdict)+' / '+esc(item.get('interpretation') or '')+'</li>')
     visuals=[]
     for path in report.get('visual_artifacts',[]):
         url=esc(relative_link(root/path,output),quote=True)
         body=('<video controls preload="metadata" src="'+url+'"></video>' if path.endswith('.mp4') else
               '<a href="'+url+'"><img loading="lazy" style="max-width:100%;width:960px" src="'+url+'"></a>')
+        if path == 'cpu_process_scaling.png':
+            body='<p>이 그림은 legacy .01m/Y stage의 수치적 시간 비교입니다. 올바른 SI 농장 처리량 인증이 아닙니다.</p>'+body
         visuals.append('<figure><figcaption>'+link(path,path)+'</figcaption>'+body+'</figure>')
     evidence = [link(item, item) for item in report['evidence_files']]
     groups=[]
@@ -469,6 +579,7 @@ def render_page(report, root, output):
         if group['resource_file']:
             links+=' · '+link(group['resource_file'],'동시 자원 표본')
         cells=[group['name'],str(group['jobs']),
+               str(group['plant_dynamics'])+' / '+str(group['plant_dofs'])+'DOF',
                str(group['device'])+' / '+str(group['hz'])+'Hz / '+str(group['solver']),
                '/'.join(str(x) for x in group['threads_per_worker']),
                number(group['group_startup_wall_s']),
@@ -477,6 +588,8 @@ def render_page(report, root, output):
                number(group['accepted_aggregate_sim_s_per_wall_s']),
                number(group['post_loop_wall_s']),number(group['group_total_wall_s']),
                number(group['accepted_end_to_end_aggregate_sim_s_per_wall_s']),
+               number(group['diagnostic_aggregate_sim_s_per_wall_s']),
+               number(group['diagnostic_end_to_end_aggregate_sim_s_per_wall_s']),
                number(group['loop_start_spread_s'],4),
                number(life.get('rss_gib_max'),2),number(life.get('gpu_memory_mib_max'),0),
                number(window_resources.get('cpu_percent_median'),1)+' / '+number(window_resources.get('cpu_percent_max'),1),
@@ -489,18 +602,56 @@ def render_page(report, root, output):
 동시 physics window는 최초 worker 시작부터 마지막 worker 종료까지이며, 준비·결과 저장은 별도입니다.
 RSS는 같은 시각의 모든 child 프로세스 RSS 합입니다. GPU 메모리는 장치 전체 측정값으로 렌더러와 공유 라이브러리 영향을 포함합니다.
 같은 7초 부하 시험의 병렬 처리량이며 로봇 수확 성공이나 다른 장면에서의 처리량을 입증하지 않습니다.</p><div class="scroll"><table><tr>
-<th>집단</th><th>workers</th><th>device / Hz / solver</th><th>worker당 threads</th><th>준비 s</th><th>동시 physics s</th><th>합계 sim s</th><th>합산 sim-s/s</th><th>종료·저장 s</th><th>전체 s</th><th>준비·저장 포함 sim-s/s</th><th>시작 분산 s</th><th>합계 RSS 최대 GiB</th><th>장치 GPU MiB</th><th>physics CPU 중앙/최대 %</th><th>판정</th><th>증거</th></tr>'''+''.join(groups)+'</table></div>'
+<th>집단</th><th>workers</th><th>식물 동역학 / DOF</th><th>device / Hz / solver</th><th>worker당 threads</th><th>준비 s</th><th>동시 physics s</th><th>합계 sim s</th><th>검증 SI 합산 sim-s/s</th><th>종료·저장 s</th><th>전체 s</th><th>검증 SI 전체 sim-s/s</th><th>기록 수치 loop sim-s/s · 미검증</th><th>기록 수치 전체 sim-s/s · 미검증</th><th>시작 분산 s</th><th>합계 RSS 최대 GiB</th><th>장치 GPU MiB</th><th>physics CPU 중앙/최대 %</th><th>판정</th><th>증거</th></tr>'''+''.join(groups)+'</table></div>'
     local_docs = []
     for name in ('README.md', 'MOTION_STATUS_KO.md', 'PERFORMANCE_STATUS_KO.md'):
         path = Path(__file__).parent/name
         if path.is_file():
             local_docs.append('<a href="'+esc(relative_link(path,output),quote=True)+'">'+esc(name)+'</a>')
+    current=[]
+    selected=[]
+    for name in ('legal_metre_z_rebuilt_pulse120','legal_metre_z_rebuilt_belt120_pgs64'):
+        selected.extend(row for row in report['trials'] if row['name']==name and row['timing_comparable'])
+    selected.extend(row for row in report['trials'] if row['name'].startswith('legal_metre_z_rebuilt_')
+                    and row['mode']=='pulse' and row['solver']=='TGS' and row['hz']==60
+                    and row['plant_dynamics']=='full' and row['position_iterations']==64
+                    and row['timing_comparable'])
+    for row in selected[:3]:
+        scope=('합성 구 이송 대조' if row['synthetic_belt_control'] else
+               '분리 fixture' if row['fixture_only'] else 'full 식물 부하·복원')
+        if row['solver']=='TGS':scope+=' · 수치 응답 변화'
+        current.append('<tr><td>'+link(row['relative_directory']+'/summary.json',row['name'])+'</td><td>'+scope+
+                       '</td><td>'+number(row['simulated_s'])+'</td><td>'+number(row['loop_wall_s'])+
+                       '</td><td>'+number(row['accepted_aggregate_sim_s_per_wall_s'])+
+                       '</td><td>초기화·완주·0.5mm 기준 통과</td></tr>')
+    for group in report.get('parallel_groups',[]):
+        if group['throughput_eligible'] and group['name'].startswith(('si_pool8','si_pool24')):
+            current.append('<tr><td>'+link(group['file'],group['name'])+'</td><td>full 독립 CPU '+str(group['jobs'])+
+                           'worker 부하 대조</td><td>'+number(group['sum_aggregate_simulated_s'])+
+                           '</td><td>'+number(group['measured_concurrent_physics_window_s'])+
+                           '</td><td>'+number(group['accepted_aggregate_sim_s_per_wall_s'])+
+                           '</td><td>모든 child의 SI·초기화·완주 검사 통과</td></tr>')
+    current_section=('<h2>현재 metre/Z/kg를 확인한 결과</h2><p>아래는 새로 생성한 올바른 SI 장면의 결과입니다. '
+                     '부하·이송 fixture 및 독립 worker 처리량이며 수확 성공은 별도로 확인해야 합니다.</p>'
+                     '<table><tr><th>실행</th><th>범위</th><th>합계 sim s</th><th>physics wall s</th>'
+                     '<th>검증 SI sim-s/s</th><th>조건</th></tr>'+''.join(current[:5])+'</table>'
+                     if current else '<h2>현재 SI 검증 결과</h2><p>올바른 metre/Z/kg 장면에서 정상 완료한 성능 결과가 아직 없습니다.</p>')
+    for row in report['trials']:
+        if row['name']=='legal_metre_z_rebuilt_harvest_open120' and row['stage_metrics']['validated_si']:
+            current_section+='<p><strong>새 SI 실제 접근:</strong> '+link(row['relative_directory']+'/summary.json',row['name'])
+            current_section+=' · '+number(row['simulated_s'])+'sim초 / '+number(row['loop_wall_s'])+'wall초 · '
+            current_section+=esc(row['status'])+' · 최저 separation '+number(row['min_contact_separation_mm'])+'mm · '
+            current_section+='목표 최대 밀림 '+number(row['target_displacement_max_mm'])+'mm. 닫기·벨트 실행 및 수확 성공은 확인되지 않았습니다.</p>'
     return '''<!doctype html><html lang="ko"><meta charset="utf-8">
 <meta name="generator" content="'''+SCHEMA+'''">
 <title>S300 Isaac 성능 · 전체 시도</title><style>
 body{font:16px system-ui;margin:30px;background:#141a21;color:#e6edf4}a{color:#8ed2ff}table{border-collapse:collapse;font-size:12px;white-space:nowrap}td,th{border:1px solid #43505e;padding:7px}.scroll{overflow:auto}.note{padding:18px;background:#34311e;line-height:1.6}.invalid{background:#3b2528}.valid{background:#1d3031}pre{white-space:pre-wrap;overflow-wrap:anywhere}video{width:min(100%,960px)}article{padding:16px 0;border-bottom:1px solid #43505e}code{overflow-wrap:anywhere}
 </style><h1>S300 + RB5 + V5.1 · Isaac 성능 및 실패 기록</h1>
 <p>갱신 UTC: '''+esc(report['generated_utc'])+''' · '''+str(len(report['trials']))+'''개 실행 · <a href="performance_summary.json">JSON</a> · <a href="results.csv">CSV</a></p>
+<div class="note"><strong>중요: legacy assembly root의 metersPerUnit/upAxis 누락으로 .01m/Y fallback이 적용된 실행을 발견했습니다.</strong>
+이 실행의 시간·접촉·pose 원자료는 보존하지만, SI 거리·힘과 올바른 농장 물리 성능을 입증하는 결과에서 제외합니다.
+같은 잘못된 stage 안의 bit-exact 대조는 수치 재현성 증거이며 SI 타당성을 입증하지 않습니다.
+새 metre/Z/kg 실행은 별도 output과 SHA로 구분합니다. 옛 이동·separation 열은 저장 수치 ×1000이고, SI 확인이 된 실행에서만 mm로 해석합니다.</div>
 <div class="note">완주한 분리 fixture는 정상 농장의 수확 성공이 아닙니다. 주변 충돌을 끄거나 원거리 송이의 휨을 고정한 설정은 각각 표시합니다.
 초기 관통, 환경 간 접촉, CUDA 오류, 실행 중단 및 native device 미확인 사례는 처리량 비교에서 제외합니다. 짧게 중단되어 빨라진 결과를 속도 개선으로 세지 않습니다.
 이전 실행에 초기 상태 guard가 없었던 경우 저장된 t=0 접촉을 사후 검사해 표에 표시하며, 원래 summary.json은 수정하지 않습니다.
@@ -508,8 +659,8 @@ body{font:16px system-ui;margin:30px;background:#141a21;color:#e6edf4}a{color:#8
 Tensor normal-only force와 native collider impulse는 같은 측정량이 아니며, 물리 설정 변경은 동등한 최적화가 아닙니다.
 프로파일의 callback 시간이 simulate 안에 포함될 수 있어 두 값을 합산하지 않습니다. CPU/GPU 자원값은 준비 포함 전체 프로세스, GPU 값은 장치 전체 표본입니다.
 완주 여부와 저장된 관통 지표만으로 검증된 수확 성공 또는 다른 경로의 물리 정확도를 주장하지 않습니다.</div>
-<p>'''+ ' · '.join(local_docs)+'''</p><div class="scroll"><table><tr>
-<th>실행</th><th>결과</th><th>범위</th><th>환경 / 식물 DOF</th><th>device / Hz / solver / contact / filter</th><th>solver 반복</th><th>sim s</th><th>loop s</th><th>준비·기타 s</th><th>save s</th><th>합산 sim-s/s</th><th>최대 이동 mm</th><th>최소 separation mm</th><th>전체 CPU 평균 %</th><th>장치 GPU 최대 %</th><th>RSS 최대 GiB</th><th>경고 / 오류</th><th>증거</th></tr>
+<p>'''+ ' · '.join(local_docs)+'''</p>'''+current_section+'''<h2>전체 시도 · legacy와 실패 포함</h2><div class="scroll"><table><tr>
+<th>실행</th><th>결과</th><th>범위</th><th>환경 / 식물 DOF</th><th>device / Hz / solver / contact / filter</th><th>stage metre/unit / up-axis / kg/unit</th><th>solver 반복</th><th>sim s</th><th>loop s</th><th>준비·기타 s</th><th>save s</th><th>검증 SI sim-s/s</th><th>기록 수치 sim-s/s · 미검증</th><th>최대 이동 ×1000 · SI시 mm</th><th>최소 separation ×1000 · SI시 mm</th><th>전체 CPU 평균 %</th><th>장치 GPU 최대 %</th><th>RSS 최대 GiB</th><th>경고 / 오류</th><th>증거</th></tr>
 '''+''.join(table)+'''</table></div>'''+group_section+'''<h2>상태·접촉 비교</h2><ul>'''+''.join(comparison)+'''</ul>
 <h2>환경·표시 진단</h2><p>'''+ ' · '.join(evidence)+'''</p>'''+''.join(visuals)+''.join(details)+'</html>'
 
@@ -530,7 +681,13 @@ def generate(root, output=None):
                     campaigns[str((path.parent/row['name']).relative_to(root))] = row
     folders = set(path.parent for name in ('summary.json', 'runtime_settings.json', 'native_metadata.json', 'runtime_error.json')
                   for path in root.rglob(name))
+    # A bootstrap crash can happen before any native metadata is written.
+    # Preserve campaign exits and their existing crash evidence as trial rows.
+    folders.update(root/name for name in campaigns if (root/name).is_dir())
+    folders.update(path.parent for path in root.rglob('native_crash_python_stack.txt'))
     rows = [case_row(root, folder, campaigns.get(str(folder.relative_to(root)), {})) for folder in sorted(folders)]
+    comparison_paths=sorted(set(root.glob('*comparison.json'))|set(root.glob('*equivalence.json')))
+    annotate_missing_reference_contacts(root,rows,comparison_paths)
     rows_by_directory={row['relative_directory']:row for row in rows}
     groups=[]
     for path in sorted(root.rglob('*_parallel_groups.json')):
@@ -539,11 +696,26 @@ def generate(root, output=None):
             groups.extend(parallel_group_row(root,path,raw,rows_by_directory)
                           for raw in raw_groups if isinstance(raw,dict))
     comparisons = []
-    for path in sorted(set(root.glob('*comparison.json'))|set(root.glob('*equivalence.json'))):
+    for path in comparison_paths:
         data = read_json(path, {})
         entry=dict(file=path.name, **{key:data.get(key) for key in
             ('baseline', 'candidate', 'passed', 'optimization_physics_equivalent', 'diagnostic_only', 'interpretation',
              'total_workers','strict_pass_count','strict_fail_count','comparisons_total','comparisons_passed')})
+        if isinstance(data.get('workers'),int) and isinstance(data.get('rows'),list):
+            worker_rows=data['rows']
+            entry.update(total_workers=data['workers'],
+                strict_pass_count=sum(row.get('comparison',{}).get('passed') is True for row in worker_rows),
+                strict_fail_count=sum(row.get('comparison',{}).get('passed') is not True for row in worker_rows),
+                bit_exact_workers=sum(bool(row.get('completed') and not row.get('native_break_events') and
+                    row.get('comparison',{}).get('environment_results') and all(
+                    environment.get('states',{}).get('poses_exact') and
+                    environment.get('states',{}).get('joint_coordinates',{}).get('exact') and
+                    environment.get('states',{}).get('commands_exact') and
+                    environment.get('contacts',{}).get('exact_order_independent')
+                    for environment in row['comparison']['environment_results'])) for row in worker_rows),
+                interpretation=data.get('scope'),
+                passed=bool(data['workers']>0 and len(worker_rows)==data['workers'] and all(
+                    row.get('comparison',{}).get('passed') is True for row in worker_rows)))
         if 'total_workers' in data and 'strict_pass_count' in data and 'strict_fail_count' in data:
             entry['passed']=bool(data['total_workers']>0 and data['strict_pass_count']==data['total_workers']
                                  and data['strict_fail_count']==0)
@@ -569,10 +741,13 @@ def generate(root, output=None):
         interpretation='No global speed ranking: incomplete/invalid runs excluded, physical variants and component fixtures explicit')
     (output/'performance_summary.json').write_text(json.dumps(report,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
     columns = ['name','status','timing_comparable','scope','device','physics_only','native_device_matches_requested',
+               'stage_metrics','historical_numerical_aggregate_sim_s_per_wall_s',
                'hz','solver','environments','plant_dofs','plant_dynamics',
                'position_iterations','contact_backend','collision_filter','simulated_s','aggregate_simulated_s','loop_wall_s',
                'physics_initialization_s','startup_and_other_s','save_wall_s','process_total_wall_s',
-               'accepted_aggregate_sim_s_per_wall_s','target_displacement_max_mm','min_contact_separation_mm','model_sha256']
+               'accepted_aggregate_sim_s_per_wall_s','target_displacement_max_mm','target_force_max_n',
+               'force_metric','native_target_detached','synthetic_sphere_transport_mm',
+               'min_contact_separation_mm','model_sha256']
     with (output/'results.csv').open('w',newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore')
         writer.writeheader()

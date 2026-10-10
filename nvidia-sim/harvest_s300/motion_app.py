@@ -50,6 +50,52 @@ def configure_scene_device(stage, device, scene_path='/World/PhysicsScene', *, b
     return actual
 
 
+def configure_gpu_pair_capacities(stage, capacity, scene_path='/World/PhysicsScene'):
+    """Set native GPU aggregate-pair allocation limits before scene initialization.
+
+    These two capacities reserve buffers; they do not change collision geometry,
+    contact policy, or solver parameters. Record the effective composed values so
+    an override in a stronger layer cannot silently defeat the requested limits.
+    """
+    from pxr import PhysxSchema, UsdPhysics
+    if isinstance(capacity, bool) or not isinstance(capacity, int) or not 0 < capacity <= 2**31-1:
+        raise ValueError('GPU pair capacity must be a positive integer at most 2147483647')
+    prim = stage.GetPrimAtPath(scene_path)
+    if not prim or not prim.IsA(UsdPhysics.Scene):
+        raise ValueError('Missing native physics scene: '+scene_path)
+    api = PhysxSchema.PhysxSceneAPI.Apply(prim)
+    api.CreateGpuFoundLostAggregatePairsCapacityAttr(capacity)
+    api.CreateGpuTotalAggregatePairsCapacityAttr(capacity)
+    actual = dict(scene=scene_path, requested_capacity=capacity,
+                  found_lost_aggregate_pairs_capacity=api.GetGpuFoundLostAggregatePairsCapacityAttr().Get(),
+                  total_aggregate_pairs_capacity=api.GetGpuTotalAggregatePairsCapacityAttr().Get())
+    if (actual['found_lost_aggregate_pairs_capacity'] != capacity
+            or actual['total_aggregate_pairs_capacity'] != capacity):
+        raise RuntimeError('Native GPU pair capacity mismatch: '+str(actual))
+    return actual
+
+
+def configure_contact_readback(settings, device, backend):
+    """Restore contact-backend readback after the final SDK device selection.
+
+    The SDK's CUDA device setter suppresses native readback. Collider contact
+    callbacks require it enabled, including after a cold stage reopen. Only the
+    opt-in CUDA tensor backend suppresses it; CPU always retains readback.
+    """
+    if device not in ('cpu', 'cuda:0'):
+        raise ValueError('Unsupported motion device: '+str(device))
+    if backend not in ('callback', 'tensor'):
+        raise ValueError('Unsupported motion contact backend: '+str(backend))
+    expected = device == 'cuda:0' and backend == 'tensor'
+    path = '/physics/suppressReadback'
+    settings.set_bool(path, expected)
+    actual = dict(requested_device=device, contact_backend=backend,
+                  suppress_readback=settings.get_as_bool(path))
+    if actual['suppress_readback'] != expected:
+        raise RuntimeError('Native contact readback mismatch: '+str(actual))
+    return actual
+
+
 # Reuse the official no-rendering sample's PhysX/Fabric/USD bootstrap. The sample
 # spells the loop extension omni.kit.loop; this installation provides its Isaac
 # implementation as omni.kit.loop-isaac. The existing executor also needs the

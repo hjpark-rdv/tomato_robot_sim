@@ -3,7 +3,102 @@
 2026-10-10 KST. 브랜치 `codex/s300-harvest-isaac-20261009`, 작업 시작 HEAD `b890fc6c39b752aa48236c7c1b6bc8ea15774c30`.
 이 문서는 서버에서 보존한 실제 측정 결과를 정리한다. 코드·보고서의 정확한 최종 커밋 SHA는 이 브랜치의 Git 기록으로 확인한다.
 
-**화면 갱신 때문에 물리가 멈추던 문제와 접촉 초기 상태 문제를 분리해서 해결했다. 원래 메시와 충돌체를 유지한 새 배치에서 정지·탄성 시험을 완료했고, 독립 CPU worker 24개는 합산 7.04sim-s/s를 기록했다. 각 환경은 목표 식물 한 개의 full 탄성과 주변 전체 충돌을 유지한다. GPU 병렬 성능 목표와 검증된 과실 포획·분리 수확은 아직 확보하지 못했다.**
+**중요한 수정: 첫 118개 trial의 assembly root에 `metersPerUnit`·`upAxis`가 빠져, 실제 native stage가 0.01m/unit·Y-up으로 동작했다. 해당 시간·상태·접촉 원자료와 동일 설정의 재현성 대조는 보존하지만, 올바른 SI 농장 물리나 속도 목표 달성을 입증하지 않는다.**
+
+화면 갱신 분리, 렌더러 없는 headless worker와 독립 CPU 병렬 연결은 구현했다.
+단위·축 전파와 native fail-fast를 고친 뒤 **새로 생성한 metre/Z/kg 모델**로 다음 결과를 확인했다.
+이 표의 시간은 준비·저장을 뺀 실제 physics window이며, 부하/이송 대조군의 성능이다.
+
+| 새 SI 시험 | 모델 / 설정 | 합계 sim초 / physics wall초 | 합산 sim-s/s | 결과 |
+|---|---|---:|---:|---|
+| 단일 CPU 부하·복원 | full 612 DOF / PGS64·120Hz | 7 / 10.525 | 0.665 | 초기화·완주·0.5mm 기준 통과, 파단0 |
+| 단일 CPU 합성 구 이송 | full 612 DOF / PGS64·120Hz | 5 / 8.002 | 0.625 | 30mm 구 40.560mm 이송, 최대 관통0.423mm |
+| 독립 CPU 8worker 부하·복원 | full 612 DOF / PGS64·120Hz | 56 / 9.467 | 5.915 | 8/8 완주, 동일 설정 단일 결과와 bit-exact |
+| 독립 CPU 24worker 부하·복원 | full 612 DOF / PGS64·120Hz | 168 / 23.935 | 7.019 | 24/24 완주, 동일 설정 단일 결과와 bit-exact |
+| 별도 빠른 24worker 진단 | 목표 송이만 234 DOF / TGS64·60Hz | 168 / 12.502 | 13.438 | 24/24 완주, 같은 변경 설정 내 bit-exact; full 모델과 동등하지 않음 |
+
+**단일 full PGS120은 아직 실시간보다 느리고, 실제 과실 수확 성공은 없다.**
+새 SI 실제 wide-open 접근은 29.917sim초/49.452wall초에 목표 과실–벨트 관통0.536mm로 중단됐다.
+목표 최대 변위43.457mm, native 파단0이며 닫기·벨트 단계에 도달하지 않았다.
+원래 충돌체·마찰·질량·강성·0.5mm 기준을 바꿔 성공시키지 않았다.
+GPU1환경의 full 3초 부하는43.906wall초로 느렸고, 대규모 GPU 병렬 성능 목표는 미달이다.
+
+새 SI 실제 저장 상태 영상은 다음 세 개다. 물리를 다시 실행하지 않고 기록된 바디 자세를 표시했다.
+
+- [실제 접근 · 전체 시점 · 46프레임/4배속](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_metre_z_rebuilt_harvest_open120/actual_si_motion.mp4)
+- [같은 접근 · 접촉 확대 시점 · 46프레임/4배속](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_metre_z_rebuilt_harvest_open120/actual_si_contact.mp4)
+- [합성 구 벨트 대조 · 입구 정면 · 26프레임/2배속](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_metre_z_rebuilt_belt60_tgs64/actual_si_belt_control.mp4)
+
+세 MP4의 전체 ffmpeg 디코드와 프레임 수를 확인했다. 접근은 관통 중단 영상이고, 벨트 영상은 guided ball 시험이며 수확 성공 영상이 아니다.
+증거: [SI 영상 검사](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_video_validation.json),
+[접촉 시점 영상 검사](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_contact_video_validation.json).
+
+새 baseline SHA는 `b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44`다.
+235바디/612자유도/605 활성 collider와 배경 전체 충돌을 유지한다. 목표 식물 한 개가 full 탄성이며 106송이 전체를 동시 탄성화한 시험은 아니다.
+metadata만 덮은 wrapper와 일부 namespace 복제는 초기 파단에 실패했다. 실제 root specs를 다시 만든 baseline은 정상이다.
+동일 source의 수치 속성·transform 보존만으로 native composition/cooking 차이를 배제할 수 없어 정확한 원인은 미확정이다.
+추가 대조에서 layer stack을 저장하고 새로 열어 native에 다시 등록한 CPU namespace 복제1개는 full612 DOF로7초를 완료했다.
+SI 단일 기준과 pose·native q·명령 및12900개 접촉이 bit-exact였다. 이1개 대조로 GPU/다중 namespace 동등성까지 확정하지 않는다.
+증거: [cold clone 단일 대조](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_cold_clone1_comparison.json).
+
+아래 1~6절의 이전 표는 metadata 오류가 있던 **역사적 수치 기록**이다. 옛 `m/mm/N`를 검증된 SI 값으로 해석하지 않는다.
+옛 24worker의7.04sim-s/s 및 bit-exact 대조는 새 SI 처리량 인증이 아니며, 위 표는 새 output의 별도 재검증 결과다.
+
+## 새 SI 결과의 범위와 자원 비용
+
+full PGS120 부하·복원은 목표 최대7.018mm/종료0.0104mm, 파단0, 최소 separation +0.1822mm였다.
+8worker는 준비15.214초 + physics9.467초 + 종료·저장2.517초, 전체27.201초다.
+24worker는 준비28.950초 + physics23.935초 + 종료·저장6.363초, 전체59.252초다.
+준비·저장 포함 처리량은 각각2.059/2.835sim-s/s다. 상주 worker 재사용의 처리량은 아직 측정하지 않았다.
+동시 RSS 최대는8worker29.77GiB,24worker89.23GiB다. RSS 합에는 공유 페이지가 중복 집계될 수 있다.
+physics CPU 표본 중앙값은 각각2932.1%/4358.35%(100%=1코어), 장치 메모리 최대2885/8254MiB였다.
+24개는8개 대비 loop 처리량18.7% 증가에 약3배 RSS가 필요해 기본8개부터 시작하는 것이 합리적이다.
+그림: [새 SI 설정의 처리량·메모리](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_cpu_process_scaling.png).
+
+새56개 worker를 각 설정의 단일 기준과 대조했다. full 32개는248바디×841시점,
+목표 송이234DOF 진단24개는 각각의 실제 body inventory를 사용했다.
+저장된 모든 pose·native 로봇 q·명령·timestamp와 order-independent native contact manifold가 bit-exact였고 파단0이다.
+full과234DOF 사이의 동등성 시험이 아니다. 실제 조작/수확의 worker 동등성도 이7초 외력 시험에 포함되지 않는다.
+증거: [새 SI worker 대조](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_cpu_worker_equivalence.json),
+[full 단일 기준](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_metre_z_rebuilt_pulse120/summary.json),
+[8worker](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_pool8/metre_z_pool8_cases_parallel_groups.json),
+[24worker](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_pool24/metre_z_pool24_cases_parallel_groups.json).
+
+더 빠른 설정은 다음과 같이 구분한다. full TGS64/60은7초 부하를6.929초,5초 합성 구 이송을5.023초에 완료했다.
+목표 최대 부하 변위11.565mm로 PGS120의7.018mm와 달라서 같은 물리의 속도 개선이라고 부르지 않는다.
+목표 송이만234DOF로 둔 TGS64/60은 단일7초/4.949초와24worker13.438sim-s/s다.
+형상과 고정 배경 충돌은 남지만 활성 줄기/다른 송이 동역학 및 solver/Hz가 바뀐 진단이다.
+그 설정의30mm 구 이송은5초/3.672초,43.251mm 이송, 최대 관통0.123mm였다.
+234DOF pool의 준비·저장 포함 처리량은3.442sim-s/s, peak RSS89.20GiB다.
+큰 USD/native 준비 비용은 DOF만 줄여도 사라지지 않았다.
+PGS16/32는 부하 시험만 빨랐고 loaded-belt 접촉에서 각각0.508/0.50036mm 관통으로 중단돼 이송 설정에서 제외했다.
+합성 구에는 D6 guide와 gravity-disabled 조건이 있으므로 농장 과실 포획·꼭지 분리 수확을 입증하지 않는다.
+
+정적 배경 메시를 원래 모든 삼각형·재질·세계 위치를 보존하며 합친 opt-in 모델도 시험했다.
+CPU7초/10.620초, GPU3초/43.695초로 baseline10.525/43.906초 대비 명확한 개선이 없어 기본 최적화로 채택하지 않았다.
+triangle 일치만으로 native cooked shape·자동 contact-offset 동등성을 보증하지 않는다.
+다만 이번 CPU7초 대조의248바디×841시점/9개 로봇 q·명령/12900접촉점과 GPU3초 대조의 실제 pose/q·명령/native 접촉은 각 장치 내에서 bit-exact였다.
+composed source 모델 SHA가 의도적으로 달라서 strict comparator의 전체 `passed=false`는 그대로 보존한다. SHA 검사를 완화해 전체 PASS로 바꾸지 않았다.
+CPU compiled248바디의 mass/COM/inertia/material hash도 같았다. 다른 경로나 모든 cooked shape 동등성으로 확장하지 않는다.
+증거: [source 삼각형·재질·좌표 보존](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/consolidated_background_metre_z_direct_specs/consolidation_audit.json),
+[CPU native 대조](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/consolidation_native_validation/README.md),
+[GPU native 대조](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_gpu_consolidation_comparison.json).
+원래 source와 모든 실패를 보존한다.
+
+GPU namespace 복제는 CPU 독립 worker와 별도다. CPU cold clone1은7초/10.953초와12900접촉을 정상 완료했다.
+GPU2 regular app은 `app.update`에서 physics 시작 전에 native crash가 났으며, 데이터/IK 실패로 집계하지 않는다.
+minimal app의 첫 GPU2 실행은 `completed=true`였지만 PhysX aggregate-pair capacity 오류가 있어 상호작용이 누락될 수 있었다.
+allocation만131072로 늘린 대조는 그 오류가 없었으나, 동일 GPU1 기준의5792접촉점이 환경당0개로 저장돼 유효한 충돌/확장 속도 증거에서 제외했다.
+설치 SDK의 두 번째 `set_device(cuda)`가 `suppressReadback`을 다시 켜는 실제 원인을 찾아 마지막 device 설정 뒤 readback을 복구했다.
+수정 후 실제 접촉146개를 읽었지만0.016667sim초에 각 환경의15개 과실 연결이 파단(합계30),
+자기 송이 Peduncle_3 ↔ 자기 주줄기/leaf Appendage_220_3 관통2.653mm로 중단됐다.
+GPU 활성화를 cold 재열기 뒤로 늦춘 마지막 lifecycle 대조도 같았다. 기록된 환경 간 접촉은0이다.
+이는 환경 간 충돌 혼선이 확인된 결과가 아니며, 최종 native 제약/파단 원인은 미확정이다.
+0접촉 자체를 모든 장면의 실패 기준으로 사용하지 않고 **같은 기준 실행에서 확인된 접촉의 누락**과 실제 코드 원인으로 판정했다.
+pose 차이1.006μm는 기존 strict 대조에 그대로 남겼으며 이 작은 차이만으로 물리 invalid를 선언하지 않았다.
+**GPU8 입력은 준비했지만 실행하지 않았다.** GPU2 invalid 중단을 throughput로 쓰지 않았고 규모만 늘리지 않았다.
+증거: [실제 GPU2 네 대조와 한계](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_gpu_cold_clone_diagnostic.json),
+[동일 GPU 기준의 저장 접촉 누락](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/si_gpu2_capacity_comparison.json).
 
 최신 원자료와 모든 실패를 포함한 표:
 
@@ -12,7 +107,7 @@
 - 수치·코드 해시: [performance_summary.json](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/performance_summary.json), [results.csv](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/results.csv).
 - 이전 수확 연결 결과: [MOTION_STATUS_KO.md](/root/farmily_tomato/nvidia-sim/harvest_s300/MOTION_STATUS_KO.md).
 
-## 1. 실제 농장 초기 상태를 확보했다
+## 1. legacy 배치와 source 보존 검사
 
 원래 `assembly_v5`는 활성 잎과 주변 식물이 이미 겹쳐 첫 스텝에서 중단됐다. 이 중단 시간으로 농장 처리 속도를 비교하지 않았다.
 잎/과실/가지 충돌체를 지우거나 관통 기준을 높이는 대신 별도 source overlay를 만들었다.
@@ -41,7 +136,7 @@
 최대 과실 변위 3.694mm, 종료 변위 0.424mm, 최소 접촉 separation +0.1635mm, 파단 0이다.
 초기 과도 응답을 포함한 값이며, 로봇이 수확 자세에 도달한 결과는 아니다.
 
-## 2. 원형을 유지한 탄성 시험과 Hz 비교
+## 2. legacy 수치 탄성 시험과 Hz 비교
 
 같은 새 배치, full 식물, 모든 배경 충돌을 켜고 목표 과실에 world +X 0.1N을 1~2초 동안 가한 뒤 제거했다.
 외력은 native rigid body force다. 로봇 접촉으로 이 힘을 만들어낸 수확 시험은 아니다.
@@ -62,7 +157,7 @@ authored 세계 기준으로 보면 세 실행 모두 원래 목표 중심 가�
 각자 첫 상태를 뺀 이동 차이는 3.814/16.161mm다. 세계 기준과 자체 초기 기준을 모두 보존했고,
 서로 다른 Hz를 단일 tolerance로 PASS/FAIL시키지 않았다. 초기 중력을 중립화한 새 비교에서 하중 응답을 따로 확인한다.
 이를 동일 물리의 속도 개선이나 모든 수확 접촉에 쓸 수 있는 기본 설정으로 채택하지 않았다.
-현재 동등성 회귀 기준은 240Hz/PGS64/4/armature0.0005다.
+이전 수치 회귀 기준은 legacy 240Hz/PGS64/4/armature0.0005였으며, 올바른 SI 모델의 기준은 재검증이 필요하다.
 
 비교 그림: [두 초기 기준을 분리한 목표 변위](/root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_hz_target_displacement.png).
 
@@ -318,16 +413,16 @@ raw CAD local bbox만으로 중앙 지지 폭을 단정하지 않았다. 좌우 
 실패한 첫 렌더 폴더/로그는 보존한다. 별도 session fixture의 xformOp가 root edit와 충돌하던 표시 오류를
 session layer 작성으로 수정했고, 실제 렌더에서 재확인했다.
 
-## 재현 및 표시
+## 재현 및 표시 · 새 SI 기준
 
-농장 전체 충돌을 유지한 짧은 탄성 검사를 새 output에 실행한다. 아래 명령은 수확 시험이 아니다.
+정상 완료한 metre/Z/kg 기준 모델로 같은7초 부하 진단을 새 output에 실행한다. 수확 시험은 아니며 새 실행의 초기화·파단·관통 기록도 확인한다.
 
 ```bash
 cd /root/farmily_tomato
 motion_out="/root/docker_share/mujoko_debugging_data/$(date +%Y%m%d_%H%M%S)_s300_full_pulse"
 DISPLAY=:0 OMNI_KIT_ALLOW_ROOT=1 /root/isaac-sim-6.1.0/python.sh --no-ros-env -u \
   nvidia-sim/harvest_s300/run_motion.py \
-  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_motion_assembly \
+  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_motion_assembly_metre_z_rebuilt \
   --output "$motion_out" --mode pulse --seconds 7 --pulse-force-n 0.1 \
   --headless --physics-only --device cpu --hz 120 --threads 2 --performance optimized \
   --gravity-neutral-warmup --armature-setup authored --buffer-contact-events \
@@ -348,21 +443,20 @@ DISPLAY=:0 OMNI_KIT_ALLOW_ROOT=1 /root/isaac-sim-6.1.0/python.sh --no-ros-env -u
 기존 완료 결과를 열어도 저장된 최신 실제 상태가 나타난다. 화면을 회전해도 물리를 다시 계산하지 않는다.
 별도 viewer의 concurrent GPU 비용은 아직 비교하지 않았으므로 성능 측정은 viewer를 끄고 순차 실행한다.
 
-위 120Hz 명령은 같은 부하 비교에서 실측한 CPU worker 설정이다. 240Hz가 기존 물리 회귀 기준이며,
-120Hz를 모든 실제 조작에 충분한 정확도의 universal preset으로 선언하지 않는다.
-같은 비교를 240Hz로 하려면 새 output에서 `--hz 240`으로 바꾼다.
-
-검증한 8worker 부하 시험을 새 폴더에 반복하려면 저장한 cases를 기존 controller로 재사용한다.
-각 worker가 다른 열매를 수확하는 명령이 아니라 독립 장면 8개의 동일 부하 대조다.
+위 PGS120/full의 새 SI 단일 기준은 정상 완료했다. 독립 CPU8/24worker도 같은 source에서 검증했다.
+기존 controller를 그대로 사용해8worker 대조를 재현하는 명령은 다음과 같다.
+controller Python은 실제 측정에 사용한 `psutil` 설치 환경이며 native child는 기존6.1 `python.sh`로 실행한다.
 
 ```bash
 cd /root/farmily_tomato
-pool_out="/root/docker_share/mujoko_debugging_data/$(date +%Y%m%d_%H%M%S)_s300_cpu_pool8"
+pool_out="/root/docker_share/mujoko_debugging_data/$(date +%Y%m%d_%H%M%S)_s300_si_pool8"
 /root/isaaclab_env/bin/python nvidia-sim/harvest_s300/benchmark_motion.py \
-  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_motion_assembly \
-  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/pool8_neutral120_cases.json \
-  --output "$pool_out" --jobs 8 --timeout 240
+  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/legal_motion_assembly_metre_z_rebuilt \
+  /root/docker_share/mujoko_debugging_data/20261010_s300_performance/metre_z_pool8_cases.json \
+  --output "$pool_out" --jobs 8 --timeout 300
 ```
+
+입력/대형 source 자산은 NAS 보존본이 필요하다. 이 명령도 같은 외력 시험이며 여러 타깃 수확을 자동 반복하는 명령은 아니다.
 
 결과 표만 갱신하려면 물리를 실행하지 않는 기존 보고서 생성기를 쓴다.
 
@@ -373,15 +467,16 @@ pool_out="/root/docker_share/mujoko_debugging_data/$(date +%Y%m%d_%H%M%S)_s300_c
 
 ## 검증과 남은 일
 
-최종 설치 SDK 묶음은 120개 테스트를 실행해 119개 통과, Torch 없는 interpreter의 GPU tensor test 1개 skip했다.
-로그는 원자료 루트의 `offline_tests_final_complete_sdk.log`다.
+최종 설치 SDK 묶음은151개 테스트를21.031초에 실행해150개 통과, Torch 없는 interpreter의 unsigned actor-ID tensor storage 검사1개 skip했다.
+로그는 원자료 루트의 `offline_tests_si_final_sdk_v2.log`다. 최종 crash-folder 보고서 변경은 SDK의 보고서20개 검사로 추가 확인했다(`offline_tests_si_final_report_sdk.log`,20PASS/0.122초).
 표시 schema/정점/notice, 저장 상태·접촉 및 공통 시점, mmap/parent 축 변환/session fixture,
 보고서의 초기화/device/중첩 병렬 집단, app bootstrap/device와 controller 검사를 포함한다.
-별도 Torch GPU 실행은 이 offline skip으로 통과했다고 해석하지 않는다.
+skip된 동일 검사는 설치된 Python3.11/Torch 환경에서 별도로1개 통과했다(`offline_torch_contact_id_test.log`).
+이는 접촉 actor-ID 저장의 offline 회귀시험이며 실제 GPU 물리 성공이나 SDK151개 전부 통과라는 뜻은 아니다.
 usd-core 환경의 PhysxSchema import 실패를 물리 실행 실패로 집계하지 않는다.
 
 우선 full 장면의 정상 시작과 실제 cooked contact를 기준으로 준비 경로·중앙 진입을 개선한다.
-8worker CPU 병렬 운영은 현재 측정에서 메모리 대비 효율이 좋으며, 16/24worker는 남는 메모리를 보고 선택한다.
-상주 worker 재사용과 실제 조작의 동등성은 다음 검증이다. GPU cloning은 초기화/제약을 먼저 해결해야 한다.
+새 SI full8worker는24worker보다 메모리 대비 효율이 좋아 기본8개부터 시작한다. 새16worker 측정은 없으며 옛16worker 수치를 SI 결과로 승격하지 않는다.
+상주 worker 재사용과 실제 조작의 동등성은 다음 검증이다. cold layer 재로딩 CPU1복제는 정상화됐으나 GPU2는 위 대조에서 실제 관통·파단으로 중단했고 GPU8은 실행하지 않았다.
 모든 collider가 켜진 상태로 도달·포획을 검증하기 전에는 새로운 RL/대규모 수집을 시작하지 않는다.
 이번 수치만으로 싱글 환경 실시간 수확과 대규모 GPU 자동수확 목표가 달성됐다고 선언하지 않는다.

@@ -16,7 +16,7 @@ p.add_argument('--mode',choices=['idle','jaw','pulse','belt_control','harvest'],
 p.add_argument('--pulse-force-n',type=float,default=.1,help='Diagnostic world +X force, 1..2 seconds, then release')
 p.add_argument('--seconds',type=float,default=0.)
 p.add_argument('--headless',action='store_true');p.add_argument('--hz',type=int,default=240)
-p.add_argument('--physics-only',action='store_true',help='CPU worker: official minimal native bootstrap without RTX renderer; display runs separately')
+p.add_argument('--physics-only',action='store_true',help='Headless worker: official minimal native bootstrap without RTX renderer; CPU/CUDA equivalence must be validated for the selected model')
 p.add_argument('--device',choices=['cpu','cuda:0'],default='cpu')
 p.add_argument('--broadphase',choices=['auto','MBP','SAP','GPU'],default='auto',help='Independent broadphase diagnostic; auto retains CPU MBP / GPU defaults; solver device remains unchanged')
 p.add_argument('--preparation',choices=['direct','fold_then_turn','low_turn_then_lift','tight_fold_then_turn','tight_fold_open_approach'],default='fold_then_turn')
@@ -28,6 +28,8 @@ p.add_argument('--num-envs',type=int,default=1,help='Identical full dynamic copi
 p.add_argument('--replicate',action='store_true',help='Use replicated namespace also for the one-world control')
 p.add_argument('--replication-source-copy',choices=['flatten','reference'],default='flatten',help='Diagnostic USD composition variant; native equivalence must pass before scaling')
 p.add_argument('--replication-update-boundary',action='store_true',help='Flush pending Kit USD notices once after copying roots, before native initialization')
+p.add_argument('--replication-persist-layer-stack',action='store_true',help='Bounded clone diagnostic: export composed opinions to a new USDC and reopen before native initialization, without carrying GPU Cloner callbacks across stages')
+p.add_argument('--replication-defer-gpu-bootstrap',action='store_true',help='Cold CUDA clone control: retain CPU/MBP and Fabric off through stage reopen, then register the requested GPU scene')
 p.add_argument('--contact-backend',choices=['callback','tensor'],default='callback',help='Tensor sensor path needs actor-level/contact equivalence validation')
 p.add_argument('--buffer-contact-events',action='store_true',help='Preserve per-step native guard; format raw callback contact evidence after measured loop')
 p.add_argument('--record-contact-frames',action='store_true',help='Buffered diagnostic: save native world contact positions/normals for actual collider support inspection')
@@ -35,6 +37,7 @@ p.add_argument('--collision-filter',choices=['pairs','groups'],default='pairs',h
 p.add_argument('--position-iterations',type=int,default=64,help='Explicit solver convergence variant; validate contact/load/recovery before adopting')
 p.add_argument('--velocity-iterations',type=int,default=4)
 p.add_argument('--gpu-partitions',type=int,default=1,help='Native articulation GPU partitions; recorded explicitly for correctness/scaling checks')
+p.add_argument('--gpu-pair-capacity',type=int,default=16384,help='Found/lost and total aggregate-pair allocation only; raise on native capacity errors and revalidate contacts')
 p.add_argument('--solver',choices=['PGS','TGS'],default='PGS',help='Controlled native solver comparison; validate before adopting')
 p.add_argument('--armature-setup',choices=['refresh','authored'],default='refresh',help='Authored validates the pre-warmup armature without a redundant runtime setter')
 p.add_argument('--gravity-neutral-warmup',action='store_true',help='Initialize at authored rest under zero gravity, restore source gravity after fixed preload and before trial')
@@ -46,8 +49,14 @@ p.add_argument('--publish-live',action='store_true',help='Publish latest measure
 p.add_argument('--live-fps',type=float,default=10.,help='Latest-frame publication cap in wall time')
 p.add_argument('--start-gate',type=Path,help='CPU pool diagnostic: publish ready.json and await the controller barrier')
 p.add_argument('--gate-timeout',type=float,default=180.)
-a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
-if a.physics_only and a.device!='cpu':p.error('--physics-only is restricted to the validated CPU worker scope')
+a=p.parse_args()
+if not 1<=a.gpu_pair_capacity<=2147483647:
+    p.error('--gpu-pair-capacity must be 1..2147483647')
+if a.replication_persist_layer_stack and (not a.replicate or not 1<=a.num_envs<=8):
+    p.error('--replication-persist-layer-stack requires --replicate and 1..8 environments')
+if a.replication_defer_gpu_bootstrap and (not a.replication_persist_layer_stack or a.device!='cuda:0'):
+    p.error('--replication-defer-gpu-bootstrap requires CUDA and --replication-persist-layer-stack')
+a.output.mkdir(parents=True,exist_ok=False)
 code_dir=a.output/'code';code_dir.mkdir()
 code_hashes={}
 for source in Path(__file__).parent.glob('*.py'):
@@ -84,6 +93,19 @@ try:
     if sha(scene)!=manifest['scene_sha256']:raise ValueError('Scene hash mismatch')
     if not omni.usd.get_context().open_stage(str(scene.resolve())):raise RuntimeError('Stage open failed')
     stage=omni.usd.get_context().get_stage()
+    from motion_stage_metrics import stage_metrics,require_motion_units
+    actual_stage_metrics=stage_metrics(stage)
+    (a.output/'stage_metrics.json').write_text(json.dumps(actual_stage_metrics,indent=2))
+    require_motion_units(stage)
+    from motion_app import configure_scene_device
+    bootstrap_device='cpu' if a.replication_defer_gpu_bootstrap else a.device
+    bootstrap_broadphase='MBP' if a.replication_defer_gpu_bootstrap else a.broadphase
+    if a.replication_defer_gpu_bootstrap:
+        # The source itself authors GPU dynamics. Switch before any app.update,
+        # and do not carry old-stage Fabric state into the reopened clone.
+        sim.set_default_physics_scene('/World/PhysicsScene')
+        sim.set_device('cpu');sim.enable_fabric(False)
+        configure_scene_device(stage,'cpu',broadphase='MBP')
     if a.performance=='optimized':
         from motion_visuals import prepare_display_meshes
         (a.output/'display_schema_cleanup.json').write_text(json.dumps(prepare_display_meshes(stage),indent=2))
@@ -149,12 +171,11 @@ try:
     # Otherwise a minimal app can silently create a second /PhysicsScene and
     # apply dt/device to that empty scene rather than the farm's actual scene.
     sim.set_default_physics_scene('/World/PhysicsScene')
-    sim.set_device(a.device);sim.set_physics_dt(1/a.hz);sim.enable_fabric(True)
+    sim.set_device(bootstrap_device);sim.set_physics_dt(1/a.hz);sim.enable_fabric(not a.replication_defer_gpu_bootstrap)
     # The minimal worker may not yet have SimulationManager's stage-event cache.
     # set_device() then changes tensor readback but misses the authored GPU scene.
     # Enforce the requested native engine on the actual composed physics scene.
-    from motion_app import configure_scene_device
-    device_settings=configure_scene_device(stage,a.device,broadphase=a.broadphase)
+    device_settings=configure_scene_device(stage,bootstrap_device,broadphase=bootstrap_broadphase)
     # Same native contact-report path as the existing GPU dataset runner.
     # GPU dynamics stays enabled; CPU readback is needed for collider callbacks.
     carb.settings.get_settings().set_bool('/physics/suppressReadback',a.contact_backend=='tensor' and a.device.startswith('cuda'))
@@ -173,8 +194,8 @@ try:
             carb.settings.get_settings().set_bool('/physics/fabricUpdateVelocities',False)
     # Allocation only: prevent silent missed broad-phase pairs in this dense farm.
     scene_api=PhysxSchema.PhysxSceneAPI(stage.GetPrimAtPath('/World/PhysicsScene'))
-    scene_api.CreateGpuFoundLostAggregatePairsCapacityAttr(16384)
-    scene_api.CreateGpuTotalAggregatePairsCapacityAttr(16384)
+    from motion_app import configure_gpu_pair_capacities
+    pair_allocation=configure_gpu_pair_capacities(stage,a.gpu_pair_capacity)
     scene_api.CreateGpuMaxNumPartitionsAttr(a.gpu_partitions)
     scene_api.CreateSolverTypeAttr(a.solver)
     events=[];step_events=[];current_time=0.;phase='idle'
@@ -206,12 +227,10 @@ try:
                     events.append(e);step_events.append(e)
         profile.total['contact_callback']+=time.perf_counter()-contact_started
         profile.count['contact_callback']+=1
-    sub=get_physx_simulation_interface().subscribe_contact_report_events(contact) if a.contact_backend=='callback' else None
     breaks=[]
     def on_event(event):
         if event.type==int(SimulationEvent.JOINT_BREAK):
             breaks.append(dict(t=current_time,phase=phase,joint=str(PhysicsSchemaTools.decodeSdfPath(*event.payload['jointPath']))))
-    break_sub=get_physx_interface().get_simulation_event_stream_v2().create_subscription_to_pop(on_event)
     for prim in stage.Traverse():
         if prim.HasAPI(UsdPhysics.RigidBodyAPI):PhysxSchema.PhysxContactReportAPI.Apply(prim).CreateThresholdAttr(0.)
         if prim.HasAPI(UsdPhysics.ArticulationRootAPI):
@@ -222,15 +241,42 @@ try:
             PhysxSchema.PhysxJointAPI.Apply(prim).CreateArmatureAttr(.0005)
     if a.num_envs>1 or a.replicate:
         from motion_replication import replicate_motion
-        replication=replicate_motion(stage,manifest,a.num_envs,device=a.device,source_copy=a.replication_source_copy)
+        replication=replicate_motion(stage,manifest,a.num_envs,device=a.device,source_copy=a.replication_source_copy,
+                                     native_replication=not a.replication_persist_layer_stack)
         envs=replication['environments']
         (a.output/'replication.json').write_text(json.dumps(replication,indent=2))
         if a.replication_update_boundary:app.update()
+    materialized=None
+    if a.replication_persist_layer_stack:
+        from motion_materialize import materialize_replication_stage
+        materialized=materialize_replication_stage(stage,a.output/'materialized_clone.usdc',replication,device=a.device)
+        if not omni.usd.get_context().open_stage(materialized['file']):
+            raise RuntimeError('Materialized clone stage open failed')
+        for _ in range(5):app.update()
+        stage=omni.usd.get_context().get_stage()
+        actual_stage_metrics=require_motion_units(stage)
+        # Stage OPENED resets SimulationManager caches/device/backend. Rebind
+        # all native settings and USD handles; register callbacks only below.
+        sim.set_default_physics_scene('/World/PhysicsScene')
+        sim.set_device(a.device);sim.set_physics_dt(1/a.hz);sim.enable_fabric(True)
+        device_settings=configure_scene_device(stage,a.device,broadphase=a.broadphase)
+        sim.set_backend('torch')
+        if a.threads:get_physx_interface().set_thread_count(a.threads)
+        scene_api=PhysxSchema.PhysxSceneAPI(stage.GetPrimAtPath('/World/PhysicsScene'))
+    # set_device(cuda) re-enables suppressReadback. Restore the requested
+    # evidence backend after the final device registration, including reopen.
+    from motion_app import configure_contact_readback
+    contact_readback=configure_contact_readback(carb.settings.get_settings(),a.device,a.contact_backend)
     # Effective settings are recorded separately from the immutable assembly.
     (a.output/'runtime_settings.json').write_text(json.dumps(dict(hz=a.hz,solver=a.solver,armature_setup=a.armature_setup,
         gravity_neutral_warmup=a.gravity_neutral_warmup,
-        plant_armature=.0005,aggregate_pair_capacities=16384,initialization='armature authored before warmup',
+        plant_armature=.0005,aggregate_pair_capacities=a.gpu_pair_capacity,initialization='armature authored before warmup',
+        pair_allocation=pair_allocation,
         source_scene_sha256=sha(scene),device=a.device,isolate_background=a.isolate_background,
+        materialized_clone=materialized,
+        replication_deferred_gpu_bootstrap=a.replication_defer_gpu_bootstrap,
+        contact_readback=contact_readback,
+        stage_metrics=actual_stage_metrics,
         native_scene_device=device_settings,
         disabled_background_colliders=isolated_count,performance=a.performance,threads=a.threads,
         display_fps=a.display_fps,num_envs=a.num_envs,contact_backend=a.contact_backend,collision_filter=a.collision_filter,
@@ -241,6 +287,8 @@ try:
         plant_dynamics=a.plant_dynamics,zero_conveyor_diagnostic=a.zero_conveyor_diagnostic,
         position_iterations=a.position_iterations,velocity_iterations=a.velocity_iterations,
         gpu_partitions=a.gpu_partitions),indent=2))
+    sub=get_physx_simulation_interface().subscribe_contact_report_events(contact) if a.contact_backend=='callback' else None
+    break_sub=get_physx_interface().get_simulation_event_stream_v2().create_subscription_to_pop(on_event)
     if a.gravity_neutral_warmup:
         from motion_initialization import GravityNeutralWarmup
         warmup=GravityNeutralWarmup(stage,'/World/PhysicsScene');warmup.__enter__()
@@ -257,6 +305,7 @@ try:
                 solver=api.GetSolverTypeAttr().Get()))
     (a.output/'native_scene_state.json').write_text(json.dumps(dict(
         requested_device=a.device,requested_broadphase=a.broadphase,requested_dt_s=1/a.hz,
+        stage_metrics=actual_stage_metrics,
         effective_step_dt_s=effective_dt,scenes=native_scenes),indent=2))
     if not math.isclose(effective_dt,1/a.hz,rel_tol=0.,abs_tol=1e-12):
         raise RuntimeError('Native simulation timestep differs from requested timestep')
@@ -515,7 +564,7 @@ try:
                  native_break_events=breaks,physics_settings=dict(hz=a.hz,solver=a.solver,armature=.0005,device=a.device,
                      position_iterations=a.position_iterations,velocity_iterations=a.velocity_iterations,
                      gpu_partitions=a.gpu_partitions,
-                     gpu_found_lost_aggregate_capacity=16384,gpu_total_aggregate_capacity=16384),
+                     gpu_found_lost_aggregate_capacity=a.gpu_pair_capacity,gpu_total_aggregate_capacity=a.gpu_pair_capacity),
                  jaw_actual_gap_mm=(44+1000*(qc[:,jawids[1]]-qc[:,jawids[0]])).tolist(),
                  target_displacement_max_m=float(np.linalg.norm(states[:,targetid,:3]-initial[targetid,:3],axis=1).max()),
                  target_force_max_n=max((e['force_n'] for e in target_events),default=0),

@@ -15,6 +15,7 @@ from scipy.spatial.transform import Rotation as R
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics, UsdShade
 
 from build_scene import REPO, mesh, camera, sha
+from motion_stage_metrics import copy_stage_metrics, require_motion_units
 sys.path.insert(0, str(REPO / 'nvidia-sim/rl'))
 from elastic_geometry import tube_centerline, resample_rod, point_segment_distances, mesh_components
 
@@ -350,11 +351,15 @@ def build_plant(stage, plant_path, report, output):
 
 
 def build(scene, output, plant=22):
+    source_stage=Usd.Stage.Open(str(scene.resolve()))
+    require_motion_units(source_stage)
     output.mkdir(parents=True,exist_ok=False)
     s=Usd.Stage.CreateNew(str(output/'scene.usda'))
     s.GetRootLayer().subLayerPaths=[str(scene.resolve())]
+    metrics=copy_stage_metrics(source_stage,s)
     s.SetDefaultPrim(s.GetPrimAtPath('/World'))
     report=dict(source_scene=str(scene),source_sha256=sha(scene),training_eligible=False,harvest_success=None)
+    report['stage_metrics']=metrics
     robot_xform=UsdGeom.Xformable(s.GetPrimAtPath(ROBOT))
     old=np.asarray(UsdGeom.XformCache().GetLocalToWorldTransform(s.GetPrimAtPath(ROBOT))).T
     op=next(x for x in robot_xform.GetOrderedXformOps() if x.GetOpType()==UsdGeom.XformOp.TypeTranslate)

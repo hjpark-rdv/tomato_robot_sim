@@ -1,9 +1,14 @@
 # S300 · RB5 · V5.1 수확 구동 연결 및 실제 물리 시험
 
+**후속 정정: 아래 최초 실행의 assembly root는 단위·up-axis metadata 누락으로 .01m/Y fallback을 사용했다. 시간·상태·접촉 기록은 보존하지만 SI 거리·힘·올바른 농장 물리의 최종 검증으로 해석하지 않는다.**
+source의 metre/Z/kg 전파와 native 사전 검사를 수정했고, 새로 재생성한 `legal_motion_assembly_metre_z_rebuilt`의 full SI 부하·접촉·병렬 결과는 [PERFORMANCE_STATUS_KO.md](PERFORMANCE_STATUS_KO.md)에 따로 기록한다.
+metadata-only wrapper의 실패와 재생성 모델의 통과가 달라 composition/native parsing 원인은 아직 확인 중이다.
+
+
 후속 정상 배치·최소 app·CPU24환경·실제 접근 비교는 [PERFORMANCE_STATUS_KO.md](PERFORMANCE_STATUS_KO.md)에 있다. 아래는 첫 동작 연결의 당시 기록이다.
 
 2026-10-10 KST. 브랜치 `codex/s300-harvest-isaac-20261009`, 기준 HEAD `b890fc6`.
-이 문서는 미커밋 구현과 서버 실험의 상태 기록이다. 기존 MuJoCo 실험과 기존 Isaac 조립 자산은 보존했다.
+이 문서는 최초 구동 연결 시점의 구현과 서버 실험을 보존한 기록이다. 기존 MuJoCo 실험과 기존 Isaac 조립 자산은 보존했다.
 
 **팔 접근·그리퍼 개폐·벨트 표면 구동·식물 탄성 연결은 구현했지만, 정상 농장에서의 과실 포획·분리 수확은 아직 달성하지 못했다.**
 현재 문제는 실행 코드만의 문제가 아니다. 원래 촘촘한 장면의 초기 잎 겹침, 접근 중 잎/유인선 충돌,
