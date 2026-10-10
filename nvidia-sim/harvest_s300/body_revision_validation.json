@@ -1,0 +1,57 @@
+{
+  "checks": {
+    "exactly_original_rear_plate_added": true,
+    "only_wheel_cover_assembly_removed": true,
+    "all_remaining_s300_meshes_unchanged": true,
+    "farm_file_unchanged": true
+  },
+  "passed": true,
+  "added": [
+    "T_06_Rear_plate_V2NR-1"
+  ],
+  "removed_count": 96,
+  "kept_before": 540,
+  "kept_after": 445,
+  "geometry_validation": {
+    "checks": {
+      "source_hashes_unchanged": true,
+      "generated_hashes_match": true,
+      "farm_full_54_plants": true,
+      "original_meshes_and_normals_unchanged": true,
+      "/World/HarvestRobot/S300_finite": true,
+      "/World/HarvestRobot/Robot_finite": true,
+      "robot_has_seven_motion_joints": true,
+      "old_tool_absent": true,
+      "pump_and_tank_removed": true,
+      "original_rear_panel_present_with_collision": true,
+      "wheel_covers_and_dedicated_mounts_removed": true,
+      "gripper_mount_frame_matches": true,
+      "lift_sits_on_deck": true,
+      "no_viewer_floor_in_robot": true,
+      "material_targets_resolve": true
+    },
+    "passed": true,
+    "original_prototype_meshes": 1440,
+    "original_prototype_faces": 621903,
+    "farm_collision_instances": 77614,
+    "s300_dimensions_m": [
+      0.8259999752044678,
+      1.5376039743423462,
+      1.0830856561660767
+    ],
+    "gripper_adapter_in_tcp_m": [
+      2.3758147903458652e-17,
+      -0.011999999999999955,
+      1.734723475976807e-17
+    ],
+    "missing_materials": [],
+    "physics_validated": false,
+    "elasticity_validated": false
+  },
+  "output": "/root/docker_share/mujoko_debugging_data/20261009_s300_rear_panel_no_wheel_covers",
+  "physics_rollout_performed": false,
+  "code_sha256": {
+    "build_scene.py": "9765eda864e6de5d707b3e87d21f909856a3b36eaa541a3f22eaecd72d250306",
+    "validate_scene.py": "4d245f5f736b7fc59156ffa6268dfae3921653a9d451de1badde06b9cac28d0d"
+  }
+}

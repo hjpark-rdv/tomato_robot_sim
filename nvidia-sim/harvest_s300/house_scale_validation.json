@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "scene": "/root/docker_share/mujoko_debugging_data/20261010_s300_restored_house_scale/assembly_final/scene.usda",
+    "house_scale": 0.5,
+    "plants": 68,
+    "trusses": 106,
+    "root_spacing_m": 0.25,
+    "robot_position": [
+      0,
+      1.6,
+      0
+    ],
+    "robot_scale_changed": false,
+    "plant_templates_changed": false,
+    "geometry_checks_passed": 27,
+    "scale_checks_passed": 8,
+    "all_passed": true,
+    "house_dimensions_xyz_m": [
+      3.270495653152466,
+      5.135393314063549,
+      2.638674840286478
+    ],
+    "physics_executed": false,
+    "training_eligible": false
+  },
+  "scale_validation": {
+    "checks": {
+      "house_matches_historical_0_5_scale": true,
+      "house_dimensions_halved": true,
+      "robot_world_dimensions_unchanged": true,
+      "robot_meshes_unchanged": true,
+      "robot_only_shifted_0_55m_to_aisle_centre": true,
+      "reviewed_root_positions_restored_exactly": true,
+      "reviewed_truss_attachment_world_positions_restored": true,
+      "plant_template_geometry_unchanged": true
+    },
+    "passed": true,
+    "historical_house_scale": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "new_house_scale": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "old_dimensions_xyz_m": [
+      6.540991306304932,
+      10.270786628127098,
+      5.277349680572956
+    ],
+    "new_dimensions_xyz_m": [
+      3.270495653152466,
+      5.135393314063549,
+      2.638674840286478
+    ],
+    "new_house_bounds_min_m": [
+      -1.635247826576233,
+      -0.054999999701976776,
+      -0.04500000189406967
+    ],
+    "new_house_bounds_max_m": [
+      1.635247826576233,
+      5.080393314361572,
+      2.5936748383924084
+    ],
+    "robot_size_xyz_m": [
+      0.8259999752044678,
+      1.5376039743423462,
+      1.8810242004979474
+    ],
+    "robot_meshes_compared": 816,
+    "physics_executed": false,
+    "training_eligible": false
+  }
+}

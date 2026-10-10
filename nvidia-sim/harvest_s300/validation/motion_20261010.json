@@ -1,0 +1,233 @@
+{
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "b890fc6c39b752aa48236c7c1b6bc8ea15774c30",
+  "uncommitted": true,
+  "asset_validation": {
+    "checks": {
+      "source_usd_hash_preserved": true,
+      "motion_scene_hash_matches": true,
+      "all_tool_part_vertices_faces_preserved": true,
+      "all_active_plant_vertices_faces_preserved": true,
+      "old_static_tool_inactive": true,
+      "old_static_plant_inactive": true,
+      "cad_28_96mm_limits_preserved": true,
+      "no_fake_grasp_constraint": true,
+      "native_break_thresholds_preserved": true,
+      "zero_joint_fk_matches_composed_usd": true
+    },
+    "passed": 10,
+    "total": 10,
+    "all_passed": true,
+    "scope": "asset/kinematic checks, not contact or harvesting validation",
+    "jaw_limit_m": [
+      0.027999999240040777,
+      0.0960000010728836
+    ],
+    "fruit_aabb_dimensions_m": [
+      [
+        0.023766799242369352,
+        0.025177833529538507,
+        0.024193599820137024
+      ],
+      [
+        0.025841059932609545,
+        0.02710796430345308,
+        0.026217930018901825
+      ],
+      [
+        0.022868666304842855,
+        0.024048350150250863,
+        0.02339319884777069
+      ],
+      [
+        0.024856750944287298,
+        0.02583000629803256,
+        0.025315135717391968
+      ],
+      [
+        0.02192542985963697,
+        0.02302881723378114,
+        0.022432953119277954
+      ],
+      [
+        0.019989459355613692,
+        0.02116008630705224,
+        0.020397424697875977
+      ],
+      [
+        0.024555424358832623,
+        0.024197718249623135,
+        0.024200409650802612
+      ],
+      [
+        0.02026085224393015,
+        0.02093795346702354,
+        0.020323053002357483
+      ],
+      [
+        0.02099112603074116,
+        0.021848489325626774,
+        0.02142280340194702
+      ],
+      [
+        0.02220596060064739,
+        0.022752954186902485,
+        0.022265106439590454
+      ],
+      [
+        0.02414100957889931,
+        0.024630608022700562,
+        0.024193599820137024
+      ],
+      [
+        0.025887020281141426,
+        0.02673359680526155,
+        0.026217930018901825
+      ],
+      [
+        0.02323684451335306,
+        0.023509467035913056,
+        0.02339319884777069
+      ],
+      [
+        0.025069863307214724,
+        0.025658071544122807,
+        0.025315135717391968
+      ],
+      [
+        0.02219039354005592,
+        0.02262067789030109,
+        0.022432953119277954
+      ],
+      [
+        0.020221409178999172,
+        0.020673906656322405,
+        0.020397424697875977
+      ],
+      [
+        0.025173870345042038,
+        0.02375934126074375,
+        0.024200409650802612
+      ],
+      [
+        0.01999853456641809,
+        0.020920193486244854,
+        0.020323053002357483
+      ],
+      [
+        0.021263109083097365,
+        0.0217045305214405,
+        0.02142280340194702
+      ],
+      [
+        0.021859397710822015,
+        0.023083234662563568,
+        0.022265106439590454
+      ],
+      [
+        0.024434698310559055,
+        0.0247050725321738,
+        0.0242370399646461
+      ],
+      [
+        0.026086179270568444,
+        0.02686511791218993,
+        0.02622449491173029
+      ],
+      [
+        0.023535238634398437,
+        0.023645342749471387,
+        0.023333732038736343
+      ],
+      [
+        0.0250367346070402,
+        0.02578942551033725,
+        0.025344230234622955
+      ],
+      [
+        0.022204439526549602,
+        0.02270489034705303,
+        0.022106528282165527
+      ],
+      [
+        0.02020851826149961,
+        0.02073045535188589,
+        0.020089775323867798
+      ],
+      [
+        0.02502328724732239,
+        0.02379867980740369,
+        0.024023808538913727
+      ],
+      [
+        0.020001905239082962,
+        0.0210217208822312,
+        0.02004854381084442
+      ],
+      [
+        0.021161362157591956,
+        0.0217592433154421,
+        0.021424315869808197
+      ],
+      [
+        0.02186011899852458,
+        0.023106710994171165,
+        0.022261708974838257
+      ]
+    ],
+    "training_eligible": false
+  },
+  "mechanism_tests_passed": 4,
+  "final_code_sha256": {
+    "validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+    "report_motion.py": "332f4830e9fd95c6ac06c08af2259d01dd2a5ea39dadb1995c83fec258f8e4d5",
+    "write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+    "latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+    "build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+    "validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+    "render_motion.py": "828d2e8e4554aaf1dd4a0918954611e5ba0b2231fd6648918d4a64ef0e667680",
+    "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+    "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+    "run_motion.py": "f11b70e0ab4a3be9db323a270dd2001300158bb0398ad8aa7987c0c8db8e9f31",
+    "capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+    "motion_assets.py": "cb28d1bc2d837569b3c3b95d3224bdabb2be31ac2412fdd5c6872d038fb60138",
+    "motion_kinematics.py": "1a495ce5c636ac8642820ea7720e22e17dc5e7a40d9bdec92b0d7e9cb1a24e92",
+    "motion_visuals.py": "c9979147474ba6988bce453ac53fde12957193ac5a242c6824796c2ba7230a78",
+    "validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+    "test_motion_kinematics.py": "cb9f8ac9e79095402b5d9ea36f81f730c01758574256c53fd256099db3039df0"
+  },
+  "video_and_trace_checks": {
+    "component_jaw_v1": {
+      "decoded": true,
+      "frame_count": 54,
+      "last_physics_state_included": true,
+      "physics_timestamp_contiguous": true,
+      "all_poses_finite": true,
+      "states_sha256": "dee74f1dcb8963036e55e21c3f38acbe330ea800fd23c29bad35ff2050302d47",
+      "video_sha256": "7c49abd368f60c59fe82aed7283a8447f3f44a74b9086bfda59866178ea2694d"
+    },
+    "component_motion_v3": {
+      "decoded": true,
+      "frame_count": 112,
+      "last_physics_state_included": true,
+      "physics_timestamp_contiguous": true,
+      "all_poses_finite": true,
+      "states_sha256": "e87bb4d6c5311f67c2525e400aec1860b6f997dd79d2a55bc3d40abddfba8b98",
+      "video_sha256": "9f30c33100a54d73456ae17eb7821721df927adb08fec3af7bc125d4045d4168"
+    },
+    "component_pulse_v1": {
+      "decoded": true,
+      "frame_count": 54,
+      "last_physics_state_included": true,
+      "physics_timestamp_contiguous": true,
+      "all_poses_finite": true,
+      "states_sha256": "d7ca38f3864b55fb17766bdce019a07c41506b8443bf5aa95f6ff1c2eb82a26d",
+      "video_sha256": "f1de316b920a1f40da05d0760249fb8f410a9df47644a65bc5e102fcccba153a"
+    }
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261010_s300_harvest_motion",
+  "robot_self_collision_enabled": false,
+  "live_gui_physics_equivalence_validated": false
+}

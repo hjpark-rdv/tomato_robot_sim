@@ -1,0 +1,52 @@
+{
+  "scope": "idle GUI pacing only; no physics performance or remote end-to-end latency test",
+  "same_stage_root_before_after": true,
+  "comparisons": [
+    {
+      "name": "original",
+      "cpu_percent": 528.1122148756718,
+      "loop_hz": 157.45456879380973
+    },
+    {
+      "name": "capped60",
+      "cpu_percent": 231.85868105676124,
+      "loop_hz": 59.660710530096615
+    },
+    {
+      "name": "capped30",
+      "cpu_percent": 123.63469631405322,
+      "loop_hz": 29.959942563988985
+    }
+  ],
+  "pacing_restore_check": {
+    "restored": {
+      "rateLimitEnabled": false,
+      "rateLimitFrequency": 120,
+      "rateLimitUseBusyLoop": false
+    },
+    "reapplied": {
+      "rateLimitEnabled": true,
+      "rateLimitFrequency": 30,
+      "rateLimitUseBusyLoop": false
+    },
+    "playing": false,
+    "physics_executed": false
+  },
+  "renderer_resolution_geometry_collision_unchanged": true,
+  "remote_user_confirmation": "pending",
+  "tests": [
+    "Python compile passed",
+    "CLI help passed",
+    "live idle cap applied",
+    "live original pacing restore and reapply verified"
+  ],
+  "limitations": [
+    "Brief live GUI samples, not controlled physics benchmark",
+    "Play event restoration implemented; no new physics rollout for this GUI change"
+  ],
+  "input_probe_side_effect": "Console lost focus after window maximization; visibility shortcut temporarily hid World. Visibility restored and root layer identical to before confirmed.",
+  "code_sha256": {
+    "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+    "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e"
+  }
+}

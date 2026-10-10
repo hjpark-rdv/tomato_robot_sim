@@ -1,0 +1,58 @@
+{
+  "scene": "/root/docker_share/mujoko_debugging_data/20261010_s300_latest_plants/assembly_final/scene.usda",
+  "plants": 68,
+  "stem_variants": {
+    "v8_recolored": 36,
+    "v9": 32
+  },
+  "trusses": 106,
+  "glb_profiles": 5,
+  "geometry_checks_passed": 27,
+  "geometry_checks_total": 27,
+  "all_checks_passed": true,
+  "robot_preservation": {
+    "checks": {
+      "s300_parts_unchanged": true,
+      "robot_placement_unchanged": true,
+      "tool_configuration_unchanged": true,
+      "robot_configuration_unchanged": true,
+      "entire_robot_meshes_normals_and_world_transforms_unchanged": true
+    },
+    "passed": true,
+    "compared_robot_meshes": 816,
+    "old": "/root/docker_share/mujoko_debugging_data/20261009_s300_rear_panel_no_wheel_covers/assembly",
+    "new": "/root/docker_share/mujoko_debugging_data/20261010_s300_latest_plants/assembly_final",
+    "physics_executed": false
+  },
+  "root_position_mapping": "Reviewed layout root positions x2 to fit current 1.0 house; stem and truss shapes stay 0.5 GLB scale. Nominal along-row root spacing 0.50 m, old reviewed half-size house 0.25 m.",
+  "original_triangles_preserved": true,
+  "physics_executed": false,
+  "elasticity_connected": false,
+  "training_eligible": false,
+  "plant_asset_validation": {
+    "template_triangles": {
+      "stem_v9_full.usdc": 524809,
+      "stem_v8_recolored.usdc": 387329,
+      "truss_0.usdc": 190095,
+      "truss_1.usdc": 190095,
+      "truss_2.usdc": 190095,
+      "truss_3.usdc": 190095,
+      "truss_4.usdc": 190095
+    },
+    "max_vertex_roundoff_m": 5.9604586599704135e-08,
+    "max_frame_error": 7.771561172376096e-16,
+    "elasticity_validated": false
+  },
+  "initial_harness_failures": {
+    "assembly": "Unmapped USD material-hash/duplicate-name suffixes in recolour lookup",
+    "assembly_v2": "Remaining material-hash suffix not covered",
+    "assembly_v3": "Single-precision USD rotation op rounded saved angles; final uses double precision"
+  },
+  "live_update": {
+    "scene": "/root/docker_share/mujoko_debugging_data/20261010_s300_latest_plants/assembly_final/scene.usda",
+    "elapsed_with_captures_s": 10.005422659218311,
+    "physics_running": false,
+    "source_preserved": true,
+    "camera_preserved": true
+  }
+}

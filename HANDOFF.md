@@ -1,5 +1,59 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신: S300 Isaac 속도 최적화·24 CPU 환경 검증 (2026-10-10)
+
+- 브랜치 `codex/s300-harvest-isaac-20261009`. 원본 USD/CAD/실험을 보존했다. 상세 [PERFORMANCE_STATUS_KO.md](nvidia-sim/harvest_s300/PERFORMANCE_STATUS_KO.md), 코드/검증의 커밋 여부는 `git status` 확인.
+- 새 `legal_layout_v2`에서 기존 합법 Y회전/부착 배치만 조정해 활성 식물의 초기 겹침을 해결했다. target Truss02는 그대로이며 메시·충돌체·질량·관성·탄성·파단 기준을 유지했다. 배경 충돌을 끄지 않았다. 활성 Plant22는 235바디/612 DOF/605 활성 collider, 주변 식물은 full triangle 고정 장애물이다.
+- 최소 native app의 `--physics-only`, 물리와 별도인 표시/replay, 접촉 버퍼를 추가했다. 실제 CPU/GPU dynamics·broadphase·Hz를 검사한다. 초기화 중 중력만 중립화하고 고정 preload 계산 뒤 원래 중력을 복구한다. 초기조건 개선과 bit-exact 코드 최적화를 구분했다.
+- CPU PGS120/64/4, full 식물의 동일7초 부하·복원 시험: 단일10.647초(0.657 sim-s/s); 병렬2/4/8/16/24개는 합산1.289/2.329/5.873/6.564/7.042 sim-s/s. **24개는168sim초/23.855loop초, 시작·저장 포함59.821초**다. peak RSS 합계 약87.36GiB(공유 페이지 중복 집계 가능). 효율 기본8개, 최고 실측 처리량24개. 모든54 worker의 바디 자세/관절/접촉이 단일 기준과 bit-exact였다.
+- 각 환경은 목표 식물 한 개만 full 탄성이며, 모든106송이의 동시 탄성화나 병렬 수확 성공률 시험이 아니다. 단일 PGS120는 아직 실시간 미달이다. GPU dynamics는 느렸고 native namespace 복제는 초기 파단으로 invalid; GPU 대규모 학습 준비 완료로 해석하지 않는다. CPU/SAP는 차이 없음, CPU solver+GPU broadphase는 더 느렸다.
+- 60Hz PGS는 부하 벨트 접촉에서 관통0.5mm를 넘었다. TGS64/60은 부하 벨트 대조군은 통과하지만 탄성 응답이 달랐다. 120Hz를 모든 접촉의 보증으로 취급하지 않는다. 충돌/마찰/물성/actuator/기준을 바꿔 성공시키지 않았다.
+- 새 좁은 회전 준비 경로는 목표 앞까지 실제 도달했다. 준비 후44→60mm 개방도 시험했다. 실제4회는 삽입 단계의 과실/자기 가지 또는 잎 접촉·관통으로 중단했고 닫기·벨트는 미도달. 240Hz의30.7417초에 실제 목표 꼭지 파단이 발생했으나 다음 스텝에 관통 중단되어 검증된 포획/수확이 아니다. 유한30과실/기존 경로 검사에서 대체 clear 경로 미발견이며 절대적 불가능 판정은 아니다.
+- 30mm 합성 구의 native 벨트 이송 약40.56mm는 확인했으나 별도 D6 guide 시험이며 농장 수확 성공이 아니다. 모든 결과 `training_eligible=false`, `harvest_success=null` 유지.
+- 테스트120개 중119통과/별도 SDK 경로에서 Torch 검사1skip. 실제 native 실행은 Torch tensor를 사용했다. 결과/실제 저장 상태 MP4: `/root/docker_share/mujoko_debugging_data/20261010_s300_performance/index.html`. 호스트 `file:///home/rdv/docker_share/mujoko_debugging_data/20261010_s300_performance/index.html`.
+- 다음 병목은 준비가 아니라 밀집 송이의 insert/grip 경로다. 기본 경로는 −60° 기울기를 선택해 receiver가 다른 Fruit04를 먼저 밀고, 목표 Fruit02는 왼쪽 벨트 앞단에서 밀리며 의도한 그립 깊이에 들어오지 않는다. 자세/경로와 실제 추종·접촉을 함께 개선해야 한다. persistent worker reset/다양한 수확 동작의 병렬 동등성은 아직 미검증이다.
+
+## 최신: S300 수확 구동·탄성 연결 시험 (2026-10-10)
+
+- `codex/s300-harvest-isaac-20261009`. 원본 USD/CAD 보존, 별도 `assembly_v5/scene.usda`에 V5.1 등가 개폐/벨트 표면 속도와 Plant_22 full 탄성 연결.
+- 뒷판↔리프트 선반 교차를 발견해 새 동작 모델의 리프트·RB5만 Y−0.20m 이동. 뒷판 유지. 기계 체결 검증은 아님.
+- 분리 시험: 개폐 실제28.02~60.01mm,0.1N 과실 외력 최대7.18mm/제거 후0.43mm 복원. 240Hz CPU 실제 상태/접촉 저장.
+- 원래 농장은 초기 잎 겹침 최대12.22mm로 중단. 분리 시험은 배경 식물↔활성 물체 및 활성 잎↔식물 내부 접촉을 명시적으로 제외했으며 full 농장 성공이 아님.
+- 접근3회: 지지선/유인선 차단 뒤 접고 회전하는 경로로 개선했으나14.73초에 잎 접촉·관통0.507mm로 중단. 잎 밀림으로 과실62.85mm 이동. 실제 수확0, `harvest_success=null`, 학습 제외.
+- 과실 약26mm 대 CAD 최소 간격28mm 미해결. 그리퍼/과실 크기는 임의 수정 안 함. RB5 원본 자기충돌false도 유지되어 자기충돌 경로 검증 추가 필요.
+- 결과/실제 상태 MP4: `/root/docker_share/mujoko_debugging_data/20261010_s300_harvest_motion/index.html`. 자산10검사/기구학4검사 통과.
+- 상세·명령·실패 포함 기록: [MOTION_STATUS_KO.md](nvidia-sim/harvest_s300/MOTION_STATUS_KO.md). 이번 변경의 커밋 여부는 `git status` 확인.
+
+## 최신 정정: 하우스 0.5 크기 복원 (2026-10-10)
+
+- 기존 `farmily_greenhouse_robot.usd`의 하우스 배율0.5 확인. S300 생성기 기본값1.0은 잘못 가져온 크기였으며0.5로 수정.
+- 줄기68개/송이106개 뿌리·부착 세계 좌표도 검토된 배치로 복원(행 내25cm). 식물 template 자체 크기는 유지.
+- S300/리프트/RB5/그리퍼는 축소하지 않고 x=0.55→0m로 통로 중앙 배치. 원본 메시/조립 관계 보존.
+- 기하27검사+크기/보존8검사 통과. 현재 Isaac 창 적용. 결과 `/root/docker_share/mujoko_debugging_data/20261010_s300_restored_house_scale/index.html`, 최종 `assembly_final/scene.usda`.
+- 이번 변경은 크기/배치 정정. 새 접촉·탄성·수확 물리 검증은 미실시. 아래1.0 배치 기록은 이전 상태다.
+
+## 최신: Isaac 농장의 줄기·잎·송이 자산 정정 (2026-10-10)
+
+- S300 조립에서 옛 v2 농장 식물을 사용했던 것을 수정. `build_scene.py` 기본 `--farm-layout reviewed`, 옛 장면은 `legacy`로 재현.
+- 원본 v8 줄기 36개 + v9 잎 줄기 32개, GLB 5종 송이 106개. 기존 Y축 0~180°/송이0.5배/Fruit06 제외/white 보정 유지. 원본 USD/GLB 면·정점은 줄이지 않음.
+- 하우스 1.0 유지, 기존 0.5 하우스 배치의 **뿌리 좌표만 2배**로 맞춤. 식물 자체 크기는0.5 유지. 행 내 명목 간격25→50cm이며 이전 MuJoCo 장면과 세계 좌표/밀도가 동일하다는 뜻은 아님.
+- S300 뒷판·휠 커버 수정 및 로봇 조립 보존. 기하27검사/로봇보존5검사 통과, 실제 Isaac6.1 전후 동일 카메라·근접·양측배치 촬영.
+- 최종 화면/결과: `/root/docker_share/mujoko_debugging_data/20261010_s300_latest_plants/index.html`, 장면 `assembly_final/scene.usda`. 현재 Isaac 창에도 반영.
+- **고정 full triangle 충돌체 상태이며 탄성 연결/수확 물리/새 속도 시험은 미실시.** `training_eligible=false` 유지. 상세 [harvest_s300/README.md](nvidia-sim/harvest_s300/README.md).
+
+## S300 수확로봇 · Isaac Sim 6.1 조립 (2026-10-09)
+
+- 새 브랜치 `codex/s300-harvest-isaac-20261009`, 시작점 V5.1 그리퍼 수정 `b890fc6`. 이전 작업과 원본 자산 보존.
+- Isaac Sim 6.1 standalone을 `/root/isaac-sim-6.1.0`에 별도 설치, 공식 MD5 일치. 기존 5.1 환경 유지.
+- 원본 54식물 농장 USD의 형상·잎·재질 보존, 원본 공간 배율 1.0. MuJoCo light/ultralight 미사용.
+- S300 V10 실제 외형에서 물통·펌프·분무부/후방 상부 지지물 제거, 평판 위에 기존 리프트·RB5, V5.1 그리퍼 356부품 부착.
+- 13개 원본/기하/좌표 검사 통과, 실제 6.1 렌더 3시점 저장. GPU PhysX 120Hz 정지 2초/240스텝에 1.662초, 팔 끝 최대 이동 0.120mm. 초기화 별도, 수확/접촉 성능 시험 아님.
+- **현재 농장 식물은 고정 triangle 장애물이며 탄성 모델 연결 전. 그리퍼도 44mm 개방 고정 상태.** 기존 `elastic_plant.py` full+keep 연결, 새 도구 하중/구동/체결 검증은 남아 있다. 학습 데이터 사용 금지.
+- 사용법/검증/한계: [nvidia-sim/harvest_s300/README.md](nvidia-sim/harvest_s300/README.md).
+- 결과: `/root/docker_share/mujoko_debugging_data/20261009_s300_harvest_isaac61/index.html`, 최종 USD `assembly_v3/scene.usda`.
+- VNC 조작 지연 조사: 내부 정지 약161 FPS/회전 표본 약117 FPS로 렌더 정지는 재현되지 않음. 정지 GUI 기본30 FPS 제한·FPS 표시 추가, Play 시 원래 갱신 설정 복귀. 짧은 GUI 표본 CPU528→124%, 화질/형상/충돌/물리 smoke 유지. 원격 체감 개선은 사용자 확인 필요. 원자료 `20261009_isaac_viewport_diagnosis/`, 실행 옵션 `--viewer-fps 0`은 원래 무제한.
+- 외형 정정: 리프트 뒤 원본 뒷판 1개 복원, 메카넘 휠 커버 및 전용 체결부 96개 제거(바퀴 유지). 새 장면 `20261009_s300_rear_panel_no_wheel_covers/assembly/scene.usda`, 전후 사진 `index.html`. 기하15검사·변경범위4검사 통과, 기존 자산/결과 보존. 현재 Isaac 창에도 반영.
+
 ## 힘·변위 중단값 비교 (2026-09-28 추가)
 
 - 사용자 요청으로 제한값을 변경한 추가12회. 기준b75e6bc, 별도 `codex/contact-limit-sweep-20260928`. 모델/경로/물성/운영정책 유지.
