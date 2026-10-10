@@ -159,8 +159,19 @@ def preparation_phases(start, qprep, preparation, recorded_prefix=None):
     raise ValueError('Unknown preparation profile ' + preparation)
 
 
+def belt_speed_fraction(elapsed_s,duration_s,ramp_s):
+    """Smooth startup/shutdown inside the requested spin duration, without added time."""
+    if not np.isfinite([elapsed_s,duration_s,ramp_s]).all() or duration_s<=0 or not 0<=ramp_s<=duration_s/2:
+        raise ValueError('Belt ramp must be finite and between zero and half the spin duration')
+    if ramp_s==0:return 1.
+    u=float(np.clip(min(elapsed_s,duration_s-elapsed_s)/ramp_s,0.,1.))
+    return u*u*(3-2*u)
+
+
 def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
-                pitch_deg=0.,yaw_offset_deg=0.,recorded_prefix=None,entry_only=False):
+                pitch_deg=0.,yaw_offset_deg=0.,recorded_prefix=None,entry_only=False,
+                harvest_profile='legacy',belt_speed_m_s=.15,belt_seconds=2.,close_seconds=3.,belt_ramp_seconds=0.,
+                belt_infeed_speed_m_s=0.):
     """Plan one fixed entry orientation, without silently changing its pitch.
 
     CAD +Y is the insertion direction and CAD +Z points up at pitch zero.
@@ -172,6 +183,22 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     center=np.asarray(center,dtype=float)
     if entry_only and preparation!='horizontal_ready':
         raise ValueError('Entry-only demonstration requires horizontal_ready')
+    if harvest_profile not in ('legacy','belt_spin_release'):
+        raise ValueError('Unknown harvest profile')
+    if harvest_profile=='belt_spin_release' and (entry_only or preparation!='horizontal_ready'):
+        raise ValueError('Belt-spin-release requires horizontal_ready and is not entry-only')
+    if not np.isfinite(belt_speed_m_s) or belt_speed_m_s<=0:
+        raise ValueError('Belt speed must be finite and positive')
+    if not np.isfinite(belt_seconds) or belt_seconds<=0:
+        raise ValueError('Belt duration must be finite and positive')
+    if not np.isfinite(close_seconds) or close_seconds<=0:
+        raise ValueError('Close duration must be finite and positive')
+    if close_seconds!=3. and harvest_profile!='belt_spin_release':
+        raise ValueError('Close duration override requires belt_spin_release')
+    belt_speed_fraction(0.,belt_seconds,belt_ramp_seconds)
+    if belt_ramp_seconds and harvest_profile!='belt_spin_release':raise ValueError('Belt ramp requires belt_spin_release')
+    if not np.isfinite(belt_infeed_speed_m_s) or belt_infeed_speed_m_s<0 or (belt_infeed_speed_m_s and harvest_profile!='belt_spin_release'):
+        raise ValueError('Nonnegative belt infeed requires belt_spin_release')
     start=np.zeros(7) if start is None else np.asarray(start,dtype=float)
     if center.shape!=(3,) or start.shape!=(7,) or not np.isfinite(center).all() or not np.isfinite(start).all():
         raise ValueError('Finite center[3] and start[7] are required')
@@ -268,6 +295,18 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
             ('return_ready',4.,np.array(ready_waypoints[::-1]),approach_gap,0.,0.),
             ('ready_close',1.,np.array([start,start]),.044,0.,0.),
             ('hold',1.,np.array([start,start]),.044,0.,0.)]
+    if harvest_profile=='belt_spin_release':
+        # Opposed belt contact velocities rotate the fruit; the arm holds its
+        # entry orientation. Detachment is left to the native breakable joint.
+        phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.),
+            ('close',float(close_seconds),np.array([q,q]),.028,0.,0.),
+            ('belt_spin',float(belt_seconds),np.array([q,q]),.028,
+             -float(belt_speed_m_s)-float(belt_infeed_speed_m_s),float(belt_speed_m_s)-float(belt_infeed_speed_m_s)),
+            ('release_open',1.,np.array([q,q]),approach_gap,0.,0.),
+            ('withdraw',entry_seconds,np.array(waypoints[::-1]),approach_gap,0.,0.),
+            ('return_ready',4.,np.array(ready_waypoints[::-1]),approach_gap,0.,0.),
+            ('ready_close',1.,np.array([start,start]),.044,0.,0.),
+            ('hold',1.,np.array([start,start]),.044,0.,0.)]
     if hasattr(kin,'bounds'):
         for name,_,qs,_,_,_ in phases:
             if np.any(qs<kin.bounds[0]-1e-8) or np.any(qs>kin.bounds[1]+1e-8):
@@ -285,6 +324,13 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                        prep_q=qprep.tolist(),goal_q=q.tolist(),ik_errors=[pe,re],pitch_deg=float(pitch_deg),
                        yaw_offset_deg=float(yaw_offset_deg),entry_orientation_policy='fixed_requested_pitch_and_yaw',
                        entry_only=bool(entry_only),
+                       harvest_profile=harvest_profile,
+                       belt_spin=(dict(duration_s=float(belt_seconds),surface_speed_m_s=float(belt_speed_m_s),
+                           opposed=bool(belt_infeed_speed_m_s<belt_speed_m_s),arm_rotates=False,closed_gap_m=.028,close_seconds=float(close_seconds),
+                           ramp_seconds=float(belt_ramp_seconds),
+                           infeed_speed_m_s=float(belt_infeed_speed_m_s),
+                           detachment='native fruit-pedicel joint break only; no timed release')
+                           if harvest_profile=='belt_spin_release' else None),
                        approach_direction_world=direction.tolist(),approach_distance_m=.10,
                        approach_waypoint_poses=[pose.tolist() for pose in poses],
                        approach_waypoint_ik_errors=errors,selected_seed_index=selected,ik_attempts=attempts,

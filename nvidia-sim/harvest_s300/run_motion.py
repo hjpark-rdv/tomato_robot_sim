@@ -23,6 +23,12 @@ p.add_argument('--preparation',choices=['direct','fold_then_turn','low_turn_then
 p.add_argument('--approach-pitch-deg',type=float,default=0.,help='Fixed entry pitch; 0 keeps CAD +Y horizontal and CAD +Z up. Never relaxed automatically')
 p.add_argument('--approach-yaw-offset-deg',type=float,default=0.,help='Explicit horizontal entry direction offset about world +Z, relative to robot-to-target direction')
 p.add_argument('--entry-only',action='store_true',help='Horizontal-ready approach/hold/return demonstration, with open jaws; not a harvest attempt')
+p.add_argument('--harvest-profile',choices=['legacy','belt_spin_release'],default='legacy',help='Opt-in open entry, close, opposed belt spin, open and withdraw; native breakage only')
+p.add_argument('--belt-speed-m-s',type=float,default=.15,help='Each belt contact surface speed for belt_spin_release; not motor rpm')
+p.add_argument('--belt-seconds',type=float,default=2.,help='Opposed belt duration after closing for belt_spin_release')
+p.add_argument('--close-seconds',type=float,default=3.,help='Closing duration for belt_spin_release; CAD jaw limits unchanged')
+p.add_argument('--belt-ramp-seconds',type=float,default=0.,help='Smooth acceleration/deceleration within belt-spin duration; default preserves step command')
+p.add_argument('--belt-infeed-speed-m-s',type=float,default=0.,help='Optional common inward belt speed during the same spin phase; no arm motion or external force')
 p.add_argument('--preparation-prefix-plan',type=Path,help='Reuse the exact first two tight-fold phases from a same-model saved plan; replan only the remaining preparation and entry')
 p.add_argument('--isolate-background',action='store_true',help='Component fixture only: disable background plant contacts; never a farm success')
 p.add_argument('--performance',choices=['baseline','optimized'],default='optimized',help='Same physical model; control USD/display/callback overhead')
@@ -44,6 +50,7 @@ p.add_argument('--velocity-iterations',type=int,default=4)
 p.add_argument('--gpu-partitions',type=int,default=1,help='Native articulation GPU partitions; recorded explicitly for correctness/scaling checks')
 p.add_argument('--gpu-pair-capacity',type=int,default=16384,help='Found/lost and total aggregate-pair allocation only; raise on native capacity errors and revalidate contacts')
 p.add_argument('--solver',choices=['PGS','TGS'],default='PGS',help='Controlled native solver comparison; validate before adopting')
+p.add_argument('--scene-ccd',action='store_true',help='CPU diagnostic: enable swept CCD at scene level as well as the existing rigid-body flags')
 p.add_argument('--armature-setup',choices=['refresh','authored'],default='refresh',help='Authored validates the pre-warmup armature without a redundant runtime setter')
 p.add_argument('--gravity-neutral-warmup',action='store_true',help='Initialize at authored rest under zero gravity, restore source gravity after fixed preload and before trial')
 p.add_argument('--plant-dynamics',choices=['full','target-truss'],default='full',help='Target-truss freezes far-truss bending; different dynamics, same collision coverage')
@@ -55,8 +62,19 @@ p.add_argument('--live-fps',type=float,default=10.,help='Latest-frame publicatio
 p.add_argument('--start-gate',type=Path,help='CPU pool diagnostic: publish ready.json and await the controller barrier')
 p.add_argument('--gate-timeout',type=float,default=180.)
 a=p.parse_args()
+if a.scene_ccd and a.device!='cpu':p.error('--scene-ccd is validated here only for CPU trials')
 if a.entry_only and (a.mode!='harvest' or a.preparation!='horizontal_ready'):
     p.error('--entry-only requires --mode harvest --preparation horizontal_ready')
+if a.harvest_profile=='belt_spin_release' and (a.mode!='harvest' or a.preparation!='horizontal_ready' or a.entry_only):
+    p.error('--harvest-profile belt_spin_release requires harvest/horizontal_ready without --entry-only')
+if not math.isfinite(a.belt_speed_m_s) or a.belt_speed_m_s<=0 or not math.isfinite(a.belt_seconds) or a.belt_seconds<=0:
+    p.error('Belt speed and duration must be finite and positive')
+if not math.isfinite(a.close_seconds) or a.close_seconds<=0 or (a.close_seconds!=3. and a.harvest_profile!='belt_spin_release'):
+    p.error('Positive close duration override requires belt_spin_release')
+if not math.isfinite(a.belt_ramp_seconds) or not 0<=a.belt_ramp_seconds<=a.belt_seconds/2 or (a.belt_ramp_seconds and a.harvest_profile!='belt_spin_release'):
+    p.error('Belt ramp requires belt_spin_release and must be between zero and half the spin duration')
+if not math.isfinite(a.belt_infeed_speed_m_s) or a.belt_infeed_speed_m_s<0 or (a.belt_infeed_speed_m_s and a.harvest_profile!='belt_spin_release'):
+    p.error('Nonnegative belt infeed override requires belt_spin_release')
 if not math.isfinite(a.approach_pitch_deg) or not -90<=a.approach_pitch_deg<=90:
     p.error('--approach-pitch-deg must be finite and within -90..90')
 if not math.isfinite(a.approach_yaw_offset_deg) or not -180<=a.approach_yaw_offset_deg<=180:
@@ -96,7 +114,7 @@ try:
     from isaacsim.core.simulation_manager import SimulationManager as sim
     from omni.physx import get_physx_simulation_interface,get_physx_interface
     from omni.physx.bindings._physx import SimulationEvent
-    from motion_kinematics import ToolKinematics,plan_motion
+    from motion_kinematics import ToolKinematics,plan_motion,belt_speed_fraction
     from motion_assets import ROBOT,sha
 
     manifest=json.loads((a.assembly/'motion_manifest.json').read_text())
@@ -189,9 +207,12 @@ try:
                           scope='Recorded nominal prefix commands; actual physics rerun at normal start')
         (a.output/'preparation_prefix_input.json').write_text(json.dumps(prefix_input,indent=2))
     initial_robot_q=np.asarray(manifest.get('initial_robot_q',np.zeros(7)),dtype=float)
-    phases,planning=plan_motion(kin,np.array(manifest['target']['center']),start=initial_robot_q,preparation=a.preparation,
+    phases,planning=plan_motion(kin,np.array(manifest.get('grasp_reference',manifest['target'])['center']),start=initial_robot_q,preparation=a.preparation,
         pitch_deg=a.approach_pitch_deg,yaw_offset_deg=a.approach_yaw_offset_deg,
-        recorded_prefix=recorded_prefix,entry_only=a.entry_only) if a.mode=='harvest' else ([],{})
+        recorded_prefix=recorded_prefix,entry_only=a.entry_only,harvest_profile=a.harvest_profile,
+        belt_speed_m_s=a.belt_speed_m_s,belt_seconds=a.belt_seconds,close_seconds=a.close_seconds,
+        belt_ramp_seconds=a.belt_ramp_seconds,belt_infeed_speed_m_s=a.belt_infeed_speed_m_s) if a.mode=='harvest' else ([],{})
+    if a.mode=='harvest':planning['grasp_reference']=manifest.get('grasp_reference')
     (a.output/'plan.json').write_text(json.dumps(planning,indent=2))
     if a.mode=='harvest':
         from motion_self_collision import audit_external
@@ -303,9 +324,14 @@ try:
     # evidence backend after the final device registration, including reopen.
     from motion_app import configure_contact_readback
     contact_readback=configure_contact_readback(carb.settings.get_settings(),a.device,a.contact_backend)
+    scene_ccd_before=bool(scene_api.GetEnableCCDAttr().Get())
+    if a.scene_ccd:scene_api.CreateEnableCCDAttr(True)
+    scene_ccd_enabled=bool(scene_api.GetEnableCCDAttr().Get())
+    if a.scene_ccd and not scene_ccd_enabled:raise RuntimeError('Scene CCD request did not take effect')
     # Effective settings are recorded separately from the immutable assembly.
     (a.output/'runtime_settings.json').write_text(json.dumps(dict(hz=a.hz,solver=a.solver,armature_setup=a.armature_setup,
-        gravity_neutral_warmup=a.gravity_neutral_warmup,
+        gravity_neutral_warmup=a.gravity_neutral_warmup,scene_ccd_requested=a.scene_ccd,
+        scene_ccd_before=scene_ccd_before,scene_ccd_enabled=scene_ccd_enabled,
         plant_armature=.0005,aggregate_pair_capacities=a.gpu_pair_capacity,initialization='armature authored before warmup',
         pair_allocation=pair_allocation,
         source_scene_sha256=sha(scene),device=a.device,isolate_background=a.isolate_background,
@@ -338,13 +364,14 @@ try:
                 enabled_gpu_dynamics=api.GetEnableGPUDynamicsAttr().Get(),
                 broadphase_type=api.GetBroadphaseTypeAttr().Get(),
                 steps_per_second=api.GetTimeStepsPerSecondAttr().Get(),
-                solver=api.GetSolverTypeAttr().Get()))
+                solver=api.GetSolverTypeAttr().Get(),scene_ccd=api.GetEnableCCDAttr().Get()))
     (a.output/'native_scene_state.json').write_text(json.dumps(dict(
         requested_device=a.device,requested_broadphase=a.broadphase,requested_dt_s=1/a.hz,
         stage_metrics=actual_stage_metrics,
         effective_step_dt_s=effective_dt,scenes=native_scenes),indent=2))
     if not math.isclose(effective_dt,1/a.hz,rel_tol=0.,abs_tol=1e-12):
         raise RuntimeError('Native simulation timestep differs from requested timestep')
+    if a.scene_ccd and any(s['scene_ccd'] is not True for s in native_scenes):raise RuntimeError('Native scene CCD state mismatch')
     if len(native_scenes)!=1 or native_scenes[0]['path']!='/World/PhysicsScene':
         raise RuntimeError('Unexpected native physics scene inventory: '+str(native_scenes))
     if native_scenes[0]['steps_per_second']!=a.hz:
@@ -513,7 +540,11 @@ try:
                     phase=label;u=offset/duration;u=u*u*(3-2*u)
                     f=u*(len(qs)-1);lo=min(int(f),len(qs)-2)
                     qcommand[0,rids]=qs[lo]*(1-(f-lo))+qs[lo+1]*(f-lo)
-                    gap=previous_gap+(nextgap-previous_gap)*u;speed=(lvel,rvel);break
+                    gap=previous_gap+(nextgap-previous_gap)*u;speed=(lvel,rvel)
+                    if label=='belt_spin' and a.belt_ramp_seconds:
+                        factor=belt_speed_fraction(offset,duration,a.belt_ramp_seconds)
+                        speed=(lvel*factor,rvel*factor)
+                    break
                 offset-=duration;previous_gap=nextgap
         if a.num_envs>1:qcommand[1:]=qcommand[0]
         qcommand[:,jawids]=[-(gap-.044)/2,(gap-.044)/2]
@@ -599,6 +630,7 @@ try:
     summary=dict(mode=a.mode,scene=str(scene),model_sha256=sha(scene),training_eligible=False,
                  robot_self_collision_enabled=robot_self_collision_enabled,
                  execution_scope='entry_hold_return_only' if a.entry_only else a.mode,
+                 harvest_profile=a.harvest_profile if a.mode=='harvest' else None,
                  physics_steps=len(times)-1,simulated_s=times[-1] if times else 0,physics_wall_s=loop_wall,
                  loop_started_monotonic_s=started,loop_finished_monotonic_s=loop_finished,
                  save_wall_s=time.perf_counter()-started-loop_wall,performance=a.performance,threads=a.threads,
@@ -617,7 +649,7 @@ try:
                  initialization_valid=not initialization_invalid,
                  native_target_detached=any(e['joint']==envs[0]['target_joint'] for e in breaks),
                  fixture_only=a.isolate_background,disabled_background_colliders=isolated_count,
-                 native_break_events=breaks,physics_settings=dict(hz=a.hz,solver=a.solver,armature=.0005,device=a.device,
+                 native_break_events=breaks,physics_settings=dict(hz=a.hz,solver=a.solver,armature=.0005,device=a.device,scene_ccd=scene_ccd_enabled,
                      position_iterations=a.position_iterations,velocity_iterations=a.velocity_iterations,
                      gpu_partitions=a.gpu_partitions,
                      gpu_found_lost_aggregate_capacity=a.gpu_pair_capacity,gpu_total_aggregate_capacity=a.gpu_pair_capacity),

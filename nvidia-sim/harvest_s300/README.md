@@ -3,6 +3,15 @@
 기준 브랜치: `codex/s300-harvest-isaac-20261009` (시작점 `b890fc6`).
 기존 S300 CAD, 농장 USD, RB5 USD, 그리퍼 CAD는 수정하지 않는다.
 
+**최신 여러 열매 접촉 시험:** 기존 V5.1은 수확 순서 완주/분리0.
+별도5mm 벨트 접촉면 시험안+감속+scene CCD에서 Truss_02_Fruit_10 분리와 개방·후퇴를 확인했다.
+원본 CAD의 성공이나 실물 검증이 아니다. [최신 결과·한계·실행법](VIDEO_ENTRY_STATUS_KO.md)을 참고한다.
+
+**새 수확 순서 진단:** `run_motion_live.sh ASSEMBLY reference belt`는 선개방 진입 → 닫기 →
+반대 방향 벨트2초 → 개방·후퇴를 계획한다. 실제120/240Hz에서는 닫기/벨트 시작에서
+접촉 관통으로 중단됐고 분리0이다. 타깃 폭23.05mm와 최소간격28mm 불일치 및 옆 과실 상판
+간섭을 확인했다. 근거/영상/명령은 [벨트 수확 진단](VIDEO_ENTRY_STATUS_KO.md)의 최신 절에 있다.
+
 **1환경 빠른 확인:** `run_motion_live.sh ASSEMBLY interactive`는 기존 native 실행기와
 실제 상태 뷰어를 별도 프로세스로 연결한다. full 식물/전체충돌을 유지한 PGS60에서
 23.5초 진입·복귀를23.500초에 완료했다. 표시15fps 상한과 물리60Hz는 별개다.

@@ -4,6 +4,8 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+import subprocess
+import sys
 from unittest.mock import patch
 
 from motion_app import (PHYSICS_ONLY_APP_ARGS, PHYSICS_ONLY_EXTENSIONS,
@@ -17,6 +19,15 @@ class FakeSimulationApp:
 
 
 class MotionAppTests(unittest.TestCase):
+    def test_ccd_cuda_request_is_rejected_before_native_startup(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out=Path(tmp)/'trial'
+            result=subprocess.run([sys.executable,str(Path(__file__).with_name('run_motion.py')),
+                str(Path(tmp)/'missing_asset'),'--output',str(out),'--device','cuda:0','--scene-ccd'],
+                capture_output=True,text=True)
+            self.assertEqual(result.returncode,2);self.assertIn('only for CPU',result.stderr)
+            self.assertFalse(out.exists())
+
     def test_default_config_is_exact_existing_constructor(self):
         for headless in (False, True):
             for performance in ('baseline', 'optimized'):

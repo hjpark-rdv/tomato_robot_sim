@@ -1,20 +1,33 @@
 #!/usr/bin/env bash
 # Reuse the native runner and measured-pose viewer in separate processes.
 set -euo pipefail
-if [[ $# -lt 1 || $# -gt 2 || "${1:-}" == --help ]]; then
-  echo 'Usage: bash run_motion_live.sh ASSEMBLY [reference|interactive]'
+if [[ $# -lt 1 || $# -gt 3 || "${1:-}" == --help ]]; then
+  echo 'Usage: bash run_motion_live.sh ASSEMBLY [reference|interactive|240|480] [entry|belt]'
   echo 'reference: PGS 120Hz; interactive: PGS 60Hz preview with different numerical dynamics.'
+  echo 'entry: open-jaw entry/return; belt: close, opposed belts for 2s, open, withdraw (detachment not guaranteed).'
   echo 'Both retain full plant, all colliders, self-collision and the 0.5mm guard.'
   exit 0
 fi
 task_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 assembly="$(realpath "$1")"
 profile="${2:-reference}"
+motion="${3:-entry}"
+case "$motion" in
+  entry) motion_args=(--entry-only) ;;
+  belt) motion_args=(--harvest-profile belt_spin_release --belt-speed-m-s "${S300_BELT_SPEED_M_S:-.15}" --belt-seconds 2
+                    --close-seconds "${S300_CLOSE_SECONDS:-3}" --belt-ramp-seconds "${S300_BELT_RAMP_SECONDS:-0}"
+                    --belt-infeed-speed-m-s "${S300_BELT_INFEED_M_S:-0}") ;;
+  *) echo 'Expected entry or belt motion' >&2; exit 2 ;;
+esac
 case "$profile" in
   reference) hz=120 ;;
   interactive) hz=60 ;;
-  *) echo 'Expected reference or interactive' >&2; exit 2 ;;
+  240|480) hz="$profile" ;;
+  *) echo 'Expected reference, interactive, 240, or 480' >&2; exit 2 ;;
 esac
+if [[ "${S300_SCENE_CCD:-0}" == 1 ]]; then
+  motion_args+=(--scene-ccd)
+fi
 native_python="${S300_ISAAC_PYTHON:-/root/isaac-sim-6.1.0/python.sh}"
 viewer_display="${S300_DISPLAY:-:0}"
 asset_python="$task_dir/../.asset-venv/bin/python"
@@ -46,7 +59,7 @@ wait_file() {
   return 1
 }
 echo "Output: $output"
-echo "Physics: full plant / PGS64 / ${hz}Hz / self-collision ON; entry, hold and return only."
+echo "Physics: full plant / PGS64 / ${hz}Hz / self-collision ON; motion: ${motion}."
 if [[ "$profile" == interactive ]]; then
   echo 'Interactive preview changes timestep from 120Hz to 60Hz; it is not numerically equivalent to the reference.'
 fi
@@ -56,7 +69,7 @@ cp -- "$task_dir/VIDEO_ENTRY_STATUS_KO.md" "$output/MOTION_STATUS_KO.md"
 setsid env DISPLAY="$viewer_display" OMNI_KIT_ALLOW_ROOT=1 \
   "$native_python" --no-ros-env -u "$task_dir/run_motion.py" "$assembly" \
   --output "$output/physics" --mode harvest --num-envs 1 \
-  --preparation horizontal_ready --entry-only --approach-pitch-deg 0 --approach-yaw-offset-deg 30 \
+  --preparation horizontal_ready "${motion_args[@]}" --approach-pitch-deg 0 --approach-yaw-offset-deg 30 \
   --headless --physics-only --device cpu --hz "$hz" --threads 2 --performance optimized \
   --gravity-neutral-warmup --armature-setup authored --buffer-contact-events --record-contact-frames \
   --contact-backend callback --collision-filter pairs --plant-dynamics full \
@@ -86,6 +99,9 @@ echo 'Viewer ready. Starting actual physics; the viewer displays measured states
 status=0
 wait "$producer_pid" || status=$?
 producer_pid=''
+if [[ "$motion" == belt && -f "$output/physics/summary.json" ]]; then
+  "$asset_python" "$task_dir/analyze_belt_trial.py" "$assembly" "$output/physics" > "$output/belt_analysis.log"
+fi
 "$asset_python" "$task_dir/report_motion.py" "$output"
 if [[ -f "$output/physics/summary.json" ]]; then
   "$asset_python" - "$output/physics/summary.json" <<'PY'

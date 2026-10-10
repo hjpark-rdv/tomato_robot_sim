@@ -1,0 +1,669 @@
+{
+  "base_commit": "d54b498764eda19a5489d93b4df044b68de1a978",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "uncommitted": true,
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261010_153918_s300_belt_spin_release",
+  "assembly": "/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/assembly_v3",
+  "model_sha256": "b3b6a1a1042f8d4d7c1cadf63323ee8824df6cfb4c922de052997016228d3709",
+  "training_eligible": false,
+  "harvest_success": null,
+  "requested_profile": "open entry -> close -> opposed belts 2 seconds -> open -> withdraw",
+  "scope": "Actual native trials; both stopped before release/withdraw. No successful fruit detachment.",
+  "trials": [
+    {
+      "name": "belt_spin_120",
+      "hz": 120,
+      "simulated_s": 14.083333333333334,
+      "wall_s": 23.54185540229082,
+      "stop_reason": "penetration_over_0_5mm",
+      "completed": false,
+      "native_target_joint_broken": false,
+      "executed_belt_spin_s": 0,
+      "target_displacement_max_mm": 16.93958230316639,
+      "target_force_max_n": 0.984705582775522,
+      "worst_penetration_mm": 0.5059094401076436,
+      "belt_target_contacts": {
+        "/World/ActuatedTool/L_belt": {
+          "points": 0,
+          "max_point_force_n": 0,
+          "first_time_s": null,
+          "max_penetration_mm": 0
+        },
+        "/World/ActuatedTool/R_belt": {
+          "points": 152,
+          "max_point_force_n": 0.984705582775522,
+          "first_time_s": 13.216666666666667,
+          "max_penetration_mm": 0.21485239267349243
+        }
+      },
+      "target_rotation_relative_to_pedicel_max_deg": 4.965907134521972,
+      "joint_anchor_gap_max_mm": 1.0709004529738884,
+      "actual_self_collision_audit": true,
+      "phase_evidence": {
+        "settle": {
+          "executed_s": 2.0,
+          "steps": 240,
+          "start_s": 0.0,
+          "end_s": 2.0,
+          "jaw_gap_min_mm": 43.99970626831055,
+          "jaw_gap_max_mm": 44.00016784667969,
+          "relative_rotation_travel_deg": 0.0017846292012051758
+        },
+        "ready_hold": {
+          "executed_s": 0.5,
+          "steps": 60,
+          "start_s": 2.0,
+          "end_s": 2.5,
+          "jaw_gap_min_mm": 43.99993133544922,
+          "jaw_gap_max_mm": 43.99993133544922,
+          "relative_rotation_travel_deg": 0.0004469839610234191
+        },
+        "prepare_open": {
+          "executed_s": 1.0,
+          "steps": 120,
+          "start_s": 2.5,
+          "end_s": 3.5,
+          "jaw_gap_min_mm": 43.99993133544922,
+          "jaw_gap_max_mm": 95.9145736694336,
+          "relative_rotation_travel_deg": 0.000976565584875459
+        },
+        "prepare_horizontal": {
+          "executed_s": 4.0,
+          "steps": 480,
+          "start_s": 3.5,
+          "end_s": 7.5,
+          "jaw_gap_min_mm": 95.94762420654297,
+          "jaw_gap_max_mm": 95.9959945678711,
+          "relative_rotation_travel_deg": 0.0033705846167559348
+        },
+        "approach": {
+          "executed_s": 4.0,
+          "steps": 480,
+          "start_s": 7.5,
+          "end_s": 11.5,
+          "jaw_gap_min_mm": 95.99504089355469,
+          "jaw_gap_max_mm": 95.99551391601562,
+          "relative_rotation_travel_deg": 0.003545755121528028
+        },
+        "close": {
+          "executed_s": 2.583333333333334,
+          "steps": 310,
+          "start_s": 11.5,
+          "end_s": 14.083333333333334,
+          "jaw_gap_min_mm": 34.18141174316406,
+          "jaw_gap_max_mm": 95.9952621459961,
+          "relative_rotation_travel_deg": 12.594331822478761
+        }
+      },
+      "code_sha256": {
+        "motion_app.py": "a4dee0e0a69b6de3cc0541707fbb6f2f2a292aa9c61df96ad1ed5e975943529a",
+        "test_motion_collision_groups.py": "47594a8500f240774b58e2401dcb00d12027602540765208b2d51306e2110ef5",
+        "motion_gpu_diagnostics.py": "d2fa9ecea06292c94628123321836917e46b0ba76d753853db559bd465e008b0",
+        "validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+        "report_performance.py": "6048f06afbcf5319ce6401543680be42452ac6eab76109d787616dfa58c76a89",
+        "test_motion_compiled_audit.py": "cee995c87891801fd173a50421b1be818a63647d42d07d4f193b1a3a66db4b11",
+        "test_motion_app.py": "62c81eecd3a3547cd1f49b0ca24cb48f903881ab4f009f4bbde4e25fa05118ed",
+        "test_motion_belt_control.py": "5a03efc15f00e26d621dedc81774d0da587c092afb96aef8e975896c9580d4da",
+        "test_motion_gpu_diagnostics.py": "2ffab54bc1572b2d2cd59cd8818ad31b9968cfd353a9c046405cfdebc6e29906",
+        "report_motion.py": "283d04dc43c6cbeac64377dfc9e8e2f5dc19295a9d0d1d662808ffc0b2bccf95",
+        "test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+        "test_motion_resolution.py": "7b17eae6b883e390c6e74234cbb23ffc44a7ee1f9b9b9fb73235296912a254ba",
+        "motion_pose_display.py": "55bf855a4507257ed39d4fa52bcbd0c2ce2294a854dab45a334f868306358e96",
+        "motion_belt_control.py": "0ddb8714e6765ab11400e79b1d5f431b75d74914f05078415747f9e9a3d4cc09",
+        "consolidate_background.py": "6d49ace743b70563c333482161824bdf521798759665b08cc93ba03bec25eacc",
+        "write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+        "test_motion_materialize.py": "2a58df5f7196cd198387a3a2a66e689764b874746e359d91d6b4de2a5df4d5f1",
+        "test_motion_stage_metrics.py": "da148a2d38c830a81b7fae4e5dd64754907030362eec72beea75defcd3b63c84",
+        "latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+        "motion_contact_buffer.py": "c4681b22eb2bd325f81deec02c92ed900cec59438eee6740c5baa3987e2a3abc",
+        "build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+        "motion_replication.py": "10e04dab53d2df3b91514ae0f2a9773b56ef62921679ed122a9eabc7aefa4385",
+        "test_motion_device.py": "acb45e5f4b5938b9ea9bc1f7b2bf2cc20d1ddf65307697e7c24d787de43a08f7",
+        "test_report_performance.py": "890a2246534edd5f79ecb09ebf711ff8b43178d22c5e8ab2e018e2043cbc97fe",
+        "test_consolidate_background.py": "328a9dc1987ccec40f90681853c89df5394e76799aaf5173ac98d5ad57e2fb7d",
+        "validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+        "render_motion.py": "c5a0630cc378cfacdbbd36e0fe98bf6ffc8aad8ee29728607c742d1b992b7af0",
+        "view_motion_live.py": "b7ea76ce6c0ce2193e1ab7f6a1ebfdf38abeb92fbad57903bca476926f9a65d0",
+        "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+        "motion_stage_metrics.py": "7923b3ca6b82daad43071b5f8e807572bce9b96174deca58871ef780c7d320a4",
+        "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+        "compare_motion_runs.py": "ecb1cd15f1d0a0286acf43143f6c18fcdd7b6eae05afad84ff10a18532062fe9",
+        "motion_collision_groups.py": "22e84f8721b07f600b9ad48ad40e5adacb0001213dd24754941af27eb5c26d07",
+        "test_motion_contacts.py": "28429dd628f84f06592c606c46818bd568d5389786c0fd2b4c8397259a16b71e",
+        "test_motion_live.py": "68d5849ee19b12cca0cea0763d3684cb3800667644f6d13060ebbbcdcc46287d",
+        "test_motion_replication.py": "e2039e819b1a18833bcf9f64b276eeaca71ef322647e4880b159767f6986a083",
+        "run_motion.py": "fceb00a384bec50885f99022d5cc0c4d056dfba96d4164d8257032d4ae05c73e",
+        "benchmark_motion_visuals.py": "3b09ed9e6acb43e2df1414d5f4985e32cf54b56bca1f0dd6031222983d48a7f9",
+        "motion_resolution.py": "a1a683b6ae247f7e1c7329ab56c53a3afd907a00644cf1b239d90888c570f1af",
+        "motion_profile.py": "3315572290e7145c6b76e27731bc0fca767b229d4d80653f7ada4306123cdcd7",
+        "motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+        "motion_live.py": "05258c09b71542ed2e1c1fda81342d85cd757721313dfb9c81b1cd048bf08a08",
+        "test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209",
+        "motion_materialize.py": "cfc2b0d02e8e659c3d1e8fd51e887cf82dd44f70ca09361dcc1d3f3e71ddaba4",
+        "motion_contacts.py": "804373fa7efe34dee84036f2a6724bd4dc3a649127ad8491f628704c54192c6e",
+        "capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+        "motion_assets.py": "23fd0b4c594289ca2b2b3f157cbef4612f3682f2786d4cf4bc017057d40c976a",
+        "motion_kinematics.py": "b72adb042e79f1d930aa6f88534fa25352a444c0b5235c5c44753e93ce82cbc0",
+        "motion_visuals.py": "68533aa42f257a6dc2e18bfb534ee4aea6fd9eef0f13f156b90c46d21d0c7e6e",
+        "benchmark_motion.py": "da0e85337b4385fad145c7150f99f7ea237966430ade3970298a27334f18fca3",
+        "motion_initialization.py": "335540ae0400e8099814fa811acc0071143c5b33bb573450a30fbf5053c5f67c",
+        "validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+        "test_motion_visuals.py": "0ca1ab6e3d465659dc8fd7a335bef7a951ba7f7593815a4e91a31c451b5438e5",
+        "test_motion_contact_buffer.py": "35b236b7c9f41568c86ba5c56e0fbc71cbbb990c4d779bc2fbf69b7a122f0cf1",
+        "test_motion_ready.py": "734aca4639707986b51adea6ec6fe290400c33e74ee6d3f650a6088532116173",
+        "test_compare_motion_runs.py": "c573d02cd72c6dc8b839c4908a7e9aff4b9516c108eb240869b534d114f75b59",
+        "test_motion_initialization.py": "797bbae29276988b87477060c7dd77236cb5458dd411f8f09cfd852ccf0dc31c",
+        "test_benchmark_motion.py": "2636560589405d5591f32f2a8b8337124b791e83c9b1a048fcf4fb9a84c7593f",
+        "motion_compiled_audit.py": "ea26a1ae624c3707309e267aaef4cce25873e51d5df0bc924f104257c09abf45",
+        "test_motion_kinematics.py": "cdbe3d54ff736fe6635fb7fb8a0cb0bcad9b7917fd7b1530896cc032c88ba58a"
+      },
+      "input_sha256": {
+        "plan.json": "56709ac179e6bef15138746ae6540dfe5994d641103ba4d4d263ac04c4114acc",
+        "summary.json": "bb91063f1624ae8f59ac3cba7a923184cd7648e4fbc03a47594d136d719cc068",
+        "states.npz": "a5bf9666e621e5d27250669b48214f8cd563cc59d960981030cb79b255b3d9f1",
+        "contacts.json": "faaeea89f8c44617980e301e27a63bf61c0e6f6a287213001491c828ce8f54a2",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "name": "belt_spin_240",
+      "hz": 240,
+      "simulated_s": 14.5875,
+      "wall_s": 48.892997393384576,
+      "stop_reason": "penetration_over_0_5mm",
+      "completed": false,
+      "native_target_joint_broken": false,
+      "executed_belt_spin_s": 0.08750000000000036,
+      "target_displacement_max_mm": 16.83252304792404,
+      "target_force_max_n": 1.5546392601486885,
+      "worst_penetration_mm": 0.5308538675308228,
+      "belt_target_contacts": {
+        "/World/ActuatedTool/L_belt": {
+          "points": 0,
+          "max_point_force_n": 0,
+          "first_time_s": null,
+          "max_penetration_mm": 0
+        },
+        "/World/ActuatedTool/R_belt": {
+          "points": 814,
+          "max_point_force_n": 1.5546392601486885,
+          "first_time_s": 13.204166666666667,
+          "max_penetration_mm": 0.5308538675308228
+        }
+      },
+      "target_rotation_relative_to_pedicel_max_deg": 7.148791903203707,
+      "joint_anchor_gap_max_mm": 1.4906029332470547,
+      "actual_self_collision_audit": true,
+      "phase_evidence": {
+        "settle": {
+          "executed_s": 2.0,
+          "steps": 480,
+          "start_s": 0.0,
+          "end_s": 2.0,
+          "jaw_gap_min_mm": 43.99965286254883,
+          "jaw_gap_max_mm": 44.0002326965332,
+          "relative_rotation_travel_deg": 0.0033278026594860746
+        },
+        "ready_hold": {
+          "executed_s": 0.5,
+          "steps": 120,
+          "start_s": 2.0,
+          "end_s": 2.5,
+          "jaw_gap_min_mm": 43.99993133544922,
+          "jaw_gap_max_mm": 43.99993133544922,
+          "relative_rotation_travel_deg": 0.0008660362238049021
+        },
+        "prepare_open": {
+          "executed_s": 1.0,
+          "steps": 240,
+          "start_s": 2.5,
+          "end_s": 3.5,
+          "jaw_gap_min_mm": 43.99993133544922,
+          "jaw_gap_max_mm": 95.97158813476562,
+          "relative_rotation_travel_deg": 0.0017377347826839514
+        },
+        "prepare_horizontal": {
+          "executed_s": 4.0,
+          "steps": 960,
+          "start_s": 3.5,
+          "end_s": 7.5,
+          "jaw_gap_min_mm": 95.98039245605469,
+          "jaw_gap_max_mm": 95.99569702148438,
+          "relative_rotation_travel_deg": 0.006647187862168983
+        },
+        "approach": {
+          "executed_s": 4.0,
+          "steps": 960,
+          "start_s": 7.5,
+          "end_s": 11.5,
+          "jaw_gap_min_mm": 95.99501037597656,
+          "jaw_gap_max_mm": 95.99552917480469,
+          "relative_rotation_travel_deg": 0.006777701414399999
+        },
+        "close": {
+          "executed_s": 3.0,
+          "steps": 720,
+          "start_s": 11.5,
+          "end_s": 14.5,
+          "jaw_gap_min_mm": 30.97119903564453,
+          "jaw_gap_max_mm": 95.99526977539062,
+          "relative_rotation_travel_deg": 19.835506639084674
+        },
+        "belt_spin": {
+          "executed_s": 0.08750000000000036,
+          "steps": 21,
+          "start_s": 14.5,
+          "end_s": 14.5875,
+          "jaw_gap_min_mm": 30.357555389404297,
+          "jaw_gap_max_mm": 30.959487915039062,
+          "relative_rotation_travel_deg": 11.752903310701045
+        }
+      },
+      "code_sha256": {
+        "motion_app.py": "a4dee0e0a69b6de3cc0541707fbb6f2f2a292aa9c61df96ad1ed5e975943529a",
+        "test_motion_collision_groups.py": "47594a8500f240774b58e2401dcb00d12027602540765208b2d51306e2110ef5",
+        "analyze_belt_trial.py": "88aa34b00673af3a5fd2bc78dd9106b63ce165d2310ec3b61d9d90cff44d631e",
+        "motion_gpu_diagnostics.py": "d2fa9ecea06292c94628123321836917e46b0ba76d753853db559bd465e008b0",
+        "validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+        "report_performance.py": "6048f06afbcf5319ce6401543680be42452ac6eab76109d787616dfa58c76a89",
+        "test_motion_compiled_audit.py": "cee995c87891801fd173a50421b1be818a63647d42d07d4f193b1a3a66db4b11",
+        "test_motion_app.py": "62c81eecd3a3547cd1f49b0ca24cb48f903881ab4f009f4bbde4e25fa05118ed",
+        "test_motion_belt_control.py": "5a03efc15f00e26d621dedc81774d0da587c092afb96aef8e975896c9580d4da",
+        "test_motion_gpu_diagnostics.py": "2ffab54bc1572b2d2cd59cd8818ad31b9968cfd353a9c046405cfdebc6e29906",
+        "report_motion.py": "df460932d366ee73ad9d176de5d6ece80aa0d09182dbf12da638332a45ef7d34",
+        "test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+        "test_motion_resolution.py": "7b17eae6b883e390c6e74234cbb23ffc44a7ee1f9b9b9fb73235296912a254ba",
+        "motion_pose_display.py": "55bf855a4507257ed39d4fa52bcbd0c2ce2294a854dab45a334f868306358e96",
+        "motion_belt_control.py": "0ddb8714e6765ab11400e79b1d5f431b75d74914f05078415747f9e9a3d4cc09",
+        "consolidate_background.py": "6d49ace743b70563c333482161824bdf521798759665b08cc93ba03bec25eacc",
+        "write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+        "test_motion_materialize.py": "2a58df5f7196cd198387a3a2a66e689764b874746e359d91d6b4de2a5df4d5f1",
+        "test_motion_stage_metrics.py": "da148a2d38c830a81b7fae4e5dd64754907030362eec72beea75defcd3b63c84",
+        "latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+        "motion_contact_buffer.py": "c4681b22eb2bd325f81deec02c92ed900cec59438eee6740c5baa3987e2a3abc",
+        "build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+        "motion_replication.py": "10e04dab53d2df3b91514ae0f2a9773b56ef62921679ed122a9eabc7aefa4385",
+        "test_motion_device.py": "acb45e5f4b5938b9ea9bc1f7b2bf2cc20d1ddf65307697e7c24d787de43a08f7",
+        "test_report_performance.py": "890a2246534edd5f79ecb09ebf711ff8b43178d22c5e8ab2e018e2043cbc97fe",
+        "test_consolidate_background.py": "328a9dc1987ccec40f90681853c89df5394e76799aaf5173ac98d5ad57e2fb7d",
+        "validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+        "render_motion.py": "c5a0630cc378cfacdbbd36e0fe98bf6ffc8aad8ee29728607c742d1b992b7af0",
+        "view_motion_live.py": "b7ea76ce6c0ce2193e1ab7f6a1ebfdf38abeb92fbad57903bca476926f9a65d0",
+        "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+        "motion_stage_metrics.py": "7923b3ca6b82daad43071b5f8e807572bce9b96174deca58871ef780c7d320a4",
+        "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+        "compare_motion_runs.py": "ecb1cd15f1d0a0286acf43143f6c18fcdd7b6eae05afad84ff10a18532062fe9",
+        "motion_collision_groups.py": "22e84f8721b07f600b9ad48ad40e5adacb0001213dd24754941af27eb5c26d07",
+        "test_motion_contacts.py": "28429dd628f84f06592c606c46818bd568d5389786c0fd2b4c8397259a16b71e",
+        "test_motion_live.py": "68d5849ee19b12cca0cea0763d3684cb3800667644f6d13060ebbbcdcc46287d",
+        "test_belt_evidence.py": "71f4b8d94d5d490226a1ad83e2ee9ab86d21bd3cfdb5333d338969ca8140e3bd",
+        "test_motion_replication.py": "e2039e819b1a18833bcf9f64b276eeaca71ef322647e4880b159767f6986a083",
+        "run_motion.py": "fceb00a384bec50885f99022d5cc0c4d056dfba96d4164d8257032d4ae05c73e",
+        "benchmark_motion_visuals.py": "3b09ed9e6acb43e2df1414d5f4985e32cf54b56bca1f0dd6031222983d48a7f9",
+        "motion_resolution.py": "a1a683b6ae247f7e1c7329ab56c53a3afd907a00644cf1b239d90888c570f1af",
+        "motion_profile.py": "3315572290e7145c6b76e27731bc0fca767b229d4d80653f7ada4306123cdcd7",
+        "motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+        "motion_live.py": "05258c09b71542ed2e1c1fda81342d85cd757721313dfb9c81b1cd048bf08a08",
+        "test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209",
+        "motion_materialize.py": "cfc2b0d02e8e659c3d1e8fd51e887cf82dd44f70ca09361dcc1d3f3e71ddaba4",
+        "motion_contacts.py": "804373fa7efe34dee84036f2a6724bd4dc3a649127ad8491f628704c54192c6e",
+        "capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+        "motion_assets.py": "23fd0b4c594289ca2b2b3f157cbef4612f3682f2786d4cf4bc017057d40c976a",
+        "motion_kinematics.py": "b72adb042e79f1d930aa6f88534fa25352a444c0b5235c5c44753e93ce82cbc0",
+        "motion_visuals.py": "68533aa42f257a6dc2e18bfb534ee4aea6fd9eef0f13f156b90c46d21d0c7e6e",
+        "benchmark_motion.py": "da0e85337b4385fad145c7150f99f7ea237966430ade3970298a27334f18fca3",
+        "motion_initialization.py": "335540ae0400e8099814fa811acc0071143c5b33bb573450a30fbf5053c5f67c",
+        "validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+        "test_motion_visuals.py": "0ca1ab6e3d465659dc8fd7a335bef7a951ba7f7593815a4e91a31c451b5438e5",
+        "test_motion_contact_buffer.py": "35b236b7c9f41568c86ba5c56e0fbc71cbbb990c4d779bc2fbf69b7a122f0cf1",
+        "test_motion_ready.py": "734aca4639707986b51adea6ec6fe290400c33e74ee6d3f650a6088532116173",
+        "test_compare_motion_runs.py": "c573d02cd72c6dc8b839c4908a7e9aff4b9516c108eb240869b534d114f75b59",
+        "test_motion_initialization.py": "797bbae29276988b87477060c7dd77236cb5458dd411f8f09cfd852ccf0dc31c",
+        "test_benchmark_motion.py": "2636560589405d5591f32f2a8b8337124b791e83c9b1a048fcf4fb9a84c7593f",
+        "motion_compiled_audit.py": "ea26a1ae624c3707309e267aaef4cce25873e51d5df0bc924f104257c09abf45",
+        "test_motion_kinematics.py": "cdbe3d54ff736fe6635fb7fb8a0cb0bcad9b7917fd7b1530896cc032c88ba58a"
+      },
+      "input_sha256": {
+        "plan.json": "56709ac179e6bef15138746ae6540dfe5994d641103ba4d4d263ac04c4114acc",
+        "summary.json": "3941be57bbdb97e9af0bf289880905e794b62b47f5f8d77d0d09ef0697a1e4dd",
+        "states.npz": "bd982ae5201dc1b4f41ad17651ed6633739b1154f46f9e9676ce859af884490d",
+        "contacts.json": "e7454f095f52d3b13b81081b5f88fbe51c872c092b04f25f20c18074aa8b1e63",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    }
+  ],
+  "grip_geometry": {
+    "nominal_minimum_gap_mm": 28.0,
+    "target_width_along_grip_axis_mm": 23.05324793177756,
+    "target_maximum_point_distance_mm": 23.118828971842287,
+    "width_shortfall_mm": 4.946752068222441,
+    "initial_fruit_extents_in_goal_tool_mm": [
+      [
+        -11.53778486866425,
+        81.94395025193776,
+        25.869145741951957
+      ],
+      [
+        11.51546306311331,
+        103.90919394836304,
+        48.13085472263068
+      ]
+    ],
+    "scope": "Original mesh/convex hull support; PhysX cooking/contact offset and actual deformation are separate"
+  },
+  "all_fruit_geometry": {
+    "fruits": [
+      {
+        "name": "Truss_00_Fruit_01",
+        "maximum_point_distance_mm": 25.213185845386448,
+        "world_axis_extents_mm": [
+          23.76679889857769,
+          25.177832692861557,
+          24.193599820137024
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_02",
+        "maximum_point_distance_mm": 27.23462678705914,
+        "world_axis_extents_mm": [
+          25.841059163212776,
+          27.10796520113945,
+          26.217930018901825
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_03",
+        "maximum_point_distance_mm": 24.137107884103244,
+        "world_axis_extents_mm": [
+          22.868666797876358,
+          24.048350751399994,
+          23.39319884777069
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_04",
+        "maximum_point_distance_mm": 26.127503414965428,
+        "world_axis_extents_mm": [
+          24.856751784682274,
+          25.83000622689724,
+          25.315135717391968
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_05",
+        "maximum_point_distance_mm": 23.121023046394896,
+        "world_axis_extents_mm": [
+          21.9254307448864,
+          23.028817027807236,
+          22.432953119277954
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_07",
+        "maximum_point_distance_mm": 21.169855614977003,
+        "world_axis_extents_mm": [
+          19.989458844065666,
+          21.16008661687374,
+          20.397424697875977
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_08",
+        "maximum_point_distance_mm": 25.231530688595427,
+        "world_axis_extents_mm": [
+          24.555424228310585,
+          24.197718128561974,
+          24.200409650802612
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_09",
+        "maximum_point_distance_mm": 21.14865997881921,
+        "world_axis_extents_mm": [
+          20.260851830244064,
+          20.937953144311905,
+          20.323053002357483
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_10",
+        "maximum_point_distance_mm": 22.09903708278242,
+        "world_axis_extents_mm": [
+          20.991126075387,
+          21.848488599061966,
+          21.42280340194702
+        ]
+      },
+      {
+        "name": "Truss_00_Fruit_11",
+        "maximum_point_distance_mm": 23.118823246993312,
+        "world_axis_extents_mm": [
+          22.205960005521774,
+          22.752953693270683,
+          22.265106439590454
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_01",
+        "maximum_point_distance_mm": 25.213186572506597,
+        "world_axis_extents_mm": [
+          24.968750774860382,
+          23.9499993622303,
+          24.193599820137024
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_02",
+        "maximum_point_distance_mm": 27.23462696874867,
+        "world_axis_extents_mm": [
+          26.79354138672352,
+          26.22591331601143,
+          26.217930018901825
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_03",
+        "maximum_point_distance_mm": 24.137108116517528,
+        "world_axis_extents_mm": [
+          24.090830236673355,
+          22.969188168644905,
+          23.39319884777069
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_04",
+        "maximum_point_distance_mm": 26.127503626929347,
+        "world_axis_extents_mm": [
+          25.817658752202988,
+          25.191346183419228,
+          25.315135717391968
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_05",
+        "maximum_point_distance_mm": 23.121022838435465,
+        "world_axis_extents_mm": [
+          23.024294525384903,
+          22.158771753311157,
+          22.432953119277954
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_07",
+        "maximum_point_distance_mm": 21.169855056730817,
+        "world_axis_extents_mm": [
+          20.97117528319359,
+          20.147107541561127,
+          20.397424697875977
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_08",
+        "maximum_point_distance_mm": 25.231530264029352,
+        "world_axis_extents_mm": [
+          24.721717461943626,
+          23.990292102098465,
+          24.200409650802612
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_09",
+        "maximum_point_distance_mm": 21.148660250270343,
+        "world_axis_extents_mm": [
+          20.538674667477608,
+          20.55083028972149,
+          20.323053002357483
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_10",
+        "maximum_point_distance_mm": 22.09903764030854,
+        "world_axis_extents_mm": [
+          21.88103087246418,
+          21.263442933559418,
+          21.42280340194702
+        ]
+      },
+      {
+        "name": "Truss_01_Fruit_11",
+        "maximum_point_distance_mm": 23.118823030202485,
+        "world_axis_extents_mm": [
+          22.212110459804535,
+          22.57707715034485,
+          22.265106439590454
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_01",
+        "maximum_point_distance_mm": 25.213183930923865,
+        "world_axis_extents_mm": [
+          24.43469874560833,
+          24.7050728648901,
+          24.23704043030739
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_02",
+        "maximum_point_distance_mm": 27.234624240684106,
+        "world_axis_extents_mm": [
+          26.08617953956127,
+          26.865117251873016,
+          26.224493980407715
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_03",
+        "maximum_point_distance_mm": 24.13710645523077,
+        "world_axis_extents_mm": [
+          23.535238578915596,
+          23.645343258976936,
+          23.333732038736343
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_04",
+        "maximum_point_distance_mm": 26.127501852687132,
+        "world_axis_extents_mm": [
+          25.036735460162163,
+          25.789424777030945,
+          25.344230234622955
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_05",
+        "maximum_point_distance_mm": 23.12102333096229,
+        "world_axis_extents_mm": [
+          22.204440087080002,
+          22.704889997839928,
+          22.106528282165527
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_07",
+        "maximum_point_distance_mm": 21.169852857065916,
+        "world_axis_extents_mm": [
+          20.20851895213127,
+          20.730454474687576,
+          20.089775323867798
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_08",
+        "maximum_point_distance_mm": 25.23152585723793,
+        "world_axis_extents_mm": [
+          25.023287162184715,
+          23.798679932951927,
+          24.023808538913727
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_09",
+        "maximum_point_distance_mm": 21.148662037543115,
+        "world_axis_extents_mm": [
+          20.001905038952827,
+          21.02172002196312,
+          20.04854381084442
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_10",
+        "maximum_point_distance_mm": 22.09902684624978,
+        "world_axis_extents_mm": [
+          21.161362528800964,
+          21.759243682026863,
+          21.424315869808197
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_11",
+        "maximum_point_distance_mm": 23.118828971842287,
+        "world_axis_extents_mm": [
+          21.860118955373764,
+          23.106710985302925,
+          22.261708974838257
+        ]
+      }
+    ],
+    "minimum_jaw_gap_mm": 28.0,
+    "maximum_fruit_diameter_mm": 27.23462696874867,
+    "scope": "Original collision mesh convex hull support, excludes native contact offset or cooking changes"
+  },
+  "regression": {
+    "legacy": true,
+    "entry_only": true,
+    "actual_prefix_before_close": {
+      "time": true,
+      "phase": true,
+      "command": true,
+      "robot_q": true,
+      "poses": true
+    },
+    "prefix_samples": 1381
+  },
+  "tests": {
+    "passed": 42,
+    "log": "/root/docker_share/mujoko_debugging_data/20261010_153918_s300_belt_spin_release/tests_final.log"
+  },
+  "source_sha256": {
+    "motion_kinematics.py": "b72adb042e79f1d930aa6f88534fa25352a444c0b5235c5c44753e93ce82cbc0",
+    "run_motion.py": "fceb00a384bec50885f99022d5cc0c4d056dfba96d4164d8257032d4ae05c73e",
+    "run_motion_live.sh": "1365c072c12d1d7232bb3315204eee450607437de28daf5dcbd866da2cf22ce6",
+    "analyze_belt_trial.py": "88aa34b00673af3a5fd2bc78dd9106b63ce165d2310ec3b61d9d90cff44d631e",
+    "render_motion.py": "97f7a2e020dbbcc6aa4c1c257f0ba86930321a2eef5ec7e50baa74beb2aefd23",
+    "report_motion.py": "df460932d366ee73ad9d176de5d6ece80aa0d09182dbf12da638332a45ef7d34",
+    "test_motion_ready.py": "734aca4639707986b51adea6ec6fe290400c33e74ee6d3f650a6088532116173",
+    "test_belt_evidence.py": "71f4b8d94d5d490226a1ad83e2ee9ab86d21bd3cfdb5333d338969ca8140e3bd"
+  },
+  "limitations": [
+    "Original jaw minimum 28mm; target width 23.053mm; no bilateral belt contact recorded",
+    "Closed command is not a confirmed grasp; mechanical interference remains",
+    "Original 3N/0.08Nm fixed-joint break thresholds retained; not calibrated biological fruit detachment",
+    "Relative fruit-neck motion and anchor gap include constraint error; no intentional twist success inferred",
+    "Belts use tangential surface velocity, no detailed motor torque limit or flexible belt loop",
+    "Second video is a replay-only foliage cutaway, exact hidden paths recorded; original video and physics retained"
+  ],
+  "preserved_errors": [
+    "campaign.log: incorrect --cases CLI, corrected before physics",
+    "tests.log: SciPy batch Euler test shape, fixed in tests_final.log"
+  ]
+}

@@ -1,5 +1,21 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신: 여러 열매 접촉·그리퍼 접촉면 시험안 (2026-10-10)
+
+- 기존 그리퍼는10·11번 중간으로 진입/6초 닫기/480Hz에서 벨트2초와 개방·후퇴까지 완료했지만 분리0.
+- 별도5mm 접촉면 시험안+감속 벨트+scene CCD에서 Truss_02_Fruit_10 native 분리와 전체30.5초 동작 완료.
+  원래 CAD/V6 유지, 표시·충돌2개와 질량74.88g을 명시적으로 추가한 시험안이다. 물성/파단값/0.5mm 기준 유지.
+- 전체9회(컨트롤러 timeout1 포함) 기록. 빠른 벨트/낮춘 높이/바닥 CCD off 실패도 보존.54테스트PASS.
+- 480Hz 검증용이며 실시간 아님, 제작/실물 안전/동시 다수 수확 검증 전. 상세 [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md).
+- 결과 `/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/index.html`. 요약 `validation/cluster_grasp_20261010.json`. 학습제외, 커밋 여부는 `git status`.
+
+## 최신: S300 벨트2초 수확 순서 연결·실제 분리 미달 (2026-10-10)
+
+- 기준 `d54b498`, `--harvest-profile belt_spin_release`: 벌려 진입 → 닫기 → 대향 벨트0.15m/s·2초 → 벌려 후퇴. 기존 legacy/entry-only 명령은 그대로다. 실제 송이/CAD/V6작업/충돌체/물성/파단값 보존.
+- 같은11번 열매의120Hz는14.0833초 닫기 중 왼쪽상판–옆10번0.5059mm 관통으로중단. 240Hz는14.5875초 오른쪽벨트–목표11번0.5309mm 관통으로중단, 벨트실행0.0875초. 목표분리0/양쪽포획미확보/수확성공아님.
+- 목표폭23.053mm 대 최소벨트간격28mm. 전체30개 활성과실의 최대두점거리도27.235mm 이하. 현재 기구의 잡기 범위 및 옆과실 상판간섭이 우선 문제. 고정 과실–꼭지 조인트의3N/0.08Nm 파단은 유지했고 시간에 따른 강제분리 없음.
+- `analyze_belt_trial.py`에 실제 단계시간/좌우접촉/열매–꼭지 상대회전/정확한 파단조인트 측정. 관련42테스트PASS, 기존명령 회귀일치,120Hz 진입까지1,381개 실제상태bit-exact. raw/영상: `/root/docker_share/mujoko_debugging_data/20261010_153918_s300_belt_spin_release/`. 상세 [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md). 커밋 여부는 `git status` 확인.
+
 ## 최신: S300 실시간 GUI 미리보기 (2026-10-10)
 
 - 기준 `56c5d01`, 브랜치 `codex/s300-harvest-isaac-20261009`. 기존 물리 실행기/실제 상태 뷰어를 별도 프로세스로 연결하는 `run_motion_live.sh` 추가. VNC `DISPLAY=:0` 화면 준비 후 시작, 완료 시 상태/접촉/HTML 저장. 새 변경의 커밋 여부는 `git status` 확인.

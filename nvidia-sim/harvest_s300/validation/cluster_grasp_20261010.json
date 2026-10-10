@@ -1,0 +1,1630 @@
+{
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "d54b498764eda19a5489d93b4df044b68de1a978",
+  "uncommitted": true,
+  "output": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp",
+  "normal_start_attempts": 9,
+  "rows": [
+    {
+      "name": "pair_close6_240",
+      "completed": false,
+      "reason": "penetration_over_0_5mm",
+      "sim_s": 17.529166666666665,
+      "wall_s": 57.864351224154234,
+      "model_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+      "physics": {
+        "hz": 240,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 0.02916666666666501,
+        "steps": 7,
+        "start_s": 17.5,
+        "end_s": 17.529166666666665,
+        "jaw_gap_min_mm": 31.646240234375,
+        "jaw_gap_max_mm": 31.648778915405273,
+        "relative_rotation_travel_deg": 7.536760964935631
+      },
+      "native_breaks": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": null,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0005310773849487305,
+      "target_displacement_max_m": 0.012202695943415165,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 13.535272598266602,
+          "final_displacement_mm": 13.535272598266602,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 1102,
+          "max_point_force_n": 0.493862316365972,
+          "max_penetration_mm": 0.07972680032253265,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 16.06972312927246,
+          "final_displacement_mm": 16.055984497070312,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2638,
+          "max_point_force_n": 3.697337543594515,
+          "max_penetration_mm": 0.4800191964022815,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 12.466602325439453,
+          "final_displacement_mm": 12.262608528137207,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2480,
+          "max_point_force_n": 1.5728227495740217,
+          "max_penetration_mm": 0.16812725516501814,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 1172
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 17.47408676147461,
+          "final_displacement_mm": 17.28962516784668,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 855,
+          "max_point_force_n": 1.728761478521365,
+          "max_penetration_mm": 0.1363234332529828,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 855,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 12.202695846557617,
+          "final_displacement_mm": 12.079298973083496,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 1298,
+          "max_point_force_n": 1.92339536258083,
+          "max_penetration_mm": 0.5310773849487305,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 1298
+          }
+        }
+      ],
+      "prototype": null,
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "8c698cc2eebfe725d215fac0773c88eced0d89ba293241eaacdb0f866641859a",
+        "plan.json": "9a83df5d18bb054ad75f70c330c77bbd092c7c43cb064bda910fc97dd67fe6a3",
+        "states.npz": "59e71a1276907403ab741d185c9d3b448e25a95f89169d5195f8ee1db958098d",
+        "contacts.json": "754a033de393fbd7a89dfda7d57b7a3379668e4d62b8ee95525f5d2936a4b546",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "name": "pair_close6_480",
+      "completed": false,
+      "reason": "controller timeout; no stored state",
+      "native_breaks": null
+    },
+    {
+      "name": "pair_ramp_240",
+      "completed": false,
+      "reason": "penetration_over_0_5mm",
+      "sim_s": 17.654166666666665,
+      "wall_s": 57.835053691640496,
+      "model_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+      "physics": {
+        "hz": 240,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 0.154166666666665,
+        "steps": 37,
+        "start_s": 17.5,
+        "end_s": 17.654166666666665,
+        "jaw_gap_min_mm": 31.64769172668457,
+        "jaw_gap_max_mm": 31.6805419921875,
+        "relative_rotation_travel_deg": 9.058718052016523,
+        "belt_peak_surface_speed_m_s": [
+          0.09719999999999877,
+          0.09719999999999877
+        ],
+        "belt_surface_travel_m": [
+          0.005873749999999838,
+          0.005873749999999838
+        ]
+      },
+      "native_breaks": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": null,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0005171522498130798,
+      "target_displacement_max_m": 0.012524791061878204,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 13.587785720825195,
+          "final_displacement_mm": 13.587785720825195,
+          "world_rotation_max_deg": 12.183144149163208,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 1102,
+          "max_point_force_n": 0.493862316365972,
+          "max_penetration_mm": 0.07972680032253265,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 16.06972312927246,
+          "final_displacement_mm": 16.05284309387207,
+          "world_rotation_max_deg": 16.292479590499237,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2728,
+          "max_point_force_n": 3.697337543594515,
+          "max_penetration_mm": 0.4800191964022815,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 12.466602325439453,
+          "final_displacement_mm": 12.38156509399414,
+          "world_rotation_max_deg": 26.369416700223884,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2780,
+          "max_point_force_n": 1.5728227495740217,
+          "max_penetration_mm": 0.16812725516501814,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 1262
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 17.37040901184082,
+          "final_displacement_mm": 17.37040901184082,
+          "world_rotation_max_deg": 28.367244382022577,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 916,
+          "max_point_force_n": 1.7811038693635237,
+          "max_penetration_mm": 0.1363234332529828,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 916,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 12.52479076385498,
+          "final_displacement_mm": 12.52479076385498,
+          "world_rotation_max_deg": 32.20419290990594,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 1388,
+          "max_point_force_n": 1.92339536258083,
+          "max_penetration_mm": 0.5171522498130798,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 1388
+          }
+        }
+      ],
+      "prototype": null,
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "df1e42ee8e99944510a5f358efed34215f2c4322eae90a98c48058a0805d274b",
+        "plan.json": "07385f92e0a3ea113670f6cf47252d60fe1d47994b89f36355f18cfc4437730b",
+        "states.npz": "edf5e63ed699dc2e7dfe8c93d28bf11fa0ece1d40fb37c756a303ab95df5a577",
+        "contacts.json": "9258dba340dc0106449b1875ac190bd713b061baded4f0111380a4ee4cc66813",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "name": "pair_480_full",
+      "completed": true,
+      "reason": null,
+      "sim_s": 30.5,
+      "wall_s": 219.40160829760134,
+      "model_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 2.0,
+        "steps": 960,
+        "start_s": 17.5,
+        "end_s": 19.5,
+        "jaw_gap_min_mm": 30.804039001464844,
+        "jaw_gap_max_mm": 32.006248474121094,
+        "relative_rotation_travel_deg": 331.50586438359016,
+        "belt_peak_surface_speed_m_s": [
+          0.15,
+          0.15
+        ],
+        "belt_surface_travel_m": [
+          0.3000000000000002,
+          0.3000000000000002
+        ]
+      },
+      "native_breaks": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": 0,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0002726779493968934,
+      "target_displacement_max_m": 0.03344166651368141,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 18.19498634338379,
+          "final_displacement_mm": 0.015727072954177856,
+          "world_rotation_max_deg": 14.93222230572936,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2590,
+          "max_point_force_n": 0.7795894724500203,
+          "max_penetration_mm": 0.03152061253786087,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 16.405521392822266,
+          "final_displacement_mm": 0.014099490828812122,
+          "world_rotation_max_deg": 29.939060850501996,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 14250,
+          "max_point_force_n": 2.381547001870188,
+          "max_penetration_mm": 0.06968977686483413,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 18.414339065551758,
+          "final_displacement_mm": 0.019668899476528168,
+          "world_rotation_max_deg": 33.73303874279536,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 6123,
+          "max_point_force_n": 1.777731919038879,
+          "max_penetration_mm": 0.07738731801509857,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 3848
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 16.205347061157227,
+          "final_displacement_mm": 0.018414868041872978,
+          "world_rotation_max_deg": 38.792445487962404,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 5054,
+          "max_point_force_n": 1.772736682802356,
+          "max_penetration_mm": 0.2726779493968934,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 5054,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 33.44166564941406,
+          "final_displacement_mm": 0.027772583067417145,
+          "world_rotation_max_deg": 50.591596821262044,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 3968,
+          "max_point_force_n": 1.9549032765572651,
+          "max_penetration_mm": 0.21070800721645355,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 3968
+          }
+        }
+      ],
+      "prototype": null,
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "44e1703f80e58ce074e951e07a37bc6109ca369110e566763fcdb3442f1cd8ab",
+        "plan.json": "a1a31d8a9fa7292766258167eaa9b8f0962dfd254f43d7af63e6215341e11a11",
+        "states.npz": "41ff9a92f07da12d3c10a364ef6741f5d1b8fad560f19cfa59ad403ffeb33c80",
+        "contacts.json": "770c65fdff2e004f74dfffee28af13c5f11bfa5d75fa3f4469cd10a8fca45e63",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "name": "pair_infeed_480",
+      "completed": true,
+      "reason": null,
+      "sim_s": 30.5,
+      "wall_s": 216.56856363639235,
+      "model_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 2.0,
+        "steps": 960,
+        "start_s": 17.5,
+        "end_s": 19.5,
+        "jaw_gap_min_mm": 31.09978675842285,
+        "jaw_gap_max_mm": 32.00649642944336,
+        "relative_rotation_travel_deg": 53.12238123333303,
+        "belt_peak_surface_speed_m_s": [
+          0.25,
+          0.04999999999999999
+        ],
+        "belt_surface_travel_m": [
+          0.43750000000000006,
+          0.08750000000000058
+        ]
+      },
+      "native_breaks": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": 0,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0002534594386816025,
+      "target_displacement_max_m": 0.0272255577147007,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 17.436067581176758,
+          "final_displacement_mm": 0.01583356224000454,
+          "world_rotation_max_deg": 13.17720168768025,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2590,
+          "max_point_force_n": 0.7795894724500203,
+          "max_penetration_mm": 0.03152061253786087,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 16.306930541992188,
+          "final_displacement_mm": 0.014101286418735981,
+          "world_rotation_max_deg": 27.01985016377529,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 14947,
+          "max_point_force_n": 2.381547001870188,
+          "max_penetration_mm": 0.06341480911942199,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 16.616256713867188,
+          "final_displacement_mm": 0.019668899476528168,
+          "world_rotation_max_deg": 33.08651378683536,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 6945,
+          "max_point_force_n": 1.777731919038879,
+          "max_penetration_mm": 0.0790553167462349,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 4127
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 16.093399047851562,
+          "final_displacement_mm": 0.01836800016462803,
+          "world_rotation_max_deg": 38.129382059875766,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 5003,
+          "max_point_force_n": 1.6844912134321834,
+          "max_penetration_mm": 0.2534594386816025,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 5003,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 27.225557327270508,
+          "final_displacement_mm": 0.027728207409381866,
+          "world_rotation_max_deg": 43.94300984534873,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 4138,
+          "max_point_force_n": 1.9223689465381335,
+          "max_penetration_mm": 0.1440383493900299,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 4138
+          }
+        }
+      ],
+      "prototype": null,
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "90b0c03afa33b2a9874be7ee039ffa29f88da576058f4b1c0b52e0ae9cfa718f",
+        "plan.json": "a8437abcf379617ae3110b640a1f5cb8fe4c5f603ca360a19a421c9392da8564",
+        "states.npz": "2f303006f3a7541480fad30a2c3400f9322d8a904f4545d3e4fabcf84f4c71b8",
+        "contacts.json": "b479fd9c05c9ea730ad7a044966f76054f1c66340a705bb8e3a6c594565be8d4",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "name": "tread5_infeed_480",
+      "completed": false,
+      "reason": "penetration_over_0_5mm",
+      "sim_s": 17.802083333333332,
+      "wall_s": 120.38756019622087,
+      "model_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 0.30208333333333215,
+        "steps": 145,
+        "start_s": 17.5,
+        "end_s": 17.802083333333332,
+        "jaw_gap_min_mm": 32.241817474365234,
+        "jaw_gap_max_mm": 33.04367446899414,
+        "relative_rotation_travel_deg": 96.60456762991296,
+        "belt_peak_surface_speed_m_s": [
+          0.35,
+          0.05000000000000002
+        ],
+        "belt_surface_travel_m": [
+          0.06161458333333289,
+          0.008802083333333278
+        ]
+      },
+      "native_breaks": [
+        {
+          "t": 17.716666666666665,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        },
+        {
+          "t": 17.802083333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+        }
+      ],
+      "native_detached_count": 2,
+      "valid_complete_run_detachment_count": null,
+      "self_collision_passed": true,
+      "min_separation_m": -0.003090586280450225,
+      "target_displacement_max_m": 0.022200506180524826,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 15.089049339294434,
+          "final_displacement_mm": 15.089049339294434,
+          "world_rotation_max_deg": 6.9566608894514035,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 6706,
+          "max_point_force_n": 0.2296754076024481,
+          "max_penetration_mm": 0.027752066671382636,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 19.17085838317871,
+          "final_displacement_mm": 19.17085838317871,
+          "world_rotation_max_deg": 12.446086539211926,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 17.802083333333332,
+              "phase": "belt_spin",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+            }
+          ],
+          "tool_contact_points": 5428,
+          "max_point_force_n": 23.874110203554835,
+          "max_penetration_mm": 3.090586280450225,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 13.779620170593262,
+          "final_displacement_mm": 13.779620170593262,
+          "world_rotation_max_deg": 25.486650154109295,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 6016,
+          "max_point_force_n": 2.7986268995651207,
+          "max_penetration_mm": 0.11259131133556366,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 4987
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 42.138671875,
+          "final_displacement_mm": 42.138671875,
+          "world_rotation_max_deg": 64.82576315029937,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 17.716666666666665,
+              "phase": "belt_spin",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "tool_contact_points": 2529,
+          "max_point_force_n": 2.689466199608795,
+          "max_penetration_mm": 0.1492425799369812,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 2513,
+            "/World/ActuatedTool/R_belt": 16
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 22.20050621032715,
+          "final_displacement_mm": 21.958921432495117,
+          "world_rotation_max_deg": 43.84241339585905,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 3632,
+          "max_point_force_n": 9.098561733202304,
+          "max_penetration_mm": 0.23572705686092377,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 411,
+            "/World/ActuatedTool/R_belt": 3221
+          }
+        }
+      ],
+      "prototype": {
+        "thickness_mm": 5.0,
+        "parts": [
+          {
+            "path": "/World/ActuatedTool/L_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              -0.0195,
+              0.075,
+              0.035
+            ],
+            "added_mass_kg": 0.037439999999999994
+          },
+          {
+            "path": "/World/ActuatedTool/R_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              0.0195,
+              0.075,
+              0.039
+            ],
+            "added_mass_kg": 0.037439999999999994
+          }
+        ],
+        "minimum_contact_gap_mm": 18.0,
+        "description": "Added visible/collision geometry + TPU-density mass. Rigid surface-velocity model; no material tuning.",
+        "source_assembly": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/assembly_pair",
+        "source_scene_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+        "fabrication_validated": false
+      },
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "0091de72f9911fd5042f396886cfcf3765d04941354746202acef2e9b11eeaf9",
+        "plan.json": "bc7d616d49a62606e021231c41bbb5e46469f37763f465b1dbcdb89d6ed7fd22",
+        "states.npz": "df03fa10435b995b5186df42ce23fea23c76d07c0cf67df6d4679e292829c1dc",
+        "contacts.json": "54586d896fe02ccb6ec873ad34f340a88802eacece7c8bca12a32f9b821e2d01",
+        "break_events.json": "7e68b734b33963168c8ae1ca596279291786a4c0f56dc3b39a07f768fc8ed788"
+      }
+    },
+    {
+      "name": "tread5_slow_480",
+      "completed": false,
+      "reason": "penetration_over_0_5mm",
+      "sim_s": 18.95625,
+      "wall_s": 130.02760085463524,
+      "model_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 1.4562500000000007,
+        "steps": 699,
+        "start_s": 17.5,
+        "end_s": 18.95625,
+        "jaw_gap_min_mm": 31.864267349243164,
+        "jaw_gap_max_mm": 32.57716369628906,
+        "relative_rotation_travel_deg": 91.44685648988028,
+        "belt_peak_surface_speed_m_s": [
+          0.1,
+          0.0
+        ],
+        "belt_surface_travel_m": [
+          0.12052083333333409,
+          0.0
+        ]
+      },
+      "native_breaks": [
+        {
+          "t": 18.497916666666665,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "native_detached_count": 1,
+      "valid_complete_run_detachment_count": null,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0012483596801757812,
+      "target_displacement_max_m": 0.028425563126802444,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 21.26198387145996,
+          "final_displacement_mm": 21.26198387145996,
+          "world_rotation_max_deg": 11.18976518629652,
+          "separation_from_initial_pedicel_frame_final_mm": 0.04018619669887563,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 6669,
+          "max_point_force_n": 0.2296754076024481,
+          "max_penetration_mm": 0.027752066671382636,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 25.401386260986328,
+          "final_displacement_mm": 25.355600357055664,
+          "world_rotation_max_deg": 13.97466773362009,
+          "separation_from_initial_pedicel_frame_final_mm": 0.09653172163159146,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 7395,
+          "max_point_force_n": 2.995395061247459,
+          "max_penetration_mm": 0.2462705597281456,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 20.662620544433594,
+          "final_displacement_mm": 20.60742950439453,
+          "world_rotation_max_deg": 25.58108972566644,
+          "separation_from_initial_pedicel_frame_final_mm": 0.1531898722740517,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 9889,
+          "max_point_force_n": 2.002804986862548,
+          "max_penetration_mm": 0.08018501102924347,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 6311
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 1000.711181640625,
+          "final_displacement_mm": 999.8688354492188,
+          "world_rotation_max_deg": 60.088171171576505,
+          "separation_from_initial_pedicel_frame_final_mm": 1011.8325755719244,
+          "recorded_time_after_first_break_s": 0.4583333333333357,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 18.497916666666665,
+              "phase": "belt_spin",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "tool_contact_points": 3838,
+          "max_point_force_n": 3.5176795973363597,
+          "max_penetration_mm": 0.11958181858062744,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 3755,
+            "/World/ActuatedTool/R_belt": 83
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 28.42556381225586,
+          "final_displacement_mm": 28.42556381225586,
+          "world_rotation_max_deg": 46.17890388653504,
+          "separation_from_initial_pedicel_frame_final_mm": 0.1941536689998308,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 5667,
+          "max_point_force_n": 4.070376588510981,
+          "max_penetration_mm": 0.2043694257736206,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 1708,
+            "/World/ActuatedTool/R_belt": 3959
+          }
+        }
+      ],
+      "prototype": {
+        "thickness_mm": 5.0,
+        "parts": [
+          {
+            "path": "/World/ActuatedTool/L_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              -0.0195,
+              0.075,
+              0.035
+            ],
+            "added_mass_kg": 0.037439999999999994
+          },
+          {
+            "path": "/World/ActuatedTool/R_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              0.0195,
+              0.075,
+              0.039
+            ],
+            "added_mass_kg": 0.037439999999999994
+          }
+        ],
+        "minimum_contact_gap_mm": 18.0,
+        "description": "Added visible/collision geometry + TPU-density mass. Rigid surface-velocity model; no material tuning.",
+        "source_assembly": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/assembly_pair",
+        "source_scene_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+        "fabrication_validated": false
+      },
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "b08eb18ca40dd28d7953ff7e2d9749996486fdefa69c7d870f15c5fba32edd52",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "states.npz": "06945d573497a219ed16eab3387d13071db21e59f6359e241d0776f4bb80c3a6",
+        "contacts.json": "8f577d1a4a40ea82fa34cc320a995044ffa2389757a48e5366dfb62dcc8fea7f",
+        "break_events.json": "8a3e64442b595a9f3a52f9aff600f7f3889f99e542afeabe8baa52159706f4bb"
+      }
+    },
+    {
+      "name": "tread5_lower_480",
+      "completed": false,
+      "reason": "penetration_over_0_5mm",
+      "sim_s": 16.991666666666667,
+      "wall_s": 115.02555422857404,
+      "model_sha256": "24098521aa7914126c29942b884137565d11ef0ea7f405313cd4d8c1de6925c4",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": null,
+      "native_breaks": [
+        {
+          "t": 16.991666666666667,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        },
+        {
+          "t": 16.991666666666667,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09"
+        }
+      ],
+      "native_detached_count": 2,
+      "valid_complete_run_detachment_count": null,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0007756948471069336,
+      "target_displacement_max_m": 0.01590321771800518,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 6.909853458404541,
+          "final_displacement_mm": 6.909853458404541,
+          "world_rotation_max_deg": 11.46627797418158,
+          "separation_from_initial_pedicel_frame_final_mm": 0.20869160171581058,
+          "recorded_time_after_first_break_s": 0.0,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 16.991666666666667,
+              "phase": "close",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09"
+            }
+          ],
+          "tool_contact_points": 3380,
+          "max_point_force_n": 6.710824347161431,
+          "max_penetration_mm": 0.7756948471069336,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 15.801179885864258,
+          "final_displacement_mm": 15.801179885864258,
+          "world_rotation_max_deg": 33.865222215151086,
+          "separation_from_initial_pedicel_frame_final_mm": 0.19011382279448494,
+          "recorded_time_after_first_break_s": 0.0,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 16.991666666666667,
+              "phase": "close",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "tool_contact_points": 3337,
+          "max_point_force_n": 3.6577098320725114,
+          "max_penetration_mm": 0.15704147517681122,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 3337,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 15.903217315673828,
+          "final_displacement_mm": 15.903217315673828,
+          "world_rotation_max_deg": 32.48271171866173,
+          "separation_from_initial_pedicel_frame_final_mm": 0.08830338400431857,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 2355,
+          "max_point_force_n": 1.904142909429428,
+          "max_penetration_mm": 0.18570572137832642,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 45,
+            "/World/ActuatedTool/R_belt": 2310
+          }
+        }
+      ],
+      "prototype": {
+        "thickness_mm": 5.0,
+        "parts": [
+          {
+            "path": "/World/ActuatedTool/L_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              -0.0195,
+              0.075,
+              0.035
+            ],
+            "added_mass_kg": 0.037439999999999994
+          },
+          {
+            "path": "/World/ActuatedTool/R_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              0.0195,
+              0.075,
+              0.039
+            ],
+            "added_mass_kg": 0.037439999999999994
+          }
+        ],
+        "minimum_contact_gap_mm": 18.0,
+        "description": "Added visible/collision geometry + TPU-density mass. Rigid surface-velocity model; no material tuning.",
+        "source_assembly": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/assembly_pair",
+        "source_scene_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+        "fabrication_validated": false
+      },
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": -0.003,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9962373930175098
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "c1cb83014b50daaf11487552a73f523b01eb69c272054bcf09cc17de2f49f887",
+        "plan.json": "d070ee5e44c5e81851609b977fa800e651936ccbbaa2f800f9b42a50fe907fc4",
+        "states.npz": "82b359df722558aa5d513899636da3ec221382831ba938d09ac5f161093159a3",
+        "contacts.json": "cc392fcb06fd597e7b09d8e3ea9bae108903872fba58c59c5dea0cf6a4a82a81",
+        "break_events.json": "bf089207d2dcbd79c239fab3b35c4145144b7eb31939f3a1ab5ddf0931643311"
+      }
+    },
+    {
+      "name": "tread5_slow_ccd480",
+      "completed": true,
+      "reason": null,
+      "sim_s": 30.5,
+      "wall_s": 221.7703038007021,
+      "model_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c",
+      "physics": {
+        "hz": 480,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "spin": {
+        "executed_s": 2.0,
+        "steps": 960,
+        "start_s": 17.5,
+        "end_s": 19.5,
+        "jaw_gap_min_mm": 31.864267349243164,
+        "jaw_gap_max_mm": 32.57716369628906,
+        "relative_rotation_travel_deg": 178.16570156007197,
+        "belt_peak_surface_speed_m_s": [
+          0.1,
+          0.0
+        ],
+        "belt_surface_travel_m": [
+          0.15000000000000074,
+          0.0
+        ]
+      },
+      "native_breaks": [
+        {
+          "t": 18.497916666666665,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "native_detached_count": 1,
+      "valid_complete_run_detachment_count": 1,
+      "self_collision_passed": true,
+      "min_separation_m": -0.0002462705597281456,
+      "target_displacement_max_m": 0.03013426996767521,
+      "contacted_fruits": [
+        {
+          "name": "Truss_02_Fruit_07",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_07",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07",
+          "max_displacement_mm": 21.646860122680664,
+          "final_displacement_mm": 3.0355842113494873,
+          "world_rotation_max_deg": 11.18976518629652,
+          "separation_from_initial_pedicel_frame_final_mm": 0.00026378169741249227,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 9354,
+          "max_point_force_n": 0.2296754076024481,
+          "max_penetration_mm": 0.027752066671382636,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_08",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08",
+          "max_displacement_mm": 25.447416305541992,
+          "final_displacement_mm": 3.448688507080078,
+          "world_rotation_max_deg": 13.97466773362009,
+          "separation_from_initial_pedicel_frame_final_mm": 0.0003832450211768777,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 10192,
+          "max_point_force_n": 2.995395061247459,
+          "max_penetration_mm": 0.2462705597281456,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 0
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_09",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09",
+          "max_displacement_mm": 21.106935501098633,
+          "final_displacement_mm": 3.601895809173584,
+          "world_rotation_max_deg": 25.58108972566644,
+          "separation_from_initial_pedicel_frame_final_mm": 0.00026762042408596414,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 11719,
+          "max_point_force_n": 2.002804986862548,
+          "max_penetration_mm": 0.08018501102924347,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 0,
+            "/World/ActuatedTool/R_belt": 6998
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "max_displacement_mm": 999.7582397460938,
+          "final_displacement_mm": 999.7582397460938,
+          "world_rotation_max_deg": 63.40337005474931,
+          "separation_from_initial_pedicel_frame_final_mm": 1003.3230792933772,
+          "recorded_time_after_first_break_s": 12.002083333333335,
+          "native_detached": true,
+          "native_break_events": [
+            {
+              "t": 18.497916666666665,
+              "phase": "belt_spin",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "tool_contact_points": 3838,
+          "max_point_force_n": 3.5176795973363597,
+          "max_penetration_mm": 0.11958181858062744,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 3755,
+            "/World/ActuatedTool/R_belt": 83
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "body": "/World/ElasticTarget/Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "max_displacement_mm": 30.13426971435547,
+          "final_displacement_mm": 4.125301837921143,
+          "world_rotation_max_deg": 47.82428349374265,
+          "separation_from_initial_pedicel_frame_final_mm": 0.00032554586556401483,
+          "recorded_time_after_first_break_s": null,
+          "native_detached": false,
+          "native_break_events": [],
+          "tool_contact_points": 7102,
+          "max_point_force_n": 4.070376588510981,
+          "max_penetration_mm": 0.2043694257736206,
+          "belt_contact_points": {
+            "/World/ActuatedTool/L_belt": 2639,
+            "/World/ActuatedTool/R_belt": 4463
+          }
+        }
+      ],
+      "prototype": {
+        "thickness_mm": 5.0,
+        "parts": [
+          {
+            "path": "/World/ActuatedTool/L_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              -0.0195,
+              0.075,
+              0.035
+            ],
+            "added_mass_kg": 0.037439999999999994
+          },
+          {
+            "path": "/World/ActuatedTool/R_belt/PrototypeTread",
+            "size_m": [
+              0.005,
+              0.12,
+              0.052
+            ],
+            "center_local_m": [
+              0.0195,
+              0.075,
+              0.039
+            ],
+            "added_mass_kg": 0.037439999999999994
+          }
+        ],
+        "minimum_contact_gap_mm": 18.0,
+        "description": "Added visible/collision geometry + TPU-density mass. Rigid surface-velocity model; no material tuning.",
+        "source_assembly": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/assembly_pair",
+        "source_scene_sha256": "a458a62794fad07c5627c1d88234112a35dc294e78f5660632f788858107cf6f",
+        "fabrication_validated": false
+      },
+      "grasp_reference": {
+        "fruits": [
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "fruit_paths": [
+          "/World/ElasticTarget/Truss_02_Fruit_10",
+          "/World/ElasticTarget/Truss_02_Fruit_11"
+        ],
+        "fruit_centroid_world_m": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          0.9992373930175098
+        ],
+        "height_offset_m": 0.009,
+        "center": [
+          -0.3885962704637497,
+          1.5226827010298887,
+          1.0082373930175097
+        ],
+        "contact_policy": "Fruit contact/pushing allowed; original penetration guard and physical collisions retained"
+      },
+      "evidence_sha256": {
+        "summary.json": "fb95f888528dc03154ff14c129084b1a399d540ea14add0d892c4809f26f3e15",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "states.npz": "c0b0eb15bde57cc5577498a85674e815bdbccb82126f8505d67c147ea8b8b631",
+        "contacts.json": "c83fd4cbde81f46ebd32fb17e5ba9fe9f5adef9ca74cb4af02824f3224dae77d",
+        "break_events.json": "8a3e64442b595a9f3a52f9aff600f7f3889f99e542afeabe8baa52159706f4bb"
+      }
+    }
+  ],
+  "tests": 54,
+  "legacy_commands": {
+    "legacy": "exact phase command match",
+    "entry_only": "exact phase command match"
+  },
+  "unchanged_original_model": [
+    {
+      "root": "/World/ElasticTarget",
+      "exact_match": true,
+      "sha256": [
+        "5ecd2a6aec00740867c34ade82f6d25668fadb07700bee8cff2afeac214e623a",
+        "5ecd2a6aec00740867c34ade82f6d25668fadb07700bee8cff2afeac214e623a"
+      ]
+    },
+    {
+      "root": "/World/ActuatedTool",
+      "exact_match": true,
+      "sha256": [
+        "56fb438ff0c81bbf3bbc7a831467fee8e6b97b35a61c23c203c660075eaefcfe",
+        "56fb438ff0c81bbf3bbc7a831467fee8e6b97b35a61c23c203c660075eaefcfe"
+      ]
+    }
+  ],
+  "tread_model_check": {
+    "active_plant_exact": true,
+    "robot_exact": true,
+    "base_collider_count": 31464,
+    "prototype_collider_count": 31466,
+    "added": [
+      "/World/ActuatedTool/L_belt/PrototypeTread",
+      "/World/ActuatedTool/R_belt/PrototypeTread"
+    ],
+    "removed": []
+  },
+  "source_sha256": {
+    "motion_app.py": "a4dee0e0a69b6de3cc0541707fbb6f2f2a292aa9c61df96ad1ed5e975943529a",
+    "test_motion_collision_groups.py": "47594a8500f240774b58e2401dcb00d12027602540765208b2d51306e2110ef5",
+    "analyze_belt_trial.py": "e4af68bb79310e2a32c29ed711acb602b9624089de0e618b4290d15ae8355a47",
+    "motion_gpu_diagnostics.py": "d2fa9ecea06292c94628123321836917e46b0ba76d753853db559bd465e008b0",
+    "validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+    "report_performance.py": "6048f06afbcf5319ce6401543680be42452ac6eab76109d787616dfa58c76a89",
+    "test_motion_compiled_audit.py": "cee995c87891801fd173a50421b1be818a63647d42d07d4f193b1a3a66db4b11",
+    "test_motion_app.py": "709f440ec7e857d0211237e51a262345a06d9bab55e3bce97d1638de5b3613b3",
+    "test_motion_belt_control.py": "5a03efc15f00e26d621dedc81774d0da587c092afb96aef8e975896c9580d4da",
+    "test_motion_gpu_diagnostics.py": "2ffab54bc1572b2d2cd59cd8818ad31b9968cfd353a9c046405cfdebc6e29906",
+    "report_motion.py": "f0e6033b9ed4e0bdf427dc197eaa10e09ce3b2b47dea11186173a96cb386dcad",
+    "test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+    "test_motion_resolution.py": "7b17eae6b883e390c6e74234cbb23ffc44a7ee1f9b9b9fb73235296912a254ba",
+    "motion_pose_display.py": "55bf855a4507257ed39d4fa52bcbd0c2ce2294a854dab45a334f868306358e96",
+    "motion_belt_control.py": "0ddb8714e6765ab11400e79b1d5f431b75d74914f05078415747f9e9a3d4cc09",
+    "consolidate_background.py": "6d49ace743b70563c333482161824bdf521798759665b08cc93ba03bec25eacc",
+    "write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+    "test_motion_materialize.py": "2a58df5f7196cd198387a3a2a66e689764b874746e359d91d6b4de2a5df4d5f1",
+    "test_motion_stage_metrics.py": "da148a2d38c830a81b7fae4e5dd64754907030362eec72beea75defcd3b63c84",
+    "latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+    "motion_contact_buffer.py": "c4681b22eb2bd325f81deec02c92ed900cec59438eee6740c5baa3987e2a3abc",
+    "build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+    "motion_replication.py": "10e04dab53d2df3b91514ae0f2a9773b56ef62921679ed122a9eabc7aefa4385",
+    "test_motion_device.py": "acb45e5f4b5938b9ea9bc1f7b2bf2cc20d1ddf65307697e7c24d787de43a08f7",
+    "test_report_performance.py": "890a2246534edd5f79ecb09ebf711ff8b43178d22c5e8ab2e018e2043cbc97fe",
+    "test_consolidate_background.py": "328a9dc1987ccec40f90681853c89df5394e76799aaf5173ac98d5ad57e2fb7d",
+    "validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+    "render_motion.py": "41d0b4cdcacd97397fccdc86ba9d59fbba4cc3a08b86ce2b814a14166d8fb67a",
+    "view_motion_live.py": "b7ea76ce6c0ce2193e1ab7f6a1ebfdf38abeb92fbad57903bca476926f9a65d0",
+    "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+    "motion_stage_metrics.py": "7923b3ca6b82daad43071b5f8e807572bce9b96174deca58871ef780c7d320a4",
+    "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+    "compare_motion_runs.py": "ecb1cd15f1d0a0286acf43143f6c18fcdd7b6eae05afad84ff10a18532062fe9",
+    "motion_collision_groups.py": "22e84f8721b07f600b9ad48ad40e5adacb0001213dd24754941af27eb5c26d07",
+    "test_motion_contacts.py": "28429dd628f84f06592c606c46818bd568d5389786c0fd2b4c8397259a16b71e",
+    "test_motion_live.py": "68d5849ee19b12cca0cea0763d3684cb3800667644f6d13060ebbbcdcc46287d",
+    "test_belt_evidence.py": "4a21672cf4321c40a80a53d86d6fcf8fca49561554d7c4e26a1aebe148d119bf",
+    "test_motion_replication.py": "e2039e819b1a18833bcf9f64b276eeaca71ef322647e4880b159767f6986a083",
+    "run_motion.py": "268d4ae000c2d18674c19387eb2c82d01f5449cd1736a708197ff8750108caee",
+    "benchmark_motion_visuals.py": "3b09ed9e6acb43e2df1414d5f4985e32cf54b56bca1f0dd6031222983d48a7f9",
+    "motion_resolution.py": "a1a683b6ae247f7e1c7329ab56c53a3afd907a00644cf1b239d90888c570f1af",
+    "motion_profile.py": "3315572290e7145c6b76e27731bc0fca767b229d4d80653f7ada4306123cdcd7",
+    "motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+    "motion_live.py": "05258c09b71542ed2e1c1fda81342d85cd757721313dfb9c81b1cd048bf08a08",
+    "test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209",
+    "motion_materialize.py": "cfc2b0d02e8e659c3d1e8fd51e887cf82dd44f70ca09361dcc1d3f3e71ddaba4",
+    "motion_contacts.py": "804373fa7efe34dee84036f2a6724bd4dc3a649127ad8491f628704c54192c6e",
+    "capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+    "motion_assets.py": "7ba224cd0bc2bfc880f6ebc3609c6dcaf1ddd496d2b76610e8e1d7e3c2edf3fe",
+    "motion_kinematics.py": "d411027ced94ebc650f46532730c6d6430d64b26686d637b8f267c86e336747d",
+    "motion_visuals.py": "68533aa42f257a6dc2e18bfb534ee4aea6fd9eef0f13f156b90c46d21d0c7e6e",
+    "benchmark_motion.py": "da0e85337b4385fad145c7150f99f7ea237966430ade3970298a27334f18fca3",
+    "motion_initialization.py": "335540ae0400e8099814fa811acc0071143c5b33bb573450a30fbf5053c5f67c",
+    "validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+    "test_motion_visuals.py": "0ca1ab6e3d465659dc8fd7a335bef7a951ba7f7593815a4e91a31c451b5438e5",
+    "test_motion_contact_buffer.py": "35b236b7c9f41568c86ba5c56e0fbc71cbbb990c4d779bc2fbf69b7a122f0cf1",
+    "test_motion_ready.py": "4e215761b1c20318bd8e01aa0aa408232b482e8d69304df4adbd4d2eb19ac49b",
+    "test_compare_motion_runs.py": "c573d02cd72c6dc8b839c4908a7e9aff4b9516c108eb240869b534d114f75b59",
+    "test_motion_initialization.py": "797bbae29276988b87477060c7dd77236cb5458dd411f8f09cfd852ccf0dc31c",
+    "test_benchmark_motion.py": "2636560589405d5591f32f2a8b8337124b791e83c9b1a048fcf4fb9a84c7593f",
+    "motion_compiled_audit.py": "ea26a1ae624c3707309e267aaef4cce25873e51d5df0bc924f104257c09abf45",
+    "test_motion_kinematics.py": "cdbe3d54ff736fe6635fb7fb8a0cb0bcad9b7917fd7b1530896cc032c88ba58a",
+    "run_motion_live.sh": "4ae10fafaa7f6f2db0da00e947123cb8f7e085aa375e36c23d814c71ea304e3b"
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "interpretation": "Native fruit detachment with full motion is a SIM diagnostic, not validated crop safety, collection, multi-fruit simultaneous harvesting or real hardware performance.",
+  "video_validation": [
+    {
+      "path": "pair_480_full/actual_motion.mp4",
+      "metadata": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_frames": "184"
+          }
+        ],
+        "format": {
+          "duration": "30.667000"
+        }
+      },
+      "decode_exit": 0,
+      "errors": ""
+    },
+    {
+      "path": "pair_480_full/contact_cutaway.mp4",
+      "metadata": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_frames": "184"
+          }
+        ],
+        "format": {
+          "duration": "30.667000"
+        }
+      },
+      "decode_exit": 0,
+      "errors": ""
+    },
+    {
+      "path": "tread5_slow_ccd480/actual_motion.mp4",
+      "metadata": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_frames": "184"
+          }
+        ],
+        "format": {
+          "duration": "30.667000"
+        }
+      },
+      "decode_exit": 0,
+      "errors": ""
+    }
+  ]
+}

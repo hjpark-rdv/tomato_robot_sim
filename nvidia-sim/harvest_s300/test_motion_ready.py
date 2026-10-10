@@ -2,7 +2,7 @@
 import unittest
 import numpy as np
 from scipy.spatial.transform import Rotation
-from motion_kinematics import plan_motion, grasp_pose
+from motion_kinematics import plan_motion, grasp_pose, belt_speed_fraction
 
 
 class CartesianRobot:
@@ -65,6 +65,69 @@ class ReadyTests(unittest.TestCase):
             self.assertEqual(p[4:],(0.,0.))
             if p[0] in ('approach','entry_hold','withdraw','return_ready'):
                 self.assertEqual(p[3],.096)
+
+    def test_spin_profile_preserves_entry_and_opens_before_withdrawal(self):
+        original,_=plan_motion(self.kin,self.center,self.q,'horizontal_ready')
+        phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',
+                               harvest_profile='belt_spin_release')
+        for old,new in zip(original[:5],phases[:5]):
+            self.assertEqual(old[:2],new[:2]);np.testing.assert_array_equal(old[2],new[2])
+            self.assertEqual(old[3:],new[3:])
+        spin=next(p for p in phases if p[0]=='belt_spin')
+        self.assertEqual(spin[1],2.);self.assertEqual(spin[4],-spin[5])
+        self.assertGreater(abs(spin[4]),.015)
+        np.testing.assert_array_equal(spin[2][0],spin[2][-1])
+        labels=[p[0] for p in phases]
+        self.assertEqual(labels[labels.index('withdraw')-1],'release_open')
+        for name in ('release_open','withdraw','return_ready'):
+            step=next(p for p in phases if p[0]==name)
+            self.assertEqual(step[3:],(.096,0.,0.))
+        previous=self.q
+        for step in phases:
+            np.testing.assert_allclose(step[2][0],previous,atol=1e-12)
+            previous=step[2][-1]
+        np.testing.assert_array_equal(previous,self.q)
+        self.assertFalse(meta['belt_spin']['arm_rotates'])
+
+    def test_spin_profile_rejects_conflicting_or_invalid_settings(self):
+        for options in ({'entry_only':True},{'belt_speed_m_s':float('nan')},
+                        {'belt_speed_m_s':0},{'belt_seconds':-1}):
+            with self.subTest(options=options),self.assertRaises(ValueError):
+                plan_motion(self.kin,self.center,self.q,'horizontal_ready',
+                            harvest_profile='belt_spin_release',**options)
+
+    def test_slow_close_changes_duration_only(self):
+        original,_=plan_motion(self.kin,self.center,self.q,'horizontal_ready',harvest_profile='belt_spin_release')
+        slow,_=plan_motion(self.kin,self.center,self.q,'horizontal_ready',harvest_profile='belt_spin_release',close_seconds=6.)
+        for a,b in zip(original,slow):
+            self.assertEqual(a[0],b[0]);np.testing.assert_array_equal(a[2],b[2]);self.assertEqual(a[3:],b[3:])
+            self.assertEqual(b[1],6. if b[0]=='close' else a[1])
+        with self.assertRaises(ValueError):plan_motion(self.kin,self.center,self.q,'horizontal_ready',close_seconds=6.)
+
+    def test_cluster_aim_does_not_move_fruit(self):
+        from motion_assets import grasp_reference
+        import copy
+        report={'plant':{'fruits':[{'name':'a','path':'/a','center':[0,1,2]},
+                                  {'name':'b','path':'/b','center':[2,1,4]}]}}
+        before=copy.deepcopy(report);ref=grasp_reference(report,['a','b'],.009)
+        np.testing.assert_allclose(ref['center'],[1,1,3.009]);self.assertEqual(report,before)
+        for names in (['a','a'],['unknown'],[]):
+            with self.assertRaises(ValueError):grasp_reference(report,names)
+
+    def test_belt_ramp_preserves_two_second_window(self):
+        self.assertEqual(belt_speed_fraction(0,2,0),1.)
+        for t,v in [(0,0),(.125,.5),(.25,1),(1,1),(1.875,.5),(2,0)]:
+            self.assertAlmostEqual(belt_speed_fraction(t,2,.25),v)
+        for ramp in (-.1,1.1,float('nan')):
+            with self.assertRaises(ValueError):belt_speed_fraction(0,2,ramp)
+
+    def test_belt_common_infeed_keeps_spin_differential_and_arm_stationary(self):
+        phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',
+            harvest_profile='belt_spin_release',belt_infeed_speed_m_s=.1)
+        spin=next(p for p in phases if p[0]=='belt_spin')
+        self.assertAlmostEqual((spin[4]+spin[5])/2,-.1)
+        self.assertAlmostEqual((spin[5]-spin[4])/2,.15)
+        self.assertEqual(spin[1],2.);np.testing.assert_array_equal(spin[2][0],spin[2][1])
 
 
 if __name__=='__main__':unittest.main()

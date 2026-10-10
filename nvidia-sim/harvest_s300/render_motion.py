@@ -8,9 +8,10 @@ from pathlib import Path
 
 p=argparse.ArgumentParser();p.add_argument('assembly',type=Path);p.add_argument('trial',type=Path)
 p.add_argument('--fps',type=int,default=15);p.add_argument('--speed',type=float,default=2.)
-p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, or mouth')
+p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, mouth, belt_contact or grip_front')
 p.add_argument('--name',default='actual_motion',help='New output basename, never overwrites a video')
 p.add_argument('--review-light',action='store_true',help='Add replay-only fill light for contact inspection')
+p.add_argument('--contact-cutaway',action='store_true',help='Replay inspection only: hide background plants and active leaf visuals, record exact paths; source physics and saved poses unchanged')
 a=p.parse_args()
 if not a.name.replace('_','').isalnum():p.error('name must be an alphanumeric basename')
 output=a.trial/(a.name+'_frames');output.mkdir(exist_ok=False)
@@ -33,6 +34,8 @@ try:
     from elastic_geometry import skin_points
     data=np.load(a.trial/'states.npz');meta=json.loads((a.assembly/'motion_manifest.json').read_text())
     summary=json.loads((a.trial/'summary.json').read_text())
+    fruit_joints={f['joint'] for f in meta['plant']['fruits']}
+    breaks=json.loads((a.trial/'break_events.json').read_text())
     if summary['model_sha256']!=sha(a.assembly/'scene.usda'):raise ValueError('Replay scene hash mismatch')
     omni.usd.get_context().open_stage(str(a.assembly/'scene.usda'))
     stage=omni.usd.get_context().get_stage()
@@ -41,6 +44,16 @@ try:
     stage.SetEditTarget(stage.GetSessionLayer())
     restore_recorded_display_fixture(stage,a.trial)
     paths=data['body_paths'].tolist();index={p:i for i,p in enumerate(paths)}
+    cutaway_hidden=[]
+    if a.contact_cutaway:
+        background=stage.GetPrimAtPath('/World/Greenhouse/Plants')
+        if background:
+            UsdGeom.Imageable(background).MakeInvisible();cutaway_hidden.append(str(background.GetPath()))
+        from pxr import Usd
+        for prim in Usd.PrimRange(stage.GetPrimAtPath('/World/ElasticTarget')):
+            source_name=str(prim.GetCustomDataByKey('sourceName') or '')
+            if prim.IsA(UsdGeom.Mesh) and any(x in source_name for x in ('CompoundLeaf','Apical_Young_Leaf')):
+                UsdGeom.Imageable(prim).MakeInvisible();cutaway_hidden.append(str(prim.GetPath()))
     pose_display=MeasuredPoseDisplay(stage,paths)
     native=json.loads((a.trial/'native_metadata.json').read_text());names=native['robot_dofs']
     lids=[names.index('jaw_L'),names.index('jaw_R')]
@@ -56,10 +69,20 @@ try:
             offset=-orientation[:,0]*1.8+np.array([0.,0.,.30])
         camera(stage,'/World/MotionReplayCamera',tuple(center+offset),tuple(center))
         a.camera='/World/MotionReplayCamera'
-    elif a.camera in ('jaw','mouth'):
-        pose=data['poses'][0,index['/World/ActuatedTool/fixed']]
+    elif a.camera in ('jaw','mouth','belt_contact','grip_front'):
+        camera_tick=0
+        if a.camera in ('belt_contact','grip_front'):
+            spin_ticks=np.flatnonzero(data['phase']=='belt_spin')
+            camera_tick=int(spin_ticks[len(spin_ticks)//2]) if len(spin_ticks) else len(data['time'])-1
+        pose=data['poses'][camera_tick,index['/World/ActuatedTool/fixed']]
         rotation=R.from_quat(pose[3:]).as_matrix()
-        if a.camera=='mouth':
+        if a.camera=='grip_front':
+            eye_local=np.array([0.,.40,.08]);center_local=np.array([0.,.10,.037])
+            replay_camera='/World/GripFrontReplayCamera';focal_length=22.
+        elif a.camera=='belt_contact':
+            eye_local=np.array([.18,.27,.14]);center_local=np.array([0.,.1,.037])
+            replay_camera='/World/BeltContactReplayCamera';focal_length=22.
+        elif a.camera=='mouth':
             # Frontal CAD +Y view exposes belt/fixture contact hidden by the
             # covers in the existing oblique jaw camera. Replay display only.
             eye_local=np.array([0.,.58,.075]);center_local=np.array([0.,.08,.037])
@@ -105,6 +128,10 @@ try:
             if time.monotonic()>deadline:raise RuntimeError('PNG write incomplete: '+str(png))
             app.update()
         label=f"Actual physics | t={stamps[tick]:.3f}s | {data['phase'][tick]}"
+        broken={e['joint'] for e in breaks if e['joint'] in fruit_joints and e['t']<=stamps[tick]}
+        label+=f' | fruit joints broken: {len(broken)}'
+        if meta['tool'].get('tread_prototype'):label+='\\NSEPARATE HARDWARE PROTOTYPE: added inner belt tread'
+        if cutaway_hidden:label+='\\NCONTACT CUTAWAY: foliage hidden in replay display only'
         if (summary.get('belt_control') or {}).get('fixture_only'):
             label+='\\NLOADED BELT CONTROL FIXTURE - NOT FRUIT HARVEST'
         if summary.get('fixture_only'):label+='\\NCOMPONENT FIXTURE - NOT FARM HARVEST'
@@ -120,7 +147,9 @@ try:
     if int(probe['streams'][0]['nb_read_frames'])!=len(selection):raise RuntimeError('Encoded frame count mismatch')
     (a.trial/(a.name+'_render.json')).write_text(json.dumps(dict(source='stored measured physical body transforms',
         frames=len(selection),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
-        physics_rerun=False,replay_only_fill_light=a.review_light,stop_reason=summary.get('stop_reason')),indent=2))
+        physics_rerun=False,replay_only_fill_light=a.review_light,
+        replay_only_hidden_paths=cutaway_hidden,source_geometry_modified=False,
+        stop_reason=summary.get('stop_reason')),indent=2))
 except Exception:
     import traceback
     exit_code=1;message=traceback.format_exc();print(message,flush=True)

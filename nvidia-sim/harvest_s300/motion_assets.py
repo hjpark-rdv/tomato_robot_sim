@@ -386,7 +386,65 @@ def build(scene, output, plant=22):
     print(json.dumps(dict(scene=str(output/'scene.usda'),bodies=len(report['plant']['bodies']),target=target),indent=2),flush=True)
 
 
-def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_index=-1, target=None):
+def grasp_reference(report, names, height_offset_m=0.):
+    """Select an aim point without moving fruit or changing its identity/physics."""
+    if not names or len(names)!=len(set(names)) or not np.isfinite(height_offset_m):
+        raise ValueError('Unique existing fruit names and finite height offset required')
+    fruits={f['name']:f for f in report['plant']['fruits']}
+    if any(n not in fruits for n in names):raise ValueError('Unknown grasp fruit')
+    center=np.mean([fruits[n]['center'] for n in names],axis=0)
+    return dict(fruits=list(names),fruit_paths=[fruits[n]['path'] for n in names],
+        fruit_centroid_world_m=center.tolist(),height_offset_m=float(height_offset_m),
+        center=(center+np.array([0.,0.,height_offset_m])).tolist(),
+        contact_policy='Fruit contact/pushing allowed; original penetration guard and physical collisions retained')
+
+
+def revise_belt_tread(assembly,output,thickness_mm):
+    """Explicit hardware prototype: added visible/colliding TPU tread, never a hidden collider edit.
+
+    Original CAD, stroke, drivers, material friction, plant and break joints are
+    untouched. Like the existing belt, this tread is rigid with surface velocity;
+    this is not a manufactured or deformable-TPU design validation.
+    """
+    import trimesh
+    if not np.isfinite(thickness_mm) or not 0<thickness_mm<=8:
+        raise ValueError('Prototype tread thickness must be finite and 0..8 mm')
+    source=assembly/'scene.usda';report=json.loads((assembly/'motion_manifest.json').read_text())
+    if sha(source)!=report['scene_sha256']:raise ValueError('Source assembly hash mismatch')
+    if 'tread_prototype' in report['tool']:raise ValueError('Refusing to add tread twice')
+    original=Usd.Stage.Open(str(source.resolve()));require_motion_units(original)
+    output.mkdir(parents=True,exist_ok=False);shutil.copy2(source,output/'scene.usda')
+    stage=Usd.Stage.Open(str(output/'scene.usda'))
+    stage.GetRootLayer().subLayerPaths=[str(Path(Sdf.ComputeAssetPathRelativeToLayer(
+        original.GetRootLayer(),p)).resolve()) for p in original.GetRootLayer().subLayerPaths]
+    added=[];thickness=thickness_mm/1000.
+    for side,sign in [('L',-1),('R',1)]:
+        body='/World/ActuatedTool/'+side+'_belt';path=body+'/PrototypeTread'
+        if stage.GetPrimAtPath(path):raise ValueError('Tread path already exists')
+        z=.035 if side=='L' else .039
+        size=np.array([thickness,.120,.052]);center=np.array([sign*(.022-thickness/2),.075,z])
+        shape=trimesh.creation.box(extents=size);shape.vertices+=center
+        m=mesh(stage,path,shape.vertices,shape.faces,(.08,.38,.36),approximation='convexHull')
+        m.GetPrim().SetCustomDataByKey('sourceName',side+'_prototype_5mm_class_tread')
+        collision(m.GetPrim())
+        mass=float(np.prod(size)*1200.)
+        before=report['tool']['mass_estimates_kg'][side+'_belt']
+        UsdPhysics.MassAPI(stage.GetPrimAtPath(body)).CreateMassAttr(before+mass)
+        report['tool']['mass_estimates_kg'][side+'_belt']=before+mass
+        added.append(dict(path=path,size_m=size.tolist(),center_local_m=center.tolist(),added_mass_kg=mass))
+    report['tool']['tread_prototype']=dict(thickness_mm=float(thickness_mm),parts=added,
+        minimum_contact_gap_mm=float(report['tool']['jaw_limits_mm'][0]-2*thickness_mm),
+        description='Added visible/collision geometry + TPU-density mass. Rigid surface-velocity model; no material tuning.',
+        source_assembly=str(assembly.resolve()),source_scene_sha256=sha(source),
+        fabrication_validated=False)
+    stage.GetRootLayer().Save();report['scene_sha256']=sha(output/'scene.usda')
+    (output/'motion_manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    shutil.copy2(assembly/'skin.npz',output/'skin.npz')
+    print(json.dumps(report['tool']['tread_prototype'],indent=2))
+
+
+def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_index=-1, target=None,
+                                grasp_fruits=None, grasp_height_offset_m=0.):
     """User-requested hardware/initial-state revision of an existing assembly.
 
     Retains the existing farm and motion runner. The receiver and its dedicated
@@ -405,6 +463,8 @@ def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_in
         if len(choices)!=1:raise ValueError('Target must match exactly one existing active fruit')
         report['target']=choices[0]
     if sha(source)!=report['scene_sha256']:raise ValueError('Source assembly hash mismatch')
+    if grasp_fruits is not None:
+        report['grasp_reference']=grasp_reference(report,grasp_fruits,grasp_height_offset_m)
     original=Usd.Stage.Open(str(source.resolve()));require_motion_units(original)
     output.mkdir(parents=True,exist_ok=False)
     # Keep the adapter's authored rigid/mesh specs in its root layer. A further
@@ -417,13 +477,17 @@ def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_in
               'L_T01_post_bolt_130','L_T01_post_nut_130'}
     parts={p['name']:p for p in json.loads((REPO/'gripper-design/inaho_gripper_v5/parts_manifest.json').read_text())}
     removed=[]
-    for prim in list(Usd.PrimRange(s.GetPrimAtPath('/World/ActuatedTool'))):
+    for prim in list(Usd.PrimRange(s.GetPrimAtPath('/World/ActuatedTool'),Usd.PrimAllPrimsPredicate)):
         name=prim.GetCustomDataByKey('sourceName')
         if name in expected:
+            if not prim.IsActive():continue
             path=str(prim.GetPath());s.OverridePrim(path).SetActive(False)
             density=1270. if parts[name]['material']=='PETG' else 7850.
             removed.append(dict(name=name,path=path,mass_kg=parts[name]['volume_mm3']*1e-9*density))
-    if {p['name'] for p in removed}!=expected or len(removed)!=5:
+    previous_removed=report.get('ready_revision',{}).get('removed_parts',[])
+    already_removed=not removed and {p['name'] for p in previous_removed}==expected and all(
+        s.GetPrimAtPath(p['path']) and not s.GetPrimAtPath(p['path']).IsActive() for p in previous_removed)
+    if not already_removed and ({p['name'] for p in removed}!=expected or len(removed)!=5):
         raise ValueError('Receiver part inventory does not exactly match the five requested parts')
     removed_mass=sum(p['mass_kg'] for p in removed)
     previous_mass=report['tool']['mass_estimates_kg']['L']
@@ -448,7 +512,7 @@ def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_in
         j.CreateLocalRot0Attr(Gf.Quatf(float(rot[3]),Gf.Vec3f(*map(float,rot[:3]))))
         tool_joint_revisions.append(dict(joint=str(j.GetPath()),old_body0=previous,new_body0=new,
             world_frame_max_abs_error=float(np.max(np.abs(new_pose@changed-old_pose@local)))))
-    kin=ToolKinematics(s);center=np.array(report['target']['center'])
+    kin=ToolKinematics(s);center=np.array(report.get('grasp_reference',report['target'])['center'])
     direction=center-np.r_[kin.world[:2,3],center[2]]
     direction=R.from_euler('z',yaw,degrees=True).apply(direction)
     pose=grasp_pose(center,direction);pose[:3,3]-=pose[:3,1]*distance
@@ -487,7 +551,9 @@ def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_in
     report['robot_self_collision_enabled']=True
     report['tool_joint_parent_revision']=tool_joint_revisions
     report['ready_revision']=dict(source_assembly=str(assembly.resolve()),source_scene_sha256=sha(source),
-        removed_parts=removed,removed_mass_kg=removed_mass,ready_pose=pose.tolist(),
+        removed_parts=previous_removed if already_removed else removed,
+        removed_mass_kg=report.get('ready_revision',{}).get('removed_mass_kg',0.) if already_removed else removed_mass,
+        newly_removed_mass_kg=removed_mass,ready_pose=pose.tolist(),
         ready_distance_m=distance,yaw_offset_deg=yaw,seed_index=seed_index,
         ik_position_error_m=pe,ik_orientation_error_rad=re,
         initialization='JointStateAPI before native startup; no runtime teleport',
@@ -506,7 +572,14 @@ if __name__=='__main__':
     p.add_argument('--ready-yaw',type=float,default=30.)
     p.add_argument('--ready-seed',type=int,default=-1,help='-1 searches IK branches with self-collision screening; 0..31 selects one checked seed')
     p.add_argument('--target',help='Existing active fruit name, for the ready revision only')
+    p.add_argument('--grasp-fruits',nargs='+',help='Existing fruit names whose centroid defines the grasp aim; plant is unchanged')
+    p.add_argument('--grasp-height-offset-m',type=float,default=0.,help='Explicit aim height offset, not a physical state correction')
+    p.add_argument('--belt-tread-mm',type=float,help='Separate hardware prototype: add visible/colliding inner belt tread; original assembly unchanged')
     a=p.parse_args()
     if a.target and not a.horizontal_ready_revision:p.error('--target requires --horizontal-ready-revision')
-    if a.horizontal_ready_revision:revise_for_horizontal_ready(a.scene,a.output,a.ready_distance,a.ready_yaw,a.ready_seed,a.target)
+    if a.grasp_fruits and not a.horizontal_ready_revision:p.error('--grasp-fruits requires --horizontal-ready-revision')
+    if a.grasp_height_offset_m and not a.grasp_fruits:p.error('Height offset requires --grasp-fruits')
+    if a.belt_tread_mm is not None and (a.horizontal_ready_revision or a.target or a.grasp_fruits):p.error('Tread prototype is a separate assembly revision')
+    if a.belt_tread_mm is not None:revise_belt_tread(a.scene,a.output,a.belt_tread_mm)
+    elif a.horizontal_ready_revision:revise_for_horizontal_ready(a.scene,a.output,a.ready_distance,a.ready_yaw,a.ready_seed,a.target,a.grasp_fruits,a.grasp_height_offset_m)
     else:build(a.scene,a.output,a.plant)
