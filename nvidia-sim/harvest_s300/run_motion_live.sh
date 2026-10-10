@@ -5,7 +5,8 @@ if [[ $# -lt 1 || $# -gt 3 || "${1:-}" == --help ]]; then
   echo 'Usage: bash run_motion_live.sh ASSEMBLY [reference|interactive|240|480] [entry|belt]'
   echo 'reference: PGS 120Hz; interactive: PGS 60Hz preview with different numerical dynamics.'
   echo 'entry: open-jaw entry/return; belt: close, opposed belts for 2s, open, withdraw (detachment not guaranteed).'
-  echo 'Both retain full plant, all colliders, self-collision and the 0.5mm guard.'
+  echo 'Full plant, all colliders and self-collision remain. Contact guard defaults to 0.5mm.'
+  echo 'Explicit variants: S300_SOLVER, S300_POSITION_ITERATIONS, S300_PHYSICS_THREADS, S300_PLANT_DYNAMICS, S300_FRUIT_CONTACT_LIMIT_MM, S300_FRUIT_FRUIT_LIMIT_MM.'
   exit 0
 fi
 task_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -28,6 +29,13 @@ esac
 if [[ "${S300_SCENE_CCD:-0}" == 1 ]]; then
   motion_args+=(--scene-ccd)
 fi
+solver="${S300_SOLVER:-PGS}"
+iterations="${S300_POSITION_ITERATIONS:-64}"
+physics_threads="${S300_PHYSICS_THREADS:-2}"
+plant_dynamics="${S300_PLANT_DYNAMICS:-full}"
+fruit_contact_limit="${S300_FRUIT_CONTACT_LIMIT_MM:-.5}"
+fruit_fruit_limit="${S300_FRUIT_FRUIT_LIMIT_MM:-.5}"
+motion_args+=(--fruit-contact-limit-mm "$fruit_contact_limit" --fruit-fruit-limit-mm "$fruit_fruit_limit")
 native_python="${S300_ISAAC_PYTHON:-/root/isaac-sim-6.1.0/python.sh}"
 viewer_display="${S300_DISPLAY:-:0}"
 asset_python="$task_dir/../.asset-venv/bin/python"
@@ -59,7 +67,8 @@ wait_file() {
   return 1
 }
 echo "Output: $output"
-echo "Physics: full plant / PGS64 / ${hz}Hz / self-collision ON; motion: ${motion}."
+echo "Physics: ${plant_dynamics} / ${solver}${iterations} / ${hz}Hz / self-collision ON; motion: ${motion}."
+echo "Contact limits: current-truss fruit/tool ${fruit_contact_limit}mm, same-truss fruit/fruit ${fruit_fruit_limit}mm, all other active pairs 0.5mm."
 if [[ "$profile" == interactive ]]; then
   echo 'Interactive preview changes timestep from 120Hz to 60Hz; it is not numerically equivalent to the reference.'
 fi
@@ -70,10 +79,10 @@ setsid env DISPLAY="$viewer_display" OMNI_KIT_ALLOW_ROOT=1 \
   "$native_python" --no-ros-env -u "$task_dir/run_motion.py" "$assembly" \
   --output "$output/physics" --mode harvest --num-envs 1 \
   --preparation horizontal_ready "${motion_args[@]}" --approach-pitch-deg 0 --approach-yaw-offset-deg 30 \
-  --headless --physics-only --device cpu --hz "$hz" --threads 2 --performance optimized \
+  --headless --physics-only --device cpu --hz "$hz" --threads "$physics_threads" --performance optimized \
   --gravity-neutral-warmup --armature-setup authored --buffer-contact-events --record-contact-frames \
-  --contact-backend callback --collision-filter pairs --plant-dynamics full \
-  --solver PGS --position-iterations 64 --velocity-iterations 4 \
+  --contact-backend callback --collision-filter pairs --plant-dynamics "$plant_dynamics" \
+  --solver "$solver" --position-iterations "$iterations" --velocity-iterations 4 \
   --publish-live --live-fps 20 --realtime --start-gate "$output/start_gate.json" --gate-timeout 300 \
   > "$output/physics.log" 2>&1 &
 producer_pid=$!

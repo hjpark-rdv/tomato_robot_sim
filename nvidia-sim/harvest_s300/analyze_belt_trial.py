@@ -134,6 +134,8 @@ def analyze(assembly, trial):
             json.loads((trial/'break_events.json').read_text()),manifest['plant']['fruits'],manifest['tool']['belts'])
     cluster.update(model_sha256=summary['model_sha256'],completed=summary['completed'],stop_reason=summary['stop_reason'],
         grasp_reference=manifest.get('grasp_reference'),tread_prototype=manifest['tool'].get('tread_prototype'))
+    if 'contact_guard' in summary:
+        cluster['contact_guard']=summary['contact_guard']
     cluster['valid_complete_run_detachment_count']=cluster['native_detached_count'] if (
         summary['completed'] and summary.get('actual_self_collision_audit_passed') is True) else None
     (trial/'cluster_evidence.json').write_text(json.dumps(cluster,ensure_ascii=False,indent=2)+'\n')

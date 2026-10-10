@@ -51,6 +51,8 @@ p.add_argument('--gpu-partitions',type=int,default=1,help='Native articulation G
 p.add_argument('--gpu-pair-capacity',type=int,default=16384,help='Found/lost and total aggregate-pair allocation only; raise on native capacity errors and revalidate contacts')
 p.add_argument('--solver',choices=['PGS','TGS'],default='PGS',help='Controlled native solver comparison; validate before adopting')
 p.add_argument('--scene-ccd',action='store_true',help='CPU diagnostic: enable swept CCD at scene level as well as the existing rigid-body flags')
+p.add_argument('--fruit-contact-limit-mm',type=float,default=.5,help='Opt-in current-truss fruit versus tool overlap tolerance; other contacts and initial state retain 0.5mm. Does not change native physics.')
+p.add_argument('--fruit-fruit-limit-mm',type=float,default=.5,help='Separate opt-in overlap tolerance between exact fruits of the current truss; no other obstacle allowance')
 p.add_argument('--armature-setup',choices=['refresh','authored'],default='refresh',help='Authored validates the pre-warmup armature without a redundant runtime setter')
 p.add_argument('--gravity-neutral-warmup',action='store_true',help='Initialize at authored rest under zero gravity, restore source gravity after fixed preload and before trial')
 p.add_argument('--plant-dynamics',choices=['full','target-truss'],default='full',help='Target-truss freezes far-truss bending; different dynamics, same collision coverage')
@@ -62,6 +64,9 @@ p.add_argument('--live-fps',type=float,default=10.,help='Latest-frame publicatio
 p.add_argument('--start-gate',type=Path,help='CPU pool diagnostic: publish ready.json and await the controller barrier')
 p.add_argument('--gate-timeout',type=float,default=180.)
 a=p.parse_args()
+if any(not math.isfinite(v) or v<.5 for v in (a.fruit_contact_limit_mm,a.fruit_fruit_limit_mm)):p.error('Fruit contact tolerance must be finite and at least 0.5mm')
+if (a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5) and (a.contact_backend!='callback' or a.num_envs!=1 or a.replicate):
+    p.error('Fruit contact override requires exact native callback mapping in one unreplicated environment')
 if a.scene_ccd and a.device!='cpu':p.error('--scene-ccd is validated here only for CPU trials')
 if a.entry_only and (a.mode!='harvest' or a.preparation!='horizontal_ready'):
     p.error('--entry-only requires --mode harvest --preparation horizontal_ready')
@@ -265,10 +270,22 @@ try:
         if a.performance=='baseline':return str(PhysicsSchemaTools.intToSdfPath(v))
         if v not in path_cache:path_cache[v]=str(PhysicsSchemaTools.intToSdfPath(v))
         return path_cache[v]
+    contact_guard=None
+    if a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5:
+        from motion_contact_guard import FruitContactGuard
+        tool_colliders=[str(p.GetPath()) for p in Usd.PrimRange(stage.GetPrimAtPath('/World/ActuatedTool'))
+            if p.HasAPI(UsdPhysics.CollisionAPI) and UsdPhysics.CollisionAPI(p).GetCollisionEnabledAttr().Get() is not False]
+        contact_guard=FruitContactGuard(manifest,tool_colliders,fruit_limit_m=a.fruit_contact_limit_mm/1000,
+            fruit_fruit_limit_m=a.fruit_fruit_limit_mm/1000)
+        for path_name in contact_guard.fruits:
+            prim=stage.GetPrimAtPath(path_name)
+            if not prim or not prim.HasAPI(UsdPhysics.CollisionAPI):raise ValueError('Missing fruit collider '+path_name)
+        (a.output/'contact_tolerance.json').write_text(json.dumps(contact_guard.metadata(),indent=2))
     contact_buffer=None
     if a.buffer_contact_events:
         from motion_contact_buffer import BufferedContactRecorder
-        contact_buffer=BufferedContactRecorder(path,a.hz,capture_frames=a.record_contact_frames)
+        contact_buffer=BufferedContactRecorder(path,a.hz,capture_frames=a.record_contact_frames,
+            pair_limit=None if contact_guard is None else contact_guard.limit)
     def contact(headers,data):
         contact_started=time.perf_counter()
         if contact_buffer is not None:
@@ -579,10 +596,12 @@ try:
         if not np.isfinite(poses).all():stop_reason='nonfinite_state';break
         if phase!=last_phase:print('[MOTION]',round(t,3),phase,flush=True);last_phase=phase
         # Report all contacts; stop on robot or active-target gross penetration.
-        invalid=[e for e in step_events if e['separation_m']<-.0005 and
-                 any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))]
+        invalid=([e for e in step_events if contact_guard.invalid(e)] if contact_guard else
+                 [e for e in step_events if e['separation_m']<-.0005 and
+                  any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))])
         if invalid:
-            stop_reason='penetration_over_0_5mm';print('[MOTION] stop',invalid[:2],flush=True);break
+            stop_reason='penetration_over_contact_policy' if contact_guard else 'penetration_over_0_5mm'
+            print('[MOTION] stop',invalid[:2],flush=True);break
         raw_min=tensor_contacts.last_summary.get('raw_minimum_separation_m') if tensor_contacts is not None else None
         if raw_min is not None and raw_min<-.0005:
             stop_reason='penetration_over_0_5mm';print('[MOTION] stop raw sensor separation',tensor_contacts.last_summary,flush=True);break
@@ -665,6 +684,9 @@ try:
                  contact_events=len(events),min_contact_separation_m=min((e['separation_m'] for e in events),default=None),
                  limitations=['Not a validated grasp/detach detector','No real fruit damage calibration',
                               'Motion diagnostic; dynamic belt-loop deformation not modeled'])
+    if contact_guard:
+        summary['contact_guard']=contact_guard.summarize(events,a.hz)
+        (a.output/'contact_tolerance_evidence.json').write_text(json.dumps(summary['contact_guard'],indent=2))
     (a.output/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
     if a.mode=='harvest':
         print('[MOTION] checking every stored actual arm/tool pose',flush=True)

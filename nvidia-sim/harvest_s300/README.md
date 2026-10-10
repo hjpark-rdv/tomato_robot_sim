@@ -1,5 +1,18 @@
 # S300 수확로봇 · Isaac Sim 6.1 조립 장면
 
+## 최신: 벨트 수확 속도·접촉 허용치 비교 (2026-10-10)
+
+같은 full612DOF/전체충돌/5mm 접촉면 시험안에서30.5초 동작을 비교했다.
+기존480Hz221.770초 → TGS120/32는52.691초(약4.21배 개선),10번 native 분리·후퇴 완료.
+TGS60/64는38.126초(0.800배속)에 완료하지만 분리0이므로 빠른 모션 확인용으로 구분한다.
+현재 송이 열매–그리퍼만1mm로 완화한 opt-in 진단이며, 다른 활성 접촉/초기상태는0.5mm 유지.
+0.5mm 초과는60Hz 오른쪽상판–7번0.948mm,120Hz 왼쪽상판–8번0.588mm 각각한물리표본.
+새 headless16회/GUI2회,81테스트PASS. GUI도38.526/52.354초, headless와 실제상태bit-exact.
+다른저주파설정은최대4.1mm겹침으로제외했다. full식물/물성/파단값은유지하며 새병렬성능은미측정.
+상세·모든실패·GUI실행법: [HARVEST_SPEED_CONTACT_KO.md](HARVEST_SPEED_CONTACT_KO.md).
+결과 `/root/docker_share/mujoko_debugging_data/20261010_173338_s300_harvest_speed/index.html`.
+
+
 기준 브랜치: `codex/s300-harvest-isaac-20261009` (시작점 `b890fc6`).
 기존 S300 CAD, 농장 USD, RB5 USD, 그리퍼 CAD는 수정하지 않는다.
 

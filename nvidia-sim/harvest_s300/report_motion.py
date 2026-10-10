@@ -89,6 +89,13 @@ def summarize(root):
     for s in sorted(rows,key=lambda row:-(row.get('cluster_evidence',{}).get('valid_complete_run_detachment_count') or 0)):
         n=s['trial'];separation=s.get('min_contact_separation_m')
         scope='진입·유지·복귀 (수확 시도 아님)' if s.get('execution_scope')=='entry_hold_return_only' else '분리 시험' if s.get('fixture_only') else '전체 환경 물리 시험'
+        if s.get('plant_dynamics')=='target-truss':scope+=' · 주줄기/목표 송이 탄성 유지, 다른 송이 굽힘 고정'
+        if s.get('contact_guard'):
+            guard=s['contact_guard']
+            scope+=f' · 현 송이 열매–그리퍼 {guard["tool_current_truss_fruit_limit_mm"]:g}mm 허용'
+            if guard.get('current_truss_fruit_fruit_limit_mm',.5)!=.5:
+                scope+=f' · 현 송이 열매끼리 {guard["current_truss_fruit_fruit_limit_mm"]:g}mm 허용'
+            if not guard['strict_0_5mm_passed']:scope+=' (기존 0.5mm 초과 있음)'
         cluster=s.get('cluster_evidence',{})
         if cluster.get('tread_prototype'):scope+=' · 접촉면 확장 하드웨어 시험안'
         cells=[n,s['status'],scope,cluster.get('native_detached_count','—'),
@@ -102,6 +109,7 @@ def summarize(root):
         for filename,label in [('self_collision_preflight.json','계획 자기충돌 검사'),
                                ('self_collision_actual.json','실제 자세 자기충돌 검사'),
                                ('belt_evidence.json','벨트 접촉·회전·분리 근거'),
+                               ('contact_tolerance_evidence.json','접촉 허용치·겹침 시간·힘'),
                                ('cluster_evidence.json','전체 열매 접촉·분리 집계')]:
             if (root/n/filename).exists():link+=f' · <a href="{n}/{filename}">{label}</a>'
         table.append('<tr>'+''.join('<td>'+esc(str(c))+'</td>' for c in cells)+f'<td>{link} · <a href="{n}.log">log</a></td></tr>')

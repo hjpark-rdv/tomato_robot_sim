@@ -1,0 +1,1894 @@
+{
+  "date": "2026-10-10 KST",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "34d681e",
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261010_173338_s300_harvest_speed",
+  "model_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c",
+  "training_eligible": false,
+  "harvest_success": null,
+  "headless_trials": 16,
+  "gui_trials": 2,
+  "tests_passed": 81,
+  "baseline": {
+    "folder": "/root/docker_share/mujoko_debugging_data/20261010_161007_s300_cluster_grasp/tread5_slow_ccd480",
+    "wall_s": 221.7703038007021,
+    "simulated_s": 30.5,
+    "max_overlap_mm": 0.2462705597281456,
+    "breaks": [
+      {
+        "t": 18.497916666666665,
+        "phase": "belt_spin",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+      }
+    ]
+  },
+  "trials": [
+    {
+      "trial": "pgs120_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 16.858333333333334,
+      "physics_wall_s": 32.013960571959615,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5058459937572479,
+      "worst_contact": {
+        "t": 16.858333333333334,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+        "separation_m": -0.0005058459937572479,
+        "force_n": 1.0843741401370461,
+        "impulse_ns": [
+          0.0006496334099210799,
+          0.009013043716549873,
+          -2.1658819605363533e-05
+        ],
+        "position_world_m": [
+          -0.38189631700515747,
+          1.5344419479370117,
+          0.9995025396347046
+        ],
+        "normal_world": [
+          0.07189032435417175,
+          0.9974096417427063,
+          -0.002396828029304743
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "4a33a2a576d57eeb9f52ce69d53bf6497c18f68b2e14826437b9eee6164e7ff6",
+        "states.npz": "b655d33dec8007dd30875da6cefdabdcbef3cc55da923d5b34567bc0f465163c",
+        "contacts.json": "093a04340796891650cf06911a87aabc5dfa6822d79fba5b10e0ef2c6e80eae8",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "pgs240_i32_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 17.966666666666665,
+      "physics_wall_s": 48.55073320120573,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 240,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5116146057844162,
+      "worst_contact": {
+        "t": 17.966666666666665,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+        "separation_m": -0.0005116146057844162,
+        "force_n": 2.1957210630644073,
+        "impulse_ns": [
+          0.00064722856041044,
+          0.009125910699367523,
+          -9.028134627442341e-06
+        ],
+        "position_world_m": [
+          -0.38614800572395325,
+          1.5338186025619507,
+          0.9968364238739014
+        ],
+        "normal_world": [
+          0.0707443431019783,
+          0.9974939823150635,
+          -0.0009868066990748048
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "346e51a30a9cc107e3092f8e5d7361c8f6a7a8676a9d977992d32160a85c14eb",
+        "states.npz": "c0403e5e3747fc452a2ab30e869bb2334a95c4ae0aedda60b3485bb55213b9b6",
+        "contacts.json": "1f018b4cfd6c604197fef071bb0900eec626938b376385485d32ae0db59e62d2",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "pgs60_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 15.65,
+      "physics_wall_s": 15.53762543387711,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5055209621787071,
+      "worst_contact": {
+        "t": 15.65,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+        "separation_m": -0.0005055209621787071,
+        "force_n": 0.0,
+        "impulse_ns": [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "position_world_m": [
+          -0.38501688838005066,
+          1.5404067039489746,
+          1.026953935623169
+        ],
+        "normal_world": [
+          0.023401178419589996,
+          0.7222232818603516,
+          -0.6912640333175659
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "a8c0b2bd9570497d1c47b1bb11da5632fefd2d31b888133f9e9480e64fcee1fd",
+        "states.npz": "0f1d3a388beb4110f8de61d13a7ece1748d9dc90d30b14c5b15241a2cd11c714",
+        "contacts.json": "531caaa9108bd378ff930820ff03311393b934572a7b004af9ea0ea1a6010187",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "pgs60_ccd_fruit1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 15.7,
+      "physics_wall_s": 16.091532664373517,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 1.3536140322685242,
+      "worst_contact": {
+        "t": 15.7,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+        "separation_m": -0.0013536140322685242,
+        "force_n": 0.017895358828528746,
+        "impulse_ns": [
+          6.269146979320794e-06,
+          8.021307439776137e-05,
+          -0.0002871988690458238
+        ],
+        "position_world_m": [
+          -0.3922145962715149,
+          1.5405640602111816,
+          1.025994062423706
+        ],
+        "normal_world": [
+          0.021019350737333298,
+          0.26894038915634155,
+          -0.9629274606704712
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "max_penetration_mm": 1.3536140322685242,
+          "max_point_force_n": 0.13607559539978037,
+          "contact_points": 5,
+          "first_t": 15.65,
+          "last_t": 15.7,
+          "physics_samples": 2,
+          "sampled_exceedance_s": 0.03333333333333333,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "0f5fb82aa464c492390b9382243b90e8b8c04719f632b3d3b0af218876c800cb",
+        "states.npz": "2c9810911d739403c487698f9cc74dc062ed74b76eeda372b6031da5a4be258e",
+        "contacts.json": "517b1a5b6cd24f32f542abbf5d5cfe8b5617fd74d9436819f059067d97a55169",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "33d2cc58a8ef75c6904ffcee848b4a56f33a2c0b8f1965f6051dc5fc9f682292"
+      }
+    },
+    {
+      "trial": "pgs60_ccd_fruit2mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 17.716666666666665,
+      "physics_wall_s": 18.305534727871418,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 1.3536140322685242,
+      "worst_contact": {
+        "t": 15.7,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+        "separation_m": -0.0013536140322685242,
+        "force_n": 0.017895358828528746,
+        "impulse_ns": [
+          6.269146979320794e-06,
+          8.021307439776137e-05,
+          -0.0002871988690458238
+        ],
+        "position_world_m": [
+          -0.3922145962715149,
+          1.5405640602111816,
+          1.025994062423706
+        ],
+        "normal_world": [
+          0.021019350737333298,
+          0.26894038915634155,
+          -0.9629274606704712
+        ]
+      },
+      "fruit_tool_limit_mm": 2.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "max_penetration_mm": 1.3536140322685242,
+          "max_point_force_n": 0.13607559539978037,
+          "contact_points": 22,
+          "first_t": 15.65,
+          "last_t": 15.933333333333334,
+          "physics_samples": 11,
+          "sampled_exceedance_s": 0.18333333333333332,
+          "longest_sampled_exceedance_s": 0.15,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "max_penetration_mm": 1.2319330126047134,
+          "max_point_force_n": 2.255645523580266,
+          "contact_points": 30,
+          "first_t": 16.483333333333334,
+          "last_t": 16.833333333333332,
+          "physics_samples": 14,
+          "sampled_exceedance_s": 0.23333333333333334,
+          "longest_sampled_exceedance_s": 0.21666666666666667,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "max_penetration_mm": 0.6079665035940707,
+          "max_point_force_n": 0.3651643508714455,
+          "contact_points": 30,
+          "first_t": 17.183333333333334,
+          "last_t": 17.666666666666668,
+          "physics_samples": 30,
+          "sampled_exceedance_s": 0.5,
+          "longest_sampled_exceedance_s": 0.5,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "max_penetration_mm": 0.8259506430476904,
+          "max_point_force_n": 0.25727057166415446,
+          "contact_points": 3,
+          "first_t": 17.716666666666665,
+          "last_t": 17.716666666666665,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.016666666666666666,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 0.5
+        }
+      ],
+      "hashes": {
+        "summary.json": "d6e14c77ce0498633c2ad2dcdbff20c021df3883e965da76a6c8714d77a20a51",
+        "states.npz": "271213e1ae1ebfcc2c68617430bbff3e3074b37f398ec562182d84f1b45fe2df",
+        "contacts.json": "60a44276804937fc3b530699ffe35bb638c64880037579b86f5c7c1758628d73",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "541a335815c73d658262618333c090b8b6c99d6d9df51e7fc9741bafb2adea6d"
+      }
+    },
+    {
+      "trial": "pgs60_ccd_tool2_fruit1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 18.4,
+      "physics_wall_s": 18.796619215980172,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 3.5398220643401146,
+      "worst_contact": {
+        "t": 18.4,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L_belt/part_163",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.0035398220643401146,
+        "force_n": 0.9125305511752548,
+        "impulse_ns": [
+          0.0019947094842791557,
+          -0.013085826300084591,
+          -0.007489404175430536
+        ],
+        "position_world_m": [
+          -0.4055517315864563,
+          1.5084859132766724,
+          1.0252608060836792
+        ],
+        "normal_world": [
+          0.1311545968055725,
+          -0.8604090809822083,
+          -0.492437481880188
+        ]
+      },
+      "fruit_tool_limit_mm": 2.0,
+      "fruit_fruit_limit_mm": 1.0,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "max_penetration_mm": 1.3536140322685242,
+          "max_point_force_n": 0.13607559539978037,
+          "contact_points": 22,
+          "first_t": 15.65,
+          "last_t": 15.933333333333334,
+          "physics_samples": 11,
+          "sampled_exceedance_s": 0.18333333333333332,
+          "longest_sampled_exceedance_s": 0.15,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "max_penetration_mm": 2.206158824265003,
+          "max_point_force_n": 2.255645523580266,
+          "contact_points": 38,
+          "first_t": 16.483333333333334,
+          "last_t": 18.4,
+          "physics_samples": 17,
+          "sampled_exceedance_s": 0.2833333333333333,
+          "longest_sampled_exceedance_s": 0.21666666666666667,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "max_penetration_mm": 0.6079665035940707,
+          "max_point_force_n": 0.3651643508714455,
+          "contact_points": 33,
+          "first_t": 17.183333333333334,
+          "last_t": 17.833333333333332,
+          "physics_samples": 33,
+          "sampled_exceedance_s": 0.55,
+          "longest_sampled_exceedance_s": 0.5,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "max_penetration_mm": 0.9728251025080681,
+          "max_point_force_n": 0.25727057166415446,
+          "contact_points": 10,
+          "first_t": 17.716666666666665,
+          "last_t": 18.133333333333333,
+          "physics_samples": 4,
+          "sampled_exceedance_s": 0.06666666666666667,
+          "longest_sampled_exceedance_s": 0.03333333333333333,
+          "configured_limit_mm": 1.0
+        },
+        {
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+          "max_penetration_mm": 0.6768479943275452,
+          "max_point_force_n": 0.021145367464797914,
+          "contact_points": 11,
+          "first_t": 17.883333333333333,
+          "last_t": 18.116666666666667,
+          "physics_samples": 11,
+          "sampled_exceedance_s": 0.18333333333333332,
+          "longest_sampled_exceedance_s": 0.1,
+          "configured_limit_mm": 2.0
+        },
+        {
+          "a": "/World/ActuatedTool/L_belt/part_163",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "max_penetration_mm": 3.5398220643401146,
+          "max_point_force_n": 0.9125305511752548,
+          "contact_points": 10,
+          "first_t": 18.216666666666665,
+          "last_t": 18.4,
+          "physics_samples": 4,
+          "sampled_exceedance_s": 0.06666666666666667,
+          "longest_sampled_exceedance_s": 0.03333333333333333,
+          "configured_limit_mm": 2.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "c8ebfb357b10082f4849073086e277f239183afca89e2a6d063a377718893ec2",
+        "states.npz": "b7aa4d1d9d43cd87d673f31bd63edc1e9257785c62864df8a29ef712074decf6",
+        "contacts.json": "787c2eb614598809dbac55bad7c5a5a77fa6311c50208afc2274dccbfeaa4107",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "c6d575f69fa63ad3432d85d6b5b50cf5f6a6116453c617c54a2d07a7a90ba48e"
+      }
+    },
+    {
+      "trial": "tgs120_i32_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 18.591666666666665,
+      "physics_wall_s": 31.00664815120399,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 18.583333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5883034318685532,
+      "worst_contact": {
+        "t": 18.591666666666665,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0005883034318685532,
+        "force_n": 2.343905117975551,
+        "impulse_ns": [
+          -0.0011343072401359677,
+          -0.017369281500577927,
+          -0.008862371556460857
+        ],
+        "position_world_m": [
+          -0.41108858585357666,
+          1.507243037223816,
+          1.041986107826233
+        ],
+        "normal_world": [
+          -0.058072689920663834,
+          -0.8892483711242676,
+          -0.45372337102890015
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "468a4c43032c167ca0110591fed359d9601cb5119b3551d96f5164b16cafaab3",
+        "states.npz": "147a9d43b9a7b4b460675f9b415486c311db4f8b1a9aa25179c5feaf4c206e4b",
+        "contacts.json": "23c17662c0fc86c7ab0a5ebb817872275dc592f27a3091ab7470de336b4a8474",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "tgs120_i32_ccd_fruit1mm",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 52.691227834671736,
+      "full_motion_rtf": 0.5788439794134096,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 18.583333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5883034318685532,
+      "worst_contact": {
+        "t": 18.591666666666665,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0005883034318685532,
+        "force_n": 2.343905117975551,
+        "impulse_ns": [
+          -0.0011343072401359677,
+          -0.017369281500577927,
+          -0.008862371556460857
+        ],
+        "position_world_m": [
+          -0.41108858585357666,
+          1.507243037223816,
+          1.041986107826233
+        ],
+        "normal_world": [
+          -0.058072689920663834,
+          -0.8892483711242676,
+          -0.45372337102890015
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/L/part_127",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "max_penetration_mm": 0.5883034318685532,
+          "max_point_force_n": 2.343905117975551,
+          "contact_points": 2,
+          "first_t": 18.591666666666665,
+          "last_t": 18.591666666666665,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.008333333333333333,
+          "longest_sampled_exceedance_s": 0.008333333333333333,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "2509d83b853db478063b8a868f10a621baf5bab2e29751239d5ba38ac07de151",
+        "states.npz": "f22e4d2bac9592683c6b20a9a8b258eb93649e6daa95f7a11c2040626ec9d651",
+        "contacts.json": "ba214e32ba834c414cee7111be9863e4c716604486ce6a23f37fba798eddfd23",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "541a335815c73d658262618333c090b8b6c99d6d9df51e7fc9741bafb2adea6d"
+      }
+    },
+    {
+      "trial": "tgs120_i32_target_truss_fruit1mm",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 42.659510685130954,
+      "full_motion_rtf": 0.714963662502365,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "target-truss",
+      "native_plant_dofs": 234,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.1270938664674759,
+      "worst_contact": {
+        "t": 16.366666666666667,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0001270938664674759,
+        "force_n": 3.7618644165779025,
+        "impulse_ns": [
+          -0.0022199933882802725,
+          -0.03127012774348259,
+          4.898163751931861e-05
+        ],
+        "position_world_m": [
+          -0.4064282178878784,
+          1.503156065940857,
+          1.0386545658111572
+        ],
+        "normal_world": [
+          -0.07081574201583862,
+          -0.997488260269165,
+          0.0015624690568074584
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": true,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "9fa097fe346745c977c7ae2a2b678271ed7112726356f0dbf6d7922a4242fe5a",
+        "states.npz": "fc554484ae30cecf877a63705d2e00829f6f1a63290a563adb6acdbbb8e299bb",
+        "contacts.json": "e2e7bc8feca95d0ae06175ab937fe0388dbe21c8c80d4e0cb1e3bd4776bff2cf",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "e960f8413dedc8dae32e4fea8ca2b628f05f1ad23ce84164f5a669d7eaa144b4"
+      }
+    },
+    {
+      "trial": "tgs120_i32_thread1_fruit1mm",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 57.134513741359115,
+      "full_motion_rtf": 0.533827943965179,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 1,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 18.583333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5883034318685532,
+      "worst_contact": {
+        "t": 18.591666666666665,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0005883034318685532,
+        "force_n": 2.343905117975551,
+        "impulse_ns": [
+          -0.0011343072401359677,
+          -0.017369281500577927,
+          -0.008862371556460857
+        ],
+        "position_world_m": [
+          -0.41108858585357666,
+          1.507243037223816,
+          1.041986107826233
+        ],
+        "normal_world": [
+          -0.058072689920663834,
+          -0.8892483711242676,
+          -0.45372337102890015
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/L/part_127",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "max_penetration_mm": 0.5883034318685532,
+          "max_point_force_n": 2.343905117975551,
+          "contact_points": 2,
+          "first_t": 18.591666666666665,
+          "last_t": 18.591666666666665,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.008333333333333333,
+          "longest_sampled_exceedance_s": 0.008333333333333333,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "33d1a4ba0ae1852635936c1660229093682850049e8ba586ccd3fef1900b72d8",
+        "states.npz": "f22e4d2bac9592683c6b20a9a8b258eb93649e6daa95f7a11c2040626ec9d651",
+        "contacts.json": "ba214e32ba834c414cee7111be9863e4c716604486ce6a23f37fba798eddfd23",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "7e15baf931c5a0a904d856c76abcdb701c86e6ffc15f44437ececda9da821e39"
+      }
+    },
+    {
+      "trial": "tgs120_i64_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 17.15,
+      "physics_wall_s": 39.8476225156337,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 17.125,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.7939421338960528,
+      "worst_contact": {
+        "t": 17.15,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0007939421338960528,
+        "force_n": 5.022351624598662,
+        "impulse_ns": [
+          -0.002600379753857851,
+          -0.041770078241825104,
+          0.0004078670754097402
+        ],
+        "position_world_m": [
+          -0.407980352640152,
+          1.5063997507095337,
+          1.0427991151809692
+        ],
+        "normal_world": [
+          -0.0621313713490963,
+          -0.9980204105377197,
+          0.009745245799422264
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "3e8c2a35d1ac0e1c6e8a636e1a49408157201f80eaa0ac1ed5f92ecdc7af122f",
+        "states.npz": "5b0477512df14172c13c6dc761dd68b9e20ee26a2509dc0d915b4b2a14d39df9",
+        "contacts.json": "fde7ae27d41f9ab912fad50ea2aae6372df1c10e607b244952d3be10736bfb2a",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "tgs60_ccd",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 16.316666666666666,
+      "physics_wall_s": 19.877277087420225,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.9476166451349854,
+      "worst_contact": {
+        "t": 16.316666666666666,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.0009476166451349854,
+        "force_n": 1.7867182676728708,
+        "impulse_ns": [
+          3.55029696947895e-05,
+          2.9917955544078723e-05,
+          -0.029778601601719856
+        ],
+        "position_world_m": [
+          -0.40616273880004883,
+          1.5441489219665527,
+          1.0414236783981323
+        ],
+        "normal_world": [
+          0.0011922294506803155,
+          0.0010046784300357103,
+          -0.9999987483024597
+        ]
+      },
+      "fruit_tool_limit_mm": 0.5,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [],
+      "hashes": {
+        "summary.json": "9a203c3dbb9f038c0eb49432dea813b3b8ca669d834202e707a2f4d689ab1c84",
+        "states.npz": "f97ce693de20b5677c58911aea2a62dbe5c6529af37e0a9f9f6830a821e7417d",
+        "contacts.json": "f7c7195c279e0970650d71e8e2f383dd81c0e2e6a95489276c07d30a6ae8a757",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "395035ece7f144d35f093db10dcb8cd4ce5cd056c6aaa851aa633694ed6c5955"
+      }
+    },
+    {
+      "trial": "tgs60_ccd_fruit1mm",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.126384070143104,
+      "full_motion_rtf": 0.7999709582709851,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.9476166451349854,
+      "worst_contact": {
+        "t": 16.316666666666666,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.0009476166451349854,
+        "force_n": 1.7867182676728708,
+        "impulse_ns": [
+          3.55029696947895e-05,
+          2.9917955544078723e-05,
+          -0.029778601601719856
+        ],
+        "position_world_m": [
+          -0.40616273880004883,
+          1.5441489219665527,
+          1.0414236783981323
+        ],
+        "normal_world": [
+          0.0011922294506803155,
+          0.0010046784300357103,
+          -0.9999987483024597
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+          "max_penetration_mm": 0.9476166451349854,
+          "max_point_force_n": 1.7867182676728708,
+          "contact_points": 1,
+          "first_t": 16.316666666666666,
+          "last_t": 16.316666666666666,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.016666666666666666,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "28a5ada7e9da389fcae3542d5619cb0a63e83ffb4bc0e0705ba13140f33b20d5",
+        "states.npz": "f9fd0d7f9fdfc5eeae73e6d1e783e582f8b08b552365dfe0de2f48383c494a95",
+        "contacts.json": "c51dbacee39b180417345ed4a331cad83c475c48b365456799af62cbb8c748d6",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "541a335815c73d658262618333c090b8b6c99d6d9df51e7fc9741bafb2adea6d"
+      }
+    },
+    {
+      "trial": "tgs60_i32_ccd_fruit1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 15.4,
+      "physics_wall_s": 12.870968360453844,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 4.102615173906088,
+      "worst_contact": {
+        "t": 15.4,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.004102615173906088,
+        "force_n": 1.447068896856592,
+        "impulse_ns": [
+          -0.0020902834367007017,
+          0.011487861163914204,
+          -0.021102814003825188
+        ],
+        "position_world_m": [
+          -0.4081486165523529,
+          1.5427688360214233,
+          1.0380388498306274
+        ],
+        "normal_world": [
+          -0.0866696834564209,
+          0.47632259130477905,
+          -0.8749886155128479
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+          "max_penetration_mm": 4.102615173906088,
+          "max_point_force_n": 1.447068896856592,
+          "contact_points": 1,
+          "first_t": 15.4,
+          "last_t": 15.4,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.016666666666666666,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "64ce774a0d05c8a35dd751b84db1eaeadd07222567e3d8d2bf071ef5856aa9d4",
+        "states.npz": "81821dfe4bddae14134f1d8bee8df4c8620aaefa1841d7e85c36618fc0f2a56e",
+        "contacts.json": "ac02bf88bf09fd7ea18618098ef12e2dbebe741dda72bef1999ba38d4cafa871",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "c6d575f69fa63ad3432d85d6b5b50cf5f6a6116453c617c54a2d07a7a90ba48e"
+      }
+    },
+    {
+      "trial": "tgs60_i48_ccd_fruit1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 15.433333333333334,
+      "physics_wall_s": 15.456249013543129,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 48,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 3.6984889302402735,
+      "worst_contact": {
+        "t": 15.433333333333334,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.0036984889302402735,
+        "force_n": 1.3628350630280721,
+        "impulse_ns": [
+          -0.0019167891005054116,
+          0.010790759697556496,
+          -0.019894910976290703
+        ],
+        "position_world_m": [
+          -0.4078306555747986,
+          1.5429917573928833,
+          1.0385991334915161
+        ],
+        "normal_world": [
+          -0.08438830822706223,
+          0.47507259249687195,
+          -0.8758907914161682
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+          "max_penetration_mm": 3.6984889302402735,
+          "max_point_force_n": 1.3628350630280721,
+          "contact_points": 1,
+          "first_t": 15.433333333333334,
+          "last_t": 15.433333333333334,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.016666666666666666,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "35b4fd6458f886d562bb8198d326e20466d89184419972871bb0e877a50a677e",
+        "states.npz": "428843807d3ebfddaf4148cef54bfdf9a0ed8a0281c8e883600934a85b99edd0",
+        "contacts.json": "54e567426c2d59f222a587c49288a3f3faa8d06dd9bccea084912f441a4a1fd0",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "e960f8413dedc8dae32e4fea8ca2b628f05f1ad23ce84164f5a669d7eaa144b4"
+      }
+    },
+    {
+      "trial": "tgs90_i48_ccd_fruit1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 18.011111111111113,
+      "physics_wall_s": 27.517994472756982,
+      "full_motion_rtf": null,
+      "physics_settings": {
+        "hz": 90,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 48,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 17.955555555555556,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 2.6191314682364464,
+      "worst_contact": {
+        "t": 18.011111111111113,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0026191314682364464,
+        "force_n": 3.6834179520399966,
+        "impulse_ns": [
+          -0.0005650038365274668,
+          -0.03647466003894806,
+          -0.018555007874965668
+        ],
+        "position_world_m": [
+          -0.4139845073223114,
+          1.5057600736618042,
+          1.0411320924758911
+        ],
+        "normal_world": [
+          -0.013805205933749676,
+          -0.8912155628204346,
+          -0.4533698856830597
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/L/part_127",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "max_penetration_mm": 2.6191314682364464,
+          "max_point_force_n": 3.6834179520399966,
+          "contact_points": 3,
+          "first_t": 18.011111111111113,
+          "last_t": 18.011111111111113,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.011111111111111112,
+          "longest_sampled_exceedance_s": 0.011111111111111112,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "e875086cdd22bd730016e849d0646997e4a773ccd73982fa14f964df93e70535",
+        "states.npz": "8e3b1bf721a2d8943d5ef2db44de1becfdd0ccab60a7ca207c96fd36edbb8871",
+        "contacts.json": "32159bf2634fc20c89dd834df45c2c4a9c7444f0b91abc12036fed45b6531fda",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "7e15baf931c5a0a904d856c76abcdb701c86e6ffc15f44437ececda9da821e39"
+      }
+    },
+    {
+      "trial": "gui_preview/physics",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.52643526531756,
+      "full_motion_rtf": 0.7916642115980257,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.9476166451349854,
+      "worst_contact": {
+        "t": 16.316666666666666,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.0009476166451349854,
+        "force_n": 1.7867182676728708,
+        "impulse_ns": [
+          3.55029696947895e-05,
+          2.9917955544078723e-05,
+          -0.029778601601719856
+        ],
+        "position_world_m": [
+          -0.40616273880004883,
+          1.5441489219665527,
+          1.0414236783981323
+        ],
+        "normal_world": [
+          0.0011922294506803155,
+          0.0010046784300357103,
+          -0.9999987483024597
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/R/part_249",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+          "max_penetration_mm": 0.9476166451349854,
+          "max_point_force_n": 1.7867182676728708,
+          "contact_points": 1,
+          "first_t": 16.316666666666666,
+          "last_t": 16.316666666666666,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.016666666666666666,
+          "longest_sampled_exceedance_s": 0.016666666666666666,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "61cd788c23972ab1f4b52f1fd64e1626bb3157a30bb4e93d9a260c17b7d5de8c",
+        "states.npz": "f9fd0d7f9fdfc5eeae73e6d1e783e582f8b08b552365dfe0de2f48383c494a95",
+        "contacts.json": "c51dbacee39b180417345ed4a331cad83c475c48b365456799af62cbb8c748d6",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "e960f8413dedc8dae32e4fea8ca2b628f05f1ad23ce84164f5a669d7eaa144b4"
+      }
+    },
+    {
+      "trial": "gui_separation/physics",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 52.354138283059,
+      "full_motion_rtf": 0.5825709485484806,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 2,
+      "plant_dynamics": "full",
+      "native_plant_dofs": 612,
+      "native_break_events": [
+        {
+          "t": 18.583333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "actual_self_collision_audit_passed": true,
+      "max_overlap_mm": 0.5883034318685532,
+      "worst_contact": {
+        "t": 18.591666666666665,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0005883034318685532,
+        "force_n": 2.343905117975551,
+        "impulse_ns": [
+          -0.0011343072401359677,
+          -0.017369281500577927,
+          -0.008862371556460857
+        ],
+        "position_world_m": [
+          -0.41108858585357666,
+          1.507243037223816,
+          1.041986107826233
+        ],
+        "normal_world": [
+          -0.058072689920663834,
+          -0.8892483711242676,
+          -0.45372337102890015
+        ]
+      },
+      "fruit_tool_limit_mm": 1.0,
+      "fruit_fruit_limit_mm": 0.5,
+      "strict_0_5mm_passed": false,
+      "exceedance_pairs": [
+        {
+          "a": "/World/ActuatedTool/L/part_127",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "max_penetration_mm": 0.5883034318685532,
+          "max_point_force_n": 2.343905117975551,
+          "contact_points": 2,
+          "first_t": 18.591666666666665,
+          "last_t": 18.591666666666665,
+          "physics_samples": 1,
+          "sampled_exceedance_s": 0.008333333333333333,
+          "longest_sampled_exceedance_s": 0.008333333333333333,
+          "configured_limit_mm": 1.0
+        }
+      ],
+      "hashes": {
+        "summary.json": "94ad56ee33ab9a2a203fab6e545a83a6d49ca510ea2dc5f75819a357ed84e543",
+        "states.npz": "f22e4d2bac9592683c6b20a9a8b258eb93649e6daa95f7a11c2040626ec9d651",
+        "contacts.json": "ba214e32ba834c414cee7111be9863e4c716604486ce6a23f37fba798eddfd23",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "code_sha256.json": "e960f8413dedc8dae32e4fea8ca2b628f05f1ad23ce84164f5a669d7eaa144b4"
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "left": "tgs60_ccd_fruit1mm",
+      "right": "gui_preview/physics",
+      "equal": {
+        "time": true,
+        "command": true,
+        "robot_q": true,
+        "poses": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "samples": 1831
+    },
+    {
+      "left": "tgs120_i32_ccd_fruit1mm",
+      "right": "gui_separation/physics",
+      "equal": {
+        "time": true,
+        "command": true,
+        "robot_q": true,
+        "poses": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "samples": 3661
+    },
+    {
+      "left": "tgs120_i32_ccd_fruit1mm",
+      "right": "tgs120_i32_thread1_fruit1mm",
+      "equal": {
+        "time": true,
+        "command": true,
+        "robot_q": true,
+        "poses": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "samples": 3661
+    },
+    {
+      "plan_sha256_by_trial": {
+        "pgs120_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "pgs240_i32_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "pgs60_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "pgs60_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "pgs60_ccd_fruit2mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "pgs60_ccd_tool2_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs120_i32_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs120_i32_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs120_i32_target_truss_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs120_i32_thread1_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs120_i64_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs60_ccd": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs60_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs60_i32_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs60_i48_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "tgs90_i48_ccd_fruit1mm": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029"
+      }
+    }
+  ],
+  "strict_relaxed_prefix_checks": [
+    {
+      "compared_samples": 940,
+      "equal": {
+        "time": true,
+        "command": true,
+        "robot_q": true,
+        "poses": true,
+        "belt_surface_velocity_local_y_m_s": true
+      }
+    },
+    {
+      "compared_samples": 980,
+      "equal": {
+        "time": true,
+        "command": true,
+        "robot_q": true,
+        "poses": true,
+        "belt_surface_velocity_local_y_m_s": true
+      }
+    }
+  ],
+  "limitations": [
+    "Opt-in 1mm tool/current-truss fruit guard; all other active pairs and initial state retain 0.5mm.",
+    "Same original tread prototype. No collider, mass, material, friction, actuator or break-threshold edits in this campaign.",
+    "Hz/solver/iterations change numerical dynamics; not equivalent physics speedup.",
+    "One scene/trace; native break and falling fruit are not verified multi-fruit harvest or collection.",
+    "Reported RTF excludes application setup, planning/preflight, save, posthoc audit and rendering.",
+    "No newly measured parallel throughput."
+  ],
+  "source_sha256": {
+    "nvidia-sim/harvest_s300/motion_app.py": "a4dee0e0a69b6de3cc0541707fbb6f2f2a292aa9c61df96ad1ed5e975943529a",
+    "nvidia-sim/harvest_s300/test_motion_collision_groups.py": "47594a8500f240774b58e2401dcb00d12027602540765208b2d51306e2110ef5",
+    "nvidia-sim/harvest_s300/analyze_belt_trial.py": "c0f0d7f1f1d8ba28a6c4596291406bd3a59e76ded743f85a519ecdb7efbd2f88",
+    "nvidia-sim/harvest_s300/motion_gpu_diagnostics.py": "d2fa9ecea06292c94628123321836917e46b0ba76d753853db559bd465e008b0",
+    "nvidia-sim/harvest_s300/validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+    "nvidia-sim/harvest_s300/report_performance.py": "6048f06afbcf5319ce6401543680be42452ac6eab76109d787616dfa58c76a89",
+    "nvidia-sim/harvest_s300/motion_contact_guard.py": "76b35502c95254d3ae4168b1733d0ad147199ea334ff390bb62418dea3dd0e2e",
+    "nvidia-sim/harvest_s300/test_motion_compiled_audit.py": "cee995c87891801fd173a50421b1be818a63647d42d07d4f193b1a3a66db4b11",
+    "nvidia-sim/harvest_s300/test_motion_app.py": "709f440ec7e857d0211237e51a262345a06d9bab55e3bce97d1638de5b3613b3",
+    "nvidia-sim/harvest_s300/test_motion_belt_control.py": "5a03efc15f00e26d621dedc81774d0da587c092afb96aef8e975896c9580d4da",
+    "nvidia-sim/harvest_s300/test_motion_gpu_diagnostics.py": "2ffab54bc1572b2d2cd59cd8818ad31b9968cfd353a9c046405cfdebc6e29906",
+    "nvidia-sim/harvest_s300/report_motion.py": "3d2968ca06af13e44e1e038c129d380097d2804391937185b81bc9e69438c599",
+    "nvidia-sim/harvest_s300/test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+    "nvidia-sim/harvest_s300/test_motion_resolution.py": "7b17eae6b883e390c6e74234cbb23ffc44a7ee1f9b9b9fb73235296912a254ba",
+    "nvidia-sim/harvest_s300/motion_pose_display.py": "55bf855a4507257ed39d4fa52bcbd0c2ce2294a854dab45a334f868306358e96",
+    "nvidia-sim/harvest_s300/motion_belt_control.py": "0ddb8714e6765ab11400e79b1d5f431b75d74914f05078415747f9e9a3d4cc09",
+    "nvidia-sim/harvest_s300/consolidate_background.py": "6d49ace743b70563c333482161824bdf521798759665b08cc93ba03bec25eacc",
+    "nvidia-sim/harvest_s300/write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+    "nvidia-sim/harvest_s300/test_motion_materialize.py": "2a58df5f7196cd198387a3a2a66e689764b874746e359d91d6b4de2a5df4d5f1",
+    "nvidia-sim/harvest_s300/test_motion_stage_metrics.py": "da148a2d38c830a81b7fae4e5dd64754907030362eec72beea75defcd3b63c84",
+    "nvidia-sim/harvest_s300/latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+    "nvidia-sim/harvest_s300/motion_contact_buffer.py": "7ea19866a04b0a7c2815e844a25f77cae4b7227428afa1060b720af256cb8d9a",
+    "nvidia-sim/harvest_s300/build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+    "nvidia-sim/harvest_s300/motion_replication.py": "10e04dab53d2df3b91514ae0f2a9773b56ef62921679ed122a9eabc7aefa4385",
+    "nvidia-sim/harvest_s300/test_motion_device.py": "acb45e5f4b5938b9ea9bc1f7b2bf2cc20d1ddf65307697e7c24d787de43a08f7",
+    "nvidia-sim/harvest_s300/test_report_performance.py": "890a2246534edd5f79ecb09ebf711ff8b43178d22c5e8ab2e018e2043cbc97fe",
+    "nvidia-sim/harvest_s300/test_consolidate_background.py": "328a9dc1987ccec40f90681853c89df5394e76799aaf5173ac98d5ad57e2fb7d",
+    "nvidia-sim/harvest_s300/validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+    "nvidia-sim/harvest_s300/render_motion.py": "41d0b4cdcacd97397fccdc86ba9d59fbba4cc3a08b86ce2b814a14166d8fb67a",
+    "nvidia-sim/harvest_s300/view_motion_live.py": "b7ea76ce6c0ce2193e1ab7f6a1ebfdf38abeb92fbad57903bca476926f9a65d0",
+    "nvidia-sim/harvest_s300/viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+    "nvidia-sim/harvest_s300/motion_stage_metrics.py": "7923b3ca6b82daad43071b5f8e807572bce9b96174deca58871ef780c7d320a4",
+    "nvidia-sim/harvest_s300/run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+    "nvidia-sim/harvest_s300/compare_motion_runs.py": "ecb1cd15f1d0a0286acf43143f6c18fcdd7b6eae05afad84ff10a18532062fe9",
+    "nvidia-sim/harvest_s300/motion_collision_groups.py": "22e84f8721b07f600b9ad48ad40e5adacb0001213dd24754941af27eb5c26d07",
+    "nvidia-sim/harvest_s300/test_motion_contacts.py": "28429dd628f84f06592c606c46818bd568d5389786c0fd2b4c8397259a16b71e",
+    "nvidia-sim/harvest_s300/test_motion_live.py": "68d5849ee19b12cca0cea0763d3684cb3800667644f6d13060ebbbcdcc46287d",
+    "nvidia-sim/harvest_s300/test_belt_evidence.py": "4a21672cf4321c40a80a53d86d6fcf8fca49561554d7c4e26a1aebe148d119bf",
+    "nvidia-sim/harvest_s300/test_motion_replication.py": "e2039e819b1a18833bcf9f64b276eeaca71ef322647e4880b159767f6986a083",
+    "nvidia-sim/harvest_s300/run_motion.py": "0ec933c189b2c3a5379099a531ae9b53017fad830029f05bb7b789b2f8b576ab",
+    "nvidia-sim/harvest_s300/benchmark_motion_visuals.py": "3b09ed9e6acb43e2df1414d5f4985e32cf54b56bca1f0dd6031222983d48a7f9",
+    "nvidia-sim/harvest_s300/test_motion_contact_guard.py": "9533686703271d5cc0f55fd108e68e382e5a63b6d9c2781043ff0ba623d0c9f8",
+    "nvidia-sim/harvest_s300/motion_resolution.py": "a1a683b6ae247f7e1c7329ab56c53a3afd907a00644cf1b239d90888c570f1af",
+    "nvidia-sim/harvest_s300/motion_profile.py": "3315572290e7145c6b76e27731bc0fca767b229d4d80653f7ada4306123cdcd7",
+    "nvidia-sim/harvest_s300/motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+    "nvidia-sim/harvest_s300/motion_live.py": "05258c09b71542ed2e1c1fda81342d85cd757721313dfb9c81b1cd048bf08a08",
+    "nvidia-sim/harvest_s300/test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209",
+    "nvidia-sim/harvest_s300/motion_materialize.py": "cfc2b0d02e8e659c3d1e8fd51e887cf82dd44f70ca09361dcc1d3f3e71ddaba4",
+    "nvidia-sim/harvest_s300/motion_contacts.py": "804373fa7efe34dee84036f2a6724bd4dc3a649127ad8491f628704c54192c6e",
+    "nvidia-sim/harvest_s300/capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+    "nvidia-sim/harvest_s300/motion_assets.py": "7ba224cd0bc2bfc880f6ebc3609c6dcaf1ddd496d2b76610e8e1d7e3c2edf3fe",
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "d411027ced94ebc650f46532730c6d6430d64b26686d637b8f267c86e336747d",
+    "nvidia-sim/harvest_s300/motion_visuals.py": "68533aa42f257a6dc2e18bfb534ee4aea6fd9eef0f13f156b90c46d21d0c7e6e",
+    "nvidia-sim/harvest_s300/benchmark_motion.py": "da0e85337b4385fad145c7150f99f7ea237966430ade3970298a27334f18fca3",
+    "nvidia-sim/harvest_s300/motion_initialization.py": "335540ae0400e8099814fa811acc0071143c5b33bb573450a30fbf5053c5f67c",
+    "nvidia-sim/harvest_s300/validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+    "nvidia-sim/harvest_s300/test_motion_visuals.py": "0ca1ab6e3d465659dc8fd7a335bef7a951ba7f7593815a4e91a31c451b5438e5",
+    "nvidia-sim/harvest_s300/test_motion_contact_buffer.py": "35b236b7c9f41568c86ba5c56e0fbc71cbbb990c4d779bc2fbf69b7a122f0cf1",
+    "nvidia-sim/harvest_s300/test_motion_ready.py": "4e215761b1c20318bd8e01aa0aa408232b482e8d69304df4adbd4d2eb19ac49b",
+    "nvidia-sim/harvest_s300/test_compare_motion_runs.py": "c573d02cd72c6dc8b839c4908a7e9aff4b9516c108eb240869b534d114f75b59",
+    "nvidia-sim/harvest_s300/test_motion_initialization.py": "797bbae29276988b87477060c7dd77236cb5458dd411f8f09cfd852ccf0dc31c",
+    "nvidia-sim/harvest_s300/test_benchmark_motion.py": "2636560589405d5591f32f2a8b8337124b791e83c9b1a048fcf4fb9a84c7593f",
+    "nvidia-sim/harvest_s300/motion_compiled_audit.py": "ea26a1ae624c3707309e267aaef4cce25873e51d5df0bc924f104257c09abf45",
+    "nvidia-sim/harvest_s300/test_motion_kinematics.py": "cdbe3d54ff736fe6635fb7fb8a0cb0bcad9b7917fd7b1530896cc032c88ba58a"
+  },
+  "video": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261010_173338_s300_harvest_speed/tgs120_i32_ccd_fruit1mm/actual_motion.mp4",
+    "sha256": "5b260dd93a0a8d983f67ad838a3d2b9e8322d12b6833bd7defeb67b0a3954465",
+    "render_metadata": {
+      "source": "stored measured physical body transforms",
+      "frames": 184,
+      "fps": 6,
+      "speed": 1.0,
+      "render_ticks": [
+        0,
+        20,
+        40,
+        60,
+        80,
+        100,
+        120,
+        140,
+        160,
+        180,
+        200,
+        220,
+        240,
+        260,
+        280,
+        300,
+        320,
+        340,
+        360,
+        380,
+        400,
+        420,
+        440,
+        460,
+        480,
+        500,
+        520,
+        540,
+        560,
+        580,
+        600,
+        620,
+        640,
+        660,
+        680,
+        700,
+        720,
+        740,
+        760,
+        780,
+        800,
+        820,
+        840,
+        860,
+        880,
+        900,
+        920,
+        940,
+        960,
+        980,
+        1000,
+        1020,
+        1040,
+        1060,
+        1080,
+        1100,
+        1120,
+        1140,
+        1160,
+        1180,
+        1200,
+        1220,
+        1240,
+        1260,
+        1280,
+        1300,
+        1320,
+        1340,
+        1360,
+        1380,
+        1400,
+        1420,
+        1440,
+        1460,
+        1480,
+        1500,
+        1520,
+        1540,
+        1560,
+        1580,
+        1600,
+        1620,
+        1640,
+        1660,
+        1680,
+        1700,
+        1720,
+        1740,
+        1760,
+        1780,
+        1800,
+        1820,
+        1840,
+        1860,
+        1880,
+        1900,
+        1920,
+        1940,
+        1960,
+        1980,
+        2000,
+        2020,
+        2040,
+        2060,
+        2080,
+        2100,
+        2120,
+        2140,
+        2160,
+        2180,
+        2200,
+        2220,
+        2240,
+        2260,
+        2280,
+        2300,
+        2320,
+        2340,
+        2360,
+        2380,
+        2400,
+        2420,
+        2440,
+        2460,
+        2480,
+        2500,
+        2520,
+        2540,
+        2560,
+        2580,
+        2600,
+        2620,
+        2640,
+        2660,
+        2680,
+        2700,
+        2720,
+        2740,
+        2760,
+        2780,
+        2800,
+        2820,
+        2840,
+        2860,
+        2880,
+        2900,
+        2920,
+        2940,
+        2960,
+        2980,
+        3000,
+        3020,
+        3040,
+        3060,
+        3080,
+        3100,
+        3120,
+        3140,
+        3160,
+        3180,
+        3200,
+        3220,
+        3240,
+        3260,
+        3280,
+        3300,
+        3320,
+        3340,
+        3360,
+        3380,
+        3400,
+        3420,
+        3440,
+        3460,
+        3480,
+        3500,
+        3520,
+        3540,
+        3560,
+        3580,
+        3600,
+        3620,
+        3640,
+        3660
+      ],
+      "camera": "/World/GripFrontReplayCamera",
+      "physics_rerun": false,
+      "replay_only_fill_light": true,
+      "replay_only_hidden_paths": [
+        "/World/Greenhouse/Plants",
+        "/World/ElasticTarget/Stem_MainStem_0/Visual_195",
+        "/World/ElasticTarget/Stem_MainStem_0/Visual_196",
+        "/World/ElasticTarget/Stem_MainStem_0/Visual_197",
+        "/World/ElasticTarget/Stem_MainStem_0/Visual_198",
+        "/World/ElasticTarget/Stem_MainStem_2/Visual_199",
+        "/World/ElasticTarget/Stem_MainStem_2/Visual_200",
+        "/World/ElasticTarget/Stem_MainStem_2/Visual_201",
+        "/World/ElasticTarget/Stem_MainStem_2/Visual_202",
+        "/World/ElasticTarget/Stem_MainStem_3/Visual_203",
+        "/World/ElasticTarget/Stem_MainStem_3/Visual_204",
+        "/World/ElasticTarget/Stem_MainStem_3/Visual_205",
+        "/World/ElasticTarget/Stem_MainStem_3/Visual_206",
+        "/World/ElasticTarget/Stem_MainStem_4/Visual_207",
+        "/World/ElasticTarget/Stem_MainStem_4/Visual_208",
+        "/World/ElasticTarget/Stem_MainStem_4/Visual_209",
+        "/World/ElasticTarget/Stem_MainStem_4/Visual_210",
+        "/World/ElasticTarget/Stem_MainStem_6/Visual_211",
+        "/World/ElasticTarget/Stem_MainStem_6/Visual_212",
+        "/World/ElasticTarget/Stem_MainStem_6/Visual_213",
+        "/World/ElasticTarget/Stem_MainStem_6/Visual_214",
+        "/World/ElasticTarget/Stem_MainStem_7/Visual_215",
+        "/World/ElasticTarget/Stem_MainStem_7/Visual_216",
+        "/World/ElasticTarget/Stem_MainStem_7/Visual_217",
+        "/World/ElasticTarget/Stem_MainStem_7/Visual_218",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_127",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_128",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_129",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_130",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_219",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_220",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_221",
+        "/World/ElasticTarget/Stem_MainStem_8/Visual_222",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_131",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_132",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_133",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_134",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_167",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_168",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_169",
+        "/World/ElasticTarget/Stem_MainStem_9/Visual_170",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_135",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_136",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_137",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_138",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_171",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_172",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_173",
+        "/World/ElasticTarget/Stem_MainStem_10/Visual_174",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_139",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_140",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_141",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_142",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_175",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_176",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_177",
+        "/World/ElasticTarget/Stem_MainStem_11/Visual_178",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_143",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_144",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_145",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_146",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_179",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_180",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_181",
+        "/World/ElasticTarget/Stem_MainStem_12/Visual_182",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_147",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_148",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_149",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_150",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_183",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_184",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_185",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_186",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_187",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_188",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_189",
+        "/World/ElasticTarget/Stem_MainStem_13/Visual_190",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_151",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_152",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_153",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_154",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_155",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_156",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_157",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_158",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_191",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_192",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_193",
+        "/World/ElasticTarget/Stem_MainStem_14/Visual_194",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_91",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_92",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_93",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_94",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_95",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_96",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_97",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_98",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_99",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_100",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_101",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_102",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_103",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_104",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_105",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_106",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_107",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_108",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_109",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_110",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_111",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_112",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_113",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_114",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_115",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_116",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_117",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_118",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_119",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_120",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_121",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_122",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_123",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_124",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_125",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_126",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_159",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_160",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_161",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_162",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_163",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_164",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_165",
+        "/World/ElasticTarget/Stem_MainStem_15/Visual_166"
+      ],
+      "source_geometry_modified": false,
+      "stop_reason": null
+    },
+    "full_decode_passed": true,
+    "frames": 184
+  },
+  "all_16_headless_plan_hashes_equal": true
+}

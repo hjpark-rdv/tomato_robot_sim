@@ -3,7 +3,8 @@
 Contact records retain exact native collider IDs, signed separation, impulse,
 timestamp and phase. Normal callbacks avoid force norms, event dictionaries and
 impulse lists; legacy event formatting occurs after the measured physics loop.
-This changes reporting work only, never collision policy or physical settings.
+Raw buffering preserves native physics; an optional pair-specific stop threshold
+changes diagnostic acceptance only, never contact generation or response.
 """
 from __future__ import annotations
 
@@ -35,7 +36,10 @@ class FramedRawContact(NamedTuple):
 
 
 class BufferedContactRecorder:
-    """Native callback adapter with the existing 0.5 mm active-contact guard.
+    """Native callback adapter with a default 0.5 mm active-contact guard.
+
+    A supplied pair_limit overrides only the diagnostic stop threshold. All raw
+    records, including tolerated overlaps, are retained.
 
     Call ``clear_step`` immediately before each simulate/fetch operation. During
     callback delivery call ``record(headers, data, t=..., phase=...)``. Afterwards
@@ -48,7 +52,7 @@ class BufferedContactRecorder:
     The decoder must return the same exact collider paths as the native runner.
     """
     def __init__(self, path_decoder, hz, *, active_path_markers=ACTIVE_PATH_MARKERS,
-                 penetration_limit_m=0.0005, capture_frames=False):
+                 penetration_limit_m=0.0005, capture_frames=False, pair_limit=None):
         hz=float(hz)
         if not math.isfinite(hz) or hz<=0:
             raise ValueError('Physics frequency must be positive and finite')
@@ -58,6 +62,8 @@ class BufferedContactRecorder:
         self.hz=hz
         self.penetration_limit_m=limit
         self.capture_frames=bool(capture_frames)
+        self._pair_limit=pair_limit
+        self._pair_limits={}
         self._decoder=path_decoder
         self._markers=tuple(active_path_markers)
         self._records=[]
@@ -107,6 +113,13 @@ class BufferedContactRecorder:
         for header in headers:
             a,b=int(header.collider0),int(header.collider1)
             active=self._active(a,b)
+            limit=self.penetration_limit_m
+            if self._pair_limit is not None:
+                if (a,b) not in self._pair_limits:
+                    value=float(self._pair_limit(self._path(a),self._path(b)))
+                    if not math.isfinite(value) or value<0:raise ValueError('Invalid pair penetration limit')
+                    self._pair_limits[a,b]=value
+                limit=self._pair_limits[a,b]
             offset,count=int(header.contact_data_offset),int(header.num_contact_data)
             for i in range(offset,offset+count):
                 contact=data[i]
@@ -127,7 +140,7 @@ class BufferedContactRecorder:
                 self._records.append(raw)
                 if self.step_minimum_separation_m is None or separation<self.step_minimum_separation_m:
                     self.step_minimum_separation_m=separation
-                if active and separation < -self.penetration_limit_m:
+                if active and separation < -limit:
                     self._step_invalid.append(index)
 
     def _event(self, raw):
@@ -158,7 +171,8 @@ class BufferedContactRecorder:
                     raw_units=dict(separation='m',impulse='N*s',timestamp='physics seconds'),
                     force_metric='maximum norm of one contact point impulse / physics dt; not summed force',
                     per_step_guard=dict(scope='exact collider paths; active robot/tool/plant',
-                                        separation_below_m=-self.penetration_limit_m),
+                                        separation_below_m=-self.penetration_limit_m,
+                                        pair_override=self._pair_limit is not None),
                     native_break_events='unchanged existing native subscription',
                     force_formatting='deferred until invalid event or post-loop materialization',
                     capture_frames=self.capture_frames,
