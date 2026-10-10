@@ -1,0 +1,412 @@
+{
+  "schema": "s300-horizontal-entry-v1",
+  "trials": [
+    {
+      "trial": "physics_yaw15",
+      "pitch_deg": 0.0,
+      "yaw_offset_deg": 15.0,
+      "preparation": "tight_fold_open_approach",
+      "simulated_s": 5.416666666666667,
+      "stop_reason": "penetration_over_0_5mm",
+      "last_phase": "prepare_fold",
+      "model_sha256": "b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44",
+      "completed": false,
+      "harvest_success": null,
+      "training_eligible": false,
+      "first_invalid_contact": {
+        "t": 5.416666666666667,
+        "phase": "prepare_fold",
+        "a": "/World/ActuatedTool/R/part_331",
+        "b": "/World/Greenhouse/Plants/Plant_19/Stem/mesh_185",
+        "separation_m": -0.0007334128022193909,
+        "force_n": 564.5334393031393,
+        "impulse_ns": [
+          1.3614860773086548,
+          0.01804528944194317,
+          4.503091812133789
+        ],
+        "position_world_m": [
+          -0.47313058376312256,
+          0.7802031636238098,
+          1.3492600917816162
+        ],
+        "normal_world": [
+          0.28940415382385254,
+          0.003835795447230339,
+          0.9571993350982666
+        ]
+      },
+      "phase_pose_metrics": {
+        "prepare_extend": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "prepare_open": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "approach": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        }
+      }
+    },
+    {
+      "trial": "physics_yaw15_recorded_fold",
+      "pitch_deg": 0.0,
+      "yaw_offset_deg": 15.0,
+      "preparation": "tight_fold_open_approach",
+      "simulated_s": 21.541666666666668,
+      "stop_reason": "penetration_over_0_5mm",
+      "last_phase": "prepare_extend",
+      "model_sha256": "b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44",
+      "completed": false,
+      "harvest_success": null,
+      "training_eligible": false,
+      "first_invalid_contact": {
+        "t": 21.541666666666668,
+        "phase": "prepare_extend",
+        "a": "/World/ActuatedTool/L/part_238",
+        "b": "/World/ElasticTarget/Stem_MainStem_13/Appendage_184_0",
+        "separation_m": -0.0005408067372627556,
+        "force_n": 1.2505644726614198,
+        "impulse_ns": [
+          0.0037538830656558275,
+          0.004965157713741064,
+          0.008358261547982693
+        ],
+        "position_world_m": [
+          -0.48998552560806274,
+          1.4940767288208008,
+          1.358283519744873
+        ],
+        "normal_world": [
+          0.360210120677948,
+          0.4764400124549866,
+          0.8020309805870056
+        ]
+      },
+      "phase_pose_metrics": {
+        "prepare_extend": {
+          "sample_count": 185,
+          "time_start_s": 20.008333333333333,
+          "time_end_s": 21.541666666666668,
+          "axis_pitch_max_abs_deg": 4.906379265409473,
+          "tcp_height_range_mm": 145.12359619140625
+        },
+        "prepare_open": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "approach": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        }
+      },
+      "recorded_prefix_equivalence": {
+        "command_bit_exact": true,
+        "timestamps_bit_exact": true,
+        "poses_bit_exact": true,
+        "phases_bit_exact": true
+      }
+    },
+    {
+      "trial": "physics_yaw30",
+      "pitch_deg": 0.0,
+      "yaw_offset_deg": 30.0,
+      "preparation": "tight_fold_open_approach",
+      "simulated_s": 6.883333333333334,
+      "stop_reason": "penetration_over_0_5mm",
+      "last_phase": "prepare_fold",
+      "model_sha256": "b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44",
+      "completed": false,
+      "harvest_success": null,
+      "training_eligible": false,
+      "first_invalid_contact": {
+        "t": 6.883333333333334,
+        "phase": "prepare_fold",
+        "a": "/World/ActuatedTool/R/part_331",
+        "b": "/World/Greenhouse/Plants/Plant_19/Stem/mesh_185",
+        "separation_m": -0.001236453652381897,
+        "force_n": 650.9414494188208,
+        "impulse_ns": [
+          1.5429891347885132,
+          0.012592583894729614,
+          5.200418949127197
+        ],
+        "position_world_m": [
+          -0.47320544719696045,
+          0.7801461815834045,
+          1.3493249416351318
+        ],
+        "normal_world": [
+          0.2844475507736206,
+          0.002321422565728426,
+          0.9586887955665588
+        ]
+      },
+      "phase_pose_metrics": {
+        "prepare_extend": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "prepare_open": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "approach": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        }
+      }
+    },
+    {
+      "trial": "physics_yaw30_level_fold",
+      "pitch_deg": 0.0,
+      "yaw_offset_deg": 30.0,
+      "preparation": "tight_fold_level_approach",
+      "simulated_s": 21.308333333333334,
+      "stop_reason": "penetration_over_0_5mm",
+      "last_phase": "prepare_extend",
+      "model_sha256": "b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44",
+      "completed": false,
+      "harvest_success": null,
+      "training_eligible": false,
+      "first_invalid_contact": {
+        "t": 21.308333333333334,
+        "phase": "prepare_extend",
+        "a": "/World/ActuatedTool/L/part_238",
+        "b": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_192",
+        "separation_m": -0.0007430315017700195,
+        "force_n": 456.07301610781343,
+        "impulse_ns": [
+          3.487330675125122,
+          -1.0599757432937622,
+          1.0768476724624634
+        ],
+        "position_world_m": [
+          -0.5638562440872192,
+          1.0228402614593506,
+          1.467820644378662
+        ],
+        "normal_world": [
+          0.9175716638565063,
+          -0.278896301984787,
+          0.2833355963230133
+        ]
+      },
+      "phase_pose_metrics": {
+        "prepare_extend": {
+          "sample_count": 157,
+          "time_start_s": 20.008333333333333,
+          "time_end_s": 21.308333333333334,
+          "axis_pitch_max_abs_deg": 5.939350942326348,
+          "tcp_height_range_mm": 20.04468536376953
+        },
+        "prepare_open": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "approach": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        }
+      },
+      "recorded_prefix_equivalence": {
+        "command_bit_exact": true,
+        "timestamps_bit_exact": true,
+        "poses_bit_exact": true,
+        "phases_bit_exact": true
+      }
+    },
+    {
+      "trial": "physics_yaw30_recorded_fold",
+      "pitch_deg": 0.0,
+      "yaw_offset_deg": 30.0,
+      "preparation": "tight_fold_open_approach",
+      "simulated_s": 23.45,
+      "stop_reason": "penetration_over_0_5mm",
+      "last_phase": "prepare_extend",
+      "model_sha256": "b25148c8210ef0ff540f7186c4a03840c0e355eaa71a360c340cb1a4dbd22f44",
+      "completed": false,
+      "harvest_success": null,
+      "training_eligible": false,
+      "first_invalid_contact": {
+        "t": 23.45,
+        "phase": "prepare_extend",
+        "a": "/World/ActuatedTool/L/part_238",
+        "b": "/World/ElasticTarget/Stem_MainStem_9/Appendage_132_0",
+        "separation_m": -0.0006522610783576965,
+        "force_n": 2.6803252529292565,
+        "impulse_ns": [
+          0.002150994958356023,
+          -0.02023579739034176,
+          0.00920785404741764
+        ],
+        "position_world_m": [
+          -0.45626282691955566,
+          1.5939444303512573,
+          1.0834015607833862
+        ],
+        "normal_world": [
+          0.09630151838064194,
+          -0.9059705138206482,
+          0.41224196553230286
+        ]
+      },
+      "phase_pose_metrics": {
+        "prepare_extend": {
+          "sample_count": 414,
+          "time_start_s": 20.008333333333333,
+          "time_end_s": 23.45,
+          "axis_pitch_max_abs_deg": 14.30546524554832,
+          "tcp_height_range_mm": 444.6064147949219
+        },
+        "prepare_open": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        },
+        "approach": {
+          "sample_count": 0,
+          "time_start_s": null,
+          "time_end_s": null,
+          "axis_pitch_max_abs_deg": null,
+          "tcp_height_range_mm": null
+        }
+      },
+      "recorded_prefix_equivalence": {
+        "command_bit_exact": true,
+        "timestamps_bit_exact": true,
+        "poses_bit_exact": true,
+        "phases_bit_exact": true
+      }
+    }
+  ],
+  "native_trial_count": 5,
+  "training_eligible": false,
+  "harvest_success": null,
+  "interpretation": "Fixed horizontal entry geometry verified by FK; actual trials stopped before approach. Level extension tracking is separate from successful entry.",
+  "code_sha256": {
+    "motion_kinematics.py": "90aaa4b9b348b0f9a2c19b6a90b8d85ca4d061c33b3aef79e2f6a6b5ece5666d",
+    "run_motion.py": "a1e06750c1c0b89010c9095339fc5482f5ab3aa10663be4d833f52454c2d645c",
+    "test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209"
+  },
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "aad8340",
+  "tests": {
+    "environment": "nvidia-sim/.asset-venv with USD/Numpy/SciPy",
+    "passed": 24,
+    "failed": 0,
+    "log": "/root/docker_share/mujoko_debugging_data/20261010_125732_s300_horizontal_entry/offline_tests_final_level.log"
+  },
+  "fk_controls": {
+    "fk_yaw30.json": {
+      "yaw_offset_deg": 30.0,
+      "nominal_height_range_mm": 0.0,
+      "actual_fk_height_range_mm": 2.3774315849323102e-07,
+      "fk_axis_elevation_max_deg": 4.463596167438538e-07,
+      "fk_position_max_error_mm": 7.99655957040902e-06,
+      "selected_seed_index": 8,
+      "prep_q": [
+        1.1519961469803006e-14,
+        -2.0229331041457126,
+        0.3175825816502645,
+        -2.0427255797610226,
+        -1.4163776485093753,
+        -0.4661379374172064,
+        3.1415165181850737
+      ],
+      "direction_world": [
+        -0.9999021370421234,
+        -0.013989865567431115,
+        0.0
+      ]
+    },
+    "fk_yaw15.json": {
+      "yaw_offset_deg": 15.0,
+      "nominal_height_range_mm": 0.0,
+      "actual_fk_height_range_mm": 4.910490902787501e-06,
+      "fk_axis_elevation_max_deg": 0.00019408265018052264,
+      "fk_position_max_error_mm": 4.966842457490836e-05,
+      "selected_seed_index": 3,
+      "prep_q": [
+        1.0091121205676643e-10,
+        -2.3858664420221847,
+        0.4893469207042985,
+        -2.761856597252897,
+        2.272510705081787,
+        0.5672550395353105,
+        -1.4635130482098905e-06
+      ],
+      "direction_world": [
+        -0.9694521415778934,
+        0.2452805438473183,
+        0.0
+      ]
+    },
+    "fk_yaw30_level_fold.json": {
+      "extension_axis_pitch_max_deg": 0.00015890847680524452,
+      "extension_upright_error_max_deg": 0.00015903353340151246,
+      "extension_sample_count": 81
+    }
+  },
+  "video_validation": {
+    "videos": [
+      {
+        "path": "physics_yaw30_level_fold/actual_motion.mp4",
+        "sha256": "5100c3a38500e79c9303bd7c496c7b971cb49de3d5a28674ddc4ec9334abd86a",
+        "frames": 65,
+        "frame_rate": "6/1",
+        "speed": 2.0,
+        "full_decode_passed": true,
+        "actual_saved_pose_replay": true,
+        "physics_rerun": false
+      },
+      {
+        "path": "physics_yaw30_level_fold/actual_motion_verified.mp4",
+        "sha256": "49d5cabcb0339cab53f52a648db2b991a463d1c439e4c160d999c9feb1b57053",
+        "frames": 65,
+        "frame_rate": "6/1",
+        "speed": 2.0,
+        "full_decode_passed": true,
+        "actual_saved_pose_replay": true,
+        "physics_rerun": false
+      }
+    ],
+    "report_video": "physics_yaw30_level_fold/actual_motion_verified.mp4",
+    "interpretation": "Actual preparation stopped before approach; replay is not completed entry or harvesting."
+  }
+}

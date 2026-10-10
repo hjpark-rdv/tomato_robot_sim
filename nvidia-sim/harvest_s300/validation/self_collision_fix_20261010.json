@@ -1,0 +1,669 @@
+{
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "aad834021bbf9c1ea757aa2033fa4a3e7d679cf1",
+  "uncommitted": true,
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix",
+  "trials": [
+    {
+      "trial": "gui_entry_return_v3",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 23.5,
+      "wall_s": 95.30356532894075,
+      "rtf": 0.24658049170447746,
+      "robot_self_collision_enabled": true,
+      "actual_audit_passed": true,
+      "actual_audit_samples": 2821,
+      "stored_samples": 2821,
+      "physics_dt_max_s": 0.008333333333336412,
+      "entry_pitch_max_abs_deg": 0.03309118542412653,
+      "all_pitch_max_abs_deg": 0.03317171198341847,
+      "tcp_height_range_mm": 8.856355667114258,
+      "entry_tcp_height_range_mm": 0.15014410018920898,
+      "initial_gravity_settling_height_change_mm": -8.661031723022461,
+      "target_max_displacement_mm": 0.03158314939355478,
+      "min_native_contact_separation_m": 0.00018223922234028578,
+      "self_contact_points": 0,
+      "self_penetrating_points": 0,
+      "max_self_contact_point_force_n": 0.0,
+      "initial_to_final_joint_max_change_m_or_rad": 0.008495420217514038,
+      "return_vs_settled_ready_max_error_m_or_rad": 7.152557373046875e-07,
+      "model_sha256": "b3b6a1a1042f8d4d7c1cadf63323ee8824df6cfb4c922de052997016228d3709"
+    },
+    {
+      "trial": "physics_entry_return",
+      "completed": false,
+      "stop_reason": "initialization_penetration_over_0_5mm",
+      "simulated_s": 0.0,
+      "wall_s": 1.1371448636054993e-05,
+      "rtf": 0.0,
+      "robot_self_collision_enabled": true,
+      "actual_audit_passed": true,
+      "actual_audit_samples": 1,
+      "stored_samples": 1,
+      "physics_dt_max_s": null,
+      "entry_pitch_max_abs_deg": null,
+      "all_pitch_max_abs_deg": 0.032778823320553194,
+      "tcp_height_range_mm": 0.0,
+      "entry_tcp_height_range_mm": null,
+      "initial_gravity_settling_height_change_mm": null,
+      "target_max_displacement_mm": 0.0,
+      "min_native_contact_separation_m": -0.0017273707780987024,
+      "self_contact_points": 463,
+      "self_penetrating_points": 212,
+      "max_self_contact_point_force_n": 5498.956938298431,
+      "initial_to_final_joint_max_change_m_or_rad": 0.0,
+      "return_vs_settled_ready_max_error_m_or_rad": null,
+      "model_sha256": "d880cc76206c4f554e9052fb0e7676bcfa1fde6e6923f656fd5ac8a8933ddb98"
+    },
+    {
+      "trial": "physics_entry_return_v2",
+      "completed": false,
+      "stop_reason": "initialization_penetration_over_0_5mm",
+      "simulated_s": 0.0,
+      "wall_s": 1.1311843991279602e-05,
+      "rtf": 0.0,
+      "robot_self_collision_enabled": true,
+      "actual_audit_passed": true,
+      "actual_audit_samples": 1,
+      "stored_samples": 1,
+      "physics_dt_max_s": null,
+      "entry_pitch_max_abs_deg": null,
+      "all_pitch_max_abs_deg": 0.03994636001636185,
+      "tcp_height_range_mm": 0.0,
+      "entry_tcp_height_range_mm": null,
+      "initial_gravity_settling_height_change_mm": null,
+      "target_max_displacement_mm": 0.0,
+      "min_native_contact_separation_m": -0.0007861107587814331,
+      "self_contact_points": 6,
+      "self_penetrating_points": 4,
+      "max_self_contact_point_force_n": 206.39631825428384,
+      "initial_to_final_joint_max_change_m_or_rad": 0.0,
+      "return_vs_settled_ready_max_error_m_or_rad": null,
+      "model_sha256": "4bd065f03bf848c52b23e3406ad04efd91cf50ad5cb92f82d9ad658028b4e7b9"
+    },
+    {
+      "trial": "physics_entry_return_v3",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 23.5,
+      "wall_s": 38.620587134733796,
+      "rtf": 0.6084837581059209,
+      "robot_self_collision_enabled": true,
+      "actual_audit_passed": true,
+      "actual_audit_samples": 2821,
+      "stored_samples": 2821,
+      "physics_dt_max_s": 0.008333333333336412,
+      "entry_pitch_max_abs_deg": 0.03309118542412653,
+      "all_pitch_max_abs_deg": 0.03317171198341847,
+      "tcp_height_range_mm": 8.856355667114258,
+      "entry_tcp_height_range_mm": 0.15014410018920898,
+      "initial_gravity_settling_height_change_mm": -8.661031723022461,
+      "target_max_displacement_mm": 0.03158314939355478,
+      "min_native_contact_separation_m": 0.00018223922234028578,
+      "self_contact_points": 0,
+      "self_penetrating_points": 0,
+      "max_self_contact_point_force_n": 0.0,
+      "initial_to_final_joint_max_change_m_or_rad": 0.008495420217514038,
+      "return_vs_settled_ready_max_error_m_or_rad": 7.152557373046875e-07,
+      "model_sha256": "b3b6a1a1042f8d4d7c1cadf63323ee8824df6cfb4c922de052997016228d3709"
+    }
+  ],
+  "assembly_validation": {
+    "active_plant": {
+      "passed": true,
+      "objects": 1737,
+      "colliders": 1266,
+      "bodies": 235,
+      "joints": 235,
+      "geometry_and_physics_sha256": "fb9504af2d59580153a7c301111b028432da50845c577332c1895e380b4271a3",
+      "maximum_world_matrix_error": 0.0,
+      "numerical_tolerance": 1e-09
+    },
+    "enabled_colliders_including_instance_proxies_before_after": [
+      31464,
+      31464
+    ],
+    "robot_tool_changes": [
+      {
+        "prim": "motion://Robot/joints/farmily_lift_height_joint",
+        "field": "attrs",
+        "changes": {
+          "drive:linear:physics:targetPosition": {
+            "before": 3.464080577941786e-08,
+            "after": 0.158073291182518
+          },
+          "state:linear:physics:position": {
+            "before": 3.464080577941786e-08,
+            "after": 0.158073291182518
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/base",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": -164.30677795410156,
+            "after": 74.9588623046875
+          },
+          "state:angular:physics:position": {
+            "before": -164.30677795410156,
+            "after": 74.9588623046875
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/shoulder",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": -31.38062858581543,
+            "after": 12.614128112792969
+          },
+          "state:angular:physics:position": {
+            "before": -31.38062858581543,
+            "after": 12.614128112792969
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/elbow",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": -128.5990753173828,
+            "after": 142.94117736816406
+          },
+          "state:angular:physics:position": {
+            "before": -128.5990753173828,
+            "after": 142.94117736816406
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/wrist1",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": 159.97999572753906,
+            "after": 24.402679443359375
+          },
+          "state:angular:physics:position": {
+            "before": 159.97999572753906,
+            "after": 24.402679443359375
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/wrist2",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": 68.19337463378906,
+            "after": 171.07247924804688
+          },
+          "state:angular:physics:position": {
+            "before": 68.19337463378906,
+            "after": 171.07247924804688
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/joints/wrist3",
+        "field": "attrs",
+        "changes": {
+          "drive:angular:physics:targetPosition": {
+            "before": -9.120240429183468e-05,
+            "after": 179.957763671875
+          },
+          "state:angular:physics:position": {
+            "before": -9.120240429183468e-05,
+            "after": 179.957763671875
+          }
+        }
+      },
+      {
+        "prim": "motion://Robot/root_joint",
+        "field": "attrs",
+        "changes": {
+          "physxArticulation:enabledSelfCollisions": {
+            "before": false,
+            "after": true
+          }
+        }
+      },
+      {
+        "prim": "motion://ActuatedTool/Joints/jaw_L",
+        "field": "attrs",
+        "changes": {
+          "physics:localRot0": {
+            "before": "(6.123234e-17, 0, 0, 1)",
+            "after": "(1, 0, 0, -2.6718908e-24)"
+          },
+          "physics:localPos0": {
+            "before": [
+              0.0,
+              -0.3026999831199646,
+              0.017999999225139618
+            ],
+            "after": [
+              1.7956681041212584e-24,
+              -1.4662742131577033e-08,
+              -7.748603980672897e-10
+            ]
+          }
+        }
+      },
+      {
+        "prim": "motion://ActuatedTool/Joints/jaw_L",
+        "field": "rels",
+        "changes": {
+          "physics:body0": {
+            "before": [
+              "motion://Robot/link6"
+            ],
+            "after": [
+              "motion://ActuatedTool/fixed"
+            ]
+          }
+        }
+      },
+      {
+        "prim": "motion://ActuatedTool/Joints/jaw_R",
+        "field": "attrs",
+        "changes": {
+          "physics:localRot0": {
+            "before": "(6.123234e-17, 0, 0, 1)",
+            "after": "(1, 0, 0, -2.6718908e-24)"
+          },
+          "physics:localPos0": {
+            "before": [
+              0.0,
+              -0.3026999831199646,
+              0.017999999225139618
+            ],
+            "after": [
+              1.7956681041212584e-24,
+              -1.4662742131577033e-08,
+              -7.748603980672897e-10
+            ]
+          }
+        }
+      },
+      {
+        "prim": "motion://ActuatedTool/Joints/jaw_R",
+        "field": "rels",
+        "changes": {
+          "physics:body0": {
+            "before": [
+              "motion://Robot/link6"
+            ],
+            "after": [
+              "motion://ActuatedTool/fixed"
+            ]
+          }
+        }
+      }
+    ],
+    "scene_sha256": "b3b6a1a1042f8d4d7c1cadf63323ee8824df6cfb4c922de052997016228d3709",
+    "original_scene_sha256": "822c20cb51aca0a4fa4783f2020ab3fac3fb584f4fedb360382d009d514180e5"
+  },
+  "tests": {
+    "passed": 37,
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest test_motion_self_collision test_motion_ready test_motion_horizontal_entry test_motion_kinematics -q"
+  },
+  "search_sources": [
+    "/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/ready_search.json",
+    "/root/docker_share/mujoko_debugging_data/20261010_142926_s300_self_collision_fix/ready_search.json",
+    "/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/fixed_lift_search.json"
+  ],
+  "planning_clearance_m": 0.002,
+  "physics_penetration_guard_m": 0.0005,
+  "training_eligible": false,
+  "harvest_success": null,
+  "scope": "Entry, hold and return only; jaw closes after withdrawal at ready; no fruit grasp, conveyor infeed or detachment tested",
+  "limitations": [
+    "Discrete 120Hz planned samples and all recorded poses, not continuous swept verification",
+    "Tool part convex envelopes are a conservative offline screen; native convex cooking remains different",
+    "Initial attempts failed and remain included; only final assembly_v3 is recommended",
+    "Mechanical slider parent was corrected to the fixed gripper frame, retaining direct-joint collision exclusion; no non-adjacent arm/tool pair was excluded",
+    "Unchanged lift drive settles downward about 8.66 mm before ready; entry height stability is reported separately"
+  ],
+  "gui_headless_comparison": {
+    "time": {
+      "shape": [
+        2821
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "poses": {
+      "shape": [
+        2821,
+        248,
+        7
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "robot_q": {
+      "shape": [
+        2821,
+        9
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "command": {
+      "shape": [
+        2821,
+        9
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "phase": {
+      "shape": [
+        2821
+      ],
+      "exact": true,
+      "max_abs_error": null
+    },
+    "body_paths": {
+      "shape": [
+        248
+      ],
+      "exact": true,
+      "max_abs_error": null
+    },
+    "all_environment_robot_q": {
+      "shape": [
+        2821,
+        1,
+        9
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "belt_surface_velocity_local_y_m_s": {
+      "shape": [
+        2821,
+        2
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    },
+    "external_force_world_n": {
+      "shape": [
+        2821,
+        3
+      ],
+      "exact": true,
+      "max_abs_error": 0.0
+    }
+  },
+  "actual_audit_cached_loading_same_result": true,
+  "final_code_sha256": {
+    "report_motion.py": "283d04dc43c6cbeac64377dfc9e8e2f5dc19295a9d0d1d662808ffc0b2bccf95",
+    "test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+    "render_motion.py": "c5a0630cc378cfacdbbd36e0fe98bf6ffc8aad8ee29728607c742d1b992b7af0",
+    "run_motion.py": "e60cccfc0fde70ef8672b292a8b905069b1055ca0f1d2d688a2af6fab5619820",
+    "motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+    "motion_assets.py": "23fd0b4c594289ca2b2b3f157cbef4612f3682f2786d4cf4bc017057d40c976a",
+    "motion_kinematics.py": "435d3727e3d8cecc9a3e43055166481e0940323695351e0ceaf103c3416542e4"
+  },
+  "video": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/gui_entry_return_v3/actual_motion.mp4",
+    "sha256": "ba94745ef70c2d55b9ea7720bcc9884078d7da2429905468a7aa5306fe611aef",
+    "full_decode_passed": true,
+    "source": "stored measured physical body transforms",
+    "frames": 236,
+    "fps": 10,
+    "speed": 1.0,
+    "render_ticks": [
+      0,
+      12,
+      24,
+      37,
+      48,
+      60,
+      73,
+      85,
+      96,
+      108,
+      120,
+      132,
+      145,
+      156,
+      169,
+      180,
+      192,
+      205,
+      216,
+      229,
+      240,
+      252,
+      264,
+      277,
+      289,
+      300,
+      312,
+      324,
+      337,
+      349,
+      360,
+      372,
+      384,
+      397,
+      409,
+      420,
+      432,
+      444,
+      457,
+      469,
+      480,
+      493,
+      504,
+      516,
+      528,
+      540,
+      553,
+      564,
+      577,
+      588,
+      600,
+      613,
+      624,
+      637,
+      648,
+      660,
+      673,
+      684,
+      697,
+      708,
+      720,
+      733,
+      744,
+      757,
+      768,
+      780,
+      793,
+      804,
+      817,
+      828,
+      840,
+      853,
+      864,
+      877,
+      888,
+      900,
+      913,
+      924,
+      937,
+      948,
+      960,
+      972,
+      985,
+      996,
+      1008,
+      1020,
+      1032,
+      1045,
+      1056,
+      1068,
+      1080,
+      1092,
+      1105,
+      1116,
+      1128,
+      1140,
+      1153,
+      1165,
+      1176,
+      1188,
+      1200,
+      1213,
+      1225,
+      1236,
+      1248,
+      1260,
+      1273,
+      1285,
+      1296,
+      1308,
+      1320,
+      1333,
+      1345,
+      1356,
+      1368,
+      1380,
+      1393,
+      1405,
+      1416,
+      1428,
+      1440,
+      1453,
+      1465,
+      1476,
+      1488,
+      1500,
+      1513,
+      1525,
+      1536,
+      1548,
+      1560,
+      1573,
+      1585,
+      1596,
+      1608,
+      1620,
+      1633,
+      1645,
+      1656,
+      1668,
+      1680,
+      1693,
+      1705,
+      1716,
+      1728,
+      1740,
+      1753,
+      1765,
+      1776,
+      1788,
+      1800,
+      1813,
+      1825,
+      1836,
+      1848,
+      1860,
+      1873,
+      1885,
+      1896,
+      1908,
+      1920,
+      1932,
+      1944,
+      1956,
+      1969,
+      1980,
+      1992,
+      2004,
+      2016,
+      2029,
+      2040,
+      2052,
+      2064,
+      2076,
+      2089,
+      2100,
+      2112,
+      2124,
+      2136,
+      2149,
+      2160,
+      2172,
+      2184,
+      2196,
+      2209,
+      2220,
+      2232,
+      2244,
+      2256,
+      2269,
+      2280,
+      2292,
+      2305,
+      2316,
+      2329,
+      2340,
+      2352,
+      2365,
+      2376,
+      2389,
+      2400,
+      2412,
+      2425,
+      2436,
+      2449,
+      2460,
+      2472,
+      2485,
+      2496,
+      2509,
+      2520,
+      2532,
+      2545,
+      2556,
+      2569,
+      2580,
+      2592,
+      2605,
+      2616,
+      2629,
+      2640,
+      2652,
+      2665,
+      2676,
+      2689,
+      2700,
+      2712,
+      2725,
+      2736,
+      2749,
+      2760,
+      2772,
+      2785,
+      2796,
+      2809,
+      2820
+    ],
+    "camera": "/World/MotionReplayCamera",
+    "physics_rerun": false,
+    "replay_only_fill_light": true,
+    "stop_reason": null
+  },
+  "code_snapshot_note": "Final source snapshot; camera framing was widened after physical runs, without changing commands/physics. Actual audit NPZ loading optimization matched the original audit JSON exactly.",
+  "initial_settling_note": "Initial pose to end of settle phase: TCP -8.661 mm. Return is compared with the settled ready hold, not the pre-settle initial sample."
+}

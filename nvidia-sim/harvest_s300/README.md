@@ -3,6 +3,11 @@
 기준 브랜치: `codex/s300-harvest-isaac-20261009` (시작점 `b890fc6`).
 기존 S300 CAD, 농장 USD, RB5 USD, 그리퍼 CAD는 수정하지 않는다.
 
+최신 팔–그리퍼 자기관통 수정은 [VIDEO_ENTRY_STATUS_KO.md](VIDEO_ENTRY_STATUS_KO.md)의 맨 위 절을 따른다.
+자기충돌 활성화·슬라이더 부모 수정·새 대기 IK를 적용한 `20261010_142120_s300_self_collision_fix/assembly_v3`에서
+진입·유지·복귀 headless/GUI 모두 완료, 각 2,821개 실제 자세 교차 검사와 native 자기접촉 0건을 확인했다.
+관련 37테스트 PASS. 열린 그리퍼의 진입 시연이며 과실 포획·분리 성공은 아니다. 이전 비활성 자기충돌 모델로 harvest를 실행하면 명시적으로 거부한다.
+
 최신 속도·병렬·실제 동작 결과는 [PERFORMANCE_STATUS_KO.md](PERFORMANCE_STATUS_KO.md)에 있다.
 첫 118개 trial의 assembly root에 단위·축이 빠져 0.01m/unit·Y-up이 적용됐다. 당시 시간과 재현성 기록은 보존하되 올바른 SI 물리 검증에서 제외한다.
 새 metre/Z/kg 모델은 원본 형상과 목표 식물 full 탄성 612자유도·주변 전체 충돌을 유지한다. PGS64/120Hz의 7초 부하 시험은 단일 CPU에서 10.525초(0.665sim-s/s), 독립 CPU 24worker에서 합산 7.019sim-s/s다.
@@ -125,6 +130,9 @@ v9 잎/줄기 혼합 및 GLB 송이 배치를 옮기지 않고 옛 v2 농장을 
 ## 장면 생성
 
 오프라인 USD 도구 환경은 `nvidia-sim/.asset-venv`이다 (`usd-core`, `numpy`, `trimesh`, `scipy`, `pillow`).
+자기충돌 검사에는 같은 환경의 `python-fcl==0.7.0.8`을 사용한다. 미설치 환경에서는
+`./nvidia-sim/.asset-venv/bin/python -m pip install python-fcl==0.7.0.8`로 설치한다.
+Isaac의 Python 3.12와 분리된 이 Python 3.11에서 계획/저장 상태를 검사한다.
 S300 스냅샷 취득에는 기존 뷰어와 Playwright/Chromium이 필요하다.
 
 ```bash
@@ -193,3 +201,15 @@ CPU 100%는 논리 코어 하나다. 이는 같은 실행 중 장면의 짧은 G
 
 `validate_scene.py`는 입력 보존·메시·부착 좌표·관절·재질을 검사한다.
 검사 통과가 충돌 없는 시작, 변형/파단의 정확성, 수확 성공 또는 GPU 속도 향상을 의미하지 않는다.
+## 수평 진입 변경
+
+수확 진입의 기본 상하 기울기는 이제 0°로 고정한다. IK를 이유로 -60° 등 다른 기울기를
+자동 선택하지 않는다. 수평 방향 옵션, 실제 물리 중단 결과와 GUI 명령은
+[HORIZONTAL_ENTRY_STATUS_KO.md](HORIZONTAL_ENTRY_STATUS_KO.md)에 있다. 수평 FK 통과와 실제 진입 완료는 별개다.
+
+후속 [영상 기준 대기 자세·수평 진입 결과](VIDEO_ENTRY_STATUS_KO.md)에서는 하부 받침을 제거하고
+팔을 접은 수평 대기 자세에서 먼저 개방하도록 수정했다. 기존 11번 과실에서 GUI 진입·2초 유지·복귀를
+완료했다. 별도 닫기 시험은 옆 과실 접촉으로 중단됐으므로 수확 완료로 집계하지 않는다.
+실행 명령과 실제 저장 상태의 1배속 영상은 해당 문서에 있다.
+**후속 정정:** 저장 자세에서 그리퍼–팔 link2의 자기관통이 확인됐다. 위 완주는 명령 실행 완료이며
+유효한 비충돌 경로가 아니다. 로봇 자기충돌이 꺼져 있어 기존 native 감시가 놓쳤다. 해당 문서의 정정을 먼저 확인한다.

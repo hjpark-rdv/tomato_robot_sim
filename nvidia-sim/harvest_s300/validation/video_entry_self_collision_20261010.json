@@ -1,0 +1,216 @@
+{
+  "robot_enabledSelfCollisions": false,
+  "source": "/root/docker_share/mujoko_debugging_data/20261010_134811_s300_video_entry",
+  "scene_sha256": "822c20cb51aca0a4fa4783f2020ab3fac3fb584f4fedb360382d009d514180e5",
+  "states_sha256": "f6d9f96f94844f9e66821bc7d36ec4e1e593fb10be70bdc97d9f62ba3d38a60d",
+  "method": "FCL BVH triangle/triangle intersection on original collider mesh triangles transformed by stored actual body poses, not AABB-only or convex hull-only",
+  "limitations": [
+    "12 selected recorded times; not a continuous swept/full trace clearance guarantee",
+    "No native convex-decomposition penetration depth inferred from triangle contacts",
+    "Direct tool attachment link6 excluded"
+  ],
+  "physics_rerun": false,
+  "training_eligible": false,
+  "self_intersection_confirmed": true,
+  "physical_path_valid": false,
+  "original_completion_means": "Command loop completed; self-collision disabled; not a collision-free path",
+  "raw_audit": "/root/docker_share/mujoko_debugging_data/20261010_141508_s300_self_collision_audit/mesh_intersection_audit.json",
+  "sample_results": [
+    {
+      "t": 0.0,
+      "phase": "initial",
+      "mesh_pair_intersections": 24,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 0.5,
+      "phase": "settle",
+      "mesh_pair_intersections": 24,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 1.0,
+      "phase": "settle",
+      "mesh_pair_intersections": 24,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 2.0,
+      "phase": "settle",
+      "mesh_pair_intersections": 24,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 4.0,
+      "phase": "prepare_horizontal",
+      "mesh_pair_intersections": 28,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 7.5,
+      "phase": "prepare_horizontal",
+      "mesh_pair_intersections": 1,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        }
+      ]
+    },
+    {
+      "t": 9.5,
+      "phase": "approach",
+      "mesh_pair_intersections": 0,
+      "examples": []
+    },
+    {
+      "t": 11.5,
+      "phase": "approach",
+      "mesh_pair_intersections": 0,
+      "examples": []
+    },
+    {
+      "t": 13.5,
+      "phase": "entry_hold",
+      "mesh_pair_intersections": 0,
+      "examples": []
+    },
+    {
+      "t": 17.5,
+      "phase": "withdraw",
+      "mesh_pair_intersections": 1,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        }
+      ]
+    },
+    {
+      "t": 21.5,
+      "phase": "return_ready",
+      "mesh_pair_intersections": 25,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    },
+    {
+      "t": 23.5,
+      "phase": "hold",
+      "mesh_pair_intersections": 24,
+      "examples": [
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_8",
+          "part": "A01_rear_fixture_adapter"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_9",
+          "part": "F01_rear_rail_backbone"
+        },
+        {
+          "robot": "/World/HarvestRobot/Robot/link2",
+          "tool": "/World/ActuatedTool/fixed/part_10",
+          "part": "F02_MGN12R_195"
+        }
+      ]
+    }
+  ]
+}

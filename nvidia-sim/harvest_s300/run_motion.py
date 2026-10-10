@@ -19,7 +19,11 @@ p.add_argument('--headless',action='store_true');p.add_argument('--hz',type=int,
 p.add_argument('--physics-only',action='store_true',help='Headless worker: official minimal native bootstrap without RTX renderer; CPU/CUDA equivalence must be validated for the selected model')
 p.add_argument('--device',choices=['cpu','cuda:0'],default='cpu')
 p.add_argument('--broadphase',choices=['auto','MBP','SAP','GPU'],default='auto',help='Independent broadphase diagnostic; auto retains CPU MBP / GPU defaults; solver device remains unchanged')
-p.add_argument('--preparation',choices=['direct','fold_then_turn','low_turn_then_lift','tight_fold_then_turn','tight_fold_open_approach'],default='fold_then_turn')
+p.add_argument('--preparation',choices=['direct','fold_then_turn','low_turn_then_lift','tight_fold_then_turn','tight_fold_open_approach','tight_fold_level_approach','horizontal_ready'],default='fold_then_turn')
+p.add_argument('--approach-pitch-deg',type=float,default=0.,help='Fixed entry pitch; 0 keeps CAD +Y horizontal and CAD +Z up. Never relaxed automatically')
+p.add_argument('--approach-yaw-offset-deg',type=float,default=0.,help='Explicit horizontal entry direction offset about world +Z, relative to robot-to-target direction')
+p.add_argument('--entry-only',action='store_true',help='Horizontal-ready approach/hold/return demonstration, with open jaws; not a harvest attempt')
+p.add_argument('--preparation-prefix-plan',type=Path,help='Reuse the exact first two tight-fold phases from a same-model saved plan; replan only the remaining preparation and entry')
 p.add_argument('--isolate-background',action='store_true',help='Component fixture only: disable background plant contacts; never a farm success')
 p.add_argument('--performance',choices=['baseline','optimized'],default='optimized',help='Same physical model; control USD/display/callback overhead')
 p.add_argument('--threads',type=int,default=16,help='Explicit native PhysX CPU dispatcher threads; 0 keeps installed setting for historical diagnostics')
@@ -50,6 +54,12 @@ p.add_argument('--live-fps',type=float,default=10.,help='Latest-frame publicatio
 p.add_argument('--start-gate',type=Path,help='CPU pool diagnostic: publish ready.json and await the controller barrier')
 p.add_argument('--gate-timeout',type=float,default=180.)
 a=p.parse_args()
+if a.entry_only and (a.mode!='harvest' or a.preparation!='horizontal_ready'):
+    p.error('--entry-only requires --mode harvest --preparation horizontal_ready')
+if not math.isfinite(a.approach_pitch_deg) or not -90<=a.approach_pitch_deg<=90:
+    p.error('--approach-pitch-deg must be finite and within -90..90')
+if not math.isfinite(a.approach_yaw_offset_deg) or not -180<=a.approach_yaw_offset_deg<=180:
+    p.error('--approach-yaw-offset-deg must be finite and within -180..180')
 if not 1<=a.gpu_pair_capacity<=2147483647:
     p.error('--gpu-pair-capacity must be 1..2147483647')
 if a.replication_persist_layer_stack and (not a.replicate or not 1<=a.num_envs<=8):
@@ -97,6 +107,10 @@ try:
     actual_stage_metrics=stage_metrics(stage)
     (a.output/'stage_metrics.json').write_text(json.dumps(actual_stage_metrics,indent=2))
     require_motion_units(stage)
+    robot_self_collision_enabled=stage.GetPrimAtPath(ROBOT+'/root_joint').GetAttribute('physxArticulation:enabledSelfCollisions').Get() is True
+    if a.mode=='harvest':
+        from motion_self_collision import require_robot_self_collisions
+        require_robot_self_collisions(stage)
     from motion_app import configure_scene_device
     bootstrap_device='cpu' if a.replication_defer_gpu_bootstrap else a.device
     bootstrap_broadphase='MBP' if a.replication_defer_gpu_bootstrap else a.broadphase
@@ -161,8 +175,29 @@ try:
         (a.output/'fixture_disabled_background_colliders.json').write_text(json.dumps(disabled))
     for _ in range(5):app.update()
     kin=ToolKinematics(stage)
-    phases,planning=plan_motion(kin,np.array(manifest['target']['center']),preparation=a.preparation) if a.mode=='harvest' else ([],{})
+    recorded_prefix=None
+    if a.preparation_prefix_plan is not None:
+        if a.mode!='harvest':raise ValueError('--preparation-prefix-plan requires harvest mode')
+        prefix_summary=json.loads((a.preparation_prefix_plan.parent/'summary.json').read_text())
+        if prefix_summary['model_sha256']!=sha(scene):raise ValueError('Recorded preparation prefix model hash mismatch')
+        prefix_plan=json.loads(a.preparation_prefix_plan.read_text())
+        recorded_prefix=[(p['name'],p['duration_s'],np.asarray(p['waypoint_q']),p['end_gap_m'],*p['belt_local_y_m_s'])
+                         for p in prefix_plan['phases'][:2]]
+        prefix_input=dict(plan=str(a.preparation_prefix_plan.resolve()),plan_sha256=sha(a.preparation_prefix_plan),
+                          model_sha256=prefix_summary['model_sha256'],reused_phases=[p[0] for p in recorded_prefix],
+                          scope='Recorded nominal prefix commands; actual physics rerun at normal start')
+        (a.output/'preparation_prefix_input.json').write_text(json.dumps(prefix_input,indent=2))
+    initial_robot_q=np.asarray(manifest.get('initial_robot_q',np.zeros(7)),dtype=float)
+    phases,planning=plan_motion(kin,np.array(manifest['target']['center']),start=initial_robot_q,preparation=a.preparation,
+        pitch_deg=a.approach_pitch_deg,yaw_offset_deg=a.approach_yaw_offset_deg,
+        recorded_prefix=recorded_prefix,entry_only=a.entry_only) if a.mode=='harvest' else ([],{})
     (a.output/'plan.json').write_text(json.dumps(planning,indent=2))
+    if a.mode=='harvest':
+        from motion_self_collision import audit_external
+        print('[MOTION] checking full arm/tool path, including jaw travel',flush=True)
+        audit_external(a.assembly,a.output/'self_collision_preflight.json',plan=a.output/'plan.json',hz=a.hz)
+        print('[MOTION] fixed entry pitch',planning['pitch_deg'],'yaw offset',planning['yaw_offset_deg'],
+              'world direction',planning['approach_direction_world'],flush=True)
     envs=[dict(index=0,root='/World',robot=ROBOT+'/root_joint',plant='/World/ElasticTarget',
                tool='/World/ActuatedTool/fixed',target=manifest['target']['path'],
                target_joint=manifest['target']['joint'],belts=manifest['tool']['belts'],mapping={})]
@@ -333,6 +368,8 @@ try:
     q0=arr(robot.get_dof_positions()).copy()
     names=list(robot.shared_metatype.dof_names)
     rids=[names.index(n) for n in kin.names]
+    if 'initial_robot_q' in manifest and not np.allclose(q0[:,rids],initial_robot_q[None],atol=.005,rtol=0):
+        raise RuntimeError('Native robot initialization does not match authored ready joint state: '+str(q0[:,rids]))
     jawids=[names.index('jaw_L'),names.index('jaw_R')]
     target_tensor=tensor(q0)
     robot.set_dof_position_targets(target_tensor,ids)
@@ -417,7 +454,15 @@ try:
     if not a.headless:
         from motion_visuals import DeformationVisuals
         visuals=DeformationVisuals(stage,a.assembly,body_paths)
-        vu.get_active_viewport().set_active_camera('/World/RobotCamera')
+        view_camera='/World/RobotCamera'
+        if a.preparation=='horizontal_ready' and a.mode=='harvest':
+            from build_scene import camera
+            pose=kin.fk(initial_robot_q);center=(pose[:3,3]+np.array(manifest['target']['center']))/2
+            # Include the folded elbow as well as the gripper in the review view.
+            center=center+np.array([0.,0.,.18])
+            eye=center-pose[:3,0]*1.8+np.array([0.,0.,.30])
+            view_camera='/World/ReadyMotionCamera';camera(stage,view_camera,tuple(eye),tuple(center))
+        vu.get_active_viewport().set_active_camera(view_camera)
     print('[MOTION] physics ready',len(body_paths),'bodies',total,'sim seconds',flush=True)
     native_profile=None
     if a.native_profile:
@@ -522,7 +567,10 @@ try:
             with profile.section('app_update'):app.update()
             last_display=time.perf_counter()
         if tick%(a.hz*2)==0:
-            print('[MOTION] progress',round(t,2),'target displacement mm',np.linalg.norm(poses[targetid,:3]-initial[targetid,:3])*1000,flush=True)
+            elapsed=time.perf_counter()-started
+            print('[MOTION] progress',round(current_time,2),'sim s /',round(elapsed,2),
+                  'wall s /',round(current_time/max(elapsed,1e-9),3),'x realtime; target displacement mm',
+                  np.linalg.norm(poses[targetid,:3]-initial[targetid,:3])*1000,flush=True)
             profile.checkpoint(tick,'progress')
     loop_finished=time.perf_counter();loop_wall=loop_finished-started
     if contact_buffer is not None:
@@ -544,9 +592,12 @@ try:
     states=np.array(trace);qc=np.array(qtrace)
     target_events=[e for e in events if e['a']==target or e['b']==target or target+'/' in e['a'] or target+'/' in e['b']]
     summary=dict(mode=a.mode,scene=str(scene),model_sha256=sha(scene),training_eligible=False,
+                 robot_self_collision_enabled=robot_self_collision_enabled,
+                 execution_scope='entry_hold_return_only' if a.entry_only else a.mode,
                  physics_steps=len(times)-1,simulated_s=times[-1] if times else 0,physics_wall_s=loop_wall,
                  loop_started_monotonic_s=started,loop_finished_monotonic_s=loop_finished,
                  save_wall_s=time.perf_counter()-started-loop_wall,performance=a.performance,threads=a.threads,
+                 gui_enabled=not a.headless,display_fps_cap=a.display_fps if not a.headless else None,
                  num_envs=a.num_envs,aggregate_simulated_s=times[-1]*a.num_envs,
                  aggregate_sim_s_per_wall_s=times[-1]*a.num_envs/loop_wall,contact_backend=a.contact_backend,collision_filter=a.collision_filter,
                  contact_evidence_scope='exact collider impulse norm' if tensor_contacts is None else 'actor-level normal-only force; friction excluded; native A/B pending',
@@ -578,6 +629,17 @@ try:
                  limitations=['Not a validated grasp/detach detector','No real fruit damage calibration',
                               'Motion diagnostic; dynamic belt-loop deformation not modeled'])
     (a.output/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+    if a.mode=='harvest':
+        print('[MOTION] checking every stored actual arm/tool pose',flush=True)
+        try:
+            audit_external(a.assembly,a.output/'self_collision_actual.json',states=a.output/'states.npz',hz=a.hz)
+            summary['actual_self_collision_audit_passed']=True
+        except Exception:
+            summary.update(actual_self_collision_audit_passed=False,completed=False,
+                           stop_reason=stop_reason or 'actual_self_collision_audit_failed')
+            (a.output/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+            raise
+        (a.output/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
     print('[MOTION] saved',a.output,stop_reason,flush=True)
 except Exception:
     exit_code=1;error=traceback.format_exc();print(error,flush=True)

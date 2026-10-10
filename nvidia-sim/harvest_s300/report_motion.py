@@ -49,6 +49,11 @@ def summarize(root):
         s=json.loads(summary.read_text());s.pop('jaw_actual_gap_mm',None)
         s['trial']=folder.name
         s['status']='completed_diagnostic' if s['completed'] else s['stop_reason']
+        posthoc=folder/'posthoc_self_collision_audit.json'
+        if posthoc.exists():
+            s['posthoc_self_collision_audit']=json.loads(posthoc.read_text())
+            if s['posthoc_self_collision_audit'].get('self_intersection_confirmed'):
+                s['status']='invalid_self_collision (posthoc; recorded completion unchanged)'
         if folder.name in ('idle_v3','idle_v4'):
             s['status']='invalid_diagnostic_contact_readback_unavailable'
         if (folder/'states.npz').exists():
@@ -71,31 +76,41 @@ def summarize(root):
         if (folder/'actual_motion_review.mp4').exists():s['video']='actual_motion_review.mp4'
         if (folder/'actual_motion_final.mp4').exists():s['video']='actual_motion_final.mp4'
         if (folder/'actual_motion_verified.mp4').exists():s['video']='actual_motion_verified.mp4'
+        if s['video']:
+            render_meta=folder/(Path(s['video']).stem+'_render.json')
+            s['video_speed']=json.loads(render_meta.read_text()).get('speed') if render_meta.exists() else None
         rows.append(s)
     report=dict(training_eligible=False,harvest_success=None,trials=rows,
-        interpretation='Completed component fixtures are not a valid dense-farm harvest. Original initial collisions and all failed attempts remain recorded.')
+        interpretation='Motion completion and entry-only demonstrations are separate from verified harvest success. All failed attempts remain recorded.')
     (root/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     esc=html.escape
     table=[];videos=[]
     for s in rows:
         n=s['trial'];separation=s.get('min_contact_separation_m')
-        cells=[n,s['status'],'분리 시험' if s.get('fixture_only') else '원래 농장/초기 진단',
+        scope='진입·유지·복귀 (수확 시도 아님)' if s.get('execution_scope')=='entry_hold_return_only' else '분리 시험' if s.get('fixture_only') else '전체 환경 물리 시험'
+        cells=[n,s['status'],scope,
                f"{s.get('simulated_s',0):.3f}",f"{s.get('physics_wall_s',0):.2f}",
                f"{s.get('target_displacement_max_m',0)*1000:.3f}",
                '—' if separation is None else f'{max(0,-separation)*1000:.3f}']
         evidence=next((f for f in ('summary.json','runtime_error.json','cancelled.json','runtime_settings.json') if (root/n/f).exists()),None)
         link=f'<a href="{n}/{evidence}">JSON</a>' if evidence else '—'
+        if s.get('posthoc_self_collision_audit'):
+            link+=f' · <a href="{n}/posthoc_self_collision_audit.json">자기관통 후속 검사</a>'
+        for filename,label in [('self_collision_preflight.json','계획 자기충돌 검사'),
+                               ('self_collision_actual.json','실제 자세 자기충돌 검사')]:
+            if (root/n/filename).exists():link+=f' · <a href="{n}/{filename}">{label}</a>'
         table.append('<tr>'+''.join('<td>'+esc(str(c))+'</td>' for c in cells)+f'<td>{link} · <a href="{n}.log">log</a></td></tr>')
         if s.get('video'):
-            videos.append(f'<article><h2>{esc(n)}</h2><p>{esc(s["status"])} / 실제 저장 상태 재생 / 2배속 · review 영상에는 재생용 보조 조명 사용</p><video controls preload="metadata" src="{n}/{s["video"]}"></video><p><a href="{n}/{s["video"]}">{n}/{s["video"]}</a></p></article>')
+            speed='배속 메타데이터 없음' if s.get('video_speed') is None else f'{s["video_speed"]:g}배속'
+            videos.append(f'<article><h2>{esc(n)}</h2><p>{esc(s["status"])} / 실제 저장 상태 재생 / {esc(speed)} · 보조 조명 여부는 render JSON 참조</p><video controls preload="metadata" src="{n}/{s["video"]}"></video><p><a href="{n}/{s["video"]}">{n}/{s["video"]}</a></p></article>')
     page='''<!doctype html><html lang="ko"><meta charset="utf-8"><title>S300 · 실제 물리 구동 시험</title>
 <style>body{font:16px system-ui;max-width:1400px;margin:32px auto;padding:0 24px;background:#151a20;color:#e8edf3}a{color:#8fd1ff}table{border-collapse:collapse;font-size:13px}td,th{border:1px solid #46515d;padding:8px;text-align:left}video{width:min(100%,960px)}article{margin:30px 0}.note{background:#313124;padding:18px;line-height:1.65}</style>
 <h1>S300 + RB5 + V5.1 · 실제 물리 구동 시험</h1>
 <p><a href="MOTION_STATUS_KO.md">MOTION_STATUS_KO.md</a> · <a href="results.json">results.json</a></p>
-<div class="note">수확 성공은 아직 확인되지 않았습니다. 분리 시험은 주변 식물과 활성 식물의 잎↔식물 접촉 일부를 제외한 구동 확인용입니다.
-원래 농장의 초기 겹침 실패를 해결한 결과로 해석하지 마세요. 열매 크기와 그리퍼 28mm 최소 간격은 그대로입니다.
+<div class="note">수확 성공은 별도 검증이 필요합니다. 진입·복귀 시연과 분리 시험의 완주를 실제 수확 성공으로 집계하지 않습니다.
+각 실행의 범위와 물리 설정은 원자료 JSON과 설명 문서에 기록합니다.
 영상은 실제 physics에서 저장한 body pose를 재생하며, 명령만 애니메이션한 영상이 아닙니다.</div>
-<h2>전체 시도 기록</h2><p>벽시계 시간은 물리·상태 읽기·결과 저장 구간입니다. 앱/장면 준비·렌더는 별도이며, CPU/GPU 성능 비교 시험이 아닙니다.</p>
+<h2>전체 시도 기록</h2><p>처리 시간은 물리·제어·상태 읽기와 실행 중 화면 갱신(켜진 경우)을 포함합니다. 앱/장면 준비·결과 저장·사후 영상 렌더는 별도입니다.</p>
 <table><tr><th>실행</th><th>상태</th><th>범위</th><th>sim 초</th><th>처리 초</th><th>목표 최대 변위 mm</th><th>최대 관통 mm</th><th>원자료</th></tr>'''+''.join(table)+'</table>'+''.join(videos)+'</html>'
     if (root/'motion_metrics.png').exists():page=page.replace('</html>','<h2>실제 측정값</h2><img style="width:min(100%,1000px)" src="motion_metrics.png"></html>')
     (root/'index.html').write_text(page)

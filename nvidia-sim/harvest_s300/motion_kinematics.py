@@ -87,7 +87,7 @@ def grasp_pose(center, inward, depth=.065, pitch_deg=0.):
     return t
 
 
-def preparation_phases(start, qprep, preparation):
+def preparation_phases(start, qprep, preparation, recorded_prefix=None):
     """Continuous preparation commands; all profiles retain the physical scene.
 
     ``low_turn_then_lift`` delays lift travel until the base has turned. It is
@@ -99,8 +99,14 @@ def preparation_phases(start, qprep, preparation):
     the staging pose for two seconds while opening to 60 mm before approach.
     """
     start, qprep = np.asarray(start, dtype=float), np.asarray(qprep, dtype=float)
+    if recorded_prefix is not None and preparation not in ('tight_fold_then_turn', 'tight_fold_open_approach', 'tight_fold_level_approach'):
+        raise ValueError('Recorded fold prefix requires a tight-fold preparation profile')
     if preparation == 'direct':
         return [('prepare', 6., np.array([start, qprep]), .060, 0., 0.)]
+    if preparation == 'horizontal_ready':
+        # Only used to rank branches here. plan_motion replaces this joint
+        # interpolation with a Cartesian path from the authored ready state.
+        return [('prepare_horizontal', 4., np.array([start, qprep]), .044, 0., 0.)]
     fold = start.copy(); fold[2:4] = qprep[2:4]
     if preparation == 'fold_then_turn':
         orient = qprep.copy(); orient[1] = start[1]
@@ -114,57 +120,180 @@ def preparation_phases(start, qprep, preparation):
                 ('prepare_orient_low', 4., np.array([fold, orient]), .060, 0., 0.),
                 ('prepare_turn_low', 4., np.array([orient, turned]), .060, 0., 0.),
                 ('prepare_lift', 4., np.array([turned, qprep]), .060, 0., 0.)]
-    if preparation in ('tight_fold_then_turn', 'tight_fold_open_approach'):
+    if preparation in ('tight_fold_then_turn', 'tight_fold_open_approach', 'tight_fold_level_approach'):
         tight = fold.copy(); tight[0] = qprep[0]; tight[2:4] = [1.3, -2.3]
+        initial = [('prepare_fold', 6., np.array([start, fold]), .044, 0., 0.),
+                   ('prepare_tight_fold', 4., np.array([fold, tight]), .044, 0., 0.)]
+        if recorded_prefix is not None:
+            if len(recorded_prefix)!=2:
+                raise ValueError('Recorded fold prefix must contain exactly its first two phases')
+            initial=[];previous=start
+            for expected,phase in zip(('prepare_fold','prepare_tight_fold'),recorded_prefix):
+                if len(phase)!=6:
+                    raise ValueError('Recorded fold prefix phase must contain six fields')
+                name,duration,qs,gap,left,right=phase
+                qs=np.asarray(qs,dtype=float)
+                if name!=expected or qs.ndim!=2 or qs.shape[1]!=7 or len(qs)<2 or not np.isfinite(qs).all():
+                    raise ValueError('Recorded fold prefix has invalid phase or waypoint shape')
+                if not np.isfinite([duration,gap,left,right]).all() or duration<=0 or gap!=.044 or left!=0. or right!=0.:
+                    raise ValueError('Recorded fold prefix must preserve the narrow, stationary-belt command')
+                if not np.array_equal(qs[0],previous):
+                    raise ValueError('Recorded fold prefix must begin at start and remain continuous')
+                initial.append((name,float(duration),qs.copy(),float(gap),float(left),float(right)))
+                previous=qs[-1]
+            # Keep the recorded lift/fold state until the new final extension.
+            tight=previous.copy()
         orient = tight.copy(); orient[4:] = qprep[4:]
+        if preparation=='tight_fold_level_approach':
+            # RB5 shoulder, elbow and wrist1 axes are parallel. Compensating
+            # their joint sum keeps the requested tool rotation while the arm
+            # extends. FK on the composed robot still verifies this profile.
+            orient[4]+=qprep[2]+qprep[3]-tight[2]-tight[3]
         turned = orient.copy(); turned[1] = qprep[1]
-        phases = [('prepare_fold', 6., np.array([start, fold]), .044, 0., 0.),
-                ('prepare_tight_fold', 4., np.array([fold, tight]), .044, 0., 0.),
-                ('prepare_orient_tight', 4., np.array([tight, orient]), .044, 0., 0.),
+        phases = initial+[('prepare_orient_tight', 4., np.array([tight, orient]), .044, 0., 0.),
                 ('prepare_turn_tight', 4., np.array([orient, turned]), .044, 0., 0.),
                 ('prepare_extend', 4., np.array([turned, qprep]), .044, 0., 0.)]
-        if preparation == 'tight_fold_open_approach':
+        if preparation in ('tight_fold_open_approach','tight_fold_level_approach'):
             phases.append(('prepare_open', 2., np.array([qprep, qprep]), .060, 0., 0.))
         return phases
     raise ValueError('Unknown preparation profile ' + preparation)
 
 
-def plan_motion(kin,center,start=None,preparation='fold_then_turn'):
-    if start is None:start=np.zeros(7)
-    inward=np.array(center)-np.r_[kin.world[:2,3],center[2]]
+def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
+                pitch_deg=0.,yaw_offset_deg=0.,recorded_prefix=None,entry_only=False):
+    """Plan one fixed entry orientation, without silently changing its pitch.
+
+    CAD +Y is the insertion direction and CAD +Z points up at pitch zero.
+    Yaw offset is an explicit rotation about world +Z; it preserves horizontal
+    entry. Alternative joint branches may be tried, but the requested pose and
+    the 100 mm staging distance remain unchanged. Nonzero pitch is a deliberate
+    diagnostic option, never an IK fallback.
+    """
+    center=np.asarray(center,dtype=float)
+    if entry_only and preparation!='horizontal_ready':
+        raise ValueError('Entry-only demonstration requires horizontal_ready')
+    start=np.zeros(7) if start is None else np.asarray(start,dtype=float)
+    if center.shape!=(3,) or start.shape!=(7,) or not np.isfinite(center).all() or not np.isfinite(start).all():
+        raise ValueError('Finite center[3] and start[7] are required')
+    if not np.isfinite(pitch_deg) or not -90.<=pitch_deg<=90.:
+        raise ValueError('Entry pitch must be finite and within -90..90 degrees')
+    if not np.isfinite(yaw_offset_deg) or not -180.<=yaw_offset_deg<=180.:
+        raise ValueError('Entry yaw offset must be finite and within -180..180 degrees')
+    inward=center-np.r_[kin.world[:2,3],center[2]]
+    if np.linalg.norm(inward[:2])<1e-9:
+        raise ValueError('Target must have a horizontal direction from the robot base')
+    inward=R.from_euler('z',yaw_offset_deg,degrees=True).apply(inward)
+    goal=grasp_pose(center,inward,pitch_deg=pitch_deg)
+    direction=goal[:3,1]
+    prep=goal.copy();prep[:3,3]-=direction*.10
+    poses=[]
+    for fraction in np.linspace(0,1,61):
+        pose=prep.copy();pose[:3,3]+=direction*.10*fraction;poses.append(pose)
     seeds=[np.array([.05,b,s,e,w,v,0.]) for b in (-np.pi/2,np.pi/2)
            for s,e,w in [(-1.1,1.8,-.7),(.9,-1.7,.8)] for v in (-np.pi/2,np.pi/2)] + [start]
-    trials=[]
-    for pitch in (0.,-30.,-60.,30.):
-        goal=grasp_pose(np.array(center),inward,pitch_deg=pitch)
-        direction=goal[:3,1]
-        prep=goal.copy();prep[:3,3]-=direction*.10
-        for seed in seeds:
-            q,pe,re=kin.ik(prep,seed);trials.append((pe+re*.1,q,pe,re,prep,goal,pitch))
-        if min(x[0] for x in trials)<.0001:break
-    _,qprep,pe,re,prep,goal,pitch=min(trials,key=lambda x:x[0])
-    direction=goal[:3,1]
-    if pe>.002 or re>.02:raise RuntimeError(f'preparation IK not found: position={pe} orientation={re}')
-    waypoints=[];q=qprep
-    for fraction in np.linspace(0,1,61):
-        pose=prep.copy();pose[:3,3]+=direction*.10*fraction
-        q,pe,re=kin.ik(pose,q)
-        if pe>.002 or re>.02:raise RuntimeError(f'approach IK not found at {fraction}: {pe}/{re}')
-        waypoints.append(q.copy())
+    attempts=[];feasible=[]
+    for index,seed in enumerate(seeds):
+        q,pe,re=kin.ik(prep,seed)
+        accepted=bool(np.isfinite(q).all() and np.isfinite([pe,re]).all() and pe<=.002 and re<=.02)
+        attempt=dict(seed_index=index,preparation_position_error_m=float(pe),
+                     preparation_orientation_error_rad=float(re),
+                     status='preparation_feasible_suffix_not_evaluated' if accepted else 'preparation_ik_failed')
+        attempts.append(attempt)
+        if accepted:
+            prefix=preparation_phases(start,q,preparation,recorded_prefix)
+            # A joint-space ordering heuristic, not a collision certificate.
+            length=sum(float(np.linalg.norm(np.diff(phase[2],axis=0),axis=1).sum()) for phase in prefix)
+            attempt['preparation_joint_space_length']=length
+            feasible.append((length,index,q))
+    if not feasible:
+        best=min(attempts,key=lambda a:a['preparation_position_error_m']+.1*a['preparation_orientation_error_rad'])
+        raise RuntimeError(f'Fixed entry preparation IK not found (pitch={pitch_deg}, yaw_offset={yaw_offset_deg}): '
+                           f"position={best['preparation_position_error_m']} orientation={best['preparation_orientation_error_rad']}; pitch was not relaxed")
+    waypoints=None;selected=None;ready_waypoints=None
+    for _,index,qprep in sorted(feasible,key=lambda item:item[0]):
+        ready_branch=None
+        if preparation=='horizontal_ready':
+            ready_pose=kin.fk(start)
+            if (abs(ready_pose[2,3]-prep[2,3])>.002 or
+                    R.from_matrix(ready_pose[:3,:3]@prep[:3,:3].T).magnitude()>.02):
+                raise ValueError('Horizontal ready start must have the entry height and orientation')
+            ready_branch=[start.copy()];qr=start.copy()
+            for u in np.linspace(0,1,81)[1:]:
+                pose=prep.copy();pose[:3,3]=ready_pose[:3,3]*(1-u)+prep[:3,3]*u
+                qr,pe,re=kin.ik(pose,qr)
+                if not np.isfinite(qr).all() or not np.isfinite([pe,re]).all() or pe>.002 or re>.02:
+                    break
+                ready_branch.append(qr.copy())
+            if len(ready_branch)!=81:
+                attempts[index]['status']='horizontal_preparation_ik_failed'
+                continue
+            # Continue on this exact branch; never jump to the other prep IK.
+            qprep=ready_branch[-1].copy()
+        q=qprep.copy();branch=[];errors=[]
+        for tick,pose in enumerate(poses):
+            q,pe,re=kin.ik(pose,q)
+            if not np.isfinite(q).all() or not np.isfinite([pe,re]).all() or pe>.002 or re>.02:
+                attempts[index].update(status='approach_ik_failed',failed_fraction=tick/60.,
+                                       approach_position_error_m=float(pe),approach_orientation_error_rad=float(re))
+                break
+            branch.append(q.copy());errors.append([float(pe),float(re)])
+        else:
+            waypoints=branch;selected=index
+            ready_waypoints=ready_branch
+            attempts[index]['status']='selected_complete_approach'
+            break
+    if waypoints is None:
+        raise RuntimeError(f'Fixed entry approach IK not found for {len(feasible)} preparation branches '
+                           f'(pitch={pitch_deg}, yaw_offset={yaw_offset_deg}); pitch was not relaxed')
+    q=waypoints[-1]
     # Slow arm motion, followed by measured jaw closing, transport, twist, withdraw.
-    prefix=preparation_phases(start,qprep,preparation)
+    prefix=preparation_phases(start,qprep,preparation,recorded_prefix)
     approach_gap=.044 if preparation=='tight_fold_then_turn' else .060
-    phases=prefix+[('approach',8.,np.array(waypoints),approach_gap,0.,0.),
+    if preparation=='horizontal_ready':
+        approach_gap=.096  # Existing CAD/slider maximum; open before the cluster.
+        prefix=[('ready_hold',.5,np.array([start,start]),.044,0.,0.),
+                ('prepare_open',1.,np.array([start,start]),approach_gap,0.,0.),
+                ('prepare_horizontal',4.,np.array(ready_waypoints),approach_gap,0.,0.)]
+    entry_seconds=4. if preparation=='horizontal_ready' else 8.
+    phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.),
             ('close',3.,np.array([q,q]),.028,0.,0.),
             ('infeed',2.,np.array([q,q]),.028,-.020,-.020),
             ('twist',3.,np.array([q,q]),.028,-.015,.015),
-            ('withdraw',8.,np.array(waypoints[::-1]),.028,-.005,-.005),
+            ('withdraw',entry_seconds,np.array(waypoints[::-1]),.028,-.005,-.005),
             ('hold',1.,np.array([qprep,qprep]),.028,0.,0.)]
+    if entry_only:
+        phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.),
+            ('entry_hold',2.,np.array([q,q]),approach_gap,0.,0.),
+            ('withdraw',entry_seconds,np.array(waypoints[::-1]),approach_gap,0.,0.),
+            ('return_ready',4.,np.array(ready_waypoints[::-1]),approach_gap,0.,0.),
+            ('ready_close',1.,np.array([start,start]),.044,0.,0.),
+            ('hold',1.,np.array([start,start]),.044,0.,0.)]
+    if hasattr(kin,'bounds'):
+        for name,_,qs,_,_,_ in phases:
+            if np.any(qs<kin.bounds[0]-1e-8) or np.any(qs>kin.bounds[1]+1e-8):
+                raise RuntimeError('Planned joint limits exceeded in '+name)
+    extension_fk=None
+    if preparation=='tight_fold_level_approach' and hasattr(kin,'fk'):
+        extension=next(p for p in prefix if p[0]=='prepare_extend')
+        samples=[kin.fk(extension[2][0]*(1-u)+extension[2][-1]*u) for u in np.linspace(0,1,81)]
+        drift=max(float(R.from_matrix(pose[:3,:3]@goal[:3,:3].T).magnitude()) for pose in samples)
+        extension_fk=dict(sample_count=len(samples),orientation_error_max_rad=drift,
+                          scope='FK on the composed RB5; actual native tracking is separate')
+        if drift>.02:
+            raise RuntimeError(f'Level preparation FK orientation check failed: {drift} rad')
     return phases,dict(prep_pose=prep.tolist(),goal_pose=goal.tolist(),start=start.tolist(),
-                       prep_q=qprep.tolist(),goal_q=q.tolist(),ik_errors=[pe,re],pitch_deg=pitch,
+                       prep_q=qprep.tolist(),goal_q=q.tolist(),ik_errors=[pe,re],pitch_deg=float(pitch_deg),
+                       yaw_offset_deg=float(yaw_offset_deg),entry_orientation_policy='fixed_requested_pitch_and_yaw',
+                       entry_only=bool(entry_only),
+                       approach_direction_world=direction.tolist(),approach_distance_m=.10,
+                       approach_waypoint_poses=[pose.tolist() for pose in poses],
+                       approach_waypoint_ik_errors=errors,selected_seed_index=selected,ik_attempts=attempts,
+                       recorded_preparation_prefix_reused=recorded_prefix is not None,
+                       preparation_extension_fk=extension_fk,
+                       approach_waypoint_fk_poses=([kin.fk(qi).tolist() for qi in waypoints] if hasattr(kin,'fk') else None),
                        preparation=preparation,approach_gap_m=approach_gap,
-                       preparation_validation=('Nine offline samples per phase against source mesh proxies; no intersections with screened fixed obstacles, dynamic active-plant contact remains; no continuous/native clearance certificate'
-                           if preparation in ('tight_fold_then_turn', 'tight_fold_open_approach') else 'Native collision audit required'),
+                       preparation_validation=('Cartesian level ready-to-staging IK; native collision audit required' if preparation=='horizontal_ready'
+                           else 'Existing preparation command profile reused; native collision audit required for the selected branch'),
                        phases=[dict(name=n,duration_s=d,waypoint_q=qs.tolist(),
                            end_gap_m=g,belt_local_y_m_s=[l,r]) for n,d,qs,g,l,r in phases],
                        scope='diagnostic IK path, contact audit during physical execution; not collision-certified planning')

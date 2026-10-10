@@ -8,7 +8,7 @@ from pathlib import Path
 
 p=argparse.ArgumentParser();p.add_argument('assembly',type=Path);p.add_argument('trial',type=Path)
 p.add_argument('--fps',type=int,default=15);p.add_argument('--speed',type=float,default=2.)
-p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, jaw, or mouth')
+p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, or mouth')
 p.add_argument('--name',default='actual_motion',help='New output basename, never overwrites a video')
 p.add_argument('--review-light',action='store_true',help='Add replay-only fill light for contact inspection')
 a=p.parse_args()
@@ -45,11 +45,16 @@ try:
     native=json.loads((a.trial/'native_metadata.json').read_text());names=native['robot_dofs']
     lids=[names.index('jaw_L'),names.index('jaw_R')]
     visuals=DeformationVisuals(stage,a.assembly,paths)
-    if a.camera=='motion':
+    if a.camera in ('motion','entry'):
         tool=data['poses'][:,index['/World/ActuatedTool/fixed'],:3]
         points=np.vstack((tool,np.array(meta['target']['center'])[None]))
         center=(points.min(0)+points.max(0))/2
-        camera(stage,'/World/MotionReplayCamera',tuple(center+[1.,-1.3,.65]),tuple(center))
+        offset=np.array([1.,-1.3,.65])
+        if a.camera=='entry':
+            orientation=R.from_quat(data['poses'][0,index['/World/ActuatedTool/fixed'],3:]).as_matrix()
+            center=center+np.array([0.,0.,.18])
+            offset=-orientation[:,0]*1.8+np.array([0.,0.,.30])
+        camera(stage,'/World/MotionReplayCamera',tuple(center+offset),tuple(center))
         a.camera='/World/MotionReplayCamera'
     elif a.camera in ('jaw','mouth'):
         pose=data['poses'][0,index['/World/ActuatedTool/fixed']]

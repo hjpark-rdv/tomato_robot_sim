@@ -1,5 +1,34 @@
 # Farmily Tomato 작업 인수인계
 
+## 최신 수정: S300 팔–그리퍼 자기충돌 수정·실제 재검증 (2026-10-10)
+
+- `codex/s300-harvest-isaac-20261009`, 기준 `aad8340` 이후 수정. 코드·테스트·문서·작은 검증 JSON을 함께 커밋하며 실제 상태/영상/대형 USD는 아래 결과 폴더에 보존한다. native 로봇 자기충돌 활성화, 그리퍼 슬라이더 부모를 실제 고정 레일로 수정하고 초기 IK 자세/접근을 다시 선택했다. 목표11번 유지, 수평 대기160mm → 준비60mm → 진입100mm → 유지 → 복귀. 비인접 팔/그리퍼 충돌 제외 추가 없음.
+- 새 `assembly_v3`의 headless/GUI 모두23.5sim초 완주. 각2,821개 실제 자세 교차 검사PASS, native 자기접촉0, 상태/명령bit-exact. 계획120Hz/2mm여유 검사도PASS. 물성/형상/구동게인/0.5mm관통기준 유지, full식물612DOF/활성충돌31,464개 유지.
+- 진입pitch최대0.0331°, 진입TCP높이범위0.150mm. 초기중력정착TCP하강8.66mm는 별도 기록. headless38.62초(0.608배속), GUI95.30초(0.247배속), 로딩/검사/저장별도. 첫2회초기관통실패도보존. 관련37테스트PASS.
+- 결과/실제영상/실행스크립트: `/root/docker_share/mujoko_debugging_data/20261010_142120_s300_self_collision_fix/`. 상세 [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md) 최신 절. 아래 "수정/재실행 미실시"는 과거 기록이다.
+- 검증 범위는 진입·유지·복귀다. 과실닫기/벨트이송/수확분리 및 새GPU병렬은 미검증. `training_eligible=false`, `harvest_success=null` 유지.
+
+## 최신 정정: S300 영상 기준 자세에 그리퍼–팔 자기관통 (2026-10-10)
+
+- 사용자 지적 후 실제 저장 pose를 FCL 원본 삼각형 교차로 검사했다. 대기·준비·복귀에서 그리퍼 프레임/레일과 RB5 `link2`의 교차 확인. 로봇 `enabledSelfCollisions=false`이므로 기존 native 접촉 감시가 검출하지 못했다.
+- 아래23.5초 GUI 완주는 명령 완료이며 **유효한 비충돌 경로가 아니다**. 28테스트/수평FK 통과도 자기충돌 검증이 아니다. 기존 원본·영상·접촉은 보존하고 보고서에 후속 정정을 추가했다. 초기 자세·경로·자기충돌 설정의 수정/재실행은 아직 하지 않았다.
+- 12개 저장 시점 검사,2초24개/4초28개 메시쌍 교차. 깊이/힘 추정이나 연속 비충돌 보증 아님. 근거 `20261010_141508_s300_self_collision_audit/mesh_intersection_audit.json`; 자세한 정정은 [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md).
+
+## 최신: 영상 기준 수평 대기·진입·복귀 완료 (2026-10-10)
+
+- inaho 영상49~69초를 확인하고 S300/RB5에 `horizontal_ready`를 추가했다. 초기부터 수평 대기, 96mm 선개방, Cartesian 수평 접근/진입을 사용한다. 하부 `L_T01_sloped_receiver` 및 전용 체결부4개의 외형·충돌체와 추정질량167.664g을 제거했다. 다른 활성충돌체/식물속성은 보존했다.
+- 바깥쪽 `Truss_02_Fruit_11`의 GUI `--entry-only`가23.5sim초 전체완료: 진입→2초유지→후퇴→대기복귀. 실제진입pitch최대0.0171°, 전체TCP높이변화0.256mm, 목표변위최대0.0316mm, 관통중단없음. 수확시도/성공은 아니다.
+- 같은11번의 전체동작은 진입후 닫기13.233초에 왼쪽상판과08번과실의1.522mm관통으로중단. 기존02번은열매/잎충돌로진입중단. 모든시도·초기USD구성실패도보존했다.
+- GUI23.5sim초/92.714wall초=0.253배속. 공통0~11.5초의GUI/headless실제상태·명령1381표본bit-exact. 관련28테스트PASS. 기존수집/학습제외유지.
+- 결과 `/root/docker_share/mujoko_debugging_data/20261010_134811_s300_video_entry/`. `run_gui.sh`로완료된진입·복귀시연재실행. 상세·실패·한계·명령: [VIDEO_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/VIDEO_ENTRY_STATUS_KO.md). 커밋 여부는 `git status` 확인.
+
+## 최신: S300 그리퍼 수평 진입 수정 (2026-10-10)
+
+- `codex/s300-harvest-isaac-20261009`, 수정 기준 `aad8340`. 수확 진입 pitch 기본0° 고정, 기존 자동0/-30/-60/+30° 선택 제거. yaw는 명시적인 월드Z 수평 방향 보정이다. 현재타깃 radial0° 준비 IK 미발견, yaw+15/+30°의100mm 수평 경로 FK 통과.
+- 기존 SI 실행의 앞 두 준비 구간을 그대로 재사용하는 opt-in과, RB5 wrist1을 보정하는 `tight_fold_level_approach`를 추가. 실제 composed FK/관절 제한을 확인하며 기존 준비 profile은 유지한다.
+- 관련24테스트PASS. 실제5회 모두 approach 전 주변/활성 식물 접촉·관통으로 중단했다. 원본 prefix 재사용3회는 처음12초 명령·time·phase·실제bodypose가 원본과bit-exact였다. 수평 진입 완주나 수확 성공은 미확인이다.
+- 기록/영상: `/root/docker_share/mujoko_debugging_data/20261010_125732_s300_horizontal_entry/`. 변경범위·모든실패·GUI명령: [HORIZONTAL_ENTRY_STATUS_KO.md](nvidia-sim/harvest_s300/HORIZONTAL_ENTRY_STATUS_KO.md). 새 결과는 학습 제외이며 커밋 여부는 `git status` 확인.
+
 ## 최신 정정: S300 native stage 단위·축 및 SI 재검증 (2026-10-10)
 
 - 첫 118개 성능/수확 연결 trial의 assembly root에 `metersPerUnit`·`upAxis`가 빠져 실제 stage가 0.01m/unit·Y-up fallback으로 동작했다. 아래 이전 속도·변위·힘 기록은 역사적 수치이며 **검증된 SI 농장 성능으로 해석하지 않는다**. 같은 잘못된 stage의 bit-exact PASS도 SI 타당성 증거가 아니다. 기존 결과와 코드2964d4a는 보존했다.

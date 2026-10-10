@@ -8,6 +8,7 @@ import argparse
 import json
 import re
 import sys
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -104,6 +105,9 @@ def geometry(prim, cache):
 
 
 def build_tool(stage, report):
+    root_joint=stage.GetPrimAtPath(ROBOT+'/root_joint')
+    attr(root_joint,'physxArticulation:enabledSelfCollisions',Sdf.ValueTypeNames.Bool,True)
+    report['robot_self_collision_enabled']=True
     cache = UsdGeom.XformCache()
     pose = np.asarray(cache.GetLocalToWorldTransform(stage.GetPrimAtPath(TOOL))).T
     parent_pose = np.asarray(cache.GetLocalToWorldTransform(stage.GetPrimAtPath(ROBOT + '/link6'))).T
@@ -128,8 +132,9 @@ def build_tool(stage, report):
         path = root + '/' + group
         rigid(stage, path, pose, mass)
         bodies[group] = path
-        j = joint(stage, root + '/Joints/jaw_' + group, ROBOT + '/link6', path,
-                  parent_pose, pose, pose[:3, 3], 'fixed' if group == 'fixed' else 'slider',
+        j = joint(stage, root + '/Joints/jaw_' + group,
+                  ROBOT + '/link6' if group == 'fixed' else bodies['fixed'], path,
+                  parent_pose if group == 'fixed' else pose, pose, pose[:3, 3], 'fixed' if group == 'fixed' else 'slider',
                   rotation=pose[:3, :3])
         if group != 'fixed':
             j.CreateAxisAttr('X')
@@ -381,6 +386,127 @@ def build(scene, output, plant=22):
     print(json.dumps(dict(scene=str(output/'scene.usda'),bodies=len(report['plant']['bodies']),target=target),indent=2),flush=True)
 
 
+def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_index=-1, target=None):
+    """User-requested hardware/initial-state revision of an existing assembly.
+
+    Retains the existing farm and motion runner. The receiver and its dedicated
+    four fasteners are removed together, including their CAD mass estimate.
+    JointStateAPI initializes a level, retracted ready pose before simulation;
+    it is not a teleport or a pose correction during the harvesting motion.
+    """
+    from motion_kinematics import ToolKinematics, grasp_pose, plan_motion
+    from motion_self_collision import MotionSelfCollision,check_plan
+    if not np.isfinite([distance,yaw]).all() or not .15<=distance<=.5 or not -180<=yaw<=180:
+        raise ValueError('Ready distance must be .15.. .5 m and yaw -180..180 degrees')
+    source=assembly/'scene.usda'
+    report=json.loads((assembly/'motion_manifest.json').read_text())
+    if target is not None:
+        choices=[p for p in report['plant']['fruits'] if p['name']==target]
+        if len(choices)!=1:raise ValueError('Target must match exactly one existing active fruit')
+        report['target']=choices[0]
+    if sha(source)!=report['scene_sha256']:raise ValueError('Source assembly hash mismatch')
+    original=Usd.Stage.Open(str(source.resolve()));require_motion_units(original)
+    output.mkdir(parents=True,exist_ok=False)
+    # Keep the adapter's authored rigid/mesh specs in its root layer. A further
+    # sublayer introduces a different native mesh-update composition boundary.
+    shutil.copy2(source,output/'scene.usda')
+    s=Usd.Stage.Open(str(output/'scene.usda'))
+    s.GetRootLayer().subLayerPaths=[str(Path(Sdf.ComputeAssetPathRelativeToLayer(
+        original.GetRootLayer(),p)).resolve()) for p in original.GetRootLayer().subLayerPaths]
+    expected={'L_T01_sloped_receiver','L_T01_post_bolt_32','L_T01_post_nut_32',
+              'L_T01_post_bolt_130','L_T01_post_nut_130'}
+    parts={p['name']:p for p in json.loads((REPO/'gripper-design/inaho_gripper_v5/parts_manifest.json').read_text())}
+    removed=[]
+    for prim in list(Usd.PrimRange(s.GetPrimAtPath('/World/ActuatedTool'))):
+        name=prim.GetCustomDataByKey('sourceName')
+        if name in expected:
+            path=str(prim.GetPath());s.OverridePrim(path).SetActive(False)
+            density=1270. if parts[name]['material']=='PETG' else 7850.
+            removed.append(dict(name=name,path=path,mass_kg=parts[name]['volume_mm3']*1e-9*density))
+    if {p['name'] for p in removed}!=expected or len(removed)!=5:
+        raise ValueError('Receiver part inventory does not exactly match the five requested parts')
+    removed_mass=sum(p['mass_kg'] for p in removed)
+    previous_mass=report['tool']['mass_estimates_kg']['L']
+    report['tool']['mass_estimates_kg']['L']=previous_mass-removed_mass
+    UsdPhysics.MassAPI(s.GetPrimAtPath('/World/ActuatedTool/L')).CreateMassAttr(previous_mass-removed_mass)
+    # The jaw carriage slides on the fixed gripper frame, not directly on the
+    # robot flange. Preserve its world joint frame/axis and drive; the existing
+    # collisionEnabled=false now excludes only this actual adjacent mechanism.
+    # This does not exclude the gripper from any non-adjacent robot arm link.
+    tool_joint_revisions=[]
+    cache=UsdGeom.XformCache()
+    for side in ('L','R'):
+        j=UsdPhysics.Joint(s.GetPrimAtPath('/World/ActuatedTool/Joints/jaw_'+side))
+        previous=str(j.GetBody0Rel().GetTargets()[0]);new='/World/ActuatedTool/fixed'
+        old_pose=np.asarray(cache.GetLocalToWorldTransform(s.GetPrimAtPath(previous))).T
+        new_pose=np.asarray(cache.GetLocalToWorldTransform(s.GetPrimAtPath(new))).T
+        qrot=j.GetLocalRot0Attr().Get();local=np.eye(4)
+        local[:3,:3]=R.from_quat([*qrot.GetImaginary(),qrot.GetReal()]).as_matrix()
+        local[:3,3]=j.GetLocalPos0Attr().Get()
+        changed=np.linalg.inv(new_pose)@old_pose@local;rot=R.from_matrix(changed[:3,:3]).as_quat()
+        j.CreateBody0Rel().SetTargets([new]);j.CreateLocalPos0Attr(Gf.Vec3f(*map(float,changed[:3,3])))
+        j.CreateLocalRot0Attr(Gf.Quatf(float(rot[3]),Gf.Vec3f(*map(float,rot[:3]))))
+        tool_joint_revisions.append(dict(joint=str(j.GetPath()),old_body0=previous,new_body0=new,
+            world_frame_max_abs_error=float(np.max(np.abs(new_pose@changed-old_pose@local)))))
+    kin=ToolKinematics(s);center=np.array(report['target']['center'])
+    direction=center-np.r_[kin.world[:2,3],center[2]]
+    direction=R.from_euler('z',yaw,degrees=True).apply(direction)
+    pose=grasp_pose(center,direction);pose[:3,3]-=pose[:3,1]*distance
+    seeds=[np.array([.05,b,u,e,w,v,0.]) for b in (-np.pi/2,np.pi/2)
+           for u,e,w in [(-1.1,1.8,-.7),(.9,-1.7,.8)] for v in (-np.pi/2,np.pi/2)]
+    seeds += [np.array([lift,b,u,e,w,v,0.]) for lift in (.3,.6,.9) for b in (-np.pi/2,np.pi/2)
+              for u,e,w in [(-1.1,1.8,-.7),(.9,-1.7,.8)] for v in (-np.pi/2,np.pi/2)]
+    if not -1<=seed_index<len(seeds):raise ValueError('Ready seed index must be -1 (search) or 0..31')
+    attr(s.GetPrimAtPath(ROBOT+'/root_joint'),'physxArticulation:enabledSelfCollisions',Sdf.ValueTypeNames.Bool,True)
+    checker=MotionSelfCollision(s,kin,clearance_m=.002);attempts=[];selected=None
+    for index in (range(len(seeds)) if seed_index==-1 else [seed_index]):
+        q,pe,re=kin.ik(pose,seeds[index]);attempt=dict(seed_index=index,position_error_m=pe,orientation_error_rad=re)
+        attempts.append(attempt)
+        if pe>.002 or re>.02 or not np.isfinite(q).all():attempt['status']='ik_failed';continue
+        hits=checker.check(q,.044) or checker.check(q,.096)
+        if hits:attempt.update(status='ready_self_collision',hits=hits);continue
+        try:
+            phases,plan=plan_motion(kin,center,start=q,preparation='horizontal_ready',yaw_offset_deg=yaw,entry_only=True)
+        except RuntimeError as exc:attempt.update(status='path_ik_failed',error=str(exc));continue
+        audit=check_plan(checker,plan,hz=120)
+        attempt.update(status='clear' if audit['passed'] else 'path_self_collision',audit=audit)
+        if audit['passed'] and audit['complete']:selected=index;break
+    (output/'ready_self_collision_search.json').write_text(json.dumps(attempts,indent=2)+'\n')
+    if selected is None:raise RuntimeError('No self-collision-free horizontal ready branch found; see ready_self_collision_search.json')
+    seed_index=selected
+    for name,value in zip(kin.names,q):
+        p=s.GetPrimAtPath(ROBOT+'/joints/'+name)
+        slider=p.IsA(UsdPhysics.PrismaticJoint);kind='linear' if slider else 'angular'
+        units=float(value if slider else np.rad2deg(value))
+        p.AddAppliedSchema('PhysicsJointStateAPI:'+kind)
+        attr(p,'state:'+kind+':physics:position',Sdf.ValueTypeNames.Float,units)
+        attr(p,'state:'+kind+':physics:velocity',Sdf.ValueTypeNames.Float,0.)
+        UsdPhysics.DriveAPI(p,kind).CreateTargetPositionAttr(units)
+    shutil.copy2(assembly/'skin.npz',output/'skin.npz')
+    report['initial_robot_q']=q.tolist()
+    report['robot_self_collision_enabled']=True
+    report['tool_joint_parent_revision']=tool_joint_revisions
+    report['ready_revision']=dict(source_assembly=str(assembly.resolve()),source_scene_sha256=sha(source),
+        removed_parts=removed,removed_mass_kg=removed_mass,ready_pose=pose.tolist(),
+        ready_distance_m=distance,yaw_offset_deg=yaw,seed_index=seed_index,
+        ik_position_error_m=pe,ik_orientation_error_rad=re,
+        initialization='JointStateAPI before native startup; no runtime teleport',
+        reference_video='https://www.youtube.com/watch?v=-V8sVICfdxg&t=49',reference_seconds=[49,69])
+    s.GetRootLayer().Save();report['scene_sha256']=sha(output/'scene.usda')
+    (output/'motion_manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    (output/'ready_plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+    print(json.dumps(report['ready_revision'],indent=2),flush=True)
+
+
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('scene',type=Path);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--plant',type=int,default=22);a=p.parse_args();build(a.scene,a.output,a.plant)
+    p.add_argument('--plant',type=int,default=22)
+    p.add_argument('--horizontal-ready-revision',action='store_true',help='Input is an existing assembly directory; remove lower receiver and author horizontal ready pose')
+    p.add_argument('--ready-distance',type=float,default=.30)
+    p.add_argument('--ready-yaw',type=float,default=30.)
+    p.add_argument('--ready-seed',type=int,default=-1,help='-1 searches IK branches with self-collision screening; 0..31 selects one checked seed')
+    p.add_argument('--target',help='Existing active fruit name, for the ready revision only')
+    a=p.parse_args()
+    if a.target and not a.horizontal_ready_revision:p.error('--target requires --horizontal-ready-revision')
+    if a.horizontal_ready_revision:revise_for_horizontal_ready(a.scene,a.output,a.ready_distance,a.ready_yaw,a.ready_seed,a.target)
+    else:build(a.scene,a.output,a.plant)
