@@ -1,7 +1,7 @@
-"""Small, explicit current S300 USD -> MuJoCo adapter (run with asset Python).
+"""Current S300 USD -> MuJoCo adapter (run with the existing asset Python).
 
-Reuses source topology, collision geometry, joint coefficients and recorded tool
-poses. This is a prescribed-tool experiment, not a full robot conversion.
+Default remains the prescribed-tool smoke; opt-in robot/background ports reuse
+the authored joint topology, full visual triangles and finite drive caps.
 """
 import argparse
 import hashlib
@@ -23,7 +23,9 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def export(assembly, trial, output, truss='Truss_00'):
+def export(assembly, trial, output, truss='Truss_00', *, robot=False,
+           background=False, excluded_background_roots=(), plant_only=False,
+           ground_collision='source-box'):
     start = time.perf_counter()
     output.mkdir(parents=True, exist_ok=False)
     (output / 'meshes').mkdir()
@@ -43,10 +45,11 @@ def export(assembly, trial, output, truss='Truss_00'):
         return np.asarray(getattr(j, f'GetLocalPos{i}Attr')().Get(), float)
 
     rods = [b for b in manifest['plant']['bodies']
-            if b['name'].startswith(('Stem_MainStem_', truss+'_')) and 'Fruit_' not in b['name']]
+            if (b['name'].startswith(('Stem_MainStem_', truss+'_')) or
+                (robot or plant_only) and b['name'].startswith('Leaf_')) and 'Fruit_' not in b['name']]
     fruits = [f for f in manifest['plant']['fruits'] if f['name'].startswith(truss+'_')]
     paths = {b['path']: b for b in rods + fruits}
-    tools = list(manifest['tool']['bodies'].values()) + manifest['tool']['belts']
+    tools = [] if robot or plant_only else list(manifest['tool']['bodies'].values()) + manifest['tool']['belts']
     names = {p: b['name'] for p, b in paths.items()}
     names.update({p: 'Tool_' + p.rsplit('/', 1)[1] for p in tools})
     transforms = {p: matrix(p) for p in names}
@@ -57,7 +60,7 @@ def export(assembly, trial, output, truss='Truss_00'):
             for child in j.GetBody1Rel().GetTargets():
                 joint_by_child[str(child)] = j
 
-    root = ET.Element('mujoco', model='s300_one_truss_prescribed_tool')
+    root = ET.Element('mujoco', model='s300_dynamic_robot_harvest' if robot else 's300_one_truss_prescribed_tool')
     ET.SubElement(root, 'compiler', angle='radian', inertiafromgeom='false', meshdir='meshes')
     opt = ET.SubElement(root, 'option', timestep=str(1/240), integrator='discrete',
                         solver='Newton', iterations='64', tolerance='1e-8',
@@ -67,7 +70,10 @@ def export(assembly, trial, output, truss='Truss_00'):
     ET.SubElement(visual, 'global', offwidth='960', offheight='720')
     ET.SubElement(visual, 'map', znear='.001', zfar='20')
     default = ET.SubElement(root, 'default')
-    ET.SubElement(default, 'geom', friction='.5 0 0', condim='3', margin='.0005', gap='.0005',
+    # Source PhysX restOffset=0, contactOffset=.5mm: force at the real surface,
+    # with a separate detection buffer. Modern MuJoCo gap adds detection range;
+    # it does not subtract margin. Setting both to .5mm inflates active contact.
+    ET.SubElement(default, 'geom', friction='.5 0 0', condim='3', margin='0', gap='.0005',
                   solref='.002 1', solimp='.99 .999 .001', density='0')
     assets = ET.SubElement(root, 'asset')
     world = ET.SubElement(root, 'worldbody')
@@ -112,8 +118,10 @@ def export(assembly, trial, output, truss='Truss_00'):
         if inertia and min(inertia) > 0:
             com = prim.GetAttribute('physics:centerOfMass').Get()
             q = prim.GetAttribute('physics:principalAxes').Get()
+            axes=np.array([q.GetReal(),*q.GetImaginary()])
+            if np.linalg.norm(axes)<1e-12:axes=np.array([1.,0.,0.,0.])
             ET.SubElement(node, 'inertial', pos=nums(com), mass=str(mass), diaginertia=nums(inertia),
-                          quat=nums([q.GetReal(), *q.GetImaginary()]))
+                          quat=nums(axes))
         elif fruit:
             # Explicit ellipsoid estimate; PhysX auto-computed hull inertia was not saved.
             a, bb, c = np.array(b['dimensions_m']) / 2
@@ -139,6 +147,7 @@ def export(assembly, trial, output, truss='Truss_00'):
             # Explicit selected policy: foliage has no collision, stem capsules do.
             if '/Appendage_' in path:
                 continue
+            if names[owner].startswith('Leaf_'):collides=False
             visible = UsdGeom.Imageable(prim).ComputeVisibility() != 'invisible'
             if not collides and not visible:
                 continue
@@ -200,6 +209,18 @@ def export(assembly, trial, output, truss='Truss_00'):
                                 force_n=f['break_force_n'], torque_nm=f['break_torque_nm'],
                                 stiffness=[j.GetPrim().GetAttribute('physxLimit:rot'+a+':stiffness').Get() for a in 'XYZ'],
                                 damping=j.GetPrim().GetAttribute('physxLimit:rotX:damping').Get(), deadband_deg=1.))
+    robot_report=None;farm_report=None
+    if robot:
+        from robot_adapter import add_robot
+        robot_port=add_robot(stage,manifest,root=root,world=world,assets=assets,
+                               contact=contact,meshdir=output/'meshes',matrix=matrix)
+        inventory.extend(robot_port['geometry'])
+        robot_report=robot_port['metadata']
+    if background:
+        world.remove(world.find("geom[@name='CatchFloor']"))
+        from farm_adapter import add_background
+        farm_report=add_background(stage,manifest,world=world,assets=assets,output=output,
+                                    excluded_roots=excluded_background_roots,ground_collision=ground_collision)
     center = np.mean([transforms[f['path']][:3, 3] for f in fruits], axis=0)
     for name, offset in [('top', [0,-.12,.75]), ('side', [.65,-.5,.28])]:
         eye = center + offset
@@ -218,6 +239,9 @@ def export(assembly, trial, output, truss='Truss_00'):
                   tools=[names[p] for p in tools], rods=[b['name'] for b in rods],
                   fruits=[f['name'] for f in fruits], attachments=attachments, geometry=inventory,
                   export_wall_s=time.perf_counter()-start, training_eligible=False, harvest_success=None,
+                  contact_offset_mapping=dict(source_rest_offset_m=0.,source_contact_offset_m=.0005,
+                      native_margin_m=0.,native_gap_m=.0005,
+                      interpretation='Force at surface; detection buffer per geom. Earlier .5mm margin was an export mapping error.'),
                   differences=[
                       'Prescribed recorded tool body poses; robot/lift/rail/chassis/farm absent. Not full-system speed comparison.',
                       'One selected truss and its 16-segment main stem; other truss mass/dynamics omitted. Leaves visual-only.',
@@ -229,6 +253,23 @@ def export(assembly, trial, output, truss='Truss_00'):
                       'Native surfacevel supplies belt and prescribed tool tangential velocity; mocap normal-velocity and finite robot inertia are not represented.',
                       'Discrete integrator accounts for damping in constraint effective inertia. No gravity preload: this selected plant settles under gravity.',
                       'Source replay ends at its original 36.8s stop; no unrecorded withdrawal is invented.'])
+    report['fruit_specs']=fruits
+    report['source_manifest']=str(assembly/'motion_manifest.json')
+    report['source_manifest_sha256']=sha(assembly/'motion_manifest.json')
+    if robot:
+        report['robot']=robot_report
+        report['tools']=robot_report['tool_names']
+        report['schema']='s300-mujoco-dynamic-robot-v1'
+        report['differences']=report['differences'][1:]
+        report['differences']=[s for s in report['differences'] if not s.startswith(('Native surfacevel supplies','Source replay ends'))]
+        report['differences']=[s for s in report['differences'] if not s.startswith(('One selected truss','Discrete integrator'))]
+        report['differences'].append('One selected truss, 16-segment stem and 27 leaf bodies per exported target plant; no merging. Leaves retain dynamics/visuals but do not collide.')
+        report['differences'].append('Native discrete integrator and fixed initial plant gravity preload; bias feedforward through finite robot actuators. Engine contact equivalence remains unverified.')
+        report['differences'].append('Rail/lift/arm/jaws use finite source PD actuators; no physical pose playback.')
+        plan=json.loads((trial/'plan.json').read_text())
+        (output/'source_plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+        report['source_plan_sha256']=sha(output/'source_plan.json')
+    if background:report['farm']=farm_report
     (output/'export.json').write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps({k:report[k] for k in ['export_wall_s','model_sha256','fruits','differences']},indent=2))
 
@@ -236,4 +277,10 @@ def export(assembly, trial, output, truss='Truss_00'):
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('assembly', type=Path); p.add_argument('trial', type=Path); p.add_argument('output', type=Path)
-    a = p.parse_args(); export(a.assembly, a.trial, a.output)
+    p.add_argument('--robot',action='store_true');p.add_argument('--background',action='store_true')
+    p.add_argument('--plant-only',action='store_true')
+    p.add_argument('--exclude-background-root',action='append',default=[])
+    p.add_argument('--ground-collision',choices=['source-box','top-plane'],default='source-box')
+    a = p.parse_args(); export(a.assembly, a.trial, a.output,robot=a.robot,background=a.background,
+                              excluded_background_roots=a.exclude_background_root,plant_only=a.plant_only,
+                              ground_collision=a.ground_collision)

@@ -1,0 +1,664 @@
+{
+  "schema": "s300-mujoco-full-migration-server-validation-v1",
+  "date_kst": "2026-10-12",
+  "branch": "codex/s300-mujoco-belt-smoke-20261012",
+  "parent_commit": "51e22eb8fb839901bcc8adb46b0109e510ebf7ae",
+  "isaac_preservation_commit": "ca3a716",
+  "mujoco_version": "3.15.0",
+  "native_python": "/root/farmily_tomato/mujoco-benchmark/.mujoco315-venv/bin/python",
+  "asset_python": "/root/farmily_tomato/nvidia-sim/.asset-venv/bin/python",
+  "report": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/index.html",
+  "report_json": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/harvest_validation.json",
+  "primary_trial": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final",
+  "model": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/model",
+  "model_mjb_sha256": "6467d1f80736b2cbe97015e715d274bbf20ea9ccfde04ea81c8e1bf6be297769",
+  "source_model_xml_sha256": "98f84bbb7cf9d9e151daa5bdfe4a463156af8a8cab2ad83d587aaa721610f701",
+  "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c",
+  "windows": [
+    {
+      "id": "29",
+      "prefix": "",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/D_target_only",
+      "source_trial": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/model/window_00_source_plan.json",
+      "source_plan_sha256": "c971050daeb909356e27a4e59117034b6255834535ec3b8f61eeb02aa28645bf",
+      "source_policy": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected/harvest_group_policy.json",
+      "source_policy_sha256": "0ed128270420d126086b4e708bc332dd0b3bfe7a1b8c65e6ab30cfcf60e62061",
+      "selected": [
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05"
+      ],
+      "eligible_remaining": [
+        "Truss_00_Fruit_01"
+      ],
+      "best_remaining_group_count": 1,
+      "termination": "no_group_meets_minimum"
+    },
+    {
+      "id": "41",
+      "prefix": "P01_",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_205000_target_only_row_harvest/assembly_step01_plant41",
+      "source_trial": "/root/docker_share/mujoko_debugging_data/20261011_205000_target_only_row_harvest/trials/step01_plant41_shallow_yaw_minus45_runtimefix",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/model/window_01_source_plan.json",
+      "source_plan_sha256": "2bdf80545dbfe0c42eb476dd790ff81a455d7cd5708e2929f64ac78528e9ce3e",
+      "source_policy": "/root/docker_share/mujoko_debugging_data/20261011_205000_target_only_row_harvest/trials/step01_plant41_shallow_yaw_minus45_runtimefix/harvest_group_policy.json",
+      "source_policy_sha256": "c60e7691ea70253f787c8d6530fe3e0bc347fa09768676496a80e5c55b1da5b0",
+      "selected": [
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05"
+      ],
+      "eligible_remaining": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ],
+      "best_remaining_group_count": 2,
+      "termination": "no_group_meets_minimum"
+    }
+  ],
+  "dynamic_model": {
+    "nbody": 241,
+    "nv": 739,
+    "ngeom": 5101,
+    "actuators": 10,
+    "mocap_bodies": 0,
+    "force_caps_unchanged": true,
+    "prescribed_physical_pose": false,
+    "inactive_target_dofs_retained": true
+  },
+  "farm": {
+    "counts": {
+      "source_meshes": 29357,
+      "source_vertices": 27049149,
+      "source_triangles": 48671177,
+      "instanced_groups": 1262,
+      "visual_geoms": 3474,
+      "cached_asset_reuses": 3083,
+      "unique_mesh_assets": 409,
+      "material_assets": 47,
+      "structural_collision_geoms": 19
+    },
+    "collision_scope": "gutter-ground",
+    "ground_collision": "top-plane",
+    "background_plant_collision": false,
+    "leaves_collision": false,
+    "source_layers": [
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/D_target_only/composed.usdc",
+        "sha256": "e5697c6111478627272ca1d6e9f62fc0a72d195bce64707223def4eaaa9d9971"
+      }
+    ],
+    "large_inventory": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/model/export.json"
+  },
+  "contact_mapping": {
+    "source_rest_offset_m": 0.0,
+    "source_contact_offset_m": 0.0005,
+    "native_margin_m": 0.0,
+    "native_gap_m": 0.0005,
+    "interpretation": "Force at surface; detection buffer per geom. Earlier .5mm margin was an export mapping error."
+  },
+  "result": {
+    "simulated_s": 136.13666666662283,
+    "loop_wall_s": 174.58927848376334,
+    "realtime_factor": 0.779753876348618,
+    "physics_wall_s": 144.85222014039755,
+    "load_s": 2.0340531673282385,
+    "planning_wall_s": 2.7054039258509874,
+    "total_wall_s": 182.29277532361448,
+    "cpu_process_s": 178.897916049,
+    "rss_mib": 1431.2890625,
+    "native_worker_threads": 0,
+    "steps_by_hz": {
+      "60": 5049,
+      "300": 15596
+    },
+    "detached": 9,
+    "detached_eligibility": {
+      "eligible": 9,
+      "ineligible": 0,
+      "unknown": 0,
+      "scope": "Source authored RGB color proxy, not biological ripeness validation"
+    },
+    "selected_group_detached": 6,
+    "completed_harvest_cycles": 2,
+    "actual_final_station_y_m": 3.2937680038089554,
+    "actual_rail_displacement_m": 1.7137675174302165,
+    "stop": null,
+    "active_criterion_mm": 1.0,
+    "active_contact_criterion_passed": true,
+    "active_max_penetration_mm": 0.983044175227148,
+    "worst_strict_contact": {
+      "solver_time_s": 55.55666666665562,
+      "phase": "close",
+      "body1": "Truss_00_Pedicel_distal_04_0",
+      "body2": "Tool_L_belt",
+      "geom1": 3760,
+      "geom2": 4150,
+      "signed_distance_m": -0.000983044175227148,
+      "force_norm_n": 2.84233117765554,
+      "released_fruit": false,
+      "released_contact_exception": false
+    },
+    "released_max_penetration_mm": 15.365520503388074,
+    "released_gutter_impacts_diagnostic": true,
+    "maximum_contact_force_n": 13.32162218640073,
+    "actuator_peak_force_n_or_nm": {
+      "root_joint": 144.15620205685263,
+      "farmily_lift_height_joint": 472.4180027351613,
+      "base": 3.3450392335028027,
+      "shoulder": 48.97750855718914,
+      "elbow": 44.20419468149407,
+      "wrist1": 11.717422323936717,
+      "wrist2": 10.82948091128219,
+      "wrist3": 1.7656731404545098,
+      "jaw_L": 9.418098956996499,
+      "jaw_R": 9.938660254780313
+    }
+  },
+  "trials": [
+    {
+      "trial": "campaign120_contact_fixed",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign120_contact_fixed/summary.json",
+      "simulated_s": 52.941666666664304,
+      "loop_wall_s": 48.88956508412957,
+      "realtime_factor": 1.0828827496330116,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 0,
+      "active_penetration_mm": 1.0788618459502586,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 0.0,
+      "max_contact_force_n": 0.6762582467401133,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": true,
+      "first_violation": {
+        "t": 52.93333333333097,
+        "phase": "close",
+        "bodies": [
+          "Tool_L_belt",
+          "Truss_00_Fruit_04"
+        ],
+        "penetration_m": 0.0010788618459502586
+      },
+      "states_sha256": "fdf661d81d9178694475a3465784d8348a767ac14b6701cceab9d628f7f5c75c"
+    },
+    {
+      "trial": "campaign120_shallow15",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign120_shallow15/summary.json",
+      "simulated_s": 53.37499999999761,
+      "loop_wall_s": 49.50184766203165,
+      "realtime_factor": 1.0782425812549357,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 0,
+      "active_penetration_mm": 1.0901846842129213,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 0.0,
+      "max_contact_force_n": 2712.9858322612663,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": false,
+      "first_violation": {
+        "t": 53.36666666666428,
+        "phase": "close",
+        "bodies": [
+          "Tool_R_belt",
+          "Truss_00_Fruit_05"
+        ],
+        "penetration_m": 0.0010901846842129212
+      },
+      "states_sha256": "9a23f49e658fa62c2b0332f522d8aef41cb84c1117243fe12f6ecc2027cb6860"
+    },
+    {
+      "trial": "campaign120_v1",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign120_v1/summary.json",
+      "simulated_s": 136.14166666670718,
+      "loop_wall_s": 141.66108151711524,
+      "realtime_factor": 0.9610378885202764,
+      "stop": null,
+      "detached": 11,
+      "active_penetration_mm": 2.0928106602468057,
+      "active_metric_scope": "tool_only",
+      "released_penetration_mm": 31.027168438648452,
+      "max_contact_force_n": 3585.2996603514835,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": false,
+      "first_violation": {
+        "t": 55.69999999999748,
+        "phase": "close",
+        "bodies": [
+          "Truss_00_Pedicel_proximal_05_2",
+          "Tool_R_belt"
+        ],
+        "penetration_m": 0.001177220403480545
+      },
+      "states_sha256": "b9e8b3189871e55e05744ea1bf11669b7fea7abae0a4e01bea2fa79ce846f7be"
+    },
+    {
+      "trial": "campaign240_contact_fixed",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign240_contact_fixed/summary.json",
+      "simulated_s": 55.19583333335029,
+      "loop_wall_s": 104.3918383307755,
+      "realtime_factor": 0.5287370566121944,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 5,
+      "active_penetration_mm": 1.112512226544337,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 14.216715231788287,
+      "max_contact_force_n": 10.802193165172978,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": true,
+      "first_violation": {
+        "t": 55.19166666668362,
+        "phase": "close",
+        "bodies": [
+          "Truss_00_Pedicel_distal_05_0",
+          "Tool_R_belt"
+        ],
+        "penetration_m": 0.001112512226544337
+      },
+      "states_sha256": "4074cb60026e3940b5e92f1c91e11e080dde49fc0d42fb4e8b49fbdf29cce926"
+    },
+    {
+      "trial": "campaign240_shallow15",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign240_shallow15/summary.json",
+      "simulated_s": 54.825000000016665,
+      "loop_wall_s": 102.72626227885485,
+      "realtime_factor": 0.533699939857559,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 6,
+      "active_penetration_mm": 4.1772024640904535,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 4.1772024640904535,
+      "max_contact_force_n": 5184.494429500662,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": false,
+      "first_violation": {
+        "t": 54.820833333349995,
+        "phase": "close",
+        "bodies": [
+          "world",
+          "Truss_00_Fruit_03"
+        ],
+        "penetration_m": 0.004177202464090453
+      },
+      "states_sha256": "33b47e0ae1032ec380c95d3412d237836e9928aef137545306f3c9ac64e591de"
+    },
+    {
+      "trial": "campaign_adaptive480_complete_cycle",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_adaptive480_complete_cycle/summary.json",
+      "simulated_s": 136.13541666662283,
+      "loop_wall_s": 252.4187897723168,
+      "realtime_factor": 0.5393236247959898,
+      "stop": null,
+      "detached": 8,
+      "active_penetration_mm": 0.4828170528090868,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 8.92766516841105,
+      "max_contact_force_n": 14.725093133331688,
+      "active_contact_criterion_passed": true,
+      "contact_mapping_corrected": true,
+      "first_violation": null,
+      "states_sha256": "34da4570aa99c9c044512f5e65d421056ed2cfec96ab48d828595c5100962275"
+    },
+    {
+      "trial": "campaign_adaptive480_free60",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_adaptive480_free60/summary.json",
+      "simulated_s": 54.41666666665751,
+      "loop_wall_s": 55.35067104175687,
+      "realtime_factor": 0.9831256901222618,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 3,
+      "active_penetration_mm": 1.9526611888707972,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 1.9526611888707972,
+      "max_contact_force_n": 14.735793703275949,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": true,
+      "first_violation": {
+        "t": 54.41458333332418,
+        "phase": "close",
+        "bodies": [
+          "world",
+          "Truss_00_Fruit_04"
+        ],
+        "penetration_m": 0.001952661188870797
+      },
+      "states_sha256": "87251f60b71be381f9ac79dee224f96d2ce1de43d2e08585a8c3486fc652a581"
+    },
+    {
+      "trial": "campaign_adaptive480_ground_policy",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_adaptive480_ground_policy/summary.json",
+      "simulated_s": 65.32916666664805,
+      "loop_wall_s": 106.9989705812186,
+      "realtime_factor": 0.6105588335269012,
+      "stop": "active_contact_penetration_1mm",
+      "detached": 5,
+      "active_penetration_mm": 2.6272336775688765,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 3.9167545879449097,
+      "max_contact_force_n": 16.82521697122895,
+      "active_contact_criterion_passed": false,
+      "contact_mapping_corrected": true,
+      "first_violation": {
+        "t": 65.31249999998138,
+        "phase": "cycle_open_final",
+        "bodies": [
+          "Truss_00_Pedicel_proximal_05_2",
+          "Tool_R_belt"
+        ],
+        "geoms": [
+          "g0161",
+          "s300_g0816"
+        ],
+        "penetration_m": 0.00242722604409563
+      },
+      "states_sha256": "d8b4df88b28bd4b37f8a5167ef5572624459c2bbda6d12e43525c54a845b5c5c"
+    },
+    {
+      "trial": "campaign_final",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/summary.json",
+      "simulated_s": 136.13666666662283,
+      "loop_wall_s": 174.58927848376334,
+      "realtime_factor": 0.779753876348618,
+      "stop": null,
+      "detached": 9,
+      "active_penetration_mm": 0.983044175227148,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 15.365520503388074,
+      "max_contact_force_n": 13.32162218640073,
+      "active_contact_criterion_passed": true,
+      "contact_mapping_corrected": true,
+      "first_violation": null,
+      "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c"
+    },
+    {
+      "trial": "campaign_rebuilt300",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_rebuilt300/summary.json",
+      "simulated_s": 136.13666666662283,
+      "loop_wall_s": 177.78973154351115,
+      "realtime_factor": 0.7657172632228515,
+      "stop": null,
+      "detached": 9,
+      "active_penetration_mm": 0.983044175227148,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 15.365520503388074,
+      "max_contact_force_n": 13.32162218640073,
+      "active_contact_criterion_passed": true,
+      "contact_mapping_corrected": true,
+      "first_violation": null,
+      "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c"
+    },
+    {
+      "trial": "campaign_rebuilt300_contact_threads",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_rebuilt300_contact_threads/summary.json",
+      "simulated_s": 136.13666666662283,
+      "loop_wall_s": 192.41546377912164,
+      "realtime_factor": 0.7075141674834274,
+      "stop": null,
+      "detached": 9,
+      "active_penetration_mm": 0.983044175227148,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 15.365520503388074,
+      "max_contact_force_n": 13.32162218640073,
+      "active_contact_criterion_passed": true,
+      "contact_mapping_corrected": true,
+      "first_violation": null,
+      "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c"
+    },
+    {
+      "trial": "campaign_rebuilt300_thread4",
+      "summary": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_rebuilt300_thread4/summary.json",
+      "simulated_s": 136.13666666662283,
+      "loop_wall_s": 194.70300628989935,
+      "realtime_factor": 0.69920166750751,
+      "stop": null,
+      "detached": 9,
+      "active_penetration_mm": 0.983044175227148,
+      "active_metric_scope": "all_active",
+      "released_penetration_mm": 15.365520503388074,
+      "max_contact_force_n": 13.32162218640073,
+      "active_contact_criterion_passed": true,
+      "contact_mapping_corrected": true,
+      "first_violation": null,
+      "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c"
+    }
+  ],
+  "reproduction": {
+    "campaign_rebuilt300": {
+      "same_keys": true,
+      "all_arrays_equal": true,
+      "array_equality": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "phase": true,
+        "window_index": true,
+        "command": true,
+        "drive": true,
+        "robot_q": true,
+        "tool_pose": true,
+        "fruit_positions": true,
+        "mocap_pos": true,
+        "mocap_quat": true
+      },
+      "realtime_factor": 0.7657172632228515,
+      "loop_wall_s": 177.78973154351115
+    },
+    "campaign_rebuilt300_thread4": {
+      "same_keys": true,
+      "all_arrays_equal": true,
+      "array_equality": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "phase": true,
+        "window_index": true,
+        "command": true,
+        "drive": true,
+        "robot_q": true,
+        "tool_pose": true,
+        "fruit_positions": true,
+        "mocap_pos": true,
+        "mocap_quat": true
+      },
+      "realtime_factor": 0.69920166750751,
+      "loop_wall_s": 194.70300628989935
+    },
+    "campaign_rebuilt300_contact_threads": {
+      "same_keys": true,
+      "all_arrays_equal": true,
+      "array_equality": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "phase": true,
+        "window_index": true,
+        "command": true,
+        "drive": true,
+        "robot_q": true,
+        "tool_pose": true,
+        "fruit_positions": true,
+        "mocap_pos": true,
+        "mocap_quat": true
+      },
+      "realtime_factor": 0.7075141674834274,
+      "loop_wall_s": 192.41546377912164
+    }
+  },
+  "thread_checkpoint_benchmark": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/thread_benchmark.json",
+    "sha256": "c6b19c8461da9f38ffe26938160a51b0d3c5e1bde9cbf015f6cb32e50c31ffb6",
+    "scope": "Same measured checkpoint with zero warmstart in every case; not an exact original continuation",
+    "whole_run_conclusion": "Workers4, globally or contact-only, are slower than worker0; arrays identical"
+  },
+  "tests": {
+    "native": 50,
+    "usd": 12,
+    "total": 62,
+    "passed": true,
+    "logs": [
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/logs/final_native_tests.log",
+        "sha256": "04440455bef36e57797fd19cf31258b9d80bb1a2c3f15be297173a8f7c1b0959"
+      },
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/logs/final_usd_tests.log",
+        "sha256": "d6f85ebf203d2c9af13bcabe8f069965599c41930e9f471dd5363a9dbb89c509"
+      }
+    ],
+    "gui_graceful_exit": {
+      "display": ":0",
+      "command": "./mujoco-benchmark/run_s300_mujoco.sh replay --start 45 --end 47 --gui-duration-s 2",
+      "exit_code": 0,
+      "physics_reexecuted": false
+    },
+    "bash_syntax": true,
+    "diff_check": true
+  },
+  "videos": [
+    {
+      "video": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_aisle_full.mp4",
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_aisle_full.json",
+      "requested_start_s": 0.0,
+      "requested_end_s": 136.13666666662283,
+      "video_sha256": "62c3a5e3e1a37c843ce752611bee75de49ca9a0357806d3c139626290d5a4304",
+      "full_decode_passed": true,
+      "probe": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "20/1",
+        "duration": "136.200000",
+        "nb_read_frames": "2724"
+      },
+      "raw_scene_checked_frames": 2724
+    },
+    {
+      "video": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_belt_plant29.mp4",
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_belt_plant29.json",
+      "requested_start_s": 45.0,
+      "requested_end_s": 72.0,
+      "video_sha256": "675dd73ed15f94f1c6a8684dc33b4a78b484cb8c73aad56b9bd1e6541d4f0246",
+      "full_decode_passed": true,
+      "probe": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "30/1",
+        "duration": "27.033333",
+        "nb_read_frames": "811"
+      },
+      "raw_scene_checked_frames": 811
+    },
+    {
+      "video": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_fruit_plant41.mp4",
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_fruit_plant41.json",
+      "requested_start_s": 106.0,
+      "requested_end_s": 121.0,
+      "video_sha256": "d8ed980c269414f68dadee0ad13494f8bf87ecaa471ab473fe4c9a8455971273",
+      "full_decode_passed": true,
+      "probe": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "30/1",
+        "duration": "15.033333",
+        "nb_read_frames": "451"
+      },
+      "raw_scene_checked_frames": 451
+    }
+  ],
+  "diagnostic_video": {
+    "video": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_harvest_gap_plant41.mp4",
+    "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/actual_harvest_gap_plant41.json",
+    "full_decode_passed": true,
+    "frame_count_verified": true,
+    "probe": {
+      "width": 960,
+      "height": 720,
+      "r_frame_rate": "30/1",
+      "duration": "15.033333",
+      "nb_read_frames": "451"
+    },
+    "model_sha256": "6467d1f80736b2cbe97015e715d274bbf20ea9ccfde04ea81c8e1bf6be297769",
+    "states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c",
+    "model_and_states_sha_match_summary": true,
+    "physics_reexecuted": false,
+    "geometry_hidden": false,
+    "render_only_headlight": {
+      "active": 1,
+      "ambient": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "diffuse": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "specular": [
+        0.1,
+        0.1,
+        0.1
+      ]
+    },
+    "camera_eye_in_tool_at_start_m": [
+      0.0,
+      0.22,
+      0.08
+    ],
+    "camera_lookat_in_tool_at_start_m": [
+      0.0,
+      0.12,
+      0.03
+    ],
+    "camera_frozen_at_requested_start_s": 106.0,
+    "diagnostic_virtual_camera_not_validated_mounted_sensor": true,
+    "start_s": 106.0,
+    "end_s": 121.0,
+    "caption_font_px": 15,
+    "playback_rate": 1,
+    "preview_frame_budget_used": 15
+  },
+  "current_code_sha256": {
+    "benchmark_session.py": "84b74c8ce6725eddcf2bcb018b6d917a93280b7e4fb5e8d8068a72c28b49dcf0",
+    "export_scene.py": "4069ed60b0ea90536d3c1b75d5277ec4463aa06f26188c019e3a5e20e98eed2b",
+    "farm_adapter.py": "16d480547a2fbf8ab6ad9ab9e29e68416efc6339d8cb92b3b49abc81293b2b44",
+    "make_report.py": "d6c52e298cd76a8dc9f756bca19e0f656262cdd0143d9facfd617658eb36cb75",
+    "merge_windows.py": "97256bd5fe8c32b1899927e8c68f4ff33fd71b6242b429f78f95d39c97f796fb",
+    "plan_adapter.py": "f7ca91878f2b76a968ddd02f846aa425881f804b8efc644375b64f82ca644bda",
+    "prepare_harvest.py": "b93c78b9f00a2194c6814d664dab31038d165e36a288767150f49dd199f9f5f7",
+    "robot_adapter.py": "1357b964c545ba82a868cf5959bdb83ffe20a5a9fd111b3ad5c3daeae4daa80d",
+    "run_harvest.py": "2599687b42b1d95d383664e10f625b012009608f83ae6b2f6a4d980ccecadc3b",
+    "run_smoke.py": "dfe33b323a7ec232c2e11985af97091c44c7fee7f2b3b098a375024ad850cc03",
+    "test_contact_semantics.py": "00a0dc07172691449fd8edcbf0f100ee8d9ad9734e51d9b54e1822811af636d7",
+    "test_dynamic_session.py": "d6007df4d5757d392d35f82ebf99716395caad1862148fcd36b6110922e0c71b",
+    "test_farm_adapter.py": "5eeac4f01f0c93412425dfbad723ced51719b6cc97c668548884ff51fa438389",
+    "test_make_report.py": "443aee561b5e86e50e5e015588bb3bbe0ab023a2c3ffb1f1fe52de1c7161340c",
+    "test_merge_windows.py": "8c1167170915998a7756dfe4599397e985b5dd2ab62a209a7a87ae1c94fa9ade",
+    "test_plan_adapter.py": "eb5cc4cfb41b85bc04936b0b213f1f2718f860983254d51e176d212c3ee4e7cc",
+    "test_robot_adapter.py": "50430dd618e76777dad74a6a80bf9264479dfa4f0f239bcfba7658e40838e3dc",
+    "test_run_harvest.py": "a00df21ca71635d784df179a93ff158485efe45db8a678f30c7d6fcc9516cb7a",
+    "test_smoke.py": "1070cf3cc96cbd71dfd620b25de58c6022427c027f955de2c83efeb7aeee628f",
+    "test_view_smoke.py": "fc45ef4a4151a8fb32de00f56b593de5c6b766c9c6a324a5ab939077d7874834",
+    "view_smoke.py": "07926ccbe31737423f17105cd3296fc1dfbd649c1a21ae9f5ff7ca33110f55ab"
+  },
+  "recorded_invocation": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/invocation.json",
+  "recorded_physics_core_matches_current": true,
+  "post_execution_changes": "Replay SHA guard, GUI cleanup, optional diagnostic camera/light and report/eligibility presentation only; physics and stored state unchanged",
+  "training_eligible": false,
+  "harvest_success": null,
+  "end_to_end_collection_verified": false,
+  "full_physics_validated": false,
+  "limitations": [
+    "SIM-GT ripe-group selection and existing IK; camera inference, optimized farm route and whole-farm harvesting are not implemented.",
+    "Target-only plant collisions; neighboring plants remain full-resolution visuals without collision. Gutters, ground and robot collisions remain active.",
+    "Fruit connect/angular spring, estimated inertia and per-source-mesh convex hulls are native adaptations; PhysX equivalence and biological damage limits are not established.",
+    "Detached eligibility is derived from the exact source color policy, not fruit numbers. Color-selective harvesting, biological ripeness and collection are not generally validated; harvest_success remains null.",
+    "Dropped-fruit impacts are retained physically but diagnosed separately. The opt-in gutter exception applies only after release; robot/attached-fruit/gutter contacts remain strict.",
+    "CPU execution only. This run is not a GPU scaling or parallel-harvest validation.",
+    "The floor top-plane variant preserves the original visible box and its top height but has infinite extent. It fixes thin-box tunneling, not small-penetration accuracy of falling impacts."
+  ]
+}

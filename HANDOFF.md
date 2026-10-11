@@ -1,5 +1,23 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-12: S300 전체 농장·연속 수확 MuJoCo 3.15 연결 완료
+
+- `codex/s300-mujoco-belt-smoke-20261012`, Isaac 보존 `ca3a716`, 이전 소규모 시험 `51e22eb` 후속.
+- 전체 농장 원본 외형 + S300/리프트/RB5/동적 턱/안쪽 벨트, 241바디/739DOF. pose 강제 이동 없음.
+- 레일 총 약1.714m 이동, 두 송이의 선정 집단03/04/05 모두 포함해 **빨간색 판정 대상9개 분리**.
+  원본 policy의07/08도 빨간색 대상. 진입 전96mm 개방, 수평 진입, 닫기/열기2회, 후퇴·다음 위치 완료.
+  잔여 대상1/4개 중 한 번에 잡을 집단 최대1/2개라 최소집단3개 미달로 남김.
+- 최종 **300Hz 접촉/60Hz 이동/worker0**: 136.137sim/174.589loop초=**.780×**.
+  활동 겹침.983mm, 1mm 중단0. 낙하 후 최대15.37mm는 별도 진단이며 전체 물리 정확도 통과 아님.
+- 전체 반복/worker4 전 구간/4 접촉 구간의 저장 배열 완전 일치. worker4는 전체 실행에서 더 느려 기본0 유지.
+- 타깃 송이·자기 주줄기만 식물 충돌, 잎 무시, 나머지 식물 외형 유지. 구조물은 거터18개+바닥.
+  opt-in 낙하 과실↔거터 진단 예외, 바닥 top-plane 사용. 부착 과실/로봇 거터 기준 유지.
+- 접촉 margin 이식 오류와 마지막 열기 60Hz 누락, 검은 영상 camera/light 갱신, 캐시 원본 보호 수정.
+- 명령: `./mujoco-benchmark/run_s300_mujoco.sh replay`(실제 기록1× GUI), `test`(새 물리), `prepare`(새 변환).
+- 결과 `/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/index.html`, 대표 `campaign_final`.
+- 자세한 이식/속도/영상/검사/한계: [S300_MUJOCO_MIGRATION_KO.md](mujoco-benchmark/S300_MUJOCO_MIGRATION_KO.md).
+- RGB-D 기반 선택·전체 행로·GPU 병렬·수거·실물 손상 기준은 미완료. `harvest_success=null`, `training_eligible=false`.
+
 ## 2026-10-12: MuJoCo 3.15 단일 송이 시험
 
 - Isaac 기존 작업 `ca3a716` 보존 후 `codex/s300-mujoco-belt-smoke-20261012`에서 시험.

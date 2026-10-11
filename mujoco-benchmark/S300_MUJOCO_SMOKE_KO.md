@@ -147,9 +147,22 @@ cd /root/farmily_tomato
 `index.html`, `validation.json`, model315/XML·OBJ·trace, 각 실행 states/contact/metrics/MJB 포함.
 모든 영상은 960×720, 30fps, 1배속, 작은 자막, 실제 저장 상태 재생이다.
 
-- 안쪽 120Hz: `verified_inward120/repeat_00/actual_top.mp4`
-- 벨트 정지 120Hz: `off120/repeat_00/actual_top.mp4`
-- 기준 초과 60Hz: `inward60/repeat_00/actual_top.mp4`
+- 안쪽 120Hz: `verified_inward120/repeat_00/actual_top_visible.mp4`
+- 벨트 정지 120Hz: `off120/repeat_00/actual_top_visible.mp4`
+- 기준 초과 60Hz: `inward60/repeat_00/actual_top_visible.mp4`
+
+### 검은 영상 수정 (2026-10-12)
+
+최초 `actual_top.mp4` 3개는 자막만 보이고 장면은 검은 화면이었다. 파일 디코드 검사만으로
+장면이 보인다고 확인한 것은 잘못이었다. 원인은 재생기가 `mj_kinematics`/`mj_comPos`만
+호출하고 `mj_camlight`를 누락해 카메라·조명 world transform이 0으로 남은 것이다.
+물리 재실행 없이 저장된 동일 qpos/mocap 기록을 사용하여 `_visible.mp4`로 다시 렌더링한다.
+기존 검은 영상은 증거로 보존하고 HTML에는 수정 영상만 표시한다.
+
+재생기에 camera/light 갱신과 자막을 그리기 전 모든 프레임의 균일/검은 화면 검사를 추가했다.
+별도 native 렌더 회귀시험은 저장 pose 복원 후 카메라·조명 위치, 실제 물체 픽셀,
+시간/qpos 보존을 검사한다. 기존 물리 시험 6개와 렌더 회귀 2개, 총 8개 통과.
+수정 영상 검사는 결과 루트의 `render_fix_validation.json`에 저장한다.
 
 ## 다음 판단
 

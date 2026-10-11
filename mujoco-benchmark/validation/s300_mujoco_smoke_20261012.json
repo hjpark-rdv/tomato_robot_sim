@@ -779,16 +779,16 @@
   },
   "videos": [
     {
-      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/inward60/repeat_00/actual_top.mp4",
-      "sha256": "efb6778b5b09e298c9090d0ca686841983e26345b4f8182293919e59b0d2e45a"
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/inward60/repeat_00/actual_top_visible.mp4",
+      "sha256": "178073bbd0b4b667a349a6f93441b4ffd2b0aeeb88e788f06d888a28dce5123b"
     },
     {
-      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/verified_inward120/repeat_00/actual_top.mp4",
-      "sha256": "2fc740caf0549f5e94168cc6fca0f3d6681412d72c7fe107af987196be1020bc"
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/verified_inward120/repeat_00/actual_top_visible.mp4",
+      "sha256": "02604affe669fa0a209263b7ada254dd25b08758f77c42eb8b3b4c2a97da2e22"
     },
     {
-      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/off120/repeat_00/actual_top.mp4",
-      "sha256": "821c1934d3cd3de6069e01d3675f40b86e1b37505d35d82f740aaa621905ba41"
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/off120/repeat_00/actual_top_visible.mp4",
+      "sha256": "852a61e214ee5b3b261740915e26f3acb79c92b9c4ecd4be1d3c2c8d82c034d5"
     }
   ],
   "source": {
@@ -1176,7 +1176,8 @@
       "Discrete integrator accounts for damping in constraint effective inertia. No gravity preload: this selected plant settles under gravity.",
       "Source replay ends at its original 36.8s stop; no unrecorded withdrawal is invented."
     ],
-    "geometry_inventory_count": 630
+    "geometry_count": 630,
+    "geometry_inventory_path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315/export.json"
   },
   "training_eligible": false,
   "harvest_success": null,
@@ -1199,22 +1200,109 @@
     "The 36.8s source trace stops during final opening. This is not a completed withdrawal or whole-truss harvest.",
     "Belt-off still releases fruit by jaw/branch loading. Separation alone does not prove belt rotation harvesting."
   ],
-  "official_version_check": {
-    "version": "3.15.0",
-    "release_date": "2026-10-05",
-    "checked_date": "2026-10-12",
-    "url": "https://github.com/google-deepmind/mujoco/releases/tag/3.15.0",
-    "python": "3.11.14 (main, Oct 10 2025, 08:54:03) [GCC 11.4.0]",
-    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.35",
-    "old_environment_unchanged": "mujoco-benchmark/.venv: MuJoCo 3.13.0"
-  },
-  "tests": {
-    "native_controls": 6,
-    "passed": true,
-    "old_isaac_tests_before_commit": 176,
-    "old_commit": "ca3a716"
-  },
-  "artifact_manifest": {
-    "model315/export.json": "5fda0b217445015ee0581d440134a7bb345c7e230d294addff9a1980172934fb"
+  "render_fix": {
+    "cause": "Missing mj_camlight left camera and light world transforms zero",
+    "physics_reexecuted": false,
+    "tests_passed": 8,
+    "videos": [
+      {
+        "experiment": "verified_inward120",
+        "video": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/verified_inward120/repeat_00/actual_top_visible.mp4",
+        "sha256": "02604affe669fa0a209263b7ada254dd25b08758f77c42eb8b3b4c2a97da2e22",
+        "original_black_video_sha256": "2fc740caf0549f5e94168cc6fca0f3d6681412d72c7fe107af987196be1020bc",
+        "states_sha256": "3eac7ae4403091db38406b7b1c04b8489023378ca0b47d948560e8f563378f8a",
+        "states_unchanged": true,
+        "full_decode_passed": true,
+        "raw_scene_checked_frames": 1105,
+        "decoded_frame_checks": [
+          {
+            "time_s": 0,
+            "below_caption_std": 30.19015264396023,
+            "colored_pixels_below_caption": 7628
+          },
+          {
+            "time_s": 20,
+            "below_caption_std": 47.53741823057129,
+            "colored_pixels_below_caption": 53419
+          },
+          {
+            "time_s": 26,
+            "below_caption_std": 44.89153013999372,
+            "colored_pixels_below_caption": 45726
+          },
+          {
+            "time_s": 36,
+            "below_caption_std": 45.00566587777351,
+            "colored_pixels_below_caption": 45579
+          }
+        ]
+      },
+      {
+        "experiment": "off120",
+        "video": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/off120/repeat_00/actual_top_visible.mp4",
+        "sha256": "852a61e214ee5b3b261740915e26f3acb79c92b9c4ecd4be1d3c2c8d82c034d5",
+        "original_black_video_sha256": "821c1934d3cd3de6069e01d3675f40b86e1b37505d35d82f740aaa621905ba41",
+        "states_sha256": "7b90f5bfb360af6c57ab607b97592a583419e68fdb627cbaa042fe9c8cd703b8",
+        "states_unchanged": true,
+        "full_decode_passed": true,
+        "raw_scene_checked_frames": 1105,
+        "decoded_frame_checks": [
+          {
+            "time_s": 0,
+            "below_caption_std": 30.188819924822536,
+            "colored_pixels_below_caption": 7626
+          },
+          {
+            "time_s": 20,
+            "below_caption_std": 47.538938809253935,
+            "colored_pixels_below_caption": 53355
+          },
+          {
+            "time_s": 26,
+            "below_caption_std": 45.629956014598,
+            "colored_pixels_below_caption": 48127
+          },
+          {
+            "time_s": 36,
+            "below_caption_std": 45.529159888193035,
+            "colored_pixels_below_caption": 48000
+          }
+        ]
+      },
+      {
+        "experiment": "inward60",
+        "video": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/inward60/repeat_00/actual_top_visible.mp4",
+        "sha256": "178073bbd0b4b667a349a6f93441b4ffd2b0aeeb88e788f06d888a28dce5123b",
+        "original_black_video_sha256": "efb6778b5b09e298c9090d0ca686841983e26345b4f8182293919e59b0d2e45a",
+        "states_sha256": "883f5c2fad909f4d70e11ec91998e637c69679cca96a115d2a021e692842af0e",
+        "states_unchanged": true,
+        "full_decode_passed": true,
+        "raw_scene_checked_frames": 1105,
+        "decoded_frame_checks": [
+          {
+            "time_s": 0,
+            "below_caption_std": 30.18500324414103,
+            "colored_pixels_below_caption": 7654
+          },
+          {
+            "time_s": 20,
+            "below_caption_std": 47.54269801602032,
+            "colored_pixels_below_caption": 53340
+          },
+          {
+            "time_s": 26,
+            "below_caption_std": 45.43755178792216,
+            "colored_pixels_below_caption": 47342
+          },
+          {
+            "time_s": 36,
+            "below_caption_std": 45.238411145919876,
+            "colored_pixels_below_caption": 47049
+          }
+        ]
+      }
+    ],
+    "contact_sheet": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/render_fix_contact_sheet.jpg",
+    "old_black_exports_preserved": true
   }
 }

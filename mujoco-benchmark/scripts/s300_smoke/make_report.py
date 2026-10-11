@@ -4,12 +4,38 @@ import hashlib
 import html
 import json
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import mujoco as mj
 
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_trial_report(folder):
+    """Always leave a directly readable index beside the native run evidence."""
+    folder=Path(folder);result=json.loads((folder/'summary.json').read_text())
+    table=''.join('<tr>'+''.join('<td>'+html.escape(str(row.get(key,'')))+'</td>'
+        for key in ('window','cycle','selected_group','completed','termination','stop'))+'</tr>'
+        for row in result['cycles'])
+    video=''.join(f'<p>{html.escape(str(p))}</p><video controls preload="metadata" src="{html.escape(p.name)}"></video>'
+        for p in sorted(folder.glob('actual*.mp4')))
+    text=f'''<!doctype html><html lang="ko"><meta charset="utf-8"><title>Native S300 harvest trial</title>
+<style>body{{font:16px sans-serif;margin:24px}}table{{border-collapse:collapse}}td,th{{border:1px solid #aaa;padding:8px}}video{{width:min(960px,100%)}}p{{overflow-wrap:anywhere}}</style>
+<h1>S300 MuJoCo 실제 실행</h1>
+<p>MuJoCo {result['mujoco_version']} / sim {result['simulated_s']:.2f}s / loop {result['loop_wall_s']:.2f}s /
+RTF {result['realtime_factor']:.2f} / 분리 {len(result['breaks'])}개 / 중단 {html.escape(str(result['stop']))}</p>
+<p>활동 겹침 최대 {result['active_contact_penetration_m']*1000:.3f}mm.
+분리 후 충돌 최대 {result['released_penetration_m']*1000:.3f}mm는 별도 기록.
+training_eligible=false / harvest_success=null / 수거·실물 안전성 미검증.</p>
+<table><tr><th>식물</th><th>진입</th><th>선택 집단</th><th>완주</th><th>선택 종료</th><th>물리 중단</th></tr>{table}</table>
+<p><a href="summary.json">결과</a> / <a href="contacts.json">실제 접촉</a> /
+<a href="break_events.json">힘·토크 분리</a> / <a href="phase_events.json">단계·시간</a> /
+<a href="invocation.json">입력·코드 해시</a></p>
+<p>영상은 저장 qpos를 재생합니다. GUI: <code>./mujoco-benchmark/run_s300_mujoco.sh replay {html.escape(str(folder))}</code></p>
+{video}</html>'''
+    (folder/'index.html').write_text(text)
 
 
 def build(root):
@@ -46,6 +72,10 @@ def build(root):
             a=np.load(p/'repeat_00/states.npz');b=np.load(p/'repeat_01/states.npz')
             repeats[name]={k:bool(np.array_equal(a[k],b[k])) for k in a.files}
         for video in p.rglob('*.mp4'):
+            if video.with_name(video.stem+'_visible.mp4').exists():
+                # Preserve the original black export as evidence, but link the
+                # corrected replay. Do not present both as different trials.
+                continue
             videos.append(dict(path=str(video),sha256=digest(video)))
     meta=json.loads((root/'model315/export.json').read_text())
     report=dict(schema='s300-mujoco-315-smoke-v1',root=str(root),results=rows,
@@ -69,6 +99,8 @@ def build(root):
                     'The 36.8s source trace stops during final opening. This is not a completed withdrawal or whole-truss harvest.',
                     'Belt-off still releases fruit by jaw/branch loading. Separation alone does not prove belt rotation harvesting.',
                 ])
+    render_fix=root/'render_fix_validation.json'
+    if render_fix.exists():report['render_fix']=json.loads(render_fix.read_text())
     (root/'validation.json').write_text(json.dumps(report,indent=2)+'\n')
     table=''.join('<tr>'+''.join('<td>'+html.escape(str(v))+'</td>' for v in [
         s['experiment']+f' #{s["repeat"]}',s['hz'],f'{s["loop_wall_s"]:.2f}',f'{s["realtime_factor"]:.2f}',
@@ -89,6 +121,9 @@ def build(root):
 <table><tr><th>시험 / 반복</th><th>Hz</th><th>실행 초</th><th>실시간 배율</th><th>분리 번호</th><th>부착 상태 최대 겹침 mm</th><th>분리 후 최대 겹침 mm</th></tr>{table}</table>
 <p>주행 조건은 모두 저장된 36.8초 동작. idle만 5초. 속도는 상태 기록·접촉 검사 포함, 로딩·영상 렌더 제외.
 영상을 틀 때 물리를 다시 실행하지 않습니다. 아래는 실제 qpos의 1배속 재생입니다.</p>
+<p>영상 수정: 초기 actual_top.mp4는 카메라·조명 변환 갱신 누락으로 검게 저장됐습니다.
+아래 actual_top_visible.mp4는 같은 물리 기록에서 다시 렌더링한 영상입니다.
+<a href="render_fix_validation.json">프레임·원본 상태 해시 검사</a></p>
 {movie}<h2>한계</h2><ul>{''.join('<li>'+html.escape(x)+'</li>' for x in report['limitations'])}</ul>
 <p><a href="validation.json">원자료·해시·재현성·전체 시험표 JSON</a></p></html>'''
     (root/'index.html').write_text(text)
@@ -96,5 +131,105 @@ def build(root):
     return report
 
 
+def build_harvest(root,primary):
+    """Report dynamic-robot trials without promoting separation to collection."""
+    root=Path(root);primary=Path(primary)
+    primary=primary if primary.is_absolute() else root/primary
+    selected=json.loads((primary/'summary.json').read_text())
+    trials=[]
+    for path in sorted(root.glob('campaign*/summary.json')):
+        result=json.loads(path.read_text())
+        model_xml=Path(result['model_dir'])/'scene.xml'
+        if digest(model_xml)!=result['source_model_xml_sha256']:
+            raise ValueError('Trial/report model hash mismatch: '+str(model_xml))
+        geom=ET.parse(model_xml).getroot().find('default/geom')
+        corrected=(geom is not None and float(geom.get('margin','0'))==0. and
+                   float(geom.get('gap','0'))==.0005)
+        # The first diagnostic recorded only active tool pairs. Preserve its
+        # scope rather than retroactively calling it an all-active maximum.
+        metric_key=('active_contact_penetration_m' if 'active_contact_penetration_m' in result
+                    else 'active_tool_penetration_m')
+        trials.append(dict(trial=path.parent.name,summary=str(path),
+            simulated_s=result['simulated_s'],loop_wall_s=result['loop_wall_s'],
+            realtime_factor=result['realtime_factor'],stop=result['stop'],
+            detached=len(result['breaks']),active_penetration_mm=1000*result[metric_key],
+            active_metric_scope='all_active' if metric_key=='active_contact_penetration_m' else 'tool_only',
+            released_penetration_mm=1000*result['released_penetration_m'],
+            max_contact_force_n=result['max_contact_force_n'],
+            active_contact_criterion_passed=result['active_contact_criterion_passed'],
+            contact_mapping_corrected=corrected,
+            first_violation=result['first_1mm_violation'],states_sha256=result['states_sha256']))
+    videos=[]
+    for video in sorted(root.glob('campaign*/actual*.mp4')):
+        info=video.with_suffix('.json')
+        videos.append(dict(path=str(video),sha256=digest(video),
+                           replay=json.loads(info.read_text()) if info.exists() else None))
+    per_window={}
+    for event in selected['breaks']:
+        per_window.setdefault(event['window'],[]).append(event['name'])
+    eligibility={}
+    metadata_path=Path(selected['model_dir'])/'export.json'
+    if metadata_path.exists():
+        metadata=json.loads(metadata_path.read_text())
+        for window in metadata.get('windows',[]):
+            policy_path=Path(window['source_trial'])/'harvest_group_policy.json'
+            policy=json.loads(policy_path.read_text())
+            for fruit in policy['fruit_eligibility']:
+                eligibility[window['prefix']+fruit['name']]=fruit['eligible']
+    detached_eligibility=dict(
+        eligible=sum(eligibility.get(event['name']) is True for event in selected['breaks']),
+        ineligible=sum(eligibility.get(event['name']) is False for event in selected['breaks']),
+        unknown=sum(event['name'] not in eligibility for event in selected['breaks']),
+        scope='Source authored RGB color proxy, not biological ripeness validation')
+    limitations=[
+        'SIM-GT ripe-group selection and existing IK; camera inference, optimized farm route and whole-farm harvesting are not implemented.',
+        'Target-only plant collisions; neighboring plants remain full-resolution visuals without collision. Gutters, ground and robot collisions remain active.',
+        'Fruit connect/angular spring, estimated inertia and per-source-mesh convex hulls are native adaptations; PhysX equivalence and biological damage limits are not established.',
+        'Detached eligibility is derived from the exact source color policy, not fruit numbers. Color-selective harvesting, biological ripeness and collection are not generally validated; harvest_success remains null.',
+        'Dropped-fruit impacts are retained physically but diagnosed separately. The opt-in gutter exception applies only after release; robot/attached-fruit/gutter contacts remain strict.',
+        'CPU execution only. This run is not a GPU scaling or parallel-harvest validation.',
+        'The floor top-plane variant preserves the original visible box and its top height but has infinite extent. It fixes thin-box tunneling, not small-penetration accuracy of falling impacts.',
+    ]
+    report=dict(schema='s300-mujoco-full-robot-migration-v1',primary=str(primary),
+                primary_summary=selected,trials=trials,detached_by_window=per_window,
+                videos=videos,detached_eligibility=detached_eligibility,limitations=limitations,training_eligible=False,
+                harvest_success=None,end_to_end_collection_verified=False)
+    (root/'harvest_validation.json').write_text(json.dumps(report,indent=2)+'\n')
+    def esc(value):return html.escape(str(value))
+    rows=''.join('<tr>'+''.join('<td>'+esc(value)+'</td>' for value in (
+        trial['trial'],f"{trial['simulated_s']:.2f}",f"{trial['loop_wall_s']:.2f}",
+        f"{trial['realtime_factor']:.2f}",trial['detached'],f"{trial['active_penetration_mm']:.3f}",
+        trial['active_metric_scope'],trial['active_contact_criterion_passed'],
+        trial['stop'] or ('완주' if trial['active_contact_criterion_passed'] else '완주했으나 물리 기준 초과')))
+        +'</tr>' for trial in trials)
+    movie=''.join(f'<section><h3>{esc(Path(v["path"]).parent.name)} / {esc(Path(v["path"]).name)}</h3>'
+        f'<video controls preload="metadata" src="{esc(Path(v["path"]).relative_to(root))}"></video>'
+        f'<p>{esc(v["path"])}</p></section>' for v in videos)
+    text=f'''<!doctype html><html lang="ko"><meta charset="utf-8"><title>S300 MuJoCo 전체 로봇 이식</title>
+<style>body{{font:16px sans-serif;margin:24px;background:#f6f7f9;color:#182230}}table{{border-collapse:collapse}}td,th{{border:1px solid #aaa;padding:7px}}video{{width:min(960px,100%)}}p{{overflow-wrap:anywhere}}.note{{background:#fff0ce;padding:16px}}</style>
+<h1>S300 + 리프트 + RB5 + 벨트 그리퍼 + 전체 농장 — MuJoCo 3.15</h1>
+<p>2026-10-12 / 실제 actuator physics / 저장 qpos 재생 / SIM-GT 진단</p>
+<p class="note">대표 결과: {esc(primary.name)} — {selected['simulated_s']:.2f}초 계산에 {selected['loop_wall_s']:.2f}초,
+실시간 {selected['realtime_factor']:.2f}배. {len(selected['breaks'])}개 분리.
+중단: {esc(selected['stop'] or '없음')}. 활동 접촉 최대 {selected['active_contact_penetration_m']*1000:.3f}mm.
+열매 분리는 수거·실물 수확 성공과 다릅니다. 아래 실패 시험도 보존했습니다.</p>
+<p>source 색상 판정 대상 분리 {detached_eligibility['eligible']}개, 비대상 {detached_eligibility['ineligible']}개,
+숙도 매핑 미확인 {detached_eligibility['unknown']}개. 생물학적 숙도 판정은 아닙니다.</p>
+<p>대표 시험 접촉 시 {selected['hz']}Hz, 계산 주기별 step 수 {esc(selected['physics_steps_by_hz'])}.
+각 진입마다 두 번 닫고 열며, 진입 전 완전 열림을 확인합니다.
+속도는 물리·검사·상태 기록 포함, 초기 로딩·계획·저장·영상 제외입니다.</p>
+<table><tr><th>시험</th><th>sim초</th><th>wall초</th><th>RTF</th><th>분리</th><th>활동 겹침mm</th><th>측정 범위</th><th>1mm 기준</th><th>완주/중단</th></tr>{rows}</table>
+<p>이전 trial의 margin=.5mm 오류와 최종 열기 구간의 60Hz 분류 누락은 수정 후 새 초기 상태로 재시험했습니다.
+이전 실패 결과를 덮어쓰지 않았습니다. 모든 영상은 실제 기록 상태의 1배속이며 물리를 다시 실행하지 않습니다.</p>
+{movie}<ul>{''.join('<li>'+esc(x)+'</li>' for x in limitations)}</ul>
+<p><a href="harvest_validation.json">전체 결과·해시</a> / <a href="{esc(primary.name)}/summary.json">대표 원자료</a></p></html>'''
+    (root/'index.html').write_text(text)
+    return report
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('root',type=Path);a=p.parse_args();build(a.root)
+    p=argparse.ArgumentParser();p.add_argument('root',type=Path)
+    p.add_argument('--harvest-primary',type=Path)
+    a=p.parse_args()
+    if a.harvest_primary:build_harvest(a.root,a.harvest_primary)
+    else:build(a.root)
