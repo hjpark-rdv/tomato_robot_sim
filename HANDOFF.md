@@ -1,5 +1,52 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-11 수확 집단 중앙으로 접근 위치 보정
+
+`HarvestGroupSelector`가 선택된 열매들의 측정 중심 평균을 두 벨트 사이에 맞추도록
+그리퍼 국소X 방향만 보정한다. 기존 집단 선택 우선순위/송이 yaw/진입 깊이·높이를
+유지하며, 보정 후 모든 선택 과실의 반경 포함 범위 및 대상 밖 과실 유입을 재검사한다.
+식물 위치/물성을 바꾸지 않는다. 원래 기준점·이동량·보정 전후 오차는 선택 이력에 저장.
+동일Truss_02 한 번 진입 native시험: 계획15.920mm 옆으로 이동, 캡처16.333초의 실제
+집단 중심 좌우15.797→−0.122mm, 진입 끝−0.103mm. 두 닫기/완전 열기와 후퇴 완료.
+대상01~05의5개 분리, 대상07/08 및 대상 밖09/10/11 남음. 초기/실측 자기충돌PASS.
+53.5sim초/79.660loop초. 이전4개 분리 대비 이번5개이나 한 장면으로 수율 향상 일반화 금지.
+offline789개 PASS. `training_eligible=false`, `harvest_success=null`, 포집 미검증.
+결과: `/root/docker_share/mujoko_debugging_data/20261011_124843_centered_group_approach/`.
+요약: `nvidia-sim/harvest_s300/validation/centered_group_approach_20261011.json`.
+앞선 개방·2회 반복 변경과 함께 코드·문서·검증 요약을 커밋에 포함한다.
+사용자 gripper-design 변경은 별도 보존하며 영상·대형 상태 기록은 공유 폴더에 유지한다.
+
+## 2026-10-11 한 번 진입에서 닫기→완전 열기2회
+
+`belt_open_close_cycle`은 진입 후 벨트 연속 회전 상태로 닫기/열기2회를 완료한다.
+마지막 열림도 벨트 구동에 포함하고 개방 유지0.5초 동안 감속한다. 실제96mm 개방
+확인 후 벨트 정지·열린 상태 후퇴. 이전처럼 마지막 열림 전에 벨트를 끄지 않는다.
+접근 전 정지 개방, 동일 수평 접근/벨트 속도/공통1mm/물성은 유지한다.
+native1진입 시험: 두 완전 개방 피드백95.999/95.999mm, 초기/실측 자기충돌PASS,
+53.5sim초/77.179loop초, 대상4개 분리·3개 남음·대상 밖 분리0.
+이번 실행은1진입 예산으로 종료했으며 전체 송이 완료가 아니다. 턱 반복2회와
+새 집단으로 재진입하는 횟수를 혼동하지 말 것. 닫힘 중 실제 폭약33~34mm는 과실
+접촉을 받는 상태이며28mm 명령에 완전 도달했다는 뜻은 아니다.
+offline785개 PASS. 기존 명령 해시4개는 의도한 패턴 변경에 맞춰 갱신, 초기 로그 보존.
+결과/영상: `/root/docker_share/mujoko_debugging_data/20261011_123435_two_close_open_cycles/`.
+요약: `nvidia-sim/harvest_s300/validation/two_close_open_cycles_20261011.json`.
+이번 및 바로 앞 접근 전 개방 수정은 위 중앙 정렬 수정과 함께 커밋에 포함한다.
+
+## 2026-10-11 접근 전 그리퍼 완전 개방
+
+수평 진입은 출발 자세에서 먼저96mm 개방한 뒤 리프트/팔 준비 이동·진입을 한다.
+`--preparation-opening ready`가 기본이며, 기존44mm transfer 옵션은 이 모드에서
+적용하지 않고 요청값/실제 적용값을 기록한다. 옛 동작 재현은 `legacy-staging` 명시.
+각 이동 직전 실제 개방 피드백을 확인한다. 자세/방향/벨트/물성과 공통1mm 기준 유지.
+같은 Truss_02/TGS60/64 실제1회: 개방 중 팔 명령 변화0, 이동 중 실측95.984~96.000mm.
+53sim초/78.720loop초, 대상5개 분리 후 남은2개로 최소3개 규칙 종료, 대상 밖 분리0.
+초기/전체 실측 자기충돌 검사PASS, offline784개 PASS. 다음 사이클도 코드상 같은
+개방/검사 순서를 사용하나 이번 native 실행에서는 두 번째 사이클이 발생하지 않았다.
+결과/영상: `/root/docker_share/mujoko_debugging_data/20261011_122521_open_before_approach/`.
+문서: [HARVEST_GROUP_POLICY_KO.md](nvidia-sim/harvest_s300/HARVEST_GROUP_POLICY_KO.md).
+요약: `nvidia-sim/harvest_s300/validation/open_before_approach_20261011.json`.
+코드·문서·검증 요약은 위 중앙 정렬 수정과 함께 커밋에 포함한다.
+
 ## 2026-10-11 공통 겹침1mm 기본 적용 · 집단 수확 속도 비교
 
 사용자 요청으로 현재 Isaac S300 수확 실행기의 공통 active-contact 중단값을1mm로

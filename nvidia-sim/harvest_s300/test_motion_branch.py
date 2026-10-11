@@ -52,10 +52,10 @@ class MotionBranchTests(unittest.TestCase):
         b,bm=plan_motion(self.kin,self.center,self.start,**self.opts,
                          ready_lift_offset_m=0.,preparation_gap_m=None)
         self.assertEqual(am['phases'],bm['phases'])
-        # Captured from the unchanged source_before implementation on 2026-10-11;
-        # this catches a default-command change shared by both current calls.
+        # Fixed commands for the requested two complete close/open repetitions
+        # (2026-10-11); catches unintended changes shared by both current calls.
         digest=hashlib.sha256(json.dumps(am['phases'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
-        self.assertEqual(digest,'e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b')
+        self.assertEqual(digest,'d7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         for p,q in zip(a,b):
             self.assertEqual(p[:2],q[:2]);np.testing.assert_array_equal(p[2],q[2]);self.assertEqual(p[3:],q[3:])
         self.assertNotIn('prepare_lift_branch',[p[0] for p in a])
@@ -78,8 +78,9 @@ class MotionBranchTests(unittest.TestCase):
             self.assertAlmostEqual(newq[0],.32);np.testing.assert_allclose(self.kin.fk(newq),self.kin.fk(oldq),atol=1e-12)
         np.testing.assert_array_equal(meta['goal_pose'],original['goal_pose'])
 
-    def test_transfer_is_narrow_then_staging_opens_before_fully_open_insertion(self):
-        phases,meta=plan_motion(self.kin,self.center,self.start,**self.opts,preparation_gap_m=.044)
+    def test_legacy_transfer_can_be_reproduced_explicitly(self):
+        phases,meta=plan_motion(self.kin,self.center,self.start,**self.opts,preparation_gap_m=.044,
+                               preparation_opening='legacy-staging')
         labels=[p[0] for p in phases]
         self.assertGreater(labels.index('prepare_open'),labels.index('prepare_horizontal'))
         self.assertLess(labels.index('prepare_open'),labels.index('approach'))
@@ -100,6 +101,45 @@ class MotionBranchTests(unittest.TestCase):
             plan_motion(self.kin,self.center,self.start,preparation='direct',ready_lift_offset_m=.1)
         start=self.start.copy();start[0]=.9
         with self.assertRaisesRegex(ValueError,'lift limits'):ready_lift_branch(self.kin,start,.2)
+
+    def test_ready_opening_precedes_every_moving_phase_even_with_old_narrow_gap(self):
+        for connector in ('cartesian','joint'):
+            for offset in (0.,.2):
+                with self.subTest(connector=connector,offset=offset):
+                    opts=dict(self.opts,horizontal_ready_connector=connector,
+                              ready_lift_offset_m=offset,preparation_gap_m=.044)
+                    phases,meta=plan_motion(self.kin,self.center,self.start,**opts)
+                    old,_=plan_motion(self.kin,self.center,self.start,**opts,preparation_opening='legacy-staging')
+                    labels=[p[0] for p in phases]
+                    self.assertEqual(labels[:2],['ready_hold','prepare_open'])
+                    np.testing.assert_array_equal(phases[1][2],[self.start,self.start])
+                    self.assertNotIn('prepare_gap',labels)
+                    contract=meta['preparation_opening']
+                    self.assertEqual(contract['location'],'ready')
+                    self.assertEqual(contract['requested_transfer_gap_m'],.044)
+                    self.assertEqual(contract['effective_transfer_gap_m'],.096)
+                    for phase in phases[2:labels.index('approach')+1]:
+                        self.assertEqual(phase[3],.096)
+                        self.assertIn(phase[0],contract['feedback_before_phases'])
+                        original=next(p for p in old if p[0]==phase[0])
+                        np.testing.assert_array_equal(phase[2],original[2])
+                    # Harvest and withdrawal are identical; only preparation
+                    # jaw commands, opening location and schedule change.
+                    suffix=phases[labels.index('approach'):]
+                    old_suffix=old[next(i for i,p in enumerate(old) if p[0]=='approach'):]
+                    for new,previous in zip(suffix,old_suffix):
+                        self.assertEqual(new[:2],previous[:2])
+                        self.assertEqual(new[3:],previous[3:])
+                        np.testing.assert_array_equal(new[2],previous[2])
+                    previous=self.start
+                    for phase in phases:
+                        np.testing.assert_allclose(phase[2][0],previous,atol=1e-12)
+                        previous=phase[2][-1]
+
+    def test_opening_policy_rejects_unknown_values(self):
+        for value in ('staging',None,True):
+            with self.assertRaisesRegex(ValueError,'Preparation opening'):
+                plan_motion(self.kin,self.center,self.start,**self.opts,preparation_opening=value)
 
     def test_long_row_aim_requires_explicit_guard_and_changes_tcp_not_plant_or_orientation(self):
         translation=np.array([0,.6,0.]);before=self.center.copy()
@@ -170,7 +210,7 @@ class MotionBranchTests(unittest.TestCase):
         measured=self.start.copy();measured[3]-=.012
         phases,meta=plan_motion(self.kin,self.center,measured,**self.opts,
             allow_measured_ready_start=True,horizontal_ready_connector='joint',
-            ready_lift_offset_m=.2,preparation_gap_m=.044)
+            ready_lift_offset_m=.2,preparation_gap_m=.044,preparation_opening='legacy-staging')
         labels=[p[0]for p in phases]
         self.assertNotIn('prepare_height',labels);self.assertNotIn('prepare_horizontal',labels)
         connector=next(p for p in phases if p[0]=='prepare_joint_branch')

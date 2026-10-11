@@ -1,0 +1,125 @@
+{
+  "completed": true,
+  "stop_reason": null,
+  "initial_valid": true,
+  "actual_self_collision_passed": true,
+  "simulated_s": 53.0,
+  "loop_wall_s": 78.71968850679696,
+  "group_outcome": {
+    "eligible_detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04",
+      "Truss_02_Fruit_05"
+    ],
+    "ineligible_detached": [],
+    "eligible_remaining": [
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08"
+    ],
+    "ineligible_remaining": [
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11"
+    ],
+    "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+  },
+  "cycles": [
+    {
+      "index": 0,
+      "fruits": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04"
+      ],
+      "status": "motion_completed",
+      "stationary_opening_command_max_span_m_or_rad": 0.0,
+      "opening_command_start_mm": 44.0,
+      "opening_command_end_mm": 95.9571533203125,
+      "opening_actual_start_mm": 43.999908447265625,
+      "opening_actual_end_mm": 95.95930480957031,
+      "opening_start_s": 2.5166666666666666,
+      "opening_end_s": 3.5,
+      "feedback": {
+        "prepare_lift_branch": {
+          "actual_gap_m": [
+            0.09595930576324463
+          ],
+          "required_gap_m": 0.096,
+          "tolerance_m": 0.0005,
+          "reached": true,
+          "t": 3.5,
+          "phase": "prepare_lift_branch",
+          "checked_before_motion_command": true
+        },
+        "prepare_height": {
+          "actual_gap_m": [
+            0.09599260985851288
+          ],
+          "required_gap_m": 0.096,
+          "tolerance_m": 0.0005,
+          "reached": true,
+          "t": 7.5,
+          "phase": "prepare_height",
+          "checked_before_motion_command": true
+        },
+        "prepare_horizontal": {
+          "actual_gap_m": [
+            0.09598991274833679
+          ],
+          "required_gap_m": 0.096,
+          "tolerance_m": 0.0005,
+          "reached": true,
+          "t": 10.5,
+          "phase": "prepare_horizontal",
+          "checked_before_motion_command": true
+        },
+        "approach": {
+          "actual_gap_m": [
+            0.0959901288151741
+          ],
+          "required_gap_m": 0.096,
+          "tolerance_m": 0.0005,
+          "reached": true,
+          "t": 14.5,
+          "phase": "approach",
+          "checked_before_motion_command": true
+        }
+      },
+      "motion_sample_count": 900,
+      "first_motion_time_s": 3.5166666666666666,
+      "motion_command_gap_min_mm": 96.0,
+      "motion_command_gap_max_mm": 96.0,
+      "motion_actual_gap_min_mm": 95.98368835449219,
+      "motion_actual_gap_max_mm": 96.00018310546875
+    }
+  ],
+  "trace_finite": true,
+  "max_trace_dt_s": 0.016666666666672825,
+  "training_eligible": false,
+  "harvest_success": null,
+  "command_file": "/root/docker_share/mujoko_debugging_data/20261011_122521_open_before_approach/cases.json",
+  "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_sha256": {
+    "motion_kinematics.py": "ccac99dd0e7d4c0e04811994d4facbe704c878a97526342ac4bdfb88de5db83b",
+    "run_motion.py": "398a4983346d2df13d5e13763dbf1b08dbd6cb530a3655c75bf32c37eebee778",
+    "test_motion_branch.py": "a10bc69db3312ce116c985adca510dd8ac80d1f4f3b85020739a396db60dce2a"
+  },
+  "offline_tests": {
+    "tests": 784,
+    "success": true,
+    "skipped": 0,
+    "wall_s": 36.05305933766067,
+    "excluded_native_sdk_modules": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ]
+  },
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_122521_open_before_approach",
+  "baseline_commit": "21313154248ab2aa92491ee16240a6f85378210a",
+  "native_trial_count": 1,
+  "later_cycle_opening": "same planner/runner gates with per-cycle reset; multi-cycle native run not exercised because only2eligible fruit remained",
+  "video": "trials/ready_open_tgs60_64/open_before_approach.mp4"
+}

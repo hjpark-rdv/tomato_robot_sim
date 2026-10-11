@@ -24,13 +24,13 @@ class GraspLateralOffsetTests(unittest.TestCase):
             harvest_profile='belt_open_close_cycle', preparation_height_first=True,
             approach_direction_world=ready[:3, 1])
 
-    def test_zero_retains_captured_legacy_commands_exactly(self):
+    def test_zero_retains_captured_two_repetition_commands_exactly(self):
         original, original_meta = plan_motion(self.kin, self.center, self.start, **self.options)
         explicit, explicit_meta = plan_motion(self.kin, self.center, self.start,
             **self.options, grasp_lateral_offset_m=0.)
         digest = hashlib.sha256(json.dumps(original_meta['phases'], sort_keys=True,
             separators=(',', ':')).encode()).hexdigest()
-        self.assertEqual(digest, 'e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b')
+        self.assertEqual(digest, 'd7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         self.assertEqual(original_meta, explicit_meta)
         for before, after in zip(original, explicit):
             self.assertEqual(before[:2], after[:2])

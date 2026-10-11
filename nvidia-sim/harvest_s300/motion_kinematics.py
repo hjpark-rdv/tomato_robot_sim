@@ -270,6 +270,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                 belt_infeed_speed_m_s=0.,grasp_gap_m=.028,grasp_height_offset_m=0.,grasp_lateral_offset_m=0.,
                 grasp_translation_world_m=(0.,0.,0.),preparation_height_first=False,grasp_depth_m=.065,
                 approach_direction_world=None,preparation_gap_m=None,ready_lift_offset_m=0.,
+                preparation_opening='ready',
                 max_grasp_translation_m=.5,allow_measured_ready_start=False,
                 horizontal_ready_connector='cartesian',horizontal_ready_seed_index=None,
                 horizontal_ready_normalize_turns=False,approach_distance_m=.10):
@@ -284,7 +285,8 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     diagnostic option, never an IK fallback. An explicit ready lift offset adds
     a continuous TCP-holding redistribution and constrains the existing lift
     throughout the entry; it never substitutes a different initial state.
-    Optional preparation gap narrows the transfer and opens at staging.
+    Open at the stationary ready pose before any arm/lift preparation motion.
+    A narrow preparation gap is used only by explicit legacy-staging replay.
     An explicit measured-ready option connects the actual initial FK pose to
     level staging through physical IK waypoints. It does not replace initial
     joints, relax the final entry pose, or certify the connector as collision-free.
@@ -331,6 +333,8 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
         if (preparation!='horizontal_ready' or harvest_profile not in BELT_PROFILES or
                 not np.isfinite(preparation_gap_m) or not .028<=preparation_gap_m<=.096):
             raise ValueError('Preparation gap requires horizontal-ready belt motion and 28..96 mm')
+    if preparation_opening not in ('ready','legacy-staging'):
+        raise ValueError('Preparation opening must be ready or legacy-staging')
     if (not np.isfinite(ready_lift_offset_m) or abs(ready_lift_offset_m)>.4 or
             ready_lift_offset_m and (preparation!='horizontal_ready' or harvest_profile not in BELT_PROFILES)):
         raise ValueError('Ready lift offset requires horizontal-ready belt motion and finite +/-400 mm')
@@ -539,7 +543,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     if preparation=='horizontal_ready':
         approach_gap=.096  # Existing CAD/slider maximum; open before the cluster.
         prefix=[('ready_hold',.5,np.array([start,start]),.044,0.,0.),
-                ('prepare_open',1.,np.array([branch_start,branch_start]),approach_gap,0.,0.),
+                ('prepare_open',1.,np.array([start,start] if preparation_opening=='ready' else [branch_start,branch_start]),approach_gap,0.,0.),
                 ('prepare_horizontal',4.,np.array(ready_waypoints),approach_gap,0.,0.)]
         return_phases=[('return_ready',4.,np.array(ready_waypoints[::-1]),approach_gap,0.,0.)]
         if horizontal_ready_connector=='joint':
@@ -555,7 +559,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                 ('prepare_horizontal',4.,np.array(ready_waypoints[80:]),approach_gap,0.,0.)]
             return_phases=[('return_ready',4.,np.array(ready_waypoints[80:][::-1]),approach_gap,0.,0.),
                            ('return_height',3.,np.array(ready_waypoints[:81][::-1]),approach_gap,0.,0.)]
-        if preparation_gap_m is not None:
+        if preparation_gap_m is not None and preparation_opening=='legacy-staging':
             # Narrow only the transfer. Opening is completed at staging before
             # the same fully open Cartesian insertion; physical feedback is
             # checked by the runner rather than inferred from these commands.
@@ -564,7 +568,10 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
             prefix=[prefix[0],('prepare_gap',1.,np.array([branch_start,branch_start]),float(preparation_gap_m),0.,0.),
                     *transfer,('prepare_open',1.,np.array([qprep,qprep]),approach_gap,0.,0.)]
         if lift_branch is not None:
-            prefix=[prefix[0],('prepare_lift_branch',4.,lift_branch,.044,0.,0.),*prefix[1:]]
+            if preparation_opening=='ready':
+                prefix=[*prefix[:2],('prepare_lift_branch',4.,lift_branch,approach_gap,0.,0.),*prefix[2:]]
+            else:
+                prefix=[prefix[0],('prepare_lift_branch',4.,lift_branch,.044,0.,0.),*prefix[1:]]
             return_phases += [('return_lift_branch',4.,lift_branch[::-1],approach_gap,0.,0.)]
     entry_seconds=4. if preparation=='horizontal_ready' else 8.
     phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.),
@@ -600,16 +607,18 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
         # Zero common infeed preserves the historical opposed commands exactly.
         left=-float(belt_speed_m_s)+float(belt_infeed_speed_m_s)
         right=float(belt_speed_m_s)+float(belt_infeed_speed_m_s)
-        # One uninterrupted belt window, including both closes and reopening.
+        # Two complete close/open repetitions in one insertion. Keep the belts
+        # running through BOTH openings; stop only after the final open hold.
         # Native separation during either close is an observation, not a failure.
         cycle=[('belt_start_open',max(1.,float(belt_ramp_seconds)),np.array([q,q]),approach_gap,left,right),
                ('close',float(close_seconds),np.array([q,q]),float(grasp_gap_m),left,right),
                ('cycle_open',1.,np.array([q,q]),approach_gap,left,right),
                ('cycle_open_hold',.5,np.array([q,q]),approach_gap,left,right),
                ('cycle_reclose',float(close_seconds),np.array([q,q]),float(grasp_gap_m),left,right),
-               ('belt_finish',float(belt_seconds),np.array([q,q]),float(grasp_gap_m),left,right)]
+               ('belt_finish',float(belt_seconds),np.array([q,q]),float(grasp_gap_m),left,right),
+               ('cycle_open_final',1.,np.array([q,q]),approach_gap,left,right),
+               ('cycle_open_final_hold',.5,np.array([q,q]),approach_gap,left,right)]
         phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.)]+cycle+[
-            ('release_open',1.,np.array([q,q]),approach_gap,0.,0.),
             ('withdraw',entry_seconds,np.array(waypoints[::-1]),approach_gap,0.,0.),
             *return_phases,
             ('ready_close',1.,np.array([start,start]),.044,0.,0.),
@@ -618,8 +627,12 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                         duration_s=sum(p[1] for p in cycle),phases=[p[0] for p in cycle],
                         full_open_gap_m=approach_gap,reclose_requires_measured_open=True,
                         opening_tracking_tolerance_m=.0005,
+                        close_open_repetitions=2,
+                        repetition_phases=[dict(close='close',open='cycle_open',open_hold='cycle_open_hold'),
+                                           dict(close='cycle_reclose',open='cycle_open_final',open_hold='cycle_open_final_hold')],
+                        withdraw_requires_measured_open=True,
                         detachment_during_close_is_allowed=True,
-                        finish='stop belts, open, withdraw and return to ready')
+                        finish='second complete opening with belts running, verify open, stop belts and withdraw open')
     if hasattr(kin,'bounds'):
         for name,_,qs,_,_,_ in phases:
             if np.any(qs<kin.bounds[0]-1e-8) or np.any(qs>kin.bounds[1]+1e-8):
@@ -653,6 +666,13 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                        horizontal_ready_seed_index=None if horizontal_ready_seed_index is None else int(horizontal_ready_seed_index),
                        preparation_height_first_applied=bool(preparation_height_first and horizontal_ready_connector=='cartesian'),
                        preparation_gap_m=float(preparation_gap_m) if preparation_gap_m is not None else None,
+                       preparation_opening=(dict(location=preparation_opening,
+                           requested_transfer_gap_m=preparation_gap_m,
+                           effective_transfer_gap_m=(approach_gap if preparation_opening=='ready' or preparation_gap_m is None else float(preparation_gap_m)),
+                           feedback_before_phases=([p[0] for p in prefix if p[0] not in ('ready_hold','prepare_open')]+['approach']
+                               if preparation_opening=='ready' else ['approach']),
+                           required_gap_m=approach_gap,tracking_tolerance_m=.0005)
+                           if preparation=='horizontal_ready' else None),
                        grasp_depth_m=float(grasp_depth_m),
                        grasp_height_offset_m=float(grasp_height_offset_m),grasp_center_world_m=center.tolist(),
                        belt_spin=(dict(duration_s=float(belt_seconds),surface_speed_m_s=float(belt_speed_m_s),

@@ -9,7 +9,8 @@ import numpy as np
 
 
 MANIPULATION_PHASES=frozenset(('approach','entry_hold','insert','infeed','close','belt_start_open',
-    'belt_spin','belt_finish','cycle_open','cycle_open_hold','cycle_reclose','grip_hold','twist'))
+    'belt_spin','belt_finish','cycle_open','cycle_open_hold','cycle_reclose',
+    'cycle_open_final','cycle_open_final_hold','grip_hold','twist'))
 
 
 def build_selected_cycle_evidence(manifest,sequence,breaks,body_paths=None,poses=None,times=None,events=(),*,legacy_summary=None,measured_phases=None):

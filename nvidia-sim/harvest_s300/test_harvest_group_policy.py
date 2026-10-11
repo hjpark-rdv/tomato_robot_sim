@@ -39,6 +39,48 @@ class GroupPolicyTests(unittest.TestCase):
         self.assertIsNone(self.select())
         self.assertEqual(self.selector.last_decision['reason'],'no_group_meets_minimum')
 
+    def test_asymmetric_group_is_centered_in_commanded_grasp_at_different_yaws(self):
+        from motion_kinematics import grasp_pose
+        for angle in (0., .7, -2.2):
+            with self.subTest(yaw=angle):
+                direction=np.array([np.sin(angle),np.cos(angle),0.])
+                rotation=np.column_stack((np.cross(direction,[0.,0.,1.]),direction,[0.,0.,1.]))
+                self.fixture(np.array([[0,0,1],[.03,.01,.99],[.03,.02,.98]])@rotation.T)
+                self.selector.direction=lambda *args:direction
+                result=self.select();self.assertIsNotNone(result)
+                evidence=result['group_selection']['lateral_centering']
+                self.assertGreater(abs(evidence['shift_tool_x_m']),.001)
+                seed=np.array(evidence['seed_aim_world_m'])
+                aim=np.array(result['aim_world_m'])
+                delta=(aim-seed)@rotation
+                np.testing.assert_allclose(delta[1:],0.,atol=1e-12)
+                pose=grasp_pose(aim+[0,0,.0075],direction,depth=.065)
+                local=(self.positions-pose[:3,3])@pose[:3,:3]
+                self.assertAlmostEqual(local[:,0].mean(),0.,places=12)
+                np.testing.assert_allclose(local,result['group_selection']['fruit_centers_tool_m'],atol=1e-12)
+                # Centroid symmetry does not imply equal fruit edge clearance.
+                self.assertTrue(np.all(np.abs(local[:,0])+.0115<=.048+1e-10))
+
+    def test_centering_rechecks_selected_fruit_radii(self):
+        self.fixture([[-.035,0,1],[.033,0,1],[.035,0,1]])
+        self.assertIsNone(self.select())
+        self.assertGreater(self.selector.last_decision['lateral_centering_rejections']['selected_fruit_outside'],0)
+        self.assertEqual(self.selector.last_decision['reason'],'no_centered_group_fits')
+        self.assertFalse(self.selector.last_decision['absolute_harvest_impossibility'])
+
+    def test_centering_cannot_admit_ineligible_fruit(self):
+        self.fixture([[-.016,0,1],[.019,0,1],[.025,0,1],[.044,0,1]],eligible=[0,1,2])
+        self.assertIsNone(self.select())
+        self.assertGreater(self.selector.last_decision['lateral_centering_rejections']['ineligible_fruit_inside'],0)
+
+    def test_centering_uses_latest_measured_state_without_moving_fruit(self):
+        self.fixture([[0,0,1],[.03,.01,.99],[.03,.02,.98]])
+        first=self.select()
+        self.positions[:,0]+=.02;before=self.positions.copy()
+        second=self.select()
+        self.assertAlmostEqual(second['aim_world_m'][0]-first['aim_world_m'][0],.02)
+        np.testing.assert_array_equal(self.positions,before)
+
     def test_reobserve_after_detachment_stops_with_two_left(self):
         self.fixture([[0,0,1],[.01,0,.985],[-.01,0,.97],[0,0,.95]])
         self.assertIsNotNone(self.select())

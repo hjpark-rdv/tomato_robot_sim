@@ -59,6 +59,9 @@ class HarvestGroupSelector:
     vertical overlap of a sphere is possible and is NOT full enclosure.
     Noneligible fruit centers in that footprint reject a proposed aim; nearby
     sphere overlap is recorded as a risk, never a no-unripe-contact guarantee.
+    Each selected group's measured centroid is centered laterally between the
+    jaws. This translates the aim along tool X only; yaw, depth and height stay
+    at the seed values. The translated footprint is checked again before use.
     """
     def __init__(self, policy, direction, *, depth_m=.065, height_offset_m=0., output=None):
         self.minimum = policy['minimum_fruits']
@@ -80,6 +83,7 @@ class HarvestGroupSelector:
         rejected = validated_rejected_groups(fruits, rejected_groups)
         attached = set(inventory(fruits, breaks)['remaining'])
         candidates = []
+        centering_rejections = dict(selected_fruit_outside=0, ineligible_fruit_inside=0)
         best_geometric_count = 0
         paths = list(body_paths)
         coords = np.asarray(poses, float)
@@ -122,13 +126,27 @@ class HarvestGroupSelector:
                     ids = np.flatnonzero(inside & available)
                     group_names = tuple(sorted(names[i] for i in ids))
                     if group_names in rejected: continue
-                    identity = (group_names, tuple(np.round(aim, 10)))
+                    seed_aim = aim.copy()
+                    centers = points[ids]
+                    lateral_shift = float(local[ids, 0].mean())
+                    aim = seed_aim + rotation[:, 0]*lateral_shift
+                    actual_center = aim + [0., 0., self.height_offset_m]
+                    local = (points-actual_center)@rotation + [0., .158-self.depth_m, .037]
+                    inside = ((np.abs(local[:,0])+radii <= .048+1e-10) &
+                              (local[:,1]-radii >= -1e-10) & (local[:,1]+radii <= .158+1e-10) &
+                              (local[:,2] >= .013-1e-10) & (local[:,2] <= .061+1e-10))
+                    if not np.all(inside[ids]):
+                        centering_rejections['selected_fruit_outside'] += 1
+                        continue
+                    if np.any(inside & ~ripe):
+                        centering_rejections['ineligible_fruit_inside'] += 1
+                        continue
+                    identity = (group_names, tuple(np.round(seed_aim, 10)))
                     if identity in seen: continue
                     seen.add(identity)
                     nearby = ((np.abs(local[:,0])-radii <= .048) &
                               (local[:,1]+radii >= 0) & (local[:,1]-radii <= .158) &
                               (local[:,2]+radii >= .013) & (local[:,2]-radii <= .061))
-                    centers = points[ids]
                     group = dict(fruits=[names[i] for i in ids], truss_key=key,
                         measured_centers_world_m=centers.tolist(),
                         measured_centroid_world_m=centers.mean(0).tolist(),
@@ -137,6 +155,15 @@ class HarvestGroupSelector:
                             direction_world=y.tolist(), belt_aim_world_m=actual_center.tolist(),
                             depth_m=self.depth_m, height_offset_m=self.height_offset_m,
                             fruit_centers_tool_m=local[ids].tolist(),
+                            lateral_centering=dict(method='selected_group_centroid_tool_x',
+                                seed_aim_world_m=seed_aim.tolist(),
+                                shift_tool_x_m=lateral_shift,
+                                translation_world_m=(aim-seed_aim).tolist(),
+                                centroid_tool_x_before_m=lateral_shift,
+                                centroid_tool_x_after_m=float(local[ids,0].mean()),
+                                footprint_rechecked=True),
+                            additional_eligible_inside=[names[i] for i in np.flatnonzero(inside & ripe)
+                                                        if i not in ids],
                             nearby_ineligible=[names[i] for i in np.flatnonzero(nearby & ~ripe)],
                             reachability='pending_existing_IK_collision_audit',
                             detachment='unknown_until_native_physics',
@@ -145,19 +172,23 @@ class HarvestGroupSelector:
                     # Try unattempted groups first, then the highest ripe group.
                     rank = (max(attempts.get(name, 0) for name in group_names),
                             -float(centers[:,2].max()), -count,
-                            float(np.linalg.norm(aim-centers.mean(0))), group_names, tuple(aim))
+                            # Retain the seed ranking so lateral correction
+                            # alone does not change the chosen depth/height.
+                            float(np.linalg.norm(seed_aim-centers.mean(0))), group_names, tuple(seed_aim))
                     candidates.append((rank, group))
         selected = min(candidates, key=lambda x:x[0])[1] if candidates else None
         eligible_remaining = sorted(attached & self.eligible)
         reason = ('group_available' if selected else
                   'no_eligible_fruit_remaining' if not eligible_remaining else
                   'attempt_budget_exhausted' if all(attempts.get(n,0)>=max_attempts for n in eligible_remaining) else
+                  'no_centered_group_fits' if any(centering_rejections.values()) else
                   'group_planning_alternatives_exhausted' if best_geometric_count >= self.minimum else
                   'no_group_meets_minimum')
         self.last_decision = dict(index=len(self.history), reason=reason,
             minimum_fruits=self.minimum, remaining=sorted(attached),
             eligible_remaining=eligible_remaining, ineligible_remaining=sorted(attached-self.eligible),
             best_geometric_count=best_geometric_count, candidate_aim_count=len(candidates),
+            lateral_centering_rejections=centering_rejections,
             selected=selected, absolute_harvest_impossibility=False)
         self.history.append(self.last_decision)
         if self.output:

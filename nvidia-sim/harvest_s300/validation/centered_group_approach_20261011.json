@@ -1,0 +1,138 @@
+{
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_124843_centered_group_approach",
+  "baseline": "/root/docker_share/mujoko_debugging_data/20261011_123435_two_close_open_cycles/trials/two_cycles_tgs60_64",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_124843_centered_group_approach/trials/centered_group_tgs60_64",
+  "checks": {
+    "same_selected_fruit": true,
+    "same_orientation": true,
+    "unchanged_depth_height": true,
+    "planned_centroid_centered": true,
+    "same_model": true,
+    "same_physics_settings": true,
+    "same_contact_limits": true
+  },
+  "goal_translation_in_tool_mm": [
+    15.920485286436755,
+    -2.0816681711721685e-14,
+    0.0
+  ],
+  "selected_fruits": [
+    "Truss_02_Fruit_01",
+    "Truss_02_Fruit_02",
+    "Truss_02_Fruit_03",
+    "Truss_02_Fruit_04"
+  ],
+  "centering": {
+    "method": "selected_group_centroid_tool_x",
+    "seed_aim_world_m": [
+      -0.4652514966821015,
+      1.5245556223835925,
+      1.0996548340074959
+    ],
+    "shift_tool_x_m": 0.01592048528643681,
+    "translation_world_m": [
+      0.004413731451002212,
+      0.015296431820332579,
+      0.0
+    ],
+    "centroid_tool_x_before_m": 0.01592048528643681,
+    "centroid_tool_x_after_m": 5.811323644522304e-17,
+    "footprint_rechecked": true
+  },
+  "actual_16_333_centroid_x_before_mm": 15.797006187196187,
+  "actual_16_333_centroid_x_after_mm": -0.12199883613512284,
+  "approach_end_centroid_x_after_mm": -0.10306534506767696,
+  "completed": true,
+  "stop_reason": null,
+  "initialization_valid": true,
+  "actual_self_collision_audit_passed": true,
+  "group_outcome": {
+    "eligible_detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04",
+      "Truss_02_Fruit_05"
+    ],
+    "ineligible_detached": [],
+    "eligible_remaining": [
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08"
+    ],
+    "ineligible_remaining": [
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11"
+    ],
+    "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+  },
+  "simulated_s": 53.5,
+  "loop_wall_s": 79.65981108509004,
+  "first_open_feedback": {
+    "actual_gap_m": [
+      0.09597189724445343
+    ],
+    "required_gap_m": 0.096,
+    "tolerance_m": 0.0005,
+    "reached": true,
+    "t": 27.0
+  },
+  "final_open_feedback": {
+    "actual_gap_m": [
+      0.0959964394569397
+    ],
+    "required_gap_m": 0.096,
+    "tolerance_m": 0.0005,
+    "reached": true,
+    "t": 36.5,
+    "phase": "withdraw",
+    "checked_before_motion_command": true
+  },
+  "tests": {
+    "count": 789,
+    "passed": true
+  },
+  "source": {
+    "branch": "codex/s300-harvest-isaac-20261009",
+    "head": "21313154248ab2aa92491ee16240a6f85378210a",
+    "source_sha256": {
+      "nvidia-sim/harvest_s300/harvest_group_policy.py": "96a78eead5d7843d6fb27512add9f51dfaf21750826ba9733e08416d3a858566",
+      "nvidia-sim/harvest_s300/test_harvest_group_policy.py": "64ffeaca2d192fc5dc2c38f8120b5862e7e5017bb20d5c9cc2b0351723a72643",
+      "nvidia-sim/harvest_s300/run_motion.py": "b2636269d2e7baf24942e1d3d2f7ddc2a43bf7156d52996bbd58f316c9d5ed13",
+      "nvidia-sim/harvest_s300/motion_kinematics.py": "e0db347b2476f917b4601c467b3b9ea3ca5834981346c8e95aa710a75b73c921",
+      "nvidia-sim/harvest_s300/selected_cycle_evidence.py": "ea7f20263dc9e2608400845fcdb4012f0fed7565415d4e214e3adbfe7b5b6b26"
+    },
+    "baseline": "/root/docker_share/mujoko_debugging_data/20261011_123435_two_close_open_cycles/trials/two_cycles_tgs60_64",
+    "training_eligible": false
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "limitations": [
+    "One native insertion; no claim of general yield improvement.",
+    "Targets 07/08 remain attached; no whole-truss completion.",
+    "Group center alignment does not imply equal fruit surface clearance.",
+    "Existing inner-belt hardware prototype and fruit-detachment hypothesis retained."
+  ],
+  "video": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_124843_centered_group_approach/trials/centered_group_tgs60_64/actual_motion.mp4",
+    "sha256": "7a1c6ecf53eb8487cedc24c034bf1ef747a00f25887ae71047ae2abc3f885615",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 720,
+          "avg_frame_rate": "6/1",
+          "duration": "53.666667",
+          "nb_read_frames": "322"
+        }
+      ]
+    },
+    "full_decode_passed": true,
+    "speed": 1,
+    "camera": "truss_top",
+    "source": "recorded actual native physics poses",
+    "replay_only_contact_cutaway": true
+  }
+}

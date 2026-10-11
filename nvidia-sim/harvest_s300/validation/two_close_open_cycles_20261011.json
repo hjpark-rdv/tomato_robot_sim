@@ -1,0 +1,264 @@
+{
+  "completed": true,
+  "repetitions": [
+    {
+      "close": {
+        "phase": "close",
+        "start_state_s": 19.516666666666666,
+        "end_state_s": 25.5,
+        "command_start_gap_mm": 96.0,
+        "command_end_gap_mm": 28.001571655273438,
+        "actual_start_gap_mm": 95.99861145019531,
+        "actual_end_gap_mm": 33.40626525878906,
+        "actual_min_gap_mm": 32.713623046875,
+        "actual_max_gap_mm": 95.99861145019531,
+        "belt_min_m_s": [
+          0.05,
+          0.05
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      },
+      "open": {
+        "phase": "cycle_open",
+        "start_state_s": 25.516666666666666,
+        "end_state_s": 26.5,
+        "command_start_gap_mm": 28.0,
+        "command_end_gap_mm": 95.94396209716797,
+        "actual_start_gap_mm": 33.39791488647461,
+        "actual_end_gap_mm": 95.97608184814453,
+        "actual_min_gap_mm": 33.392059326171875,
+        "actual_max_gap_mm": 95.97608184814453,
+        "belt_min_m_s": [
+          0.05,
+          0.05
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      },
+      "open_hold": {
+        "phase": "cycle_open_hold",
+        "start_state_s": 26.516666666666666,
+        "end_state_s": 27.0,
+        "command_start_gap_mm": 96.0,
+        "command_end_gap_mm": 96.0,
+        "actual_start_gap_mm": 95.99995422363281,
+        "actual_end_gap_mm": 95.99894714355469,
+        "actual_min_gap_mm": 95.99861145019531,
+        "actual_max_gap_mm": 95.99995422363281,
+        "belt_min_m_s": [
+          0.05,
+          0.05
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      }
+    },
+    {
+      "close": {
+        "phase": "cycle_reclose",
+        "start_state_s": 27.016666666666666,
+        "end_state_s": 33.0,
+        "command_start_gap_mm": 96.0,
+        "command_end_gap_mm": 28.001571655273438,
+        "actual_start_gap_mm": 95.998779296875,
+        "actual_end_gap_mm": 34.49380874633789,
+        "actual_min_gap_mm": 34.49380874633789,
+        "actual_max_gap_mm": 95.99887084960938,
+        "belt_min_m_s": [
+          0.05,
+          0.05
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      },
+      "open": {
+        "phase": "cycle_open_final",
+        "start_state_s": 35.016666666666666,
+        "end_state_s": 36.0,
+        "command_start_gap_mm": 28.0,
+        "command_end_gap_mm": 95.94396209716797,
+        "actual_start_gap_mm": 34.41910171508789,
+        "actual_end_gap_mm": 95.89551544189453,
+        "actual_min_gap_mm": 34.41853332519531,
+        "actual_max_gap_mm": 95.89551544189453,
+        "belt_min_m_s": [
+          0.05,
+          0.05
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      },
+      "open_hold": {
+        "phase": "cycle_open_final_hold",
+        "start_state_s": 36.016666666666666,
+        "end_state_s": 36.5,
+        "command_start_gap_mm": 96.0,
+        "command_end_gap_mm": 96.0,
+        "actual_start_gap_mm": 96.00015258789062,
+        "actual_end_gap_mm": 95.998779296875,
+        "actual_min_gap_mm": 95.99810028076172,
+        "actual_max_gap_mm": 96.00015258789062,
+        "belt_min_m_s": [
+          0.00016296296296294463,
+          0.00016296296296294463
+        ],
+        "belt_max_m_s": [
+          0.05,
+          0.05
+        ],
+        "arm_command_span": 0.0
+      }
+    }
+  ],
+  "first_open_feedback": {
+    "actual_gap_m": [
+      0.09599894285202026
+    ],
+    "required_gap_m": 0.096,
+    "tolerance_m": 0.0005,
+    "reached": true,
+    "t": 27.0
+  },
+  "final_open_feedback": {
+    "actual_gap_m": [
+      0.09599877893924713
+    ],
+    "required_gap_m": 0.096,
+    "tolerance_m": 0.0005,
+    "reached": true,
+    "t": 36.5,
+    "phase": "withdraw",
+    "checked_before_motion_command": true
+  },
+  "preparation_open_feedback": {
+    "prepare_lift_branch": {
+      "actual_gap_m": [
+        0.09595930576324463
+      ],
+      "required_gap_m": 0.096,
+      "tolerance_m": 0.0005,
+      "reached": true,
+      "t": 3.5,
+      "phase": "prepare_lift_branch",
+      "checked_before_motion_command": true
+    },
+    "prepare_height": {
+      "actual_gap_m": [
+        0.09599260985851288
+      ],
+      "required_gap_m": 0.096,
+      "tolerance_m": 0.0005,
+      "reached": true,
+      "t": 7.5,
+      "phase": "prepare_height",
+      "checked_before_motion_command": true
+    },
+    "prepare_horizontal": {
+      "actual_gap_m": [
+        0.09598991274833679
+      ],
+      "required_gap_m": 0.096,
+      "tolerance_m": 0.0005,
+      "reached": true,
+      "t": 10.5,
+      "phase": "prepare_horizontal",
+      "checked_before_motion_command": true
+    },
+    "approach": {
+      "actual_gap_m": [
+        0.0959901288151741
+      ],
+      "required_gap_m": 0.096,
+      "tolerance_m": 0.0005,
+      "reached": true,
+      "t": 14.5,
+      "phase": "approach",
+      "checked_before_motion_command": true
+    }
+  },
+  "simulated_s": 53.5,
+  "loop_wall_s": 77.17943740449846,
+  "initial_valid": true,
+  "actual_self_collision_passed": true,
+  "group_outcome": {
+    "eligible_detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04"
+    ],
+    "ineligible_detached": [],
+    "eligible_remaining": [
+      "Truss_02_Fruit_05",
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08"
+    ],
+    "ineligible_remaining": [
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11"
+    ],
+    "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+  },
+  "insertion_count": 1,
+  "experiment_stop": "one insertion budget; jaw repetitions are two inside that insertion",
+  "withdrawal_command_gap_mm": 96,
+  "withdrawal_belts_stopped": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_sha256": {
+    "run_motion.py": "b2636269d2e7baf24942e1d3d2f7ddc2a43bf7156d52996bbd58f316c9d5ed13",
+    "motion_kinematics.py": "e0db347b2476f917b4601c467b3b9ea3ca5834981346c8e95aa710a75b73c921",
+    "selected_cycle_evidence.py": "ea7f20263dc9e2608400845fcdb4012f0fed7565415d4e214e3adbfe7b5b6b26",
+    "test_motion_ready.py": "45674f19ffd5d93792ef90474e2f83e9f1c7a921f05ab5ad29abed5d3ce80168",
+    "test_motion_branch.py": "15935e63517bc6787481e9f73d211b35d3f6822e453667c7c5d4ade2eeb10138"
+  },
+  "offline_tests": {
+    "tests": 785,
+    "success": true,
+    "skipped": 0,
+    "wall_s": 36.7938733715564,
+    "excluded_native_sdk_modules": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ]
+  },
+  "native_trial_count": 1,
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_123435_two_close_open_cycles",
+  "baseline_prefix_comparison": {
+    "through_physics_time_s": 34.5,
+    "samples": 2071,
+    "old": "/root/docker_share/mujoko_debugging_data/20261011_122521_open_before_approach/trials/ready_open_tgs60_64",
+    "new": "/root/docker_share/mujoko_debugging_data/20261011_123435_two_close_open_cycles/trials/two_cycles_tgs60_64",
+    "exact_equal": {
+      "time": true,
+      "poses": true,
+      "robot_q": true,
+      "command": true,
+      "phase": true,
+      "belt_surface_velocity_local_y_m_s": true
+    },
+    "meaning": "Prior motion and physical trajectory before the changed belt ramp/final opening; not an equality claim after34.5s"
+  },
+  "test_notes": "First suite failed4 historical full-command snapshots after intentional motion change; updated snapshots, all785 final tests PASS; initial logs retained",
+  "video": "trials/two_cycles_tgs60_64/actual_motion.mp4",
+  "baseline_commit": "21313154248ab2aa92491ee16240a6f85378210a"
+}

@@ -225,14 +225,14 @@ class ReadyTests(unittest.TestCase):
         phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',harvest_profile='belt_open_close_cycle',**options)
         for a,b in zip(old[:4],phases[:4]):
             self.assertEqual(a[:2],b[:2]);np.testing.assert_array_equal(a[2],b[2]);self.assertEqual(a[3:],b[3:])
-        window=meta['belt_cycle'];cycle=phases[4:10]
-        self.assertEqual([p[0] for p in cycle],['belt_start_open','close','cycle_open','cycle_open_hold','cycle_reclose','belt_finish'])
-        self.assertEqual([p[3] for p in cycle],[.096,.028,.096,.096,.028,.028])
+        window=meta['belt_cycle'];cycle=phases[4:12]
+        self.assertEqual([p[0] for p in cycle],['belt_start_open','close','cycle_open','cycle_open_hold','cycle_reclose','belt_finish','cycle_open_final','cycle_open_final_hold'])
+        self.assertEqual([p[3] for p in cycle],[.096,.028,.096,.096,.028,.028,.096,.096])
         elapsed=0.
         for name,duration,qs,gap,left,right in cycle:
             np.testing.assert_array_equal(qs[0],qs[1])
             self.assertEqual((left,right),(0.,.1))
-            if elapsed>0:
+            if 0<elapsed<window['duration_s']-.5:
                 for delta in (-1e-6,0,1e-6):
                     self.assertEqual(belt_speed_fraction(elapsed+delta,window['duration_s'],.5),1.)
             elapsed+=duration
@@ -240,8 +240,12 @@ class ReadyTests(unittest.TestCase):
         self.assertEqual(belt_speed_fraction(0,elapsed,.5),0.)
         self.assertEqual(belt_speed_fraction(elapsed,elapsed,.5),0.)
         self.assertTrue(window['detachment_during_close_is_allowed'])
-        self.assertEqual(phases[10][0],'release_open')
-        for step in phases[10:]:self.assertEqual(step[4:],(0.,0.))
+        self.assertEqual(window['close_open_repetitions'],2)
+        self.assertTrue(window['withdraw_requires_measured_open'])
+        self.assertEqual(phases[12][0],'withdraw')
+        self.assertEqual(phases[12][3],.096)
+        self.assertNotIn('release_open',[p[0] for p in phases])
+        for step in phases[12:]:self.assertEqual(step[4:],(0.,0.))
         for bad in ({'entry_only':True},{'preparation':'direct'}):
             settings=dict(preparation='horizontal_ready',harvest_profile='belt_open_close_cycle',**options);settings.update(bad)
             with self.assertRaises(ValueError):plan_motion(self.kin,self.center,self.q,**settings)
@@ -250,6 +254,26 @@ class ReadyTests(unittest.TestCase):
         self.assertTrue(cycle_opening_check([.096,.0958])['reached'])
         for gaps in ([.093],[.04],[float('nan')],[],[.096,.07],[.097]):
             self.assertFalse(cycle_opening_check(gaps)['reached'])
+
+    def test_two_close_open_repetitions_hold_same_arm_pose_and_belts_through_final_open(self):
+        phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',
+            harvest_profile='belt_open_close_cycle',belt_speed_m_s=0.,belt_infeed_speed_m_s=.05,
+            close_seconds=6.,belt_ramp_seconds=.5)
+        window=meta['belt_cycle'];by_name={p[0]:p for p in phases}
+        previous_gap=.096;transitions=[];elapsed=0.
+        for name in window['phases']:
+            phase=by_name[name]
+            np.testing.assert_array_equal(phase[2],[meta['goal_q'],meta['goal_q']])
+            if phase[3]!=previous_gap:transitions.append('close' if phase[3]<previous_gap else 'open')
+            if name in ('cycle_open','cycle_open_final'):
+                for fraction in (0.,.5,1.):
+                    speed=belt_speed_fraction(elapsed+phase[1]*fraction,window['duration_s'],.5)
+                    self.assertAlmostEqual(speed,1.)
+                    self.assertEqual(phase[4:],(.05,.05))
+            previous_gap=phase[3];elapsed+=phase[1]
+        self.assertEqual(transitions,['close','open','close','open'])
+        self.assertEqual(by_name['withdraw'][3:],(.096,0.,0.))
+        self.assertEqual(window['repetition_phases'][1]['open'],'cycle_open_final')
 
     def test_translated_group_preserves_ready_and_horizontal_entry(self):
         opts=dict(harvest_profile='belt_open_close_cycle',grasp_height_offset_m=-.01)

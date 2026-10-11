@@ -84,7 +84,7 @@ class JointTurnNormalizationTests(unittest.TestCase):
         bad=serial_robot();bad.bounds[0,1]=float('nan')
         with self.assertRaisesRegex(ValueError,'exact finite'):equivalent_joint_goal_near_start(bad,goal,start)
 
-    def test_default_false_keeps_captured_legacy_arrays_and_boolean_scope_is_strict(self):
+    def test_default_false_keeps_two_repetition_arrays_and_boolean_scope_is_strict(self):
         kin=RedundantCartesianRobot();center=np.array([.4,1.,1.2]);ready=grasp_pose(center,center.copy())
         ready[:3,3]-=ready[:3,1]*.3;start=kin.ik_at_lift(ready,np.zeros(7),.12)[0]
         opts=dict(preparation='horizontal_ready',harvest_profile='belt_open_close_cycle',
@@ -93,7 +93,7 @@ class JointTurnNormalizationTests(unittest.TestCase):
         explicit,after=plan_motion(kin,center,start,**opts,horizontal_ready_normalize_turns=False)
         self.assertEqual(meta,after)
         self.assertEqual(hashlib.sha256(json.dumps(meta['phases'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
-                         'e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b')
+                         'd7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         for a,b in zip(original,explicit):np.testing.assert_array_equal(a[2],b[2])
         for value in (1,0,'yes',None):
             with self.assertRaisesRegex(ValueError,'Turn normalization'):plan_motion(kin,center,start,**opts,horizontal_ready_normalize_turns=value)

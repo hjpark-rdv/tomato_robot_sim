@@ -67,7 +67,8 @@ p.add_argument('--single-fruit-when-remaining',type=int,default=0,help='Opt-in i
 p.add_argument('--split-unproductive-pairs',action='store_true',help='Opt-in center fruits individually after a completed paired physical cycle leaves both native fruit joints attached; finite attempt limits remain unchanged')
 p.add_argument('--truss-order',choices=['lowest-first','highest-first'],default='lowest-first',help='Explicit remaining-fruit ordering; highest-first also changes the initial grasp group')
 p.add_argument('--preparation-height-first',action='store_true',help='At the existing ready XY, change height first, then move horizontally to staging; preserve entry orientation')
-p.add_argument('--preparation-gap-mm',type=float,help='Opt-in narrow transfer gap; fully open at staging before entry, with measured feedback gate')
+p.add_argument('--preparation-opening',choices=['ready','legacy-staging'],default='ready',help='Open fully at stationary ready pose before any approach motion; legacy-staging only reproduces old narrow-transfer diagnostics')
+p.add_argument('--preparation-gap-mm',type=float,help='Legacy narrow transfer gap; used only with --preparation-opening legacy-staging. Default ready opening keeps transfer fully open at96mm')
 p.add_argument('--ready-lift-offset-mm',type=float,default=0.,help='Opt-in continuous lift/arm redistribution at the unchanged ready TCP; fixed lift branch thereafter')
 p.add_argument('--max-aim-translation-m',type=float,default=.5,help='Explicit bound on SIM-GT grasp translation; default historical 0.5m, row targeting may use up to2m')
 p.add_argument('--near-trusses-metadata',type=Path,help='Whole-truss mode: harvest every aisle-facing truss on the active near-side stem using the existing farm inventory')
@@ -474,6 +475,7 @@ try:
             grasp_depth_m=effective_depth_mm/1000,
             approach_distance_m=a.entry_retract_mm/1000,
             preparation_gap_m=None if a.preparation_gap_mm is None else a.preparation_gap_mm/1000,
+            preparation_opening=a.preparation_opening,
             ready_lift_offset_m=a.ready_lift_offset_mm/1000,
             max_grasp_translation_m=a.max_aim_translation_m,
             allow_measured_ready_start=a.measured_ready_start,
@@ -626,6 +628,8 @@ try:
         if a.mode=='harvest':
             print('[MOTION] fixed entry pitch',planning['pitch_deg'],'yaw offset',planning['yaw_offset_deg'],
                   'world direction',planning['approach_direction_world'],flush=True)
+            if planning.get('preparation_opening'):
+                print('[MOTION] gripper opening',planning['preparation_opening'],flush=True)
     envs=[dict(index=0,root='/World',robot=ROBOT+'/root_joint',plant='/World/ElasticTarget',
                tool='/World/ActuatedTool/fixed',target=manifest['target']['path'],
                target_joint=manifest['target']['joint'],belts=manifest['tool']['belts'],mapping={})]
@@ -1181,7 +1185,7 @@ try:
             if time.perf_counter()-waiting>a.gate_timeout:raise TimeoutError('CPU pool start barrier timed out')
             time.sleep(.05)
     started=time.perf_counter()
-    cycle_open_feedback=None;entry_open_feedback=None
+    cycle_open_feedback=None;cycle_final_open_feedback=None;entry_open_feedback=None;preparation_open_feedback={}
     last_display=-float('inf')
     last_publish=-float('inf')
     poses=initial.copy();q=q0.copy();current_time=0.;tick=-1
@@ -1190,7 +1194,9 @@ try:
             boundary=time.perf_counter()
             record=sequence['cycle_plans'][-1]
             record.update(status='motion_completed',end_s=current_time,end_frame_index=len(times)-1,
-                          cycle_open_feedback=cycle_open_feedback,inventory_after=inventory(selected_fruits,breaks))
+                          cycle_open_feedback=cycle_open_feedback,preparation_open_feedback=preparation_open_feedback,
+                          cycle_final_open_feedback=cycle_final_open_feedback,
+                          inventory_after=inventory(selected_fruits,breaks))
             print('[TRUSS] inventory',record['inventory_after'],flush=True)
             sequence['inventory']=inventory(selected_fruits,breaks)
             if a.checkpoint_cycle_states:
@@ -1258,7 +1264,7 @@ try:
                             last_height_mm=a.last_fruit_height_offset_mm,last_depth_mm=a.last_fruit_depth_mm)
                         record.setdefault('plan_parameters',{}).update(last_remaining_fruit_aim=last_aim_evidence)
                     fingerprint_parameters={name:getattr(a,name) for name in ('preparation','horizontal_ready_connector','horizontal_ready_seed_index','horizontal_ready_normalize_turns','ready_lift_offset_mm','entry_retract_mm',
-                         'grasp_height_offset_mm','grasp_lateral_offset_mm','grasp_depth_mm','preparation_gap_mm','belt_seconds',
+                         'grasp_height_offset_mm','grasp_lateral_offset_mm','grasp_depth_mm','preparation_gap_mm','preparation_opening','belt_seconds',
                          'close_seconds','belt_speed_m_s','sparse_entry_duration_scale')}
                     if a.later_grasp_depth_mm is not None:
                         fingerprint_parameters.update(grasp_depth_mm=effective_depth_mm,
@@ -1289,7 +1295,9 @@ try:
                             sequence['verified_truss_axes']=verified_truss_axes.copy()
                     cycle_start=current_time;cycle_end=cycle_start+sum(p[1] for p in phases)
                     cycle_open_feedback=None
+                    cycle_final_open_feedback=None
                     entry_open_feedback=None
+                    preparation_open_feedback={}
                     record.update(status='executing',plan=str((folder/'plan.json').relative_to(a.output)),planned_end_s=cycle_end)
                     planned_next=True;break
                 except (RuntimeError,ValueError) as error:
@@ -1345,15 +1353,26 @@ try:
                     if railid is not None:
                         qcommand[0,railid]=rail_command(planning['phases'][phase_index],u)
                     gap=previous_gap+(nextgap-previous_gap)*u;speed=(lvel,rvel)
-                    if label=='approach' and a.preparation_gap_mm is not None and entry_open_feedback is None:
-                        entry_open_feedback=cycle_opening_check(.044+q[:,jawids[1]]-q[:,jawids[0]])
-                        entry_open_feedback['t']=t
-                        if not entry_open_feedback['reached']:stop_reason='entry_open_not_reached'
+                    opening=planning.get('preparation_opening')
+                    if opening and label in opening['feedback_before_phases'] and label not in preparation_open_feedback:
+                        feedback=cycle_opening_check(.044+q[:,jawids[1]]-q[:,jawids[0]],
+                            required_gap_m=opening['required_gap_m'],tolerance_m=opening['tracking_tolerance_m'])
+                        feedback.update(t=t,phase=label,checked_before_motion_command=True)
+                        preparation_open_feedback[label]=feedback
+                        if label=='approach':entry_open_feedback=feedback
+                        if not feedback['reached']:stop_reason='entry_open_not_reached'
                     if label=='cycle_reclose' and cycle_open_feedback is None:
                         cycle_open_feedback=cycle_opening_check(.044+q[:,jawids[1]]-q[:,jawids[0]])
                         cycle_open_feedback['t']=t
                         if not cycle_open_feedback['reached']:
                             stop_reason='cycle_reopen_not_reached'
+                    if (label=='withdraw' and (planning.get('belt_cycle') or {}).get('withdraw_requires_measured_open')
+                            and cycle_final_open_feedback is None):
+                        cycle_final_open_feedback=cycle_opening_check(.044+q[:,jawids[1]]-q[:,jawids[0]],
+                            required_gap_m=planning['belt_cycle']['full_open_gap_m'],
+                            tolerance_m=planning['belt_cycle']['opening_tracking_tolerance_m'])
+                        cycle_final_open_feedback.update(t=t,phase=label,checked_before_motion_command=True)
+                        if not cycle_final_open_feedback['reached']:stop_reason='cycle_final_open_not_reached'
                     if planning.get('belt_cycle') and a.belt_ramp_seconds and label in planning['belt_cycle']['phases']:
                         window=planning['belt_cycle']
                         factor=belt_speed_fraction(t-cycle_start-window['start_after_settle_s'],window['duration_s'],a.belt_ramp_seconds)
@@ -1363,7 +1382,7 @@ try:
                         speed=(lvel*factor,rvel*factor)
                     break
                 offset-=duration;previous_gap=nextgap
-        if stop_reason in ('cycle_reopen_not_reached','entry_open_not_reached'):break
+        if stop_reason in ('cycle_reopen_not_reached','cycle_final_open_not_reached','entry_open_not_reached'):break
         if a.num_envs>1:qcommand[1:]=qcommand[0]
         if a.belt_off_control:speed=(0.,0.)
         if not (route_start_context is not None and a.mode=='idle'):
@@ -1506,7 +1525,9 @@ try:
             reached_end=current_time>=cycle_end-1e-8
             record.update(status='motion_completed' if reached_end and stop_reason is None else 'stopped',
                 end_s=current_time,end_frame_index=len(times)-1,stop_reason=stop_reason,
-                cycle_open_feedback=cycle_open_feedback,inventory_after=sequence['inventory'])
+                cycle_open_feedback=cycle_open_feedback,preparation_open_feedback=preparation_open_feedback,
+                cycle_final_open_feedback=cycle_final_open_feedback,
+                inventory_after=sequence['inventory'])
         sequence['termination']=stop_reason or sequence['termination'] or (
             'all_fruit_native_joints_detached' if not sequence['inventory']['remaining'] else 'time_budget_exhausted_remaining_fruit')
         sequence.update(planning_paused_wall_s=planning_paused_wall_s,
@@ -1558,7 +1579,9 @@ try:
                  execution_scope='entry_hold_return_only' if a.entry_only else a.mode,
                  harvest_profile=a.harvest_profile if a.mode=='harvest' else None,
                  belt_off_control=a.belt_off_control,cycle_open_feedback=cycle_open_feedback,
-                 entry_open_feedback=entry_open_feedback,preparation_gap_mm=a.preparation_gap_mm,
+                 cycle_final_open_feedback=cycle_final_open_feedback,
+                 entry_open_feedback=entry_open_feedback,preparation_open_feedback=preparation_open_feedback,
+                 preparation_opening=a.preparation_opening,preparation_gap_mm=a.preparation_gap_mm,
                  contact_lifecycle_scope=contact_scope.summarize(breaks),
                  rail_destination=rail_destination,
                  native_resume=resume_validation,

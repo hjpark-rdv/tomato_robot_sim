@@ -91,7 +91,10 @@ def summarize(root):
         scope='진입·유지·복귀 (수확 시도 아님)' if s.get('execution_scope')=='entry_hold_return_only' else '분리 시험' if s.get('fixture_only') else '전체 환경 물리 시험'
         if s.get('plant_dynamics')=='target-truss':scope+=' · 주줄기/목표 송이 탄성 유지, 다른 송이 굽힘 고정'
         if s.get('fruit_attachment'):scope+=' · 열매 연결 '+s['fruit_attachment']['kind']+' (미보정 시험 모델)'
-        if s.get('harvest_profile')=='belt_open_close_cycle':scope+=' · 벨트 연속 회전/닫기·완전 열기·다시 닫기 (닫기 중 분리 허용)'
+        if s.get('harvest_profile')=='belt_open_close_cycle':
+            scope+=(' · 벨트 연속 회전/닫기→완전 열기2회 후 열린 상태로 후퇴 (닫기 중 분리 허용)'
+                    if 'cycle_final_open_feedback' in s else
+                    ' · 벨트 연속 회전/닫기·완전 열기·다시 닫기 (닫기 중 분리 허용)')
         if s.get('truss_sequence'):scope+=' · 같은 물리 장면에서 남은 열매 연속 접근 (reset 없음)'
         scope+=f' · 공통 겹침 중단값 {s.get("contact_limit_mm", .5):g}mm'
         sequence=s.get('truss_sequence') or {}

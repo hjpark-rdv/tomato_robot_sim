@@ -16,13 +16,13 @@ class EntryRetractTests(unittest.TestCase):
                   preparation_height_first=True,approach_direction_world=ready[:3,1])
         return kin,center,start,opts
 
-    def test_default_is_bit_identical_to_prior_command_capture(self):
+    def test_default_is_bit_identical_to_two_repetition_command_capture(self):
         kin,center,start,opts=self.fixture()
         phases,meta=plan_motion(kin,center,start,**opts)
         same,explicit=plan_motion(kin,center,start,**opts,approach_distance_m=.10)
         self.assertEqual(meta,explicit)
         self.assertEqual(hashlib.sha256(json.dumps(meta['phases'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
-                         'e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b')
+                         'd7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         for a,b in zip(phases,same):np.testing.assert_array_equal(a[2],b[2])
 
     def test_staging_and_actual_entry_fk_span_requested_distance_with_same_goal_and_full_open(self):
