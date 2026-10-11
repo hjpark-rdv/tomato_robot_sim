@@ -93,6 +93,13 @@ def summarize(root):
         if s.get('fruit_attachment'):scope+=' · 열매 연결 '+s['fruit_attachment']['kind']+' (미보정 시험 모델)'
         if s.get('harvest_profile')=='belt_open_close_cycle':scope+=' · 벨트 연속 회전/닫기·완전 열기·다시 닫기 (닫기 중 분리 허용)'
         if s.get('truss_sequence'):scope+=' · 같은 물리 장면에서 남은 열매 연속 접근 (reset 없음)'
+        scope+=f' · 공통 겹침 중단값 {s.get("contact_limit_mm", .5):g}mm'
+        sequence=s.get('truss_sequence') or {}
+        if sequence.get('group_policy'):
+            outcome=sequence.get('group_outcome',{})
+            scope+=f' · 집단 최소{sequence["group_policy"]["minimum_fruits"]}개'
+            scope+=f' · 대상 분리{len(outcome.get("eligible_detached",[]))}/남음{len(outcome.get("eligible_remaining",[]))}'
+            scope+=f' · 대상 밖 분리{len(outcome.get("ineligible_detached",[]))}'
         if s.get('belt_off_control'):scope+=' · 벨트 정지 대조군'
         if s.get('contact_guard'):
             guard=s['contact_guard']
@@ -145,7 +152,8 @@ def summarize(root):
 각 실행의 범위와 물리 설정은 원자료 JSON과 설명 문서에 기록합니다.
 영상은 실제 physics에서 저장한 body pose를 재생하며, 명령만 애니메이션한 영상이 아닙니다.</div>
 <h2>전체 시도 기록</h2><p>처리 시간은 물리·제어·상태 읽기와 실행 중 화면 갱신(켜진 경우)을 포함합니다. 앱/장면 준비·결과 저장·사후 영상 렌더는 별도입니다.</p>
-<table><tr><th>실행</th><th>상태</th><th>범위</th><th>열매 파단 수</th><th>sim 초</th><th>처리 초</th><th>목표 최대 변위 mm</th><th>최대 관통 mm</th><th>원자료</th></tr>'''+''.join(table)+'</table>'+''.join(videos)+'</html>'
+<p>callback 겹침은 계산 전 접촉값입니다. 계산 후 형상 확인과 이미 분리된 열매의 낙과 진단 예외는 각 실행 원자료에 별도로 남깁니다. 이 열 하나로 최종 물리 유효성을 판정하지 않습니다.</p>
+<table><tr><th>실행</th><th>상태</th><th>범위</th><th>열매 파단 수</th><th>sim 초</th><th>처리 초</th><th>목표 최대 변위 mm</th><th>callback 최대 겹침 mm</th><th>원자료</th></tr>'''+''.join(table)+'</table>'+''.join(videos)+'</html>'
     if (root/'motion_metrics.png').exists():page=page.replace('</html>','<h2>실제 측정값</h2><img style="width:min(100%,1000px)" src="motion_metrics.png"></html>')
     (root/'index.html').write_text(page)
     print(json.dumps(dict(output=str(root/'index.html'),trials=len(rows),videos=len(videos)),ensure_ascii=False))

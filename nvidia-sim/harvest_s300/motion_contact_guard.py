@@ -6,8 +6,8 @@ from motion_contact_buffer import ACTIVE_PATH_MARKERS
 
 
 class FruitContactGuard:
-    def __init__(self, manifest, tool_colliders, *, fruit_limit_m=.0005, fruit_fruit_limit_m=.0005):
-        if any(not math.isfinite(v) or v < .0005 for v in (fruit_limit_m,fruit_fruit_limit_m)):
+    def __init__(self, manifest, tool_colliders, *, fruit_limit_m=.0005, fruit_fruit_limit_m=.0005, default_limit_m=.0005):
+        if any(not math.isfinite(v) or v < .0005 for v in (fruit_limit_m,fruit_fruit_limit_m,default_limit_m)):
             raise ValueError('Fruit contact limit must be finite and at least 0.5mm')
         match = re.fullmatch(r'(Truss_\d+)_Fruit_\d+', manifest['target']['name'])
         if not match:
@@ -22,6 +22,7 @@ class FruitContactGuard:
             raise ValueError('Target fruit collider is missing from the source inventory')
         if not self.tools or any(not p.startswith('/World/ActuatedTool/') for p in self.tools):
             raise ValueError('Only exact actuated-tool collider paths are allowed')
+        self.default_limit_m = default_limit_m
         self.fruit_limit_m = fruit_limit_m
         self.fruit_fruit_limit_m = fruit_fruit_limit_m
 
@@ -31,18 +32,18 @@ class FruitContactGuard:
         if ((left in self.fruits and right in self.tools) or
                 (right in self.fruits and left in self.tools)):
             return self.fruit_limit_m
-        return .0005
+        return self.default_limit_m
 
     def invalid(self, event):
         return (any(m in event['a'] or m in event['b'] for m in ACTIVE_PATH_MARKERS)
                 and event['separation_m'] < -self.limit(event['a'], event['b']))
 
     def metadata(self):
-        return dict(default_limit_mm=.5, tool_current_truss_fruit_limit_mm=self.fruit_limit_m*1000,
+        return dict(default_limit_mm=self.default_limit_m*1000, tool_current_truss_fruit_limit_mm=self.fruit_limit_m*1000,
                     current_truss_fruit_fruit_limit_mm=self.fruit_fruit_limit_m*1000,
                     fruit_colliders=sorted(self.fruits), tool_colliders=sorted(self.tools),
-                    initialization_limit_mm=.5,
-                    scope='Exact current-truss fruit/tool and optional same-truss fruit/fruit budgets; all other active pairs retain 0.5mm',
+                    initialization_limit_mm=self.default_limit_m*1000,
+                    scope='Exact current-truss fruit/tool and optional same-truss fruit/fruit budgets; all other active pairs use the recorded common threshold',
                     interpretation='Numerical overlap tolerance only. Native contacts and all raw evidence remain. Not calibrated fruit compression.')
 
     def summarize(self, events, hz):

@@ -316,12 +316,27 @@ def measured_sequence_evidence(sequence,states,fruits,breaks,hz):
         raise ValueError('Whole-truss physics timestamps have a gap or reset')
     if not np.isfinite(states['poses']).all():raise ValueError('Nonfinite sequence pose')
     paths=list(states['body_paths']);by_name={f['name']:f for f in fruits}
-    errors=[]
+    errors=[];authored_initial_offsets=[]
     for cycle in sequence['cycle_plans']:
         if 'measured_centers_world_m' not in cycle:continue
         actual=np.array([states['poses'][cycle['measured_frame_index'],paths.index(by_name[name]['path']),:3]
                          for name in cycle['fruits']])
         error=float(np.max(np.abs(actual-np.asarray(cycle['measured_centers_world_m']))))
+        # The first group is selected before native warmup from authored GT.
+        # Its historical field name says "measured", but the sequence records
+        # that distinct source. Verify against the source, and report native
+        # warmup/float conversion displacement separately. Later aims remain
+        # subject to the unchanged exact measured-boundary check.
+        authored_first=(cycle.get('index')==0 and cycle['measured_frame_index']==0 and
+            (sequence.get('group_policy') or {}).get('schema')=='s300-harvest-group-policy-v1' and
+            sequence.get('initial_aim_source')=='authored fruit positions; subsequent aims use measured boundary state')
+        if authored_first:
+            authored=np.asarray([by_name[name]['center'] for name in cycle['fruits']],float)
+            stored=np.asarray(cycle['measured_centers_world_m'],float)
+            if authored.shape!=stored.shape or not np.isfinite(authored).all() or not np.isfinite(stored).all() or np.max(np.abs(authored-stored))>1e-8:
+                raise ValueError('Initial group position differs from authored source')
+            authored_initial_offsets.append(error)
+            continue
         if error>1e-8:raise ValueError('Selected fruit position differs from stored boundary state')
         errors.append(error)
     result=inventory(fruits,breaks)
@@ -329,6 +344,8 @@ def measured_sequence_evidence(sequence,states,fruits,breaks,hz):
     return dict(**result,fruit_count=len(fruits),native_detached_count=len(result['detached']),
         timestamp_contiguous=True,max_dt_s=float(dt.max()),physics_steps=len(dt),
         measured_target_position_max_error_m=max(errors,default=0.),
+        authored_initial_group_count=len(authored_initial_offsets),
+        authored_initial_to_native_position_max_delta_m=max(authored_initial_offsets,default=0.),
         all_selected_truss_joints_broken=not result['remaining'],
         collection_verified=False,biological_calibration=False,training_eligible=False,
         scope='Continuous measured physics timestamps and exact native joint events; not collection evidence')

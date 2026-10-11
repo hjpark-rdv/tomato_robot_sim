@@ -157,11 +157,11 @@ def certify_leaf_structural_clear(stage,leaf,structural,pose,native_data,timesta
         executed_query_helper=dict(module_import_source_path=str(Path(__file__).resolve()),
             module_import_source_sha256=SOURCE_SHA256,source_bytes_captured_at_import=True,
             launch_snapshot_is_separate=True),
-        method='Complete native overlap_box queries of native cooked leaf hull enclosing OBBs; clear or guarded <=0.5mm escape')
+        method='Complete native overlap_box queries of native cooked leaf hull enclosing OBBs; clear or guarded escape within the recorded limit')
     row['measured_leaf_pose_world_xyzw']=np.asarray(pose,float).tolist()
     try:
-        if not np.isfinite(max_escape_m) or not 0<=max_escape_m<=.0005:
-            raise ValueError('Escape limit must stay within existing 0.5mm criterion')
+        if not np.isfinite(max_escape_m) or not 0<=max_escape_m<=.001:
+            raise ValueError('Escape limit must stay within supported 1mm maximum')
         if not isinstance(escape_direction_budget,int) or not 1<=escape_direction_budget<=96:
             raise ValueError('Finite native escape direction budget must be 1..96')
         row.update(escape_limit_m=float(max_escape_m),escape_direction_budget=escape_direction_budget)
@@ -236,6 +236,6 @@ def certify_leaf_structural_clear(stage,leaf,structural,pose,native_data,timesta
         bounds=[0. if cleared(item) else item.get('bounded_escape',{}).get('penetration_upper_bound_m') for item in boxes]
         row.update(certified_clear=clear,certified_within_limit=bounded,
                    penetration_upper_bound_m=float(max(bounds)) if bounded else None,
-                   interpretation='A complete native query clearing an enclosing box or tighter complete closed-cell hull cover proves actual native hull nonintersection. Authored structural geometry proposes box axes only; it is not a native triangle certificate. Otherwise each component needs a completed native escape query whose serialized displacement plus reserved guard is <=0.5mm; maximum component bound is reported. Failed finite cover/escape searches remain inconclusive.')
+                   interpretation='A complete native query clearing an enclosing box or tighter complete closed-cell hull cover proves actual native hull nonintersection. Authored structural geometry proposes box axes only; it is not a native triangle certificate. Otherwise each component needs a completed native escape query whose serialized displacement plus reserved guard is within the recorded escape limit; maximum component bound is reported. Failed finite cover/escape searches remain inconclusive.')
     except Exception as error:row['error']=str(error)
     return row

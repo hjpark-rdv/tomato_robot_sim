@@ -492,7 +492,9 @@ class CookedLeafContactGeometry:
                     uncertainty='Native cooked triangle query unavailable; exact authored source used for clear separation or opt-in enclosing-component hull per-pair bounds',
                     native_weld_tolerance=repr(weld))
 
-    def verify(self, a, b, poses, timestamp, reported_separation):
+    def verify(self, a, b, poses, timestamp, reported_separation, *, limit_m=.0005):
+        if not np.isfinite(limit_m) or limit_m<.0005:
+            raise ValueError('Contact limit must be finite and at least0.5mm')
         active_fruit_leaf=(a in self.active_plant_fruits and b in self.active_plant_leaves or b in self.active_plant_fruits and a in self.active_plant_leaves)
         active_capsule_leaf=(a in self.active_plant_capsules and b in self.active_plant_leaves or b in self.active_plant_capsules and a in self.active_plant_leaves)
         active_fruit_capsule=(a in self.active_plant_fruits and b in self.active_plant_capsules or b in self.active_plant_fruits and a in self.active_plant_capsules)
@@ -502,7 +504,7 @@ class CookedLeafContactGeometry:
         passive_leaf=(a in self.background_leaves or b in self.background_leaves)
         row=dict(t=float(timestamp),a=a,b=b,native_callback_separation_m=float(reported_separation),
                  certified_clear=False,certified_within_limit=False,
-                 limit_m=.0005,numerical_guard_m=.000001,
+                 limit_m=float(limit_m),numerical_guard_m=.000001,
                  contact_scope='declared_passive_leaf_measured_geometry' if passive_leaf else
                                'active_plant_leaf_structural' if structural_leaf else
                                'active_plant_fruit_leaf' if active_fruit_leaf else
@@ -522,7 +524,7 @@ class CookedLeafContactGeometry:
                     from native_leaf_scene_query import certify_leaf_structural_clear
                     native_data=self.cooked(leaf)
                     proof=certify_leaf_structural_clear(self.stage,leaf,structural,
-                        poses[self.body_ids[native_data['body']]],native_data,timestamp)
+                        poses[self.body_ids[native_data['body']]],native_data,timestamp,max_escape_m=limit_m)
                     row.update(native_scene_query_certificate=proof,
                         certified_clear=proof['certified_clear'],certified_within_limit=proof['certified_within_limit'],
                         penetration_upper_bound_m=proof['penetration_upper_bound_m'],
@@ -571,7 +573,7 @@ class CookedLeafContactGeometry:
                 row.update(hull_capsule_pair_count=len(gaps),minimum_certified_gap_m=min(gaps),
                            penetration_upper_bound_m=max(0.,-min(gaps)),
                            certified_clear=bool(all(g>1e-6 for g in gaps)),
-                           certified_within_limit=bool(all(g>=-.0005+.000001 for g in gaps)),
+                           certified_within_limit=bool(all(g>=-limit_m+.000001 for g in gaps)),
                            method='Exact analytic capsule support versus native cooked convex at measured post-fetch poses')
                 self.records.append(row)
                 return row
@@ -586,7 +588,7 @@ class CookedLeafContactGeometry:
                         component_gaps=[convex_component_hull_gaps(v,n,e,components)
                                         for v,n,e in hulls[0]]
                         flat=[gap for values in component_gaps for gap in values]
-                        passed=bool(flat and all(g>=-.0005+.000001 for g in flat))
+                        passed=bool(flat and all(g>=-limit_m+.000001 for g in flat))
                         row.update(enclosing_component_hull_certificate=dict(
                             attempted=True,certified_within_limit=passed,
                             hull_component_pair_count=len(flat),component_count=len(components),
@@ -601,7 +603,7 @@ class CookedLeafContactGeometry:
                                        penetration_upper_bound_m=max(0.,-min(flat)),
                                        certified_clear=bool(all(g>1e-6 for g in flat)),
                                        certified_within_limit=True,
-                                       method='Full convex SAT against authored connected-component enclosing hulls; conservative per-pair upper bounds with unchanged 0.5mm limit')
+                                       method='Full convex SAT against authored connected-component enclosing hulls; conservative per-pair upper bounds with the recorded contact limit')
                             self.records.append(row)
                             return row
                     except Exception as error:
@@ -624,7 +626,7 @@ class CookedLeafContactGeometry:
                        helper_source_sha256=SOURCE_SHA256,minimum_certified_gap_m=min(gaps),
                        penetration_upper_bound_m=max(0.,-min(gaps)),
                        certified_clear=bool(all(g>1e-6 for g in gaps)),
-                       certified_within_limit=bool(all(g>=-.0005+.000001 for g in gaps)))
+                       certified_within_limit=bool(all(g>=-limit_m+.000001 for g in gaps)))
         except Exception as error:row['error']=str(error)
         self.records.append(row)
         return row
@@ -654,14 +656,14 @@ class CookedLeafContactGeometry:
 
     def policy_metadata(self):
         return dict(helper_source_sha256=SOURCE_SHA256,
-                    positive_world_aabb_shortcut='Exact native vertices at current measured pose; only support gap >1um skips full SAT. Ambiguous/overlapping pairs retain full face and edge-cross axes. No geometry or0.5mm change.',
+                    positive_world_aabb_shortcut='Exact native vertices at current measured pose; only support gap >1um skips full SAT. Ambiguous/overlapping pairs retain full face and edge-cross axes. No geometry change; recorded per-query diagnostic limits.',
                     verify_current_truss_fruit_contacts=self.verify_fruit_contacts,
                     verify_background_component_hulls=self.verify_background_component_hulls,
                     verify_structural_scene_queries=self.verify_structural_scene_queries,
                     exact_fruit_colliders=sorted(self.fruits),exact_active_leaf_colliders=sorted(self.leaves),
                     exact_declared_passive_leaf_colliders=sorted(self.background_leaves),
                     exact_declared_passive_leaf_inventory=self.background_leaf_inventory,
-                    passive_leaf_geometry_scope='Exact separately declared standalone neighbor leaves only; measured native body and cooked hulls required. No permission, collider, force or 0.5mm validity change.',
+                    passive_leaf_geometry_scope='Exact separately declared standalone neighbor leaves only; measured native body and cooked hulls required. No permission, collider or force change; recorded per-query diagnostic limits.',
                     exact_all_active_plant_fruit_colliders=sorted(self.active_plant_fruits),
                     exact_all_active_plant_capsule_colliders=sorted(self.active_plant_capsules),
                     exact_all_active_plant_leaf_colliders=sorted(self.active_plant_leaves),
@@ -669,7 +671,7 @@ class CookedLeafContactGeometry:
                     exact_structural_capsule_colliders=sorted(self.structural_capsules),
                     exact_own_truss_capsule_colliders=sorted(self.capsules),
                     retarget_history=self.retarget_history,
-                    limit_m=.0005,numerical_guard_m=.000001,
+                    default_limit_m=.0005,effective_limits_m=sorted({r["limit_m"] for r in self.records}),numerical_guard_m=.000001,
                     fruit_scope='Exact current-truss fruit versus another exact current-truss fruit, enabled actuated-tool collider or exact own-truss pedicel/rachis/peduncle capsule; enabled actuated-tool Mesh versus exact own-truss capsule only; geometry validity, not contact permission',
                     active_plant_geometry_scope='Exact manifest active-plant fruit/leaf, fruit/capsule and capsule/leaf only; exact enabled Mesh/Capsule types and measured owners required. Tool/background contact authorization is unchanged.',
                     structural_geometry_scope='Exact active-plant compliant leaf versus enabled House/Environment Mesh/Capsule inventory only. Native convex or uniform static/rigid-owned exact Capsule required; static triangle Mesh remains inconclusive without native cooked triangle evidence. Contact authorization unchanged.',

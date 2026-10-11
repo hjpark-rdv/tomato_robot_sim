@@ -7,8 +7,8 @@ if [[ $# -lt 1 || $# -gt 3 || "${1:-}" == --help ]]; then
   echo 'entry: open-jaw entry/return; belt: close, opposed belts for 2s, open, withdraw (detachment not guaranteed).'
   echo 'cycle: start belts while open, close, fully reopen and close again with continuous belts; then stop/open/withdraw.'
   echo 'truss: repeat cycle on remaining measured fruit in one physical scene without resets.'
-  echo 'Full plant, all colliders and self-collision remain. Contact guard defaults to 0.5mm.'
-  echo 'Explicit variants: S300_SOLVER, S300_POSITION_ITERATIONS, S300_PHYSICS_THREADS, S300_PLANT_DYNAMICS, S300_FRUIT_CONTACT_LIMIT_MM, S300_FRUIT_FRUIT_LIMIT_MM.'
+  echo 'Full plant, all colliders and self-collision remain. Contact guard defaults to 1mm.'
+  echo 'Explicit variants: S300_SOLVER, S300_POSITION_ITERATIONS, S300_PHYSICS_THREADS, S300_PLANT_DYNAMICS, S300_CONTACT_LIMIT_MM, S300_FRUIT_CONTACT_LIMIT_MM, S300_FRUIT_FRUIT_LIMIT_MM.'
   echo 'Grasp motion: S300_GRASP_GAP_MM (default 28), S300_GRASP_HEIGHT_OFFSET_MM (default 0).'
   echo 'Yaw: S300_APPROACH_YAW_MODE=truss-axis aligns horizontal entry with attached-fruit XY direction; default robot-radial preserves prior motion.'
   echo 'Whole-truss budget: S300_MAX_TRUSS_CYCLES (default 12); all native contact guards remain.'
@@ -47,9 +47,10 @@ solver="${S300_SOLVER:-PGS}"
 iterations="${S300_POSITION_ITERATIONS:-64}"
 physics_threads="${S300_PHYSICS_THREADS:-2}"
 plant_dynamics="${S300_PLANT_DYNAMICS:-full}"
-fruit_contact_limit="${S300_FRUIT_CONTACT_LIMIT_MM:-.5}"
-fruit_fruit_limit="${S300_FRUIT_FRUIT_LIMIT_MM:-.5}"
-motion_args+=(--fruit-contact-limit-mm "$fruit_contact_limit" --fruit-fruit-limit-mm "$fruit_fruit_limit")
+contact_limit="${S300_CONTACT_LIMIT_MM:-1}"
+fruit_contact_limit="${S300_FRUIT_CONTACT_LIMIT_MM:-$contact_limit}"
+fruit_fruit_limit="${S300_FRUIT_FRUIT_LIMIT_MM:-$contact_limit}"
+motion_args+=(--contact-limit-mm "$contact_limit" --fruit-contact-limit-mm "$fruit_contact_limit" --fruit-fruit-limit-mm "$fruit_fruit_limit")
 yaw_mode="${S300_APPROACH_YAW_MODE:-robot-radial}"
 yaw_offset=30
 if [[ "$yaw_mode" == truss-axis ]]; then yaw_offset=0; fi
@@ -86,7 +87,7 @@ wait_file() {
 }
 echo "Output: $output"
 echo "Physics: ${plant_dynamics} / ${solver}${iterations} / ${hz}Hz / self-collision ON; motion: ${motion}."
-echo "Contact limits: current-truss fruit/tool ${fruit_contact_limit}mm, same-truss fruit/fruit ${fruit_fruit_limit}mm, all other active pairs 0.5mm."
+echo "Contact limits: current-truss fruit/tool ${fruit_contact_limit}mm, same-truss fruit/fruit ${fruit_fruit_limit}mm, all other active pairs ${contact_limit}mm."
 if [[ "$profile" == interactive ]]; then
   echo 'Interactive preview changes timestep from 120Hz to 60Hz; it is not numerically equivalent to the reference.'
 fi

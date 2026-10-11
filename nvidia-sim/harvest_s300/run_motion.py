@@ -16,9 +16,9 @@ p.add_argument('assembly',type=Path);p.add_argument('--output',type=Path,require
 p.add_argument('--mode',choices=['idle','jaw','pulse','belt_control','harvest'],default='harvest')
 p.add_argument('--pulse-force-n',type=float,default=.1,help='Diagnostic world +X force, 1..2 seconds, then release')
 p.add_argument('--pulse-body',help='One-world pulse fixture: exact rigid-body path; default remains the target fruit')
-p.add_argument('--verify-leaf-contact-after-step',action='store_true',help='Opt-in: retain native logs; check solved leaf/tool or leaf/background-leaf overlap against the existing 0.5mm limit using native cooked convex hulls; unavailable geometry still stops')
-p.add_argument('--verify-harvest-contact-after-step',action='store_true',help='Opt-in same 0.5mm native cooked solved-pose check for exact current-truss fruit/tool pairs; callback values retained')
-p.add_argument('--verify-background-leaf-enclosures',action='store_true',help='Opt-in conservative closed-component hull bound for authored static leaf triangles; same 0.5mm solved-pose limit, native triangles remain unchanged')
+p.add_argument('--verify-leaf-contact-after-step',action='store_true',help='Opt-in: retain native logs; check solved leaf/tool or leaf/background-leaf overlap against the configured contact limit using native cooked convex hulls; unavailable geometry still stops')
+p.add_argument('--verify-harvest-contact-after-step',action='store_true',help='Opt-in configured contact-limit native cooked solved-pose check for exact current-truss fruit/tool pairs; callback values retained')
+p.add_argument('--verify-background-leaf-enclosures',action='store_true',help='Opt-in conservative closed-component hull bound for authored static leaf triangles; configured contact-limit solved-pose limit, native triangles remain unchanged')
 p.add_argument('--capture-leaf-colliders',nargs='+',help='Exact existing compliant leaf/capsule paths for native cooked shape evidence before first motion step; observation only, never expands contact authorization')
 p.add_argument('--capture-tool-colliders',nargs='+',help='Read-only exact existing tool Mesh native cooking capture before first trial step; all returned pieces retained')
 p.add_argument('--seconds',type=float,default=0.)
@@ -97,6 +97,7 @@ p.add_argument('--replication-persist-layer-stack',action='store_true',help='Bou
 p.add_argument('--replication-defer-gpu-bootstrap',action='store_true',help='Cold CUDA clone control: retain CPU/MBP and Fabric off through stage reopen, then register the requested GPU scene')
 p.add_argument('--contact-backend',choices=['callback','tensor'],default='callback',help='Tensor sensor path needs actor-level/contact equivalence validation')
 p.add_argument('--buffer-contact-events',action='store_true',help='Preserve per-step native guard; format raw callback contact evidence after measured loop')
+p.add_argument('--native-contact-vector-copy',action='store_true',help='Opt-in lossless native Float3 slice copy for buffered callbacks; keeps every contact and per-step guard')
 p.add_argument('--record-contact-frames',action='store_true',help='Buffered diagnostic: save native world contact positions/normals for actual collider support inspection')
 p.add_argument('--verify-structural-scene-query',action='store_true',help='Opt-in native post-fetch enclosing-leaf OBB query for static triangle obstacles; complete positive/negative and pose controls are required for clear-only certification')
 p.add_argument('--collision-filter',choices=['pairs','groups'],default='pairs',help='Groups compress the identical source exclusion graph; native A/B must pass before scaling')
@@ -106,8 +107,9 @@ p.add_argument('--gpu-partitions',type=int,default=1,help='Native articulation G
 p.add_argument('--gpu-pair-capacity',type=int,default=16384,help='Found/lost and total aggregate-pair allocation only; raise on native capacity errors and revalidate contacts')
 p.add_argument('--solver',choices=['PGS','TGS'],default='PGS',help='Controlled native solver comparison; validate before adopting')
 p.add_argument('--scene-ccd',action='store_true',help='CPU diagnostic: enable swept CCD at scene level as well as the existing rigid-body flags')
-p.add_argument('--fruit-contact-limit-mm',type=float,default=.5,help='Opt-in current-truss fruit versus tool overlap tolerance; other contacts and initial state retain 0.5mm. Does not change native physics.')
-p.add_argument('--fruit-fruit-limit-mm',type=float,default=.5,help='Separate opt-in overlap tolerance between exact fruits of the current truss; no other obstacle allowance')
+p.add_argument('--contact-limit-mm',type=float,default=1.,help='Common active-contact and initial-state penetration stop threshold (0.5..1mm); diagnostic tolerance only, no physics changes')
+p.add_argument('--fruit-contact-limit-mm',type=float,default=None,help='Optional exact current-truss fruit/tool threshold; defaults to the common contact limit')
+p.add_argument('--fruit-fruit-limit-mm',type=float,default=None,help='Optional exact current-truss fruit/fruit threshold; defaults to the common contact limit')
 p.add_argument('--armature-setup',choices=['refresh','authored'],default='refresh',help='Authored validates the pre-warmup armature without a redundant runtime setter')
 p.add_argument('--gravity-neutral-warmup',action='store_true',help='Initialize at authored rest under zero gravity, restore source gravity after fixed preload and before trial')
 p.add_argument('--plant-dynamics',choices=['full','target-truss'],default='full',help='Target-truss freezes far-truss bending; different dynamics, same collision coverage')
@@ -119,10 +121,16 @@ p.add_argument('--live-fps',type=float,default=10.,help='Latest-frame publicatio
 p.add_argument('--start-gate',type=Path,help='CPU pool diagnostic: publish ready.json and await the controller barrier')
 p.add_argument('--gate-timeout',type=float,default=180.)
 a=p.parse_args()
+if not math.isfinite(a.contact_limit_mm) or not .5<=a.contact_limit_mm<=1.:
+    p.error('Common contact limit must be finite within 0.5..1mm')
+if a.fruit_contact_limit_mm is None:a.fruit_contact_limit_mm=a.contact_limit_mm
+if a.fruit_fruit_limit_mm is None:a.fruit_fruit_limit_mm=a.contact_limit_mm
+if a.native_contact_vector_copy and (not a.buffer_contact_events or a.contact_backend!='callback'):
+    p.error('Native contact vector copying requires buffered callback contacts')
 if not math.isfinite(a.condition_foliage_seconds) or not 0<=a.condition_foliage_seconds<=3:p.error('Conditioning budget must be finite within 0..3 seconds')
 if a.condition_foliage_seconds and (a.mode!='idle' or a.num_envs!=1 or a.replicate or a.rail_to_y is not None or a.contact_backend!='callback' or not a.buffer_contact_events or not a.verify_leaf_contact_after_step or not a.save_route_checkpoint or not math.isfinite(a.seconds) or a.seconds<a.condition_foliage_seconds+1):
     p.error('Foliage conditioning requires one stationary buffered callback idle world, solved leaf verification, saved checkpoint and at least 1 second strict suffix')
-if a.condition_foliage_seconds and (a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5 or a.isolate_background or a.plant_dynamics!='full' or a.zero_conveyor_diagnostic):p.error('Conditioning preserves strict 0.5mm contact criteria, complete background contacts and full source plant dynamics')
+if a.condition_foliage_seconds and (a.contact_limit_mm!=.5 or a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5 or a.isolate_background or a.plant_dynamics!='full' or a.zero_conveyor_diagnostic):p.error('Conditioning preserves strict 0.5mm contact criteria, complete background contacts and full source plant dynamics')
 if a.allow_resume_conditioned_start and (a.resume_native_checkpoint is None or a.allow_resume_leaf_proxy_revision or a.allow_resume_accuracy_proxy_revision or a.allow_resume_attachment_transfer):p.error('Conditioned-start resume requires an exact same-model checkpoint, without a model revision')
 if a.pulse_body and (a.mode!='pulse' or a.num_envs!=1 or a.replicate):p.error('--pulse-body requires one unreplicated pulse fixture')
 if (a.verify_leaf_contact_after_step or a.verify_harvest_contact_after_step) and (a.num_envs!=1 or a.replicate or a.contact_backend!='callback'):
@@ -195,7 +203,7 @@ if a.last_fruit_depth_mm is not None and (not math.isfinite(a.last_fruit_depth_m
 if not math.isfinite(a.grasp_lateral_offset_mm) or abs(a.grasp_lateral_offset_mm)>20 or (a.grasp_lateral_offset_mm and (a.preparation!='horizontal_ready' or a.harvest_profile not in ('belt_spin_release','belt_open_close_cycle'))):
     p.error('Grasp lateral offset must be within +/-20 mm and requires horizontal-ready belt entry')
 if any(not math.isfinite(v) or v<.5 for v in (a.fruit_contact_limit_mm,a.fruit_fruit_limit_mm)):p.error('Fruit contact tolerance must be finite and at least 0.5mm')
-if (a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5) and (a.contact_backend!='callback' or a.num_envs!=1 or a.replicate):
+if (a.fruit_contact_limit_mm!=a.contact_limit_mm or a.fruit_fruit_limit_mm!=a.contact_limit_mm) and (a.contact_backend!='callback' or a.num_envs!=1 or a.replicate):
     p.error('Fruit contact override requires exact native callback mapping in one unreplicated environment')
 if a.scene_ccd and a.device!='cpu':p.error('--scene-ccd is validated here only for CPU trials')
 if (a.verify_rail_environment_preflight or a.verify_preparation_environment_preflight) and (a.hz!=120 or a.num_envs!=1 or a.replicate):
@@ -678,12 +686,12 @@ try:
         if v not in path_cache:path_cache[v]=str(PhysicsSchemaTools.intToSdfPath(v))
         return path_cache[v]
     contact_guard=None
-    if a.fruit_contact_limit_mm!=.5 or a.fruit_fruit_limit_mm!=.5:
+    if a.fruit_contact_limit_mm!=a.contact_limit_mm or a.fruit_fruit_limit_mm!=a.contact_limit_mm:
         from motion_contact_guard import FruitContactGuard
         tool_colliders=[str(p.GetPath()) for p in Usd.PrimRange(stage.GetPrimAtPath('/World/ActuatedTool'))
             if p.HasAPI(UsdPhysics.CollisionAPI) and UsdPhysics.CollisionAPI(p).GetCollisionEnabledAttr().Get() is not False]
         contact_guard=FruitContactGuard(manifest,tool_colliders,fruit_limit_m=a.fruit_contact_limit_mm/1000,
-            fruit_fruit_limit_m=a.fruit_fruit_limit_mm/1000)
+            fruit_fruit_limit_m=a.fruit_fruit_limit_mm/1000,default_limit_m=a.contact_limit_mm/1000)
         for path_name in contact_guard.fruits:
             prim=stage.GetPrimAtPath(path_name)
             if not prim or not prim.HasAPI(UsdPhysics.CollisionAPI):raise ValueError('Missing fruit collider '+path_name)
@@ -692,7 +700,9 @@ try:
     if a.buffer_contact_events:
         from motion_contact_buffer import BufferedContactRecorder
         contact_buffer=BufferedContactRecorder(path,a.hz,capture_frames=a.record_contact_frames,
-            pair_limit=None if contact_guard is None else contact_guard.limit)
+            penetration_limit_m=a.contact_limit_mm/1000,
+            pair_limit=None if contact_guard is None else contact_guard.limit,
+            native_triplet_slice=a.native_contact_vector_copy)
     def contact(headers,data):
         contact_started=time.perf_counter()
         capture_initial=initialization_capture['enabled'] and initialization_capture['active']
@@ -783,7 +793,10 @@ try:
         native_scene_device=device_settings,
         disabled_background_colliders=isolated_count,performance=a.performance,threads=a.threads,
         display_fps=a.display_fps,realtime_cap=a.realtime,num_envs=a.num_envs,contact_backend=a.contact_backend,collision_filter=a.collision_filter,
+        contact_limit_mm=a.contact_limit_mm,
+        fruit_contact_limit_mm=a.fruit_contact_limit_mm,fruit_fruit_limit_mm=a.fruit_fruit_limit_mm,
         buffer_contact_events=a.buffer_contact_events,
+        native_contact_vector_copy=a.native_contact_vector_copy,
         record_contact_frames=a.record_contact_frames,
         fabric_transform_output=carb.settings.get_settings().get('/physics/fabricUpdateTransformations'),
         fabric_velocity_output=carb.settings.get_settings().get('/physics/fabricUpdateVelocities'),
@@ -939,7 +952,7 @@ try:
         # can themselves raise. A native warmup break changes topology and may
         # not be removed by the measured old-robot state restore.
         warmup_events=[e for e in (contact_buffer.materialize() if contact_buffer is not None else events) if e['t']==0.]
-        violations=[e for e in warmup_events if e['separation_m']<-.0005 and
+        violations=[e for e in warmup_events if e['separation_m'] < -a.contact_limit_mm/1000 and
             any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))]
         (a.output/'pre_restore_initialization.json').write_text(json.dumps(dict(
             schema='s300-pre-restore-initialization-v1',state_scope='pre_restore',
@@ -1026,10 +1039,10 @@ try:
         initial_tensor_events=tensor_contacts.read(t=0.,phase='initialization',dt=1/a.hz)
         events.extend(initial_tensor_events)
     initialization_events=[e for e in (contact_buffer.materialize() if contact_buffer is not None else events) if e['t']==0.]
-    initialization_invalid=[e for e in initialization_events if e['separation_m']<-.0005 and
+    initialization_invalid=[e for e in initialization_events if e['separation_m'] < -a.contact_limit_mm/1000 and
         any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))]
     if tensor_contacts is not None and tensor_contacts.last_summary.get('raw_minimum_separation_m') is not None:
-        if tensor_contacts.last_summary['raw_minimum_separation_m']<-.0005 and not initialization_invalid:
+        if tensor_contacts.last_summary['raw_minimum_separation_m'] < -a.contact_limit_mm/1000 and not initialization_invalid:
             initialization_invalid=[dict(raw_sensor_summary=tensor_contacts.last_summary)]
     restored_initialization=resume_context is not None or route_start_context is not None
     trial_contact_start=0
@@ -1055,6 +1068,7 @@ try:
             physics_warmup_steps=2,timestamp_scope='native initialize_physics before trial clock',
             reported_contact_points=len(initialization_events),violations=initialization_invalid,
             native_break_events=breaks)
+    initialization_validity['contact_limit_mm']=a.contact_limit_mm
     (a.output/'initialization_validity.json').write_text(json.dumps(initialization_validity,indent=2))
     # Initial parity is checked at the measured saved station. The planning
     # kinematics may already be translated to a future rail destination.
@@ -1107,7 +1121,8 @@ try:
         (a.output/'truss_sequence.json').write_text(json.dumps(sequence,indent=2))
     trace=[initial.copy()];qtrace=[q0[0].copy()];times=[0.];phases_trace=['initial']
     command=[arr(robot.get_dof_position_targets())[0].copy()]
-    stop_reason='initialization_penetration_over_0_5mm' if initialization_invalid else None
+    stop_reason=('initialization_penetration_over_0_5mm' if a.contact_limit_mm==.5
+                 else 'initialization_penetration_over_contact_policy') if initialization_invalid else None
     batch_qtrace=[q0.copy()]
     belt_commands=[(0.,0.)];force_commands=[(0.,0.,0.)]
     cycle_trace=[0]
@@ -1386,14 +1401,14 @@ try:
         if phase!=last_phase:print('[MOTION]',round(t,3),phase,flush=True);last_phase=phase
         # Report all contacts; stop on robot or active-target gross penetration.
         invalid=([e for e in step_events if contact_guard.invalid(e)] if contact_guard else
-                 [e for e in step_events if e['separation_m']<-.0005 and
+                 [e for e in step_events if e['separation_m'] < -a.contact_limit_mm/1000 and
                   any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))])
         raw_conditioning_invalid=None
         if foliage_conditioner is not None:
             # Passive compliant leaves must remain in the unchanged strict
             # final guard even though the historical active-root guard did
             # not know their new exact namespace.
-            invalid=[e for e in step_events if e['separation_m']<-.0005 and
+            invalid=[e for e in step_events if e['separation_m'] < -a.contact_limit_mm/1000 and
                 (any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/')) or
                  e['a'] in foliage_conditioner.leaves or e['b'] in foliage_conditioner.leaves)]
             raw_conditioning_invalid=invalid.copy()
@@ -1410,7 +1425,8 @@ try:
                 worst_by_pair[key]=min(worst_by_pair.get(key,0.),e['separation_m'])
             for key,separation in worst_by_pair.items():
                 if leaf_geometry.eligible(*key):
-                    certificates[key]=leaf_geometry.verify(*key,poses,current_time,separation)['certified_within_limit']
+                    certificates[key]=leaf_geometry.verify(*key,poses,current_time,separation,
+                        limit_m=contact_guard.limit(*key) if contact_guard else a.contact_limit_mm/1000)['certified_within_limit']
             invalid=[e for e in invalid if not certificates.get(tuple(sorted((e['a'],e['b']))),False)]
         invalid=contact_scope.filter_invalid(invalid,breaks)
         if foliage_conditioner is not None:
@@ -1419,7 +1435,7 @@ try:
                 stop_reason=conditioning_step_error;print('[MOTION] conditioning stop',stop_reason,flush=True);break
         if restored_initialization and tick==0:
             initial_raw_min=tensor_contacts.last_summary.get('raw_minimum_separation_m') if tensor_contacts is not None else None
-            initialization_validity.update(valid=not invalid and (initial_raw_min is None or initial_raw_min>=-.0005),
+            initialization_validity.update(valid=not invalid and (initial_raw_min is None or initial_raw_min >= -a.contact_limit_mm/1000),
                 native_validity='evaluated_first_physics_step',timestamp_scope='Fresh solved native step after measured restore',
                 first_physics_timestamp_s=current_time,
                 reported_contact_points=contact_buffer.step_contact_count if contact_buffer is not None else len(step_events),
@@ -1433,11 +1449,11 @@ try:
                     conditional_continuation_is_not_clearance=True)
             (a.output/'initialization_validity.json').write_text(json.dumps(initialization_validity,indent=2))
         if invalid:
-            stop_reason='penetration_over_contact_policy' if contact_guard else 'penetration_over_0_5mm'
+            stop_reason='penetration_over_contact_policy' if contact_guard or a.contact_limit_mm!=.5 else 'penetration_over_0_5mm'
             print('[MOTION] stop',invalid[:2],flush=True);break
         raw_min=tensor_contacts.last_summary.get('raw_minimum_separation_m') if tensor_contacts is not None else None
-        if raw_min is not None and raw_min<-.0005:
-            stop_reason='penetration_over_0_5mm';print('[MOTION] stop raw sensor separation',tensor_contacts.last_summary,flush=True);break
+        if raw_min is not None and raw_min < -a.contact_limit_mm/1000:
+            stop_reason='penetration_over_contact_policy' if a.contact_limit_mm!=.5 else 'penetration_over_0_5mm';print('[MOTION] stop raw sensor separation',tensor_contacts.last_summary,flush=True);break
         draw=(tick%max(1,round(a.hz/a.display_fps))==0) if a.performance=='baseline' else (time.perf_counter()-last_display>=1/a.display_fps)
         if visuals is not None and draw:
             profile.checkpoint(tick,'before_visual_update')
@@ -1560,6 +1576,8 @@ try:
                  compliant_foliage=manifest.get('compliant_foliage'),pulse_body=a.pulse_body,
                  leaf_poststep_verification=a.verify_leaf_contact_after_step,
                  truss_sequence=sequence,planning_paused_wall_s=planning_paused_wall_s,
+                 contact_limit_mm=a.contact_limit_mm,
+                 fruit_contact_limit_mm=a.fruit_contact_limit_mm,fruit_fruit_limit_mm=a.fruit_fruit_limit_mm,
                  physics_steps=len(times)-1,simulated_s=times[-1] if times else 0,physics_wall_s=loop_wall,
                  loop_started_monotonic_s=started,loop_finished_monotonic_s=loop_finished,
                  save_wall_s=time.perf_counter()-started-loop_wall,performance=a.performance,threads=a.threads,

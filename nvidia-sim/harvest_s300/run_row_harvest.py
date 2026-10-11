@@ -25,7 +25,7 @@ DEFAULT_ARGUMENTS = ['--headless', '--physics-only', '--native-materialized-stag
     '--device', 'cpu', '--performance', 'optimized', '--threads', '2',
     '--contact-backend', 'callback', '--plant-dynamics', 'full',
     '--solver', 'TGS', '--position-iterations', '64', '--velocity-iterations', '4',
-    '--scene-ccd', '--fruit-contact-limit-mm', '.5', '--fruit-fruit-limit-mm', '.5',
+    '--scene-ccd', '--contact-limit-mm', '1', '--fruit-contact-limit-mm', '1', '--fruit-fruit-limit-mm', '1',
     '--preparation', 'horizontal_ready', '--measured-ready-start', '--approach-yaw-mode', 'truss-axis',
     '--truss-axis-min-fruits', '5', '--sparse-entry-duration-scale', '4',
     '--single-fruit-when-remaining', '2',

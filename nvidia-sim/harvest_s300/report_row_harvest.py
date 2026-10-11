@@ -363,7 +363,7 @@ def write_report(root,*,refresh_subreports=False):
                 '<td>'+_link(record['trial'],'실제 station 원자료')+' · '+_link(record['checkpoint'],'측정 checkpoint')+'</td></tr>')
         campaign_parts.append('<article><h3>'+_link(campaign['source'])+'</h3><p>실제 실행 요청: '+_text(campaign['executed'])+
             ' · 상태: '+_text(campaign['status'])+'</p><p>계획 표본은 제안만 제공합니다. 각 실제 station의 레일 DOF 측정과 동작 결과는 아래 실행 표에 따로 기록합니다. '+
-            '창 전환은 측정 상태 handoff와 PhysX 재시작이며, 이전 비활성 줄기는 명시적인 동역학 근사로 보존합니다.</p>'+ 
+            '창 전환은 측정 상태 handoff와 PhysX 재시작이며, 이전 비활성 줄기는 명시적인 동역학 근사로 보존합니다.</p>'+
             '<table><tr><th>station</th><th>줄기</th><th>계획 y m</th><th>상태</th><th>실제 실행</th><th>blocker</th><th>원자료</th></tr>'+''.join(rows)+'</table></article>')
     station=report['station_screen'];screen_rows=[]
     for item in station['results']:

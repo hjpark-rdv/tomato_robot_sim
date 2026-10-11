@@ -73,8 +73,8 @@ class FruitGuardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             for flags in (['--fruit-contact-limit-mm','nan'],
                           ['--fruit-fruit-limit-mm','0.4'],
-                          ['--fruit-contact-limit-mm','1','--contact-backend','tensor'],
-                          ['--fruit-fruit-limit-mm','1','--num-envs','2']):
+                          ['--contact-limit-mm','.5','--fruit-contact-limit-mm','1','--contact-backend','tensor'],
+                          ['--contact-limit-mm','.5','--fruit-fruit-limit-mm','1','--num-envs','2']):
                 output=Path(tmp)/'output'
                 cmd=[sys.executable,str(Path(__file__).with_name('run_motion.py')),tmp,'--output',str(output),*flags]
                 p=subprocess.run(cmd,capture_output=True,text=True)

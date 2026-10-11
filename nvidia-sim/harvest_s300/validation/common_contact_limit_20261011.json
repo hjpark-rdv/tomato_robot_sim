@@ -1,0 +1,1544 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "algorithm_commit": "4d45485",
+  "source_output": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed",
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "common_default_limit_mm": 1.0,
+  "initial_and_runtime_and_postsolve_limit_shared": true,
+  "physics_materials_geometry_actuators_unchanged": true,
+  "numerical_variants_change_response": true,
+  "fast_variant_is_opt_in": true,
+  "trials": [
+    {
+      "trial": "ripe_groups_cpu16",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_112538_ripe_group_harvest/trials/ripe_groups_cpu16",
+      "completed": true,
+      "stop_reason": null,
+      "common_limit_mm": 0.5,
+      "simulated_s": 54.0,
+      "physics_loop_wall_s": 152.65590485557914,
+      "save_wall_s": 12.428182169795036,
+      "planning_paused_wall_s": 0.7670015208423138,
+      "realtime_factor": 0.3537367260774286,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "group_no_group_meets_minimum",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "motion_completed",
+          "start_s": 2.0,
+          "end_s": 54.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 5,
+      "target_truss_break_count": 5,
+      "raw_max_contact_penetration_mm": 2.9433940071612597,
+      "raw_points_over_half_mm": 14,
+      "raw_points_over_one_mm": 3,
+      "solved_geometry_queries": 9,
+      "solved_geometry_accepted": 9,
+      "solved_geometry_failed": 0,
+      "solved_max_accepted_upper_bound_mm": 0.17547616270530142,
+      "failed_geometry": [],
+      "input_sha256": {
+        "summary.json": "8751557700fbb5431df6af82c6af82e27ed084eb321d79c570b93d014c0e946e",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "9ccb8148ab65abd2bb6c7fc4e9612ceb5fe92ce0344afa9153d6e6daaba04ef6",
+        "contacts.json": "255d1229ab00a6ab5d96c7844402ae3d051d11d7c287b1ad6c8a84037c4003fd",
+        "break_events.json": "745b2d427e7e390db50d1c2c05ec21d2875fb43ad954f1bdaa8868e33061b1f1",
+        "runtime_settings.json": "81b15da474624ed82016c4c73b364159a9a1ee214bbd13ba375230d005434dac",
+        "code_sha256.json": "3f731bc3e87a28a1772bdf86b6a58be206ccbb62bba7d9fc3d9743af3cf39abb"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 331,
+        "max_rss_gib": 46.4810676574707,
+        "cpu_percent_median": 120.80000000000001,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "pgs120_64",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/pgs120_64",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "common_limit_mm": 0.5,
+      "simulated_s": 23.741666666666667,
+      "physics_loop_wall_s": 55.012446507811546,
+      "save_wall_s": 5.230207888409495,
+      "planning_paused_wall_s": 0.0,
+      "realtime_factor": 0.43156900254009695,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "penetration_over_0_5mm",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "stopped",
+          "start_s": 2.0,
+          "end_s": 23.741666666666667,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 0,
+      "target_truss_break_count": 0,
+      "raw_max_contact_penetration_mm": 0.8033139165490866,
+      "raw_points_over_half_mm": 2,
+      "raw_points_over_one_mm": 0,
+      "solved_geometry_queries": 2,
+      "solved_geometry_accepted": 1,
+      "solved_geometry_failed": 1,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [
+        {
+          "t": 23.741666666666667,
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_01/Collider",
+          "native_callback_separation_m": -0.0005356026813387871,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+          "minimum_certified_gap_m": -0.0005491188130137825,
+          "penetration_upper_bound_m": 0.0005491188130137825
+        }
+      ],
+      "input_sha256": {
+        "summary.json": "d7fbbfd92167a4bedc1cc544d755e47e12ce74db68e35d1671565e2b5f27ee2c",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "0558ffd4bf6b298175292a53a968a336a61996a1f6f0e997dd01f5035b70db28",
+        "contacts.json": "6f8dae505f000d363af7ff9fbc303dad392d6bc898384cd4d53f86f4318f8ebc",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "runtime_settings.json": "8efa3d2168846f67ae21f08d4020f64a098d57f23780e06ea9f2887ec20f3b0b",
+        "code_sha256.json": "dd0436c9a4f3d74907e60b670d866b2bf75d45cda92cc2d6837e4ac0fe36543c"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 151,
+        "max_rss_gib": 5.8355255126953125,
+        "cpu_percent_median": 120.4,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "pgs60_64",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/pgs60_64",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "common_limit_mm": 0.5,
+      "simulated_s": 23.683333333333334,
+      "physics_loop_wall_s": 28.82241919450462,
+      "save_wall_s": 3.0145125798881054,
+      "planning_paused_wall_s": 0.0,
+      "realtime_factor": 0.8216983166301627,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "penetration_over_0_5mm",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "stopped",
+          "start_s": 2.0,
+          "end_s": 23.683333333333334,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 0,
+      "target_truss_break_count": 0,
+      "raw_max_contact_penetration_mm": 0.7844347856007516,
+      "raw_points_over_half_mm": 2,
+      "raw_points_over_one_mm": 0,
+      "solved_geometry_queries": 2,
+      "solved_geometry_accepted": 1,
+      "solved_geometry_failed": 1,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [
+        {
+          "t": 23.683333333333334,
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_01/Collider",
+          "native_callback_separation_m": -0.000504171708598733,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+          "minimum_certified_gap_m": -0.0005735131996132958,
+          "penetration_upper_bound_m": 0.0005735131996132958
+        }
+      ],
+      "input_sha256": {
+        "summary.json": "eb0ef16d533ce7398cfabc456c441f305e1ec444e028ef027f1852fb6f345f65",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "cd9f739160416af4e7437ca751ac092ad89443dae66f828243864cff367e1bbd",
+        "contacts.json": "e4ee3466770b422b935b97c35b10707284d206b4589f94dc19b631a6cdb50fa2",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "runtime_settings.json": "5f4e99356649d8e5bc136bd3b834c64273d6862b202c6515ea45d1c2b80eeae6",
+        "code_sha256.json": "b6275b1d6fdaba9a3e4cc267c0f30cc61afdd6219b73c6969f84ecdec605b56b"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 102,
+        "max_rss_gib": 5.725345611572266,
+        "cpu_percent_median": 121.1,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "tgs120_32",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/tgs120_32",
+      "completed": true,
+      "stop_reason": null,
+      "common_limit_mm": 0.5,
+      "simulated_s": 54.0,
+      "physics_loop_wall_s": 109.59206086583436,
+      "save_wall_s": 13.787777317687869,
+      "planning_paused_wall_s": 0.7484784405678511,
+      "realtime_factor": 0.49273642245042093,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "group_no_group_meets_minimum",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "motion_completed",
+          "start_s": 2.0,
+          "end_s": 54.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 6,
+      "target_truss_break_count": 6,
+      "raw_max_contact_penetration_mm": 15.165784396231174,
+      "raw_points_over_half_mm": 43,
+      "raw_points_over_one_mm": 26,
+      "solved_geometry_queries": 14,
+      "solved_geometry_accepted": 14,
+      "solved_geometry_failed": 0,
+      "solved_max_accepted_upper_bound_mm": 0.010011889060912438,
+      "failed_geometry": [],
+      "input_sha256": {
+        "summary.json": "c890f09e2a39cc32c5268c6d1053dda59e7532d5565641cb9a6257a7e0cf1c90",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "ace2ff8812278eccafc79e3db5ad0c4db60e0b994dc457410ca2d2e4be2c0530",
+        "contacts.json": "67f42d2b5a0a0078d9c247b2ead213d4952e8660f8753950eb99c0deb640c4bb",
+        "break_events.json": "cc492424c10828cb05586f5c7cc7eaaaa165aababbf86ccf59e47ba49c3120ce",
+        "runtime_settings.json": "73909f55dc293336e669cd79aa007ad3e5b903a4b35802af2c3cad58a0e70294",
+        "code_sha256.json": "b6275b1d6fdaba9a3e4cc267c0f30cc61afdd6219b73c6969f84ecdec605b56b"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 236,
+        "max_rss_gib": 6.317779541015625,
+        "cpu_percent_median": 122.05,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "tgs60_64",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/tgs60_64",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "common_limit_mm": 0.5,
+      "simulated_s": 24.916666666666668,
+      "physics_loop_wall_s": 36.2162523958832,
+      "save_wall_s": 3.2130021769553423,
+      "planning_paused_wall_s": 0.0,
+      "realtime_factor": 0.6879968251353089,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "penetration_over_0_5mm",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "stopped",
+          "start_s": 2.0,
+          "end_s": 24.916666666666668,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 3,
+      "target_truss_break_count": 3,
+      "raw_max_contact_penetration_mm": 0.5165226757526398,
+      "raw_points_over_half_mm": 1,
+      "raw_points_over_one_mm": 0,
+      "solved_geometry_queries": 1,
+      "solved_geometry_accepted": 0,
+      "solved_geometry_failed": 1,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [
+        {
+          "t": 24.916666666666668,
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_03/Collider",
+          "native_callback_separation_m": -0.0005165226757526398,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+          "minimum_certified_gap_m": -0.0005025904329680753,
+          "penetration_upper_bound_m": 0.0005025904329680753
+        }
+      ],
+      "input_sha256": {
+        "summary.json": "6b4bc815cfd76603a37e0f6a30b8620182b934cae9db12cc358bdb69132c573b",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "5f72378ae55290b7cbecbfb6e2a0e367196d2a13ba5ea4b3703aa205f07badc3",
+        "contacts.json": "e768522a004624f76503ff4f17252b1e2d84c87a342d84b538ca8c3709eb0b42",
+        "break_events.json": "5badc643cdbf180f268f3434dc60174655963cb244ba91480ddbd85ea232b374",
+        "runtime_settings.json": "b6f9fe1bb2c078ee932741997e8fc7598c0826fb5dc5130b729889a71f6cfc3c",
+        "code_sha256.json": "b6275b1d6fdaba9a3e4cc267c0f30cc61afdd6219b73c6969f84ecdec605b56b"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 110,
+        "max_rss_gib": 5.7439422607421875,
+        "cpu_percent_median": 121.64999999999999,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "pgs120_64_1mm",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/pgs120_64_1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "common_limit_mm": 1.0,
+      "simulated_s": 24.0,
+      "physics_loop_wall_s": 55.25818790495396,
+      "save_wall_s": 5.265355238690972,
+      "planning_paused_wall_s": 0.0,
+      "realtime_factor": 0.43432477448013407,
+      "physics_settings": {
+        "hz": 120,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "penetration_over_contact_policy",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "stopped",
+          "start_s": 2.0,
+          "end_s": 24.0,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 0,
+      "target_truss_break_count": 0,
+      "raw_max_contact_penetration_mm": 1.0063918307423592,
+      "raw_points_over_half_mm": 110,
+      "raw_points_over_one_mm": 1,
+      "solved_geometry_queries": 1,
+      "solved_geometry_accepted": 0,
+      "solved_geometry_failed": 1,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [
+        {
+          "t": 24.0,
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_01/Collider",
+          "native_callback_separation_m": -0.0010063918307423592,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.001,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "a39b534c5b3488a1dce9a95a03b2aa95a084d2b4410b7e64e7de223116e028ab",
+          "minimum_certified_gap_m": -0.001020075465723247,
+          "penetration_upper_bound_m": 0.001020075465723247
+        }
+      ],
+      "input_sha256": {
+        "summary.json": "9d4e5e977546051e31b52906a8f96e1dce59002e806aa93c17655f728ed39a4d",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "6ba5437eeaa2bbf29816b754325ae9cca7e8876cc3161c9b696dd77846ef8205",
+        "contacts.json": "42abcf3a0fed33f97f01762de1f7c4b89e67d6d06e8164959c06056a49cf01cd",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "runtime_settings.json": "1264a06be7f6372d6b4f581ae273d886da9be05a7c1da5fee1900b0d7100e1e8",
+        "code_sha256.json": "7cc4cace3f246431b730e855b2c55e7f69729dd156f9b3486257dc28c3b6eb48"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 152,
+        "max_rss_gib": 5.839275360107422,
+        "cpu_percent_median": 120.9,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "pgs60_64_1mm",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/pgs60_64_1mm",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "common_limit_mm": 1.0,
+      "simulated_s": 23.866666666666667,
+      "physics_loop_wall_s": 28.679486017674208,
+      "save_wall_s": 2.99527326785028,
+      "planning_paused_wall_s": 0.0,
+      "realtime_factor": 0.8321859970558203,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "PGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "penetration_over_contact_policy",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "stopped",
+          "start_s": 2.0,
+          "end_s": 23.866666666666667,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 0,
+      "target_truss_break_count": 0,
+      "raw_max_contact_penetration_mm": 1.0514101013541222,
+      "raw_points_over_half_mm": 38,
+      "raw_points_over_one_mm": 2,
+      "solved_geometry_queries": 2,
+      "solved_geometry_accepted": 0,
+      "solved_geometry_failed": 2,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [
+        {
+          "t": 23.866666666666667,
+          "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_01/Collider",
+          "native_callback_separation_m": -0.0010514101013541222,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.001,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "a39b534c5b3488a1dce9a95a03b2aa95a084d2b4410b7e64e7de223116e028ab",
+          "minimum_certified_gap_m": -0.0011607130089433815,
+          "penetration_upper_bound_m": 0.0011607130089433815
+        },
+        {
+          "t": 23.866666666666667,
+          "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_02/Collider",
+          "native_callback_separation_m": -0.0010498575866222382,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.001,
+          "numerical_guard_m": 1e-06,
+          "contact_scope": "current_truss_fruit_tool",
+          "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+          "hull_pair_count": 1,
+          "positive_world_aabb_separated_pair_count": 0,
+          "complete_full_sat_pair_count": 1,
+          "minimum_positive_support_gap_is_not_euclidean_distance": true,
+          "helper_source_sha256": "a39b534c5b3488a1dce9a95a03b2aa95a084d2b4410b7e64e7de223116e028ab",
+          "minimum_certified_gap_m": -0.0010902380691342195,
+          "penetration_upper_bound_m": 0.0010902380691342195
+        }
+      ],
+      "input_sha256": {
+        "summary.json": "290003280cbb322b718b8d2513d07d3072b12512b12fddee6b562c6732df38ae",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "76355ce31deafc8bbaede59914e7d210d0089b0bfca68aa900eba4f2b55c8ec0",
+        "contacts.json": "eacbca45ad9f5e25c5e8a4c1f9d5436f24a365bad718c6d91ccaba31f6854535",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "runtime_settings.json": "550ab63016e477c26a4eb425a2cfb98a4f593059062560fd2b226596f5d7e7c3",
+        "code_sha256.json": "7cc4cace3f246431b730e855b2c55e7f69729dd156f9b3486257dc28c3b6eb48"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 102,
+        "max_rss_gib": 5.729724884033203,
+        "cpu_percent_median": 120.19999999999999,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "tgs60_32_1mm",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_32_1mm",
+      "completed": true,
+      "stop_reason": null,
+      "common_limit_mm": 1.0,
+      "simulated_s": 54.0,
+      "physics_loop_wall_s": 62.68051020428538,
+      "save_wall_s": 7.066773496568203,
+      "planning_paused_wall_s": 0.7802464906126261,
+      "realtime_factor": 0.861511813225606,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "group_no_group_meets_minimum",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "motion_completed",
+          "start_s": 2.0,
+          "end_s": 54.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 5,
+      "target_truss_break_count": 5,
+      "raw_max_contact_penetration_mm": 6.634905934333801,
+      "raw_points_over_half_mm": 253,
+      "raw_points_over_one_mm": 135,
+      "solved_geometry_queries": 25,
+      "solved_geometry_accepted": 25,
+      "solved_geometry_failed": 0,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [],
+      "input_sha256": {
+        "summary.json": "a5064165da4f877720794af094470d929c2e4890ed76f09b9c13084f67fcbaae",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "85a68b141dc3177ac945a98611e677c2396f650c563363ff6ea2b91be228aa2e",
+        "contacts.json": "3282594cb22c8e15e02c87fcb3a275826e39d40cee98afe75780bd9e7098e73f",
+        "break_events.json": "8b42f5028c5e894c0f0d93912772e31d7c1db65c84a30c1c8a64adcb3b38186c",
+        "runtime_settings.json": "dbc967e68c0508269c87929960fb008fbb1897af73530b5b63a2328da7832a12",
+        "code_sha256.json": "7cc4cace3f246431b730e855b2c55e7f69729dd156f9b3486257dc28c3b6eb48"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 151,
+        "max_rss_gib": 5.926048278808594,
+        "cpu_percent_median": 122.5,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "tgs60_32_1mm_vector_copy",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_32_1mm_vector_copy",
+      "completed": true,
+      "stop_reason": null,
+      "common_limit_mm": 1.0,
+      "simulated_s": 54.0,
+      "physics_loop_wall_s": 59.95457602851093,
+      "save_wall_s": 7.01375731639564,
+      "planning_paused_wall_s": 0.7471607755869627,
+      "realtime_factor": 0.9006818757974491,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 32,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "group_no_group_meets_minimum",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "motion_completed",
+          "start_s": 2.0,
+          "end_s": 54.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 5,
+      "target_truss_break_count": 5,
+      "raw_max_contact_penetration_mm": 6.634905934333801,
+      "raw_points_over_half_mm": 253,
+      "raw_points_over_one_mm": 135,
+      "solved_geometry_queries": 25,
+      "solved_geometry_accepted": 25,
+      "solved_geometry_failed": 0,
+      "solved_max_accepted_upper_bound_mm": 0,
+      "failed_geometry": [],
+      "input_sha256": {
+        "summary.json": "8eadc19548128ae0ff976b13abea0ff2771fd73b093d87a10287be6551f98a27",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "85a68b141dc3177ac945a98611e677c2396f650c563363ff6ea2b91be228aa2e",
+        "contacts.json": "a1b949a5b556d3d4f6870243e1470a08a4078790f336b431c76f4adcb67564c6",
+        "break_events.json": "8b42f5028c5e894c0f0d93912772e31d7c1db65c84a30c1c8a64adcb3b38186c",
+        "runtime_settings.json": "277a0f53154a9852c08f9c714c6ffb5be65d66bd6159c283a3b17d681890268a",
+        "code_sha256.json": "a10748cf05776f86bfb67248bb3d25248df885504270b94a94f59c0dcb799ae0"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": true,
+      "whole_process_resources": {
+        "samples": 148,
+        "max_rss_gib": 5.921611785888672,
+        "cpu_percent_median": 121.35,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    },
+    {
+      "trial": "tgs60_64_1mm",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_64_1mm",
+      "completed": true,
+      "stop_reason": null,
+      "common_limit_mm": 1.0,
+      "simulated_s": 106.0,
+      "physics_loop_wall_s": 180.85438819229603,
+      "save_wall_s": 13.461929026991129,
+      "planning_paused_wall_s": 25.37340691871941,
+      "realtime_factor": 0.5861068733775704,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threads": 16,
+      "initialization_valid": true,
+      "actual_self_collision_pass": true,
+      "group_outcome": {
+        "eligible_detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08"
+        ],
+        "ineligible_detached": [],
+        "eligible_remaining": [],
+        "ineligible_remaining": [
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+      },
+      "termination": "group_no_eligible_fruit_remaining",
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "motion_completed",
+          "start_s": 2.0,
+          "end_s": 54.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_05",
+            "Truss_02_Fruit_07",
+            "Truss_02_Fruit_08"
+          ],
+          "status": "motion_completed",
+          "start_s": 54.0,
+          "end_s": 106.0,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "native_break_count": 7,
+      "target_truss_break_count": 7,
+      "raw_max_contact_penetration_mm": 4.369406960904598,
+      "raw_points_over_half_mm": 82,
+      "raw_points_over_one_mm": 39,
+      "solved_geometry_queries": 10,
+      "solved_geometry_accepted": 10,
+      "solved_geometry_failed": 0,
+      "solved_max_accepted_upper_bound_mm": 0.22048511277616978,
+      "failed_geometry": [],
+      "input_sha256": {
+        "summary.json": "d66125243d2700568510754672f76265c1b1430972f6ff57d1ba8bbe9b1ab199",
+        "plan.json": "d11b5f20b990909a953b793f6c9abb9ecdb090198ecb1c0ef160e2c2ceb428c3",
+        "states.npz": "8810783719859c8db91be07abafa4d831c56849f46968701005db9c4060af3be",
+        "contacts.json": "79dedd3b1fc0c1beb932929030ff540ff408e1e44ab5b7199432f42c3a37d976",
+        "break_events.json": "1714b04290f4b3f83bc6778b92998b6d71635d0ed0f2fea42a2a34dd880465c3",
+        "runtime_settings.json": "038773180b1bed7d6675619c244f43f940699f09df9cdd9c2abc3c9faf7cfdd9",
+        "code_sha256.json": "462e34c7cc4dfbef17f89ec2a29f81c4ad1b27c6115e2565495c462f238d512e"
+      },
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "native_contact_vector_copy": false,
+      "whole_process_resources": {
+        "samples": 290,
+        "max_rss_gib": 6.298305511474609,
+        "cpu_percent_median": 326.65,
+        "scope": "Startup/planning/physics/post-audit mixed;100percent=one core; not physics-only CPU utilization"
+      }
+    }
+  ],
+  "prefix_equivalence": [
+    {
+      "old": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/tgs60_64",
+      "new": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_64_1mm",
+      "samples": 1496,
+      "last_common_timestamp_s": 24.916666666666668,
+      "arrays_exact": {
+        "time": true,
+        "poses": true,
+        "robot_q": true,
+        "command": true,
+        "phase": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "contact_multiset_exact": true,
+      "contact_points_reference": 82426,
+      "contact_points_new": 82426,
+      "first_plan_exact": true,
+      "interpretation": "Common prefix only through original0.5mm stop; no full-run equivalence claim"
+    },
+    {
+      "old": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/pgs60_64",
+      "new": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/pgs60_64_1mm",
+      "samples": 1422,
+      "last_common_timestamp_s": 23.683333333333334,
+      "arrays_exact": {
+        "time": true,
+        "poses": true,
+        "robot_q": true,
+        "command": true,
+        "phase": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "contact_multiset_exact": true,
+      "contact_points_reference": 76604,
+      "contact_points_new": 76604,
+      "first_plan_exact": true,
+      "interpretation": "Common prefix only through original0.5mm stop; no full-run equivalence claim"
+    },
+    {
+      "old": "/root/docker_share/mujoko_debugging_data/20261011_113601_group_harvest_speed/trials/pgs120_64",
+      "new": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/pgs120_64_1mm",
+      "samples": 2850,
+      "last_common_timestamp_s": 23.741666666666667,
+      "arrays_exact": {
+        "time": true,
+        "poses": true,
+        "robot_q": true,
+        "command": true,
+        "phase": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "contact_multiset_exact": true,
+      "contact_points_reference": 150485,
+      "contact_points_new": 150485,
+      "first_plan_exact": true,
+      "interpretation": "Common prefix only through original0.5mm stop; no full-run equivalence claim"
+    }
+  ],
+  "native_copy_equivalence": {
+    "old": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_32_1mm",
+    "new": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_32_1mm_vector_copy",
+    "samples": 3241,
+    "last_common_timestamp_s": 54.0,
+    "arrays_exact": {
+      "time": true,
+      "poses": true,
+      "robot_q": true,
+      "command": true,
+      "phase": true,
+      "belt_surface_velocity_local_y_m_s": true
+    },
+    "contact_multiset_exact": true,
+    "contact_points_reference": 222044,
+    "contact_points_new": 222044,
+    "first_plan_exact": true,
+    "interpretation": "Full completed trace comparison of native contact vector copy off/on; no numerical physics setting changes",
+    "same_sample_count": true
+  },
+  "tests": {
+    "tests": 782,
+    "success": true,
+    "errors": [],
+    "failures": [],
+    "skipped": 0,
+    "wall_s": 37.2361959759146,
+    "excluded_native_sdk_modules": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ]
+  },
+  "displacement": [
+    {
+      "trial": "ripe_groups_cpu16",
+      "fruits": [
+        {
+          "name": "Truss_02_Fruit_01",
+          "attached_max_displacement_mm": 33.121395111083984,
+          "native_detached": true,
+          "final_displacement_mm": 1135.4984130859375
+        },
+        {
+          "name": "Truss_02_Fruit_02",
+          "attached_max_displacement_mm": 41.05024337768555,
+          "native_detached": true,
+          "final_displacement_mm": 1112.384765625
+        },
+        {
+          "name": "Truss_02_Fruit_03",
+          "attached_max_displacement_mm": 45.53485107421875,
+          "native_detached": true,
+          "final_displacement_mm": 1094.5726318359375
+        },
+        {
+          "name": "Truss_02_Fruit_04",
+          "attached_max_displacement_mm": 71.70514678955078,
+          "native_detached": true,
+          "final_displacement_mm": 1071.93359375
+        },
+        {
+          "name": "Truss_02_Fruit_05",
+          "attached_max_displacement_mm": 77.06838989257812,
+          "native_detached": true,
+          "final_displacement_mm": 1081.2489013671875
+        },
+        {
+          "name": "Truss_02_Fruit_07",
+          "attached_max_displacement_mm": 76.68123626708984,
+          "native_detached": false,
+          "final_displacement_mm": 15.491972923278809
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "attached_max_displacement_mm": 75.16741943359375,
+          "native_detached": false,
+          "final_displacement_mm": 16.330774307250977
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "attached_max_displacement_mm": 75.97798156738281,
+          "native_detached": false,
+          "final_displacement_mm": 16.662805557250977
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "attached_max_displacement_mm": 75.86436462402344,
+          "native_detached": false,
+          "final_displacement_mm": 16.62410545349121
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "attached_max_displacement_mm": 74.92340850830078,
+          "native_detached": false,
+          "final_displacement_mm": 17.225685119628906
+        }
+      ],
+      "all_poses_finite": true
+    },
+    {
+      "trial": "tgs60_32_1mm",
+      "fruits": [
+        {
+          "name": "Truss_02_Fruit_01",
+          "attached_max_displacement_mm": 59.13719940185547,
+          "native_detached": true,
+          "final_displacement_mm": 860.46142578125
+        },
+        {
+          "name": "Truss_02_Fruit_02",
+          "attached_max_displacement_mm": 68.85035705566406,
+          "native_detached": true,
+          "final_displacement_mm": 1109.1309814453125
+        },
+        {
+          "name": "Truss_02_Fruit_03",
+          "attached_max_displacement_mm": 66.04705810546875,
+          "native_detached": true,
+          "final_displacement_mm": 1085.8731689453125
+        },
+        {
+          "name": "Truss_02_Fruit_04",
+          "attached_max_displacement_mm": 80.36790466308594,
+          "native_detached": true,
+          "final_displacement_mm": 1074.6810302734375
+        },
+        {
+          "name": "Truss_02_Fruit_05",
+          "attached_max_displacement_mm": 93.40941619873047,
+          "native_detached": true,
+          "final_displacement_mm": 1301.00830078125
+        },
+        {
+          "name": "Truss_02_Fruit_07",
+          "attached_max_displacement_mm": 92.19058227539062,
+          "native_detached": false,
+          "final_displacement_mm": 23.50385093688965
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "attached_max_displacement_mm": 89.25838470458984,
+          "native_detached": false,
+          "final_displacement_mm": 24.409351348876953
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "attached_max_displacement_mm": 91.71398162841797,
+          "native_detached": false,
+          "final_displacement_mm": 24.484054565429688
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "attached_max_displacement_mm": 89.41552734375,
+          "native_detached": false,
+          "final_displacement_mm": 24.21908950805664
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "attached_max_displacement_mm": 89.29459381103516,
+          "native_detached": false,
+          "final_displacement_mm": 24.45856285095215
+        }
+      ],
+      "all_poses_finite": true
+    },
+    {
+      "trial": "tgs60_64_1mm",
+      "fruits": [
+        {
+          "name": "Truss_02_Fruit_01",
+          "attached_max_displacement_mm": 44.3385124206543,
+          "native_detached": true,
+          "final_displacement_mm": 1125.850830078125
+        },
+        {
+          "name": "Truss_02_Fruit_02",
+          "attached_max_displacement_mm": 45.59836196899414,
+          "native_detached": true,
+          "final_displacement_mm": 1117.647216796875
+        },
+        {
+          "name": "Truss_02_Fruit_03",
+          "attached_max_displacement_mm": 68.52867126464844,
+          "native_detached": true,
+          "final_displacement_mm": 1134.197509765625
+        },
+        {
+          "name": "Truss_02_Fruit_04",
+          "attached_max_displacement_mm": 86.39579010009766,
+          "native_detached": true,
+          "final_displacement_mm": 1073.5791015625
+        },
+        {
+          "name": "Truss_02_Fruit_05",
+          "attached_max_displacement_mm": 91.40898132324219,
+          "native_detached": true,
+          "final_displacement_mm": 1060.7452392578125
+        },
+        {
+          "name": "Truss_02_Fruit_07",
+          "attached_max_displacement_mm": 98.4346923828125,
+          "native_detached": true,
+          "final_displacement_mm": 1039.417236328125
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "attached_max_displacement_mm": 85.4848861694336,
+          "native_detached": true,
+          "final_displacement_mm": 1028.3214111328125
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "attached_max_displacement_mm": 103.68460845947266,
+          "native_detached": false,
+          "final_displacement_mm": 28.557743072509766
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "attached_max_displacement_mm": 105.24711608886719,
+          "native_detached": false,
+          "final_displacement_mm": 28.656951904296875
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "attached_max_displacement_mm": 108.33883666992188,
+          "native_detached": false,
+          "final_displacement_mm": 29.781381607055664
+        }
+      ],
+      "all_poses_finite": true
+    }
+  ],
+  "limitations": [
+    "Same source model and first plan; timestep/solver changes numerical response.",
+    "Cycles differ after contact and native detachment; equal cycle counts are not assumed.",
+    "Loop includes between-cycle planning pause; startup/post-audit/save excluded.",
+    "Raw callback depth is pre-solve; accepted post-solve proofs and detached-fruit exceptions are distinct.",
+    "Single truss and one run per configuration; no multi-scene or real-world success claim.",
+    "Pre-solve gripper-fruit callback depth reached6.635mm in fast variant; post-solve certified clear. This is not a continuous sub-mm nonpenetration guarantee.",
+    "Separate historical post-native-break ground/chassis diagnostic exceptions remain; leaf collisions previously ignored by user instruction.",
+    "GUI and parallel harvesting throughput not measured this round."
+  ],
+  "postprocess_fix": "First authored group checked against manifest center; native warmup delta recorded separately. Later measured boundary tolerance1e-8 unchanged.",
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_32_1mm/actual_motion.mp4",
+      "sha256": "25a6965617f821b9ceea7da7e372f877edda942d5e4d8b0dc451b99562b805e4",
+      "frames": 325,
+      "fps": 6,
+      "speed": 1.0,
+      "physics_rerun": false,
+      "full_ffmpeg_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_114941_common_1mm_harvest_speed/trials/tgs60_64_1mm/actual_motion.mp4",
+      "sha256": "2c89821297c37ff022dd426451c5a272750d474e14130c9f261f249400a64b46",
+      "frames": 637,
+      "fps": 6,
+      "speed": 1.0,
+      "physics_rerun": false,
+      "full_ffmpeg_decode_passed": true
+    }
+  ],
+  "analysis_sha256": {
+    "summarize_comparison.py": "64ce74f787c9d1933d9ef85cf758c47b02fba2b5e52a2fe29c5a9164fcedc50a",
+    "comparison.json": "dcf61580b1b6b8e62b41b9375c01d431cdfc8b62a706013ad0f2675bbbf7a4ad",
+    "attached_fruit_displacement_comparison.json": "0e26b69709293a7761e69ebc11df48d393f18a351dc95e96bc1c91ff9457860a",
+    "video_validation.json": "4e8d88cd3bc5cc838515a0f6b4e1a2304465d6249bff0f78b778f7812b47b307"
+  },
+  "final_implementation_sha256": {
+    "run_motion.py": "e9619bfe3ec9551358ce958e347a816541244c4075d2dcd9ff58bb4f8e5600e9",
+    "run_motion_live.sh": "6cac0fa6c92d62280cc79e0b0bcd81f48ec8c07ee93b1416c09684137945bdee",
+    "run_row_harvest.py": "26f99ac5d2dc92a3948a85b59127967a7222ef55d5903d9c4a5de3430ddf9ff0",
+    "motion_contact_guard.py": "e00de4206a5ea998eaf6fd79ce488c362f619e86b476535b98cd779c389a4010",
+    "leaf_contact_geometry.py": "a39b534c5b3488a1dce9a95a03b2aa95a084d2b4410b7e64e7de223116e028ab",
+    "native_leaf_scene_query.py": "24b4d75d6e534addeb828299523f2954c7fb1c544407428e97601ffc9b14b13d",
+    "report_motion.py": "d67ae35d25fef5c312fde86c70da5f8ffa1ba5db62122379513f02ccdeb78327",
+    "truss_sequence.py": "6bf29836591723ef82fdc4c15c6adda54f6256ec986a086a4294d52e939581a0",
+    "test_common_contact_limit.py": "949147f9a42e708a3efffd879bac83f2ad4262c20fd3328cfe0684c68d3a72c3",
+    "test_native_contact_copy_cli.py": "8f25d4e4f17a50f18096d845fc978ecfbda2e26d48e91f0ffb54b715714c181e",
+    "test_truss_sequence.py": "f919a12acb6e45a558bb93220247a128755655dcc457b90e7c209667df75af1d"
+  }
+}

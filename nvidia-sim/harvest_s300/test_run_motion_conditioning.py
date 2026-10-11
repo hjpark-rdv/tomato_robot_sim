@@ -49,7 +49,7 @@ def actual_cli(arguments):
     return namespace['a']
 
 
-CONDITIONING = ['--mode', 'idle', '--seconds', '4', '--condition-foliage-seconds', '3',
+CONDITIONING = ['--contact-limit-mm', '.5', '--mode', 'idle', '--seconds', '4', '--condition-foliage-seconds', '3',
                 '--buffer-contact-events', '--verify-leaf-contact-after-step',
                 '--save-route-checkpoint']
 
@@ -61,7 +61,7 @@ class RunMotionConditioningTests(unittest.TestCase):
         self.assertEqual(default, explicit)
         self.assertEqual(default['mode'], 'harvest')
         self.assertEqual(default['plant_dynamics'], 'full')
-        self.assertEqual(default['fruit_contact_limit_mm'], .5)
+        self.assertEqual(default['fruit_contact_limit_mm'], 1.)
         self.assertFalse(default['allow_resume_conditioned_start'])
         # Existing opt-in contact diagnostics remain available outside the new
         # conditioning mode; the new mode must not rewrite their CLI meaning.
@@ -139,7 +139,7 @@ class RunMotionConditioningTests(unittest.TestCase):
             def eligible(self, *pair):
                 return True
 
-            def verify(self, *args):
+            def verify(self, *args, **kwargs):
                 order.append(('native_geometry', args[-1]))
                 return dict(certified_within_limit=certified)
 
@@ -148,7 +148,7 @@ class RunMotionConditioningTests(unittest.TestCase):
                 order.append(('contact_scope', copy.deepcopy(invalid)))
                 return invalid
 
-        namespace = dict(a=SimpleNamespace(output=output), step_events=[event], contact_guard=None,
+        namespace = dict(a=SimpleNamespace(output=output,contact_limit_mm=.5), step_events=[event], contact_guard=None,
             foliage_conditioner=Conditioner() if conditioning else None, leaf_geometry=Geometry(),
             poses=[[0., 0., 0., 0., 0., 0., 1.]], breaks=[],
             bodies=SimpleNamespace(get_velocities=lambda: [[0.] * 6]), arr=lambda value: value,

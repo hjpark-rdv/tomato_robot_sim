@@ -141,6 +141,26 @@ class SequenceTests(unittest.TestCase):
         group=select_group(self.fruits,[{'joint':'/joint/1'},{'joint':'/joint/2'}],self.paths,self.poses,{},order='highest-first')
         self.assertEqual(group['fruits'],['Truss_02_Fruit_03','Truss_02_Fruit_04'])
 
+    def test_first_authored_group_is_not_mislabeled_as_measured_boundary(self):
+        import copy
+        fruits=copy.deepcopy(self.fruits)
+        for f,pose in zip(fruits,self.poses):f['center']=pose[:3].tolist()
+        group=select_group(fruits,[],self.paths,self.poses,{})
+        cycle=dict(**group,index=0,measured_frame_index=0)
+        seq=dict(cycle_plans=[cycle],inventory=inventory(fruits,[]),
+            group_policy=dict(schema='s300-harvest-group-policy-v1'),
+            initial_aim_source='authored fruit positions; subsequent aims use measured boundary state')
+        poses=np.tile(self.poses,(4,1,1));poses[:,:,0]+=3e-7
+        states=dict(time=np.arange(4)/60,poses=poses,body_paths=self.paths)
+        evidence=measured_sequence_evidence(seq,states,fruits,[],60)
+        self.assertEqual(evidence['authored_initial_group_count'],1)
+        self.assertAlmostEqual(evidence['authored_initial_to_native_position_max_delta_m'],3e-7)
+        bad=copy.deepcopy(seq);bad['cycle_plans'][0]['measured_centers_world_m'][0][0]+=.01
+        with self.assertRaisesRegex(ValueError,'authored source'):measured_sequence_evidence(bad,states,fruits,[],60)
+        for change in (dict(index=1,measured_frame_index=2),dict(index=0,measured_frame_index=2)):
+            bad=copy.deepcopy(seq);bad['cycle_plans'][0].update(change)
+            with self.assertRaisesRegex(ValueError,'boundary state'):measured_sequence_evidence(bad,states,fruits,[],60)
+
 
 class NearScopeContinuationTests(unittest.TestCase):
     def setUp(self):

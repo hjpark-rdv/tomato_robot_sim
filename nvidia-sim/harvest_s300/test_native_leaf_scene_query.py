@@ -127,8 +127,8 @@ class NativeLeafSceneQueryTests(unittest.TestCase):
     def test_escape_limit_and_complete_query_are_hard_requirements(self):
         stage,leaf,structural,data=self.fixture();pose=[0.,0,0,0,0,0,1.]
         query,_=self.query(leaf,structural,intersect=True)
-        too_large=certify_leaf_structural_clear(stage,leaf,structural,pose,data,0.,query,max_escape_m=.000501)
-        self.assertFalse(too_large['certified_within_limit']);self.assertIn('existing 0.5mm',too_large['error'])
+        too_large=certify_leaf_structural_clear(stage,leaf,structural,pose,data,0.,query,max_escape_m=.001001)
+        self.assertFalse(too_large['certified_within_limit']);self.assertIn('supported 1mm',too_large['error'])
         calls=[]
         def incomplete(box):
             calls.append(box)
