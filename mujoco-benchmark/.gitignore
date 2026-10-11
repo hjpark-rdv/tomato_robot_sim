@@ -1,4 +1,5 @@
 .venv/
+.mujoco315-venv/
 outputs/
 assets/reference/
 models/*.xml

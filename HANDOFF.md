@@ -1,5 +1,17 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-12: MuJoCo 3.15 단일 송이 시험
+
+- Isaac 기존 작업 `ca3a716` 보존 후 `codex/s300-mujoco-belt-smoke-20261012`에서 시험.
+- 최신 안정판 3.15.0은 별도 `mujoco-benchmark/.mujoco315-venv`; 기존 환경 보존.
+- 주줄기+1송이+기록된 그리퍼 pose, 로봇 팔/농장 제외. 120Hz 36.8초를 약24.5초(1.50배) 처리.
+- 안쪽 벨트 03/04/05/07 분리, belt-off 02/05 분리. 120Hz 두 반복 상태 완전 일치.
+- 60Hz는 약3배지만 1mm 기준 초과·9개 분리로 채택 불가. **전체 이식/검증된 수확 성공 아님**.
+- prescribed 턱이 접촉력에 양보하지 않아 분리 후 최대315N/바닥30.4mm 겹침. 동적 턱 및 정확한 충돌 분해가 다음 단계.
+- 보고서: [S300_MUJOCO_SMOKE_KO.md](mujoco-benchmark/S300_MUJOCO_SMOKE_KO.md).
+- 데이터/영상: `/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/index.html`.
+- 이전 Isaac GUI 갑작스러운 동시 파단 원인은 미확정 상태 유지.
+
 ## 2026-10-12 MuJoCo 소량 비교 전 Isaac 상태 보존
 
 사용자 요청으로 아래 Isaac 연속 수확/식물 충돌 범위/얕은 진입 작업을 먼저 커밋하고,
