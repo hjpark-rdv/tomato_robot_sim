@@ -1,0 +1,19 @@
+{
+  "schema": "s300-native-schema-unittest-v1",
+  "tests_run": 18,
+  "passed": true,
+  "errors": 0,
+  "failures": 0,
+  "wall_s": 0.054,
+  "python": "/root/isaac-sim-6.1.0/python.sh",
+  "bootstrap": "Existing create_motion_app; headless physics-only officialnativeIsaac6.1",
+  "modules": [
+    "test_motion_belt_control",
+    "test_motion_device"
+  ],
+  "log_path": "/tmp/s300_row_native_schema_unittest_bootstrapped.log",
+  "log_sha256": "5d00b7f2f716d6af1d40b9a5a06204bf3468c7faf0f7f7bf1ff0dcaf3aed6646",
+  "launcher_sha256": "e5556008fcb096ed20b2aebb95b0aefc71330b9bbcb44e0c118f67e3d2e82d2c",
+  "prior_attempt": "Without SimulationApp these2modules couldnotimportUSD; preservedfailedlog",
+  "scope": "NativeUSD/PhysxSchemaAPIchecks; nointegratedharvestcredit"
+}

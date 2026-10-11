@@ -1,0 +1,154 @@
+{
+  "schema": "fresh-upper-first-local-leaf-pressure-review-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_rail_centered_query120/fresh_rail_truss02_centered_query120",
+  "read_only_analysis": true,
+  "physics_reruns": 0,
+  "valid_boundary": {
+    "checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_rail_centered_query120/fresh_rail_truss02_centered_query120/cycle_checkpoints/000/checkpoint.json",
+    "sha256": "98ad8970854a6d23c927139ed6a1e3f416445e67326166e34341bd1a235799c4",
+    "time_s": 54.0,
+    "native_detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03"
+    ],
+    "new_native_break_events": [
+      {
+        "t": 23.925,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+      },
+      {
+        "t": 24.35,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+      },
+      {
+        "t": 25.175,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+      }
+    ]
+  },
+  "next_group": [
+    "Truss_02_Fruit_04",
+    "Truss_02_Fruit_05"
+  ],
+  "axis_comparison": {
+    "initial_verified_direction_world": [
+      -0.9608018565466832,
+      0.27723598694333845,
+      0.0
+    ],
+    "initial_yaw_world_deg": 163.90469118953092,
+    "next_remaining_direction_world": [
+      -0.9998040470906626,
+      -0.019795641468065475,
+      0.0
+    ],
+    "next_remaining_yaw_world_deg": -178.86571920161697,
+    "initial_xy_singular_values_m": [
+      0.12139460468933982,
+      0.049493232833528696
+    ],
+    "remaining_xy_singular_values_m": [
+      0.058849382640996706,
+      0.04045009274562106
+    ],
+    "scope": "Both are longitudinal XY estimates. Removing fruits changes PCA sampling; preserving verified initial longitudinal direction is an explicit diagnostic, not a new yaw search."
+  },
+  "remote_leaf_wire_raw": {
+    "scope": "Recorded native raw callback evidence; cooked solved intersection validity separate",
+    "leaf": "/World/ElasticTarget/Leaf_V9_Additional_CompoundLeaf_02",
+    "leaf_position_start_world_m": [
+      -0.5922902822494507,
+      1.9766420125961304,
+      0.43669188022613525
+    ],
+    "leaf_position_end_world_m": [
+      -0.5955745577812195,
+      1.9732919931411743,
+      0.4387438893318176
+    ],
+    "leaf_translation_max_mm": 5.296536255627871,
+    "contact_by_phase": {
+      "approach": {
+        "count": 872,
+        "first_s": 70.16666666666667,
+        "min_separation_m": -1.4275312423706055e-05,
+        "max_force_n": 0.01361387038717235,
+        "last_s": 71.5,
+        "min_t_s": 71.05
+      },
+      "belt_start_open": {
+        "count": 162,
+        "first_s": 71.50833333333334,
+        "min_separation_m": -0.0005522444844245911,
+        "max_force_n": 0.06686544265695168,
+        "last_s": 71.84166666666667,
+        "min_t_s": 71.84166666666667
+      }
+    }
+  },
+  "local_leaf_contact": {
+    "tool_collider": "/World/ActuatedTool/R/part_331",
+    "tool_source_name": "R_C13_outer_finger_cover",
+    "leaf_collider": "/World/ElasticTarget/Leaf_CompoundLeaf_02/Appendage_132_0",
+    "contact_time_s": 71.65,
+    "force_n": 3.6272217652198018,
+    "contact_actual_tool_local_mm": [
+      80.75654504733251,
+      150.8741430967247,
+      43.79338334315826
+    ],
+    "tool_cover_y_max_mm": 149.00000393390656,
+    "right_cad_belt_y_max_mm": 156.9998562335968,
+    "predicted_y_after_15mm_tool_retreat_mm": 165.8741430967247
+  },
+  "bounded_variants": {
+    "depth50_current_axis": "fresh04_05_retreat_screen/depth50_current_axis",
+    "depth50_initial_longitudinal_axis": "fresh04_05_retreat_screen/depth50_initial_longitudinal_axis",
+    "physics_pending": true,
+    "self_fcl_results": [
+      {
+        "label": "depth50_current_axis",
+        "axis_world": [
+          -0.9998040470906626,
+          -0.019795641468065475,
+          0.0
+        ],
+        "ik": "passed",
+        "self_fcl": {
+          "passed": true,
+          "complete": true,
+          "samples": 6260,
+          "first_blocked": null
+        }
+      },
+      {
+        "label": "depth50_initial_longitudinal_axis",
+        "axis_world": [
+          -0.9608018565466832,
+          0.27723598694333845,
+          0.0
+        ],
+        "ik": "passed",
+        "self_fcl": {
+          "passed": true,
+          "complete": true,
+          "samples": 6260,
+          "first_blocked": null
+        }
+      }
+    ]
+  },
+  "interpretation": "Early highest-first detaches Fruit02 before its retained-pedicel pinch obstruction develops. The next04/05 approach loads a leaf at the right finger front; remote leaf motion then contacts a structural wire. A15mm tool retreat has a geometric reason to avoid the local front leaf. Actual deformation and solved cooked wire penetration remain separately unverified.",
+  "limits": [
+    "Stop-event float32 JSON serialization failed; raw contacts and full measured state remain saved.",
+    "Raw callback wire separation is not a cooked postsolve collision certificate.",
+    "A valid54s cycle boundary is available; later stopped state is not a valid checkpoint.",
+    "No physics/material/filter changes and no absolute impossibility claim."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

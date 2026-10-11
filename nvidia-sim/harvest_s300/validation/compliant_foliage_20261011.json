@@ -1,0 +1,2239 @@
+{
+  "status": "compliant_leaf_fixture_passed_harvest_not_completed",
+  "training_eligible": false,
+  "harvest_success": null,
+  "result_directory": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest",
+  "source_geometry_audit": {
+    "layered_vs_materialized_geometry_max_error_m": 0.0,
+    "mesh_count": 1874,
+    "collider_paths_equal": true,
+    "source_preserved": true
+  },
+  "same_commands": {
+    "phases_equal": true,
+    "goal_equal": true
+  },
+  "limits": [
+    "Leaflets remain rigid; leaf petioles now articulated. No biological calibration.",
+    "Background leaves remain static triangle meshes; convex post-step verifier cannot certify them.",
+    "Raw callback minimum is preserved and is not the same quantity as post-fetch cooked geometry overlap.",
+    "Native initialization failures and pulse tests are not harvest trials.",
+    "FCL 2mm clearance rejection is distinct from actual intersecting robot meshes.",
+    "No harvesting trial in this campaign detached fruit or completed the requested cycle.",
+    "Post-fetch shape verification changes evaluation timing; it is not equivalent to the original callback guard or a swept-overlap certificate."
+  ],
+  "latest_trial": "trials_all_leaves_v2/upper_leafpairs60",
+  "latest_assembly": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_all_leaves_v2",
+  "latest_leaf_count": 27,
+  "tests": {
+    "passed": 55,
+    "log": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/tests_all_leaves_v2.log"
+  },
+  "poststep_policy_comparable_to_original_callback_guard": false,
+  "source_branch": "codex/s300-harvest-isaac-20261009",
+  "source_head": "76479ee",
+  "uncommitted": true,
+  "source_code_hashes": {
+    "analyze_belt_trial.py": "8c9fa8da67bf48cb41b3caa615d2d404d7692cd40aae093e7e863fb73e724962",
+    "benchmark_motion.py": "da0e85337b4385fad145c7150f99f7ea237966430ade3970298a27334f18fca3",
+    "benchmark_motion_visuals.py": "3b09ed9e6acb43e2df1414d5f4985e32cf54b56bca1f0dd6031222983d48a7f9",
+    "build_scene.py": "46a21ebf3ece9e78ceb86ba6599ef89fee4cccb3e7bbe7b54ec68faf52cd8ade",
+    "capture_s300.py": "e25bebb659f764426dd98bc3d0892bce8ebb19b9e84229b42547a5123dadb10c",
+    "check_fruit_attachment.py": "2334f853c60659a46da66a69dde079883e9fd3d64181777125234b14e1ba9061",
+    "compare_motion_runs.py": "ecb1cd15f1d0a0286acf43143f6c18fcdd7b6eae05afad84ff10a18532062fe9",
+    "compliant_foliage.py": "91449e9bd5c8500d66baa6105be48ef2d9b8009b7dc4e591772817ba65100758",
+    "consolidate_background.py": "6d49ace743b70563c333482161824bdf521798759665b08cc93ba03bec25eacc",
+    "fruit_attachment.py": "f69f13d71c03abfdb2fe5451c8d05fe0226c191428257fcff071e3420e18a57f",
+    "latest_farm.py": "28b504c93f3699b0c1dd1b5cbe5f7f35678cebadfe1bcf295169599b8a822f24",
+    "leaf_contact_geometry.py": "d8381eecd5025690accb8fe96c3611a319d4f35018791a02a71204c991066034",
+    "motion_app.py": "a4dee0e0a69b6de3cc0541707fbb6f2f2a292aa9c61df96ad1ed5e975943529a",
+    "motion_assets.py": "7ba224cd0bc2bfc880f6ebc3609c6dcaf1ddd496d2b76610e8e1d7e3c2edf3fe",
+    "motion_belt_control.py": "0ddb8714e6765ab11400e79b1d5f431b75d74914f05078415747f9e9a3d4cc09",
+    "motion_collision_groups.py": "22e84f8721b07f600b9ad48ad40e5adacb0001213dd24754941af27eb5c26d07",
+    "motion_compiled_audit.py": "ea26a1ae624c3707309e267aaef4cce25873e51d5df0bc924f104257c09abf45",
+    "motion_contact_buffer.py": "7ea19866a04b0a7c2815e844a25f77cae4b7227428afa1060b720af256cb8d9a",
+    "motion_contact_guard.py": "76b35502c95254d3ae4168b1733d0ad147199ea334ff390bb62418dea3dd0e2e",
+    "motion_contacts.py": "804373fa7efe34dee84036f2a6724bd4dc3a649127ad8491f628704c54192c6e",
+    "motion_gpu_diagnostics.py": "d2fa9ecea06292c94628123321836917e46b0ba76d753853db559bd465e008b0",
+    "motion_initialization.py": "335540ae0400e8099814fa811acc0071143c5b33bb573450a30fbf5053c5f67c",
+    "motion_kinematics.py": "71761f668440abb1e63fb5eebbd765d249953909f38bddeb3a2d1e1a07faaba1",
+    "motion_live.py": "05258c09b71542ed2e1c1fda81342d85cd757721313dfb9c81b1cd048bf08a08",
+    "motion_materialize.py": "cfc2b0d02e8e659c3d1e8fd51e887cf82dd44f70ca09361dcc1d3f3e71ddaba4",
+    "motion_pose_display.py": "55bf855a4507257ed39d4fa52bcbd0c2ce2294a854dab45a334f868306358e96",
+    "motion_profile.py": "3315572290e7145c6b76e27731bc0fca767b229d4d80653f7ada4306123cdcd7",
+    "motion_replication.py": "10e04dab53d2df3b91514ae0f2a9773b56ef62921679ed122a9eabc7aefa4385",
+    "motion_resolution.py": "a1a683b6ae247f7e1c7329ab56c53a3afd907a00644cf1b239d90888c570f1af",
+    "motion_self_collision.py": "9622517a10313f6f099b5ad8096a9443196e6828530b089d32761978ddc13f9e",
+    "motion_stage_metrics.py": "7923b3ca6b82daad43071b5f8e807572bce9b96174deca58871ef780c7d320a4",
+    "motion_visuals.py": "68533aa42f257a6dc2e18bfb534ee4aea6fd9eef0f13f156b90c46d21d0c7e6e",
+    "render_motion.py": "c9f81b9971a086f78dd08970e9a93558b189d3b967c38b3345db9b61a2281091",
+    "report_motion.py": "a4037fc33b1b19a4826c4dac18ddacf6251b293ab325b1336a802c6405f8a63c",
+    "report_performance.py": "6048f06afbcf5319ce6401543680be42452ac6eab76109d787616dfa58c76a89",
+    "run_motion.py": "737fe8ae79c20e33ae454e58eb4c931d236cec90ed3b4b83e6bdd5df882b424f",
+    "run_scene.py": "905d152f3024c908ff42bb095b95a4e096fce82f43e619ae5da4cdcdf2b8d298",
+    "test_belt_evidence.py": "9d7809cb13d331cda1bb968a45beea083de24e96195beb231528f72c1b0142c0",
+    "test_benchmark_motion.py": "2636560589405d5591f32f2a8b8337124b791e83c9b1a048fcf4fb9a84c7593f",
+    "test_compare_motion_runs.py": "c573d02cd72c6dc8b839c4908a7e9aff4b9516c108eb240869b534d114f75b59",
+    "test_compliant_foliage.py": "33652e75e65584d26554d6e2032386b03e2ec809438a9973523d57963d29f935",
+    "test_consolidate_background.py": "328a9dc1987ccec40f90681853c89df5394e76799aaf5173ac98d5ad57e2fb7d",
+    "test_fruit_attachment.py": "7fb8c20e6f75a542fdc0ce956aae5d7a7a967a501a4ccfd301e0aa2876a151c8",
+    "test_leaf_contact_geometry.py": "ab03d71dd1315222dd919a5875878f94ebe7fb5aab1df51cef1754a0aff52831",
+    "test_motion_app.py": "709f440ec7e857d0211237e51a262345a06d9bab55e3bce97d1638de5b3613b3",
+    "test_motion_belt_control.py": "5a03efc15f00e26d621dedc81774d0da587c092afb96aef8e975896c9580d4da",
+    "test_motion_collision_groups.py": "47594a8500f240774b58e2401dcb00d12027602540765208b2d51306e2110ef5",
+    "test_motion_compiled_audit.py": "cee995c87891801fd173a50421b1be818a63647d42d07d4f193b1a3a66db4b11",
+    "test_motion_contact_buffer.py": "35b236b7c9f41568c86ba5c56e0fbc71cbbb990c4d779bc2fbf69b7a122f0cf1",
+    "test_motion_contact_guard.py": "9533686703271d5cc0f55fd108e68e382e5a63b6d9c2781043ff0ba623d0c9f8",
+    "test_motion_contacts.py": "28429dd628f84f06592c606c46818bd568d5389786c0fd2b4c8397259a16b71e",
+    "test_motion_device.py": "acb45e5f4b5938b9ea9bc1f7b2bf2cc20d1ddf65307697e7c24d787de43a08f7",
+    "test_motion_gpu_diagnostics.py": "2ffab54bc1572b2d2cd59cd8818ad31b9968cfd353a9c046405cfdebc6e29906",
+    "test_motion_horizontal_entry.py": "5326e7a5e17f75687df92c3663e4ec20b0cdddded18ea1e5eb6e0644ea1a2209",
+    "test_motion_initialization.py": "797bbae29276988b87477060c7dd77236cb5458dd411f8f09cfd852ccf0dc31c",
+    "test_motion_kinematics.py": "cdbe3d54ff736fe6635fb7fb8a0cb0bcad9b7917fd7b1530896cc032c88ba58a",
+    "test_motion_live.py": "68d5849ee19b12cca0cea0763d3684cb3800667644f6d13060ebbbcdcc46287d",
+    "test_motion_materialize.py": "2a58df5f7196cd198387a3a2a66e689764b874746e359d91d6b4de2a5df4d5f1",
+    "test_motion_ready.py": "49c19c709ae638599bf528ef4fafbed2faf9ea974da3f8590cc6cc892b446413",
+    "test_motion_replication.py": "e2039e819b1a18833bcf9f64b276eeaca71ef322647e4880b159767f6986a083",
+    "test_motion_resolution.py": "7b17eae6b883e390c6e74234cbb23ffc44a7ee1f9b9b9fb73235296912a254ba",
+    "test_motion_self_collision.py": "1f8647933af84d094e62524a16d8a715564c0c42bd408ab9c6dc1cc424527d74",
+    "test_motion_stage_metrics.py": "da148a2d38c830a81b7fae4e5dd64754907030362eec72beea75defcd3b63c84",
+    "test_motion_visuals.py": "0ca1ab6e3d465659dc8fd7a335bef7a951ba7f7593815a4e91a31c451b5438e5",
+    "test_report_performance.py": "890a2246534edd5f79ecb09ebf711ff8b43178d22c5e8ab2e018e2043cbc97fe",
+    "test_truss_sequence.py": "5a458fca04c783b8697c082ef0ada0d8758a7fcc135bb22ede1f4260d809c619",
+    "truss_sequence.py": "fa3f3e042bd30111a0befbaa2b97fad8914360c118a12db3930b8b5f0341da20",
+    "validate_latest_farm.py": "3fa1fb9ce6cfb47550c02d39ec04e734e6f33d01a4db46a6a8253e5ee78bad22",
+    "validate_motion_assets.py": "991ce5499814b0c72987e23b7d6f90fa9448b377632f9866c300381684b5ab66",
+    "validate_scene.py": "1c299b1deaf1e1981ca20700edf0eba0f4481050ac5f1b1c23cde44bd64b8a2f",
+    "view_motion_live.py": "b7ea76ce6c0ce2193e1ab7f6a1ebfdf38abeb92fbad57903bca476926f9a65d0",
+    "viewer_pacing.py": "f35fefdfab288e16d13c09709efbaeddcc90c2bea8eb9c935583dbcb466fec5e",
+    "write_report.py": "3a0d82725cfb7a161073af9d1ebd35f8d981050c8f2796749418c8b0aa3fa834",
+    "run_motion_live.sh": "4ed81a9832db9404bbd34f541caffe2620bff370c204227e9dcbd1b4f9e114c0"
+  },
+  "all_leaves_same_commands": {
+    "phases_equal": true,
+    "goal_equal": true
+  },
+  "trials": [
+    {
+      "trial": "trials_all_leaves/idle60",
+      "mode": "idle",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_all_leaves/scene.usda",
+      "model_sha256": "34dd49841f6e02847552d5063d6db465d2aee10769f7f3bd6624031e1e88edf6",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 4.0,
+      "physics_wall_s": 4.905259499326348,
+      "realtime_factor": 0.8154512519774602,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "settle",
+      "raw_min_contact_separation_m": 0.0001822280464693904,
+      "selected_fruits": [],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 9.153653081739321e-05,
+        "Truss_00_Fruit_02": 8.376953337574378e-05,
+        "Truss_00_Fruit_03": 7.585994899272919e-05,
+        "Truss_00_Fruit_04": 7.087242556735873e-05,
+        "Truss_00_Fruit_05": 6.931730604264885e-05,
+        "Truss_00_Fruit_07": 7.030367123661563e-05,
+        "Truss_00_Fruit_08": 7.046957762213424e-05,
+        "Truss_00_Fruit_09": 6.771195330657065e-05,
+        "Truss_00_Fruit_10": 7.358605944318697e-05,
+        "Truss_00_Fruit_11": 8.410105510847643e-05,
+        "Truss_01_Fruit_01": 7.044073572615162e-05,
+        "Truss_01_Fruit_02": 5.714282815461047e-05,
+        "Truss_01_Fruit_03": 6.0078822571085766e-05,
+        "Truss_01_Fruit_04": 4.861433990299702e-05,
+        "Truss_01_Fruit_05": 5.279898323351517e-05,
+        "Truss_01_Fruit_07": 4.8256246373057365e-05,
+        "Truss_01_Fruit_08": 4.8161364247789606e-05,
+        "Truss_01_Fruit_09": 5.4925250879023224e-05,
+        "Truss_01_Fruit_10": 5.117956970934756e-05,
+        "Truss_01_Fruit_11": 7.05596394254826e-05,
+        "Truss_02_Fruit_01": 0.0012429130729287863,
+        "Truss_02_Fruit_02": 0.0008209430379793048,
+        "Truss_02_Fruit_03": 0.001057400368154049,
+        "Truss_02_Fruit_04": 0.0009313735645264387,
+        "Truss_02_Fruit_05": 0.00041848377441056073,
+        "Truss_02_Fruit_07": 0.00040578332846052945,
+        "Truss_02_Fruit_08": 0.00028961917269043624,
+        "Truss_02_Fruit_09": 0.00048152889939956367,
+        "Truss_02_Fruit_10": 0.0006208739359863102,
+        "Truss_02_Fruit_11": 0.00038949886220507324
+      },
+      "leaves": [
+        {
+          "name": "Leaf_Apical_Young_Leaf_1",
+          "max_angle_deg": 0.0015498485611055391,
+          "final_angle_deg": 0.0003947758778049831
+        },
+        {
+          "name": "Leaf_Apical_Young_Leaf_2",
+          "max_angle_deg": 0.0018747233519177003,
+          "final_angle_deg": 0.0005875697672360859
+        },
+        {
+          "name": "Leaf_Apical_Young_Leaf_3",
+          "max_angle_deg": 0.001761340850166975,
+          "final_angle_deg": 0.00038964230149702135
+        },
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 0.023316690317649675,
+          "final_angle_deg": 0.016128590507308443
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 0.029950843244798964,
+          "final_angle_deg": 0.0240332860810148
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 0.02848188620730819,
+          "final_angle_deg": 0.01519046072422053
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 0.0272135455802427,
+          "final_angle_deg": 0.015136706327103157
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 0.03548158108947313,
+          "final_angle_deg": 0.021800418177073445
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 0.02215092220863725,
+          "final_angle_deg": 0.011639157903957482
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 0.02366885872158753,
+          "final_angle_deg": 0.009669068323266264
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.015808445841980403,
+          "final_angle_deg": 0.0057620629688719584
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.012041062959535007,
+          "final_angle_deg": 0.003941753986207644
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.0037720776453348203,
+          "final_angle_deg": 0.0011863010045066369
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 0.02481787894394945,
+          "final_angle_deg": 0.015046290871539459
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 0.029398313105197207,
+          "final_angle_deg": 0.013543694525687244
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 0.027837329391721788,
+          "final_angle_deg": 0.008126264231305287
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 0.033881618905030136,
+          "final_angle_deg": 0.013345687688298477
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 0.022498330119347612,
+          "final_angle_deg": 0.011757917966341423
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 0.030609755853356006,
+          "final_angle_deg": 0.015608987160727205
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.016874329054933267,
+          "final_angle_deg": 0.006715437063513018
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_01",
+          "max_angle_deg": 0.0,
+          "final_angle_deg": 0.0
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_02",
+          "max_angle_deg": 0.008346678867652689,
+          "final_angle_deg": 0.007242384683224569
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_03",
+          "max_angle_deg": 0.014640801252455987,
+          "final_angle_deg": 0.012454182259794278
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_04",
+          "max_angle_deg": 0.007155224153958797,
+          "final_angle_deg": 0.0060511767837040055
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_05",
+          "max_angle_deg": 0.013806565802683043,
+          "final_angle_deg": 0.01215250566905675
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_06",
+          "max_angle_deg": 0.016346398107501846,
+          "final_angle_deg": 0.009389259423087354
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_07",
+          "max_angle_deg": 0.010537676008941038,
+          "final_angle_deg": 0.007268785017735151
+        }
+      ],
+      "max_contact_point_force_n": 0.0,
+      "max_leaf_tool_contact_point_force_n": 0.0,
+      "final_worst_contacts": [
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_11/Collider",
+          "separation_m": 0.00018227763939648867,
+          "force_n": 0.0,
+          "impulse_ns": [
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.8135464191436768,
+            1.5998854637145996,
+            0.8330176472663879
+          ],
+          "normal_world": [
+            -0.4120487868785858,
+            -0.17398329079151154,
+            -0.8943967223167419
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_01_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_01_Rachis_11/Collider",
+          "separation_m": 0.00018229626584798098,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.578248143196106,
+            1.4808893203735352,
+            0.757161021232605
+          ],
+          "normal_world": [
+            0.3128516972064972,
+            -0.32002878189086914,
+            -0.894262433052063
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+          "separation_m": 0.0001911316066980362,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7642115950584412,
+            1.6091786623001099,
+            0.9635004997253418
+          ],
+          "normal_world": [
+            0.2708595097064972,
+            0.9569067358970642,
+            -0.10471221804618835
+          ]
+        }
+      ],
+      "poststep_certificates": [],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_all_leaves_v2/upper_leafpairs60",
+      "mode": "harvest",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_all_leaves_v2/scene.usda",
+      "model_sha256": "d6caf9bf51aa2f7ba0ca9bfb792268d246cc4716355997d8fa0da7501a7305a3",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 12.7,
+      "physics_wall_s": 16.439868465065956,
+      "realtime_factor": 0.7725122635249166,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "approach",
+      "raw_min_contact_separation_m": -0.0014606043696403503,
+      "selected_fruits": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02"
+      ],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 0.06685878336429596,
+        "Truss_00_Fruit_02": 0.0641019344329834,
+        "Truss_00_Fruit_03": 0.06249499320983887,
+        "Truss_00_Fruit_04": 0.06036212295293808,
+        "Truss_00_Fruit_05": 0.06038535386323929,
+        "Truss_00_Fruit_07": 0.058584023267030716,
+        "Truss_00_Fruit_08": 0.05715151131153107,
+        "Truss_00_Fruit_09": 0.05712220072746277,
+        "Truss_00_Fruit_10": 0.05522191524505615,
+        "Truss_00_Fruit_11": 0.0547795444726944,
+        "Truss_01_Fruit_01": 0.060267336666584015,
+        "Truss_01_Fruit_02": 0.05865661799907684,
+        "Truss_01_Fruit_03": 0.05595948547124863,
+        "Truss_01_Fruit_04": 0.05509466677904129,
+        "Truss_01_Fruit_05": 0.05390515923500061,
+        "Truss_01_Fruit_07": 0.05230497196316719,
+        "Truss_01_Fruit_08": 0.05224539339542389,
+        "Truss_01_Fruit_09": 0.05104004219174385,
+        "Truss_01_Fruit_10": 0.04997744411230087,
+        "Truss_01_Fruit_11": 0.048373058438301086,
+        "Truss_02_Fruit_01": 0.08204057812690735,
+        "Truss_02_Fruit_02": 0.07932347804307938,
+        "Truss_02_Fruit_03": 0.07940933853387833,
+        "Truss_02_Fruit_04": 0.07396252453327179,
+        "Truss_02_Fruit_05": 0.07747858762741089,
+        "Truss_02_Fruit_07": 0.0754881277680397,
+        "Truss_02_Fruit_08": 0.07169821113348007,
+        "Truss_02_Fruit_09": 0.07349728792905807,
+        "Truss_02_Fruit_10": 0.07010836154222488,
+        "Truss_02_Fruit_11": 0.07220347970724106
+      },
+      "leaves": [
+        {
+          "name": "Leaf_Apical_Young_Leaf_1",
+          "max_angle_deg": 0.0170688517012565,
+          "final_angle_deg": 0.0170688517012565
+        },
+        {
+          "name": "Leaf_Apical_Young_Leaf_2",
+          "max_angle_deg": 0.018193345637052948,
+          "final_angle_deg": 0.018193345637052948
+        },
+        {
+          "name": "Leaf_Apical_Young_Leaf_3",
+          "max_angle_deg": 0.017202003838374565,
+          "final_angle_deg": 0.017202003838374565
+        },
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 4.128116228902466,
+          "final_angle_deg": 4.128116228902466
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 8.325576243587493,
+          "final_angle_deg": 8.325576243587493
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 4.781839324748458,
+          "final_angle_deg": 3.077621780995705
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 2.508309905615607,
+          "final_angle_deg": 2.508309905615607
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 3.3837951400101316,
+          "final_angle_deg": 3.3837951400101316
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 4.3930771310451675,
+          "final_angle_deg": 4.3930771310451675
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 0.9125782721815493,
+          "final_angle_deg": 0.9125782721815493
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.25793119529197706,
+          "final_angle_deg": 0.1968885673875796
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.10908941580748835,
+          "final_angle_deg": 0.09539146237494361
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.078177496167274,
+          "final_angle_deg": 0.078177496167274
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 5.382947252810576,
+          "final_angle_deg": 5.382947252810576
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 9.21859593579643,
+          "final_angle_deg": 9.21859593579643
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 4.062745195617403,
+          "final_angle_deg": 4.062745195617403
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 2.5539354428357597,
+          "final_angle_deg": 2.5539354428357597
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 2.0073358025543016,
+          "final_angle_deg": 2.0073358025543016
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 7.76140449559271,
+          "final_angle_deg": 7.76140449559271
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.5287787871470904,
+          "final_angle_deg": 0.5287787871470904
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_01",
+          "max_angle_deg": 0.0,
+          "final_angle_deg": 0.0
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_02",
+          "max_angle_deg": 1.5342404029274936,
+          "final_angle_deg": 1.5342404029274936
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_03",
+          "max_angle_deg": 0.38377605663704706,
+          "final_angle_deg": 0.38377605663704706
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_04",
+          "max_angle_deg": 0.673893892107994,
+          "final_angle_deg": 0.673893892107994
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_05",
+          "max_angle_deg": 1.4738061111344436,
+          "final_angle_deg": 1.4738061111344436
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_06",
+          "max_angle_deg": 1.0817369418481368,
+          "final_angle_deg": 1.0817369418481368
+        },
+        {
+          "name": "Leaf_V9_Additional_CompoundLeaf_07",
+          "max_angle_deg": 0.5485754487833582,
+          "final_angle_deg": 0.5485754487833582
+        }
+      ],
+      "max_contact_point_force_n": 2.4497876759699286,
+      "max_leaf_tool_contact_point_force_n": 2.4497876759699286,
+      "final_worst_contacts": [
+        {
+          "t": 12.7,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0006155692972242832,
+          "force_n": 0.010094706902877707,
+          "impulse_ns": [
+            9.284169937018305e-05,
+            6.173623114591464e-05,
+            -0.0001259979180758819
+          ],
+          "position_world_m": [
+            -0.7008253931999207,
+            1.434617519378662,
+            1.4099400043487549
+          ],
+          "normal_world": [
+            0.5518240332603455,
+            0.3669421970844269,
+            -0.748894989490509
+          ]
+        },
+        {
+          "t": 12.7,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0006093308329582214,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.700911819934845,
+            1.4346805810928345,
+            1.4099154472351074
+          ],
+          "normal_world": [
+            0.5518240332603455,
+            0.3669421970844269,
+            -0.748894989490509
+          ]
+        },
+        {
+          "t": 12.7,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0004245331510901451,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7008938789367676,
+            1.4346234798431396,
+            1.4101474285125732
+          ],
+          "normal_world": [
+            0.5518240332603455,
+            0.3669421970844269,
+            -0.748894989490509
+          ]
+        }
+      ],
+      "poststep_certificates": [
+        {
+          "t": 10.016666666666667,
+          "a": "/World/ActuatedTool/R/part_244",
+          "b": "/World/ElasticTarget/Leaf_CompoundLeaf_02/Appendage_132_0",
+          "native_callback_separation_m": -0.0014606043696403503,
+          "certified_clear": false,
+          "certified_within_limit": true,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "hull_pair_count": 16,
+          "minimum_certified_gap_m": -0.0003041544088044912,
+          "penetration_upper_bound_m": 0.0003041544088044912
+        },
+        {
+          "t": 12.7,
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "native_callback_separation_m": -0.0006155692972242832,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "error": "No native cooked convex hulls: PhysxCollisionRepresentationResult.RESULT_ERROR_UNSUPPORTED_APPROXIMATION"
+        }
+      ],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_responsive/idle60",
+      "mode": "idle",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_responsive/scene.usda",
+      "model_sha256": "efcdbe0cf3cdb5f6a500c185f4d3d3f247cec9b27a8918930ad89e5ae570b280",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 4.0,
+      "physics_wall_s": 4.419077957049012,
+      "realtime_factor": 0.9051661995732554,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "settle",
+      "raw_min_contact_separation_m": 0.0001822224585339427,
+      "selected_fruits": [],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 8.557545515941456e-05,
+        "Truss_00_Fruit_02": 7.75779117248021e-05,
+        "Truss_00_Fruit_03": 6.641862273681909e-05,
+        "Truss_00_Fruit_04": 6.04589149588719e-05,
+        "Truss_00_Fruit_05": 5.798563870484941e-05,
+        "Truss_00_Fruit_07": 5.716163286706433e-05,
+        "Truss_00_Fruit_08": 5.862688703928143e-05,
+        "Truss_00_Fruit_09": 5.5134136346168816e-05,
+        "Truss_00_Fruit_10": 5.9135167248314247e-05,
+        "Truss_00_Fruit_11": 6.839969864813611e-05,
+        "Truss_01_Fruit_01": 7.069191633490846e-05,
+        "Truss_01_Fruit_02": 5.771952055511065e-05,
+        "Truss_01_Fruit_03": 5.0232571084052324e-05,
+        "Truss_01_Fruit_04": 3.6029665352543816e-05,
+        "Truss_01_Fruit_05": 4.387586159282364e-05,
+        "Truss_01_Fruit_07": 4.613927012542263e-05,
+        "Truss_01_Fruit_08": 4.190532854408957e-05,
+        "Truss_01_Fruit_09": 5.422584945335984e-05,
+        "Truss_01_Fruit_10": 5.0777489377651364e-05,
+        "Truss_01_Fruit_11": 7.011634443188086e-05,
+        "Truss_02_Fruit_01": 0.0012446074979379773,
+        "Truss_02_Fruit_02": 0.0008194144465960562,
+        "Truss_02_Fruit_03": 0.0010489573469385505,
+        "Truss_02_Fruit_04": 0.0009151991689577699,
+        "Truss_02_Fruit_05": 0.000424355297582224,
+        "Truss_02_Fruit_07": 0.00039982321322895586,
+        "Truss_02_Fruit_08": 0.0002893566561397165,
+        "Truss_02_Fruit_09": 0.0004815455467905849,
+        "Truss_02_Fruit_10": 0.0006209263228811324,
+        "Truss_02_Fruit_11": 0.0003894854162354022
+      },
+      "leaves": [
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 0.023039343076407436,
+          "final_angle_deg": 0.010374149554466297
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 0.02960279057330785,
+          "final_angle_deg": 0.017853755351827677
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 0.028857941031438433,
+          "final_angle_deg": 0.007544242778434811
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 0.027646463332945376,
+          "final_angle_deg": 0.005520897369412483
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 0.03599627645086914,
+          "final_angle_deg": 0.007312654420892449
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 0.022587617458111164,
+          "final_angle_deg": 0.005941904823392367
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 0.024157201879491372,
+          "final_angle_deg": 0.004570908714753379
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.016140758150312132,
+          "final_angle_deg": 0.00354559358094576
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.012307540067289225,
+          "final_angle_deg": 0.0024877154816611985
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.0035148191804155507,
+          "final_angle_deg": 0.0005762095414789055
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 0.02519167445712474,
+          "final_angle_deg": 0.011561888451952815
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 0.029869095811134512,
+          "final_angle_deg": 0.009582322458482841
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 0.02829709937794684,
+          "final_angle_deg": 0.0058232866607338
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 0.03446880977241272,
+          "final_angle_deg": 0.005749535804548056
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 0.02290170565330557,
+          "final_angle_deg": 0.00441836580651648
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 0.031130910149419103,
+          "final_angle_deg": 0.005460852480060192
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.017221021719951216,
+          "final_angle_deg": 0.0037627758754004226
+        }
+      ],
+      "max_contact_point_force_n": 0.0,
+      "max_leaf_tool_contact_point_force_n": 0.0,
+      "final_worst_contacts": [
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_01_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_01_Rachis_11/Collider",
+          "separation_m": 0.00018227729015052319,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.5782445073127747,
+            1.4808863401412964,
+            0.7571542859077454
+          ],
+          "normal_world": [
+            0.3127433955669403,
+            -0.3201347887516022,
+            -0.894262433052063
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_11/Collider",
+          "separation_m": 0.00018232467118650675,
+          "force_n": 0.0,
+          "impulse_ns": [
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.8135432600975037,
+            1.5998862981796265,
+            0.833024799823761
+          ],
+          "normal_world": [
+            -0.41217324137687683,
+            -0.17395073175430298,
+            -0.894345760345459
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+          "separation_m": 0.00019079854246228933,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7641934752464294,
+            1.609171986579895,
+            0.9635024666786194
+          ],
+          "normal_world": [
+            0.27083662152290344,
+            0.9569135308265686,
+            -0.10470935702323914
+          ]
+        }
+      ],
+      "poststep_certificates": [],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_responsive/leaf_pulse60",
+      "mode": "pulse",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_responsive/scene.usda",
+      "model_sha256": "efcdbe0cf3cdb5f6a500c185f4d3d3f247cec9b27a8918930ad89e5ae570b280",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 8.0,
+      "physics_wall_s": 9.279367696493864,
+      "realtime_factor": 0.8621277075832157,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "release",
+      "raw_min_contact_separation_m": 0.0001822237391024828,
+      "selected_fruits": [],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 0.0033060007262974977,
+        "Truss_00_Fruit_02": 0.00316407042555511,
+        "Truss_00_Fruit_03": 0.003164145164191723,
+        "Truss_00_Fruit_04": 0.0030526132322847843,
+        "Truss_00_Fruit_05": 0.00310679548420012,
+        "Truss_00_Fruit_07": 0.0030609441455453634,
+        "Truss_00_Fruit_08": 0.002963760169222951,
+        "Truss_00_Fruit_09": 0.0030342466197907925,
+        "Truss_00_Fruit_10": 0.0029399297200143337,
+        "Truss_00_Fruit_11": 0.002998187905177474,
+        "Truss_01_Fruit_01": 0.0030614198185503483,
+        "Truss_01_Fruit_02": 0.0030315001495182514,
+        "Truss_01_Fruit_03": 0.0029263540636748075,
+        "Truss_01_Fruit_04": 0.0029449020512402058,
+        "Truss_01_Fruit_05": 0.0028933417052030563,
+        "Truss_01_Fruit_07": 0.0029035916086286306,
+        "Truss_01_Fruit_08": 0.0029557147063314915,
+        "Truss_01_Fruit_09": 0.0029173654038459063,
+        "Truss_01_Fruit_10": 0.0029178319964557886,
+        "Truss_01_Fruit_11": 0.0028800894506275654,
+        "Truss_02_Fruit_01": 0.00403399346396327,
+        "Truss_02_Fruit_02": 0.003985226154327393,
+        "Truss_02_Fruit_03": 0.004254995379596949,
+        "Truss_02_Fruit_04": 0.003999759908765554,
+        "Truss_02_Fruit_05": 0.004223745781928301,
+        "Truss_02_Fruit_07": 0.004293795675039291,
+        "Truss_02_Fruit_08": 0.004430470988154411,
+        "Truss_02_Fruit_09": 0.004288311582058668,
+        "Truss_02_Fruit_10": 0.004304404370486736,
+        "Truss_02_Fruit_11": 0.004303391557186842
+      },
+      "leaves": [
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 0.3485661455003356,
+          "final_angle_deg": 0.012238811349827787
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 28.505929491466084,
+          "final_angle_deg": 0.02118601041414047
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 0.5713274255404112,
+          "final_angle_deg": 0.009863031844758579
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 0.30106738786308246,
+          "final_angle_deg": 0.007962015758040885
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 0.40400067681586393,
+          "final_angle_deg": 0.008744440972709962
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 0.3022685239819034,
+          "final_angle_deg": 0.005818847636365192
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 0.16037335093283084,
+          "final_angle_deg": 0.004740115617268499
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.06065813540035555,
+          "final_angle_deg": 0.003888052491061852
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.0316971877834415,
+          "final_angle_deg": 0.002685612850345912
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.008140085687691347,
+          "final_angle_deg": 0.002779299445229762
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 0.4869502327691493,
+          "final_angle_deg": 0.011807703939402885
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 0.7722506980711835,
+          "final_angle_deg": 0.009814564202345805
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 0.4395343481570395,
+          "final_angle_deg": 0.005570210177901553
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 0.3572474115225992,
+          "final_angle_deg": 0.00603338027214205
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 0.19732325845999935,
+          "final_angle_deg": 0.005463331545913278
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 0.17587151805880277,
+          "final_angle_deg": 0.006367404521677623
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.05090822686088217,
+          "final_angle_deg": 0.0039716597991380255
+        }
+      ],
+      "max_contact_point_force_n": 0.0,
+      "max_leaf_tool_contact_point_force_n": 0.0,
+      "final_worst_contacts": [
+        {
+          "t": 8.0,
+          "phase": "release",
+          "a": "/World/ElasticTarget/Truss_01_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_01_Rachis_11/Collider",
+          "separation_m": 0.00018228450790047646,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.5782467126846313,
+            1.4808889627456665,
+            0.757160484790802
+          ],
+          "normal_world": [
+            0.3127695620059967,
+            -0.32015031576156616,
+            -0.8942477107048035
+          ]
+        },
+        {
+          "t": 8.0,
+          "phase": "release",
+          "a": "/World/ElasticTarget/Truss_00_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_11/Collider",
+          "separation_m": 0.00018232117872685194,
+          "force_n": 0.0,
+          "impulse_ns": [
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.813544750213623,
+            1.5998873710632324,
+            0.8330239057540894
+          ],
+          "normal_world": [
+            -0.4120997488498688,
+            -0.17398247122764587,
+            -0.8943734169006348
+          ]
+        },
+        {
+          "t": 8.0,
+          "phase": "release",
+          "a": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+          "separation_m": 0.00019148318096995354,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7642003893852234,
+            1.609176754951477,
+            0.9635034203529358
+          ],
+          "normal_world": [
+            0.2708500623703003,
+            0.9569103121757507,
+            -0.10470432788133621
+          ]
+        }
+      ],
+      "poststep_certificates": [],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_responsive/upper_leafpairs120",
+      "mode": "harvest",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_responsive/scene.usda",
+      "model_sha256": "efcdbe0cf3cdb5f6a500c185f4d3d3f247cec9b27a8918930ad89e5ae570b280",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 12.675,
+      "physics_wall_s": 32.37506835907698,
+      "realtime_factor": 0.3915049648519528,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "approach",
+      "raw_min_contact_separation_m": -0.0009820014238357544,
+      "selected_fruits": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02"
+      ],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 0.06624280661344528,
+        "Truss_00_Fruit_02": 0.0631234273314476,
+        "Truss_00_Fruit_03": 0.06176880747079849,
+        "Truss_00_Fruit_04": 0.05929284170269966,
+        "Truss_00_Fruit_05": 0.059641651809215546,
+        "Truss_00_Fruit_07": 0.05782870948314667,
+        "Truss_00_Fruit_08": 0.056066449731588364,
+        "Truss_00_Fruit_09": 0.05636157840490341,
+        "Truss_00_Fruit_10": 0.05417252331972122,
+        "Truss_00_Fruit_11": 0.05405562371015549,
+        "Truss_01_Fruit_01": 0.0602920800447464,
+        "Truss_01_Fruit_02": 0.05874495208263397,
+        "Truss_01_Fruit_03": 0.05598197132349014,
+        "Truss_01_Fruit_04": 0.055238042026758194,
+        "Truss_01_Fruit_05": 0.054002903401851654,
+        "Truss_01_Fruit_07": 0.052546244114637375,
+        "Truss_01_Fruit_08": 0.052657950669527054,
+        "Truss_01_Fruit_09": 0.051419321447610855,
+        "Truss_01_Fruit_10": 0.05036656931042671,
+        "Truss_01_Fruit_11": 0.04875463619828224,
+        "Truss_02_Fruit_01": 0.08252688497304916,
+        "Truss_02_Fruit_02": 0.07951944321393967,
+        "Truss_02_Fruit_03": 0.0796826109290123,
+        "Truss_02_Fruit_04": 0.07425098121166229,
+        "Truss_02_Fruit_05": 0.07767342776060104,
+        "Truss_02_Fruit_07": 0.07562373578548431,
+        "Truss_02_Fruit_08": 0.07146777957677841,
+        "Truss_02_Fruit_09": 0.07381721585988998,
+        "Truss_02_Fruit_10": 0.06999127566814423,
+        "Truss_02_Fruit_11": 0.07251308113336563
+      },
+      "leaves": [
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 4.115054050673068,
+          "final_angle_deg": 4.115054050673068
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 8.970668131957437,
+          "final_angle_deg": 8.970668131957437
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 4.492452350911247,
+          "final_angle_deg": 2.192969311215418
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 2.5792814526944334,
+          "final_angle_deg": 2.5792814526944334
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 3.2112708580632314,
+          "final_angle_deg": 3.2112708580632314
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 4.247089455524059,
+          "final_angle_deg": 4.247089455524059
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 1.0034851849560622,
+          "final_angle_deg": 1.0034851849560622
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.30127725183434717,
+          "final_angle_deg": 0.30127725183434717
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.13379212420432185,
+          "final_angle_deg": 0.13379212420432185
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.07069271772722902,
+          "final_angle_deg": 0.07069271772722902
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 5.416948943499626,
+          "final_angle_deg": 5.416948943499626
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 9.158686824256693,
+          "final_angle_deg": 9.158686824256693
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 4.070062968159601,
+          "final_angle_deg": 4.070062968159601
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 2.700830044240179,
+          "final_angle_deg": 2.700830044240179
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 1.9112327573288366,
+          "final_angle_deg": 1.9112327573288366
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 8.468153038235199,
+          "final_angle_deg": 8.468153038235199
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.46538057656576953,
+          "final_angle_deg": 0.46538057656576953
+        }
+      ],
+      "max_contact_point_force_n": 7.183966379503237,
+      "max_leaf_tool_contact_point_force_n": 3.665518265082309,
+      "final_worst_contacts": [
+        {
+          "t": 12.675,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0006792941130697727,
+          "force_n": 0.017187347155068217,
+          "impulse_ns": [
+            7.842508057365194e-05,
+            5.2816645620623603e-05,
+            -0.00010758316784631461
+          ],
+          "position_world_m": [
+            -0.7008253931999207,
+            1.434617519378662,
+            1.4099400043487549
+          ],
+          "normal_world": [
+            0.5475544929504395,
+            0.36875948309898376,
+            -0.7511327862739563
+          ]
+        },
+        {
+          "t": 12.675,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0006735548377037048,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7009124159812927,
+            1.4346810579299927,
+            1.4099152088165283
+          ],
+          "normal_world": [
+            0.5475544929504395,
+            0.36875948309898376,
+            -0.7511327862739563
+          ]
+        },
+        {
+          "t": 12.675,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.00048820371739566326,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7008938789367676,
+            1.4346234798431396,
+            1.4101474285125732
+          ],
+          "normal_world": [
+            0.5475544929504395,
+            0.36875948309898376,
+            -0.7511327862739563
+          ]
+        }
+      ],
+      "poststep_certificates": [
+        {
+          "t": 9.95,
+          "a": "/World/ActuatedTool/R/part_244",
+          "b": "/World/ElasticTarget/Leaf_CompoundLeaf_02/Appendage_132_0",
+          "native_callback_separation_m": -0.0009585022926330566,
+          "certified_clear": false,
+          "certified_within_limit": true,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "hull_pair_count": 16,
+          "minimum_certified_gap_m": -0.00031938271860321166,
+          "penetration_upper_bound_m": 0.00031938271860321166
+        },
+        {
+          "t": 12.675,
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "native_callback_separation_m": -0.0006792941130697727,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "error": "No native cooked convex hulls: PhysxCollisionRepresentationResult.RESULT_ERROR_UNSUPPORTED_APPROXIMATION"
+        }
+      ],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_responsive/upper_leafpairs60",
+      "mode": "harvest",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/assembly_responsive/scene.usda",
+      "model_sha256": "efcdbe0cf3cdb5f6a500c185f4d3d3f247cec9b27a8918930ad89e5ae570b280",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 12.583333333333334,
+      "physics_wall_s": 16.07480575889349,
+      "realtime_factor": 0.7827984687386672,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "approach",
+      "raw_min_contact_separation_m": -0.001414954662322998,
+      "selected_fruits": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02"
+      ],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 0.06332399696111679,
+        "Truss_00_Fruit_02": 0.06040817126631737,
+        "Truss_00_Fruit_03": 0.05907581001520157,
+        "Truss_00_Fruit_04": 0.056765519082546234,
+        "Truss_00_Fruit_05": 0.05704415962100029,
+        "Truss_00_Fruit_07": 0.055306218564510345,
+        "Truss_00_Fruit_08": 0.05367027223110199,
+        "Truss_00_Fruit_09": 0.053894802927970886,
+        "Truss_00_Fruit_10": 0.05185241252183914,
+        "Truss_00_Fruit_11": 0.051678288727998734,
+        "Truss_01_Fruit_01": 0.05767357349395752,
+        "Truss_01_Fruit_02": 0.05617799237370491,
+        "Truss_01_Fruit_03": 0.05358210951089859,
+        "Truss_01_Fruit_04": 0.05284305289387703,
+        "Truss_01_Fruit_05": 0.05169680342078209,
+        "Truss_01_Fruit_07": 0.05030077323317528,
+        "Truss_01_Fruit_08": 0.0503658764064312,
+        "Truss_01_Fruit_09": 0.04921872541308403,
+        "Truss_01_Fruit_10": 0.04819867014884949,
+        "Truss_01_Fruit_11": 0.04669938609004021,
+        "Truss_02_Fruit_01": 0.07899655401706696,
+        "Truss_02_Fruit_02": 0.07673180848360062,
+        "Truss_02_Fruit_03": 0.07655058801174164,
+        "Truss_02_Fruit_04": 0.07169987261295319,
+        "Truss_02_Fruit_05": 0.07474137097597122,
+        "Truss_02_Fruit_07": 0.07288532704114914,
+        "Truss_02_Fruit_08": 0.06971494108438492,
+        "Truss_02_Fruit_09": 0.0711146742105484,
+        "Truss_02_Fruit_10": 0.06803819537162781,
+        "Truss_02_Fruit_11": 0.06948524713516235
+      },
+      "leaves": [
+        {
+          "name": "Leaf_CompoundLeaf_01",
+          "max_angle_deg": 3.997125011504502,
+          "final_angle_deg": 3.997125011504502
+        },
+        {
+          "name": "Leaf_CompoundLeaf_02",
+          "max_angle_deg": 7.883347622217529,
+          "final_angle_deg": 7.883347622217529
+        },
+        {
+          "name": "Leaf_CompoundLeaf_03",
+          "max_angle_deg": 5.440616033837343,
+          "final_angle_deg": 5.440616033837343
+        },
+        {
+          "name": "Leaf_CompoundLeaf_04",
+          "max_angle_deg": 2.48872272913405,
+          "final_angle_deg": 2.48872272913405
+        },
+        {
+          "name": "Leaf_CompoundLeaf_05",
+          "max_angle_deg": 3.3565695017891723,
+          "final_angle_deg": 3.3565695017891723
+        },
+        {
+          "name": "Leaf_CompoundLeaf_06",
+          "max_angle_deg": 2.773332175437246,
+          "final_angle_deg": 2.773332175437246
+        },
+        {
+          "name": "Leaf_CompoundLeaf_07",
+          "max_angle_deg": 0.8950225376419783,
+          "final_angle_deg": 0.8950225376419783
+        },
+        {
+          "name": "Leaf_CompoundLeaf_08",
+          "max_angle_deg": 0.2544973849734983,
+          "final_angle_deg": 0.19838953682854873
+        },
+        {
+          "name": "Leaf_CompoundLeaf_09",
+          "max_angle_deg": 0.10723312816663942,
+          "final_angle_deg": 0.10230995940346085
+        },
+        {
+          "name": "Leaf_CompoundLeaf_10",
+          "max_angle_deg": 0.07145962581099354,
+          "final_angle_deg": 0.07145962581099354
+        },
+        {
+          "name": "Leaf_CompoundLeaf_11",
+          "max_angle_deg": 5.143700599633523,
+          "final_angle_deg": 5.143700599633523
+        },
+        {
+          "name": "Leaf_CompoundLeaf_12",
+          "max_angle_deg": 8.781810426185913,
+          "final_angle_deg": 8.781810426185913
+        },
+        {
+          "name": "Leaf_CompoundLeaf_13",
+          "max_angle_deg": 3.924078694556935,
+          "final_angle_deg": 3.924078694556935
+        },
+        {
+          "name": "Leaf_CompoundLeaf_14",
+          "max_angle_deg": 2.550709958363128,
+          "final_angle_deg": 2.550709958363128
+        },
+        {
+          "name": "Leaf_CompoundLeaf_15",
+          "max_angle_deg": 1.9406527505528461,
+          "final_angle_deg": 1.9406527505528461
+        },
+        {
+          "name": "Leaf_CompoundLeaf_16",
+          "max_angle_deg": 7.245758643431802,
+          "final_angle_deg": 7.245758643431802
+        },
+        {
+          "name": "Leaf_CompoundLeaf_17",
+          "max_angle_deg": 0.5013178251876341,
+          "final_angle_deg": 0.5013178251876341
+        }
+      ],
+      "max_contact_point_force_n": 6.020578582369747,
+      "max_leaf_tool_contact_point_force_n": 2.9015588871067326,
+      "final_worst_contacts": [
+        {
+          "t": 12.583333333333334,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.000565374968573451,
+          "force_n": 0.009775611627468357,
+          "impulse_ns": [
+            9.126315853791311e-05,
+            5.821920422022231e-05,
+            -0.00012176502787042409
+          ],
+          "position_world_m": [
+            -0.7008253931999207,
+            1.434617519378662,
+            1.4099397659301758
+          ],
+          "normal_world": [
+            0.5601480007171631,
+            0.35733336210250854,
+            -0.7473600506782532
+          ]
+        },
+        {
+          "t": 12.583333333333334,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.000554300844669342,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.700951337814331,
+            1.4347093105316162,
+            1.4099042415618896
+          ],
+          "normal_world": [
+            0.5601480007171631,
+            0.35733336210250854,
+            -0.7473600506782532
+          ]
+        },
+        {
+          "t": 12.583333333333334,
+          "phase": "approach",
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "separation_m": -0.0003740305546671152,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7008938789367676,
+            1.4346234798431396,
+            1.4101474285125732
+          ],
+          "normal_world": [
+            0.5601480007171631,
+            0.35733336210250854,
+            -0.7473600506782532
+          ]
+        }
+      ],
+      "poststep_certificates": [
+        {
+          "t": 10.016666666666667,
+          "a": "/World/ActuatedTool/R/part_244",
+          "b": "/World/ElasticTarget/Leaf_CompoundLeaf_02/Appendage_132_0",
+          "native_callback_separation_m": -0.0013884305953979492,
+          "certified_clear": false,
+          "certified_within_limit": true,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "hull_pair_count": 16,
+          "minimum_certified_gap_m": -0.0003037165185337809,
+          "penetration_upper_bound_m": 0.0003037165185337809
+        },
+        {
+          "t": 12.583333333333334,
+          "a": "/World/ElasticTarget/Leaf_CompoundLeaf_16/Appendage_188_0",
+          "b": "/World/Greenhouse/Plants/Plant_02/Stem/mesh_149",
+          "native_callback_separation_m": -0.000565374968573451,
+          "certified_clear": false,
+          "certified_within_limit": false,
+          "limit_m": 0.0005,
+          "numerical_guard_m": 1e-06,
+          "method": "cooked convex hull support separation at measured post-fetch poses",
+          "error": "No native cooked hulls"
+        }
+      ],
+      "physics_timestamps_contiguous": true
+    },
+    {
+      "trial": "trials_source/idle60",
+      "mode": "idle",
+      "scene": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/assembly_elastic/scene.usda",
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 4.0,
+      "physics_wall_s": 4.737394841387868,
+      "realtime_factor": 0.8443459187852198,
+      "native_break_events": [],
+      "initialization_valid": true,
+      "last_phase": "settle",
+      "raw_min_contact_separation_m": 0.00018222664948552847,
+      "selected_fruits": [],
+      "fruit_displacement_m": {
+        "Truss_00_Fruit_01": 9.28482913877815e-05,
+        "Truss_00_Fruit_02": 8.234680717578158e-05,
+        "Truss_00_Fruit_03": 6.80288503644988e-05,
+        "Truss_00_Fruit_04": 6.16463294136338e-05,
+        "Truss_00_Fruit_05": 5.973589941277169e-05,
+        "Truss_00_Fruit_07": 5.9168920415686443e-05,
+        "Truss_00_Fruit_08": 6.0193757235538214e-05,
+        "Truss_00_Fruit_09": 5.9033758589066565e-05,
+        "Truss_00_Fruit_10": 6.296714127529413e-05,
+        "Truss_00_Fruit_11": 7.332313543884084e-05,
+        "Truss_01_Fruit_01": 7.841624756110832e-05,
+        "Truss_01_Fruit_02": 6.338656385196373e-05,
+        "Truss_01_Fruit_03": 5.259443787508644e-05,
+        "Truss_01_Fruit_04": 3.951010148739442e-05,
+        "Truss_01_Fruit_05": 4.939743666909635e-05,
+        "Truss_01_Fruit_07": 4.924949098494835e-05,
+        "Truss_01_Fruit_08": 4.7112636821111664e-05,
+        "Truss_01_Fruit_09": 5.840796075062826e-05,
+        "Truss_01_Fruit_10": 5.502102794707753e-05,
+        "Truss_01_Fruit_11": 7.554316835012287e-05,
+        "Truss_02_Fruit_01": 0.0012476153206080198,
+        "Truss_02_Fruit_02": 0.0008294752333313227,
+        "Truss_02_Fruit_03": 0.0010715349344536662,
+        "Truss_02_Fruit_04": 0.0009223026572726667,
+        "Truss_02_Fruit_05": 0.00047835553414188325,
+        "Truss_02_Fruit_07": 0.00043627171544358134,
+        "Truss_02_Fruit_08": 0.0004265250463504344,
+        "Truss_02_Fruit_09": 0.0004823605704586953,
+        "Truss_02_Fruit_10": 0.0006222442607395351,
+        "Truss_02_Fruit_11": 0.000392513262340799
+      },
+      "leaves": [],
+      "max_contact_point_force_n": 0.0,
+      "max_leaf_tool_contact_point_force_n": 0.0,
+      "final_worst_contacts": [
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_11/Collider",
+          "separation_m": 0.0001822302583605051,
+          "force_n": 0.0,
+          "impulse_ns": [
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.813557505607605,
+            1.599892497062683,
+            0.8330287933349609
+          ],
+          "normal_world": [
+            -0.41216081380844116,
+            -0.1739475280046463,
+            -0.89435213804245
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_01_Pedicel_proximal_11_0/Collider",
+          "b": "/World/ElasticTarget/Truss_01_Rachis_11/Collider",
+          "separation_m": 0.00018227496184408665,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.5782598853111267,
+            1.4808900356292725,
+            0.7571651935577393
+          ],
+          "normal_world": [
+            0.31272566318511963,
+            -0.32013076543807983,
+            -0.8942700624465942
+          ]
+        },
+        {
+          "t": 4.0,
+          "phase": "settle",
+          "a": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+          "b": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+          "separation_m": 0.000191253493539989,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.7642077803611755,
+            1.6091841459274292,
+            0.9635060429573059
+          ],
+          "normal_world": [
+            0.27085432410240173,
+            0.9569063782691956,
+            -0.10472916066646576
+          ]
+        }
+      ],
+      "poststep_certificates": [],
+      "physics_timestamps_contiguous": true
+    }
+  ],
+  "planning_diagnostics": [
+    {
+      "path": "plan_staging_140_corrected/audit.json",
+      "result": {
+        "passed": false,
+        "complete": false,
+        "samples": 477,
+        "hz": 60,
+        "phases": [
+          {
+            "phase": "ready_hold",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_open",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_height",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_horizontal",
+            "clear": false,
+            "first_hit_fraction": 0.8458333333333333,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link4/collisions/link4/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0014490234667908963,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        ],
+        "geometry": {
+          "shapes": 347,
+          "checked_shape_pairs": 17429,
+          "clearance_m": 0.002,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false
+      }
+    },
+    {
+      "path": "plan_staging_180/audit.json",
+      "result": {
+        "error": "Horizontal ready start must have the entry height and orientation"
+      }
+    },
+    {
+      "path": "plan_staging_180_corrected/audit.json",
+      "result": {
+        "passed": false,
+        "complete": false,
+        "samples": 484,
+        "hz": 60,
+        "phases": [
+          {
+            "phase": "ready_hold",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_open",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_height",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_horizontal",
+            "clear": false,
+            "first_hit_fraction": 0.875,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link4/collisions/link4/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0018690032616636792,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        ],
+        "geometry": {
+          "shapes": 347,
+          "checked_shape_pairs": 17429,
+          "clearance_m": 0.002,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false
+      }
+    },
+    {
+      "path": "plan_staging_250/audit.json",
+      "result": {
+        "error": "Horizontal ready start must have the entry height and orientation"
+      }
+    },
+    {
+      "path": "plan_staging_250_corrected/audit.json",
+      "result": {
+        "passed": false,
+        "complete": false,
+        "samples": 683,
+        "hz": 60,
+        "phases": [
+          {
+            "phase": "ready_hold",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_open",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_height",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_horizontal",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "approach",
+            "clear": false,
+            "first_hit_fraction": 0.28,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link4/collisions/link4/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0018062076539775704,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        ],
+        "geometry": {
+          "shapes": 347,
+          "checked_shape_pairs": 17429,
+          "clearance_m": 0.002,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false
+      }
+    },
+    {
+      "path": "trials_responsive/upper_depth45_60/self_collision_preflight.json",
+      "result": {
+        "passed": false,
+        "complete": false,
+        "samples": 483,
+        "hz": 60,
+        "phases": [
+          {
+            "phase": "ready_hold",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_open",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_height",
+            "clear": true,
+            "first_hit_fraction": null,
+            "hits": []
+          },
+          {
+            "phase": "prepare_horizontal",
+            "clear": false,
+            "first_hit_fraction": 0.8708333333333333,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link4/collisions/link4/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.001830417527811521,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        ],
+        "geometry": {
+          "shapes": 347,
+          "checked_shape_pairs": 17429,
+          "clearance_m": 0.002,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false,
+        "scene_sha256": "efcdbe0cf3cdb5f6a500c185f4d3d3f247cec9b27a8918930ad89e5ae570b280",
+        "input_sha256": "611d4fa008c4f1db58a0d193d45b4cbc56bef755b5143ebd46f0af5dbc3faeb3",
+        "physics_rerun": false
+      }
+    }
+  ]
+}

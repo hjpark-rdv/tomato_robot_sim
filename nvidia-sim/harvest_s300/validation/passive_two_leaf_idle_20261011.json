@@ -1,0 +1,319 @@
+{
+  "schema": "s300-passive-two-leaf-idle-diagnostic-20261011",
+  "source_trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16",
+  "cooking_control": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_cooking025/fresh_truss01_two_passive_leaves_cooking025_cpu16",
+  "source_report_root": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review",
+  "status": "Original active-target idle check completed; passive-leaf stability not established. Accuracy revision experimental/native-pending.",
+  "training_eligible": false,
+  "harvest_success": null,
+  "native_result": {
+    "initialization_valid": true,
+    "completed": true,
+    "stop_reason": null,
+    "simulated_s": 3.0,
+    "native_new_break_count": 0,
+    "target_displacement_max_m": 0.00045145160402171314
+  },
+  "guard_scope_gap": "Historical active markers exclude BackgroundCompliantFoliage. Background-only raw violations were retained but not sent to cooked verification. Existing init-valid flag does not certify those pairs.",
+  "contact_diagnostics": {
+    "count": 1199596,
+    "passive_leaf_contact_count": 1181137,
+    "passive_leaf_fraction": 0.9846123194808919,
+    "unique_collider_pairs": 513,
+    "raw_deepest_event": {
+      "t": 2.783333333333333,
+      "phase": "settle",
+      "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+      "b": "/World/Greenhouse/House/Environment/GutterSuspensionWire_003/Mesh",
+      "separation_m": -0.01719602942466736,
+      "force_n": 0.0,
+      "impulse_ns": [
+        -0.0,
+        0.0,
+        -0.0
+      ],
+      "position_world_m": [
+        -0.6065000295639038,
+        1.1007999181747437,
+        0.9890669584274292
+      ],
+      "normal_world": [
+        -0.16440343856811523,
+        0.9816425442695618,
+        -0.09669207036495209
+      ]
+    },
+    "max_point_force_event": {
+      "t": 2.5833333333333335,
+      "phase": "settle",
+      "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_131",
+      "b": "/World/Greenhouse/Plants/Plant_20/Truss_00/mesh_71",
+      "separation_m": -0.0008810014696791768,
+      "force_n": 889.2180690568347,
+      "impulse_ns": [
+        -7.400407791137695,
+        0.3792833387851715,
+        -0.02098153904080391
+      ],
+      "position_world_m": [
+        -0.5576952695846558,
+        1.116657018661499,
+        0.9581066370010376
+      ],
+      "normal_world": [
+        -0.9986852407455444,
+        0.05118429660797119,
+        -0.0028314592782408
+      ]
+    },
+    "saved_leaf_resolution_record_count": 0
+  },
+  "performance": {
+    "physics_loop_wall_s": 57.043338080868125,
+    "contact_callback_wall_s": 22.557863833382726,
+    "simulate_wall_s": 56.8340722899884,
+    "save_wall_s": 27.650827342644334,
+    "RTF": 0.05259159265446592,
+    "interpretation": "Callback is included in simulate time. Removing all callback work would still leave about34s/3simulatedseconds. Not an isolated same-model old/new benchmark."
+  },
+  "leaf_pose_review": [
+    {
+      "path": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+      "mass_kg": 0.0024234925750654668,
+      "authored_position_m": [
+        -0.6449660164084997,
+        1.2959884861685498,
+        0.8858753941568691
+      ],
+      "initial_actual_position_m": [
+        -0.6445527076721191,
+        1.295311689376831,
+        0.8874062299728394
+      ],
+      "initial_authored_position_error_m": 0.0017240464913413865,
+      "maximum_body_position_change_m": 0.19330125510509172,
+      "maximum_body_rotation_from_authored_deg": 114.26343246134735,
+      "final_position_m": [
+        -0.5562241077423096,
+        1.1478843688964844,
+        0.799294650554657
+      ],
+      "final_rotation_from_authored_deg": 113.50064177882894,
+      "pivot": [
+        -0.6697764740106431,
+        1.1898803273417218,
+        0.8361344389232952
+      ],
+      "rest_to_initial_actual_rotation_deg": 0.9374784516724125
+    },
+    {
+      "path": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+      "mass_kg": 0.0031867184801797083,
+      "authored_position_m": [
+        -0.53577200218707,
+        1.1616693148590786,
+        1.021324311903413
+      ],
+      "initial_actual_position_m": [
+        -0.5347277522087097,
+        1.1629023551940918,
+        1.0202043056488037
+      ],
+      "initial_authored_position_error_m": 0.0019660265754660325,
+      "maximum_body_position_change_m": 0.11227901544172082,
+      "maximum_body_rotation_from_authored_deg": 30.210902929824954,
+      "final_position_m": [
+        -0.5647250413894653,
+        1.0574440956115723,
+        1.0176266431808472
+      ],
+      "final_rotation_from_authored_deg": 27.373375717105695,
+      "pivot": [
+        -0.6557295665857164,
+        1.172598407623933,
+        0.943185632637437
+      ],
+      "rest_to_initial_actual_rotation_deg": 1.1370060445070316
+    }
+  ],
+  "anchor_summary": [
+    {
+      "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+      "authored_pivot_world_error_m": 5.0785296516662585e-08,
+      "authored_rest_frame_error_deg": 0.0,
+      "initial_native_pivot_error_m": 0.00016690990252038752,
+      "max_native_pivot_error_m": 0.016057127817369156,
+      "final_native_pivot_error_m": 0.015030638747390314
+    },
+    {
+      "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+      "authored_pivot_world_error_m": 5.1562056144558236e-08,
+      "authored_rest_frame_error_deg": 0.0,
+      "initial_native_pivot_error_m": 0.002652637489788248,
+      "max_native_pivot_error_m": 0.10850545721507811,
+      "final_native_pivot_error_m": 0.10850545721507811
+    }
+  ],
+  "native_cooked_diagnostic": {
+    "hull_count": 127,
+    "support_vertex_count": 2683,
+    "support_vertex_over_half_mm_from_source": 2637,
+    "source_vertex_count": 21040,
+    "source_vertices_outside_hull_union_count": 920,
+    "native_hull_support_to_source_max_m": 0.008154936955865907,
+    "source_full_triangle_enclosure_proven": false,
+    "local_schema_defaults": {
+      "maxConvexHulls": 32,
+      "errorPercentage": 10,
+      "voxelResolution": 500000,
+      "hullVertexLimit": 64,
+      "minThickness": 0.001,
+      "shrinkWrap": false
+    },
+    "schema_source": "/root/isaac-sim-6.1.0/extscache/omni.usd.schema.physx-110.3.2+110.3.0.lx64.r.cp312.u7f4/plugins/PhysxSchema/resources/schema.usda",
+    "schema_defaults_are_not_observed_native_piece_counts": true
+  },
+  "gravity_preload_proposal": {
+    "schema": "standalone-passive-leaf-fixed-rest-gravity-preload-proposal-v1",
+    "rows": [
+      {
+        "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+        "mass_kg": 0.0024234925750654668,
+        "COM_body_frame_m": [
+          0,
+          0,
+          0
+        ],
+        "authored_diagonal_inertia_kg_m2": [
+          1.4042509821224532e-05,
+          8.150809867136447e-06,
+          1.3686020917236738e-05
+        ],
+        "rest_world_lever_COM_minus_anchor_m": [
+          0.0248104576021434,
+          0.106108158826828,
+          0.049740955233573914
+        ],
+        "gravity_force_world_N": [
+          0.0,
+          0.0,
+          -0.02377446216139223
+        ],
+        "fixed_authored_pose_gravity_preload_torque_world_Nm": [
+          0.0025226644070434194,
+          -0.0005898552854689844,
+          -0.0
+        ],
+        "preload_torque_norm_Nm": 0.0025907074262369774,
+        "preload_currently_applied": false,
+        "revision_authorized_or_executed": false
+      },
+      {
+        "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+        "mass_kg": 0.0031867184801797083,
+        "COM_body_frame_m": [
+          0,
+          0,
+          0
+        ],
+        "authored_diagonal_inertia_kg_m2": [
+          1.5800300034092658e-05,
+          2.449292960716947e-05,
+          2.5157952666652762e-05
+        ],
+        "rest_world_lever_COM_minus_anchor_m": [
+          0.11995756439864635,
+          -0.010929092764854431,
+          0.07813867926597595
+        ],
+        "gravity_force_world_N": [
+          0.0,
+          0.0,
+          -0.03126170829056294
+        ],
+        "fixed_authored_pose_gravity_preload_torque_world_Nm": [
+          -0.0003416621098953812,
+          -0.003750078385476901,
+          -0.0
+        ],
+        "preload_torque_norm_Nm": 0.0037656102950994813,
+        "preload_currently_applied": false,
+        "revision_authorized_or_executed": false
+      }
+    ],
+    "existing_active_mechanism": "run_motion.py computes fixed authored-pose articulation Jacobian gravity preload and applies constant DOF forces. Standalone world-D6 leaves are outside that articulation and receive no such preload.",
+    "proposed_separate_hypothesis": "Equivalent fixed world torque only at original authored COM/pivot, constant over motion rather than pose-following gravity cancellation; preserve source pose, mass, inertia, spring/damping and all collisions.",
+    "limits": [
+      "No runtime preload change was implemented or executed",
+      "Gravity is zero during SDKwarmup; the244.9N t0 passive contacts therefore cannot be caused by missing gravity preload",
+      "A rest-torque controller cannot justify ignored background penetrations or large locked-pivot drift"
+    ]
+  },
+  "accuracy_revision": {
+    "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves_accuracy_v2",
+    "USDC_sha256": "c8b34e38a6f36e85a6e657a3828084e94d5349ddb5eb378ec4ea0e2fc4a0297b",
+    "exact_paths": [
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01/Appendage_mesh_127",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01/Appendage_mesh_128",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01/Appendage_mesh_129",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01/Appendage_mesh_130",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_131",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_133",
+      "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_134"
+    ],
+    "configuration": {
+      "hullVertexLimit": 64,
+      "maxConvexHulls": 128,
+      "minThickness": 0.001,
+      "voxelResolution": 5000000,
+      "errorPercentage": 0.5,
+      "shrinkWrap": false
+    },
+    "geometry_audit": {
+      "mesh_count": 31941,
+      "world_vertices": 32649127,
+      "world_vertex_max_abs_error_m": 0.0,
+      "rigid_body_count": 279,
+      "rigid_pose_max_abs_error": 0.0,
+      "collider_count": 32142,
+      "collider_pose_max_abs_error": 0.0,
+      "geometry_sha256": "93be59e3a27986895ca1d3fa7f9a26caf30e139372c0c1c2b15465502d5fde03"
+    },
+    "normalized_all_properties_identical": true,
+    "native_cooking_validation": "pending_exact_leaf_positive_negative_controls",
+    "native_stability_validation": "pending",
+    "native_performance_validation": "pending",
+    "CAD_fixture_certificate_applied": false
+  },
+  "tests": {
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest -v test_background_leaf_proxy_accuracy",
+    "pass_count": 6
+  },
+  "code_snapshot": {
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/compact_motion_assets.py": "6989d03298dc030e60dadd8cc65e15ea5f71f88d761dacd654d349bf6f5c64c8",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/collision_proxy_accuracy.py": "e291208faea35d9fa622d74e722b442f1033a895c56549463d0776ced86a020b",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/background_foliage.py": "a1520733055eedad43991e777f15b2b4ec6007559267c6c02a5185cd5bfa734e",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/motion_contact_buffer.py": "7ea19866a04b0a7c2815e844a25f77cae4b7227428afa1060b720af256cb8d9a",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/test_background_leaf_proxy_accuracy.py": "5328073121854b48ea472bcd3e8f92956748dbe3b8e53198686b4806fff624ec",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/analysis_code_snapshot/background_leaf_proxy_accuracy.py": "109de0a5f7974c7720c0cc6dfa3709e05cbb5bf4b18113818c907d26fe44b99a"
+  },
+  "evidence_sha256": {
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/source_pair_review.json": "ff3b79bb2972319733dfff01bf5b046364b588896b78a19e556e4181f12b073a",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/anchor_review.json": "720535cb93fd782924266f798768967f07d36fde6ade23fc8ef1e669a5bffabe",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/default_cooked_source_review.json": "b893f9d7dcb98426dc516286e4b2cc7c3796987217978b176b1f3fd22942bbcc",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/cooking_capture_prefix_equivalence.json": "dbd39065da5d13b650491098e2768c36894b7dae13f221940a6e1466a3b1c28f",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/t0_contact_review.json": "0130f86ba1babb12f1e493b6ca50c18170ad53f92fe3488f3cc154d165fbfd91",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16/summary.json": "a819762bcb89b7e57519f649fb2012d60feb001b784888aac00b59238b6287a5",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16/profile.json": "efbc022c8199dca193e370340378656d395fd0de551ef58a5d8017159215ab23",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16/contacts.json": "2d69c8974c1dfe6e2d9f3e5c00cf0efc2bfb7a786249964d5a321df2cc7838ee",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_cooking025/fresh_truss01_two_passive_leaves_cooking025_cpu16/initial_leaf_cooked_geometry.json": "45e9c5710bb78682226863b80b9f863dd14cb7670a2ab89160cfc96e9ab5944c",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves_accuracy_v2/background_leaf_proxy_accuracy_validation.json": "17ddbf13a721c70f93cf8757ae3a18e853e3c5792acd6c1202e1aab780595a9d"
+  },
+  "next_bounded_proof": [
+    "Capture exact8 refined native hulls and compare source diagnostics at same authored pose",
+    "Process exact passive inventory in unchanged0.5mm validity guard; unknown background physics is not a PASS",
+    "Same-start bounded control, raw evidence/cooked post-fetch checks, zero new breaks, pivot drift and loop/contact counts",
+    "Only as separate hypothesis, fixed authored-pose gravity preload equivalent to active articulation; no stiffness/threshold increase"
+  ]
+}

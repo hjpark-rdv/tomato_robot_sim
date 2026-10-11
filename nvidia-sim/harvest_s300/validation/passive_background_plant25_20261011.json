@@ -1,0 +1,68 @@
+{
+  "schema": "passive_background_plant25_v1",
+  "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant25_neighbor_foliage_v7",
+  "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "composed_usdc_sha256": "a44896e7aed18845dd8b6dbe0f3e1415f2440c3cdfc0ea16c675c0d8b6cb7cdb",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant25_near_scope_full_leaves_v6",
+  "source_scope": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/plant25_neighbor_foliage_scope.json",
+  "selected_leaf_count": 6,
+  "source_mesh_parts": 24,
+  "added_mass_kg": 0.014953646708125,
+  "world_geometry_max_error_m": 0.0,
+  "source_filter_graph_preserved": true,
+  "native_validation": "FAIL:new_native_joint_break_during_zeroG_warmup_before_preload",
+  "startup_failure_baseline": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant25_unchanged_v6/plant25_unchanged_idle120/initialization_failure.json",
+  "baseline_harvest_credit": 0,
+  "tests": {
+    "background_foliage": 4,
+    "native_route_start": 12,
+    "route_checkpoint": 11,
+    "resume_native_state": 10,
+    "total": 37,
+    "status": "PASS"
+  },
+  "code_sha256": {
+    "background_foliage.py": "397b58bd21688366c16835ad58d342de220a216f6c4dabb28b1fcaf7ec6870e7",
+    "route_checkpoint.py": "a73123fc2484eb4c076d56c503c0eac70950fbdb69a14e8fb1165f4300231f68",
+    "native_route_start.py": "c6b7bdd8211e42b4f78933686e1fa6c75df0a1b444bd142770a94af76ddfa2f9",
+    "test_background_foliage.py": "2823ce543327260d274cfcbe5df3d85b8f7d3b546227942f34664f9946417142",
+    "test_native_route_start.py": "65bcbaf5ed35b1e94715a30e7c80711128f7cbf6849b00dff4cd5d77966b5023"
+  },
+  "geometry_revision": "Static triangle leaf Mesh approximation none becomes convexDecomposition on standalone passive D6 body; same rendered vertices and triangles",
+  "dynamics_revision": "Only six exact neighboring leaves; source neighboring stems and trusses remain static; existing active plant/robot parameters unchanged",
+  "continuity": "Native measured passive body pose/velocity capture and restore covered by pure helper tests; physical passive-body resume pending",
+  "limitations": [
+    "Exact cooked reader registration completed; native startup fails on remaining constraints, so no physical continuity/harvest success claim",
+    "Plant26 native warmup contact lies outside this scope and may remain blocker",
+    "Source completed54s state is an independent diagnostic starting point after its parent later stopped; no campaign rollback or second-station success claim",
+    "Switching active target into a plant already carrying passive leaf bodies is explicitly unsupported until exact joint/state transition exists"
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "native_trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant25_neighbor_foliage_v7/plant25_six_neighbor_leaves_idle120",
+  "native_ab_comparison": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/plant25_passive_foliage_native_ab.json",
+  "new_warmup_break_count": 4,
+  "idle_loop_executed": false,
+  "rail_travel_executed": false,
+  "harvest_credit": 0,
+  "complete_initial_coverage_control": {
+    "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant25_complete_initial_neighbor_foliage_v8",
+    "materialized_dependency": {
+      "relative_path": "composed.usdc",
+      "sha256": "1c3fb922ca08e1e8f3c1b0f57710201d4eabcbed2f3523b8d181ca0dc773c54a",
+      "format": "usdc",
+      "materialized": true,
+      "external_usd_sublayers": []
+    },
+    "scope_groups": 27,
+    "source_mesh_parts": 108,
+    "authored_world_geometry_max_error_m": 0.0,
+    "native_validation": "FAIL:four_new_native_breaks_before_measured_restore",
+    "new_native_break_count": 4,
+    "harvest_credit": 0,
+    "rail_travel_executed": false,
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/plant25_complete_initial_foliage_native_control.json",
+    "evidence_sha256": "84df252d92d3de44ab38c0de810276c5766696794b79f3a627067cf4ddb8aa59",
+    "finding": "All four broken fruits have direct contact with declared passive neighboring Plant24Leaf01/12. Fruit10/11 already intersect those exact source triangle surfaces at authored rest. Complete neighbor-foliage coverage does not establish stable startup, and own-leaf proxy cooking alone is not established as cause."
+  }
+}

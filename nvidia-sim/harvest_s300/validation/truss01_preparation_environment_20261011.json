@@ -1,0 +1,105 @@
+{
+  "schema": "s300-actual-truss01-preparation-environment-review-v1",
+  "status": "blocked",
+  "passed": false,
+  "complete": true,
+  "scope": "all existing phases before first approach",
+  "samples": 1505,
+  "last_sample_time_s": 12.5,
+  "hard_intersection_sample_pairs": 16444,
+  "diagnostic_intersection_sample_pairs": 1505,
+  "distance_queries": 169993,
+  "wall_s": 791.9916283860803,
+  "code_sha256": "800c3564ce93f36a330feeaeddd1ce30aa01cd03a7251cdc7c1fde4d7366eb8c",
+  "hard_taxonomy": {
+    "static_leaf_obstacle": {
+      "pair_count": 1498,
+      "sample_pairs": 9291,
+      "first_time_s": 7.533333333333333,
+      "last_time_s": 12.5
+    },
+    "structural_or_unknown_obstacle": {
+      "pair_count": 587,
+      "sample_pairs": 3518,
+      "first_time_s": 7.966666666666667,
+      "last_time_s": 10.616666666666667
+    },
+    "main_stem": {
+      "pair_count": 14,
+      "sample_pairs": 31,
+      "first_time_s": 9.225,
+      "last_time_s": 9.275
+    },
+    "foreign_fruit": {
+      "pair_count": 124,
+      "sample_pairs": 821,
+      "first_time_s": 9.358333333333334,
+      "last_time_s": 10.591666666666667
+    },
+    "foreign_pedicel": {
+      "pair_count": 274,
+      "sample_pairs": 1760,
+      "first_time_s": 9.375,
+      "last_time_s": 10.6
+    },
+    "foreign_rachis": {
+      "pair_count": 75,
+      "sample_pairs": 529,
+      "first_time_s": 9.383333333333333,
+      "last_time_s": 10.433333333333334
+    },
+    "foreign_peduncle": {
+      "pair_count": 74,
+      "sample_pairs": 373,
+      "first_time_s": 9.4,
+      "last_time_s": 9.766666666666666
+    },
+    "gutter": {
+      "pair_count": 34,
+      "sample_pairs": 121,
+      "first_time_s": 9.433333333333334,
+      "last_time_s": 9.675
+    }
+  },
+  "hard_unique_pairs": 2680,
+  "hard_environment_plant_sample_pairs": {
+    "Plant_34": 356,
+    "Plant_21": 1119,
+    "Plant_19": 2243,
+    "Plant_18": 99,
+    "Plant_20": 12442
+  },
+  "native_stop_pair_nominal_evidence": [
+    {
+      "robot_geom": "/World/ActuatedTool/L/part_209",
+      "environment_geom": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_132",
+      "obstacle_class": "static_leaf_obstacle",
+      "sample_pairs": 8,
+      "first_time_s": 7.533333333333333,
+      "last_time_s": 7.608333333333333
+    }
+  ],
+  "native_counterexample": {
+    "native_time_s": 9.658333333333333,
+    "phase": "prepare_joint_branch",
+    "robot_geom": "/World/ActuatedTool/L/part_209",
+    "environment_geom": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_132",
+    "raw_contact_generation_separation_m": -0.000610191375,
+    "raw_single_contact_force_N": 70.090236,
+    "stored_postsolve_exact_source_surface_clearance_m": 0.001780203015
+  },
+  "timing_interpretation": "Nominal prefix time excludes2s native initial settle; FCL conservative CAD envelope is not reconstructed native cooked collider. Native guard stop retained.",
+  "report_sha256": "c68ca0a882eb45d8ebb434123faf547c2099f4b8eb76028d161de871fda6bc00",
+  "source_import_snapshot_sha256": "800c3564ce93f36a330feeaeddd1ce30aa01cd03a7251cdc7c1fde4d7366eb8c",
+  "report_path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_current_preparation_environment120/report.json",
+  "native_runs": 0,
+  "training_eligible": false,
+  "preparation_started": true,
+  "manipulation_started": false,
+  "new_native_breaks": 0,
+  "accepted_terminal": false,
+  "nearscope_native_breaks": 9,
+  "near_inventory": 20,
+  "finite_search_failure_is_impossible": false,
+  "actual_environment_audit_would_block_before_native_preparation": true
+}

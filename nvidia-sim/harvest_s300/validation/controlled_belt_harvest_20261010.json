@@ -1,0 +1,938 @@
+{
+  "base_commit": "76479eef658275b0164cb23103aa48fcb9d1ef70",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "root": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest",
+  "trials": [
+    {
+      "trial": "controlled_120_belt_off",
+      "folder": "confirmation_trials/controlled_120_belt_off",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": true,
+      "simulated_s": 30.5,
+      "physics_wall_s": 71.59606908634305,
+      "rtf": 0.4260010415267041,
+      "native_break_events": [],
+      "max_penetration_mm": 0.05115848034620285,
+      "worst_contact": {
+        "t": 15.925,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -5.115848034620285e-05,
+        "force_n": 0.4111890581582188,
+        "impulse_ns": [
+          -0.0008344116504304111,
+          -0.0028244818095117807,
+          -0.0017514220671728253
+        ],
+        "position_world_m": [
+          -0.396338552236557,
+          1.502731204032898,
+          1.0132544040679932
+        ],
+        "normal_world": [
+          -0.24351181089878082,
+          -0.8242870569229126,
+          -0.5111289620399475
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "3abf49142fc6a4259c7711e1344dedc617ff76be9821c2a1a51a7a949bc24146",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "b47bd9973d3b24d4946cd5ff82e7907a239c3714c748aeb51e0cf700949fbe97",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "controlled_120_height-12",
+      "folder": "confirmation_trials/controlled_120_height-12",
+      "gap_mm": 40.0,
+      "height_offset_mm": -12.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 70.0021563898772,
+      "rtf": 0.43570086370097183,
+      "native_break_events": [
+        {
+          "t": 17.875,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.4614507779479027,
+      "worst_contact": {
+        "t": 17.808333333333334,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.0004614507779479027,
+        "force_n": 0.6673118202995496,
+        "impulse_ns": [
+          -0.00024908100022003055,
+          -0.0035544775892049074,
+          -0.004269380588084459
+        ],
+        "position_world_m": [
+          -0.3964359760284424,
+          1.5071704387664795,
+          1.0109206438064575
+        ],
+        "normal_world": [
+          -0.04479123651981354,
+          -0.6391873955726624,
+          -0.7677455544471741
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "8ed8e636f3b0ee7b854b47ad8686592471228ae930dc27b7647eeb21c98b29e8",
+        "plan.json": "0888fad2bc0450f76b12050b37b747a5590b3aba3a8fd107cb816b1e33750c34",
+        "contacts.json": "d8456cc5081f49bfad5f17ae76a2278e54065a80062ad78354d2b462b48d499b",
+        "break_events.json": "9bc180ef1a6b0f1b2e048a73314b50be9cbb84dc105220b0de6821c857083cdf"
+      }
+    },
+    {
+      "trial": "controlled_60",
+      "folder": "confirmation_trials/controlled_60",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.39469024911523,
+      "rtf": 0.7943806761327589,
+      "native_break_events": [
+        {
+          "t": 17.833333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.19165873527526855,
+      "worst_contact": {
+        "t": 16.216666666666665,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.00019165873527526855,
+        "force_n": 0.4918221088037934,
+        "impulse_ns": [
+          -0.0020620415452867746,
+          -0.006668653804808855,
+          -0.004297490697354078
+        ],
+        "position_world_m": [
+          -0.39600804448127747,
+          1.5039290189743042,
+          1.0132495164871216
+        ],
+        "normal_world": [
+          -0.25155943632125854,
+          -0.8135446310043335,
+          -0.5242738127708435
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.016666666666669272,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "4ecacddb4905da05257757c71e4fd2c7882e127059bca7d275b88522c66ce188",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "5a820ad814a01477f2826e38654ba16bdf2de22de4e0620261f3f82e9977b9d8",
+        "break_events.json": "feef4ea110eb2f9be531bce12b30ec1cee220817b0dfd713392f8b8f10cdf8d1"
+      }
+    },
+    {
+      "trial": "gap41_120",
+      "folder": "gap41_trials/gap41_120",
+      "gap_mm": 41.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 73.20354593731463,
+      "rtf": 0.4166464835749574,
+      "native_break_events": [],
+      "max_penetration_mm": 0.3016628324985504,
+      "worst_contact": {
+        "t": 17.85,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.0003016628324985504,
+        "force_n": 0.6994604770282028,
+        "impulse_ns": [
+          -0.0006701895617879927,
+          -0.004315181635320187,
+          -0.0038607509341090918
+        ],
+        "position_world_m": [
+          -0.39892470836639404,
+          1.506996512413025,
+          1.0130475759506226
+        ],
+        "normal_world": [
+          -0.11497826129198074,
+          -0.7403160333633423,
+          -0.662353515625
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "be2eefdc7582dc37ac56b3e77a27112ce4778dda8ffaf8a653e37914fbdb632a",
+        "plan.json": "bb8468a252bea736d20b9ffe1789b45d184a02bf2504de5f6d9f2043aedf3930",
+        "contacts.json": "6a35cf69512c2c04ef1db19b90cd82aca4078990bb7c0bb4d806c1a7d5a1324b",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap41_240",
+      "folder": "gap41_trials/gap41_240",
+      "gap_mm": 41.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 135.760665288195,
+      "rtf": 0.22466006582432466,
+      "native_break_events": [
+        {
+          "t": 17.883333333333333,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.037594232708215714,
+      "worst_contact": {
+        "t": 15.8,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+        "separation_m": -3.7594232708215714e-05,
+        "force_n": 0.14282766196211186,
+        "impulse_ns": [
+          4.1353036067448556e-05,
+          0.0005936729139648378,
+          -2.13732209886075e-06
+        ],
+        "position_world_m": [
+          -0.3739751875400543,
+          1.542813777923584,
+          0.9909785985946655
+        ],
+        "normal_world": [
+          0.06948744505643845,
+          0.9975763559341431,
+          -0.0035914424806833267
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.0041666666666699825,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "b3ff48e3913e4c683c1d554a64f5cbb5e9618ecf89542492b2a2e9980cb88ce6",
+        "plan.json": "bb8468a252bea736d20b9ffe1789b45d184a02bf2504de5f6d9f2043aedf3930",
+        "contacts.json": "9c3663ccffa65ce77ebbb3483d88d5999a3059f7eefc4518055503e7c92fb30b",
+        "break_events.json": "22e81bd4afcc77c7017f28a8188fdb704fcbe9b2d6904da05251ff2080254618"
+      }
+    },
+    {
+      "trial": "gap41_60",
+      "folder": "gap41_trials/gap41_60",
+      "gap_mm": 41.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 37.90698636882007,
+      "rtf": 0.8046010227045483,
+      "native_break_events": [],
+      "max_penetration_mm": 0.22335443645715714,
+      "worst_contact": {
+        "t": 17.8,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.00022335443645715714,
+        "force_n": 0.17816089661886467,
+        "impulse_ns": [
+          0.0012638657353818417,
+          -0.00170130783226341,
+          -0.0020797173492610455
+        ],
+        "position_world_m": [
+          -0.4055163264274597,
+          1.5025415420532227,
+          1.0322823524475098
+        ],
+        "normal_world": [
+          0.425637423992157,
+          -0.5729566812515259,
+          -0.7003952264785767
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.016666666666669272,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "321abba8ac52cc19a2ce1ca856b9f40e15b1e28d48a2bf6c138d07fde03afa6c",
+        "plan.json": "bb8468a252bea736d20b9ffe1789b45d184a02bf2504de5f6d9f2043aedf3930",
+        "contacts.json": "3eeb98776afa684789fe83f17fbf92451d8fbef65a8d9c6c146471945715d445",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap42_120",
+      "folder": "gap42_trials/gap42_120",
+      "gap_mm": 42.0,
+      "height_offset_mm": -10.0,
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "belt_off": false,
+      "simulated_s": 18.458333333333332,
+      "physics_wall_s": 42.953304432332516,
+      "rtf": 0.4297302286116798,
+      "native_break_events": [
+        {
+          "t": 17.966666666666665,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.5130171775817871,
+      "worst_contact": {
+        "t": 18.458333333333332,
+        "phase": "belt_spin",
+        "a": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "b": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+        "separation_m": -0.0005130171775817871,
+        "force_n": 0.14140216168016323,
+        "impulse_ns": [
+          -1.7558803369621678e-11,
+          1.5802921471408382e-10,
+          0.001178351347334683
+        ],
+        "position_world_m": [
+          -0.44105133414268494,
+          1.5394536256790161,
+          0.0022497770842164755
+        ],
+        "normal_world": [
+          -1.4901161193847656e-08,
+          1.341104365337742e-07,
+          1.0
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 0.9583333333333321,
+      "input_sha256": {
+        "states.npz": "a127b8949b4db2abe4902ed727926d606a0b7379b2a11400697b4d2f6090e82f",
+        "plan.json": "918a9770247e944f7f671f4077f08c215fe36120259e8f9a79acb6482f59657f",
+        "contacts.json": "c87e535d68416bd644b7675bbef14d7a7404a032bd8b803d251501a25cbc81ac",
+        "break_events.json": "db03ed7cabd8c99fe80380102fdda651fd68736930e9412d42a10cf0f6c6aa39"
+      }
+    },
+    {
+      "trial": "gap42_240",
+      "folder": "gap42_trials/gap42_240",
+      "gap_mm": 42.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 135.9713219292462,
+      "rtf": 0.22431200614399358,
+      "native_break_events": [],
+      "max_penetration_mm": 0.07193931378424168,
+      "worst_contact": {
+        "t": 15.916666666666666,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+        "separation_m": -7.193931378424168e-05,
+        "force_n": 0.18649304323932964,
+        "impulse_ns": [
+          5.2391023928066716e-05,
+          0.0007752600940875709,
+          -6.358070095302537e-06
+        ],
+        "position_world_m": [
+          -0.3739330768585205,
+          1.542617917060852,
+          0.9910715222358704
+        ],
+        "normal_world": [
+          0.06742259860038757,
+          0.9976909756660461,
+          -0.00818227231502533
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.0041666666666699825,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "e285af963044023c2bee56a54ef28535df0ef772b088107ee977beb330bc07a6",
+        "plan.json": "918a9770247e944f7f671f4077f08c215fe36120259e8f9a79acb6482f59657f",
+        "contacts.json": "16dd3cdc403f479a4239a2733aa3acfdb285b6ad9a6e48dd65b6ed362fd99b3c",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap42_60",
+      "folder": "gap42_trials/gap42_60",
+      "gap_mm": 42.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 37.36121677234769,
+      "rtf": 0.8163545685849849,
+      "native_break_events": [],
+      "max_penetration_mm": 0.2660788595676422,
+      "worst_contact": {
+        "t": 16.3,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.0002660788595676422,
+        "force_n": 0.5021605588304058,
+        "impulse_ns": [
+          -0.0020564382430166006,
+          -0.006919022649526596,
+          -0.0042360457591712475
+        ],
+        "position_world_m": [
+          -0.3955509066581726,
+          1.503359317779541,
+          1.0132157802581787
+        ],
+        "normal_world": [
+          -0.2457108497619629,
+          -0.8267104029655457,
+          -0.5061384439468384
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.016666666666669272,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "0de4f68a429b7d48beb7b10eb2a4e0a55f39ccf481aae63cf03489a9ba8a22b2",
+        "plan.json": "918a9770247e944f7f671f4077f08c215fe36120259e8f9a79acb6482f59657f",
+        "contacts.json": "c8f23568840f5ca3f1de4034c82aa8df8e3cf019045c8a842d95d1252a9bb74b",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap36_120",
+      "folder": "gap_trials/gap36_120",
+      "gap_mm": 36.0,
+      "height_offset_mm": 0.0,
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "belt_off": false,
+      "simulated_s": 18.733333333333334,
+      "physics_wall_s": 44.10040580481291,
+      "rtf": 0.42478823020918477,
+      "native_break_events": [],
+      "max_penetration_mm": 1.4154864475131035,
+      "worst_contact": {
+        "t": 18.733333333333334,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0014154864475131035,
+        "force_n": 0.9391555783000741,
+        "impulse_ns": [
+          -0.0032773453276604414,
+          -0.004353206604719162,
+          -0.005617785733193159
+        ],
+        "position_world_m": [
+          -0.4190872311592102,
+          1.5048918724060059,
+          1.041335105895996
+        ],
+        "normal_world": [
+          -0.418760746717453,
+          -0.5562282204627991,
+          -0.7178090214729309
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 1.2333333333333343,
+      "input_sha256": {
+        "states.npz": "3bce977a5105e285fd79d1a88f31e7740c229bf7af14cd415efcd1c2d56f5cd0",
+        "plan.json": "51e2b97fbd2eee6cab39a9564f3c83a8da5e7ae1a75bb6bec025bfd5a6657749",
+        "contacts.json": "3087f9c80f5d46d013b94fb5a9d04af45ea6126cb29396d2ddab2dc1d23a1b64",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap40_120",
+      "folder": "gap_trials/gap40_120",
+      "gap_mm": 40.0,
+      "height_offset_mm": 0.0,
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "belt_off": false,
+      "simulated_s": 19.133333333333333,
+      "physics_wall_s": 44.89518486149609,
+      "rtf": 0.42617784941437775,
+      "native_break_events": [],
+      "max_penetration_mm": 2.27500032633543,
+      "worst_contact": {
+        "t": 19.133333333333333,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.00227500032633543,
+        "force_n": 1.4733269617323634,
+        "impulse_ns": [
+          0.004175733309239149,
+          -0.007535657379776239,
+          -0.008747550658881664
+        ],
+        "position_world_m": [
+          -0.4179660677909851,
+          1.5025122165679932,
+          1.040732979774475
+        ],
+        "normal_world": [
+          0.34010645747184753,
+          -0.613766610622406,
+          -0.7124732732772827
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 1.6333333333333329,
+      "input_sha256": {
+        "states.npz": "67741505259dac9d1caac49ceaa5c32efd9c42498b0ddd12eacadd54983d23ff",
+        "plan.json": "6b025b2c3ee65a4003c9cd823feab89daf94f8889f62ed6c56e069e09e658362",
+        "contacts.json": "08c93acc5bc3babb42e66047152ba27079d6efe54e7857bfefa60c24330fceeb",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "gap40_height-10_120",
+      "folder": "height_trials/gap40_height-10_120",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 70.72384951263666,
+      "rtf": 0.4312548059838058,
+      "native_break_events": [
+        {
+          "t": 17.866666666666667,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.4565045237541199,
+      "worst_contact": {
+        "t": 17.816666666666666,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.0004565045237541199,
+        "force_n": 0.8409519668264983,
+        "impulse_ns": [
+          -0.0007799011073075235,
+          -0.005046742036938667,
+          -0.004799299407750368
+        ],
+        "position_world_m": [
+          -0.396420419216156,
+          1.507167935371399,
+          1.0129261016845703
+        ],
+        "normal_world": [
+          -0.11128831654787064,
+          -0.7201470136642456,
+          -0.684838056564331
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "07142b7980bd13ca0d7b468b634cd510ae9f164b70e7dffae8270a26f10e805e",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "00533d28cde8b9e5fa4e76e7404dc73e09f4943d368bac278722c3d2ccc0d97d",
+        "break_events.json": "8ca635425981e4791410de0094482b3748fa7e965e6dc11fc2b95af2777d35f0"
+      }
+    },
+    {
+      "trial": "gap40_height-20_120",
+      "folder": "height_trials/gap40_height-20_120",
+      "gap_mm": 40.0,
+      "height_offset_mm": -20.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 68.53013739548624,
+      "rtf": 0.4450596651220036,
+      "native_break_events": [],
+      "max_penetration_mm": 0.02773664891719818,
+      "worst_contact": {
+        "t": 19.791666666666668,
+        "phase": "release_open",
+        "a": "/World/ActuatedTool/L_belt/part_163",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -2.773664891719818e-05,
+        "force_n": 0.28331686990554616,
+        "impulse_ns": [
+          -0.000660264864563942,
+          -0.001800704631023109,
+          -0.0013768482021987438
+        ],
+        "position_world_m": [
+          -0.396614670753479,
+          1.5020477771759033,
+          1.0069481134414673
+        ],
+        "normal_world": [
+          -0.27965784072875977,
+          -0.7626956701278687,
+          -0.5831695795059204
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.008333333333336412,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "b4d0f74e784ef04b6e74ac3ef5de8f0672128e02733a80a503ba2d55d54bb91c",
+        "plan.json": "afe7974f67e6abcfb0dc8c269097731049439863ace403786c4adbadc809c36b",
+        "contacts.json": "6598338df6053840089fabe7cfe5ed45eec2dc4fcf1af9a46ef9b29261684284",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "trial": "physics",
+      "folder": "live_trials/physics",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.58611810952425,
+      "rtf": 0.7904397097792445,
+      "native_break_events": [
+        {
+          "t": 17.833333333333332,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.19165873527526855,
+      "worst_contact": {
+        "t": 16.216666666666665,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.00019165873527526855,
+        "force_n": 0.4918221088037934,
+        "impulse_ns": [
+          -0.0020620415452867746,
+          -0.006668653804808855,
+          -0.004297490697354078
+        ],
+        "position_world_m": [
+          -0.39600804448127747,
+          1.5039290189743042,
+          1.0132495164871216
+        ],
+        "normal_world": [
+          -0.25155943632125854,
+          -0.8135446310043335,
+          -0.5242738127708435
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.016666666666669272,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "4ecacddb4905da05257757c71e4fd2c7882e127059bca7d275b88522c66ce188",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "5a820ad814a01477f2826e38654ba16bdf2de22de4e0620261f3f82e9977b9d8",
+        "break_events.json": "feef4ea110eb2f9be531bce12b30ec1cee220817b0dfd713392f8b8f10cdf8d1"
+      }
+    },
+    {
+      "trial": "controlled_240",
+      "folder": "robustness_trials/controlled_240",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": false,
+      "simulated_s": 30.5,
+      "physics_wall_s": 140.77670249715447,
+      "rtf": 0.21665516707650187,
+      "native_break_events": [
+        {
+          "t": 17.1125,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "max_penetration_mm": 0.09846873581409454,
+      "worst_contact": {
+        "t": 17.125,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -9.846873581409454e-05,
+        "force_n": 0.03561617474936828,
+        "impulse_ns": [
+          1.951642843778245e-05,
+          -0.00014381266373675317,
+          -3.098068555118516e-05
+        ],
+        "position_world_m": [
+          -0.3974643647670746,
+          1.5068283081054688,
+          1.0132395029067993
+        ],
+        "normal_world": [
+          0.13151167333126068,
+          -0.9690832495689392,
+          -0.20876368880271912
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.0041666666666699825,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "e4ee5e4508cb16d3dffa7a7d534ccf17248ba2fa6fb912458ffe2863044b5b1b",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "b8dbe4744bbef246c1de5d06b91b126c956909733cc729f4b8ea56a2c32d28b7",
+        "break_events.json": "4b39b396d098fcf16ffaff9fbbf9e7743984f4eb7a60beaa35d9c5e946b86076"
+      }
+    },
+    {
+      "trial": "controlled_60_belt_off",
+      "folder": "robustness_trials/controlled_60_belt_off",
+      "gap_mm": 40.0,
+      "height_offset_mm": -10.0,
+      "completed": true,
+      "stop_reason": null,
+      "belt_off": true,
+      "simulated_s": 30.5,
+      "physics_wall_s": 36.728365041315556,
+      "rtf": 0.8304208468220869,
+      "native_break_events": [],
+      "max_penetration_mm": 0.19165873527526855,
+      "worst_contact": {
+        "t": 16.216666666666665,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+        "separation_m": -0.00019165873527526855,
+        "force_n": 0.4918221088037934,
+        "impulse_ns": [
+          -0.0020620415452867746,
+          -0.006668653804808855,
+          -0.004297490697354078
+        ],
+        "position_world_m": [
+          -0.39600804448127747,
+          1.5039290189743042,
+          1.0132495164871216
+        ],
+        "normal_world": [
+          -0.25155943632125854,
+          -0.8135446310043335,
+          -0.5242738127708435
+        ]
+      },
+      "actual_self_collision_audit_passed": true,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "max_dt_s": 0.016666666666669272,
+      "states_finite": true,
+      "timestamps_monotonic": true,
+      "belt_spin_executed_s": 2.0,
+      "input_sha256": {
+        "states.npz": "84d20fd188d2d9eea779acce124152cd245fda2f5d29bb300c2ef72b39243f9f",
+        "plan.json": "61948e58a82df7512faef8cf561705c3962d5911a53dc8afe2198ae55c36bae9",
+        "contacts.json": "1bf4eb24cf8431afea0260cfbb0bdb886ad6181f298de3187b851979e06aac4f",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    }
+  ],
+  "comparisons": {
+    "120_belt_control": {
+      "same_command": true,
+      "same_time": true,
+      "same_phase": true,
+      "same_measured_robot_before_belt": true,
+      "same_measured_poses_before_belt": true,
+      "same_all_measured_poses": false,
+      "same_all_measured_robot": false,
+      "off_belt_zero": true,
+      "on_peak_belt_speed_m_s": [
+        0.1,
+        0.0
+      ]
+    },
+    "60_belt_control": {
+      "same_command": true,
+      "same_time": true,
+      "same_phase": true,
+      "same_measured_robot_before_belt": true,
+      "same_measured_poses_before_belt": true,
+      "same_all_measured_poses": false,
+      "same_all_measured_robot": false,
+      "off_belt_zero": true,
+      "on_peak_belt_speed_m_s": [
+        0.1,
+        0.0
+      ]
+    },
+    "60_gui_reproduction": {
+      "same_command": true,
+      "same_time": true,
+      "same_phase": true,
+      "same_measured_robot_before_belt": true,
+      "same_measured_poses_before_belt": true,
+      "same_all_measured_poses": true,
+      "same_all_measured_robot": true,
+      "off_belt_zero": false,
+      "on_peak_belt_speed_m_s": [
+        0.1,
+        0.0
+      ]
+    }
+  },
+  "automated_tests": {
+    "passed": 89,
+    "log": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/tests_final.log"
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "calibrated": false,
+  "selection": {
+    "gap_mm": 40,
+    "height_offset_mm": -10,
+    "hz": 60,
+    "scope": "Single-scene current-truss fruit10 native detachment and withdrawal; no collection; no timestep-converged harvest model"
+  },
+  "source_sha256": {
+    "motion_kinematics.py": "1207ce84019c4926cae53f1a6a9a99854c0747edc927ff3f0520a1419047b1b6",
+    "run_motion.py": "0533238921e72acf0caf020694d002e83da3bbe85773b26ba65d291a642ddf41",
+    "run_motion_live.sh": "76818990800405392d96df457e5ad2a1a6d69f3b1d73d4f6339f840da1f6f8da",
+    "fruit_attachment.py": "f69f13d71c03abfdb2fe5451c8d05fe0226c191428257fcff071e3420e18a57f",
+    "analyze_belt_trial.py": "c19bef1449ff19afc15265a4c551ac67939132a7389cf755e234971dfc22abd5",
+    "render_motion.py": "2042c759ade376bfee6c9ebbeb202de1dd3dfd29a3a2471e1a5e1a75c19de9d0",
+    "report_motion.py": "f0152bff44a705835bfe18a09ed38d902c65c59e443c9d2c77f8388699df8196",
+    "test_fruit_attachment.py": "7fb8c20e6f75a542fdc0ce956aae5d7a7a967a501a4ccfd301e0aa2876a151c8",
+    "test_motion_ready.py": "36c352fed4b8e8f8169a6385da7f11ab90bb7ab09304525a7f40b239e64b3086",
+    "CONTROLLED_BELT_HARVEST_KO.md": "153858f234f44f7cc3366188a002f76050ff1cbf86507399e35df4b60a34892c"
+  },
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/confirmation_trials/controlled_60/actual_motion.mp4",
+      "sha256": "039fc9b570eb1fee949bd6acb8d92ae572aaaa243acfa398ea5e8ac8f92d65a9",
+      "frames": 184,
+      "speed": 1,
+      "full_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/robustness_trials/controlled_60_belt_off/actual_motion.mp4",
+      "sha256": "4b4e54cdc634ee5020ee109c4499732a6851d8a543224b7f8f55ecc2028b5c6a",
+      "frames": 184,
+      "speed": 1,
+      "full_decode_passed": true
+    }
+  ],
+  "original_scene_unchanged": true,
+  "corrected_manifest_same_scene_sha": true,
+  "completed_trials": 13,
+  "entry_geometry": {
+    "confirmation_trials/controlled_60": {
+      "measured_entry_pitch_max_abs_deg": 0.05096664910152914,
+      "measured_entry_height_span_mm": 0.2562999725341797,
+      "samples": 240
+    },
+    "height_trials/gap40_height-10_120": {
+      "measured_entry_pitch_max_abs_deg": 0.04251896610152341,
+      "measured_entry_height_span_mm": 0.2104640007019043,
+      "samples": 480
+    },
+    "live_trials/physics": {
+      "measured_entry_pitch_max_abs_deg": 0.05096664910152914,
+      "measured_entry_height_span_mm": 0.2562999725341797,
+      "samples": 240
+    }
+  }
+}

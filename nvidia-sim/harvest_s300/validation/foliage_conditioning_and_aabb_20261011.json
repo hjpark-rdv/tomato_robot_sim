@@ -1,0 +1,156 @@
+{
+  "schema": "foliage-conditioning-and-convex-proof-server-validation-v1",
+  "date": "2026-10-11",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "source_sha256": {
+    "foliage_conditioning.py": "baddcba73778703c839cf21c22dc4889c1dae31587ed88c4fb0e9e335670ef5c",
+    "test_foliage_conditioning.py": "a18a98728d5cad4371578e4b24720a74b6a3d15e89ae3a11c9e4a20a14276f60",
+    "leaf_contact_geometry.py": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+    "test_convex_pair_shortcut.py": "89e61f2911410c9a1db7188cb5c8f27fd965841a5f8dbe91146072e4ff8ed66d",
+    "test_leaf_contact_geometry.py": "c0e72b6e9c5b521140d4602f75274f8ad8654d2ae48c6b0854e6c383f0ef30e6"
+  },
+  "tests": {
+    "conditioning": 10,
+    "convex_shortcut": 5,
+    "existing_leaf_reader": 23,
+    "status": "PASS"
+  },
+  "bounded_foliage_conditioning": {
+    "max_conditioning_seconds": 3,
+    "strict_followup_min_seconds": 1,
+    "strict_limit_m": 0.0005,
+    "scope": "Exact declared compliant leaf containing pairs only during explicitly invalid initialization; robot/nonleaf pairs and any new native joint break remain fatal",
+    "query_skip": "Raw events retained; no clearance certificate during invalid interval",
+    "terminal_stationarity": "Disclosed per-body measured pose total-variation rates first-half versus second-half: no increasing drift, numerical rate guards only; no universal5mm or equilibrium/safety claim",
+    "native_conditioning_executed_by_this_agent": false,
+    "canonical_start_native_outcome": "FAIL",
+    "report_schema": "native_foliage_conditioning_v1",
+    "completed_cycle": false,
+    "training_eligible": false,
+    "native_attempt_by_root": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant40_v8_condition3_strict1_idle120/plant40_v8_condition3_strict1_idle120",
+    "native_outcome": "FAIL before conditioning: native warmup joint break; no bounded interval/strict suffix/canonical marker/harvest credit",
+    "native_failure_sha256": "ad6c6d01508bac784a19aa26901eff9f59dddbc39442615ad303d2dfe961690e",
+    "native_failure": {
+      "schema": "s300-native-window-initialization-failure-v1",
+      "physics_execution_started": false,
+      "valid": false,
+      "reason": "new_native_joint_break_during_warmup",
+      "native_break_events": [
+        {
+          "t": 0.0,
+          "phase": "idle",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02"
+        }
+      ],
+      "state_restore_verified": true,
+      "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "actual_snapshot": "invalid_initialization_state.npz",
+      "training_eligible": false,
+      "harvest_success": null
+    }
+  },
+  "plant40_v8_cpu_inventory": {
+    "schema": "foliage_conditioning_v8_cpu_registration_v1",
+    "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant40_neighbor_foliage_v8",
+    "native_scene_sha256": "68f48e724dcd0f809d91125382f55ecf4a843e4b009c5d17bd31a15318e3db43",
+    "elapsed_seconds": 2.644221067428589,
+    "exact_compliant_leaf_colliders": 276,
+    "exact_counterpart_roles": {
+      "active_compliant_leaf": 232,
+      "background_compliant_leaf": 44,
+      "active_plant_branch_or_stem": 79,
+      "active_plant_fruit": 10,
+      "static_structural_suspension_wire": 23,
+      "static_neighbor_main_stem": 66,
+      "static_neighbor_leaf": 7688,
+      "static_neighbor_branch": 5508,
+      "static_neighbor_fruit": 1020,
+      "static_neighbor_calyx": 8364
+    },
+    "pairs": {
+      "/World/ElasticTarget/Leaf_CompoundLeaf_11/Appendage_169_0 <-> /World/Greenhouse/House/Environment/GutterSuspensionWire_018/Mesh": {
+        "a_role": "active_compliant_leaf",
+        "b_role": "static_structural_suspension_wire"
+      },
+      "/World/ElasticTarget/Leaf_CompoundLeaf_11/Appendage_169_0 <-> /World/Greenhouse/Plants/Plant_39/Truss_00/mesh_28": {
+        "a_role": "active_compliant_leaf",
+        "b_role": "static_neighbor_branch"
+      },
+      "/World/BackgroundCompliantFoliage/Plant_41/Leaf_CompoundLeaf_01/Appendage_mesh_129 <-> /World/ElasticTarget/Truss_00_Pedicel_proximal_02_0/Collider": {
+        "a_role": "background_compliant_leaf",
+        "b_role": "active_plant_branch_or_stem"
+      }
+    },
+    "native_execution": false,
+    "canonical_conditioned_start": false,
+    "training_eligible": false
+  },
+  "actual_pedicel_review": {
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/plant40_pedicel_source_triangle_review.json",
+    "report_sha256": "f6473b5d4a5c2c1ede33522337689b97db202f525ba619b7fde46565bb39b099",
+    "a": "/World/ElasticTarget/Truss_00_Pedicel_proximal_02_0/Collider",
+    "b": "/World/Greenhouse/Plants/Plant_41/Stem/mesh_129",
+    "source_rest_clearance_m": 0.004688648766669023,
+    "source_rest_capsule_contacts": 0,
+    "postwarmup_restored_capsule_contacts": 7,
+    "first_fresh_capsule_contacts": 8,
+    "conclusion": "Real deformed source pedicel/leaf intersection after warmup, not merely convex-proxy excess; missing Plant41Leaf01 has been converted as explicit uncalibrated neighbor-foliage revision v8; existing stop remainsfailed"
+  },
+  "actual_native_convex_aabb_control": {
+    "schema": "current-reader-native-cooked-40-aabb-proof-validation-v1",
+    "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant40_neighbor_foliage_v7/plant40_neighbor_foliage_idle120",
+    "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant40_neighbor_foliage_v7",
+    "helper_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+    "native_scene_sha256": "c6c4ba59f7fc43091be3b3dfce95130f8c71af3bc90866327ef0ab40bb78ccc2",
+    "source_files": {
+      "states.npz": "f671e5c955f790d367f4da1ceee37484883b76891e66e2174018884cd7250ec9",
+      "leaf_cooked_geometry.json": "549191512439cef2e7252f98bc4f12498a63cb7676a6c793bd5545aa862958dd",
+      "leaf_contact_resolution.json": "d478f232cc2a86e94f5d90af06f87d9c69c840e81ea65eb51557f5b1f6123253"
+    },
+    "actual_native_convex_pairs": 40,
+    "hull_pairs": 10224,
+    "positive_world_aabb_separated_pairs": 9793,
+    "full_sat_pairs": 431,
+    "cpu_proof_replay_seconds": 0.7059724647551775,
+    "original_certificate_and_upper_bound_bit_identical": true,
+    "mismatches": [],
+    "native_execution": false,
+    "training_eligible": false,
+    "old_failed_stop_reclassified": false
+  },
+  "functional_cpu_proof_ab": {
+    "schema": "actual-native-cooked-40-aabb-proof-comparison-v1",
+    "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant40_neighbor_foliage_v7/plant40_neighbor_foliage_idle120",
+    "source_files": {
+      "states.npz": "f671e5c955f790d367f4da1ceee37484883b76891e66e2174018884cd7250ec9",
+      "leaf_cooked_geometry.json": "549191512439cef2e7252f98bc4f12498a63cb7676a6c793bd5545aa862958dd",
+      "leaf_contact_resolution.json": "d478f232cc2a86e94f5d90af06f87d9c69c840e81ea65eb51557f5b1f6123253"
+    },
+    "native_convex_convex_contact_pairs": 40,
+    "baseline": {
+      "seconds": 11.735690472647548,
+      "hull_pairs": 10224,
+      "strict_positive_aabb_certificates": 0
+    },
+    "strict_positive_aabb": {
+      "seconds": 0.564466530457139,
+      "hull_pairs": 10224,
+      "strict_positive_aabb_certificates": 9793
+    },
+    "certificate_and_penetration_upper_bound_bit_equal": true,
+    "mismatches": [],
+    "measured_speed_ratio": 20.790764092147818,
+    "minimum_positive_gap_measurement_may_be_conservative_lower_bound": true,
+    "physical_geometry_and_threshold_unchanged": true,
+    "native_execution": false,
+    "training_eligible": false,
+    "interpretation": "CPU saved native shape/pose proof replay. Real negative/overlapping pairs retain complete face+edge cross SAT; only >1um world-axis-separated pairs skip full axis generation. Native original failed stop not reclassified. Functional concurrent CPU timing, not isolated simulator RTF."
+  },
+  "limitations": [
+    "CPU saved-native geometry proof replay is not a new native success or isolated simulator RTF measurement",
+    "Negative/overlapping/AABB-ambiguous convex pairs retain complete face+edge-cross SAT",
+    "Positive support gap can differ from old axis-set gap and is not Euclidean distance; clear/within-limit flags and penetration upper bounds remainidentical",
+    "No collider/physical parameter/contact authorization/0.5mm criterion changes",
+    "No original failed result reclassified"
+  ]
+}

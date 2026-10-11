@@ -1,0 +1,35 @@
+{
+  "schema": "s300-rail-wheel-support-readonly-review-validation-20261011",
+  "source_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_chassis_cover_source_review_v2/report.json",
+  "source_report_sha256": "318464931e867420a4b780919f3765144ae242650218bdcb3095ac9dd17b5017",
+  "source_probe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_chassis_cover_source_review_v2/source_probe.py",
+  "source_probe_sha256": "f1d1134179e1e5fef88552dcff71d6c56017f8e47bb51be4c42e2c92dd8ef2c8",
+  "scope": {
+    "wheels": 4,
+    "coverlap_meshes": 8,
+    "offsets": 5
+  },
+  "backward_source_triangle_intersection": true,
+  "proxy_only_falsepositive": false,
+  "reported_first_source_contact_depth_m": 0.0004239551990172716,
+  "reported_first_monolithic_hull_contact_depth_m": 0.0005999175969697574,
+  "full_pair_penetration_certified": false,
+  "native_cooking_certified": false,
+  "positive177p923mm_source_coverlap_segment_clear": true,
+  "full_environment_or_current_checkpoint_clearance": false,
+  "nearest_positive_self_proposal": {
+    "plant_id": 35,
+    "truss_index": 2,
+    "station_y_m": 1.7779228352467091,
+    "physics_pending": true
+  },
+  "changes": {
+    "physical_model": false,
+    "contact_policy": false,
+    "native_runs": 0,
+    "code": false
+  },
+  "rail_only_resume_cli_available": false,
+  "training_eligible": false,
+  "harvest_success": null
+}

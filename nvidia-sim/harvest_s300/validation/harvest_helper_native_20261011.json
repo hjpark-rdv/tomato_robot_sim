@@ -1,0 +1,212 @@
+{
+  "schema": "s300-harvest-helper-native-validation-20261011-v1",
+  "updated_utc": "2026-10-10T20:19:35.142672+00:00",
+  "training_eligible": false,
+  "collection_verified": false,
+  "harvest_success": null,
+  "physics_limit_m": 0.0005,
+  "default_contact_guard": "strict",
+  "tool_proxy_accuracy": {
+    "selected_tool_review": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_decomposition_accuracy_control_v3/selected_tool_only_review.json",
+      "sha256": "a70db286a72201b9dac9a6cd78783e5f1305ec931c63ecb7d2ed1f481938a1d6"
+    },
+    "passed": true,
+    "exact_paths": [
+      "/World/ActuatedTool/L/part_122"
+    ],
+    "configuration": {
+      "hullVertexLimit": 64,
+      "maxConvexHulls": 128,
+      "minThickness": 0.001,
+      "voxelResolution": 5000000,
+      "errorPercentage": 0.5,
+      "shrinkWrap": false
+    },
+    "same_pose_native_clearance_m": 0.0037605228917485523,
+    "exact_closed_source_clearance_m": 0.006968643095776894,
+    "deep_native_penetration_upper_bounds_m": [
+      0.005045842964941594,
+      0.00554288290795224,
+      0.00773865556576403
+    ],
+    "immutable_geometry_property_audit": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_parent_tool_accuracy_v1/collision_proxy_accuracy_validation.json",
+      "sha256": "5810b6716ab21a9b3e68915c08dd934e7e03c3297b3ce0191a48afdb34ce6f9e"
+    },
+    "non_accuracy_properties_preserved": true,
+    "authored_triangles_retained": true,
+    "geometry_audit": {
+      "mesh_count": 31941,
+      "world_vertices": 32649127,
+      "world_vertex_max_abs_error_m": 0.0,
+      "rigid_body_count": 275,
+      "rigid_pose_max_abs_error": 0.0,
+      "collider_count": 32142,
+      "collider_pose_max_abs_error": 0.0,
+      "geometry_sha256": "330fe5ef576d1034d40416f5280ecd026f8a9e6fa281d1fa11d1646631feb988"
+    },
+    "source_and_normalized_property_inventory_sha256": "544536f4a369d8ebcdd6a1d81432bb67f23afc07da67b92217b640b56e87fc37",
+    "full_source_triangle_enclosure_proven": false,
+    "note": "Only exact part122 proxy cooking accuracy changes; sampling is diagnostic, no universal native enclosure claim."
+  },
+  "native_query_controls": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v3/result.json",
+      "sha256": "5318ac2982de216a10ecdff15aa7382097021f507589d3d44bd47faef996535d",
+      "passed": true,
+      "native_cooked_geometry_identical_to_original_trial": true,
+      "native_vertices_max_abs_error_m": 2.220446049250313e-16,
+      "original_pose_all_hulls_clear": true,
+      "additional_queries_all_16_hulls": 17,
+      "worst_hull_method": "Complete native full-hull enclosure oriented by authored-geometry proposal",
+      "deep_actual_source_intersection_blocked": true,
+      "clear_control": true,
+      "stale_control_blocked": true,
+      "runtime_query_source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v3/runtime_code_sources/native_leaf_scene_query.py",
+        "module_import_source_sha256": "028f869cbf6dc512f843efd4e5e6e596115716f57c8abca5527df2f4faa15333",
+        "source_bytes_captured_at_import": true,
+        "launch_snapshot_overwritten": false
+      },
+      "runtime_cover_source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v3/runtime_code_sources/native_leaf_cover_query.py",
+        "module_import_source_sha256": "b3221116ccc5328c1367d4a21d894d97a2051e23bede81a6878077cb5028dfa1",
+        "source_bytes_captured_at_import": true,
+        "launch_snapshot_overwritten": false
+      },
+      "fixture_only": true,
+      "production_stop_reclassified": false
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v4/result.json",
+      "sha256": "2a89c10570f6234dddf5001e7f29406ec77171d358e78444af27444db584bfeb",
+      "passed": true,
+      "native_cooked_geometry_identical_to_original_trial": true,
+      "native_vertices_max_abs_error_m": 2.220446049250313e-16,
+      "original_pose_all_hulls_clear": true,
+      "additional_queries_all_16_hulls": 17,
+      "worst_hull_method": "Complete native full-hull enclosure oriented by authored-geometry proposal",
+      "deep_actual_source_intersection_blocked": true,
+      "clear_control": true,
+      "stale_control_blocked": true,
+      "runtime_query_source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v4/runtime_code_sources/native_leaf_scene_query.py",
+        "module_import_source_sha256": "880961d9b23d9c721bf4838063c1be92d6d42aa4d58ce2065c2c3567dddc9733",
+        "source_bytes_captured_at_import": true,
+        "launch_snapshot_overwritten": false,
+        "tighter_cover_runtime_source": {
+          "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v4/runtime_code_sources/native_leaf_cover_query.py",
+          "module_import_source_sha256": "0ac7fcce01697db3d445f73f6711c38ade8e607869a04cd8b38a821ffff2944d",
+          "source_bytes_captured_at_import": true,
+          "launch_snapshot_overwritten": false
+        }
+      },
+      "runtime_cover_source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_structural_tight_cover_control_v4/runtime_code_sources/native_leaf_cover_query.py",
+        "module_import_source_sha256": "0ac7fcce01697db3d445f73f6711c38ade8e607869a04cd8b38a821ffff2944d",
+        "source_bytes_captured_at_import": true,
+        "launch_snapshot_overwritten": false
+      },
+      "fixture_only": true,
+      "production_stop_reclassified": false
+    }
+  ],
+  "selected_cycle_legacy_target_diagnosis": {
+    "evidence": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_last_fruit02_retreat50_tool_accuracy120/last_fruit02_retreat50_tool_accuracy120/selected_cycle_evidence.json",
+      "sha256": "c565220277b8e36e461f989187b3333f9e8ecf85ca24aa05adc692959a18ca95"
+    },
+    "original_manifest_target": "Truss_02_Fruit_11",
+    "actually_selected_fruit": "Truss_02_Fruit_02",
+    "selected_native_detached_at_end": false,
+    "original_legacy_fields_unchanged": true
+  },
+  "helper_sources": {
+    "collision_proxy_accuracy.py": "e291208faea35d9fa622d74e722b442f1033a895c56549463d0776ced86a020b",
+    "leaf_contact_geometry.py": "58af267166bbe9762ee8fc05ee10667020c0910c2cd18da23b09957e2abfdccf",
+    "harvest_contact_scope.py": "65aa6eb18c9fadbf61b3a714257438b5288333923ff9a6efe40d3b7bb747e171",
+    "native_leaf_scene_query.py": "880961d9b23d9c721bf4838063c1be92d6d42aa4d58ce2065c2c3567dddc9733",
+    "native_leaf_cover_query.py": "0ac7fcce01697db3d445f73f6711c38ade8e607869a04cd8b38a821ffff2944d",
+    "selected_cycle_evidence.py": "0e492788a0cc4ff1847794d805abcb1d2079633e19f42622327955026986bb5d",
+    "report_row_harvest.py": "a3518b70d20739232958316e90040a7c20b3fa4bb83bd4f00dfea37609baa0cc",
+    "passive_collection_surfaces.py": "506c5f5e280856e30a914f032446c58891f41719220a4872448bd7bd1487d1bf"
+  },
+  "limitations": [
+    "Fixtures validate geometry/query decisions, not whole-truss harvest or realtime performance.",
+    "Manual minimal native stage time-storage warnings/errors retained; simulate/fetch timestamps explicit.",
+    "Released-fruit passive floor/deck/source-proven passive-chassis contacts remain unverified diagnostics with raw penetration retained.",
+    "Only new actual production trials can validate revised guards; no retrospective original-stop success."
+  ],
+  "contact_authorization_unchanged_for_geometry_checks": true,
+  "physical_proxy_revision": "Only explicit part122 native cooking accuracy; native query enclosures do not change physical colliders",
+  "focused_cpu_tests": {
+    "passed": true,
+    "tests": 111,
+    "suites": [
+      "test_leaf_contact_geometry",
+      "test_harvest_contact_scope",
+      "test_passive_collection_surfaces",
+      "test_native_leaf_cover_query",
+      "test_native_leaf_scene_query",
+      "test_collision_proxy_accuracy",
+      "test_leaf_collision_geometry",
+      "test_native_route_checkpoint",
+      "test_native_stage_selection",
+      "test_compliant_foliage",
+      "test_report_row_harvest",
+      "test_motion_replay_clip",
+      "test_selected_cycle_evidence"
+    ]
+  },
+  "released_fruit_passive_chassis_diagnostic": {
+    "exact_source_inventory": {
+      "repo_path": "validation/passive_s300_chassis_source_inventory.json",
+      "sha256": "7a5ee9f0b55e4508c7b3f0baec37b2172d44be984fdb30e6e0a471f06929aed4",
+      "cad_colliders": 445,
+      "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "source_geometry_sha256": "720f8b66359fcbcb9cb7cfde068bed13ff01328b4d38327cf4df0efdf015863c",
+      "source_dependencies": [
+        {
+          "relative_path": "composed.usdc",
+          "sha256": "0d2d4c91174c0654613acf4ef8848e690b92cb3fc2fa50c655e5b3d9490106c6",
+          "format": "usdc",
+          "materialized": true,
+          "external_usd_sublayers": []
+        }
+      ]
+    },
+    "current_stage_source_identity_registration_passed": true,
+    "exact_carrier_body": "/World/HarvestRobot/Robot/S300Carrier",
+    "exact_external_fixed_constraint": "/World/HarvestRobot/Robot/S300CarrierJoint",
+    "geometry_topology_name_relative_transform_SHA_verified": true,
+    "actual_native_break_required_before_contact": true,
+    "current_stage_inventory_surfaces": 447,
+    "current_stage_initial_registration_wall_s": 0.8349747490137815,
+    "registration_time_is_per_step": false,
+    "diagnostic_authorization_changed": true,
+    "scope": "Exact natively released fruits versus source-proven passive S300 CAD; attached fruit, active arm/lift/tool/plant remain strict",
+    "vertical_Part_0492_collection_verified": false,
+    "physical_colliders_or_properties_modified": false,
+    "full_scene_strict_0_5mm_pass_claimed": false,
+    "collection_verified": false,
+    "released_fruit_physics_verified": false,
+    "historical_production_stop_reclassified": false,
+    "measured_common_prefix": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/passive0496_scope_common_prefix_comparison.json",
+      "sha256": "dcbf2c8b4cea3e37f7dc8e71fc2d54d3cccc6150aec434aab7cb42b8b2abba6b",
+      "stop_s": 79.225,
+      "native_scene_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+      "physics_settings_exact": true,
+      "poses_exact": true,
+      "maximum_position_error_m": 0.0,
+      "contacts_passed": true,
+      "native_breaks_exact": true,
+      "prefix_physics_equivalence_verified": true,
+      "entire_trial_equivalence_claimed": false
+    },
+    "moved_carrier_ancestor_local_identity_regression_passed": true,
+    "imported_source_bytes_and_approved_input_preserved": true,
+    "source_transform_scope": "Authored local transforms within the chassis ancestor; independent of measured carrier rotation or translation"
+  }
+}

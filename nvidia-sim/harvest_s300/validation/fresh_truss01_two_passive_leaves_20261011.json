@@ -1,0 +1,210 @@
+{
+  "schema": "s300-two-leaf-direct-and-native-coupled-validation-v1",
+  "source_asset": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves",
+  "source_sha256": {
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves/scene.usda": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves/motion_manifest.json": "261c7f9af805ed4fffbdc33a2c37f52ae8d386ad5cef784780c4e30eae8c277a",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves/skin.npz": "885882dabe3384ffd6e8d7ea5b3d243beeee448287a97df500bc67000c48aaf0",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves/composed.usdc": "2a7720d4864878fae9fa54eda784bd900a77020ae0c26436b3d7ac20d02fc2f8"
+  },
+  "source_unchanged": true,
+  "source_code_unchanged": true,
+  "physical_model_change": "TwoexactforeignPlant20leafgroups nowdeclaredexistingworld-D6dynamic+convexDecomp, originalstaticassetpreserved",
+  "proposal_budget": 3,
+  "nominal_prefix_pass_count": 0,
+  "proposals": [
+    {
+      "name": "seed1_retract100_lift135",
+      "status": "self_blocked_8hz",
+      "endpoint_self_clear": false,
+      "self_8hz": {
+        "passed": false,
+        "complete": false,
+        "samples": 62,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.29166666666666663,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/L/part_214",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "L_C14_rear_drive_cover",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.00034628359215389045,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        }
+      },
+      "elapsed_s": 2.7820834424346685
+    },
+    {
+      "name": "seed1_retract250_lift135",
+      "status": "self_blocked_8hz",
+      "endpoint_self_clear": true,
+      "self_8hz": {
+        "passed": false,
+        "complete": false,
+        "samples": 63,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.3125,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/fixed/part_9",
+              "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+              "a_name": "F01_rear_rail_backbone",
+              "b_name": null,
+              "intersection": true,
+              "distance_m": null,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        }
+      },
+      "elapsed_s": 2.116127284243703
+    },
+    {
+      "name": "seed5_retract100_lift135",
+      "status": "self_blocked_8hz",
+      "endpoint_self_clear": false,
+      "self_8hz": {
+        "passed": false,
+        "complete": false,
+        "samples": 62,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.29166666666666663,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/L/part_214",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "L_C14_rear_drive_cover",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.00034734476287087425,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        }
+      },
+      "elapsed_s": 1.5759431943297386
+    }
+  ],
+  "independent_environment8": [
+    {
+      "name": "seed1_retract100_lift135",
+      "passed": true,
+      "complete": true,
+      "hard_intersection_sample_pairs": 0,
+      "diagnostic_intersection_sample_pairs": 148
+    },
+    {
+      "name": "seed1_retract250_lift135",
+      "passed": true,
+      "complete": true,
+      "hard_intersection_sample_pairs": 0,
+      "diagnostic_intersection_sample_pairs": 6
+    },
+    {
+      "name": "seed5_retract100_lift135",
+      "passed": true,
+      "complete": true,
+      "hard_intersection_sample_pairs": 0,
+      "diagnostic_intersection_sample_pairs": 148
+    }
+  ],
+  "zero_engineering_clearance_diagnostic": {
+    "legacy_engineering_clearance_m": 0.002,
+    "diagnostic_planning_clearance_m": 0.0,
+    "legacy_failures_preserved": true,
+    "production_default_unchanged": true,
+    "native_penetration_limit_m": 0.0005,
+    "self_120hz": {
+      "passed": false,
+      "complete": false,
+      "samples": 878,
+      "first_blocked": {
+        "phase": "prepare_joint_branch",
+        "clear": false,
+        "first_hit_fraction": 0.2972222222222222,
+        "hits": [
+          {
+            "a": "/World/ActuatedTool/L/part_214",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": "L_C14_rear_drive_cover",
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.0
+          }
+        ]
+      }
+    },
+    "elapsed_s": 8.422515895217657
+  },
+  "native_idle": {
+    "summary": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16/summary.json",
+    "sha256": "a819762bcb89b7e57519f649fb2012d60feb001b784888aac00b59238b6287a5",
+    "completed": true,
+    "initialization_valid": true,
+    "stop_reason": null,
+    "native_break_events": [],
+    "simulated_s": 3.0,
+    "physics_steps": 360,
+    "physics_wall_s": 57.043338080868125,
+    "contact_events": 1199596,
+    "profile": {
+      "contact_callback": {
+        "total_s": 22.557863833382726,
+        "count": 362,
+        "max_s": 0.0
+      },
+      "control": {
+        "total_s": 0.0654349084943533,
+        "count": 360,
+        "max_s": 0.0
+      },
+      "simulate": {
+        "total_s": 56.8340722899884,
+        "count": 360,
+        "max_s": 0.4051734283566475
+      },
+      "fetch": {
+        "total_s": 0.00774683803319931,
+        "count": 360,
+        "max_s": 3.665126860141754e-05
+      },
+      "readback": {
+        "total_s": 0.08054156601428986,
+        "count": 360,
+        "max_s": 0.000377461314201355
+      }
+    },
+    "target_displacement_max_m": 0.00045145160402171314,
+    "performance_scope": "Functionalconcurrenttest, notisolatedRTFbenchmark; simulateincludescallback",
+    "harvest_credit": false
+  },
+  "sources": {
+    "fresh_truss01_passive_leaves_three_direct/summary.json": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_passive_leaves_three_direct/summary.json",
+      "sha256": "7c6e85fbf743128a6714736a3ade15c130d52f1a7d327cb3910c14cd6991c004"
+    },
+    "fresh_truss01_passive_leaves_three_direct/independent_environment8/summary.json": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_passive_leaves_three_direct/independent_environment8/summary.json",
+      "sha256": "f25fcdaf7a8812c236f0a40b7f6e1a22d73782f7a78f6ed735c6d98ca1e751ed"
+    },
+    "fresh_truss01_seed5_intersection_only_diagnostic/summary.json": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_seed5_intersection_only_diagnostic/summary.json",
+      "sha256": "f9d90997b5efbe3f3c8c8e793ca0ab1e88a2415835f120c5a37a030d0af01183"
+    }
+  },
+  "native_motion_runs": 0,
+  "training_eligible": false,
+  "harvest_success": null,
+  "conclusion": "Newsource strict3sidlevalidwith0breakandall3nominal8HzprefixENVclear; directpreparationSELFblockedbyrealgeometricintersections. Loweringonlyengineering2mmclearancedoesnotremoveseed5collision. Needcollision-awareselfdetour toclear250mmgoal; production2mmdefault/native.5unchanged."
+}

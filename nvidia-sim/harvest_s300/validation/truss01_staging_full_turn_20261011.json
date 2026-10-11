@@ -1,0 +1,114 @@
+{
+  "schema": "s300-staging-full-turn-readonly-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_truss01_after_attempt6_transfer",
+  "source_scene": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_truss01_after_attempt6_transfer/composed.usdc",
+  "source_scene_sha256": "6a9a24803d1daa25e021ec513264c95e1fa3b828e82ce5ab897ac82779389953",
+  "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16/plan.json",
+  "source_plan_sha256": "550479b1aae18f9141f2cf1b97d4a42bb44638c43eb44c7a7cd1e9d3e3c616ba",
+  "selected_seed": 6,
+  "joints": [
+    {
+      "joint": "base",
+      "start_rad": 1.3419029637941577,
+      "original_goal_rad": 0.05532176402248438,
+      "original_delta_rad": -1.2865811997716734,
+      "nearest_equivalent_rad": 0.05532176402248438,
+      "candidate_delta_rad": -1.2865811997716734,
+      "period_shift": 0,
+      "lower_rad": -6.283185307179586,
+      "upper_rad": 6.283185307179586
+    },
+    {
+      "joint": "shoulder",
+      "start_rad": -0.15202788225088051,
+      "original_goal_rad": -0.16455551311800992,
+      "original_delta_rad": -0.012527630867129408,
+      "nearest_equivalent_rad": -0.16455551311800992,
+      "candidate_delta_rad": -0.012527630867129408,
+      "period_shift": 0,
+      "lower_rad": -6.283185307179586,
+      "upper_rad": 6.283185307179586
+    },
+    {
+      "joint": "elbow",
+      "start_rad": 2.3421160849247555,
+      "original_goal_rad": -2.238622177904478,
+      "original_delta_rad": -4.580738262829234,
+      "nearest_equivalent_rad": -2.238622177904478,
+      "candidate_delta_rad": -4.580738262829234,
+      "period_shift": 0,
+      "lower_rad": -2.879792999474535,
+      "upper_rad": 2.879792999474535
+    },
+    {
+      "joint": "wrist1",
+      "start_rad": 0.9554104995521282,
+      "original_goal_rad": -0.7383483350318033,
+      "original_delta_rad": -1.6937588345839316,
+      "nearest_equivalent_rad": -0.7383483350318033,
+      "candidate_delta_rad": -1.6937588345839316,
+      "period_shift": 0,
+      "lower_rad": -6.283185307179586,
+      "upper_rad": 6.283185307179586
+    },
+    {
+      "joint": "wrist2",
+      "start_rad": 2.9838931420004045,
+      "original_goal_rad": -3.696153956829305,
+      "original_delta_rad": -6.680047098829709,
+      "nearest_equivalent_rad": 2.5870313503502813,
+      "candidate_delta_rad": -0.39686179165012314,
+      "period_shift": 1,
+      "lower_rad": -6.283185307179586,
+      "upper_rad": 6.283185307179586
+    },
+    {
+      "joint": "wrist3",
+      "start_rad": 3.1407943838678034,
+      "original_goal_rad": -3.1415237419890296,
+      "original_delta_rad": -6.282318125856833,
+      "nearest_equivalent_rad": 3.1416615651905566,
+      "candidate_delta_rad": 0.0008671813227532077,
+      "period_shift": 1,
+      "lower_rad": -6.283185307179586,
+      "upper_rad": 6.283185307179586
+    }
+  ],
+  "original_q": [
+    0.008366292119026175,
+    0.05532176402248438,
+    -0.16455551311800992,
+    -2.238622177904478,
+    -0.7383483350318033,
+    -3.696153956829305,
+    -3.1415237419890296
+  ],
+  "candidate_equivalent_q": [
+    0.008366292119026175,
+    0.05532176402248438,
+    -0.16455551311800992,
+    -2.238622177904478,
+    -0.7383483350318033,
+    2.5870313503502813,
+    3.1416615651905566
+  ],
+  "all_link_fk_max_abs_error": 2.449144945008974e-16,
+  "link_fk_errors": {
+    "/World/HarvestRobot/Robot/farmily_lift_platform": 0.0,
+    "/World/HarvestRobot/Robot/link1": 0.0,
+    "/World/HarvestRobot/Robot/link2": 0.0,
+    "/World/HarvestRobot/Robot/link3": 0.0,
+    "/World/HarvestRobot/Robot/link4": 0.0,
+    "/World/HarvestRobot/Robot/link5": 2.220446049250313e-16,
+    "/World/HarvestRobot/Robot/link6": 2.449144945008974e-16
+  },
+  "endpoint_joint_limits_respected": true,
+  "candidate_commands_written": false,
+  "native_executed": false,
+  "source_terminal_valid": false,
+  "scope": "Endpoint FK equivalence only. Different interpolation is UNTESTED and must pass all source environment/self sampling before any native execution.",
+  "original_joint_path_length_rad": 10.468905407179516,
+  "equivalent_endpoint_joint_path_length_rad": 5.0660566697477005,
+  "training_eligible": false,
+  "harvest_success": null
+}

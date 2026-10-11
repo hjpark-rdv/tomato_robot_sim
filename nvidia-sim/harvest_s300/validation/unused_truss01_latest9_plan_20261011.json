@@ -1,0 +1,73 @@
+{
+  "schema": "s300-unused-truss01-latest9-cpu-proposal-validation-v1",
+  "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_upper23p5_resume120_cpu16/final_fruit10_upper23p5_resume120_cpu16/route_checkpoint",
+  "checkpoint_metadata_sha256": "eb42e0aec836a62bf15c36aafd4f92a656b13781968f0b9a97df419030f86ba6",
+  "source_native_summary_sha256": "cacf2b3504463bfad2823e4f5a60404a7c2d3ab1a4a4f47afbf9aab8b7716e55",
+  "source_actual_states_sha256": "eeb2f45abc2f083cbab189fb0c860f66806957d67cd99819465df75627303fa2",
+  "source_actual_self_audit_sha256": "cc7be12855548621e8ff5756cda3d248692d57f71982accbf7e306a66f2e507f",
+  "source_native_status": {
+    "detached_eligible": 9,
+    "total_eligible": 20,
+    "Truss02_detached": 9,
+    "Truss02_total": 10,
+    "selected_fruit10_attempts": 5,
+    "all_eligible_native_detached": false
+  },
+  "revision": {
+    "selected_neck_count": 10,
+    "selected_truss": "Truss_01",
+    "preserved_native_broken_joints": 9,
+    "approved_elastic_force_n": 3.0,
+    "approved_elastic_torque_nm": 0.008,
+    "immutable_original_source": true,
+    "excluded_truss00_unchanged": true,
+    "unbroken_truss02_fruit10_unchanged": true,
+    "native_validation": "pending",
+    "coupled_dynamics": "intentional uncalibrated hypothesis"
+  },
+  "proposal": {
+    "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/unused_truss01_transfer_latest9_upper23p5",
+    "materialized_dependency": {
+      "relative_path": "composed.usdc",
+      "sha256": "cbba681ba1223155c086a1fa4dd495ba1b249888d1b94d750cb93af5f69006cd",
+      "format": "usdc",
+      "materialized": true,
+      "external_usd_sublayers": []
+    },
+    "measured_station_y_m": 1.600000228881836,
+    "group": [
+      "Truss_01_Fruit_01",
+      "Truss_01_Fruit_02"
+    ],
+    "own_truss_yaw_deg": 124.94469270191188,
+    "horizontal_ready_connector": "joint",
+    "horizontal_ready_seed_index": 6,
+    "complete_self_audit_passed": true,
+    "complete": true,
+    "samples": 6018,
+    "hz": 120,
+    "scope": "nominal robot/chassis/tool self collision only"
+  },
+  "explicit_limits": {
+    "native_execution": false,
+    "environment_audit": false,
+    "rail_motion": false,
+    "accepted_physical_history_changed": false,
+    "all20_or_row_completion": false,
+    "later_attempt6_checkpoint_requires_new_immutable_revision": true
+  },
+  "continuation": {
+    "recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_after_attempt6_continuation_recipe.json",
+    "recipe_sha256": "8872c4a8a6fdb0d06879259456c309f0223b5a85d1bc11bc15063e75e83f6424",
+    "parent": "<LATEST_VERIFIED_ATTEMPT6_TERMINAL_CHECKPOINT>",
+    "exhausted_fruit10": "Remains attached and finite-budget unknown; no reset or fabricated detach",
+    "no_all20_gate_on_other_Truss01_attempts": true
+  },
+  "focused_tests": {
+    "command": "python -m unittest test_near_scope_runner_continuation test_truss_sequence",
+    "passed": 19,
+    "regression": "Actual runner advances to own Truss01 direction/first65 while retaining an attached source fruit at six attempts."
+  },
+  "training_eligible": false,
+  "harvest_success": null
+}

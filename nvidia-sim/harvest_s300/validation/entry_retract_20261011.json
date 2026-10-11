@@ -1,0 +1,26 @@
+{
+  "schema": "s300-opt-in-entry-retract-validation-v1",
+  "option": "plan_motion(...,approach_distance_m=.10)",
+  "scope": "Nondefault finite50..300mm horizontal-ready belt only",
+  "source": "/root/farmily_tomato/nvidia-sim/harvest_s300/motion_kinematics.py",
+  "source_sha256": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+  "tests": {
+    "passed": 56,
+    "command": "OPENBLAS_NUM_THREADS=1 nvidia-sim/.asset-venv/bin/python -m unittest -q test_entry_retract test_joint_turn_normalization test_motion_branch test_motion_ready test_motion_horizontal_entry test_grasp_lateral_offset"
+  },
+  "default_command_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b",
+  "changed": "Preparation pose retract and61actualCartesian entry waypoints span requested distance; goal, entry rotation/full96gap unchanged",
+  "unchanged": [
+    "allsourcegeometry",
+    "physicalcolliders",
+    "materials",
+    "joints",
+    "selfplanning2mm",
+    "nativepenetration0.5mm",
+    "fruitposes",
+    "legacydefaultcommandarrays"
+  ],
+  "native_runs": 0,
+  "training_eligible": false,
+  "harvest_success": null
+}

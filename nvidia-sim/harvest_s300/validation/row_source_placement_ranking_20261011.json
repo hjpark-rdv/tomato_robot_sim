@@ -1,0 +1,285 @@
+{
+  "schema": "row-source-placement-ranking-summary-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_manifest_sha256": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+  "source_materialized_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "full_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_authored_source_placement_ranking.json",
+  "full_report_sha256": "3b463c3882eb6bc79d0e9aefc6eb9f8c95f34c7c3910f6f3f35a12612c9ce9a4",
+  "archived_code": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_authored_source_placement_code",
+  "ranking_script_sha256": "8d46de3ff23b708d0aa8d8023a0ba4ff9a178e2e0a8dfe8563a755743ff56083",
+  "borrowed_scanner_sha256": "a290feceb22ea8fef968f2b6e75ef5f554e1255a94442d3d7d8e335781e7c34d",
+  "requested_target_count": 16,
+  "source_shape_count": 11956,
+  "complete": true,
+  "errors": [],
+  "wall_s": 20.745951717719436,
+  "ranking_rule": "Counts offoreign nonleaf source intersections first, thenforeignfoliage; no numerical universalFAIL or nativeviability claim",
+  "shape_scope": "Exact enabled source Mesh triangle surfaces and authored Sphere/Capsule/Box/Cylinder primitives for fruit/mainstem/rachis/pedicel/peduncle/foliage; decorative trichomes, calyx, house androbot are outside this ranking",
+  "filter_scope": "Owntruss pairs omitted; sameplantmainstem/foliage intersections separated as attachment/compoundcandidates. SourcefilteredPairs were collected but ranking doesnotalter/enforce nativecollisionfiltergraph.",
+  "targets": [
+    {
+      "plant_id": 20,
+      "truss_index": 2,
+      "source_shapes": 34,
+      "candidate_pairs": 120,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 8,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 22,
+      "truss_index": 2,
+      "source_shapes": 73,
+      "candidate_pairs": 20,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 2,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 29,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 40,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 7,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 40,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 113,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 2,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 41,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 205,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 12,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 43,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 46,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {},
+      "own_attachment_or_compound_intersections": 1,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 21,
+      "truss_index": 1,
+      "source_shapes": 34,
+      "candidate_pairs": 23,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 2,
+      "foreign_class_counts": {
+        "foliage": 2
+      },
+      "own_attachment_or_compound_intersections": 1,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 47,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 109,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 4,
+      "foreign_class_counts": {
+        "foliage": 4
+      },
+      "own_attachment_or_compound_intersections": 7,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 19,
+      "truss_index": 2,
+      "source_shapes": 34,
+      "candidate_pairs": 127,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 6,
+      "foreign_class_counts": {
+        "foliage": 6
+      },
+      "own_attachment_or_compound_intersections": 3,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 31,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 95,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 7,
+      "foreign_class_counts": {
+        "foliage": 7
+      },
+      "own_attachment_or_compound_intersections": 4,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 25,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 241,
+      "foreign_nonleaf_source_intersections": 0,
+      "foreign_foliage_source_intersections": 10,
+      "foreign_class_counts": {
+        "foliage": 10
+      },
+      "own_attachment_or_compound_intersections": 1,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 33,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 15,
+      "foreign_nonleaf_source_intersections": 1,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {
+        "fruit": 1
+      },
+      "own_attachment_or_compound_intersections": 1,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 33,
+      "truss_index": 1,
+      "source_shapes": 34,
+      "candidate_pairs": 22,
+      "foreign_nonleaf_source_intersections": 1,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {
+        "fruit": 1
+      },
+      "own_attachment_or_compound_intersections": 1,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 34,
+      "truss_index": 1,
+      "source_shapes": 34,
+      "candidate_pairs": 176,
+      "foreign_nonleaf_source_intersections": 9,
+      "foreign_foliage_source_intersections": 0,
+      "foreign_class_counts": {
+        "fruit": 8,
+        "peduncle": 1
+      },
+      "own_attachment_or_compound_intersections": 13,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 21,
+      "truss_index": 2,
+      "source_shapes": 34,
+      "candidate_pairs": 226,
+      "foreign_nonleaf_source_intersections": 9,
+      "foreign_foliage_source_intersections": 11,
+      "foreign_class_counts": {
+        "foliage": 11,
+        "fruit": 5,
+        "pedicel": 4
+      },
+      "own_attachment_or_compound_intersections": 2,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    },
+    {
+      "plant_id": 21,
+      "truss_index": 0,
+      "source_shapes": 34,
+      "candidate_pairs": 403,
+      "foreign_nonleaf_source_intersections": 12,
+      "foreign_foliage_source_intersections": 6,
+      "foreign_class_counts": {
+        "foliage": 6,
+        "peduncle": 1,
+        "rachis": 1,
+        "main_stem": 3,
+        "pedicel": 4,
+        "fruit": 3
+      },
+      "own_attachment_or_compound_intersections": 9,
+      "native_initialization_validity": "unknown",
+      "placement_excluded": false
+    }
+  ],
+  "preferred_forward_source_priors": [
+    {
+      "plant_id": 40,
+      "truss_index": 0,
+      "stations_y_m": [
+        2.802253120994065,
+        2.9822531209940646
+      ]
+    },
+    {
+      "plant_id": 29,
+      "truss_index": 0,
+      "stations_y_m": [
+        3.222384591770679
+      ]
+    },
+    {
+      "plant_id": 41,
+      "truss_index": 0,
+      "stations_y_m": [
+        3.293768003804118
+      ],
+      "required_preparation": "jointseed6or8"
+    },
+    {
+      "plant_id": 43,
+      "truss_index": 0,
+      "stations_y_m": [
+        3.627233947417058
+      ]
+    }
+  ],
+  "caveats": [
+    "BVH triangle surfaces can miss a solid wholly contained withoutsurfacecrossing; zero reported intersections is a placementprior only, never a nativecollision/stabilitycertificate",
+    "Localtriangle/primitive contactdepth is not native cookedpenetration or a globalpenetration metric; itis recorded, notthresholded",
+    "Source-rest checks on the selectedtruss do not audit every othertruss/leaf of a newlyactivewholeplant. Native initialization is still required before rail/harvest.",
+    "No single penetration number or source intersection count is used as a universalFAIL; all source placements remain unchanged."
+  ],
+  "native_physics_executed": false,
+  "native_cooking_verified": false,
+  "geometry_or_policy_changed": false,
+  "training_eligible": false,
+  "harvest_success": null
+}

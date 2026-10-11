@@ -1,0 +1,34 @@
+{
+  "schema": "s300-canonical-conditioned-start-validation-v1",
+  "opt_in": "--allow-resume-conditioned-start",
+  "conditioning": "Existing exact-foliage idle initialization experiment, at most3s, then at least1s contiguous strict0.5mm actual native suffix",
+  "checkpoint_kind": "canonical_conditioned_start",
+  "completed_cycle": false,
+  "harvest_attempt": false,
+  "same_assembly_only": true,
+  "other_model_revision_combinations_rejected": true,
+  "state_preservation": "Exact measured q/qvel, body poses/velocities, preload, real prior-break inventory, native position/velocity drive targets; no fabricated completed-cycle record or velocity reset",
+  "marker": "Write-once conditioned_start.json after report/checkpoint/final summary/actual-state audit exist; every source/report/model/materialized dependency/NPZ/controller/helper/state-trace/audit identity revalidated",
+  "actual_state_audit": "Complete existing audit bound to all stored actual native timestamps and exact final body/q checkpoint state",
+  "raw_conditioning": "Invalid beginning and deferred contact records retained; only independently verified strict terminal state can be proposed as a canonical start",
+  "tests": {
+    "test_conditioned_start_checkpoint": 9,
+    "test_foliage_conditioning": 10,
+    "test_resume_native_state": 11,
+    "test_motion_continuation": 16,
+    "additional_rail_depth_cache_regressions": 19,
+    "total": 65,
+    "status": "PASS"
+  },
+  "code_sha256": {
+    "conditioned_start_checkpoint.py": "e68e9595df8979f7276d9a792a26430b90858d5b85bb102d9700ffc652f1ebe8",
+    "test_conditioned_start_checkpoint.py": "33cdd6d4b43ccf01079350bab406698ef9ef2ac3a4d46661ac8bde2a87773647",
+    "resume_native_state.py": "1be80f11147de8106b557061bdc16cd61293be1ef123d477d0c3f597c93b7710",
+    "run_motion.py": "bfb0f24695eac8e89cb83807a5fa77d5733047f79f2ed5c8f20c1e365a090514",
+    "test_motion_continuation.py": "cb3f884fee34a4ae3961a540b61182adee60b48b8c0ec07d5c3e1967daafaeee",
+    "foliage_conditioning.py": "baddcba73778703c839cf21c22dc4889c1dae31587ed88c4fb0e9e335670ef5c"
+  },
+  "native_validation": "Pending; helper/AST regressions do not establish a physically valid conditioned start or harvest",
+  "training_eligible": false,
+  "harvest_success": null
+}

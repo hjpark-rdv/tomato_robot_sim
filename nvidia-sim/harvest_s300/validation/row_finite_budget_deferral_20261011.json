@@ -1,0 +1,37 @@
+{
+  "schema": "s300-finite-current-plant-operational-deferral-validation-v1",
+  "flag": "--defer-exhausted-current-plant",
+  "default_behavior_unchanged": true,
+  "required": [
+    "exact-model final completed native checkpoint",
+    "completed actual-state audit with matching input/model hashes",
+    "full exact eligible20-fruit final summary scope",
+    "unchanged checkpoint/summary attempt ledger",
+    "same source and next-run per-fruit attempt budget",
+    "every still-attached exact fruit exhausted that budget"
+  ],
+  "semantics": {
+    "native_completion_remains_false": true,
+    "attached_fruits_retained": true,
+    "native_break_history_retained": true,
+    "attempt_counts_reset": false,
+    "absolute_impossibility_inferred": false,
+    "original_current_plant_proposals_retained_as_deferred": true,
+    "next_window_source": "Same exact latest accepted physical checkpoint",
+    "previously_frozen_plant_reactivated": false
+  },
+  "focused_tests": {
+    "passed": 72,
+    "command": "python -m unittest test_run_row_harvest test_terminal_cycle_checkpoint test_eligible_attachment_transfer test_resume_native_state test_near_scope_runner_continuation test_truss_sequence",
+    "new_controls": [
+      "19/20 with one attached exhausted fruit defers operationally but not native completion",
+      "an eligible unattempted fruit retains the current proposal",
+      "changed counters/budgets, booleans and incomplete selected scope reject deferral",
+      "next active window receives the exact source checkpoint without native rerun/reset",
+      "missing actual final checkpoint rejects the opt-in"
+    ]
+  },
+  "current_native_status": "Truss01 execution in progress; no actual19/20 terminal or row deferral credited by this CPU validation",
+  "training_eligible": false,
+  "harvest_success": null
+}

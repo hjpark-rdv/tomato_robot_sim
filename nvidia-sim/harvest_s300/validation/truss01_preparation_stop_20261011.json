@@ -1,0 +1,50 @@
+{
+  "schema": "s300-truss01-preparation-stop-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_truss01_after_attempt6_transfer",
+  "completed": false,
+  "initialization_valid": true,
+  "stop_time_s": 9.658333333333333,
+  "stop_reason": "penetration_over_0_5mm",
+  "actual_self_collision_audit_passed": true,
+  "phase": "prepare_joint_branch",
+  "selected_fruits": [
+    "Truss_01_Fruit_01",
+    "Truss_01_Fruit_02"
+  ],
+  "manipulation_started": false,
+  "selected_truss_new_native_break_count": 0,
+  "prior_truss02_native_break_count": 9,
+  "near_scope_detached_count": 9,
+  "near_scope_eligible_count": 20,
+  "terminal_accepted_for_continuation": false,
+  "rollback_performed": false,
+  "raw_stop_contact": {
+    "a": "/World/ActuatedTool/L/part_209",
+    "b": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_132",
+    "separation_m": -0.0006101913750171661,
+    "max_single_contact_point_force_n": 70.09023609676173
+  },
+  "interpretation": "Preparation environment collision, before approach/grasp; self-clear planning alone did not certify farm clearance. Force is raw one contact point norm, not joint reaction or tissue damage.",
+  "video": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16/actual_truss01_preparation_obstacle.mp4",
+    "physics_rerun": false,
+    "frames": 21,
+    "fps": 4,
+    "full_decode_passed": true
+  },
+  "phase_proxy_correction": {
+    "original_summary_preserved": true,
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16/selected_cycle_evidence_phase_corrected.json"
+  },
+  "inputs": {
+    "summary.json": "2bd3a39864cf47555f864e50a62c7bd90d2505a3e857bd1184457a920e55f58b",
+    "plan.json": "550479b1aae18f9141f2cf1b97d4a42bb44638c43eb44c7a7cd1e9d3e3c616ba",
+    "states.npz": "c92603c289c76c07f2765714e0fe0613120ada15d1b3da283256dabac9563154",
+    "truss_sequence.json": "b3238e99d33b56ca7ea00d2c4555052488f55bf3d33dc97286d027f92ded9603",
+    "break_events.json": "12eb7c325f761d52e6686fab8a1e25ddea61a74caec599f85a4d20c25ddb6867",
+    "self_collision_actual.json": "65b145564e5129fb748e6baecffabd5f7b287f3197bcd0a02425245fb8c06c18"
+  },
+  "training_eligible": false,
+  "harvest_success": null
+}

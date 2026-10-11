@@ -1,0 +1,24 @@
+{
+  "schema": "s300-same-plant-rail-reposition-validation-20261011",
+  "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/same_plant_truss01_rail_reposition_review/report.json",
+  "report_sha256": "7f8e73fa075fd785c11ea1dda9e14e168cd1e9f8a2fff630dc74d2abdd1dd51b",
+  "pending_recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/same_plant_truss01_rail_reposition_review/pending_recipe.json",
+  "pending_recipe_sha256": "62aeefe9369b722a7233714d7e1f246de33ec2905ff30b01fe39cb264f153e77",
+  "tests": {
+    "count": 24,
+    "failures": 0,
+    "errors": 0,
+    "wall_s": 1.102
+  },
+  "model_changed_by_review": false,
+  "native_runs": 0,
+  "actual_final_10of10_parent": false,
+  "rail_physics_verified": false,
+  "truss01_native_harvest_verified": false,
+  "source_sha256": {
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_motion_continuation.py": "fd5394918246c2d4aa0fa7fd5463c1f3c5afd33a8fc2b092da18effb709b5c45",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/SAME_PLANT_RAIL_REPOSITION_KO.md": "20e30b9e1685c0143e84d05fcf6fdf0dcff2f08f9f485d7f8bc0288d97929202"
+  },
+  "training_eligible": false,
+  "harvest_success": null
+}

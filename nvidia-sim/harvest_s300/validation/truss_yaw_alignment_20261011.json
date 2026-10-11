@@ -1,0 +1,203 @@
+{
+  "date_kst": "2026-10-11",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_head": "76479eef658275b0164cb23103aa48fcb9d1ef70",
+  "uncommitted": true,
+  "model": "/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/assembly_elastic/scene.usda",
+  "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+  "training_eligible": false,
+  "harvest_success": null,
+  "native_executions": 1,
+  "blocked_before_physics": 1,
+  "posture_diagnostic_plans": [
+    {
+      "lift_offset_mm": -40,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_-40/audit.json"
+    },
+    {
+      "lift_offset_mm": -80,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_-80/audit.json"
+    },
+    {
+      "lift_offset_mm": 40,
+      "passed": false,
+      "error": "Fixed entry approach IK not found for 9 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+    },
+    {
+      "lift_offset_mm": 10,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_10/audit.json"
+    },
+    {
+      "lift_offset_mm": 20,
+      "passed": false,
+      "error": "Fixed entry approach IK not found for 9 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+    },
+    {
+      "lift_offset_mm": -10,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_-10/audit.json"
+    },
+    {
+      "lift_offset_mm": 30,
+      "passed": false,
+      "error": "Fixed entry approach IK not found for 9 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+    },
+    {
+      "lift_offset_mm": 1,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_1/audit.json"
+    },
+    {
+      "lift_offset_mm": -3,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_-3/audit.json"
+    },
+    {
+      "lift_offset_mm": 3,
+      "passed": false,
+      "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/posture_3/audit.json"
+    }
+  ],
+  "ready_revision_seed_attempts": 32,
+  "adopted_ready_or_lift_change": false,
+  "legacy_regression": {
+    "same_phase_count": true,
+    "phase_commands_bitwise_equal": true,
+    "phase_count": 15,
+    "comparison": "pre-edit source versus new source with original sequence60 options on actual USD RB5"
+  },
+  "tests": {
+    "modules": [
+      "test_motion_ready",
+      "test_truss_sequence",
+      "test_motion_kinematics",
+      "test_motion_live"
+    ],
+    "passed": 43,
+    "python": "nvidia-sim/.asset-venv/bin/python"
+  },
+  "rows": [
+    {
+      "name": "baseline_upper",
+      "source": "/root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/trials/baseline_upper",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "sim_seconds": 17.016666666666666,
+      "stop_phase": "close",
+      "native_detached_count": 0,
+      "penetration_max_mm": 1.831089612096548,
+      "planned_direction_world": [
+        -0.9974931160644542,
+        0.0707635739913234,
+        0.0
+      ],
+      "actual_final_yaw_deg": 175.95590231715175,
+      "actual_tool_up_error_max_deg": 0.1113051402478609,
+      "actual_self_collision_passed": true,
+      "commanded_insertion_was_reached": true,
+      "fk_entry_z_span_m": 6.073364033909456e-12,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "states_sha256": "c3e549076d9a8ea95794ae45f3792551d4930d1d9b658a4a6b62a4bfc51e5c7c",
+      "dt_contiguous": true
+    },
+    {
+      "name": "upper_truss_yaw60",
+      "source": "/root/docker_share/mujoko_debugging_data/20261011_001548_truss_yaw_alignment/trials/upper_truss_yaw60",
+      "completed": false,
+      "stop_reason": "penetration_over_0_5mm",
+      "sim_seconds": 10.016666666666667,
+      "stop_phase": "prepare_horizontal",
+      "native_detached_count": 0,
+      "penetration_max_mm": 1.2292712926864624,
+      "planned_direction_world": [
+        -0.9608018565466832,
+        0.27723598694333845,
+        0.0
+      ],
+      "actual_final_yaw_deg": 164.51022323834664,
+      "actual_tool_up_error_max_deg": 0.10900687607887542,
+      "actual_self_collision_passed": true,
+      "commanded_insertion_was_reached": false,
+      "fk_entry_z_span_m": 2.159317169514452e-11,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "states_sha256": "f4f2af6a605486b1a311ff70075cab2e05ba874af71d063b4f37dfd3a9cd2ce5",
+      "dt_contiguous": true,
+      "deepest_contact": {
+        "t": 10.016666666666667,
+        "phase": "prepare_horizontal",
+        "a": "/World/ActuatedTool/R/part_244",
+        "b": "/World/ElasticTarget/Stem_MainStem_9/Appendage_132_0",
+        "separation_m": -0.0012292712926864624,
+        "force_n": 2.8875461255751853,
+        "impulse_ns": [
+          0.0317218191921711,
+          -0.01743253879249096,
+          0.031716279685497284
+        ],
+        "position_world_m": [
+          -0.42786556482315063,
+          1.6083974838256836,
+          1.07465660572052
+        ],
+        "normal_world": [
+          0.6591441631317139,
+          -0.36222878098487854,
+          0.6590290069580078
+        ]
+      }
+    }
+  ],
+  "videos": [
+    {
+      "path": "trials/baseline_upper/top_actual.mp4",
+      "full_decode_passed": true,
+      "sha256": "3a572942f9699005442d65386f672cd7e710aa7992ccb900d740e15f382795b4",
+      "frames": 70,
+      "camera": "/World/TrussTopReplayCamera",
+      "source": "stored measured physical body transforms",
+      "physics_rerun": false,
+      "foliage_hidden": true
+    },
+    {
+      "path": "trials/upper_truss_yaw60/top_actual.mp4",
+      "full_decode_passed": true,
+      "sha256": "2b600c900c1ca776d10b6b32670f1210ae8eb14cc50d4b165083143cdd12a682",
+      "frames": 42,
+      "camera": "/World/TrussTopReplayCamera",
+      "source": "stored measured physical body transforms",
+      "physics_rerun": false,
+      "foliage_hidden": true
+    },
+    {
+      "path": "trials/upper_truss_yaw60/top_full_foliage.mp4",
+      "full_decode_passed": true,
+      "sha256": "b1ba8388e85095bf9653585659446a9a200db20c187988d72ad17bc2bf309c5e",
+      "frames": 42,
+      "camera": "/World/TrussTopReplayCamera",
+      "source": "stored measured physical body transforms",
+      "physics_rerun": false,
+      "foliage_hidden": false
+    }
+  ],
+  "source_sha256": {
+    "truss_sequence.py": "fa3f3e042bd30111a0befbaa2b97fad8914360c118a12db3930b8b5f0341da20",
+    "test_truss_sequence.py": "5a458fca04c783b8697c082ef0ada0d8758a7fcc135bb22ede1f4260d809c619",
+    "motion_kinematics.py": "71761f668440abb1e63fb5eebbd765d249953909f38bddeb3a2d1e1a07faaba1",
+    "test_motion_ready.py": "49c19c709ae638599bf528ef4fafbed2faf9ea974da3f8590cc6cc892b446413",
+    "run_motion.py": "a3b5f5948bcf761c2b47a7e53db68bf6f2aff380f2275387b4093fca08ae56de",
+    "run_motion_live.sh": "594729f781bf1125dd43f6171e11db608ec092f8221fa3bb1bdb9f630506b7c3",
+    "render_motion.py": "e5bc1cbe1d887ce26f90e5e35b0056593c74d332abe2faf54d2699199832e1d3",
+    "CONTROLLED_BELT_HARVEST_KO.md": "73a360fff57f9e9ddd1a41f4255ca99c9081a6b54b0fdd6b1d4cecf004cb83fa"
+  },
+  "limitations": [
+    "SIM-GT XY fruit-axis fit; not camera inference",
+    "No within-cycle target tracking",
+    "New physical run stopped during preparation before insertion",
+    "Old/new stopping times differ; not evidence of harvesting improvement",
+    "Existing user viewer and replay rendering ran during the CPU test; not an isolated speed benchmark",
+    "Remaining-truss yaw update after a completed cycle has unit checks, not a native completed-cycle test"
+  ]
+}

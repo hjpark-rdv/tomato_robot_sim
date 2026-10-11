@@ -1,0 +1,1017 @@
+{
+  "task": "whole-truss continuous native harvest attempt",
+  "training_eligible": false,
+  "harvest_success": null,
+  "full_truss_harvest_demonstrated": false,
+  "best_observed_native_detachment_count": 5,
+  "fruit_count": 10,
+  "native_runs": 7,
+  "trials": [
+    {
+      "name": "sequence60",
+      "hz": 60,
+      "order": "lowest-first",
+      "detached_count": 5,
+      "detached": [
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "분리된 9번 과실 ↔ 바닥 겹침",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 63.233333333333334,
+      "loop_wall_s": 93.36142480745912,
+      "planning_paused_wall_s": 15.160421539098024,
+      "physical_loop_wall_s": 78.20100326836109,
+      "max_recorded_overlap_mm": 1.3288706541061401,
+      "worst_contact": {
+        "t": 63.233333333333334,
+        "phase": "belt_finish",
+        "a": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+        "b": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+        "separation_m": -0.0013288706541061401,
+        "force_n": 0.0,
+        "impulse_ns": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "position_world_m": [
+          -0.9344472289085388,
+          1.4671529531478882,
+          0.002250012941658497
+        ],
+        "normal_world": [
+          -1.4901162970204496e-08,
+          1.2293456563838845e-07,
+          1.0
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": {
+        "actual_gap_m": [
+          0.09599490463733673
+        ],
+        "required_gap_m": 0.096,
+        "tolerance_m": 0.0005,
+        "reached": true,
+        "t": 57.0
+      },
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_10",
+            "Truss_02_Fruit_11"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 39.0,
+          "status": "motion_completed",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 39.0,
+          "end_frame_index": 2340,
+          "cycle_open_feedback": {
+            "actual_gap_m": [
+              0.09599466621875763
+            ],
+            "required_gap_m": 0.096,
+            "tolerance_m": 0.0005,
+            "reached": true,
+            "t": 20.0
+          },
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_09",
+            "Truss_02_Fruit_08"
+          ],
+          "measured_centers_world_m": [
+            [
+              -0.3869134783744812,
+              1.534042239189148,
+              1.0353946685791016
+            ],
+            [
+              -0.40546169877052307,
+              1.5058592557907104,
+              1.0480672121047974
+            ]
+          ],
+          "measured_centroid_world_m": [
+            -0.39618758857250214,
+            1.5199507474899292,
+            1.0417309403419495
+          ],
+          "start_s": 39.0,
+          "measured_frame_index": 2340,
+          "inventory_before": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          },
+          "status": "stopped",
+          "plan": "cycles/001/plan.json",
+          "planned_end_s": 76.0,
+          "end_s": 63.233333333333334,
+          "end_frame_index": 3794,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": {
+            "actual_gap_m": [
+              0.09599490463733673
+            ],
+            "required_gap_m": 0.096,
+            "tolerance_m": 0.0005,
+            "reached": true,
+            "t": 57.0
+          },
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "3d89367d1931e86b48ef54d6cfc86b642d33b233971bce5b545051a61801fa5a",
+        "truss_sequence.py": "076bb46631de50c79a1d2f0811097dfc348af043590a929a4a0cfeecfd5bdd81",
+        "motion_kinematics.py": "89f12353ffaa173ff35a3ffe2477f84652a99863b9ec3c2c10dac1eda2e8407d"
+      },
+      "input_sha256": {
+        "plan.json": "2066b79f214eb8894b48a289bcc24ab25b8bfb917814ba95c78da35d0df9a293",
+        "states.npz": "e03956d53468bc7b7d8c38cb0710ba81f2abe440502a205c507a10a334a4e4a5",
+        "contacts.json": "7ced6331502a0f2265ceedcfcdaccb4028c85956ca1646d6ca457e4c439c7584",
+        "break_events.json": "d74f0e611c5ae0107f43a611677c0601add1f3549761ed2111b7d0bbbc4cda3d"
+      },
+      "phase_plans_sha256": {
+        "cycles/001/plan.json": "820ab0d3c85f2aff4efa064141e4fa9319f7f8f95ad9d7b9fd44e3d13876279c"
+      }
+    },
+    {
+      "name": "sequence120",
+      "hz": 120,
+      "order": "lowest-first",
+      "detached_count": 4,
+      "detached": [
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_09"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "7번 과실 ↔ 9번 꼭지 가지 겹침",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 54.59166666666667,
+      "loop_wall_s": 150.43463032320142,
+      "planning_paused_wall_s": 21.028125127777457,
+      "physical_loop_wall_s": 129.40650519542396,
+      "max_recorded_overlap_mm": 0.5343972006812692,
+      "worst_contact": {
+        "t": 54.59166666666667,
+        "phase": "close",
+        "a": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_09_1/Collider",
+        "separation_m": -0.0005343972006812692,
+        "force_n": 0.8525065433908857,
+        "impulse_ns": [
+          0.0016205100109800696,
+          0.00449081277474761,
+          0.0052608465775847435
+        ],
+        "position_world_m": [
+          -0.4266696870326996,
+          1.5259227752685547,
+          1.062813401222229
+        ],
+        "normal_world": [
+          0.22810527682304382,
+          0.6321331262588501,
+          0.740524172782898
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": null,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_10",
+            "Truss_02_Fruit_11"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 39.0,
+          "status": "motion_completed",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 39.0,
+          "end_frame_index": 4680,
+          "cycle_open_feedback": {
+            "actual_gap_m": [
+              0.09599359333515167
+            ],
+            "required_gap_m": 0.096,
+            "tolerance_m": 0.0005,
+            "reached": true,
+            "t": 20.0
+          },
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_09",
+            "Truss_02_Fruit_08"
+          ],
+          "measured_centers_world_m": [
+            [
+              -0.38646072149276733,
+              1.5333657264709473,
+              1.0346012115478516
+            ],
+            [
+              -0.4048466086387634,
+              1.505342960357666,
+              1.0472753047943115
+            ]
+          ],
+          "measured_centroid_world_m": [
+            -0.3956536650657654,
+            1.5193543434143066,
+            1.0409382581710815
+          ],
+          "start_s": 39.0,
+          "measured_frame_index": 4680,
+          "inventory_before": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          },
+          "status": "stopped",
+          "plan": "cycles/001/plan.json",
+          "planned_end_s": 76.0,
+          "end_s": 54.59166666666667,
+          "end_frame_index": 6551,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": null,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_09"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "3d89367d1931e86b48ef54d6cfc86b642d33b233971bce5b545051a61801fa5a",
+        "truss_sequence.py": "076bb46631de50c79a1d2f0811097dfc348af043590a929a4a0cfeecfd5bdd81",
+        "motion_kinematics.py": "89f12353ffaa173ff35a3ffe2477f84652a99863b9ec3c2c10dac1eda2e8407d"
+      },
+      "input_sha256": {
+        "plan.json": "2066b79f214eb8894b48a289bcc24ab25b8bfb917814ba95c78da35d0df9a293",
+        "states.npz": "404bc192d20ecf8d02f57a97f5dd05b59f669a4c16769a17cfec4106d6634332",
+        "contacts.json": "25a99e0b47fe191c15bdbc84cb3ce6d3542a99c83764720464d3da3d6074cf4c",
+        "break_events.json": "45a9c9c99050fbe46250b8992122b903697184828796a4490d1355d3987ade18"
+      },
+      "phase_plans_sha256": {
+        "cycles/001/plan.json": "2efe9ebedd4fe2e991005b9d9e581962b6cca32ecc12641c892fceb2d5b4ea3b"
+      }
+    },
+    {
+      "name": "sequence240",
+      "hz": 240,
+      "order": "lowest-first",
+      "detached_count": 4,
+      "detached": [
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_09"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "7번 과실 ↔ 9번 꼭지 가지 겹침",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 55.38333333333333,
+      "loop_wall_s": 279.1221541836858,
+      "planning_paused_wall_s": 32.3071269094944,
+      "physical_loop_wall_s": 246.81502727419138,
+      "max_recorded_overlap_mm": 0.5879134405404329,
+      "worst_contact": {
+        "t": 55.38333333333333,
+        "phase": "close",
+        "a": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_09_1/Collider",
+        "separation_m": -0.0005879134405404329,
+        "force_n": 0.45027027017639637,
+        "impulse_ns": [
+          0.0005255066207610071,
+          0.000921413826290518,
+          0.0015474781394004822
+        ],
+        "position_world_m": [
+          -0.42790549993515015,
+          1.526255488395691,
+          1.0606167316436768
+        ],
+        "normal_world": [
+          0.2801019549369812,
+          0.4911257028579712,
+          0.8248262405395508
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": null,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_10",
+            "Truss_02_Fruit_11"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 39.0,
+          "status": "motion_completed",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 39.0,
+          "end_frame_index": 9360,
+          "cycle_open_feedback": {
+            "actual_gap_m": [
+              0.09599429368972778
+            ],
+            "required_gap_m": 0.096,
+            "tolerance_m": 0.0005,
+            "reached": true,
+            "t": 20.0
+          },
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_09",
+            "Truss_02_Fruit_08"
+          ],
+          "measured_centers_world_m": [
+            [
+              -0.3862988352775574,
+              1.5333597660064697,
+              1.034339189529419
+            ],
+            [
+              -0.404669851064682,
+              1.5053409337997437,
+              1.047014832496643
+            ]
+          ],
+          "measured_centroid_world_m": [
+            -0.3954843431711197,
+            1.5193503499031067,
+            1.040677011013031
+          ],
+          "start_s": 39.0,
+          "measured_frame_index": 9360,
+          "inventory_before": {
+            "detached": [
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09"
+            ]
+          },
+          "status": "stopped",
+          "plan": "cycles/001/plan.json",
+          "planned_end_s": 76.0,
+          "end_s": 55.38333333333333,
+          "end_frame_index": 13292,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": null,
+          "inventory_after": {
+            "detached": [
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_09"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "3d89367d1931e86b48ef54d6cfc86b642d33b233971bce5b545051a61801fa5a",
+        "truss_sequence.py": "dea43b0160e8cfdc7410c81fb4abb97953e66543285a0c425a0255e9f2a709b3",
+        "motion_kinematics.py": "89f12353ffaa173ff35a3ffe2477f84652a99863b9ec3c2c10dac1eda2e8407d"
+      },
+      "input_sha256": {
+        "plan.json": "2066b79f214eb8894b48a289bcc24ab25b8bfb917814ba95c78da35d0df9a293",
+        "states.npz": "12a17b6747d820fea6494fe76586ab751914138db506e8dd41ce42d043231b5e",
+        "contacts.json": "d4303e8093b96d80b62eae139a71927ced5b1ad6232b6189b3944347ffe10040",
+        "break_events.json": "6a7d55e17621a7888dc9a4563ea86ba9215c3b6bc6c55cee5d2e7c9448da048d"
+      },
+      "phase_plans_sha256": {
+        "cycles/001/plan.json": "fd634ad561a510d1b8ec3f5e094054abaecd9fbabcf433302949dc6c2065d6f4"
+      }
+    },
+    {
+      "name": "topdown60",
+      "hz": 60,
+      "order": "highest-first",
+      "detached_count": 0,
+      "detached": [],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "준비 구간: 오른쪽 그리퍼 옆판 ↔ 주줄기 부속 잎·가지",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 7.016666666666667,
+      "loop_wall_s": 8.501140223816037,
+      "planning_paused_wall_s": 0.0,
+      "physical_loop_wall_s": 8.501140223816037,
+      "max_recorded_overlap_mm": 0.8088946342468262,
+      "worst_contact": {
+        "t": 7.016666666666667,
+        "phase": "prepare_horizontal",
+        "a": "/World/ActuatedTool/R/part_244",
+        "b": "/World/ElasticTarget/Stem_MainStem_9/Appendage_132_0",
+        "separation_m": -0.0008088946342468262,
+        "force_n": 1.0786648100835459,
+        "impulse_ns": [
+          0.004127622116357088,
+          -0.009962574578821659,
+          -0.014384339563548565
+        ],
+        "position_world_m": [
+          -0.43618589639663696,
+          1.6207873821258545,
+          1.0782231092453003
+        ],
+        "normal_world": [
+          0.22959618270397186,
+          -0.5541614890098572,
+          -0.800119161605835
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": null,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 39.0,
+          "status": "stopped",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 7.016666666666667,
+          "end_frame_index": 421,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": null,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "59975f46eeb3f0703ab0603f345f9b75eb98d5aadd8cdac3ef3d909e140ef066",
+        "truss_sequence.py": "5aca284d3dfa081bcded2c81f9b73b7c33e35a6ce588a390fbc23ad3dd511bf0",
+        "motion_kinematics.py": "89f12353ffaa173ff35a3ffe2477f84652a99863b9ec3c2c10dac1eda2e8407d"
+      },
+      "input_sha256": {
+        "plan.json": "e74ad9ca60259de9f91c84b7693b1b5139de014e6b3b6ffac2baffde256a85a7",
+        "states.npz": "1305780927007fc837dc34d155bf71c8e06ed64d0653f0308754eb47649228aa",
+        "contacts.json": "7b3058c10c8e036b29233d79545e4c26acf14eebaf26d953fa03112f09823e14",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "phase_plans_sha256": {}
+    },
+    {
+      "name": "topdown120",
+      "hz": 120,
+      "order": "highest-first",
+      "detached_count": 0,
+      "detached": [],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "준비 구간: 오른쪽 그리퍼 옆판 ↔ 주줄기 부속 잎·가지",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 6.3,
+      "loop_wall_s": 14.837514612823725,
+      "planning_paused_wall_s": 0.0,
+      "physical_loop_wall_s": 14.837514612823725,
+      "max_recorded_overlap_mm": 1.031622290611267,
+      "worst_contact": {
+        "t": 6.3,
+        "phase": "prepare_horizontal",
+        "a": "/World/ActuatedTool/R/part_244",
+        "b": "/World/ElasticTarget/Stem_MainStem_9/Appendage_132_0",
+        "separation_m": -0.001031622290611267,
+        "force_n": 1.3544541205784695,
+        "impulse_ns": [
+          0.00237119197845459,
+          -0.005670207552611828,
+          -0.00946705974638462
+        ],
+        "position_world_m": [
+          -0.4114028811454773,
+          1.6135516166687012,
+          1.0572770833969116
+        ],
+        "normal_world": [
+          0.21007949113845825,
+          -0.502360999584198,
+          -0.8387491106987
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": null,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 39.0,
+          "status": "stopped",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 6.3,
+          "end_frame_index": 756,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": null,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "59975f46eeb3f0703ab0603f345f9b75eb98d5aadd8cdac3ef3d909e140ef066",
+        "truss_sequence.py": "5aca284d3dfa081bcded2c81f9b73b7c33e35a6ce588a390fbc23ad3dd511bf0",
+        "motion_kinematics.py": "89f12353ffaa173ff35a3ffe2477f84652a99863b9ec3c2c10dac1eda2e8407d"
+      },
+      "input_sha256": {
+        "plan.json": "e74ad9ca60259de9f91c84b7693b1b5139de014e6b3b6ffac2baffde256a85a7",
+        "states.npz": "609939f1fcd994851640b45ed08f929fc9d82e21b4e7fcc0988dfeba539e314d",
+        "contacts.json": "0b261b4e6fc997578b11b2525a6889b08da24787c238f956bbcf09f10edb70ef",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "phase_plans_sha256": {}
+    },
+    {
+      "name": "topdown_height60",
+      "hz": 60,
+      "order": "highest-first",
+      "detached_count": 0,
+      "detached": [],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "접근 후 줄기·송이 밀림: 주줄기 부속 잎 ↔ 주변 Plant_20",
+      "stop_reason": "penetration_over_0_5mm",
+      "simulated_s": 17.016666666666666,
+      "loop_wall_s": 22.11964817531407,
+      "planning_paused_wall_s": 0.0,
+      "physical_loop_wall_s": 22.11964817531407,
+      "max_recorded_overlap_mm": 1.831089612096548,
+      "worst_contact": {
+        "t": 17.016666666666666,
+        "phase": "close",
+        "a": "/World/ElasticTarget/Stem_MainStem_10/Appendage_136_0",
+        "b": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_172",
+        "separation_m": -0.001831089612096548,
+        "force_n": 11.979632238625754,
+        "impulse_ns": [
+          0.08171838521957397,
+          0.05324995517730713,
+          -0.17421503365039825
+        ],
+        "position_world_m": [
+          -0.6833232641220093,
+          1.4145939350128174,
+          1.1127445697784424
+        ],
+        "normal_world": [
+          0.40928661823272705,
+          0.26670244336128235,
+          -0.8725561499595642
+        ]
+      },
+      "strict_penetration_passed": false,
+      "opening_feedback": null,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 45.0,
+          "status": "stopped",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 17.016666666666666,
+          "end_frame_index": 1021,
+          "stop_reason": "penetration_over_0_5mm",
+          "cycle_open_feedback": null,
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "81ad5cfbb27200e54ad4492cfcd531402428536a9180967dca42bbb2b99c0b08",
+        "truss_sequence.py": "5aca284d3dfa081bcded2c81f9b73b7c33e35a6ce588a390fbc23ad3dd511bf0",
+        "motion_kinematics.py": "524c46cc96b7ca77412473848dd80fd10d039958822a8d1d7d4e74f3a328b2c7"
+      },
+      "input_sha256": {
+        "plan.json": "dfe6fb20ca06ab18498af9262ac89463a8b88b74788198116202c53061c026db",
+        "states.npz": "c3e549076d9a8ea95794ae45f3792551d4930d1d9b658a4a6b62a4bfc51e5c7c",
+        "contacts.json": "0c8c5b18ce7efefdfe6ad4997270a097626042c87f826b22517f5ba3fb06ab15",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "phase_plans_sha256": {}
+    },
+    {
+      "name": "topdown_shallow60",
+      "hz": 60,
+      "order": "highest-first",
+      "detached_count": 0,
+      "detached": [],
+      "remaining": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ],
+      "completed": false,
+      "all_fruit_detached": false,
+      "actual_self_collision_audit_passed": true,
+      "timestamp_contiguous": true,
+      "measured_target_position_error_m": 0.0,
+      "cause": "실제 재개방 91.1mm: 요구한 96mm 완전 개방 미도달",
+      "stop_reason": "cycle_reopen_not_reached",
+      "simulated_s": 23.0,
+      "loop_wall_s": 30.502644849941134,
+      "planning_paused_wall_s": 0.0,
+      "physical_loop_wall_s": 30.502644849941134,
+      "max_recorded_overlap_mm": 0.2793398161884397,
+      "worst_contact": {
+        "t": 14.45,
+        "phase": "approach",
+        "a": "/World/ActuatedTool/R/part_244",
+        "b": "/World/ElasticTarget/Stem_MainStem_9/Appendage_132_0",
+        "separation_m": -0.0002793398161884397,
+        "force_n": 24.259585232421514,
+        "impulse_ns": [
+          0.2466946691274643,
+          -0.13961634039878845,
+          0.28832077980041504
+        ],
+        "position_world_m": [
+          -0.5222666263580322,
+          1.6155613660812378,
+          1.0747560262680054
+        ],
+        "normal_world": [
+          0.610137403011322,
+          -0.34530600905418396,
+          0.7130891680717468
+        ]
+      },
+      "strict_penetration_passed": true,
+      "opening_feedback": {
+        "actual_gap_m": [
+          0.0910654067993164
+        ],
+        "required_gap_m": 0.096,
+        "tolerance_m": 0.0005,
+        "reached": false,
+        "t": 23.0
+      },
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "cycle_plans": [
+        {
+          "index": 0,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "start_s": 2.0,
+          "planned_end_s": 45.0,
+          "status": "stopped",
+          "plan": "plan.json",
+          "measured_frame_index": 0,
+          "end_s": 23.0,
+          "end_frame_index": 1380,
+          "stop_reason": "cycle_reopen_not_reached",
+          "cycle_open_feedback": {
+            "actual_gap_m": [
+              0.0910654067993164
+            ],
+            "required_gap_m": 0.096,
+            "tolerance_m": 0.0005,
+            "reached": false,
+            "t": 23.0
+          },
+          "inventory_after": {
+            "detached": [],
+            "remaining": [
+              "Truss_02_Fruit_01",
+              "Truss_02_Fruit_02",
+              "Truss_02_Fruit_03",
+              "Truss_02_Fruit_04",
+              "Truss_02_Fruit_05",
+              "Truss_02_Fruit_07",
+              "Truss_02_Fruit_08",
+              "Truss_02_Fruit_09",
+              "Truss_02_Fruit_10",
+              "Truss_02_Fruit_11"
+            ]
+          }
+        }
+      ],
+      "source_sha256": {
+        "run_motion.py": "ecc9961aeec1d72e57043f9bd0f7acfa65e8e619ff38a94fb751a4ed73979c9c",
+        "truss_sequence.py": "5aca284d3dfa081bcded2c81f9b73b7c33e35a6ce588a390fbc23ad3dd511bf0",
+        "motion_kinematics.py": "e609e2a72ac32475bee423634e18a49ca730394f2852dc5eb76638708d2bbc95"
+      },
+      "input_sha256": {
+        "plan.json": "0089e244e9d8d998fac1d246184b9f6e399f04b9ce9be757dcfb38d6631849cf",
+        "states.npz": "55d1b304aa3c08e87511ac318064ee629e5e295ff1c9b1628a8a04f635ac4e57",
+        "contacts.json": "f55cbfb8b2c9b767292054e38a9dcd9c18f8a4df25067d6a552924c23ba5bd74",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "phase_plans_sha256": {}
+    }
+  ],
+  "model_unchanged": true,
+  "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+  "first_cycle_regression": {
+    "time": true,
+    "phase": true,
+    "robot_q": true,
+    "command": true,
+    "poses": true,
+    "belt_surface_velocity_local_y_m_s": true
+  },
+  "tests": {
+    "targeted_asset_tests_passed": 71,
+    "native_schema_tests_passed": 18,
+    "orchestration_tests_passed": 11
+  },
+  "limits": [
+    "Each trial retains one native scene through its cycles; failed trials restart only as distinct experiments.",
+    "Fruit break counts are not collection or biological validation. Same uncalibrated 3N/0.008Nm model and tread prototype.",
+    "Static initial gravity preload was retained, including after detachment; not recalibrated after mass release.",
+    "Some video rendering overlapped CPU execution. These timings are diagnostic, not an isolated throughput benchmark.",
+    "All seven experiments remain reported, including zero-detachment and guard-stopped cases."
+  ],
+  "base_commit": "76479eef658275b0164cb23103aa48fcb9d1ef70",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "raw_output": "/root/docker_share/mujoko_debugging_data/20261010_203914_whole_truss_harvest",
+  "actual_videos": [
+    "trials/topdown_height60/actual_motion.mp4",
+    "trials/sequence60/actual_motion_review.mp4",
+    "trials/topdown_shallow60/actual_motion.mp4"
+  ],
+  "video_full_decode_passed": true,
+  "html_links_passed": true
+}

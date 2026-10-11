@@ -1,0 +1,152 @@
+{
+  "schema": "exact-lower-deck-leaf-triangle-review-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_last_fruit02_retreat50_120_retry/last_fruit02_retreat50_120_retry",
+  "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_parent_all_refined",
+  "time_s": 38.483333333333334,
+  "read_only": true,
+  "native_reruns": 0,
+  "source_shapes": [
+    {
+      "path": "/World/ActuatedTool/L/part_122",
+      "owner": "/World/ActuatedTool/L",
+      "source_name": "L_C02_lower_deck",
+      "approximation": "convexDecomposition",
+      "vertices": 3566,
+      "triangles": 7200,
+      "world_pose_xyzw": [
+        -0.38392743468284607,
+        1.5251171588897705,
+        1.1009101867675781,
+        -0.0008223382756114006,
+        -0.00018260342767462134,
+        0.6354830265045166,
+        0.7721143960952759
+      ],
+      "is_watertight": true,
+      "winding_consistent": true,
+      "source_topology_sha256": "579c98e5de9dc84eee8110f8660cc715b546dcac79ec3540621d7899552892bc",
+      "components": [
+        {
+          "triangles": 7200,
+          "closed": true
+        }
+      ]
+    },
+    {
+      "path": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_2",
+      "owner": "/World/ElasticTarget/Leaf_CompoundLeaf_04",
+      "source_name": null,
+      "approximation": "convexDecomposition",
+      "vertices": 836,
+      "triangles": 1668,
+      "world_pose_xyzw": [
+        -0.6231848001480103,
+        1.5229921340942383,
+        1.1661252975463867,
+        0.0450306236743927,
+        0.04030105471611023,
+        0.015857413411140442,
+        0.9980464577674866
+      ],
+      "is_watertight": true,
+      "winding_consistent": true,
+      "source_topology_sha256": "1280749ef836ff4c6fd6c8451f51ed330237e850b34c17f241d56eeeaac44db6",
+      "components": [
+        {
+          "triangles": 1668,
+          "closed": true
+        }
+      ]
+    }
+  ],
+  "exact_source_triangles_surface_intersect": false,
+  "triangle_contact_count": 0,
+  "unsigned_surface_distance_m": 0.006968643095776894,
+  "raw_fcl_distance_return_m": 0.006968643095776894,
+  "nearest_points_world_m": [
+    [
+      -0.5542084025104609,
+      1.53352666827142,
+      1.1056754784517233
+    ],
+    [
+      -0.5576080889030661,
+      1.5391833773121941,
+      1.107912834448492
+    ]
+  ],
+  "surface_contacts": [],
+  "native_cooked_full_sat": {
+    "hull_pair_count": 208,
+    "minimum_gap_m": -0.0005865214596858515,
+    "penetration_upper_bound_m": 0.0005865214596858515,
+    "worst_hull_pair_indices": [
+      6,
+      3
+    ]
+  },
+  "actual_mechanical_jaw_gap_mm": 34.20398712158203,
+  "actual_contact_gap_mm": 24.20398712158203,
+  "exact_fruit02_new_native_breaks": [],
+  "signed_distance_scope": "Triangle BVH collision identifies source-surface crossing; reported triangle penetration is not a full solid penetration depth. Native cooked fullSAT remains the physical validity authority.",
+  "no_geometry_or_policy_change": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "component_containment": [
+    {
+      "source_index": 0,
+      "component": 0,
+      "point_world_m": [
+        -0.39121062324212424,
+        1.4596338769672386,
+        1.0989684763318173
+      ],
+      "inside_other_closed_source": false
+    },
+    {
+      "source_index": 1,
+      "component": 0,
+      "point_world_m": [
+        -0.6221078121250355,
+        1.540847235878543,
+        1.1658592271526247
+      ],
+      "inside_other_closed_source": false
+    }
+  ],
+  "closed_source_solids_intersect": false,
+  "native_worst_hull_pair_fcl_contact_count": 1,
+  "native_proxy_contact_source_comparison": [
+    {
+      "native_contact_world_m": [
+        -0.5579476452957097,
+        1.5364439110850707,
+        1.109551695815917
+      ],
+      "native_convex_penetration_depth_m": 0.0005865214596856589,
+      "exact_source_distances": [
+        {
+          "source_index": 0,
+          "inside_exact_closed_source": false,
+          "unsigned_surface_distance_m": 0.005996633043808873,
+          "closest_source_point_world_m": [
+            -0.5551519496830981,
+            1.5328225022286819,
+            1.1056749570070907
+          ]
+        },
+        {
+          "source_index": 1,
+          "inside_exact_closed_source": false,
+          "unsigned_surface_distance_m": 0.001554621468326966,
+          "closest_source_point_world_m": [
+            -0.5588919390007333,
+            1.5376360609361643,
+            1.109874091768462
+          ]
+        }
+      ]
+    }
+  ],
+  "interpretation": "The exact closed source solids are disjoint at the measured stopping pose. Saved native cooked proxies intersect. This is a collision approximation discrepancy; actual native force still responds to those proxies. Existing stop remains valid for the current simulated model."
+}

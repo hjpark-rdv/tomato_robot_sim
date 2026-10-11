@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "old_source_certificate_identical": true,
+  "compared_fields": [
+    "passed",
+    "complete",
+    "samples",
+    "hz",
+    "phases",
+    "geometry",
+    "training_eligible"
+  ],
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_retained_axis_collection_cover120/fresh_rail_truss02_retained_axis_collection_cover120/cycles/002/plan.json",
+  "input_sha256": "78432133fc69f0edd4b878e8aa03c37d1df6e9664aec4731a7f3e6fd5194ac2c",
+  "helper_sha256": "884a74965945ffa5fbf7114f2d3b5d0d63529edd50405812f85e69fc8c226dbf",
+  "actual_physics_changed": false,
+  "all_sample_times_evaluated": true,
+  "interpretation": "Paired offline query timings during concurrent functional trials; no total RTF claim",
+  "training_eligible": false,
+  "wall_results": {
+    "False": {
+      "wall_s": 107.16910191066563,
+      "query_cache": {
+        "enabled": false,
+        "exact_configuration_queries": 6260,
+        "reused_exact_configuration_queries": 0,
+        "rounded_configuration_keys": false,
+        "all_sample_times_evaluated": true
+      }
+    },
+    "True": {
+      "wall_s": 77.93903507106006,
+      "query_cache": {
+        "enabled": true,
+        "exact_configuration_queries": 4640,
+        "reused_exact_configuration_queries": 1620,
+        "rounded_configuration_keys": false,
+        "all_sample_times_evaluated": true
+      }
+    }
+  },
+  "artifact": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/exact_self_query_cache_control.json"
+}

@@ -1,0 +1,353 @@
+{
+  "schema": "s300-horizontal-ready-connector-trials-v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "physics_executions": 0,
+  "default_phase_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b",
+  "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "full_fcl_clearance_m": 0.002,
+  "full_fcl_hz": 120,
+  "positive_results": {
+    "final_fruit02": {
+      "group": [
+        "Truss_02_Fruit_02"
+      ],
+      "offset_m": -0.15,
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 21.42218199931085
+    },
+    "initial_highest_truss02": {
+      "group": {
+        "fruits": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02"
+        ],
+        "measured_centers_world_m": [
+          [
+            -0.49350685229588975,
+            1.5666773875810764,
+            1.1297601561412456
+          ],
+          [
+            -0.48398089165913794,
+            1.5304701919985417,
+            1.1160974162515493
+          ]
+        ],
+        "measured_centroid_world_m": [
+          -0.48874387197751384,
+          1.548573789789809,
+          1.1229287861963975
+        ],
+        "individual_sparse_aim": {
+          "enabled": true,
+          "threshold": 2,
+          "attached_fruit_count": 10,
+          "selected_individually": false,
+          "height_offset_changed": false,
+          "scope": "Current exact truss only; measured center of selected attached fruit; entry yaw unchanged"
+        }
+      },
+      "preparation_height_first": true,
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 108.97760096378624
+    }
+  },
+  "lower_truss01": {
+    "cartesian_height_first": [
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.15,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 8.022601425647736
+      },
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.075,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 8.605811456218362
+      },
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": 0.0,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 19.897373404353857
+      },
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": 0.075,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 8.572162078693509
+      }
+    ],
+    "cartesian_direct": [
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.15,
+        "preparation_height_first": false,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 3.29771919362247
+      },
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": 0.0,
+        "preparation_height_first": false,
+        "ik": "rejected",
+        "error": "Fixed entry approach IK not found for 8 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "wall_s": 6.224329041317105
+      }
+    ],
+    "joint_default": [
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.15,
+        "preparation_height_first": false,
+        "ik": "passed",
+        "fcl": {
+          "passed": false,
+          "complete": false,
+          "samples": 907,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.3375,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/L/part_214",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": "L_C14_rear_drive_cover",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.001992664684188729,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "wall_s": 16.95522591471672
+      }
+    ],
+    "joint_alternate_seeds": [
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.15,
+        "horizontal_ready_seed_index": 0,
+        "preparation_height_first": false,
+        "ik": "passed",
+        "fcl": {
+          "passed": false,
+          "complete": false,
+          "samples": 839,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.24305555555555555,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/fixed/part_9",
+                "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "a_name": "F01_rear_rail_backbone",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0013337773569729004,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "wall_s": 16.382226476445794
+      },
+      {
+        "group": [
+          "Truss_01_Fruit_11",
+          "Truss_01_Fruit_10"
+        ],
+        "offset_m": -0.15,
+        "horizontal_ready_seed_index": 1,
+        "preparation_height_first": false,
+        "ik": "passed",
+        "fcl": {
+          "passed": false,
+          "complete": false,
+          "samples": 973,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.4291666666666667,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link6/collisions/link6/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0015910163461497601,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "wall_s": 19.01855189166963
+      }
+    ],
+    "joint_waypoint_detours": [
+      {
+        "joint_index": 4,
+        "delta_rad": 0.1,
+        "passed": false,
+        "complete": false,
+        "samples": 964,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.4166666666666667,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/L/part_214",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "L_C14_rear_drive_cover",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.001987905560418615,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        },
+        "wall_s": 17.353214003145695
+      },
+      {
+        "joint_index": 4,
+        "delta_rad": -0.1,
+        "passed": false,
+        "complete": false,
+        "samples": 966,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.41944444444444445,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/L/part_214",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "L_C14_rear_drive_cover",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.001984465245468658,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        },
+        "wall_s": 17.1518638394773
+      },
+      {
+        "joint_index": 5,
+        "delta_rad": 0.1,
+        "passed": false,
+        "complete": false,
+        "samples": 1003,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.4708333333333333,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/fixed/part_8",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "A01_rear_fixture_adapter",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.0019990809726160986,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        },
+        "wall_s": 17.983412647619843
+      },
+      {
+        "joint_index": 5,
+        "delta_rad": -0.1,
+        "passed": false,
+        "complete": false,
+        "samples": 866,
+        "first_blocked": {
+          "phase": "prepare_joint_branch",
+          "clear": false,
+          "first_hit_fraction": 0.28055555555555556,
+          "hits": [
+            {
+              "a": "/World/ActuatedTool/L/part_214",
+              "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+              "a_name": "L_C14_rear_drive_cover",
+              "b_name": null,
+              "intersection": false,
+              "distance_m": 0.001869352762540566,
+              "required_planning_clearance_m": 0.002
+            }
+          ]
+        },
+        "wall_s": 15.106848755851388
+      }
+    ],
+    "failure_stage": "horizontal_preparation",
+    "globally_feasible_staging_branches": 8,
+    "original_cartesian_transfer_solved": 24,
+    "original_cartesian_transfer_requested": 80,
+    "final_pose_reachability": "not classified impossible; Cartesian connector fails; joint branch completes IK but self-clearance blocks"
+  },
+  "api": {
+    "connector": "horizontal_ready_connector='cartesian'|'joint'",
+    "explicit_seed": "horizontal_ready_seed_index=None or0..8 for joint connector"
+  },
+  "tests": {
+    "passed": 87,
+    "failed": 0
+  },
+  "limits": [
+    "Native environment collision/tracking/plant response not established by these self-collision FCL screens.",
+    "Highest-first ordering may reduce upper-neighbor plate contact; actual native trial remains required.",
+    "Changing connector or waypoint does not change source geometry, collision policy, physical properties, penetration guard or endpoint yaw/pitch.",
+    "All failed candidates retained; no finite failure is called absolute harvest impossibility."
+  ],
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery"
+}

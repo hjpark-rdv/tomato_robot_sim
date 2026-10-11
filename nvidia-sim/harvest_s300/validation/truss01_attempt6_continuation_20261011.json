@@ -1,0 +1,99 @@
+{
+  "schema": "s300-truss01-after-sixth-attempt-continuation-validation-v1",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery",
+  "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/route_checkpoint",
+  "checkpoint_metadata_sha256": "d29ca2212972333a61a4556fdedb0b38dba9835841c4e61dca7acd6ffa7971da",
+  "source_parent_validation": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/latest_lateral_minus1_native_parent_validation.json",
+  "source_parent_validation_sha256": "56b5f484e6855b2c8df790c05121b2bdaff74649fc67d2b2e43072fc558a1c94",
+  "source_status": "Verified completed-cycle final54s with complete actual audit; nine exact native Truss02 joints detached, Fruit10 attached at six attempts",
+  "immutable_asset": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_truss01_after_attempt6_transfer",
+  "materialized_dependency": {
+    "relative_path": "composed.usdc",
+    "sha256": "6a9a24803d1daa25e021ec513264c95e1fa3b828e82ce5ab897ac82779389953",
+    "format": "usdc",
+    "materialized": true,
+    "external_usd_sublayers": []
+  },
+  "exact_joint_revision": {
+    "selected": 10,
+    "preserved_native_broken": 9,
+    "nonselected_properties_unchanged": true,
+    "geometry": {
+      "mesh_count": 31941,
+      "world_vertices": 32649127,
+      "world_vertex_max_abs_error_m": 0.0,
+      "rigid_body_count": 277,
+      "rigid_pose_max_abs_error": 0.0,
+      "collider_count": 32142,
+      "collider_pose_max_abs_error": 0.0,
+      "geometry_sha256": "6dd70c4fd93f78192946e6023c88876f1b317f68906831b6ee481b8a90978994"
+    }
+  },
+  "unchanged_goal": "Measured own Truss01 fruit centers, yaw124.9444985degrees, first depth65mm, height−1.5mm",
+  "existing_branch_revision": {
+    "source_rejection": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_plan_after_attempt6_seed6/report.json",
+    "previous_ready_lift_offset_m": -0.15,
+    "new_ready_lift_offset_m": -0.135,
+    "saved_lift_q_m": 0.14336629211902618,
+    "commanded_lower_branch_lift_q_m": 0.008366292119026175,
+    "actual_start_q_unchanged": true,
+    "goal_fruit_yaw_depth_unchanged": true,
+    "reason": "Existing joint-limit check rejected measured .143366m minus .150m; approved existing offset redistributed to .135m"
+  },
+  "preserved_rejection": {
+    "offset_mm": -150,
+    "status": "rejected_existing_joint_limit",
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_plan_after_attempt6_seed6/report.json"
+  },
+  "measured_station_y_m": 1.600000228881836,
+  "rail_phase": false,
+  "initial_near_scope_selection": {
+    "initial_truss_key": "Truss_02",
+    "initial_truss_remaining": [
+      "Truss_02_Fruit_10"
+    ],
+    "initial_truss_attempt_exhausted": [
+      "Truss_02_Fruit_10"
+    ],
+    "initial_truss_rejected_exact_groups": [],
+    "max_attempts_per_fruit": 6,
+    "eligible_truss_keys": [
+      "Truss_01",
+      "Truss_02"
+    ],
+    "selection": "Initial exact truss first, then existing finite selection within other eligible trusses",
+    "measured_positions_preserved": true,
+    "attempt_counts_preserved": true,
+    "physical_state_reset": false,
+    "training_eligible": false,
+    "harvest_success": null,
+    "selected_truss_key": "Truss_01",
+    "switched_truss": true,
+    "reason": "initial_truss_finite_attempt_or_rejection_exhaustion",
+    "selection_exhausted": false
+  },
+  "nominal_self_audit": {
+    "passed": true,
+    "complete": true,
+    "samples": 6018,
+    "hz": 120,
+    "scope": "robot/chassis/tool self only",
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_plan_after_attempt6_seed6_lift135/self_full120.json",
+    "report_sha256": "e7de6148ecd1ebca82afaf20c62e6abae46dc39ce0c13ca4fd602ed9c0f24f54"
+  },
+  "ready_cases": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/cases_truss01_after_attempt6_continuation_ready_lift135.json",
+  "ready_recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/truss01_after_attempt6_continuation_ready_lift135.json",
+  "ready_recipe_sha256": "0c04174601ddd19d675b01761e653d7a0f7ed8863044f225555e807c22cb49d1",
+  "tests": {
+    "passed": 19,
+    "command": "python -m unittest test_near_scope_runner_continuation test_truss_sequence",
+    "regression": "Actual runner keeps attached source fruit at six attempts, advances to own next truss, retains native breaks/positions/budget and first65mm depth."
+  },
+  "native_execution": false,
+  "farm_environment_audit": false,
+  "native_state_reproduction": "pending actual execution",
+  "accepted_physical_history_changed": false,
+  "all20_native_detached": false,
+  "training_eligible": false,
+  "harvest_success": null
+}

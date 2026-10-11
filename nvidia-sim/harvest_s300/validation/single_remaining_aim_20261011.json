@@ -1,0 +1,40 @@
+{
+  "schema": "s300-single-native-remaining-aim-validation-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "source_manifest_sha256": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+  "independent_fresh_campaign": true,
+  "imported_checkpoint": null,
+  "imported_native_detachment_credit": 0,
+  "source_original_result": "Historical9/10 retained separately; new run imports zero prior release credits",
+  "first_cycles": "Existing known9 robot height−1.5mm/depth65 then50mm/trussyaw; all physicalproperties unchanged",
+  "last_remaining_only": {
+    "absolute_robot_height_offset_mm": -8.5,
+    "absolute_depth_mm": 80,
+    "lateral_offset_mm": 0
+  },
+  "mechanical_gap_command_mm": 28,
+  "belt_speed_m_s": 0.05,
+  "belt_seconds": 2,
+  "per_fruit_attempt_budget": 6,
+  "native_trial_state": "running",
+  "native_outcome": null,
+  "training_eligible": false,
+  "harvest_success": null,
+  "physics_unchanged": true,
+  "source_fruit_positions_unchanged": true,
+  "offline_reference_self120": "fruit10_new_fresh_last_aim_normal_start_reference_self120/self_collision_reference120.json",
+  "frozen_cad_obstacle_projection": "fruit10_candidate80_cad_obstacle_projection.json",
+  "case_path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/cases_fresh_truss02_known9_last_lower85_depth80.json",
+  "case_sha256": "39672b627c20a873e6bd1e4eeb4f6fc9ae3c22dc3b8218bbe5f63189ea9c2bff",
+  "code_sha256": {
+    "run_motion.py": "44ae3ed26b0e166f43d18d285a079ab350d8934285e8ee50f3841596b3a9e922",
+    "single_remaining_aim.py": "795c87ea1493594a4ec05859a8e8ee14af1c337672074f6f4900c4987dc457f7"
+  },
+  "verification": {
+    "focused_unittests": 46,
+    "failures": 0,
+    "meaning": "Defaultcommands retained, actualFK−7mmheight/fullsameorientation and nativeexactjointinventory gating; independentfullsuffixSELF120 complete6260samplesPASS. Native/bilateralcapture not established by CPUchecks"
+  }
+}

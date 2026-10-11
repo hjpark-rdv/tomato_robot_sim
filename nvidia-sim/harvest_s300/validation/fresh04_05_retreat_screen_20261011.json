@@ -1,0 +1,115 @@
+{
+  "schema": "fresh04-05-retreat-finite-existing-planner-v1",
+  "queries": 2,
+  "source_summary": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh04_05_retreat_screen/summary.json",
+  "source_summary_sha256": "8b1aae038d7e2f22759632d32d31bba309cab0cee1d2eebce89b67be36f06650",
+  "results": [
+    {
+      "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_rail_centered_query120/fresh_rail_truss02_centered_query120/cycle_checkpoints/000",
+      "source_time_s": 54.0,
+      "checkpoint_sha256": "c31d7f1649c913b4a5edce07a1acc9ee66818183900a6dc7964ce16137cc75d1",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+      "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+      "fruits": [
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05"
+      ],
+      "actual_centers_world_m": [
+        [
+          -0.4483029246330261,
+          1.5224037170410156,
+          1.0898345708847046
+        ],
+        [
+          -0.43047934770584106,
+          1.5509716272354126,
+          1.0791760683059692
+        ]
+      ],
+      "actual_start_q": [
+        0.16876870393753052,
+        1.341870903968811,
+        0.2189919501543045,
+        2.4946720600128174,
+        0.42837291955947876,
+        2.9835801124572754,
+        3.1408658027648926
+      ],
+      "axis_world": [
+        -0.9998040470906626,
+        -0.019795641468065475,
+        0.0
+      ],
+      "depth_m": 0.05,
+      "height_offset_m": -0.0015,
+      "native_trials": 0,
+      "physics_executed": false,
+      "training_eligible": false,
+      "environmental_dynamic_leaf_wire_validity": "not evaluated by robot self-FCL",
+      "ik": "passed",
+      "self_fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 103.93987723067403
+    },
+    {
+      "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_rail_centered_query120/fresh_rail_truss02_centered_query120/cycle_checkpoints/000",
+      "source_time_s": 54.0,
+      "checkpoint_sha256": "c31d7f1649c913b4a5edce07a1acc9ee66818183900a6dc7964ce16137cc75d1",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+      "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+      "fruits": [
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05"
+      ],
+      "actual_centers_world_m": [
+        [
+          -0.4483029246330261,
+          1.5224037170410156,
+          1.0898345708847046
+        ],
+        [
+          -0.43047934770584106,
+          1.5509716272354126,
+          1.0791760683059692
+        ]
+      ],
+      "actual_start_q": [
+        0.16876870393753052,
+        1.341870903968811,
+        0.2189919501543045,
+        2.4946720600128174,
+        0.42837291955947876,
+        2.9835801124572754,
+        3.1408658027648926
+      ],
+      "axis_world": [
+        -0.9608018565466832,
+        0.27723598694333845,
+        0.0
+      ],
+      "depth_m": 0.05,
+      "height_offset_m": -0.0015,
+      "native_trials": 0,
+      "physics_executed": false,
+      "training_eligible": false,
+      "environmental_dynamic_leaf_wire_validity": "not evaluated by robot self-FCL",
+      "ik": "passed",
+      "self_fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 105.96433814056218
+    }
+  ],
+  "scope": "ExistingIK and complete2mm robot/tool selfFCL at120Hz. Actualenvironment contact, plantdeformation and nativeharvest not tested here.",
+  "geometry_changed": false,
+  "physics_changed": false,
+  "training_eligible": false,
+  "harvest_success": null
+}

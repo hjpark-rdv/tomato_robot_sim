@@ -1,0 +1,78 @@
+{
+  "schema": "fresh-near20-truss01-independent-asset-validation-v1",
+  "date": "2026-10-11",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "derived_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01",
+  "derived_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "derived_usdc_sha256": "ccee192a4b3dfd6317202f2b48d84a92de5e4f568bb53e009a353f4995b50e4e",
+  "derived_manifest_sha256": "3ded653bfcddb6550bb4d217b928e7628db14f45dbab14c67980e6c9382527a1",
+  "fresh_start": {
+    "checkpoint_imported": false,
+    "inherited_native_breaks": [],
+    "accepted_previous_route_history": false,
+    "authored_normal_robot_q": [
+      0.1772361584508187,
+      1.34186025440419,
+      0.21832403128775776,
+      2.494406530138995,
+      0.42814954021974044,
+      2.983476174350552,
+      3.140876281585933
+    ],
+    "initial_target": "Truss_01_Fruit_01",
+    "initial_grasp_fruits": [
+      "Truss_01_Fruit_01",
+      "Truss_01_Fruit_02"
+    ]
+  },
+  "attachment_revision": {
+    "changed_fruit_necks": [
+      "Truss_01_Fruit_01",
+      "Truss_01_Fruit_02",
+      "Truss_01_Fruit_03",
+      "Truss_01_Fruit_04",
+      "Truss_01_Fruit_05",
+      "Truss_01_Fruit_07",
+      "Truss_01_Fruit_08",
+      "Truss_01_Fruit_09",
+      "Truss_01_Fruit_10",
+      "Truss_01_Fruit_11"
+    ],
+    "approved_force_n": 3.0,
+    "approved_torque_nm": 0.008,
+    "eligible_fruit_count": 20,
+    "excluded_truss00_unchanged": true,
+    "existing_truss02_enabled_and_unchanged": true,
+    "calibrated": false
+  },
+  "preservation": {
+    "unrelated_properties_unchanged": true,
+    "mesh_count": 31941,
+    "world_vertices": 32649127,
+    "world_vertex_max_abs_error_m": 0.0,
+    "rigid_body_count": 277,
+    "rigid_pose_max_abs_error": 0.0,
+    "collider_count": 32142,
+    "collider_pose_max_abs_error": 0.0,
+    "geometry_sha256": "6dd70c4fd93f78192946e6023c88876f1b317f68906831b6ee481b8a90978994"
+  },
+  "native_first_case_scope": "Whole Truss01 only; no near-trusses flag. Later all20 continuation requires its own valid final native checkpoint.",
+  "historical_route": {
+    "status": "closed_after_actual_preparation_collision",
+    "new_native_breaks_in_failed_truss01_trial": 0,
+    "stop_time_s": 9.658333333333333,
+    "phase": "prepare_joint_branch",
+    "robot_collider": "/World/ActuatedTool/L/part_209",
+    "foreign_collider": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_132",
+    "raw_penetration_m": 0.0006101913750171661,
+    "single_contact_force_n": 70.09023609676173,
+    "old9_detached_not_imported_or_credited": true
+  },
+  "tests": {
+    "passed": 47,
+    "command": "asset Python -m unittest test_eligible_attachment_transfer test_run_row_harvest test_terminal_cycle_checkpoint test_near_scope_runner_continuation -q"
+  },
+  "planning_and_native": "pending bounded full-self and preparation environment checks; no physics launched by this asset builder",
+  "training_eligible": false,
+  "harvest_success": null
+}

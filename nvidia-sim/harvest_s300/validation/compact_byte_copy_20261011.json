@@ -1,0 +1,64 @@
+{
+  "schema": "s300-compact-byte-copy-validation-v1",
+  "before_code_sha256": "c15da18600cdd9d5ebf96141b13eb76d7a50d647fd4061bbde690ffb9abe1bc7",
+  "after_code_sha256": "6989d03298dc030e60dadd8cc65e15ea5f71f88d761dacd654d349bf6f5c64c8",
+  "test_code_sha256": "be8c4ec464a6fdefd6f0f6e364268b6cd1a2db694d6bc457fd9b09adbe31ec0f",
+  "protected_functions": {
+    "file_sha256": {
+      "unchanged": true,
+      "sha256": "4a31cbe412a9ff33e1eb74f2729261d0a002ee8c239c9bc8248fb30dd8a3b4c2"
+    },
+    "_value_digest": {
+      "unchanged": true,
+      "sha256": "4cc50963519854c4d6a1fd4f3c8318ee984db777f65db37f5a6159c60151af10"
+    },
+    "_prims": {
+      "unchanged": true,
+      "sha256": "8aeab433e0238a44d9d9b9b1578f28a447fe1a9fc14ddf8e8de2fae3f1a79893"
+    },
+    "property_inventory": {
+      "unchanged": true,
+      "sha256": "b49f35101db958ff006dd676be0651c16d657aecd2dacc85fb00fdbe404496ca"
+    },
+    "compare_geometry": {
+      "unchanged": true,
+      "sha256": "31e65912e2d83e8911883b6a6c0a0db331245646e0c300a814462b1f4e96f2b8"
+    },
+    "verify_compact_dependencies": {
+      "unchanged": true,
+      "sha256": "7eb8dd304b926645f0b56641c8a7388151f59291dd30019f2cf81dc3f81a49dd"
+    }
+  },
+  "legacy_compact_body_unchanged_except_dispatch": true,
+  "tests": {
+    "command": "OPENBLAS_NUM_THREADS=1 .asset-venv/bin/python -m unittest -v test_compact_byte_copy test_compact_motion_assets",
+    "passed": 12,
+    "new": 8,
+    "legacy": 4,
+    "native_physics_executed": false,
+    "actual_house_benchmark_executed": false
+  },
+  "coverage": [
+    "exact wrapper/USDC/skin bytes; source SHA unchanged",
+    "internal prototype instances, unknown API/custom data, MassAPI/DriveAPI, material binding and time samples",
+    "root runtime opinions, unknown metadata, external asset path, stage time/unit override fallback",
+    "corrupt dependency hard-fail without fallback/output",
+    "mid-copy source mutation hard-fail without success report",
+    "clean but stale USD cache eligibility rejection",
+    "new output never overwrites existing output",
+    "symlinked composition anchor fails fast-path eligibility"
+  ],
+  "semantics": {
+    "geometry_or_physics_changed": false,
+    "fresh_property_inventory_recomputed": false,
+    "fresh_world_geometry_recomputed": false,
+    "native_validation": "pending",
+    "training_eligible": false,
+    "old_failures_reclassified": false
+  },
+  "limits": [
+    "This only removes re-compaction of already self-contained unchanged USDC storage. Transfer/resume/route independent geometry audits remain unchanged.",
+    "No actual full-house speed claim yet. The observed previous re-compaction elapsed116.313s belongs to the unchanged legacy process, not a measured A/B.",
+    "A fresh asset or wrapper with stronger runtime opinions still takes exhaustive legacy validation."
+  ]
+}

@@ -90,6 +90,10 @@ def summarize(root):
         n=s['trial'];separation=s.get('min_contact_separation_m')
         scope='진입·유지·복귀 (수확 시도 아님)' if s.get('execution_scope')=='entry_hold_return_only' else '분리 시험' if s.get('fixture_only') else '전체 환경 물리 시험'
         if s.get('plant_dynamics')=='target-truss':scope+=' · 주줄기/목표 송이 탄성 유지, 다른 송이 굽힘 고정'
+        if s.get('fruit_attachment'):scope+=' · 열매 연결 '+s['fruit_attachment']['kind']+' (미보정 시험 모델)'
+        if s.get('harvest_profile')=='belt_open_close_cycle':scope+=' · 벨트 연속 회전/닫기·완전 열기·다시 닫기 (닫기 중 분리 허용)'
+        if s.get('truss_sequence'):scope+=' · 같은 물리 장면에서 남은 열매 연속 접근 (reset 없음)'
+        if s.get('belt_off_control'):scope+=' · 벨트 정지 대조군'
         if s.get('contact_guard'):
             guard=s['contact_guard']
             scope+=f' · 현 송이 열매–그리퍼 {guard["tool_current_truss_fruit_limit_mm"]:g}mm 허용'
@@ -109,10 +113,20 @@ def summarize(root):
         for filename,label in [('self_collision_preflight.json','계획 자기충돌 검사'),
                                ('self_collision_actual.json','실제 자세 자기충돌 검사'),
                                ('belt_evidence.json','벨트 접촉·회전·분리 근거'),
+                               ('fruit_attachment_evidence.json','꼭지 대비 비틀림·굽힘'),
                                ('contact_tolerance_evidence.json','접촉 허용치·겹침 시간·힘'),
                                ('cluster_evidence.json','전체 열매 접촉·분리 집계')]:
             if (root/n/filename).exists():link+=f' · <a href="{n}/{filename}">{label}</a>'
         table.append('<tr>'+''.join('<td>'+esc(str(c))+'</td>' for c in cells)+f'<td>{link} · <a href="{n}.log">log</a></td></tr>')
+        if s.get('truss_sequence'):
+            seq=s['truss_sequence'];inv=seq['inventory']
+            cycle_rows=''.join('<tr>'+''.join('<td>'+esc(str(v))+'</td>' for v in
+                [c['index'],', '.join(c['fruits']),c['status'],c.get('start_s'),c.get('end_s'),
+                 ', '.join(c.get('inventory_after',{}).get('remaining',[])),c.get('error','')])+'</tr>'
+                 for c in seq['cycle_plans'])
+            videos.append(f'<article><h2>{esc(n)} · 송이 전체 연속 수확 시험</h2><p>분리 {len(inv["detached"])}/{len(seq["fruit_names"])} · 남음 {esc(str(inv["remaining"]))} · 종료 {esc(seq["termination"])}</p>'
+                f'<p>동일 native scene의 상태를 계속 사용합니다. 분리는 정확한 열매 조인트의 native 파단 기록입니다. 포집 성공이나 실물 검증이 아닙니다. 계획 중 물리 일시 정지 {seq["planning_paused_wall_s"]:.2f}초.</p>'
+                f'<a href="{n}/truss_sequence.json">연속 실행 원자료</a><table><tr><th>회차</th><th>조준 열매</th><th>상태</th><th>시작 s</th><th>끝 s</th><th>남은 열매</th><th>계획 오류</th></tr>{cycle_rows}</table></article>')
         if s.get('video'):
             speed='배속 메타데이터 없음' if s.get('video_speed') is None else f'{s["video_speed"]:g}배속'
             videos.append(f'<article><h2>{esc(n)}</h2><p>{esc(s["status"])} / 실제 저장 상태 재생 / {esc(speed)} · 보조 조명 여부는 render JSON 참조</p><video controls preload="metadata" src="{n}/{s["video"]}"></video><p><a href="{n}/{s["video"]}">{n}/{s["video"]}</a></p></article>')

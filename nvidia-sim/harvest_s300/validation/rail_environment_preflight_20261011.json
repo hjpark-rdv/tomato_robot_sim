@@ -1,0 +1,94 @@
+{
+  "schema": "s300-rail-environment-functional-validation-v1",
+  "scope": "Initial nominal rail_move only; guarded native travel unexecuted",
+  "native_runs": 0,
+  "training_eligible": false,
+  "harvest_success": null,
+  "adapter_source_sha256": "7debbb9a1cfcd77bfad5225c00ef30442d79482e3724a6f6021cb55ccfd24f96",
+  "tests": {
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest -v test_rail_environment_preflight",
+    "count": 38,
+    "status": "PASS",
+    "log": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_environment_probe_200mm_existing_collection_scope/focused_tests.log"
+  },
+  "original": {
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_environment_probe_200mm_latest_native/report.json",
+    "report_sha256": "22369d11a6eba86706573e7ccb889fadd2dad7b06f4c86dd981ef764b0238daf",
+    "status": "blocked",
+    "complete": true,
+    "hard_intersection_sample_pairs": 452,
+    "source_scope_omission": "Exact existing FlatRearDeck was absent from initial adapter collection list; preserved unchanged"
+  },
+  "existing_collection_policy_matched": {
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_environment_probe_200mm_existing_collection_scope/report.json",
+    "report_sha256": "897640b08088518b514f4f0e95341b274fa7cbe954ca380d48d8c5877c6f7318",
+    "status": "sampled_clear",
+    "complete": true,
+    "passed": true,
+    "samples": 452,
+    "last_time_s": 3.7500052054768904,
+    "hard_intersection_sample_pairs": 0,
+    "all_hard_pair_counts": [],
+    "diagnostic_intersection_sample_pairs": 452,
+    "all_diagnostic_pair_counts": [
+      {
+        "robot_geom": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/FlatRearDeck",
+        "environment_geom": "/World/ElasticTarget/Truss_02_Fruit_01/Collider",
+        "obstacle_class": "released_fruit_passive_carrier_diagnostic",
+        "sample_pairs": 452,
+        "first_time_s": 0.0,
+        "last_time_s": 3.7500052054768904
+      }
+    ],
+    "collision_queries": 583,
+    "wall_s_functional_not_isolated_perf": 17.619869235903025,
+    "moving_shapes": 793,
+    "environment_shapes": 30673,
+    "swept_environment_candidates": 130,
+    "existing_exact_collection_scope_count": 447
+  },
+  "paired_inputs": {
+    "equality_checked": [
+      "source_sha256",
+      "checkpoint_proof",
+      "initial_alignment",
+      "samples",
+      "last_sample_time_s"
+    ],
+    "source_sha256": {
+      "scene": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "manifest": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+      "materialized_dependency": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+      "plan": "c7863f0929f6295c159c1de31ba07f6b6b5644f5577983cc16e4149a6e653b55"
+    },
+    "checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/route_checkpoint",
+    "checkpoint_metadata_sha256": "d29ca2212972333a61a4556fdedb0b38dba9835841c4e61dca7acd6ffa7971da",
+    "checkpoint_json_sha256": "965da371110512ecb78fbdaa02d837077fb81546739fa8dc33f270314948c4e7",
+    "checkpoint_npz_sha256": "1d171e56a50fe166b3702a6de8591a2464b21210023d8b8572002d5b555b4673",
+    "native_actual_self_audit_sha256": "add538ba81b29ab9d60786119bd20605fb49677582c0b82f9546d90f6442e7c2",
+    "origin_y_m": 1.600000228881836,
+    "destination_y_m": 1.80000023,
+    "start_max_moving_fk_error_m": 2.2997531881805472e-05,
+    "geometry_shift_applied_once": true
+  },
+  "unchanged": {
+    "physics_model": true,
+    "collider_geometry": true,
+    "filters": true,
+    "margin_gap": true,
+    "material_actuator": true,
+    "native_penetration_guard_m": 0.0005,
+    "existing_self_clearance_m": 0.002
+  },
+  "limitations": [
+    "Frozen measured/source environment and whole-CAD-part conservative envelopes; native cooked decomposition is not reproduced.",
+    "Only rail_move is screened; settle, manipulation and dynamic tracking require unchanged guarded native execution.",
+    "Released-fruit/deck intersections remain raw diagnostics; FCL penetration/force is not a native contact or safety certificate.",
+    "Current own-truss tool contact and soft leaves are diagnostics, not blanket permissions for arm, lift or chassis.",
+    "Full source enabled collider count, filtergraph and provenance are verified; finite blocked/inconclusive outcomes are not impossibility."
+  ],
+  "actual_arrival_proven": false,
+  "collection_verified": false,
+  "released_fruit_physics_verified": false,
+  "strict_whole_scene_physics_passed": null
+}

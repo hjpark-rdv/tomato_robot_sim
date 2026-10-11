@@ -1,0 +1,83 @@
+# 수확 대상 집단 선택과 잔여 열매 종료 조건
+
+2026-10-11. 기존 `run_motion.py`의 선택 함수만 opt-in으로 교체한다.
+기존 벨트 열기→닫기→열기→닫기, IK/FCL, native physics, 실제 상태 저장과
+영상 재생을 재사용한다. 기본 모드의 두 열매 선택/개별 재시도 동작은 보존한다.
+
+`--harvest-group-policy policy.json`을 사용하면 다음과 같이 동작한다.
+
+1. 수확 대상으로 표시된 아직 붙은 열매만 센다.
+2. 동일 송이에서 기존 벨트와 그리퍼가 포괄하는 국소 범위를 조사한다.
+3. 최소 수량 이상인 집단 중 미시도 집단을 우선하고, 그중 높은 집단을 고른다.
+4. 기존 계획기/충돌 검사를 통과해야 실제로 진입한다.
+5. 사이클 종료 후 측정된 열매 위치와 실제 파단 이력으로 다시 선택한다.
+6. 기준을 만족하는 집단이 없으면 남은 열매를 기록하고 종료한다.
+
+위/아래 두 번을 고정하지 않는다. 최소 수량은 첫 시험에서 3개이며 정책 생성 시
+`--min-fruits`로 2~10개 중 선택한다. 이것은 영상에서 확인한 이나호 내부 규칙이나
+검증된 최적값이 아니다. 기하상 범위에 든 개수가 실제 분리 개수를 보장하지 않는다.
+
+## 수확 대상 표시와 범위
+
+현 자산에는 생물학적 숙도 라벨이 없다. `prepare_harvest_group_policy.py`는
+원본 과실 collider의 RGB와 같은 색상의 실제 Visual 메시를 확인하고,
+색상 hue가 빨강 ±20°, saturation≥0.4, value≥0.15인 과실에 대상 표시를 만든다.
+이는 **SIM-GT 자산 색상 대용 기준**이며 카메라 인식/숙도 학습 결과가 아니다.
+모델이나 원본 색상을 수정하지 않는다. 누락·불명확한 색상은 자동으로 익었다고 보지 않는다.
+
+정책은 manifest/composed USD SHA와 정확한 열매 이름·바디·joint를 검증한다.
+Truss_02 현재 자산에서는 01/02/03/04/05/07/08이 대상, 09/10/11은 대상 밖이다.
+
+그리퍼 96mm 개방 폭과 실제 벨트 Y=0~158mm, Z=13~61mm를 사용한다.
+폭/깊이는 열매 bounding radius까지 포함하고, 높이는 벨트 구간 안에 과실 중심이
+오는지를 본다. 과실 전체가 벨트 높이에 완전히 포함되거나 파지된다는 뜻은 아니다.
+기존 높이 보정과 실제 진입 방향/yaw/depth를 반영한다. 떨어져 있는 열매를 송이의
+총 개수만으로 합산하지 않는다. 과실 중심/두 중심의 중간점 및 높이 경계에서 유한 탐색한다.
+
+대상이 아닌 과실 중심이 포획 범위 안에 들면 해당 자세를 제외한다. 범위 가장자리의
+과실 반경 중첩은 위험 지표로 남긴다. 접근 중 접촉/식물 변형까지 예방하는 보증이 아니므로
+대상 밖 과실의 실제 분리는 `ineligible_detached`에 별도 기록한다.
+
+첫 native 연결은 한 송이, 수평 truss-axis, highest-first 조건이다.
+near-truss/rail 연속 실행, 단일 잔여 열매 보정, 개별 재시도와의 혼용은 명시적으로 거부한다.
+해당 통합의 테스트를 마치기 전 기존 rail 실행에 정책을 자동 적용하지 않는다.
+
+## 실행
+
+```bash
+cd /root/farmily_tomato
+nvidia-sim/.asset-venv/bin/python nvidia-sim/harvest_s300/prepare_harvest_group_policy.py \
+  /root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/assembly_leaves_visual_only \
+  --output /원하는/새폴더/policy.json --min-fruits 3
+```
+
+기존 `--whole-truss --truss-order highest-first --approach-yaw-mode truss-axis`
+명령에 `--harvest-group-policy /원하는/새폴더/policy.json`을 추가한다.
+`--single-fruit-when-remaining`, `--split-unproductive-pairs`, `--last-fruit-*`
+개별 잔여 열매 옵션은 제거한다. 최초 집단이 없으면 physics 0회인 selection-only
+summary를 남기며, 장면 오류나 불가능 판정으로 세지 않는다.
+
+첫 실제 시험의 전체 인자는
+`/root/docker_share/mujoko_debugging_data/20261011_112538_ripe_group_harvest/cases.json`.
+
+## 증거와 한계
+
+`group_selection_history.json`에 매 선택 시점의 남은 대상/대상 밖 열매, 집단 수량,
+기하 후보 수, 실제 선택과 중단 이유를 저장한다. `truss_sequence.json`의
+`group_outcome`은 대상 분리/미분리 및 대상 밖 우발 분리/남음을 분리한다.
+계획/시도 예산 초과와 최소 집단 없음은 서로 다른 이유다.
+
+잎은 앞선 사용자 요구대로 표시하되 충돌을 무시하는 기존 별도 모델을 사용한다.
+다른 충돌체/물성/0.5mm 활성 물리 검사/파단 기준은 바꾸지 않는다.
+`training_eligible=false`, `harvest_success=null`; 분리는 포집 성공과 다르다.
+
+## 첫 native 검증 결과
+
+Truss_02의 대상7개 중 상단01~04 집단을 선택했다. 한 사이클에서01~05의5개가
+native joint break로 분리됐다. 집단 밖05도 대상 열매다. 남은 대상07/08은2개라
+최소3개 조건으로 종료했고, 대상 밖09/10/11은 모두 붙어 남았다.
+54sim초/152.656실행loop초(0.354배속), 저장12.428초. 준비·계획·사후 검사는 별도다.
+초기 상태 및 실제 로봇 자기충돌 검사PASS, 중단 없음. 한 장면 검증이며 포집은 미검증.
+관련 전체 offline 자동검사773개 PASS. 원자료에는 초기 테스트 fixture 누락 실패와
+수정 후 통과 로그를 함께 보존했다. 검증 요약은
+`validation/harvest_group_policy_20261011.json`.

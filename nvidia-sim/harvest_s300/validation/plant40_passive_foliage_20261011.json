@@ -1,0 +1,78 @@
+{
+  "schema": "plant40-strict-passive-leaf-native-control-review-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/assembly_plant40_neighbor_foliage_v7",
+  "source_manifest_sha256": "80425985e2e9ed4db0b441393ad61cc9e92fd41339ae5ceb82184bc6149b8776",
+  "source_usdc_sha256": "c6c4ba59f7fc43091be3b3dfce95130f8c71af3bc90866327ef0ab40bb78ccc2",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/trials_plant40_neighbor_foliage_v7/plant40_neighbor_foliage_idle120",
+  "completed": false,
+  "stop_reason": "penetration_over_0_5mm",
+  "simulated_s": 0.008333333333333333,
+  "physics_wall_s": 21.997480852529407,
+  "initialization_valid": false,
+  "native_warmup_and_new_break_count": 0,
+  "native_new_break_events": [],
+  "reported_contact_points": 5245,
+  "retained_violation_points": 702,
+  "retained_pair_count": 49,
+  "retained_pair_class_counts": {
+    "active_pedicel \u2194 static_foreign_leaf": 4,
+    "active_leaf \u2194 passive_scoped_foreign_leaf": 588,
+    "active_leaf \u2194 structural_gutter_wire": 15,
+    "active_leaf \u2194 foreign_pedicel": 29,
+    "active_leaf \u2194 foreign_pedicel_trichomes": 8,
+    "active_leaf \u2194 foreign_calyx": 58
+  },
+  "additional_static_foreign_leaf_groups_observed_in_native_first_step": [
+    {
+      "stem": "/World/Greenhouse/Plants/Plant_41/Stem",
+      "group": "CompoundLeaf_01",
+      "exact_intersected_meshes": [
+        "/World/Greenhouse/Plants/Plant_41/Stem/mesh_129"
+      ]
+    }
+  ],
+  "pre_restore_initialization_summary": {
+    "contacts": 10806,
+    "violations": 1549,
+    "new_break_events": []
+  },
+  "source_visual_intersection_review": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/plant40_source_visual_triangle_and_scope_review.json",
+  "geometry_interpretation": "Two source rest/solved visual reviews confirm real leaf/foreignleaf, leaf/wire and postwarmup pedicel/foreignleaf intersections. This does not certify every retained49pair source triangle geometry; unreviewed pairs remain explicit native-contact diagnostics.",
+  "scope_extension": "Authorized v8 included exact11passive leafgroups, then failed with new nativeFruit02warmup break before conditioning/strict/trial; Plant40 branch closed with no further conversion/retry.",
+  "training_eligible": false,
+  "harvest_success": null,
+  "source_visual_geometry_followup": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/plant40_pedicel_source_triangle_review.json",
+    "sha256": "f6473b5d4a5c2c1ede33522337689b97db202f525ba619b7fde46565bb39b099",
+    "conclusion": "Rest source analytic capsule/visuals are clear4.48\u20134.69mm; aftertwoSDKwarmupsteps exact capsule7/source-skinnedvisual38 triangle contacts exist; firstsolved capsule8/visual42 contacts. Genuine changed native physical pose intersects foreignLeaf01; not proxy-only.",
+    "native_cooked_foreign_triangle_verified": false
+  },
+  "full_native_review": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/plant40_passive_leaf_native_control_review.json",
+  "full_native_review_sha256": "2dd58e239c5d0efd41463e522018aef6374273148a7c3dd108edf4c8e5c16e8d",
+  "route_restore_selected_metrics": {
+    "max_position_error_m": 5.654592882819998e-07,
+    "max_orientation_error_rad": 1.859389528042345e-07,
+    "standalone_max_linear_velocity_error_m_s": 0.0,
+    "standalone_max_angular_velocity_error_rad_s": 0.0,
+    "robot_q_max_abs_error": 0.0,
+    "robot_qvel_max_abs_error": 0.0
+  },
+  "active_body_post_warmup_max_displacement_from_authored_rest_m": 0.0214242318705535,
+  "v8_final_followup": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/route_window_native_control/plant40_v8_initialization_failure_review.json",
+    "sha256": "4960677f7420322b97b20fdb3a5750210a1adff8767452f12d3766827893cf41",
+    "source_usdc_sha256": "68f48e724dcd0f809d91125382f55ecf4a843e4b009c5d17bd31a15318e3db43",
+    "native_warmup_break_events": [
+      {
+        "t": 0.0,
+        "phase": "idle",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02"
+      }
+    ],
+    "conditioning_started": false,
+    "trial_clock_started": false,
+    "canonical_conditioned_start": false,
+    "branch_closed": true,
+    "harvest_credit": 0
+  }
+}

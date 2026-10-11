@@ -1,0 +1,93 @@
+{
+  "schema": "s300-last-fruit-late-sway-cpu-validation-v2",
+  "new_helper": "last_fruit_grasp_sway.py",
+  "opt_in_default": null,
+  "tests": {
+    "focused": 24,
+    "new_sway": 8,
+    "failures": 0
+  },
+  "actual_composed_robot": {
+    "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+    "source_completed_boundary_s": 158.0,
+    "fixed_lift_m": 0.027236158450818698,
+    "command_fk_proofs": [
+      {
+        "name": "close",
+        "duration_s": 6.0,
+        "sample_count": 721,
+        "commanded_waypoint_count": 161,
+        "max_position_error_m": 1.2993095951264203e-07,
+        "max_orientation_error_rad": 7.104571453712556e-08,
+        "cad_x_offset_range_m": [
+          -0.0014988435747974964,
+          0.0014983603225719514
+        ],
+        "segment_joint_velocity_upper_bound_m_or_rad_s": [
+          0.0,
+          0.0879153851446901,
+          0.04812607487982401,
+          0.01273144814048166,
+          0.0354098459702179,
+          0.08791816225311777,
+          1.0649188197930926e-07
+        ]
+      },
+      {
+        "name": "cycle_reclose",
+        "duration_s": 6.0,
+        "sample_count": 721,
+        "commanded_waypoint_count": 161,
+        "max_position_error_m": 1.2993095951264203e-07,
+        "max_orientation_error_rad": 7.104571453712556e-08,
+        "cad_x_offset_range_m": [
+          -0.0014988435747974964,
+          0.0014983603225719514
+        ],
+        "segment_joint_velocity_upper_bound_m_or_rad_s": [
+          0.0,
+          0.0879153851446901,
+          0.04812607487982401,
+          0.01273144814048166,
+          0.0354098459702179,
+          0.08791816225311777,
+          1.0649188197930926e-07
+        ]
+      }
+    ]
+  },
+  "waveform": {
+    "inactive_coordinate_interval": [
+      0,
+      0.75
+    ],
+    "active_coordinate_interval": [
+      0.75,
+      1
+    ],
+    "amplitude_mm": 1.5,
+    "waypoints": 161,
+    "positive_peak_s": 0.8125,
+    "negative_peak_s": 0.9375,
+    "old_phase_sine_replaced": true
+  },
+  "full_nominal_self120": {
+    "passed": true,
+    "complete": true,
+    "samples": 6260,
+    "hz": 120,
+    "input_sha256": "07f9752c364fbaf262db1467819cc06dac0cb85a8dd541a67dbe255e651c1a6e",
+    "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f"
+  },
+  "planning_clearance_m": 0.002,
+  "commands_unchanged_except_close_and_reclose_arm_q": true,
+  "duration_jaw_belt_sequences_unchanged": true,
+  "no_native_physics": true,
+  "environment_and_native_tracking": "unverified; required before native success claim",
+  "source_current_native_trial_uses_helper": false,
+  "validation_folder": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/last_fruit_sway_late_actual_plan_cpu",
+  "helper_sha256": "3362418cd55e42215d2c58835c1ebe9e4f0ae6a0ae4821602fbd2d3b9b64d003",
+  "test_sha256": "55a0ef3ad6e787f8031e34f920fb57b927f77f03eb71a6fd808bf084ed692c37",
+  "training_eligible": false,
+  "harvest_success": null
+}

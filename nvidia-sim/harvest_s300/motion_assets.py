@@ -355,7 +355,15 @@ def build_plant(stage, plant_path, report, output):
                          deformation='spring-linked rods, not calibrated continuum',breakage='native breakable fixed joints, original 3N/.08Nm thresholds')
 
 
-def build(scene, output, plant=22):
+def select_build_target(fruits,target=None):
+    """Keep the existing default or choose one exact active fruit identity."""
+    name='Truss_02_Fruit_02' if target is None else target
+    choices=[f for f in fruits if f['name']==name]
+    if len(choices)!=1:raise ValueError('Target must match exactly one existing active fruit: '+str(name))
+    return choices[0]
+
+
+def build(scene, output, plant=22,target=None):
     source_stage=Usd.Stage.Open(str(scene.resolve()))
     require_motion_units(source_stage)
     output.mkdir(parents=True,exist_ok=False)
@@ -376,7 +384,7 @@ def build(scene, output, plant=22):
     build_plant(s,f'/World/Greenhouse/Plants/Plant_{plant:02d}',report,output)
     # Original stable diagnostic rate; no reduction in plant segmentation or collision coverage.
     attr(s.GetPrimAtPath('/World/PhysicsScene'),'physxScene:timeStepsPerSecond',Sdf.ValueTypeNames.UInt,240)
-    target=next(x for x in report['plant']['fruits'] if x['name']=='Truss_02_Fruit_02')
+    target=select_build_target(report['plant']['fruits'],target)
     c=np.array(target['center'])
     camera(s,'/World/HarvestCloseCamera',tuple(c+[.42,-.42,.23]),tuple(c))
     report['target']=target
@@ -571,15 +579,14 @@ if __name__=='__main__':
     p.add_argument('--ready-distance',type=float,default=.30)
     p.add_argument('--ready-yaw',type=float,default=30.)
     p.add_argument('--ready-seed',type=int,default=-1,help='-1 searches IK branches with self-collision screening; 0..31 selects one checked seed')
-    p.add_argument('--target',help='Existing active fruit name, for the ready revision only')
+    p.add_argument('--target',help='Exact active fruit name for the base build or ready revision')
     p.add_argument('--grasp-fruits',nargs='+',help='Existing fruit names whose centroid defines the grasp aim; plant is unchanged')
     p.add_argument('--grasp-height-offset-m',type=float,default=0.,help='Explicit aim height offset, not a physical state correction')
     p.add_argument('--belt-tread-mm',type=float,help='Separate hardware prototype: add visible/colliding inner belt tread; original assembly unchanged')
     a=p.parse_args()
-    if a.target and not a.horizontal_ready_revision:p.error('--target requires --horizontal-ready-revision')
     if a.grasp_fruits and not a.horizontal_ready_revision:p.error('--grasp-fruits requires --horizontal-ready-revision')
     if a.grasp_height_offset_m and not a.grasp_fruits:p.error('Height offset requires --grasp-fruits')
     if a.belt_tread_mm is not None and (a.horizontal_ready_revision or a.target or a.grasp_fruits):p.error('Tread prototype is a separate assembly revision')
     if a.belt_tread_mm is not None:revise_belt_tread(a.scene,a.output,a.belt_tread_mm)
     elif a.horizontal_ready_revision:revise_for_horizontal_ready(a.scene,a.output,a.ready_distance,a.ready_yaw,a.ready_seed,a.target,a.grasp_fruits,a.grasp_height_offset_m)
-    else:build(a.scene,a.output,a.plant)
+    else:build(a.scene,a.output,a.plant,a.target)

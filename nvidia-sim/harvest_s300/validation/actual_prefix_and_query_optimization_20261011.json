@@ -1,0 +1,61 @@
+{
+  "schema": "actual-prefix-and-query-optimization-validation-v1",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery",
+  "evidence": [
+    {
+      "file": "passive_chassis_scope_common_prefix_comparison.json",
+      "sha256": "22e825c91adfaebcdff8a8ccfef730aa2a65dde1ee3f68b5e4a989124f439e75"
+    },
+    {
+      "file": "actual_self_audit_exact_repeat_assessment.json",
+      "sha256": "3fdbcc63fb33e31903affc5d1ed2b89221a29ce8371928fb1899497922175250"
+    },
+    {
+      "file": "actual_self_audit_body_broadphase_proposal.json",
+      "sha256": "674ca2cd1556d6267aab4f8fe2a5fb5820225f53b5837e5d021d63a8c538daa2"
+    },
+    {
+      "file": "actual_self_audit_staged_axis_proposal.json",
+      "sha256": "8f9a36882672a7523fa998946734a932a8cb24ba17953dfffd29d552006f7e77"
+    }
+  ],
+  "prefix": {
+    "verified": true,
+    "stop_time_s": 130.61666666666667,
+    "samples": 15675,
+    "body_poses_exact": true,
+    "maximum_position_error_m": 0.0,
+    "commands_exact": true,
+    "native_contact_points": 1148923,
+    "native_contacts_exact": true,
+    "maximum_impulse_error_ns": 0.0,
+    "maximum_recorded_point_force_error_n": 0.0,
+    "native_breaks_exact": true,
+    "break_count": 8,
+    "same_native_scene_sha256": true,
+    "physical_settings_exact": true,
+    "scope_change": "Only post-native-release passive chassis impact diagnostic inventory; raw contacts and physical response unchanged"
+  },
+  "actual_pose_repeat": {
+    "samples": 31441,
+    "body_count": 15,
+    "exact_repeat_samples": 6,
+    "fraction": 0.0001908336248847047,
+    "memo_recommended": false,
+    "q_only_or_rounded_memo_authorized": false
+  },
+  "staged_axis_proposal": {
+    "all_saved_actual_and_positive_controls_passed": true,
+    "source_shapes": 793,
+    "checked_pairs": 172191,
+    "screening_queries_per_order": 250,
+    "xyz_screen_speed_ratio": 3.1330379889710236,
+    "y_x_z_screen_speed_ratio": 3.4331769374840277,
+    "production_implemented": false,
+    "interpretation": "Concurrent read-only CPU query microbenchmark; not isolated whole-simulator RTF. Candidate pair order, geometry, clearance, timestamps and FCL unchanged."
+  },
+  "physics_rerun": false,
+  "training_eligible": false,
+  "collection_verified": false,
+  "whole_truss_success_claimed": false
+}

@@ -1,0 +1,113 @@
+{
+  "schema": "measured-ready-physical-connector-validation-v1",
+  "training_eligible": false,
+  "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_direct_harvest/whole_truss_direct_refined60/cycle_checkpoints/001",
+  "actual_fk_evidence": {
+    "checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_direct_harvest/whole_truss_direct_refined60/cycle_checkpoints/001",
+    "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_refined",
+    "time_s": 106.0,
+    "actual_q": [
+      0.16892126202583313,
+      1.341917634010315,
+      0.21900872886180878,
+      2.4946460723876953,
+      0.4286003112792969,
+      2.9836559295654297,
+      3.140848159790039
+    ],
+    "canonical_q": [
+      0.1772361584508187,
+      1.34186025440419,
+      0.21832403128775776,
+      2.494406530138995,
+      0.42814954021974044,
+      2.983476174350552,
+      3.140876281585933
+    ],
+    "joint_delta": [
+      -0.008314896424985563,
+      5.7379606124952076e-05,
+      0.0006846975740510131,
+      0.00023954224870026408,
+      0.0004507710595564318,
+      0.00017975521487789692,
+      -2.812179589373187e-05
+    ],
+    "actual_fk": [
+      [
+        0.07088229733903663,
+        -0.9974846658896293,
+        0.00020307386599751446,
+        -0.1362793447958079
+      ],
+      [
+        0.997483705902998,
+        0.07088251165871698,
+        0.00138780365092907,
+        1.5046576676721628
+      ],
+      [
+        -0.0013987072467416034,
+        0.00010419216139388188,
+        0.9999990163805319,
+        0.9627744126970246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "canonical_fk": [
+      [
+        0.07076045051480494,
+        -0.9974933314655342,
+        -0.00011101680894945927,
+        -0.1362299478715913
+      ],
+      [
+        0.9974933375624275,
+        0.07076044865283569,
+        2.0615984170948308e-05,
+        1.5047791535512094
+      ],
+      [
+        -1.270870752283472e-05,
+        -0.00011219732361225109,
+        0.9999999936251248,
+        0.9712374606917975
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "position_error_xyz_m": [
+      -4.939692421659925e-05,
+      -0.00012148587904659003,
+      -0.008463047994772932
+    ],
+    "position_error_m": 0.008464064049660774,
+    "orientation_error_rad": 0.0014081169918481802,
+    "up_axis_error": 0.0014025829515898482,
+    "source_read_only": true
+  },
+  "geometry_only_sparse_aim_file": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/measured_ready_connector/sparse_top_individual_aims.json",
+  "api": "plan_motion(...,allow_measured_ready_start=True)",
+  "default": false,
+  "default_phase_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b",
+  "behavior": "Actual initial q/FK physically connected with sampled IK translation/full SO(3) orientation; fixed horizontal entry preserved",
+  "changes_geometry": false,
+  "changes_initial_state": false,
+  "changes_physics_threshold": false,
+  "collision_certified": false,
+  "native_validation": "pending integration by root",
+  "tests": {
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest test_motion_branch test_motion_ready test_motion_horizontal_entry test_motion_kinematics test_motion_timing test_max_fruit_attempts test_truss_sequence test_row_harvest_targets",
+    "passed": 75,
+    "failed": 0
+  }
+}

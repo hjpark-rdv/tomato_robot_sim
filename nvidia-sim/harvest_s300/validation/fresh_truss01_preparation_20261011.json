@@ -1,0 +1,2560 @@
+{
+  "schema": "s300-fresh-truss01-preparation-bounded-validation-v1",
+  "native_runs": 0,
+  "training_eligible": false,
+  "harvest_success": null,
+  "source_asset": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01",
+  "self_planning_clearance_m": 0.002,
+  "native_penetration_limit_m": 0.0005,
+  "source_geometry_changed": false,
+  "finite_search_failure_is_impossible": false,
+  "screen_results": [
+    {
+      "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_preparation_screen/summary.json",
+      "sha256": "8617f04aec300ee01003a725946cf6622600ce8cff6f3200b29e5fa5a5aebb26",
+      "max_queries": 8,
+      "elapsed_s": 20.639796439558268,
+      "nominal_prefix_pass_count": 0,
+      "source_unchanged": true,
+      "source_code_unchanged": false,
+      "source_code_before": {
+        "screen_fresh_truss_preparation.py": "ea4898fc2590c86f8cfeadbffbcca080d044c9d6b6f0518dc49b836746d47981",
+        "motion_kinematics.py": "771edb0d63d0b97ef5f0db9a4fd6c686b687ee0290c3380b81238d59e19efa61",
+        "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+        "rail_environment_preflight.py": "800c3564ce93f36a330feeaeddd1ce30aa01cd03a7251cdc7c1fde4d7366eb8c"
+      },
+      "source_code_after": {
+        "screen_fresh_truss_preparation.py": "ea4898fc2590c86f8cfeadbffbcca080d044c9d6b6f0518dc49b836746d47981",
+        "motion_kinematics.py": "771edb0d63d0b97ef5f0db9a4fd6c686b687ee0290c3380b81238d59e19efa61",
+        "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+        "rail_environment_preflight.py": "e59f4c2631fe47ab7b53d4a58070f40e2f88a94ddaa12a019349915f15211d65"
+      },
+      "proposals": [
+        {
+          "name": "joint_seed_0",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.4530220106244087,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 60,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.25,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/fixed/part_9",
+                  "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+                  "a_name": "F01_rear_rail_backbone",
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_1",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.5411964394152164,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 71,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.47916666666666663,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link6/collisions/link6/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_2",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.638923516497016,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 80,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.6666666666666666,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_3",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.5094309691339731,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 63,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.3125,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/fixed/part_9",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": "F01_rear_rail_backbone",
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_4",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.4348065499216318,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 58,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.20833333333333331,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/fixed/part_9",
+                  "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+                  "a_name": "F01_rear_rail_backbone",
+                  "b_name": null,
+                  "intersection": false,
+                  "distance_m": 0.001279975275649717,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_5",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.47574582695961,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 62,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.29166666666666663,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/L/part_214",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": "L_C14_rear_drive_cover",
+                  "b_name": null,
+                  "intersection": false,
+                  "distance_m": 0.00034734476287087425,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "cartesian_height_first",
+          "status": "proposal_or_screen_error",
+          "elapsed_s": 8.167754374444485
+        },
+        {
+          "name": "cartesian_direct",
+          "status": "proposal_or_screen_error",
+          "elapsed_s": 3.334610763937235
+        }
+      ]
+    },
+    {
+      "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_turn_normalization_screen/summary.json",
+      "sha256": "7e87e15e3d3b2be61a529c30a3e305dbbcb88749d5d75d779430c5f24982bf69",
+      "max_queries": 6,
+      "elapsed_s": 173.97283450327814,
+      "nominal_prefix_pass_count": 0,
+      "source_unchanged": true,
+      "source_code_unchanged": false,
+      "source_code_before": {
+        "screen_fresh_truss_preparation.py": "0a7a99d33e8b9ffe5363884dcd762ebbca911360c73d99dd94f304892cf9758a",
+        "motion_kinematics.py": "d7b2015db1738dde367361383f5a4e7f14245eade7c428be776a51bc3d533dc7",
+        "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+        "rail_environment_preflight.py": "a5775aa54740dc2fc80bca925e9a8dec6dfa38b17cba6d8b4dc6c023237702a4"
+      },
+      "source_code_after": {
+        "screen_fresh_truss_preparation.py": "0a7a99d33e8b9ffe5363884dcd762ebbca911360c73d99dd94f304892cf9758a",
+        "motion_kinematics.py": "d7b2015db1738dde367361383f5a4e7f14245eade7c428be776a51bc3d533dc7",
+        "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+        "rail_environment_preflight.py": "1b6d234c1e7881cff781e1e88add8259179f2824f1c0a423d7ed93348274e92a"
+      },
+      "proposals": [
+        {
+          "name": "joint_seed_6_raw_lift135",
+          "status": "environment_screen_blocked_or_unknown_8hz",
+          "elapsed_s": 72.90028026886284,
+          "self_8hz": {
+            "passed": true,
+            "complete": true,
+            "samples": 418,
+            "first_blocked": null
+          },
+          "environment_8hz": {
+            "passed": false,
+            "complete": true,
+            "samples": 105,
+            "hard_intersection_sample_pairs": 2098,
+            "first_hard_hit": {
+              "robot_geom": "/World/ActuatedTool/R/part_249",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_183",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.9446548174833924,
+                -0.1894986082934485,
+                0.8825377175066844,
+                0.4600501471648545,
+                0.8829257430325166,
+                1.1530875525990951
+              ],
+              "gap_m": 0.044,
+              "closed_volume_containment": false,
+              "phase": "prepare_joint_branch",
+              "time_s": 7.75,
+              "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          }
+        },
+        {
+          "name": "joint_seed_7_raw_lift135",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.4987846035510302,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 63,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.3125,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/fixed/part_9",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": "F01_rear_rail_backbone",
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_6_canonical_lift135",
+          "status": "environment_screen_blocked_or_unknown_8hz",
+          "elapsed_s": 49.86945840343833,
+          "self_8hz": {
+            "passed": true,
+            "complete": true,
+            "samples": 418,
+            "first_blocked": null
+          },
+          "environment_8hz": {
+            "passed": false,
+            "complete": true,
+            "samples": 105,
+            "hard_intersection_sample_pairs": 1064,
+            "first_hard_hit": {
+              "robot_geom": "/World/ActuatedTool/R/part_244",
+              "environment_geom": "/World/Greenhouse/House/Environment/LongitudinalTrellisWire_002/Mesh",
+              "obstacle_class": "structural_or_unknown_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.44735343769143743,
+                -0.23512619440285648,
+                -0.9425395725324109,
+                -0.15795925438030273,
+                2.730100624198956,
+                3.1414408791177912
+              ],
+              "gap_m": 0.044,
+              "closed_volume_containment": false,
+              "phase": "prepare_joint_branch",
+              "time_s": 9.375,
+              "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          }
+        },
+        {
+          "name": "joint_seed_7_canonical_lift135",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.4643546734005213,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 57,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.1875,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/R/part_336",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": "R_C14_rear_drive_cover",
+                  "b_name": null,
+                  "intersection": false,
+                  "distance_m": 2.4604942973387624e-05,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "joint_seed_6_canonical_lift170",
+          "status": "environment_screen_blocked_or_unknown_8hz",
+          "elapsed_s": 46.620476653799415,
+          "self_8hz": {
+            "passed": true,
+            "complete": true,
+            "samples": 418,
+            "first_blocked": null
+          },
+          "environment_8hz": {
+            "passed": false,
+            "complete": true,
+            "samples": 105,
+            "hard_intersection_sample_pairs": 830,
+            "first_hard_hit": {
+              "robot_geom": "/World/ActuatedTool/fixed/part_63",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_188",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.4119600282869375,
+                -0.19168767267055561,
+                -1.0668953472443765,
+                -0.25416371635783996,
+                2.720075311184913,
+                3.1414653939445527
+              ],
+              "gap_m": 0.044,
+              "closed_volume_containment": false,
+              "phase": "prepare_joint_branch",
+              "time_s": 9.5,
+              "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          }
+        },
+        {
+          "name": "joint_seed_7_canonical_lift170",
+          "status": "self_screen_blocked_8hz",
+          "elapsed_s": 1.5138978231698275,
+          "self_8hz": {
+            "passed": false,
+            "complete": false,
+            "samples": 56,
+            "first_blocked": {
+              "phase": "prepare_joint_branch",
+              "clear": false,
+              "first_hit_fraction": 0.16666666666666666,
+              "hits": [
+                {
+                  "a": "/World/ActuatedTool/L/part_193",
+                  "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                  "a_name": "L_C11_rear_motor_bracket",
+                  "b_name": null,
+                  "intersection": false,
+                  "distance_m": 0.0008012889898054437,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "endpoint_report": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_endpoint_probe.json",
+    "sha256": "777e35423e52144eb33a06bf4d541aeec27e2a9c61976b44a5910c82e9882deb",
+    "environment_executed_sha256": "265175dc56a23c2b30969ea24238a873381f1dc5331de51e22f189d927e75320",
+    "states": [
+      {
+        "proposal": "joint_seed_6_canonical_lift135",
+        "state": "prepstart44",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": true,
+        "hard_hits": []
+      },
+      {
+        "proposal": "joint_seed_6_canonical_lift135",
+        "state": "staging44",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": true,
+        "hard_hits": []
+      },
+      {
+        "proposal": "joint_seed_6_canonical_lift135",
+        "state": "staging96",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": false,
+        "hard_hits": [
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_193",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_193",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_209",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_209",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_214",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_214",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.042236158450818684,
+              0.08649493818022397,
+              -0.26823509562216896,
+              -2.266876642843821,
+              -0.6064075281789917,
+              2.627884838951723,
+              3.1416688915822286
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          }
+        ]
+      },
+      {
+        "proposal": "joint_seed_6_canonical_lift170",
+        "state": "prepstart44",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": true,
+        "hard_hits": []
+      },
+      {
+        "proposal": "joint_seed_6_canonical_lift170",
+        "state": "staging44",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": true,
+        "hard_hits": []
+      },
+      {
+        "proposal": "joint_seed_6_canonical_lift170",
+        "state": "staging96",
+        "self_clear": true,
+        "environment_complete": true,
+        "environment_clear": false,
+        "hard_hits": [
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_193",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_193",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_209",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_209",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_214",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          },
+          {
+            "robot_geom": "/World/ActuatedTool/L/part_214",
+            "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+            "obstacle_class": "static_leaf_obstacle",
+            "rail_position_m": 0.0,
+            "command_q": [
+              0.0072361584508186805,
+              0.08649495217093232,
+              -0.18458360630673754,
+              -2.238408437517875,
+              -0.7185238196852805,
+              2.6278850143845,
+              3.1416718458493804
+            ],
+            "gap_m": 0.096,
+            "closed_volume_containment": false,
+            "phase": "staging96",
+            "time_s": null,
+            "timestamp_scope": "Exploratory state; no motion timestamp",
+            "representation": "exact_source_triangle_surface_and_closed_volume",
+            "native_cooking_verified": false
+          }
+        ]
+      }
+    ]
+  },
+  "interpretation": "The existing100mmfull96openinggoal is obstructed bystaticPlant20leafs.250mmretractclearsforeigngeometry. ExistingIKseed1and7,bothfixedlift135/170 give4full96openSELF+ENVclearstaginggoals; existingopen→approach→beltcycle→release→withdraw suffix120HzSELFclear3190samples. Positiveelbowstagingavoidsseed6+2.340→−2.267longelbowsweep. Noapproachconnectionnoractualharvestcertificate; collision-awareconnection+complete120Hzpreflightandnativevalidationstillrequired.",
+  "screen_environment_provenance": {
+    "executed_source_sha256": "a5775aa54740dc2fc80bca925e9a8dec6dfa38b17cba6d8b4dc6c023237702a4",
+    "archive": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_environment_source_snapshots/a5775aa54740dc2fc80bca925e9a8dec6dfa38b17cba6d8b4dc6c023237702a4.py",
+    "origin": "Sibling recovered immutable800c snapshot plus two metadata-only edits; SHA exactly matches all3ENV report import-time source hashes. Original reports unmodified."
+  },
+  "fresh_truss01_staging_distance_probe": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_distance_probe/summary.json",
+    "sha256": "91ce795f2336f836c5b3eaaa574854b484c95e3804083a028de1ae8b46292467",
+    "source_unchanged": true,
+    "source_code_unchanged": true,
+    "environment_import_sha256": "265175dc56a23c2b30969ea24238a873381f1dc5331de51e22f189d927e75320",
+    "source_code_before": {
+      "probe_fresh_staging_distance.py": "d43843b8e918475ccaf0c302bf40684a09e98ba6c98b19901df460639f5de56e",
+      "motion_kinematics.py": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+      "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+      "rail_environment_preflight.py": "265175dc56a23c2b30969ea24238a873381f1dc5331de51e22f189d927e75320"
+    },
+    "source_code_after": {
+      "probe_fresh_staging_distance.py": "d43843b8e918475ccaf0c302bf40684a09e98ba6c98b19901df460639f5de56e",
+      "motion_kinematics.py": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+      "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+      "rail_environment_preflight.py": "265175dc56a23c2b30969ea24238a873381f1dc5331de51e22f189d927e75320"
+    },
+    "proposals": [
+      {
+        "name": "retract150_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 3.8725347463041544,
+        "approach_distance_m": 0.15,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.2221508021242083,
+          -0.9177005811286162,
+          -2.2444086540579398,
+          3.162033148296198,
+          3.5196518729508766,
+          -7.130347771881189e-05
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": false,
+          "complete": false,
+          "samples": 75,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.5625,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 7,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 102,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_188",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.2221508021242083,
+                -0.9177005811286162,
+                -2.2444086540579398,
+                3.162033148296198,
+                3.5196518729508766,
+                -7.130347771881189e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "retract150_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.8829542882740498,
+        "approach_distance_m": 0.15,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.22215033595912223,
+          -0.8109356008372546,
+          -2.2760406303653724,
+          3.0868978967894503,
+          3.519653424784964,
+          -7.332769599126707e-05
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": false,
+          "complete": false,
+          "samples": 75,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.5625,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 7,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 102,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_188",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.22215033595912223,
+                -0.8109356008372546,
+                -2.2760406303653724,
+                3.0868978967894503,
+                3.519653424784964,
+                -7.332769599126707e-05
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "retract200_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 3.258241981267929,
+        "approach_distance_m": 0.2,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 6,
+        "endpoint_self_clear": true,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.36677213757882554,
+          -0.2583559926367116,
+          -2.2817254501216064,
+          -0.6011602944430671,
+          2.9081572205711073,
+          3.1419465948282546
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 418,
+          "first_blocked": null
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 5,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.36677213757882554,
+                -0.2583559926367116,
+                -2.2817254501216064,
+                -0.6011602944430671,
+                2.9081572205711073,
+                3.1419465948282546
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.36677213757882554,
+                -0.2583559926367116,
+                -2.2817254501216064,
+                -0.6011602944430671,
+                2.9081572205711073,
+                3.1419465948282546
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.36677213757882554,
+                -0.2583559926367116,
+                -2.2817254501216064,
+                -0.6011602944430671,
+                2.9081572205711073,
+                3.1419465948282546
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.36677213757882554,
+                -0.2583559926367116,
+                -2.2817254501216064,
+                -0.6011602944430671,
+                2.9081572205711073,
+                3.1419465948282546
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.36677213757882554,
+                -0.2583559926367116,
+                -2.2817254501216064,
+                -0.6011602944430671,
+                2.9081572205711073,
+                3.1419465948282546
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "retract200_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 2.030600791797042,
+        "approach_distance_m": 0.2,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.36677446606508374,
+          -0.8110876226858706,
+          -2.2736068758284556,
+          3.084526546469761,
+          3.3750302628632425,
+          -0.00016389815774167448
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": false,
+          "complete": false,
+          "samples": 74,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.5416666666666666,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": null,
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0018285353947498496,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 5,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.36677446606508374,
+                -0.8110876226858706,
+                -2.2736068758284556,
+                3.084526546469761,
+                3.3750302628632425,
+                -0.00016389815774167448
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_193",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.36677446606508374,
+                -0.8110876226858706,
+                -2.2736068758284556,
+                3.084526546469761,
+                3.3750302628632425,
+                -0.00016389815774167448
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.36677446606508374,
+                -0.8110876226858706,
+                -2.2736068758284556,
+                3.084526546469761,
+                3.3750302628632425,
+                -0.00016389815774167448
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.36677446606508374,
+                -0.8110876226858706,
+                -2.2736068758284556,
+                3.084526546469761,
+                3.3750302628632425,
+                -0.00016389815774167448
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.36677446606508374,
+                -0.8110876226858706,
+                -2.2736068758284556,
+                3.084526546469761,
+                3.3750302628632425,
+                -0.00016389815774167448
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 2.312909761443734,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.5144198772561653,
+          -0.9174130527392979,
+          -2.220899726945298,
+          3.137343866771143,
+          3.227384980728543,
+          6.282219433682225
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": false,
+          "complete": false,
+          "samples": 64,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.3333333333333333,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/R/part_336",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": "R_C14_rear_drive_cover",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0018368020439236,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.855502923950553,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.5144197442252267,
+          -0.812744261376998,
+          -2.251930787667065,
+          3.0636907009623604,
+          3.2273861258836583,
+          6.282204115774946
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": false,
+          "complete": false,
+          "samples": 62,
+          "first_blocked": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.29166666666666663,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/R/part_336",
+                "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+                "a_name": "R_C14_rear_drive_cover",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0018086538039810622,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          }
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "retract70_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 3.320954954251647,
+        "approach_distance_m": 0.07,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 6,
+        "endpoint_self_clear": true,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.011267235060636621,
+          -0.2811157028435135,
+          -2.247375567777618,
+          -0.6130452095927219,
+          2.5526583320011045,
+          3.1416516336584084
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 418,
+          "first_blocked": null
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 6,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 142,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_117",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/R/part_331",
+              "environment_geom": "/World/ElasticTarget/Leaf_V9_Additional_CompoundLeaf_07/Appendage_220_0",
+              "obstacle_class": "structural_or_unknown_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "source_part_convex_envelope_native_cooking_unverified",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L_belt/part_163",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.042236158450818684,
+                0.011267235060636621,
+                -0.2811157028435135,
+                -2.247375567777618,
+                -0.6130452095927219,
+                2.5526583320011045,
+                3.1416516336584084
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "retract70_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 3.2501889411360025,
+        "approach_distance_m": 0.07,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 6,
+        "endpoint_self_clear": true,
+        "coarse_self_and_endpoint_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.011267255785360425,
+          -0.19909957612154003,
+          -2.2193404290465577,
+          -0.723093667596478,
+          2.552658497132298,
+          3.1416539595265602
+        ],
+        "whole_manipulation_self_8hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 418,
+          "first_blocked": null
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": false,
+          "hard_intersection_pairs": 6,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 141,
+          "hard_hits": [
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_117",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_209",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L/part_214",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/R/part_331",
+              "environment_geom": "/World/ElasticTarget/Leaf_V9_Additional_CompoundLeaf_07/Appendage_220_0",
+              "obstacle_class": "structural_or_unknown_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "source_part_convex_envelope_native_cooking_unverified",
+              "native_cooking_verified": false
+            },
+            {
+              "robot_geom": "/World/ActuatedTool/L_belt/part_163",
+              "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+              "obstacle_class": "static_leaf_obstacle",
+              "rail_position_m": 0.0,
+              "command_q": [
+                0.0072361584508186805,
+                0.011267255785360425,
+                -0.19909957612154003,
+                -2.2193404290465577,
+                -0.723093667596478,
+                2.552658497132298,
+                3.1416539595265602
+              ],
+              "gap_m": 0.096,
+              "closed_volume_containment": false,
+              "phase": "staging_full_open96",
+              "time_s": null,
+              "timestamp_scope": "Exploratory state; no motion timestamp",
+              "representation": "exact_source_triangle_surface_and_closed_volume",
+              "native_cooking_verified": false
+            }
+          ]
+        }
+      }
+    ],
+    "elapsed_s": 21.870055977255106,
+    "endpoint_clear_count": 0
+  },
+  "fresh_truss01_staging_branch_probe": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/summary.json",
+    "sha256": "510a8266fb395a0fe6d2f56661c0193aa64c374a263c6c3fbfd908fad6f1f6d1",
+    "source_unchanged": true,
+    "source_code_unchanged": false,
+    "environment_import_sha256": "a89201ca1ffde7fe0940d580772d4a1e1655c9effc0c5a30d1aae5d78107e7a9",
+    "source_code_before": {
+      "probe_fresh_staging_branches.py": "d92e43c3862b2191b37398d1dabca18095c406f2b2d98434a1fb9dd1630320d5",
+      "motion_kinematics.py": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+      "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+      "rail_environment_preflight.py": "a89201ca1ffde7fe0940d580772d4a1e1655c9effc0c5a30d1aae5d78107e7a9"
+    },
+    "source_code_after": {
+      "probe_fresh_staging_branches.py": "d92e43c3862b2191b37398d1dabca18095c406f2b2d98434a1fb9dd1630320d5",
+      "motion_kinematics.py": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+      "motion_self_collision.py": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+      "rail_environment_preflight.py": "9a9c9f4bfd49c1ef0f49e2023d77678479b3b17975bb71e3b7b6ff1c78ae77c0"
+    },
+    "proposals": [
+      {
+        "name": "seed0_retract250_lift135",
+        "status": "ik_or_query_error",
+        "elapsed_s": 1.166779225692153,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 0,
+        "error": "RuntimeError: Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+      },
+      {
+        "name": "seed1_retract250_lift135",
+        "status": "clear_endpoint_connection_unproven",
+        "elapsed_s": 12.486269246786833,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 1,
+        "endpoint_self_clear": true,
+        "endpoint_and_manipulation_self_clear": true,
+        "staging_q": [
+          0.042236158450818684,
+          4.287530589162505,
+          0.2730285545062285,
+          2.2595567824392297,
+          0.6089446982317124,
+          0.5457212604703368,
+          3.1416590760727634
+        ],
+        "suffix_self_120hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 3190,
+          "first_blocked": null,
+          "scope": "Existing staging44→96 opening, approach, belt cycle, release and withdrawal; unsafe direct preparation/return excluded for OMPL replacement"
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        }
+      },
+      {
+        "name": "seed2_retract250_lift135",
+        "status": "ik_or_query_error",
+        "elapsed_s": 1.150632256641984,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 2,
+        "error": "RuntimeError: Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+      },
+      {
+        "name": "seed3_retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.566774832084775,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 3,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          4.287523619804471,
+          2.3618577604600968,
+          -2.2595424521851655,
+          3.0392162499373074,
+          0.5457260493788704,
+          3.1416570751352824
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed4_retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.48547750338912,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 4,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.514417676168443,
+          -2.9757148149025716,
+          2.2208090915487575,
+          0.7542452612571277,
+          3.2273911162593816,
+          -0.0006583250586395707
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed5_retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.483607517555356,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 5,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.5144231248087352,
+          -2.9757066713730733,
+          2.2207995735110067,
+          0.7542387117474552,
+          3.227372139749224,
+          -0.0006662777805909957
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed6_retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.4906462766230106,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.5144198772561653,
+          -0.9174130527392979,
+          -2.220899726945298,
+          3.137343866771143,
+          3.227384980728543,
+          6.282219433682225
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed7_retract250_lift135",
+        "status": "clear_endpoint_connection_unproven",
+        "elapsed_s": 12.304854420945048,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 7,
+        "endpoint_self_clear": true,
+        "endpoint_and_manipulation_self_clear": true,
+        "staging_q": [
+          0.042236158450818684,
+          0.5144373496442673,
+          -0.2736891587294197,
+          -2.2580344032662496,
+          -0.6147137395419504,
+          3.0558144715176305,
+          3.1367529920600425
+        ],
+        "suffix_self_120hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 3190,
+          "first_blocked": null,
+          "scope": "Existing staging44→96 opening, approach, belt cycle, release and withdrawal; unsafe direct preparation/return excluded for OMPL replacement"
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        }
+      },
+      {
+        "name": "seed8_retract250_lift135",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.4954303000122309,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.135,
+        "seed_index": 8,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.042236158450818684,
+          0.5144203467909448,
+          -2.361727298637889,
+          2.2591303810260697,
+          3.2428387642954926,
+          3.0557899547401375,
+          3.140247272234229
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed0_retract250_lift170",
+        "status": "ik_or_query_error",
+        "elapsed_s": 1.1572231333702803,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 0,
+        "error": "RuntimeError: Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+      },
+      {
+        "name": "seed1_retract250_lift170",
+        "status": "clear_endpoint_connection_unproven",
+        "elapsed_s": 11.547325296327472,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 1,
+        "endpoint_self_clear": true,
+        "endpoint_and_manipulation_self_clear": true,
+        "staging_q": [
+          0.0072361584508186805,
+          4.287530539617357,
+          0.19000231433395826,
+          2.2312472124600364,
+          0.7202808039590318,
+          0.5457212831081945,
+          3.1416588191342125
+        ],
+        "suffix_self_120hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 3190,
+          "first_blocked": null,
+          "scope": "Existing staging44→96 opening, approach, belt cycle, release and withdrawal; unsafe direct preparation/return excluded for OMPL replacement"
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        }
+      },
+      {
+        "name": "seed2_retract250_lift170",
+        "status": "ik_or_query_error",
+        "elapsed_s": 1.1906689442694187,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 2,
+        "error": "RuntimeError: Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed"
+      },
+      {
+        "name": "seed3_retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.5437353271991014,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 3,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          4.287523560332294,
+          2.256572435417116,
+          -2.231233248098428,
+          3.1161908635906,
+          0.5457261509239437,
+          3.141658353885444
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed4_retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.5341009721159935,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 4,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.5144174222350106,
+          -2.895570456017706,
+          2.25183040754609,
+          0.6430951389771089,
+          3.227392279244533,
+          -0.0006427757058467613
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed5_retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.5503504946827888,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 5,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.5144228710799252,
+          -2.895563047505606,
+          2.251820599828693,
+          0.6430896140590885,
+          3.2273733021038966,
+          -0.0006507285132947391
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed6_retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.571159552782774,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 6,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.5144197442252267,
+          -0.812744261376998,
+          -2.251930787667065,
+          3.0636907009623604,
+          3.2273861258836583,
+          6.282204115774946
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      },
+      {
+        "name": "seed7_retract250_lift170",
+        "status": "clear_endpoint_connection_unproven",
+        "elapsed_s": 12.508251598104835,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 7,
+        "endpoint_self_clear": true,
+        "endpoint_and_manipulation_self_clear": true,
+        "staging_q": [
+          0.0072361584508186805,
+          0.514436119851495,
+          -0.1907851509490908,
+          -2.229782975533643,
+          -0.7256989110093937,
+          3.0558111438547817,
+          3.1369227514723175
+        ],
+        "suffix_self_120hz": {
+          "passed": true,
+          "complete": true,
+          "samples": 3190,
+          "first_blocked": null,
+          "scope": "Existing staging44→96 opening, approach, belt cycle, release and withdrawal; unsafe direct preparation/return excluded for OMPL replacement"
+        },
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        }
+      },
+      {
+        "name": "seed8_retract250_lift170",
+        "status": "blocked_endpoint",
+        "elapsed_s": 1.4918488953262568,
+        "approach_distance_m": 0.25,
+        "ready_lift_offset_m": -0.17,
+        "seed_index": 8,
+        "endpoint_self_clear": false,
+        "staging_q": [
+          0.0072361584508186805,
+          0.5144195371439788,
+          -2.256490691262512,
+          2.230862819573943,
+          3.1659925305869443,
+          3.0557879197977003,
+          3.1403697047216306
+        ],
+        "endpoint_environment": {
+          "complete": true,
+          "hard_clear": true,
+          "hard_intersection_pairs": 0,
+          "diagnostic_intersection_pairs": 0,
+          "distance_queries": 117,
+          "hard_hits": []
+        },
+        "endpoint_self_first_hit": {
+          "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+          "a_name": null,
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      }
+    ],
+    "elapsed_s": 68.82731202803552,
+    "endpoint_clear_count": 4
+  },
+  "unchanged_source_approach_representatives": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_original_approach_representatives/report.json",
+    "sha256": "d7c128cb84c0214c1c939234f5101fe37f62661a643866dd2397b2872e947a24",
+    "environment_executed_sha256": "9a9c9f4bfd49c1ef0f49e2023d77678479b3b17975bb71e3b7b6ff1c78ae77c0",
+    "source_unchanged": true,
+    "native_runs": 0,
+    "rows": [
+      {
+        "remaining_m": 0.1,
+        "self_clear": true,
+        "environment_complete": true,
+        "hard_pairs": 6,
+        "hard_classes": [
+          "static_leaf_obstacle"
+        ],
+        "hard_objects": [
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132"
+        ],
+        "diagnostic_pairs": 0
+      },
+      {
+        "remaining_m": 0.05,
+        "self_clear": true,
+        "environment_complete": true,
+        "hard_pairs": 5,
+        "hard_classes": [
+          "static_leaf_obstacle"
+        ],
+        "hard_objects": [
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128"
+        ],
+        "diagnostic_pairs": 3
+      },
+      {
+        "remaining_m": 0.0,
+        "self_clear": true,
+        "environment_complete": true,
+        "hard_pairs": 9,
+        "hard_classes": [
+          "static_leaf_obstacle"
+        ],
+        "hard_objects": [
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+          "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128"
+        ],
+        "diagnostic_pairs": 18
+      }
+    ],
+    "limitation": "Only100/50/0mm states; fullpath/newnative remains required. Allhardhits atthese3states lie inexactPlant20Leaf01/02 source meshes127/128/131/132. This doesnotauthorize rigidleaf contact or waive.5mm validity; separate declaredsoftleaf physicalhypothesis maybetested."
+  },
+  "latest_implementation_sha256": {
+    "motion_kinematics.py": "9d5497cccea467d4ba61e06631a1a20dc6412ff6aa5d8f538668fbbc2f4ade15",
+    "screen_fresh_truss_preparation.py": "0a7a99d33e8b9ffe5363884dcd762ebbca911360c73d99dd94f304892cf9758a",
+    "probe_fresh_staging_distance.py": "d43843b8e918475ccaf0c302bf40684a09e98ba6c98b19901df460639f5de56e",
+    "probe_fresh_staging_branches.py": "d92e43c3862b2191b37398d1dabca18095c406f2b2d98434a1fb9dd1630320d5",
+    "test_entry_retract.py": "459054b52cd7406f60317b4cc29b1d7112ce7cd52ef89e047b8caaa60e7a2f6a",
+    "test_joint_turn_normalization.py": "f358979fae65f0d31958f25f218a2a0867f8cf415b273dba148c71d017e42d57",
+    "test_screen_fresh_truss_preparation.py": "675bfc3a71e1373931acf6758ded71a5cc5254ee3f7dde99d454646c78d888aa"
+  }
+}

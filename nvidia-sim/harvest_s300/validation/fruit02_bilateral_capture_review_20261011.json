@@ -1,0 +1,386 @@
+{
+  "schema": "fruit02-bilateral-jaw-obstruction-review-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_last_fruit02_height_compensated120/last_fruit02_height_compensated120",
+  "read_only_analysis": true,
+  "physics_reruns": 0,
+  "identity": {
+    "exact_fruit_name": "Truss_02_Fruit_02",
+    "target_path": "/World/ElasticTarget/Truss_02_Fruit_02",
+    "pedicel_body": "/World/ElasticTarget/Truss_02_Pedicel_distal_02_0",
+    "target_joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02",
+    "selected_manifest_target_name": "Truss_02_Fruit_11"
+  },
+  "exact_target_result": {
+    "native_target_joint_broken": false,
+    "native_new_target_breaks": [],
+    "fruit_rotation_relative_to_pedicel_max_deg": 3.5459043553955985,
+    "joint_anchor_gap_max_mm": 0.010275669319453637,
+    "actual_fruit_center_displacement_max_mm": 34.97039031982422,
+    "actual_self_fcl": true,
+    "timestamp_max_gap_s": 0.008333333333339965
+  },
+  "jaw_actual_by_phase": {
+    "close": {
+      "jaw_actual_min_mm": 53.12953186035156,
+      "jaw_actual_max_mm": 96.00001525878906,
+      "fruit_center_tool_local_final_mm": [
+        -13.240811759408036,
+        98.37868391742333,
+        32.30648778331619
+      ]
+    },
+    "cycle_reclose": {
+      "jaw_actual_min_mm": 53.04145812988281,
+      "jaw_actual_max_mm": 95.99105834960938,
+      "fruit_center_tool_local_final_mm": [
+        -13.736937502501254,
+        98.64780362442457,
+        32.25357124008448
+      ]
+    },
+    "belt_finish": {
+      "jaw_actual_min_mm": 53.03337860107422,
+      "jaw_actual_max_mm": 53.17231369018555,
+      "fruit_center_tool_local_final_mm": [
+        -13.416625752229987,
+        98.61651025777925,
+        32.184649768973
+      ]
+    }
+  },
+  "commanded_mechanical_gap_mm": 28.0,
+  "belt_target_contacts": {
+    "/World/ActuatedTool/L_belt": {
+      "points": 764,
+      "max_point_force_n": 0.014593525865228139,
+      "first_time_s": 36.7,
+      "max_penetration_mm": 0.01091277226805687
+    },
+    "/World/ActuatedTool/R_belt": {
+      "points": 0,
+      "max_point_force_n": 0,
+      "first_time_s": null,
+      "max_penetration_mm": 0
+    }
+  },
+  "joint_drive_unchanged": {
+    "stiffness_n_m": 1500.0,
+    "damping": 30.0,
+    "max_force_n_each_jaw": 10.0,
+    "force_is_native_actuator_wrench": false
+  },
+  "jaw_obstructions": [
+    {
+      "a": "/World/ActuatedTool/L/part_182",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_2",
+      "points": 4487,
+      "max_point_force_n": 7.5413643121790415,
+      "raw_max_penetration_mm": 0.17293356359004974,
+      "first_s": 34.425,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_01_0/Collider",
+      "points": 829,
+      "max_point_force_n": 6.475455039816079,
+      "raw_max_penetration_mm": 0.026642228476703167,
+      "first_s": 36.05,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_01_1/Collider",
+      "points": 1475,
+      "max_point_force_n": 6.105518911673518,
+      "raw_max_penetration_mm": 0.024736335035413504,
+      "first_s": 35.84166666666667,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_01_0/Collider",
+      "points": 1368,
+      "max_point_force_n": 3.5366817274153695,
+      "raw_max_penetration_mm": 0.025293848011642694,
+      "first_s": 34.0,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/part_163",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_2",
+      "points": 3262,
+      "max_point_force_n": 3.414318549902649,
+      "raw_max_penetration_mm": 0.05216570571064949,
+      "first_s": 34.516666666666666,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/part_285",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_4",
+      "points": 2244,
+      "max_point_force_n": 2.3027894469537444,
+      "raw_max_penetration_mm": 0.37092174170538783,
+      "first_s": 36.4,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_04_0/Collider",
+      "points": 1089,
+      "max_point_force_n": 1.5477602142935991,
+      "raw_max_penetration_mm": 0.0079362653195858,
+      "first_s": 35.9,
+      "last_s": 48.0
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/part_285",
+      "b": "/World/ElasticTarget/Truss_02_Rachis_0/Collider",
+      "points": 2538,
+      "max_point_force_n": 0.16972727769108137,
+      "raw_max_penetration_mm": 0.13503001537173986,
+      "first_s": 36.483333333333334,
+      "last_s": 48.0
+    }
+  ],
+  "actual_tcp_tracking": {
+    "approach": {
+      "samples": 160,
+      "native_tcp_minus_command_fk_max_mm": 2.960514726895269,
+      "native_tcp_minus_command_fk_end_mm": 2.9582671697655565,
+      "native_tcp_minus_command_rotation_max_deg": 0.09705384093760965,
+      "native_tcp_minus_command_rotation_end_deg": 0.09702245825887812,
+      "native_tcp_minus_measured_q_fk_max_mm": 0.0009170835845158782,
+      "native_tcp_minus_measured_q_fk_rotation_max_deg": 4.975013689395117e-05
+    },
+    "belt_start_open": {
+      "samples": 10,
+      "native_tcp_minus_command_fk_max_mm": 2.962072641736381,
+      "native_tcp_minus_command_fk_end_mm": 2.9605171720930192,
+      "native_tcp_minus_command_rotation_max_deg": 0.09741280867937285,
+      "native_tcp_minus_command_rotation_end_deg": 0.09737456214454086,
+      "native_tcp_minus_measured_q_fk_max_mm": 0.0008229167581153243,
+      "native_tcp_minus_measured_q_fk_rotation_max_deg": 4.002658808355835e-05
+    },
+    "close": {
+      "samples": 60,
+      "native_tcp_minus_command_fk_max_mm": 2.9614093862959394,
+      "native_tcp_minus_command_fk_end_mm": 2.9601127312454674,
+      "native_tcp_minus_command_rotation_max_deg": 0.09772152799702225,
+      "native_tcp_minus_command_rotation_end_deg": 0.09751675319902567,
+      "native_tcp_minus_measured_q_fk_max_mm": 0.0009433717968865866,
+      "native_tcp_minus_measured_q_fk_rotation_max_deg": 4.849798605100689e-05
+    },
+    "cycle_reclose": {
+      "samples": 60,
+      "native_tcp_minus_command_fk_max_mm": 2.963080836862452,
+      "native_tcp_minus_command_fk_end_mm": 2.963080836862452,
+      "native_tcp_minus_command_rotation_max_deg": 0.09782211179471402,
+      "native_tcp_minus_command_rotation_end_deg": 0.09782211179471402,
+      "native_tcp_minus_measured_q_fk_max_mm": 0.000931536551493845,
+      "native_tcp_minus_measured_q_fk_rotation_max_deg": 4.622496526629062e-05
+    },
+    "belt_finish": {
+      "samples": 20,
+      "native_tcp_minus_command_fk_max_mm": 2.9626048780875185,
+      "native_tcp_minus_command_fk_end_mm": 2.955689117369316,
+      "native_tcp_minus_command_rotation_max_deg": 0.09775979755533272,
+      "native_tcp_minus_command_rotation_end_deg": 0.09710281400339403,
+      "native_tcp_minus_measured_q_fk_max_mm": 0.0007561595660088104,
+      "native_tcp_minus_measured_q_fk_rotation_max_deg": 4.671711798454261e-05
+    }
+  },
+  "jaw_contact_projection": {
+    "L": 10.524203020842279,
+    "R": 10.055145124764666
+  },
+  "projection_scope": "Sum of absolute reported point-force components; not net wrench or native actuator force",
+  "strongest_contact_locations": [
+    {
+      "a": "/World/ActuatedTool/L/part_182",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_2",
+      "max_force_n": 7.5413643121790415,
+      "time_s": 44.916666666666664,
+      "phase": "cycle_reclose",
+      "contact_point_in_actual_tool_mm": [
+        -33.055116165778124,
+        156.73840174029007,
+        82.52069644186732
+      ],
+      "contact_normal_in_actual_tool": [
+        -0.9999998854940344,
+        5.584768170313882e-05,
+        0.00017704468865763643
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_01_0/Collider",
+      "max_force_n": 6.475455039816079,
+      "time_s": 47.083333333333336,
+      "phase": "belt_finish",
+      "contact_point_in_actual_tool_mm": [
+        15.896194202230197,
+        128.56019526379023,
+        56.88859075226117
+      ],
+      "contact_normal_in_actual_tool": [
+        1.000000026300451,
+        1.1707107242770266e-06,
+        -9.083340502926216e-08
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_proximal_01_1/Collider",
+      "max_force_n": 6.105518911673518,
+      "time_s": 43.983333333333334,
+      "phase": "cycle_reclose",
+      "contact_point_in_actual_tool_mm": [
+        22.28124682691953,
+        121.4264798555866,
+        58.892014028362965
+      ],
+      "contact_normal_in_actual_tool": [
+        0.9999998784938691,
+        1.501392346249184e-07,
+        5.419513974266099e-07
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_01_0/Collider",
+      "max_force_n": 3.5366817274153695,
+      "time_s": 36.075,
+      "phase": "close",
+      "contact_point_in_actual_tool_mm": [
+        23.75878116370926,
+        113.64308792768836,
+        58.66158263506729
+      ],
+      "contact_normal_in_actual_tool": [
+        1.0000000318949818,
+        -1.507013844280948e-07,
+        -1.6899852829138155e-06
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/part_163",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_2",
+      "max_force_n": 3.414318549902649,
+      "time_s": 38.166666666666664,
+      "phase": "close",
+      "contact_point_in_actual_tool_mm": [
+        -28.274004312304953,
+        134.79972096232663,
+        64.68802058259836
+      ],
+      "contact_normal_in_actual_tool": [
+        -0.9999998027518938,
+        0.00027038066422565784,
+        0.0006588613087462585
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/part_285",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_4",
+      "max_force_n": 2.3027894469537444,
+      "time_s": 47.8,
+      "phase": "belt_finish",
+      "contact_point_in_actual_tool_mm": [
+        23.73429942106679,
+        156.87396513246574,
+        28.37321131658274
+      ],
+      "contact_normal_in_actual_tool": [
+        0.5773566771078914,
+        -0.8164323669437177,
+        -0.009872573117813865
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_04_0/Collider",
+      "max_force_n": 1.5477602142935991,
+      "time_s": 46.88333333333333,
+      "phase": "belt_finish",
+      "contact_point_in_actual_tool_mm": [
+        -27.161067421638684,
+        64.86957237934521,
+        13.563467005449679
+      ],
+      "contact_normal_in_actual_tool": [
+        -1.0000003767047505,
+        -3.181989054017334e-08,
+        6.686354742964609e-07
+      ]
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/part_285",
+      "b": "/World/ElasticTarget/Truss_02_Rachis_0/Collider",
+      "max_force_n": 0.16972727769108137,
+      "time_s": 38.49166666666667,
+      "phase": "close",
+      "contact_point_in_actual_tool_mm": [
+        21.375708965456464,
+        151.67172284081173,
+        61.14113759517563
+      ],
+      "contact_normal_in_actual_tool": [
+        0.9496093188171937,
+        -0.313435954772854,
+        -5.824200382146164e-07
+      ]
+    }
+  ],
+  "geometric_depth_semantics": {
+    "source": "motion_kinematics.grasp_pose",
+    "origin_equation": "center - rotation @ [0, .158-depth_m, .037]",
+    "cad_direction": "tool +Y inward",
+    "depth_65mm_local_aim_y_mm": 93.0,
+    "depth_50mm_local_aim_y_mm": 108.0,
+    "65_to_50_tool_translation_mm_along_inward": -15.0,
+    "65_to_90_tool_translation_mm_along_inward": 25.0,
+    "reasoned_next_depth_mm": 50.0,
+    "candidate_is_validated_in_physics": false,
+    "prediction_scope": "A rigid geometric retreat moves retained pedicel contact coordinates toward the tread front while maintaining target within the tread span. Deformed-plant dynamics and actual audit remain unverified.",
+    "dominant_leaf_contact_top_arm": {
+      "exact_path": "/World/ActuatedTool/L/part_182",
+      "source_name": "L_C10_removable_top_arm",
+      "mesh_tool_y_bounds_mm": [
+        131.99999928474426,
+        165.99999368190765
+      ],
+      "actual_contact_y_mm": 156.73840174029007,
+      "same_world_contact_y_after_15mm_retreat_mm": 171.73840174029007,
+      "scope": "Rest tool-local authored CAD bounds and measured native contact location; full leaf spatial span/dynamic recontact unverified."
+    }
+  },
+  "interpretation": "The exact Fruit02 did not detach. Its right belt had no reported target contact, while jaws stalled near 53mm against retained same-truss pedicels and compliant leaf geometry. Recorded TCP/FK agreement excludes a gross coordinate mismatch. Position correction alone did not establish bilateral capture.",
+  "limits": [
+    "Raw callback separation is not a solved cooked-shape penetration certificate.",
+    "Reported point-force projections are neither a net wrench nor a recorded actuator force.",
+    "The saved generic target dashboard refers to Fruit11; exact Fruit02 identity is resolved independently.",
+    "Retreat depth50 is a reasoned proposal only; no success or impossibility claim."
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "input_sha256": {
+    "plan.json": "448d9e1e3fca79fa0c0d787180467d6eeb433893fbd8529d166b1e37fba4949c",
+    "code_sha256.json": "6712a533359dbcee82dc3a8ab5e2337c043251e9590f1606e1fd9ff9f26bdf9c",
+    "native_metadata.json": "30f680738a97eebb9c98b3e761da32cd012c35cf1d3da390d78171c6320189fe",
+    "fruit02_actual_capture_review.json": "174364859f63f761f981e79b470f728621d6b4566b5ae9f2edc3b52ea74331ff",
+    "jaw_blockage_contact_review.json": "05818786e7db7d66f140adc15bb1cbb18ca456e053fdeffa7c92f004d6f3e842",
+    "fruit02_tcp_and_contact_locations.json": "e1124f26cb19a85216b0b916d530757959b917ba32a24fa42345fb80a2ebe759"
+  },
+  "prototype_tread": {
+    "each_thickness_mm": 5.0,
+    "tool_y_bounds_mm": [
+      15.0,
+      135.0
+    ],
+    "nominal_closed_contact_gap_mm": 18.0,
+    "actual_contact_gap_min_mm": 43.03337860107422,
+    "gap_derivation": "Mechanical gap minus two unchanged 5mm tread thicknesses, assuming recorded slider translations."
+  }
+}

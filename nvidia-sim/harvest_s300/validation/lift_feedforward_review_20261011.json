@@ -1,0 +1,70 @@
+{
+  "schema": "s300-lift-static-position-bias-review-v1",
+  "trials": [
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_rail_highest120/fresh_rail_truss02_highest120",
+      "source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "calibration": {
+        "schema": "static-lift-position-feedforward-v1",
+        "lift_dof": "farmily_lift_height_joint",
+        "lift_dof_index": 1,
+        "offset_m": 0.008467450737953186,
+        "calibration_start_s": 1.5,
+        "calibration_end_s": 2.0,
+        "calibration_samples": 61,
+        "physics_hz": 120.0,
+        "lift_position_span_m": 0.0,
+        "lift_target_span_m": 0.0,
+        "target_minus_measured_min_m": 0.008467450737953186,
+        "target_minus_measured_max_m": 0.008467450737953186,
+        "measured_position_velocity_max_m_s": 0.0,
+        "max_bias_m": 0.015,
+        "one_time_fixed_bias": true,
+        "nominal_geometric_plan_unchanged": true,
+        "actuator_properties_changed": false,
+        "contact_free_ready_hold_verified_by_caller": false,
+        "scope": "Ready-hold drive compensation; requires full nominal/drive collision audits and actual physics verification"
+      },
+      "command_evidence": "Saved native setter command trace, not independent native getter history",
+      "native_qvel_checkpoint_m_s": 0.03679998219013214,
+      "physical_compensation_tested": false
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_direct_harvest/whole_truss_direct_refined60",
+      "source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "calibration": {
+        "schema": "static-lift-position-feedforward-v1",
+        "lift_dof": "farmily_lift_height_joint",
+        "lift_dof_index": 0,
+        "offset_m": 0.008314892649650574,
+        "calibration_start_s": 1.5,
+        "calibration_end_s": 2.0,
+        "calibration_samples": 31,
+        "physics_hz": 60.0,
+        "lift_position_span_m": 0.0,
+        "lift_target_span_m": 0.0,
+        "target_minus_measured_min_m": 0.008314892649650574,
+        "target_minus_measured_max_m": 0.008314892649650574,
+        "measured_position_velocity_max_m_s": 0.0,
+        "max_bias_m": 0.015,
+        "one_time_fixed_bias": true,
+        "nominal_geometric_plan_unchanged": true,
+        "actuator_properties_changed": false,
+        "contact_free_ready_hold_verified_by_caller": false,
+        "scope": "Ready-hold drive compensation; requires full nominal/drive collision audits and actual physics verification"
+      },
+      "command_evidence": "Saved native setter command trace, not independent native getter history",
+      "native_qvel_checkpoint_m_s": 0.06720573455095291,
+      "physical_compensation_tested": false
+    }
+  ],
+  "findings": [
+    "Constant ready target under load differs from constant measured lift position by 8.3149mm at 60Hz and 8.46745mm at 120Hz",
+    "Fresh continuous runner plans use unchanged initial q, so its bias does not accumulate each cycle",
+    "A resumed plan beginning at measured q needs a distinct drive command to avoid an additional load-dependent offset"
+  ],
+  "actuator_or_material_changes": false,
+  "nominal_vs_drive_collision_audit_pending": true,
+  "actual_corrected_physics_pending": true,
+  "training_eligible": false
+}

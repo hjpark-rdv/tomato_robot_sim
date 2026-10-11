@@ -59,6 +59,14 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(result['contacted_fruit_count'],2)
         self.assertEqual(result['both_belts_touch_any_fruit_during_spin_s'],.5)
         self.assertIsNone(result['harvest_success'])
+        states['phase']=np.array(['initial','close','cycle_open','cycle_reclose','hold'])
+        states['belt_surface_velocity_local_y_m_s']=np.array([[0,0],[-.05,.05],[-.05,.05],[-.05,.05],[0,0]])
+        result=measure_cluster(states,events,[],fruits,['/World/ActuatedTool/L','/World/ActuatedTool/R'])
+        self.assertEqual(result['both_belts_touch_any_fruit_during_spin_s'],0.)
+        self.assertEqual(result['both_belts_touch_any_fruit_while_commanded_s'],.5)
+        states['belt_surface_velocity_local_y_m_s'][:]=0
+        result=measure_cluster(states,events,[],fruits,['/World/ActuatedTool/L','/World/ActuatedTool/R'])
+        self.assertEqual(result['both_belts_touch_any_fruit_while_commanded_s'],0.)
 
 
 class TreadPrototypeTests(unittest.TestCase):

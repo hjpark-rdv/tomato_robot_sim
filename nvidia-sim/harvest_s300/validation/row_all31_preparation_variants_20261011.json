@@ -1,0 +1,123 @@
+{
+  "schema": "all-baseline-unknown-row-preparation-validation-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_manifest_sha256": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+  "materialized_dependency_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "inventory_sha256": "1d9ad0498c0f12f36bedeb1fa144a75e210b89dcccbad074ad126d672ddc1309",
+  "preparation_variants_source_sha256": "5a3471c6bc94073a3eb560c9fcfa6b51f7621a7160435a69ce00e6708dfb1a58",
+  "code_launch_provenance": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_all31_preparation_variants_launch_provenance.json",
+  "original_eligible_trusses": 46,
+  "original_fullself_trusses": 15,
+  "selected_baseline_unknown_trusses": 31,
+  "selected_unknowns_not_favorably_pruned": true,
+  "finite_budget_max": 186,
+  "actual_queries": 183,
+  "clamped_duplicate_station_query_count": 3,
+  "controls": [
+    {
+      "name": "joint_seed0",
+      "horizontal_ready_connector": "joint",
+      "horizontal_ready_seed_index": 0
+    },
+    {
+      "name": "joint_seed6",
+      "horizontal_ready_connector": "joint",
+      "horizontal_ready_seed_index": 6
+    },
+    {
+      "name": "joint_seed8",
+      "horizontal_ready_connector": "joint",
+      "horizontal_ready_seed_index": 8
+    }
+  ],
+  "all_status_counts": {
+    "self_path_blocked_coarse": 120,
+    "ik_path_not_found_finite": 37,
+    "self_path_clear_full": 26
+  },
+  "new_fullself_proposals": 26,
+  "new_fullself_trusses": 12,
+  "source_reports": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_station_screen_v6_measured120/report.json",
+      "sha256": "b6c586fbd7ed0b67934ede14162a24e5f30234609176902d452871cfbfa9ede5",
+      "query_count": 91,
+      "status_counts": {
+        "self_path_blocked_coarse": 38,
+        "ik_path_not_found_finite": 32,
+        "self_path_clear_full": 21
+      },
+      "wall_s": 868.1087205056101
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/report.json",
+      "sha256": "72d6b00f70e9f15dc03e63fea1ae7a326afe7cf1e34917a1e7d427b2e0238a93",
+      "query_count": 6,
+      "status_counts": {
+        "self_path_blocked_coarse": 5,
+        "self_path_clear_full": 1
+      },
+      "wall_s": 204.30371300503612
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_seed8_followup/report.json",
+      "sha256": "edd820b2836e99242dd925373d0cf2dbeb090e5dbe4cb5556611d6c326505c61",
+      "query_count": 3,
+      "status_counts": {
+        "self_path_blocked_coarse": 2,
+        "self_path_clear_full": 1
+      },
+      "wall_s": 185.65618761070073
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_all31_preparation_variants_screen/report.json",
+      "sha256": "90c5cca019781a2370133da76795deb13c7bab2d8a654ca67dcb7f0f68d66d97",
+      "query_count": 183,
+      "status_counts": {
+        "self_path_blocked_coarse": 120,
+        "ik_path_not_found_finite": 37,
+        "self_path_clear_full": 26
+      },
+      "wall_s": 953.3872401062399
+    }
+  ],
+  "raw_executed_union_queries": 283,
+  "exact_duplicate_query_count": 9,
+  "distinct_union_queries": 274,
+  "distinct_union_status_counts": {
+    "self_path_blocked_coarse": 158,
+    "ik_path_not_found_finite": 69,
+    "self_path_clear_full": 47
+  },
+  "union_fullself_proposals": 47,
+  "union_fullself_trusses": 27,
+  "union_fullself_plants": 18,
+  "remaining_finite_unknown_trusses": 19,
+  "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_station_screen_v6_all31_union/report.json",
+  "report_sha256": "b545e8317d66df616c7233958303f1b5128471d2ae3481c0e425f2d5a829734f",
+  "selection": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_row_selection_all31_variants.json",
+  "selection_sha256": "f26b0f2efe4788b7e4aa9e8dd982a765cc6e23e1e722a2f507003b0d972debf5",
+  "resources": "8CPU workers functional overlap with native trials;953.387s is not a performance comparison",
+  "physics_execution": false,
+  "environment_audit": false,
+  "training_eligible": false,
+  "harvest_success": null,
+  "conclusion": "Different actual IK branches/joint prefixes increased complete selfclear target proposals from15 to27trusses. All19 remaining trusses remain finite unknown. This does not establish active-window native startup, environment clearance, rail travel or harvest success.",
+  "blocked_stages": {
+    "prepare_joint_branch": 119,
+    "approach": 1
+  },
+  "blocked_with_all_three_endpoints_selfclear": 26,
+  "queries_with_at_least_one_endpoint_collision": 94,
+  "postscreen_offline_validation": {
+    "passed": 36,
+    "seconds": 0.851,
+    "modules": [
+      "test_plan_row_stations",
+      "test_run_row_harvest",
+      "test_motion_branch"
+    ],
+    "execution_scope": "Current post-screen code; original launch code separately archived"
+  }
+}

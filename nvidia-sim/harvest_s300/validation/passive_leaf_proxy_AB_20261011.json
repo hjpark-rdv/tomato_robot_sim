@@ -1,0 +1,872 @@
+{
+  "schema": "exact-eight-passive-leaf-cooking-ab-20261011",
+  "rows": [
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_cooking025/fresh_truss01_two_passive_leaves_cooking025_cpu16",
+      "native_summary": {
+        "physics_wall_s": 4.797206005081534,
+        "simulated_s": 0.25,
+        "native_new_break_count": 0,
+        "target_displacement_max_m": 0.00045145160402171314,
+        "initialization_valid": true,
+        "stop_reason": null,
+        "completed": true
+      },
+      "contact_count": 64832,
+      "passive_contact_count": 63203,
+      "deepest_passive_raw_event": {
+        "t": 0.0,
+        "phase": "idle",
+        "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+        "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_20",
+        "separation_m": -0.009895890951156616,
+        "force_n": 0.0,
+        "impulse_ns": [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "position_world_m": [
+          -0.5333694219589233,
+          1.081444263458252,
+          1.0974736213684082
+        ],
+        "normal_world": [
+          0.9935358762741089,
+          -0.02971802093088627,
+          0.10956009477376938
+        ]
+      },
+      "highest_passive_point_force_event": {
+        "t": 0.03333333333333333,
+        "phase": "settle",
+        "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+        "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_36",
+        "separation_m": -0.002540077082812786,
+        "force_n": 357.46732071033796,
+        "impulse_ns": [
+          -0.23446054756641388,
+          2.3533895015716553,
+          -1.8111867904663086
+        ],
+        "position_world_m": [
+          -0.5254395604133606,
+          1.1090495586395264,
+          1.0867308378219604
+        ],
+        "normal_world": [
+          -0.07870723307132721,
+          0.7900211215019226,
+          -0.6080063581466675
+        ]
+      },
+      "passive_at_t0": {
+        "count": 2985,
+        "raw_min_separation_m": -0.009895890951156616,
+        "maximum_point_force_N": 244.9223561628588
+      },
+      "leaf_pose": [
+        {
+          "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+          "max_body_center_displacement_from_authored_m": 0.022282128485404618,
+          "max_rotation_from_authored_deg": 10.727295907760016,
+          "max_world_anchor_pivot_drift_m": 0.0019802460355697786,
+          "final_world_anchor_pivot_drift_m": 0.0012237657055625985
+        },
+        {
+          "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+          "max_body_center_displacement_from_authored_m": 0.01863996608852031,
+          "max_rotation_from_authored_deg": 9.870886559919533,
+          "max_world_anchor_pivot_drift_m": 0.027421856792947317,
+          "final_world_anchor_pivot_drift_m": 0.027421856792947317
+        }
+      ],
+      "profile": {
+        "contact_callback": {
+          "total_s": 1.6564490720629692,
+          "count": 32,
+          "max_s": 0.0
+        },
+        "control": {
+          "total_s": 0.005271727219223976,
+          "count": 30,
+          "max_s": 0.0
+        },
+        "simulate": {
+          "total_s": 4.768790638074279,
+          "count": 30,
+          "max_s": 0.2630878631025553
+        },
+        "fetch": {
+          "total_s": 0.0007659029215574265,
+          "count": 30,
+          "max_s": 3.1581148505210876e-05
+        },
+        "readback": {
+          "total_s": 0.00498184934258461,
+          "count": 30,
+          "max_s": 0.0002552121877670288
+        }
+      },
+      "raw_contacts_sha256": "cfe8bbde463a7fb5b2f37ef4df35970ec8d3a0d8f9a4f28c37f667d342a2811a"
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_accuracy_v2_cooking025/fresh_truss01_two_passive_leaves_accuracy_v2_cooking025_cpu16",
+      "native_summary": {
+        "physics_wall_s": 2.644112840294838,
+        "simulated_s": 0.25,
+        "native_new_break_count": 0,
+        "target_displacement_max_m": 0.00045145160402171314,
+        "initialization_valid": true,
+        "stop_reason": null,
+        "completed": true
+      },
+      "contact_count": 48307,
+      "passive_contact_count": 46678,
+      "deepest_passive_raw_event": {
+        "t": 0.008333333333333333,
+        "phase": "settle",
+        "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+        "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_39",
+        "separation_m": -0.0029149651527404785,
+        "force_n": 0.0,
+        "impulse_ns": [
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "position_world_m": [
+          -0.5274455547332764,
+          1.1186778545379639,
+          1.0807511806488037
+        ],
+        "normal_world": [
+          0.14433376491069794,
+          -0.8698110580444336,
+          -0.47180137038230896
+        ]
+      },
+      "highest_passive_point_force_event": {
+        "t": 0.24166666666666667,
+        "phase": "settle",
+        "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_131",
+        "b": "/World/Greenhouse/Plants/Plant_20/Truss_00/mesh_8",
+        "separation_m": -0.0008298695902340114,
+        "force_n": 129.74797991814964,
+        "impulse_ns": [
+          0.8703082203865051,
+          -0.5908955335617065,
+          -0.24994245171546936
+        ],
+        "position_world_m": [
+          -0.5793743133544922,
+          1.121808409690857,
+          1.0636909008026123
+        ],
+        "normal_world": [
+          0.8049218654632568,
+          -0.5465015172958374,
+          -0.23116424679756165
+        ]
+      },
+      "passive_at_t0": {
+        "count": 3445,
+        "raw_min_separation_m": -0.002468794584274292,
+        "maximum_point_force_N": 85.32235252959734
+      },
+      "leaf_pose": [
+        {
+          "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+          "max_body_center_displacement_from_authored_m": 0.013396005246710242,
+          "max_rotation_from_authored_deg": 7.023047958933572,
+          "max_world_anchor_pivot_drift_m": 0.0009503181719966151,
+          "final_world_anchor_pivot_drift_m": 0.0005533902223638998
+        },
+        {
+          "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+          "max_body_center_displacement_from_authored_m": 0.011520063105533104,
+          "max_rotation_from_authored_deg": 1.8722392813299666,
+          "max_world_anchor_pivot_drift_m": 0.010456169532377085,
+          "final_world_anchor_pivot_drift_m": 0.00935590659990369
+        }
+      ],
+      "profile": {
+        "contact_callback": {
+          "total_s": 1.1452532820403576,
+          "count": 32,
+          "max_s": 0.0
+        },
+        "control": {
+          "total_s": 0.005217086523771286,
+          "count": 30,
+          "max_s": 0.0
+        },
+        "simulate": {
+          "total_s": 2.615785453468561,
+          "count": 30,
+          "max_s": 0.17784726433455944
+        },
+        "fetch": {
+          "total_s": 0.0007847081869840622,
+          "count": 30,
+          "max_s": 3.328360617160797e-05
+        },
+        "readback": {
+          "total_s": 0.004982290789484978,
+          "count": 30,
+          "max_s": 0.000264802947640419
+        }
+      },
+      "raw_contacts_sha256": "38ad35c7092ccc0c9b6f8ef28a991a5191a4188ffd3833dad23051420e20ce3e"
+    }
+  ],
+  "body_path_inventory_equal": true,
+  "active_body_pose_bitidentical": true,
+  "robot_q_bitidentical": true,
+  "command_bitidentical": true,
+  "contact_count_reduction_fraction": 0.2548895607107601,
+  "loop_wall_time_ratio": 1.8142970042634832,
+  "native_cooked_comparison": [
+    {
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves",
+      "hull_count": 127,
+      "support_vertex_count": 2683,
+      "max_support_point_to_source_surface_m": 0.008154936955865907,
+      "per_mesh_median_support_point_to_source_surface_m": [
+        0.003754583138869364,
+        0.00375577006088867,
+        0.0028423781041059092,
+        0.0025454354334510047,
+        0.0042344337799081425,
+        0.004382012367870602,
+        0.0032952570424706726,
+        0.002964793231364667
+      ],
+      "source_vertices_outside_union": 920,
+      "source_enclosure_proven": false
+    },
+    {
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves_accuracy_v2",
+      "hull_count": 899,
+      "support_vertex_count": 9062,
+      "max_support_point_to_source_surface_m": 0.0022120173315996806,
+      "per_mesh_median_support_point_to_source_surface_m": [
+        0.0010107475958082354,
+        0.0009471620851695787,
+        0.0006142009239014894,
+        0.0008499983463260703,
+        0.001135509694295824,
+        0.0010714123234498996,
+        0.000701420109112627,
+        0.000931049270701825
+      ],
+      "source_vertices_outside_union": 2871,
+      "source_enclosure_proven": false
+    }
+  ],
+  "limitations": [
+    "0.25s is a cooking/startup diagnostic, not3s stability or harvest/route proof",
+    "No isolated benchmark claim; runtime sources/capture flags differ and may be concurrent CPU work",
+    "Historical guard excludes background-only contacts; initial-valid does not certify passive physics",
+    "Full native/source enclosure not proved by point-only diagnostic",
+    "Refined3s native completion certifies only old active-scopeguard;background-only invalid contacts were not forwarded",
+    "Two standalone leaf bodies did not stabilize in final0.5s;notan acceptedcanonicalstart",
+    "All277nonbackground trackedbodyposes/q/commands are bitidentical across3s old/new"
+  ],
+  "next_control": {
+    "recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/cases_fresh_truss01_accuracy_v2_idle3_capture.json",
+    "launched_by_parent": true,
+    "completed": true,
+    "scope": "3s same-start fixedrobot fullphysics diagnostic, no routeCP",
+    "native_loop_completed": true,
+    "background_physics_certified": false,
+    "canonical_conditioning_success": false,
+    "harvest_credit": 0,
+    "route_credit": 0,
+    "result": "persistent_constraint_drift_and_contact_flood"
+  },
+  "evidence_sha256": {
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/accuracy_v2_cooking025_AB.json": "6b0ff64987c30aa88e82d4d276a471a383505a20a2b37651acf9896820168d3f",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/default_cooked_source_review.json": "b893f9d7dcb98426dc516286e4b2cc7c3796987217978b176b1f3fd22942bbcc",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/refined_cooked_source_review.json": "3dded6899e053dd0725069e9bb21dd18b521399e5d05223a4bd792579359c4c5",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/accuracy_v2_idle3_AB.json": "39069024176d08fb08228cd128f3ea2f7f1255f7ae32b04e5f465246a054f209",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/accuracy_v2_idle3_contacts.json": "8f7105b387692831e25d3433c388ea66092374478c2aebdfa03f311220abab6d",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_two_leaf_idle_contact_review/accuracy_v2_idle3_source_pairs.json": "6b0db140aa14867b7ae391a77e91144c129fe27e52d0e3f25ccfe90d1fdd9853"
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "three_second_AB": {
+    "schema": "passive-leaf-3s-cooking-stability-ab-v1",
+    "body_path_inventory_equal": true,
+    "timestamps_bitidentical": true,
+    "active_body_count": 277,
+    "active_body_pose_bitidentical": true,
+    "active_body_pose_max_abs_delta": 0.0,
+    "robot_q_bitidentical": true,
+    "command_bitidentical": true,
+    "limitations": [
+      "Background-only contacts omitted from historical ACTIVE_PATH_MARKERS validity guard; ordinary completion is not background validity certification",
+      "Functional concurrent CPU timing, notisolated performance",
+      "Saved poses are afterfetch; callbackrawcontacts are presolve evidence"
+    ],
+    "rows": [
+      {
+        "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_two_passive_leaves_idle120/fresh_truss01_two_passive_leaves_strict_idle120_cpu16",
+        "summary": {
+          "physics_wall_s": 57.043338080868125,
+          "simulated_s": 3.0,
+          "native_new_break_count": 0,
+          "target_displacement_max_m": 0.00045145160402171314,
+          "initialization_valid": true,
+          "stop_reason": null,
+          "completed": true
+        },
+        "leaf_metrics": [
+          {
+            "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+            "max_center_displacement_m": 0.19330125510509172,
+            "max_rotation_deg": 114.26343246134735,
+            "max_pivot_drift_m": 0.01605708241471329,
+            "final_pivot_drift_m": 0.015030592296751051,
+            "final_center_displacement_m": 0.19314808067741218,
+            "final_rotation_deg": 113.50064177882894,
+            "tail_0p5s": {
+              "sample_count": 61,
+              "start_s": 2.5,
+              "end_s": 3.0,
+              "center_net_displacement_m": 0.00033262663055211306,
+              "center_bbox_range_m": [
+                0.0002002716064453125,
+                0.0004696846008300781,
+                0.0004953145980834961
+              ],
+              "pivot_drift_min_m": 0.014825146491250324,
+              "pivot_drift_max_m": 0.015113191706122346,
+              "pivot_net_displacement_m": 0.00047436555005626803,
+              "center_speed_mean_m_s": 0.0031473041912001305,
+              "center_speed_max_m_s": 0.08192037758884613,
+              "pivot_speed_mean_m_s": 0.002545665679480542,
+              "pivot_speed_max_m_s": 0.022497864784067106,
+              "angular_speed_mean_deg_s": 4.0061220254810115,
+              "angular_speed_max_deg_s": 196.23581955682081,
+              "rotation_min_deg": 113.48070474050478,
+              "rotation_max_deg": 114.26343246134735
+            }
+          },
+          {
+            "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+            "max_center_displacement_m": 0.11227901544172082,
+            "max_rotation_deg": 30.210902929824954,
+            "max_pivot_drift_m": 0.10850550301401382,
+            "final_pivot_drift_m": 0.10850550301401382,
+            "final_center_displacement_m": 0.10823514937499766,
+            "final_rotation_deg": 27.373375717105695,
+            "tail_0p5s": {
+              "sample_count": 61,
+              "start_s": 2.5,
+              "end_s": 3.0,
+              "center_net_displacement_m": 0.019187266007065773,
+              "center_bbox_range_m": [
+                0.01973491907119751,
+                0.021798372268676758,
+                0.009747505187988281
+              ],
+              "pivot_drift_min_m": 0.08093414935627984,
+              "pivot_drift_max_m": 0.10850550301401382,
+              "pivot_net_displacement_m": 0.027819266532457823,
+              "center_speed_mean_m_s": 0.2135266444781429,
+              "center_speed_max_m_s": 1.7540785313947294,
+              "pivot_speed_mean_m_s": 0.3017429436824467,
+              "pivot_speed_max_m_s": 1.6401027413239944,
+              "angular_speed_mean_deg_s": 85.13787627094116,
+              "angular_speed_max_deg_s": 278.5684665000674,
+              "rotation_min_deg": 22.340227348006977,
+              "rotation_max_deg": 27.373375717105695
+            }
+          }
+        ],
+        "states_sha256": "baffd190ee363f496dc86cabb005c996cece197a3c11da43d8bdadbaee05512b"
+      },
+      {
+        "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_accuracy_v2_idle3_capture/fresh_truss01_two_passive_leaves_accuracy_v2_idle3_capture_cpu16",
+        "summary": {
+          "physics_wall_s": 30.8492331802845,
+          "simulated_s": 3.0,
+          "native_new_break_count": 0,
+          "target_displacement_max_m": 0.00045145160402171314,
+          "initialization_valid": true,
+          "stop_reason": null,
+          "completed": true
+        },
+        "leaf_metrics": [
+          {
+            "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+            "max_center_displacement_m": 0.07607586700632943,
+            "max_rotation_deg": 113.11371911326877,
+            "max_pivot_drift_m": 0.006614693722339206,
+            "final_pivot_drift_m": 0.006614693722339206,
+            "final_center_displacement_m": 0.05835158702862818,
+            "final_rotation_deg": 113.11371911326877,
+            "tail_0p5s": {
+              "sample_count": 61,
+              "start_s": 2.5,
+              "end_s": 3.0,
+              "center_net_displacement_m": 0.023596681654453278,
+              "center_bbox_range_m": [
+                0.014091432094573975,
+                0.01756274700164795,
+                0.023994088172912598
+              ],
+              "pivot_drift_min_m": 0.001465763473969337,
+              "pivot_drift_max_m": 0.006614693722339206,
+              "pivot_net_displacement_m": 0.00541401215437654,
+              "center_speed_mean_m_s": 0.1597321136035983,
+              "center_speed_max_m_s": 2.0516595071215145,
+              "pivot_speed_mean_m_s": 0.034127982693865154,
+              "pivot_speed_max_m_s": 0.31382066110811246,
+              "angular_speed_mean_deg_s": 87.21691668528995,
+              "angular_speed_max_deg_s": 1082.5610162750947,
+              "rotation_min_deg": 102.13745617898014,
+              "rotation_max_deg": 113.11371911326877
+            }
+          },
+          {
+            "body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+            "max_center_displacement_m": 0.027428113914983544,
+            "max_rotation_deg": 12.43300212668875,
+            "max_pivot_drift_m": 0.038757282521990274,
+            "final_pivot_drift_m": 0.03856418133014165,
+            "final_center_displacement_m": 0.02519260974551949,
+            "final_rotation_deg": 12.280415573368956,
+            "tail_0p5s": {
+              "sample_count": 61,
+              "start_s": 2.5,
+              "end_s": 3.0,
+              "center_net_displacement_m": 0.0140452329069376,
+              "center_bbox_range_m": [
+                0.004853248596191406,
+                0.012192368507385254,
+                0.009529471397399902
+              ],
+              "pivot_drift_min_m": 0.03556084613576712,
+              "pivot_drift_max_m": 0.038757282521990274,
+              "pivot_net_displacement_m": 0.008978559794780844,
+              "center_speed_mean_m_s": 0.058422885404885376,
+              "center_speed_max_m_s": 0.3507537531512134,
+              "pivot_speed_mean_m_s": 0.06541302707473413,
+              "pivot_speed_max_m_s": 0.3281892383165158,
+              "angular_speed_mean_deg_s": 36.854937238163586,
+              "angular_speed_max_deg_s": 267.64745865840854,
+              "rotation_min_deg": 10.731363383640108,
+              "rotation_max_deg": 12.43300212668875
+            }
+          }
+        ],
+        "states_sha256": "35f8a79517bf429bca43a2ee3571f20bbcdea9ec6bbb9a080388be254e94384b"
+      }
+    ],
+    "raw_contact_summary": {
+      "contact_sha256": "fc0dde72f65581f30a32c775f63c68c8b1f8b07735e33e537c0d50875dea8605",
+      "contact_count": 510119,
+      "passive_contact_count": 491660,
+      "passive_fraction": 0.9638143256769499,
+      "pair_count": 110,
+      "windows": {
+        "warmup0": {
+          "count": 3547,
+          "passive": 3445,
+          "below_half_mm": 487,
+          "max_force_N": 85.32235252959734,
+          "raw_min_m": -0.002468794584274292
+        },
+        "0to0p5": {
+          "count": 77282,
+          "passive": 74225,
+          "below_half_mm": 13309,
+          "max_force_N": 129.74797991814964,
+          "raw_min_m": -0.0029149651527404785
+        },
+        "0p5to1": {
+          "count": 58222,
+          "passive": 55162,
+          "below_half_mm": 6887,
+          "max_force_N": 134.16074043522275,
+          "raw_min_m": -0.002655748277902603
+        },
+        "1to1p5": {
+          "count": 74281,
+          "passive": 71221,
+          "below_half_mm": 9583,
+          "max_force_N": 192.64098359442556,
+          "raw_min_m": -0.003009513020515442
+        },
+        "1p5to2": {
+          "count": 78987,
+          "passive": 75927,
+          "below_half_mm": 11716,
+          "max_force_N": 238.42537439820813,
+          "raw_min_m": -0.0029938146471977234
+        },
+        "2to2p5": {
+          "count": 101251,
+          "passive": 98191,
+          "below_half_mm": 13854,
+          "max_force_N": 344.9848325390642,
+          "raw_min_m": -0.0026168227195739746
+        },
+        "last0p5": {
+          "count": 116549,
+          "passive": 113489,
+          "below_half_mm": 15280,
+          "max_force_N": 339.39004642517483,
+          "raw_min_m": -0.0031662285327911377
+        }
+      }
+    },
+    "exact_source_pair_reviews": [
+      {
+        "selection": "pairs_by_raw_depth",
+        "raw_event": {
+          "t": 2.6166666666666667,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_35",
+          "separation_m": -0.0031662285327911377,
+          "force_n": 0.00877967776800312,
+          "impulse_ns": [
+            4.401327532832511e-05,
+            -1.7353675502818078e-05,
+            -5.5809046898502856e-05
+          ],
+          "position_world_m": [
+            -0.5296362638473511,
+            1.111127257347107,
+            1.0847383737564087
+          ],
+          "normal_world": [
+            0.6015702486038208,
+            -0.23718878626823425,
+            -0.762794017791748
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.0018233649743477221
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 80,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 2.6166666666666667,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 80,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      },
+      {
+        "selection": "pairs_by_raw_depth",
+        "raw_event": {
+          "t": 1.125,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_00/mesh_8",
+          "separation_m": -0.003009513020515442,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.582033634185791,
+            1.122947335243225,
+            1.0587742328643799
+          ],
+          "normal_world": [
+            0.6345070004463196,
+            -0.3858184218406677,
+            -0.6697350144386292
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 290,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.0019546810642513193
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 1.125,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 154,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      },
+      {
+        "selection": "pairs_by_raw_depth",
+        "raw_event": {
+          "t": 0.008333333333333333,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_39",
+          "separation_m": -0.0029149651527404785,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "position_world_m": [
+            -0.5274455547332764,
+            1.1186778545379639,
+            1.0807511806488037
+          ],
+          "normal_world": [
+            0.14433376491069794,
+            -0.8698110580444336,
+            -0.47180137038230896
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.0017748892948321747
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 260,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 0.008333333333333333,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 248,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      },
+      {
+        "selection": "pairs_by_max_force",
+        "raw_event": {
+          "t": 2.5,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_3",
+          "separation_m": -0.0006601422210223973,
+          "force_n": 344.9848325390642,
+          "impulse_ns": [
+            2.6313297748565674,
+            -0.8765900731086731,
+            0.7566978931427002
+          ],
+          "position_world_m": [
+            -0.5337669849395752,
+            1.092092514038086,
+            1.0832854509353638
+          ],
+          "normal_world": [
+            0.9152854084968567,
+            -0.30491432547569275,
+            0.26321086287498474
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 6,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.0004130272552793401
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 2.5,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.00014173752037688672
+          }
+        ]
+      },
+      {
+        "selection": "pairs_by_max_force",
+        "raw_event": {
+          "t": 1.9166666666666667,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_32",
+          "separation_m": -0.0014859512448310852,
+          "force_n": 238.42537439820813,
+          "impulse_ns": [
+            1.9706547260284424,
+            0.14747801423072815,
+            -0.2060457468032837
+          ],
+          "position_world_m": [
+            -0.5332348346710205,
+            1.1115293502807617,
+            1.07492196559906
+          ],
+          "normal_world": [
+            0.9918347001075745,
+            0.0742259994149208,
+            -0.10370326042175293
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.008310470730552475
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.0037042572364077574
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 1.9166666666666667,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 190,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      },
+      {
+        "selection": "pairs_by_max_force",
+        "raw_event": {
+          "t": 2.3666666666666667,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_00/mesh_32",
+          "separation_m": -0.0008131492650136352,
+          "force_n": 236.58452648499582,
+          "impulse_ns": [
+            -1.3778880834579468,
+            0.370613694190979,
+            1.3605259656906128
+          ],
+          "position_world_m": [
+            -0.588970959186554,
+            1.1254016160964966,
+            1.0180096626281738
+          ],
+          "normal_world": [
+            -0.6988900899887085,
+            0.18798205256462097,
+            0.6900836825370789
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.024450028536882475
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": false,
+            "triangle_contact_count": 0,
+            "unsigned_source_surface_distance_m": 0.02075131698695413
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 2.3666666666666667,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 90,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      },
+      {
+        "selection": "tail_pairs_by_count",
+        "raw_event": {
+          "t": 2.5083333333333333,
+          "phase": "settle",
+          "a": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02/Appendage_mesh_132",
+          "b": "/World/Greenhouse/Plants/Plant_20/Truss_02/mesh_28",
+          "separation_m": -0.002421930432319641,
+          "force_n": 0.0016761641886306408,
+          "impulse_ns": [
+            -4.775978140969528e-06,
+            9.79454671323765e-06,
+            8.738586075196508e-06
+          ],
+          "position_world_m": [
+            -0.5280687212944031,
+            1.1086337566375732,
+            1.0812290906906128
+          ],
+          "normal_world": [
+            -0.34192198514938354,
+            0.7012115120887756,
+            0.6256130933761597
+          ]
+        },
+        "source_triangle_reviews": [
+          {
+            "label": "authored_rest",
+            "timestamp_s": null,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 28,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "native_postwarmup_initial",
+            "timestamp_s": 0.0,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 76,
+            "unsigned_source_surface_distance_m": 0.0
+          },
+          {
+            "label": "stored_postfetch_event",
+            "timestamp_s": 2.5083333333333333,
+            "source_triangle_surface_intersects": true,
+            "triangle_contact_count": 76,
+            "unsigned_source_surface_distance_m": 0.0
+          }
+        ]
+      }
+    ]
+  }
+}

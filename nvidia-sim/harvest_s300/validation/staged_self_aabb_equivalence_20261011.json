@@ -1,0 +1,31 @@
+{
+  "schema": "staged-self-aabb-regression-validation-v1",
+  "actual_checkpoint_validation_file": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/actual_self_audit_staged_axis_implemented_validation.json",
+  "actual_checkpoint_validation_sha256": "9abdbc3916af5140108ff1bc4e2554030310f321602ece432375f7ec11683300",
+  "source_module_sha256": "edfbbb848bacc98f1f4f359667920d9b988a753bc88e98dd815c03d56a946684",
+  "test_file_sha256": "09b812186c2879a565af0f2821367df1ed911f73b2d6b73b1209b2c2c7198bef",
+  "focused_test_modules": [
+    "test_staged_aabb_screen",
+    "test_motion_self_collision",
+    "test_exact_self_query_cache"
+  ],
+  "focused_tests_passed": 21,
+  "new_specific_tests_passed": 7,
+  "paired_actual_checkpoints": 5,
+  "intentional_fcl_positive_controls": 1,
+  "all_candidate_indices_and_order_identical": true,
+  "all_full_fcl_hit_records_identical": true,
+  "inclusive_clearance_comparisons_unchanged": true,
+  "nonfinite_bounds_comparison_behavior_unchanged": true,
+  "original_geometry_metadata_unchanged": true,
+  "exact_plan_repeat_cache_behavior_unchanged": true,
+  "physics_rerun": false,
+  "physical_colliders_and_permissions_unchanged": true,
+  "functional_queries_per_version": 250,
+  "functional_old_query_wall_s": 3.8430146984755993,
+  "functional_new_query_wall_s": 1.3036321997642517,
+  "functional_query_speed_ratio": 2.947928640586331,
+  "performance_scope": "Concurrent CPU read-only saved-checkpoint full-query A/B; not isolated simulator RTF, native frame rate, or full-row throughput.",
+  "import_scope": "Already-imported processes retain their implementation; next process imports the new helper. No historical audit is retrospectively accelerated.",
+  "training_eligible": false
+}

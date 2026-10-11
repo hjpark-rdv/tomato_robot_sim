@@ -1,0 +1,45 @@
+{
+  "schema": "same-active-plant-near-scope-continuation-helper-validation-v1",
+  "files": [
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/truss_sequence.py",
+      "sha256": "2c7ed7960ee0824150ac7b7af55b986013f2c6943431ea1933da6e130ea34aae"
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/grasp_depth_schedule.py",
+      "sha256": "9d29632f9d99d40026764f178c929537f9481d7a5b747e3bc70bca0c8691b4b9"
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/test_truss_sequence.py",
+      "sha256": "082c495ae9e6033b338854133b9069371d2738a6a16e015a5f6901dabc16ab15"
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/test_grasp_depth_schedule.py",
+      "sha256": "f14478304f0390ea8eaf567f305f9087cd65093663c74d70e8a0fa21c68bbe81"
+    }
+  ],
+  "tests": {
+    "passed": 42,
+    "wall_s": 1.04,
+    "modules": [
+      "test_truss_sequence",
+      "test_grasp_depth_schedule",
+      "test_row_harvest_targets",
+      "test_motion_branch"
+    ]
+  },
+  "selection": "Original exact truss first, existing per-truss remaining-fruit selector fallback only among caller-approved eligiblefruit scope",
+  "preserves": [
+    "exact native break/body identities",
+    "measured saved centers",
+    "finite retry counts and planning rejections",
+    "horizontal yaw-only orientation",
+    "physical source model and native detach criteria",
+    "default unscoped selector/completed-cycle behavior"
+  ],
+  "axis": "New truss own attached measured XY PCA signed robot-side; minimum10 opt, own-truss-only verifiedfallback; anothertruss yaw is rejected",
+  "depth": "Exact selectedtruss completed physical records only; first01 uses65 evenafter02 completion; later01 uses50; stopped/rejected/mixedtruss records neveractivateoverride",
+  "native_validation": "pending parent-controlled real-state continuation; no child native run for helper",
+  "training_eligible": false,
+  "harvest_success": null
+}

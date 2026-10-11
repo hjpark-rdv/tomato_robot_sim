@@ -1,0 +1,198 @@
+{
+  "schema": "s300-exact-base-angle-alias-diagnostic-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_usdc_sha256": "2a7720d4864878fae9fa54eda784bd900a77020ae0c26436b3d7ac20d02fc2f8",
+  "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+  "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+  "code_sha256": "e8e8515d71bbc58b5e4a2cfc2f1703c2624044020ca79676020b0ce3f70279d0",
+  "base_angle_delta_rad": -6.283185307179586,
+  "exact_goal_fk_preserved": true,
+  "all_suffix_fk_max_matrix_error": 7.771561172376096e-16,
+  "checked_waypoints": 312,
+  "bounds_valid": true,
+  "source_staging_q": [
+    0.042236158450818684,
+    4.287530589162505,
+    0.2730285545062285,
+    2.2595567824392297,
+    0.6089446982317124,
+    0.5457212604703368,
+    3.1416590760727634
+  ],
+  "alias_staging_q": [
+    0.042236158450818684,
+    -1.9956547180170814,
+    0.2730285545062285,
+    2.2595567824392297,
+    0.6089446982317124,
+    0.5457212604703368,
+    3.1416590760727634
+  ],
+  "six_coarse_fractions": [
+    0.0,
+    0.2,
+    0.4,
+    0.6000000000000001,
+    0.8,
+    1.0
+  ],
+  "coarse_clear": false,
+  "coarse_samples": 12,
+  "distance_queries": 180,
+  "wall_s": 10.525517700240016,
+  "physics_executed": false,
+  "native_eligible": false,
+  "training_eligible": false,
+  "impossible": null,
+  "command_import": "Diagnostic only; ordinary planner command identity is intentionally different; native import not authorized",
+  "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_base_alias_seed1_retract250_lift135/report.json",
+  "report_sha256": "e24347a816bf106bccc610fde28d0ec2f459ebc9e5870cf201a138d4c2726361",
+  "blocked_fraction_checks": [
+    {
+      "fraction": 0.4,
+      "q": [
+        0.042236158450818684,
+        0.006854261192539957,
+        0.01737850416456979,
+        2.3079827029827573,
+        0.8157784991442315,
+        2.00837420067767,
+        3.141189035441977
+      ],
+      "gap_m": 0.044,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_0",
+          "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_-78_12",
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    },
+    {
+      "fraction": 0.4,
+      "q": [
+        0.042236158450818684,
+        0.006854261192539957,
+        0.01737850416456979,
+        2.3079827029827573,
+        0.8157784991442315,
+        2.00837420067767,
+        3.141189035441977
+      ],
+      "gap_m": 0.096,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_0",
+          "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_-78_12",
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    },
+    {
+      "fraction": 0.6000000000000001,
+      "q": [
+        0.042236158450818684,
+        -0.660648731877334,
+        0.1025951876117894,
+        2.291840729468248,
+        0.7468338988400585,
+        1.5208232206085588,
+        3.141345715652239
+      ],
+      "gap_m": 0.044,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_3",
+          "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_78_2",
+          "b_name": null,
+          "intersection": false,
+          "distance_m": 0.0013952643944985493,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    },
+    {
+      "fraction": 0.6000000000000001,
+      "q": [
+        0.042236158450818684,
+        -0.660648731877334,
+        0.1025951876117894,
+        2.291840729468248,
+        0.7468338988400585,
+        1.5208232206085588,
+        3.141345715652239
+      ],
+      "gap_m": 0.096,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_3",
+          "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_78_2",
+          "b_name": null,
+          "intersection": false,
+          "distance_m": 0.0013952643944985493,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    },
+    {
+      "fraction": 0.8,
+      "q": [
+        0.042236158450818684,
+        -1.3281517249472077,
+        0.1878118710590089,
+        2.275698755953739,
+        0.6778892985358854,
+        1.0332722405394477,
+        3.1415023958625015
+      ],
+      "gap_m": 0.044,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_2",
+          "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_78_12",
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    },
+    {
+      "fraction": 0.8,
+      "q": [
+        0.042236158450818684,
+        -1.3281517249472077,
+        0.1878118710590089,
+        2.275698755953739,
+        0.6778892985358854,
+        1.0332722405394477,
+        3.1415023958625015
+      ],
+      "gap_m": 0.096,
+      "self_hits": [
+        {
+          "a": "/World/ActuatedTool/fixed/part_2",
+          "b": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+          "a_name": "A01_bolt_78_12",
+          "b_name": null,
+          "intersection": true,
+          "distance_m": null,
+          "required_planning_clearance_m": 0.002
+        }
+      ]
+    }
+  ],
+  "interpretation": "Exact geometric joint alias preserved its endpoint and suffix, but the direct opposite-base preparation route has concrete intermediate self collision; no full certificate or native attempt was credited."
+}

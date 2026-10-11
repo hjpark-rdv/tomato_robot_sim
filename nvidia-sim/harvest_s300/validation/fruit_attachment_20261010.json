@@ -1,0 +1,3060 @@
+{
+  "source_commit": "76479ee",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "root": "/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment",
+  "trials": [
+    {
+      "label": "고정 / 0.08 Nm",
+      "folder": "baseline/fixed_strong_60",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 36.739796571433544,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.8301624626771831,
+      "native_break_events": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": 0,
+      "max_penetration_mm": 0.9476166451349854,
+      "worst_pair": {
+        "t": 16.316666666666666,
+        "phase": "close",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_07/Collider",
+        "separation_m": -0.0009476166451349854,
+        "force_n": 1.7867182676728708,
+        "impulse_ns": [
+          3.55029696947895e-05,
+          2.9917955544078723e-05,
+          -0.029778601601719856
+        ],
+        "position_world_m": [
+          -0.40616273880004883,
+          1.5441489219665527,
+          1.0414236783981323
+        ],
+        "normal_world": [
+          0.0011922294506803155,
+          0.0010046784300357103,
+          -0.9999987483024597
+        ]
+      },
+      "max_single_point_force_n": 4.3544144169452395,
+      "model_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c",
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 2.085905810016174,
+          "max_bend_before_or_at_break_deg": 1.947698063952838,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.363925513687973e-05,
+              "max_bend_deg": 0.00019509590553422527,
+              "end_twist_deg": -5.363925513687973e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 0.0007305568575551633,
+              "max_bend_deg": 0.0013979678433900214,
+              "end_twist_deg": 0.0003619520014160963
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 0.00046372471754986777,
+              "max_bend_deg": 0.0011920363200644205,
+              "end_twist_deg": 0.0003933361269236592
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 0.00044496643522864526,
+              "max_bend_deg": 0.0012433883723876283,
+              "end_twist_deg": 0.0003508278026715128
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 0.00045156875572128173,
+              "max_bend_deg": 0.0012246455700017514,
+              "end_twist_deg": 0.0003596399603435002
+            },
+            "approach": {
+              "max_abs_twist_deg": 0.0004880194225999942,
+              "max_bend_deg": 0.0012732447031995001,
+              "end_twist_deg": 0.0003564657213785232
+            },
+            "close": {
+              "max_abs_twist_deg": 1.2947269398076315,
+              "max_bend_deg": 1.947698063952838,
+              "end_twist_deg": 0.5703248125192302
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 2.085905810016174,
+              "max_bend_deg": 1.7997467505684748,
+              "end_twist_deg": 2.0516064401048664
+            },
+            "release_open": {
+              "max_abs_twist_deg": 2.0845258502419353,
+              "max_bend_deg": 1.3565630475011836,
+              "end_twist_deg": 3.7148451212944685e-06
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 0.0011151327274543494,
+              "max_bend_deg": 0.0020023797478933036,
+              "end_twist_deg": 0.00029801848055721446
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 0.0005139403613396373,
+              "max_bend_deg": 0.0013395906233105138,
+              "end_twist_deg": 0.00040252053025267794
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 0.00047167569632830536,
+              "max_bend_deg": 0.0011725139885971972,
+              "end_twist_deg": 0.00039313252007717076
+            },
+            "hold": {
+              "max_abs_twist_deg": 0.00045788962546971205,
+              "max_bend_deg": 0.0012472527083839584,
+              "end_twist_deg": 0.0004073481994994752
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 1.165011435153641,
+          "max_bend_before_or_at_break_deg": 1.321596530514349,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 1.7864721004572185e-05,
+              "max_bend_deg": 0.00010344040060160667,
+              "end_twist_deg": -1.7864721004572185e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 0.0009908689922147559,
+              "max_bend_deg": 0.001937687232737088,
+              "end_twist_deg": 0.0008356042986405181
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 0.0009175908497475536,
+              "max_bend_deg": 0.0014580394251785384,
+              "end_twist_deg": 0.0008542569737732084
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 0.0009063284648076137,
+              "max_bend_deg": 0.0015707640136397088,
+              "end_twist_deg": 0.0008435838948795353
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 0.00093637066757908,
+              "max_bend_deg": 0.0015161438228692603,
+              "end_twist_deg": 0.0008095252420089961
+            },
+            "approach": {
+              "max_abs_twist_deg": 0.0009866423214965677,
+              "max_bend_deg": 0.0015399225816136156,
+              "end_twist_deg": 0.000774293694665463
+            },
+            "close": {
+              "max_abs_twist_deg": 1.165011435153641,
+              "max_bend_deg": 1.321596530514349,
+              "end_twist_deg": -0.5666268580638404
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 0.810970336281338,
+              "max_bend_deg": 0.8240165895972756,
+              "end_twist_deg": -0.6766028183057364
+            },
+            "release_open": {
+              "max_abs_twist_deg": 0.6777114448510955,
+              "max_bend_deg": 1.1030196857864785,
+              "end_twist_deg": -0.00012082718895826046
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 0.0012042561502993362,
+              "max_bend_deg": 0.0018465447994298096,
+              "end_twist_deg": 0.0006930888558607053
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 0.001021095800232155,
+              "max_bend_deg": 0.001573848613662732,
+              "end_twist_deg": 0.0008882304424838249
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 0.0009199550163964911,
+              "max_bend_deg": 0.0015360587743101465,
+              "end_twist_deg": 0.0008062835654123304
+            },
+            "hold": {
+              "max_abs_twist_deg": 0.0009708610820707385,
+              "max_bend_deg": 0.0015528248765116473,
+              "end_twist_deg": 0.0008384215590180457
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "f9fd0d7f9fdfc5eeae73e6d1e783e582f8b08b552365dfe0de2f48383c494a95",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "c51dbacee39b180417345ed4a331cad83c475c48b365456799af62cbb8c748d6",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "label": "탄성 / 0.08 Nm",
+      "folder": "elastic_strong/elastic_strong_60",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.636614898219705,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.789406630998757,
+      "native_break_events": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": 0,
+      "max_penetration_mm": 0.6566094234585762,
+      "worst_pair": {
+        "t": 19.683333333333334,
+        "phase": "release_open",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0006566094234585762,
+        "force_n": 0.5014626002836452,
+        "impulse_ns": [
+          -0.0029624302405864,
+          -0.004692419432103634,
+          -0.006249521858990192
+        ],
+        "position_world_m": [
+          -0.425057977437973,
+          1.5080655813217163,
+          1.041916847229004
+        ],
+        "normal_world": [
+          -0.35445481538772583,
+          -0.5614480376243591,
+          -0.7477553486824036
+        ]
+      },
+      "max_single_point_force_n": 3.4733460649092454,
+      "model_sha256": "1a17e07c1a8d0e36f6ce209ca195aea0adb86e629aacfbfc4fc3b13eba66ed03",
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 24.512579888857655,
+          "max_bend_before_or_at_break_deg": 29.237517895417238,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 2.807780238133018e-05,
+              "max_bend_deg": 0.0036188074985905464,
+              "end_twist_deg": -2.807780238133018e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.038774519553758,
+              "max_bend_deg": 2.973940500722938,
+              "end_twist_deg": -1.0038473015944531
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0222372234909143,
+              "max_bend_deg": 2.19480339563525,
+              "end_twist_deg": -0.9992583983784746
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0397374440926466,
+              "max_bend_deg": 2.4845957735438606,
+              "end_twist_deg": -1.0096877544224787
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.0394760308730597,
+              "max_bend_deg": 2.661874760562391,
+              "end_twist_deg": -0.9993630795229143
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0448751272677843,
+              "max_bend_deg": 2.547571093851349,
+              "end_twist_deg": -0.9994401553913813
+            },
+            "close": {
+              "max_abs_twist_deg": 13.301347534573733,
+              "max_bend_deg": 21.02305287724546,
+              "end_twist_deg": 12.745980924830448
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 24.512579888857655,
+              "max_bend_deg": 29.237517895417238,
+              "end_twist_deg": 17.970316943458908
+            },
+            "release_open": {
+              "max_abs_twist_deg": 20.825001096733626,
+              "max_bend_deg": 28.759423308673718,
+              "end_twist_deg": -1.0021708514949637
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 1.057550207473706,
+              "max_bend_deg": 1.7447698021249898,
+              "end_twist_deg": -1.0398950985780135
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 1.0557911180934443,
+              "max_bend_deg": 1.5377587162814494,
+              "end_twist_deg": -1.002189804919836
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 1.0550315182630456,
+              "max_bend_deg": 1.5376165520427787,
+              "end_twist_deg": -1.0048115137325093
+            },
+            "hold": {
+              "max_abs_twist_deg": 1.0555861292617494,
+              "max_bend_deg": 1.5376677582290066,
+              "end_twist_deg": -1.0016960754170354
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 46.35100134281548,
+          "max_bend_before_or_at_break_deg": 13.544540810230753,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.211925645194484e-05,
+              "max_bend_deg": 0.003250851822194492,
+              "end_twist_deg": -5.211925645194484e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.1895835820548215,
+              "max_bend_deg": 2.9203072639375187,
+              "end_twist_deg": -1.0159095422148752
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0576428266934619,
+              "max_bend_deg": 2.016216815032016,
+              "end_twist_deg": -1.0180612770876643
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0470280813700283,
+              "max_bend_deg": 2.431730621817322,
+              "end_twist_deg": -1.00168841110048
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.057494373111887,
+              "max_bend_deg": 2.3509083421340007,
+              "end_twist_deg": -1.0118715627337405
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0472920968396617,
+              "max_bend_deg": 2.561231826453375,
+              "end_twist_deg": -1.022791435210722
+            },
+            "close": {
+              "max_abs_twist_deg": 15.651086178599659,
+              "max_bend_deg": 13.415122506187608,
+              "end_twist_deg": -12.402850443025583
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 46.35100134281548,
+              "max_bend_deg": 13.544540810230753,
+              "end_twist_deg": 43.358046617181046
+            },
+            "release_open": {
+              "max_abs_twist_deg": 43.30313562034583,
+              "max_bend_deg": 11.449621900632911,
+              "end_twist_deg": -1.0662027890550883
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 1.095390721372369,
+              "max_bend_deg": 3.744441372147856,
+              "end_twist_deg": -1.0026397754619945
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 1.0923098326267018,
+              "max_bend_deg": 3.69546161654229,
+              "end_twist_deg": -1.0289365824237366
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 1.0921574396001243,
+              "max_bend_deg": 3.6946699787399853,
+              "end_twist_deg": -1.0920372361033848
+            },
+            "hold": {
+              "max_abs_twist_deg": 1.0918543090682242,
+              "max_bend_deg": 3.6942609525015415,
+              "end_twist_deg": -1.064151457891569
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "b07cb2be8dc2d57e3907b276c2ad4830b0f55de3b9bae0f8bd58d000e48e3bdd",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "c73c1f1ee44aba1a554c5a8a9e710986f9bf80a68f523cc0774fd1eb5457b1d2",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "label": "고정 / 0.008 Nm",
+      "folder": "fixed_weak/fixed_weak_60",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 15.516666666666667,
+      "physics_wall_s": 18.640759229660034,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.8324052939848876,
+      "native_break_events": [
+        {
+          "t": 15.433333333333334,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+        },
+        {
+          "t": 15.45,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11"
+        },
+        {
+          "t": 15.5,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "native_detached_count": 3,
+      "valid_complete_run_detachment_count": null,
+      "max_penetration_mm": 2.0976178348064423,
+      "worst_pair": {
+        "t": 15.516666666666667,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L_belt/part_163",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0020976178348064423,
+        "force_n": 0.0,
+        "impulse_ns": [
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        "position_world_m": [
+          -0.41231217980384827,
+          1.5026123523712158,
+          1.0258291959762573
+        ],
+        "normal_world": [
+          -0.13593074679374695,
+          -0.8118789792060852,
+          -0.5677811503410339
+        ]
+      },
+      "max_single_point_force_n": 2.3131531564492116,
+      "model_sha256": "5eaaf12acda2896c07d15fc2c968f3b7da91e3abf0e4396816dd1bb16e1d4076",
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [
+            {
+              "t": 15.5,
+              "phase": "close",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "max_abs_twist_before_or_at_break_deg": 0.5913709061228652,
+          "max_bend_before_or_at_break_deg": 1.4083717197177184,
+          "sample_before_break_twist_deg": -0.190443386284406,
+          "sample_before_break_bend_deg": 1.4083717197177184,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.363925513687973e-05,
+              "max_bend_deg": 0.00019509590553422527,
+              "end_twist_deg": -5.363925513687973e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 0.0007305568575551633,
+              "max_bend_deg": 0.0013979678433900214,
+              "end_twist_deg": 0.0003619520014160963
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 0.00046372471754986777,
+              "max_bend_deg": 0.0011920363200644205,
+              "end_twist_deg": 0.0003933361269236592
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 0.00044496643522864526,
+              "max_bend_deg": 0.0012433883723876283,
+              "end_twist_deg": 0.0003508278026715128
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 0.00045156875572128173,
+              "max_bend_deg": 0.0012246455700017514,
+              "end_twist_deg": 0.0003596399603435002
+            },
+            "approach": {
+              "max_abs_twist_deg": 0.0004880194225999942,
+              "max_bend_deg": 0.0012732447031995001,
+              "end_twist_deg": 0.0003564657213785232
+            },
+            "close": {
+              "max_abs_twist_deg": 0.5913709061228652,
+              "max_bend_deg": 1.4083717197177184,
+              "end_twist_deg": 0.5579627612604179
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [
+            {
+              "t": 15.45,
+              "phase": "close",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11"
+            }
+          ],
+          "max_abs_twist_before_or_at_break_deg": 0.4697619712312434,
+          "max_bend_before_or_at_break_deg": 1.0123570101756305,
+          "sample_before_break_twist_deg": -0.11608507265369876,
+          "sample_before_break_bend_deg": 0.7253813052272008,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 1.7864721004572185e-05,
+              "max_bend_deg": 0.00010344040060160667,
+              "end_twist_deg": -1.7864721004572185e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 0.0009908689922147559,
+              "max_bend_deg": 0.001937687232737088,
+              "end_twist_deg": 0.0008356042986405181
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 0.0009175908497475536,
+              "max_bend_deg": 0.0014580394251785384,
+              "end_twist_deg": 0.0008542569737732084
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 0.0009063284648076137,
+              "max_bend_deg": 0.0015707640136397088,
+              "end_twist_deg": 0.0008435838948795353
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 0.00093637066757908,
+              "max_bend_deg": 0.0015161438228692603,
+              "end_twist_deg": 0.0008095252420089961
+            },
+            "approach": {
+              "max_abs_twist_deg": 0.0009866423214965677,
+              "max_bend_deg": 0.0015399225816136156,
+              "end_twist_deg": 0.000774293694665463
+            },
+            "close": {
+              "max_abs_twist_deg": 0.4697619712312434,
+              "max_bend_deg": 1.0123570101756305,
+              "end_twist_deg": -0.4697619712312434
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "25f1fe7b18d326f35ded9baac8a3cf186d6355e0ef7eca9c099b12368522dac2",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "829fb9fe604d056c1263e459e8842ac5ea568df251f2b1a09eb4b38fbcd99b2d",
+        "break_events.json": "d07538d5435e8f4f1b2e029b6e75a0555dff3d86035e6ae5589fc694aa6aae1d"
+      }
+    },
+    {
+      "label": "탄성 / 0.008 Nm",
+      "folder": "elastic_weak/elastic_weak_60",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 37.4688241686672,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.8140100650797901,
+      "native_break_events": [
+        {
+          "t": 19.283333333333335,
+          "phase": "belt_spin",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "native_detached_count": 1,
+      "valid_complete_run_detachment_count": 1,
+      "max_penetration_mm": 0.9567371453158557,
+      "worst_pair": {
+        "t": 19.433333333333334,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/L/part_127",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0009567371453158557,
+        "force_n": 1.6789553795060541,
+        "impulse_ns": [
+          2.165804289688822e-05,
+          -4.781298048328608e-05,
+          -0.027982540428638458
+        ],
+        "position_world_m": [
+          -0.4240328073501587,
+          1.5100027322769165,
+          1.0414506196975708
+        ],
+        "normal_world": [
+          0.0007739828433841467,
+          -0.0017086690058931708,
+          -0.9999982714653015
+        ]
+      },
+      "max_single_point_force_n": 3.4733460649092454,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [
+            {
+              "t": 19.283333333333335,
+              "phase": "belt_spin",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "max_abs_twist_before_or_at_break_deg": 24.512579888857655,
+          "max_bend_before_or_at_break_deg": 29.237517895417238,
+          "sample_before_break_twist_deg": 22.110114590336742,
+          "sample_before_break_bend_deg": 27.914802176172962,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 2.807780238133018e-05,
+              "max_bend_deg": 0.0036188074985905464,
+              "end_twist_deg": -2.807780238133018e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.038774519553758,
+              "max_bend_deg": 2.973940500722938,
+              "end_twist_deg": -1.0038473015944531
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0222372234909143,
+              "max_bend_deg": 2.19480339563525,
+              "end_twist_deg": -0.9992583983784746
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0397374440926466,
+              "max_bend_deg": 2.4845957735438606,
+              "end_twist_deg": -1.0096877544224787
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.0394760308730597,
+              "max_bend_deg": 2.661874760562391,
+              "end_twist_deg": -0.9993630795229143
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0448751272677843,
+              "max_bend_deg": 2.547571093851349,
+              "end_twist_deg": -0.9994401553913813
+            },
+            "close": {
+              "max_abs_twist_deg": 13.301347534573733,
+              "max_bend_deg": 21.02305287724546,
+              "end_twist_deg": 12.745980924830448
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 24.512579888857655,
+              "max_bend_deg": 29.237517895417238,
+              "end_twist_deg": 21.989112127290742
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 46.35100134281548,
+          "max_bend_before_or_at_break_deg": 13.544540810230753,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.211925645194484e-05,
+              "max_bend_deg": 0.003250851822194492,
+              "end_twist_deg": -5.211925645194484e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.1895835820548215,
+              "max_bend_deg": 2.9203072639375187,
+              "end_twist_deg": -1.0159095422148752
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0576428266934619,
+              "max_bend_deg": 2.016216815032016,
+              "end_twist_deg": -1.0180612770876643
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0470280813700283,
+              "max_bend_deg": 2.431730621817322,
+              "end_twist_deg": -1.00168841110048
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.057494373111887,
+              "max_bend_deg": 2.3509083421340007,
+              "end_twist_deg": -1.0118715627337405
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0472920968396617,
+              "max_bend_deg": 2.561231826453375,
+              "end_twist_deg": -1.022791435210722
+            },
+            "close": {
+              "max_abs_twist_deg": 15.651086178599659,
+              "max_bend_deg": 13.415122506187608,
+              "end_twist_deg": -12.402850443025583
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 46.35100134281548,
+              "max_bend_deg": 13.544540810230753,
+              "end_twist_deg": 44.42635906324771
+            },
+            "release_open": {
+              "max_abs_twist_deg": 44.369389575519016,
+              "max_bend_deg": 11.49986096869317,
+              "end_twist_deg": -1.0463891037773083
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 1.0585221892691028,
+              "max_bend_deg": 3.535741505959231,
+              "end_twist_deg": -1.041276152509168
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 1.058777838663476,
+              "max_bend_deg": 3.4695334985689006,
+              "end_twist_deg": -1.0411220108237027
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 1.0525597923894012,
+              "max_bend_deg": 3.4666110853791308,
+              "end_twist_deg": -1.0383977471826067
+            },
+            "hold": {
+              "max_abs_twist_deg": 1.05807032909427,
+              "max_bend_deg": 3.468057308166363,
+              "end_twist_deg": -1.0409371207208806
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "55b62ca25dc9d5d9197d82f86b69df9b2f7b903f65858f67e36e7613c3282d12",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "147a35487afc1712caf356183c1ce42e166df97e55f8f24ae01f8df1a51711ea",
+        "break_events.json": "61c71824667fcb7b516c3a5ba90e28dfc3b82ec61ad1219a890502a69112846d"
+      }
+    },
+    {
+      "label": "탄성 / 0.008 Nm / 벨트 정지",
+      "folder": "elastic_weak/elastic_weak_60_belt_off",
+      "completed": true,
+      "stop_reason": null,
+      "simulated_s": 30.5,
+      "physics_wall_s": 38.0420244615525,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.8017449237178502,
+      "native_break_events": [],
+      "native_detached_count": 0,
+      "valid_complete_run_detachment_count": 0,
+      "max_penetration_mm": 0.1556580828037113,
+      "worst_pair": {
+        "t": 17.883333333333333,
+        "phase": "belt_spin",
+        "a": "/World/ActuatedTool/R/part_249",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_09/Collider",
+        "separation_m": -0.0001556580828037113,
+        "force_n": 2.009396894885685,
+        "impulse_ns": [
+          0.0023494402412325144,
+          0.033407386392354965,
+          -5.7433830079389736e-05
+        ],
+        "position_world_m": [
+          -0.3856002688407898,
+          1.5413299798965454,
+          1.0375800132751465
+        ],
+        "normal_world": [
+          0.0701536014676094,
+          0.9975347518920898,
+          -0.0017149574123322964
+        ]
+      },
+      "max_single_point_force_n": 2.439647694062167,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 13.301347534573733,
+          "max_bend_before_or_at_break_deg": 21.02305287724546,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 2.807780238133018e-05,
+              "max_bend_deg": 0.0036188074985905464,
+              "end_twist_deg": -2.807780238133018e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.038774519553758,
+              "max_bend_deg": 2.973940500722938,
+              "end_twist_deg": -1.0038473015944531
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0222372234909143,
+              "max_bend_deg": 2.19480339563525,
+              "end_twist_deg": -0.9992583983784746
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0397374440926466,
+              "max_bend_deg": 2.4845957735438606,
+              "end_twist_deg": -1.0096877544224787
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.0394760308730597,
+              "max_bend_deg": 2.661874760562391,
+              "end_twist_deg": -0.9993630795229143
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0448751272677843,
+              "max_bend_deg": 2.547571093851349,
+              "end_twist_deg": -0.9994401553913813
+            },
+            "close": {
+              "max_abs_twist_deg": 13.301347534573733,
+              "max_bend_deg": 21.02305287724546,
+              "end_twist_deg": 12.745980924830448
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 12.731414165701368,
+              "max_bend_deg": 19.45982370987351,
+              "end_twist_deg": 11.79923389335183
+            },
+            "release_open": {
+              "max_abs_twist_deg": 11.813434619611408,
+              "max_bend_deg": 19.410243001229574,
+              "end_twist_deg": -1.0070058140760776
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 1.0484795798533888,
+              "max_bend_deg": 1.5247799407079086,
+              "end_twist_deg": -0.9875123763079875
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 1.044145671045553,
+              "max_bend_deg": 1.51871746527714,
+              "end_twist_deg": -0.9866915657313773
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 1.034805543673462,
+              "max_bend_deg": 1.51866441148266,
+              "end_twist_deg": -0.9998215406261236
+            },
+            "hold": {
+              "max_abs_twist_deg": 1.0429160382248372,
+              "max_bend_deg": 1.5187162098990996,
+              "end_twist_deg": -1.000325399371897
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 15.651086178599659,
+          "max_bend_before_or_at_break_deg": 13.415122506187608,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.211925645194484e-05,
+              "max_bend_deg": 0.003250851822194492,
+              "end_twist_deg": -5.211925645194484e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.1895835820548215,
+              "max_bend_deg": 2.9203072639375187,
+              "end_twist_deg": -1.0159095422148752
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0576428266934619,
+              "max_bend_deg": 2.016216815032016,
+              "end_twist_deg": -1.0180612770876643
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0470280813700283,
+              "max_bend_deg": 2.431730621817322,
+              "end_twist_deg": -1.00168841110048
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.057494373111887,
+              "max_bend_deg": 2.3509083421340007,
+              "end_twist_deg": -1.0118715627337405
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0472920968396617,
+              "max_bend_deg": 2.561231826453375,
+              "end_twist_deg": -1.022791435210722
+            },
+            "close": {
+              "max_abs_twist_deg": 15.651086178599659,
+              "max_bend_deg": 13.415122506187608,
+              "end_twist_deg": -12.402850443025583
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 12.423729737716481,
+              "max_bend_deg": 4.266774395775798,
+              "end_twist_deg": -10.439388253092547
+            },
+            "release_open": {
+              "max_abs_twist_deg": 10.496803370134495,
+              "max_bend_deg": 10.657820605557234,
+              "end_twist_deg": -1.062913195590197
+            },
+            "withdraw": {
+              "max_abs_twist_deg": 1.0718788946679771,
+              "max_bend_deg": 1.5110809749208833,
+              "end_twist_deg": -1.0567561252619808
+            },
+            "return_ready": {
+              "max_abs_twist_deg": 1.0696149359331597,
+              "max_bend_deg": 1.492709650469848,
+              "end_twist_deg": -1.057086433064493
+            },
+            "ready_close": {
+              "max_abs_twist_deg": 1.0681193760955552,
+              "max_bend_deg": 1.492478221970204,
+              "end_twist_deg": -1.0570276151758744
+            },
+            "hold": {
+              "max_abs_twist_deg": 1.0697929872793643,
+              "max_bend_deg": 1.4926505428504258,
+              "end_twist_deg": -1.066719223610564
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "eb6fc23058af8614565814ed5e47db82be2fea038d034b39b16985467b320c51",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "6cd66299da63abc8160f0da43e5f9348d25d4c4b77a2c4caa32316e5ea332774",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "label": "탄성 / 0.008 Nm / 120Hz",
+      "folder": "elastic_120/elastic_weak_120",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "simulated_s": 19.85,
+      "physics_wall_s": 46.984882520511746,
+      "actual_self_collision_audit_passed": true,
+      "rtf": 0.42247631440462313,
+      "native_break_events": [
+        {
+          "t": 16.333333333333332,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+        },
+        {
+          "t": 16.383333333333333,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+        }
+      ],
+      "native_detached_count": 2,
+      "valid_complete_run_detachment_count": null,
+      "max_penetration_mm": 1.0989941656589508,
+      "worst_pair": {
+        "t": 19.85,
+        "phase": "release_open",
+        "a": "/World/ActuatedTool/L_belt/part_163",
+        "b": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+        "separation_m": -0.0010989941656589508,
+        "force_n": 0.34511312509901126,
+        "impulse_ns": [
+          0.00037477753357961774,
+          -0.0020656485576182604,
+          -0.0019656256772577763
+        ],
+        "position_world_m": [
+          -0.4068787693977356,
+          1.5046513080596924,
+          1.0262019634246826
+        ],
+        "normal_world": [
+          0.1303146779537201,
+          -0.7182509899139404,
+          -0.6834717988967896
+        ]
+      },
+      "max_single_point_force_n": 2.733261510729791,
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "fruit10_and_11": [
+        {
+          "name": "Truss_02_Fruit_10",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10",
+          "breaks": [
+            {
+              "t": 16.383333333333333,
+              "phase": "close",
+              "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+            }
+          ],
+          "max_abs_twist_before_or_at_break_deg": 9.574443936787244,
+          "max_bend_before_or_at_break_deg": 18.6590981746163,
+          "sample_before_break_twist_deg": 9.127893393989385,
+          "sample_before_break_bend_deg": 18.29694943204988,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 2.2996217851648194e-05,
+              "max_bend_deg": 0.0035817488759153754,
+              "end_twist_deg": -2.2996217851648194e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.0643002182648682,
+              "max_bend_deg": 2.141140368435408,
+              "end_twist_deg": -1.0011088823877923
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0052848449688194,
+              "max_bend_deg": 1.5888563833153897,
+              "end_twist_deg": -1.0025158171088577
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0052124873446255,
+              "max_bend_deg": 1.5891440373541899,
+              "end_twist_deg": -1.0002199057018906
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.0053927295648808,
+              "max_bend_deg": 1.5890269514408322,
+              "end_twist_deg": -0.9993780763783718
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0054624049550498,
+              "max_bend_deg": 1.5889768229629524,
+              "end_twist_deg": -1.0013813414047892
+            },
+            "close": {
+              "max_abs_twist_deg": 9.574443936787244,
+              "max_bend_deg": 18.6590981746163,
+              "end_twist_deg": 9.574443936787244
+            }
+          }
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11",
+          "breaks": [],
+          "max_abs_twist_before_or_at_break_deg": 16.661694411451528,
+          "max_bend_before_or_at_break_deg": 13.690641472431883,
+          "sample_before_break_twist_deg": null,
+          "sample_before_break_bend_deg": null,
+          "phase_evidence": {
+            "initial": {
+              "max_abs_twist_deg": 5.096681772910684e-05,
+              "max_bend_deg": 0.0031647121938793016,
+              "end_twist_deg": -5.096681772910684e-05
+            },
+            "settle": {
+              "max_abs_twist_deg": 1.1229590173615052,
+              "max_bend_deg": 2.1499170238863945,
+              "end_twist_deg": -1.0008721180614026
+            },
+            "ready_hold": {
+              "max_abs_twist_deg": 1.0015561983174912,
+              "max_bend_deg": 1.5635607228429438,
+              "end_twist_deg": -1.0014558559144562
+            },
+            "prepare_open": {
+              "max_abs_twist_deg": 1.0015096326886352,
+              "max_bend_deg": 1.5631838770660655,
+              "end_twist_deg": -1.0007885740219291
+            },
+            "prepare_horizontal": {
+              "max_abs_twist_deg": 1.0089387109644128,
+              "max_bend_deg": 1.563373871709392,
+              "end_twist_deg": -1.000958392118028
+            },
+            "approach": {
+              "max_abs_twist_deg": 1.0015772631472275,
+              "max_bend_deg": 1.563391224822681,
+              "end_twist_deg": -1.0012609104088257
+            },
+            "close": {
+              "max_abs_twist_deg": 16.661694411451528,
+              "max_bend_deg": 13.690641472431883,
+              "end_twist_deg": -5.363236992635691
+            },
+            "belt_spin": {
+              "max_abs_twist_deg": 6.075691271537961,
+              "max_bend_deg": 3.0305512157456165,
+              "end_twist_deg": -6.075691271537961
+            },
+            "release_open": {
+              "max_abs_twist_deg": 9.100205497814125,
+              "max_bend_deg": 8.195279230379384,
+              "end_twist_deg": -1.366365208745065
+            }
+          }
+        }
+      ],
+      "input_sha256": {
+        "states.npz": "bf7f409570aec80f2b2e2707c40b20515998dbd1f62bbeb8c22405e21d27123d",
+        "plan.json": "18121945aa1d1a4bd938254d0fe0a583d8ff6a67bad2a78dcd45dc0bdbf51029",
+        "contacts.json": "9df2b4ece800afde16b59c804a7b6c46e20acc6d9acf8a1ffed0e44dc9d24fed",
+        "break_events.json": "95358797ef046c6b3156b19b0037697c8099dd2f03daec6fb75adc0f9b14486d"
+      }
+    }
+  ],
+  "fixtures": {
+    "fixture60_final": {
+      "hz": 60,
+      "solver": "TGS",
+      "uncapped_synthetic_fixture": true,
+      "checks": {
+        "finite": true,
+        "idle_stable": true,
+        "elastic_rotation": true,
+        "recovery": true,
+        "twist_native_break": true,
+        "bend_native_break": true,
+        "fixed_strong_retained": true,
+        "fixed_weak_break": true
+      },
+      "passed": true,
+      "rows": [
+        {
+          "case": "idle",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.0,
+          "axis": 0,
+          "max_rotation_deg": 0.0,
+          "final_rotation_deg": 0.0,
+          "breaks": []
+        },
+        {
+          "case": "recover",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.003,
+          "axis": 0,
+          "max_rotation_deg": 13.142345349156606,
+          "final_rotation_deg": 0.9943683487091504,
+          "breaks": []
+        },
+        {
+          "case": "twist_break",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 52.56937273145466,
+          "final_rotation_deg": 103.19455526176523,
+          "breaks": [
+            {
+              "t": 1.1833333333333333,
+              "joint": "/World/Joints/twist_break"
+            }
+          ]
+        },
+        {
+          "case": "bend_break",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 1,
+          "max_rotation_deg": 52.56937273145466,
+          "final_rotation_deg": 76.97200844238229,
+          "breaks": [
+            {
+              "t": 1.1833333333333333,
+              "joint": "/World/Joints/bend_break"
+            }
+          ]
+        },
+        {
+          "case": "fixed_strong",
+          "kind": "fixed",
+          "break_torque_nm": 0.08,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 2.5399353979653694e-06,
+          "final_rotation_deg": 5.005871105246338e-22,
+          "breaks": []
+        },
+        {
+          "case": "fixed_weak",
+          "kind": "fixed",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 2.475771651154648e-06,
+          "final_rotation_deg": 57.53348731591242,
+          "breaks": [
+            {
+              "t": 1.2,
+              "joint": "/World/Joints/fixed_weak"
+            }
+          ]
+        }
+      ],
+      "fixture_only": true,
+      "harvest_success": null
+    },
+    "fixture120_final": {
+      "hz": 120,
+      "solver": "TGS",
+      "uncapped_synthetic_fixture": true,
+      "checks": {
+        "finite": true,
+        "idle_stable": true,
+        "elastic_rotation": true,
+        "recovery": true,
+        "twist_native_break": true,
+        "bend_native_break": true,
+        "fixed_strong_retained": true,
+        "fixed_weak_break": true
+      },
+      "passed": true,
+      "rows": [
+        {
+          "case": "idle",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.0,
+          "axis": 0,
+          "max_rotation_deg": 0.0,
+          "final_rotation_deg": 0.0,
+          "breaks": []
+        },
+        {
+          "case": "recover",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.003,
+          "axis": 0,
+          "max_rotation_deg": 15.24798264512962,
+          "final_rotation_deg": 0.9904573351768204,
+          "breaks": []
+        },
+        {
+          "case": "twist_break",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 36.80584702423772,
+          "final_rotation_deg": 23.59026056454643,
+          "breaks": [
+            {
+              "t": 1.175,
+              "joint": "/World/Joints/twist_break"
+            }
+          ]
+        },
+        {
+          "case": "bend_break",
+          "kind": "elastic",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 1,
+          "max_rotation_deg": 8.418206181290182,
+          "final_rotation_deg": 149.8824040833935,
+          "breaks": [
+            {
+              "t": 1.175,
+              "joint": "/World/Joints/bend_break"
+            }
+          ]
+        },
+        {
+          "case": "fixed_strong",
+          "kind": "fixed",
+          "break_torque_nm": 0.08,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 8.187296332158551e-07,
+          "final_rotation_deg": 6.05504096539729e-21,
+          "breaks": []
+        },
+        {
+          "case": "fixed_weak",
+          "kind": "fixed",
+          "break_torque_nm": 0.008,
+          "applied_torque_nm": 0.012,
+          "axis": 0,
+          "max_rotation_deg": 4.037108081617835e-07,
+          "final_rotation_deg": 86.26793981249754,
+          "breaks": [
+            {
+              "t": 1.1833333333333333,
+              "joint": "/World/Joints/fixed_weak"
+            }
+          ]
+        }
+      ],
+      "fixture_only": true,
+      "harvest_success": null
+    }
+  },
+  "command_regression": {
+    "previous_baseline_bit_exact": {
+      "time": true,
+      "phase": true,
+      "command": true,
+      "robot_q": true,
+      "poses": true,
+      "belt_surface_velocity_local_y_m_s": true
+    },
+    "same_plan_commands": {
+      "elastic_strong/elastic_strong_60": {
+        "time": true,
+        "phase": true,
+        "command": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "fixed_weak/fixed_weak_60": {
+        "time": true,
+        "phase": true,
+        "command": true,
+        "belt_surface_velocity_local_y_m_s": true
+      }
+    }
+  },
+  "belt_control": {
+    "same_commands": true,
+    "same_time": true,
+    "same_phases": true,
+    "actual_poses_before_belt_identical": true,
+    "actual_robot_before_belt_identical": true,
+    "off_actual_belt_speed_zero": true,
+    "on_peak_belt_speed": [
+      0.1,
+      0.0
+    ]
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "calibrated": false,
+  "tests": {
+    "unittest_passed": 87,
+    "log": "/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment/regression_tests_final.log"
+  },
+  "limitations": [
+    "single scene and grasp",
+    "60/120Hz results differ",
+    "native event does not report break wrench component",
+    "uncalibrated spring and torque thresholds",
+    "5mm separate tread hardware prototype",
+    "GUI and parallel throughput not newly measured"
+  ],
+  "production_defaults_changed": false,
+  "discarded_or_diagnostic_fixtures": [
+    {
+      "folder": "fixture120",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": false,
+          "recovery": true,
+          "twist_native_break": false,
+          "bend_native_break": false,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": false
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 175.31393223300228,
+            "final_rotation_deg": 0.6601507038270396,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 172.24991569095866,
+            "final_rotation_deg": 1.1273667802635037,
+            "breaks": []
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 179.85037101495047,
+            "final_rotation_deg": 0.03645144771557884,
+            "breaks": []
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 2.2121546587139762e-07,
+            "final_rotation_deg": 6.232768307876045e-21,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 2.2121546587139762e-07,
+            "final_rotation_deg": 6.232768307876045e-21,
+            "breaks": []
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_anchored",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": true,
+          "recovery": true,
+          "twist_native_break": false,
+          "bend_native_break": false,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": false
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 15.24798264512962,
+            "final_rotation_deg": 0.9904573351768204,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 17.627903563264965,
+            "final_rotation_deg": 0.9904562679996074,
+            "breaks": []
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 6.573910844918708,
+            "final_rotation_deg": 0.9998766766717792,
+            "breaks": []
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 1.8495621378074654e-07,
+            "final_rotation_deg": 1.9776189508405278e-22,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 1.8495621378074654e-07,
+            "final_rotation_deg": 1.9776189508405278e-22,
+            "breaks": []
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_baked",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": false,
+          "recovery": true,
+          "twist_native_break": false,
+          "bend_native_break": false,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": false
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 175.3139424697206,
+            "final_rotation_deg": 0.6587123999333939,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 172.24987139623067,
+            "final_rotation_deg": 1.1279127025434963,
+            "breaks": []
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 179.85027538346682,
+            "final_rotation_deg": 0.036450867416362366,
+            "breaks": []
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 1.8495621378074654e-07,
+            "final_rotation_deg": 1.9776189508405278e-22,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 1.8495621378074654e-07,
+            "final_rotation_deg": 1.9776189508405278e-22,
+            "breaks": []
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_pgs",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": false,
+          "recovery": true,
+          "twist_native_break": false,
+          "bend_native_break": false,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": false
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 178.79787491422343,
+            "final_rotation_deg": 0.5098384525832463,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 178.053234261455,
+            "final_rotation_deg": 0.7805112735767018,
+            "breaks": []
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 178.24781064346948,
+            "final_rotation_deg": 1.0022069283920771,
+            "breaks": []
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_physx",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": false,
+          "recovery": true,
+          "twist_native_break": false,
+          "bend_native_break": false,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": false
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 175.31393223300228,
+            "final_rotation_deg": 0.6601507038270396,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 172.24991569095866,
+            "final_rotation_deg": 1.1273667802635037,
+            "breaks": []
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 179.85037101495047,
+            "final_rotation_deg": 0.03645144771557884,
+            "breaks": []
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 2.2121546587139762e-07,
+            "final_rotation_deg": 6.232768307876045e-21,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 2.2121546587139762e-07,
+            "final_rotation_deg": 6.232768307876045e-21,
+            "breaks": []
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_si_uncapped",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": true,
+          "recovery": true,
+          "twist_native_break": true,
+          "bend_native_break": true,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": true
+        },
+        "passed": true,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 15.24798264512962,
+            "final_rotation_deg": 0.9904573351768204,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 36.80584702423772,
+            "final_rotation_deg": 23.59026056454643,
+            "breaks": [
+              {
+                "t": 1.175,
+                "joint": "/World/Joints/twist_break"
+              }
+            ]
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 8.418206181290182,
+            "final_rotation_deg": 149.8824040833935,
+            "breaks": [
+              {
+                "t": 1.175,
+                "joint": "/World/Joints/bend_break"
+              }
+            ]
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 8.187296332158551e-07,
+            "final_rotation_deg": 6.05504096539729e-21,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 4.037108081617835e-07,
+            "final_rotation_deg": 86.26793981249754,
+            "breaks": [
+              {
+                "t": 1.1833333333333333,
+                "joint": "/World/Joints/fixed_weak"
+              }
+            ]
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_uncapped",
+      "summary": null,
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    },
+    {
+      "folder": "fixture120_uncapped_v2",
+      "summary": {
+        "hz": 120,
+        "checks": {
+          "finite": true,
+          "idle_stable": true,
+          "elastic_rotation": false,
+          "recovery": true,
+          "twist_native_break": true,
+          "bend_native_break": true,
+          "fixed_strong_retained": true,
+          "fixed_weak_break": true
+        },
+        "passed": false,
+        "rows": [
+          {
+            "case": "idle",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.0,
+            "axis": 0,
+            "max_rotation_deg": 0.0,
+            "final_rotation_deg": 0.0,
+            "breaks": []
+          },
+          {
+            "case": "recover",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.003,
+            "axis": 0,
+            "max_rotation_deg": 178.6252767519914,
+            "final_rotation_deg": 0.7160436657308807,
+            "breaks": []
+          },
+          {
+            "case": "twist_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 178.33046187712048,
+            "final_rotation_deg": 51.6404433139868,
+            "breaks": [
+              {
+                "t": 1.2416666666666667,
+                "joint": "/World/Joints/twist_break"
+              }
+            ]
+          },
+          {
+            "case": "bend_break",
+            "kind": "elastic",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 1,
+            "max_rotation_deg": 176.12861602301817,
+            "final_rotation_deg": 139.92302299801992,
+            "breaks": [
+              {
+                "t": 1.2,
+                "joint": "/World/Joints/bend_break"
+              }
+            ]
+          },
+          {
+            "case": "fixed_strong",
+            "kind": "fixed",
+            "break_torque_nm": 0.08,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 8.187296332158551e-07,
+            "final_rotation_deg": 6.05504096539729e-21,
+            "breaks": []
+          },
+          {
+            "case": "fixed_weak",
+            "kind": "fixed",
+            "break_torque_nm": 0.008,
+            "applied_torque_nm": 0.012,
+            "axis": 0,
+            "max_rotation_deg": 4.037108081617835e-07,
+            "final_rotation_deg": 86.26793981249754,
+            "breaks": [
+              {
+                "t": 1.1833333333333333,
+                "joint": "/World/Joints/fixed_weak"
+              }
+            ]
+          }
+        ],
+        "fixture_only": true,
+        "harvest_success": null
+      },
+      "status": "preserved intermediate fixture; not production model or farm harvest"
+    }
+  ],
+  "joint_preservation_audits": {
+    "assembly_fixed_weak": {
+      "model_sha256": "5eaaf12acda2896c07d15fc2c968f3b7da91e3abf0e4396816dd1bb16e1d4076",
+      "audit": {
+        "passed": true,
+        "outside_joint_spec_sha256": "2e272e7783b48d32ac69398298051307a574591c4e255a6d31d64e31f4ffc94e",
+        "resolved_sublayers_unchanged": true
+      },
+      "joint_count": 10,
+      "source_scene_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c"
+    },
+    "assembly_elastic_strong_v2": {
+      "model_sha256": "1a17e07c1a8d0e36f6ce209ca195aea0adb86e629aacfbfc4fc3b13eba66ed03",
+      "audit": {
+        "passed": true,
+        "outside_joint_spec_sha256": "2e272e7783b48d32ac69398298051307a574591c4e255a6d31d64e31f4ffc94e",
+        "resolved_sublayers_unchanged": true
+      },
+      "joint_count": 10,
+      "source_scene_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c"
+    },
+    "assembly_elastic_weak_v2": {
+      "model_sha256": "369e88c0f95f1b4831e24d9984ee28218ea51bd6ac1edc8852390034e6005616",
+      "audit": {
+        "passed": true,
+        "outside_joint_spec_sha256": "2e272e7783b48d32ac69398298051307a574591c4e255a6d31d64e31f4ffc94e",
+        "resolved_sublayers_unchanged": true
+      },
+      "joint_count": 10,
+      "source_scene_sha256": "4f09cb55794dcdee4fbfd82de20ebdd22c339e20b43a3b700b50c0397129ab7c"
+    }
+  },
+  "source_sha256": {
+    "fruit_attachment.py": "079e999f53e9abec99677dadb18152c3655a104b20570eac122b2c02d785035c",
+    "check_fruit_attachment.py": "2334f853c60659a46da66a69dde079883e9fd3d64181777125234b14e1ba9061",
+    "test_fruit_attachment.py": "87d810fc1ad0ec54658236d00bb06575da292531308fab95f869324fac33ae52",
+    "run_motion.py": "446b9e2b4e9d768bae5d1516d30eaa0a520261223437d87fc61a40cc75dbdc37",
+    "analyze_belt_trial.py": "72c9f4e33797eaf69472828f893928eaf73ef77204d3b7f221c138317f834e9e",
+    "report_motion.py": "f0152bff44a705835bfe18a09ed38d902c65c59e443c9d2c77f8388699df8196",
+    "render_motion.py": "2042c759ade376bfee6c9ebbeb202de1dd3dfd29a3a2471e1a5e1a75c19de9d0"
+  },
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment/elastic_weak/elastic_weak_60/actual_motion.mp4",
+      "sha256": "7a97ebac2b63f7bcfe9792d55de33c7908f55723fdb2f6d19c71a10af2728d13",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "6/1",
+        "nb_frames": "184"
+      },
+      "render": {
+        "source": "stored measured physical body transforms",
+        "frames": 184,
+        "fps": 6,
+        "speed": 1.0,
+        "render_ticks": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100,
+          110,
+          120,
+          130,
+          140,
+          150,
+          160,
+          170,
+          180,
+          190,
+          200,
+          210,
+          220,
+          230,
+          240,
+          250,
+          260,
+          270,
+          280,
+          290,
+          300,
+          310,
+          320,
+          330,
+          340,
+          350,
+          360,
+          370,
+          380,
+          390,
+          400,
+          410,
+          420,
+          430,
+          440,
+          450,
+          460,
+          470,
+          480,
+          490,
+          500,
+          510,
+          520,
+          530,
+          540,
+          550,
+          560,
+          570,
+          580,
+          590,
+          600,
+          610,
+          620,
+          630,
+          640,
+          650,
+          660,
+          670,
+          680,
+          690,
+          700,
+          710,
+          720,
+          730,
+          740,
+          750,
+          760,
+          770,
+          780,
+          790,
+          800,
+          810,
+          820,
+          830,
+          840,
+          850,
+          860,
+          870,
+          880,
+          890,
+          900,
+          910,
+          920,
+          930,
+          940,
+          950,
+          960,
+          970,
+          980,
+          990,
+          1000,
+          1010,
+          1020,
+          1030,
+          1040,
+          1050,
+          1060,
+          1070,
+          1080,
+          1090,
+          1100,
+          1110,
+          1120,
+          1130,
+          1140,
+          1150,
+          1160,
+          1170,
+          1180,
+          1190,
+          1200,
+          1210,
+          1220,
+          1230,
+          1240,
+          1250,
+          1260,
+          1270,
+          1280,
+          1290,
+          1300,
+          1310,
+          1320,
+          1330,
+          1340,
+          1350,
+          1360,
+          1370,
+          1380,
+          1390,
+          1400,
+          1410,
+          1420,
+          1430,
+          1440,
+          1450,
+          1460,
+          1470,
+          1480,
+          1490,
+          1500,
+          1510,
+          1520,
+          1530,
+          1540,
+          1550,
+          1560,
+          1570,
+          1580,
+          1590,
+          1600,
+          1610,
+          1620,
+          1630,
+          1640,
+          1650,
+          1660,
+          1670,
+          1680,
+          1690,
+          1700,
+          1710,
+          1720,
+          1730,
+          1740,
+          1750,
+          1760,
+          1770,
+          1780,
+          1790,
+          1800,
+          1810,
+          1820,
+          1830
+        ],
+        "camera": "/World/GripFrontReplayCamera",
+        "physics_rerun": false,
+        "replay_only_fill_light": true,
+        "replay_only_hidden_paths": [
+          "/World/Greenhouse/Plants",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_195",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_196",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_197",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_198",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_199",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_200",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_201",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_202",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_203",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_204",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_205",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_206",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_207",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_208",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_209",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_210",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_211",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_212",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_213",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_214",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_215",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_216",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_217",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_218",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_127",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_128",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_129",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_130",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_219",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_220",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_221",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_222",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_131",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_132",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_133",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_134",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_167",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_168",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_169",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_170",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_135",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_136",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_137",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_138",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_171",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_172",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_173",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_174",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_139",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_140",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_141",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_142",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_175",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_176",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_177",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_178",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_143",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_144",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_145",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_146",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_179",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_180",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_181",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_182",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_147",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_148",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_149",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_150",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_183",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_184",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_185",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_186",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_187",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_188",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_189",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_190",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_151",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_152",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_153",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_154",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_155",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_156",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_157",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_158",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_191",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_192",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_193",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_194",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_91",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_92",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_93",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_94",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_95",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_96",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_97",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_98",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_99",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_100",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_101",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_102",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_103",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_104",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_105",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_106",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_107",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_108",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_109",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_110",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_111",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_112",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_113",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_114",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_115",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_116",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_117",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_118",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_119",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_120",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_121",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_122",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_123",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_124",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_125",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_126",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_159",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_160",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_161",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_162",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_163",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_164",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_165",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_166"
+        ],
+        "source_geometry_modified": false,
+        "stop_reason": null
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment/elastic_weak/elastic_weak_60_belt_off/actual_motion.mp4",
+      "sha256": "979afa89e17aa0b643299c345fa69449e8bc4433545f4ed319875c426eaa424a",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "6/1",
+        "nb_frames": "184"
+      },
+      "render": {
+        "source": "stored measured physical body transforms",
+        "frames": 184,
+        "fps": 6,
+        "speed": 1.0,
+        "render_ticks": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100,
+          110,
+          120,
+          130,
+          140,
+          150,
+          160,
+          170,
+          180,
+          190,
+          200,
+          210,
+          220,
+          230,
+          240,
+          250,
+          260,
+          270,
+          280,
+          290,
+          300,
+          310,
+          320,
+          330,
+          340,
+          350,
+          360,
+          370,
+          380,
+          390,
+          400,
+          410,
+          420,
+          430,
+          440,
+          450,
+          460,
+          470,
+          480,
+          490,
+          500,
+          510,
+          520,
+          530,
+          540,
+          550,
+          560,
+          570,
+          580,
+          590,
+          600,
+          610,
+          620,
+          630,
+          640,
+          650,
+          660,
+          670,
+          680,
+          690,
+          700,
+          710,
+          720,
+          730,
+          740,
+          750,
+          760,
+          770,
+          780,
+          790,
+          800,
+          810,
+          820,
+          830,
+          840,
+          850,
+          860,
+          870,
+          880,
+          890,
+          900,
+          910,
+          920,
+          930,
+          940,
+          950,
+          960,
+          970,
+          980,
+          990,
+          1000,
+          1010,
+          1020,
+          1030,
+          1040,
+          1050,
+          1060,
+          1070,
+          1080,
+          1090,
+          1100,
+          1110,
+          1120,
+          1130,
+          1140,
+          1150,
+          1160,
+          1170,
+          1180,
+          1190,
+          1200,
+          1210,
+          1220,
+          1230,
+          1240,
+          1250,
+          1260,
+          1270,
+          1280,
+          1290,
+          1300,
+          1310,
+          1320,
+          1330,
+          1340,
+          1350,
+          1360,
+          1370,
+          1380,
+          1390,
+          1400,
+          1410,
+          1420,
+          1430,
+          1440,
+          1450,
+          1460,
+          1470,
+          1480,
+          1490,
+          1500,
+          1510,
+          1520,
+          1530,
+          1540,
+          1550,
+          1560,
+          1570,
+          1580,
+          1590,
+          1600,
+          1610,
+          1620,
+          1630,
+          1640,
+          1650,
+          1660,
+          1670,
+          1680,
+          1690,
+          1700,
+          1710,
+          1720,
+          1730,
+          1740,
+          1750,
+          1760,
+          1770,
+          1780,
+          1790,
+          1800,
+          1810,
+          1820,
+          1830
+        ],
+        "camera": "/World/GripFrontReplayCamera",
+        "physics_rerun": false,
+        "replay_only_fill_light": true,
+        "replay_only_hidden_paths": [
+          "/World/Greenhouse/Plants",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_195",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_196",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_197",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_198",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_199",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_200",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_201",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_202",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_203",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_204",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_205",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_206",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_207",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_208",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_209",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_210",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_211",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_212",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_213",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_214",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_215",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_216",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_217",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_218",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_127",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_128",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_129",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_130",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_219",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_220",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_221",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_222",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_131",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_132",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_133",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_134",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_167",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_168",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_169",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_170",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_135",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_136",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_137",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_138",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_171",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_172",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_173",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_174",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_139",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_140",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_141",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_142",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_175",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_176",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_177",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_178",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_143",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_144",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_145",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_146",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_179",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_180",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_181",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_182",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_147",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_148",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_149",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_150",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_183",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_184",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_185",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_186",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_187",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_188",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_189",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_190",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_151",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_152",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_153",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_154",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_155",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_156",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_157",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_158",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_191",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_192",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_193",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_194",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_91",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_92",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_93",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_94",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_95",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_96",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_97",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_98",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_99",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_100",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_101",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_102",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_103",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_104",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_105",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_106",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_107",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_108",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_109",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_110",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_111",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_112",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_113",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_114",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_115",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_116",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_117",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_118",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_119",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_120",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_121",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_122",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_123",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_124",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_125",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_126",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_159",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_160",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_161",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_162",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_163",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_164",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_165",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_166"
+        ],
+        "source_geometry_modified": false,
+        "stop_reason": null
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment/elastic_120/elastic_weak_120/actual_motion.mp4",
+      "sha256": "c991dd3bf3be5dc7678bf836fb22f86a47f4bcd8f4bdf03381b90392a32fa007",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "6/1",
+        "nb_frames": "121"
+      },
+      "render": {
+        "source": "stored measured physical body transforms",
+        "frames": 121,
+        "fps": 6,
+        "speed": 1.0,
+        "render_ticks": [
+          0,
+          20,
+          40,
+          60,
+          80,
+          100,
+          120,
+          140,
+          160,
+          180,
+          200,
+          220,
+          240,
+          260,
+          280,
+          300,
+          320,
+          340,
+          360,
+          380,
+          400,
+          420,
+          440,
+          460,
+          480,
+          500,
+          520,
+          540,
+          560,
+          580,
+          600,
+          620,
+          640,
+          660,
+          680,
+          700,
+          720,
+          740,
+          760,
+          780,
+          800,
+          820,
+          840,
+          860,
+          880,
+          900,
+          920,
+          940,
+          960,
+          980,
+          1000,
+          1020,
+          1040,
+          1060,
+          1080,
+          1100,
+          1120,
+          1140,
+          1160,
+          1180,
+          1200,
+          1220,
+          1240,
+          1260,
+          1280,
+          1300,
+          1320,
+          1340,
+          1360,
+          1380,
+          1400,
+          1420,
+          1440,
+          1460,
+          1480,
+          1500,
+          1520,
+          1540,
+          1560,
+          1580,
+          1600,
+          1620,
+          1640,
+          1660,
+          1680,
+          1700,
+          1720,
+          1740,
+          1760,
+          1780,
+          1800,
+          1820,
+          1840,
+          1860,
+          1880,
+          1900,
+          1920,
+          1940,
+          1960,
+          1980,
+          2000,
+          2020,
+          2040,
+          2060,
+          2080,
+          2100,
+          2120,
+          2140,
+          2160,
+          2180,
+          2200,
+          2220,
+          2240,
+          2260,
+          2280,
+          2300,
+          2320,
+          2340,
+          2360,
+          2380,
+          2382
+        ],
+        "camera": "/World/GripFrontReplayCamera",
+        "physics_rerun": false,
+        "replay_only_fill_light": true,
+        "replay_only_hidden_paths": [
+          "/World/Greenhouse/Plants",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_195",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_196",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_197",
+          "/World/ElasticTarget/Stem_MainStem_0/Visual_198",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_199",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_200",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_201",
+          "/World/ElasticTarget/Stem_MainStem_2/Visual_202",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_203",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_204",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_205",
+          "/World/ElasticTarget/Stem_MainStem_3/Visual_206",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_207",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_208",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_209",
+          "/World/ElasticTarget/Stem_MainStem_4/Visual_210",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_211",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_212",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_213",
+          "/World/ElasticTarget/Stem_MainStem_6/Visual_214",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_215",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_216",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_217",
+          "/World/ElasticTarget/Stem_MainStem_7/Visual_218",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_127",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_128",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_129",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_130",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_219",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_220",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_221",
+          "/World/ElasticTarget/Stem_MainStem_8/Visual_222",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_131",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_132",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_133",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_134",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_167",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_168",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_169",
+          "/World/ElasticTarget/Stem_MainStem_9/Visual_170",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_135",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_136",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_137",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_138",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_171",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_172",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_173",
+          "/World/ElasticTarget/Stem_MainStem_10/Visual_174",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_139",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_140",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_141",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_142",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_175",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_176",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_177",
+          "/World/ElasticTarget/Stem_MainStem_11/Visual_178",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_143",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_144",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_145",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_146",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_179",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_180",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_181",
+          "/World/ElasticTarget/Stem_MainStem_12/Visual_182",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_147",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_148",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_149",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_150",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_183",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_184",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_185",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_186",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_187",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_188",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_189",
+          "/World/ElasticTarget/Stem_MainStem_13/Visual_190",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_151",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_152",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_153",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_154",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_155",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_156",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_157",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_158",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_191",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_192",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_193",
+          "/World/ElasticTarget/Stem_MainStem_14/Visual_194",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_91",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_92",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_93",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_94",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_95",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_96",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_97",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_98",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_99",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_100",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_101",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_102",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_103",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_104",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_105",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_106",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_107",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_108",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_109",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_110",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_111",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_112",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_113",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_114",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_115",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_116",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_117",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_118",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_119",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_120",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_121",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_122",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_123",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_124",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_125",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_126",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_159",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_160",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_161",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_162",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_163",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_164",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_165",
+          "/World/ElasticTarget/Stem_MainStem_15/Visual_166"
+        ],
+        "source_geometry_modified": false,
+        "stop_reason": "penetration_over_contact_policy"
+      }
+    }
+  ],
+  "root_html_links_valid": true
+}

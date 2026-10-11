@@ -1,0 +1,30 @@
+{
+  "schema": "fruit10-actual-saved-pose-replay-validation-v1",
+  "video": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/actual_fruit10_lateral_minus1_top_contact.mp4",
+  "video_sha256": "ef544645b4070ac1b88ed1583822c65545e07dbcb87e3e1a34296847ffe42450",
+  "render_metadata": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/actual_fruit10_lateral_minus1_top_contact_render.json",
+  "render_metadata_sha256": "5fc5bff2b33cbf8f73d5f95599bb8632426784fe963410b31ce02122d1734b6b",
+  "ffprobe": {
+    "width": 960,
+    "height": 720,
+    "duration": "5.250000",
+    "nb_read_frames": "21"
+  },
+  "actual_clip_s": [
+    18.0,
+    38.0
+  ],
+  "speed": 4.0,
+  "fps": 4,
+  "camera": "/World/TrussTopReplayCamera",
+  "physics_rerun": false,
+  "source_geometry_modified": false,
+  "display_only_background_and_leaf_cutaway": true,
+  "hidden_paths_retained_in_render_metadata": true,
+  "native_source_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "inherited_truss_native_release_count": 9,
+  "new_native_target_releases_in_trial": 0,
+  "collection_verified": false,
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "buffered-contact-native-slice-copy-validation-v1",
+  "unittest_passed": 16,
+  "actual_SDK_native_type": "<class 'carb._carb.Float3'>",
+  "all_paired_raw_binary_eventJSON_invalid_events_exact": true,
+  "microbenchmark": {
+    "False": {
+      "median_original_s": 0.06161327846348286,
+      "median_optin_s": 0.051918210461735725,
+      "copy_loop_speedup": 1.1867373300336015
+    },
+    "True": {
+      "median_original_s": 0.14308267645537853,
+      "median_optin_s": 0.11732013709843159,
+      "copy_loop_speedup": 1.2195917938225063
+    }
+  },
+  "full_fixture_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/native_float3_copy_validation/native_float3_copy_validation.json",
+  "fixture_report_sha256": "78587efad2118c3e6840708fc96607a8804f0e292d043d737afd72722263fd1f",
+  "native_physics_executed": false,
+  "actual_native_prefix_AB": "pending",
+  "default_enabled": false,
+  "default_event_schema_and_metadata_unchanged": true,
+  "points_omitted": 0,
+  "physical_properties_or_collision_change": false,
+  "overall_simulator_speedup_claimed": false,
+  "note": "SDKFloat3 realvalues but syntheticContactData properties; concurrent nativeharvest. Does not exercise nativeContactDataVector callback delivery and is not an isolated throughput measurement.",
+  "module_sha256": "b8cdde78c19534dde459eb4413c4fca0babd47af56401d5a1ca44c6bc58dfd09"
+}

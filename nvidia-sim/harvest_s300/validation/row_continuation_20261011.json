@@ -1,0 +1,62 @@
+{
+  "schema": "s300-row-continuation-api-validation-v1",
+  "initial_checkpoint": {
+    "option": "--initial-native-checkpoint",
+    "exact_source_assembly_required": true,
+    "materialized_dependency_sha_required": true,
+    "terminal_parent_summary_required": true,
+    "checkpoint_timestamp_matches_final_physical_state_required": true,
+    "earlier_valid_cycle_from_later_failed_run_rejected": true,
+    "real_old_t54_rejection_verified": true,
+    "campaign_station_origin": "actual saved native base world displacement; asset pre-travel origin is not reused"
+  },
+  "initial_current_plant_native_restore": {
+    "resume_option": "--resume-native-checkpoint",
+    "unchanged_station_redundant_rail_command_omitted": true,
+    "additional_sameplant_resume_rail_travel": "explicitly unsupported by executor, fail before native launch"
+  },
+  "new_window_preflight": {
+    "option": "--preflight-new-windows",
+    "mode": "idle",
+    "seconds": 3,
+    "rail_or_manipulation_commands": false,
+    "diagnostic_states_accepted": false,
+    "warmup_breaks_credited": false,
+    "failed_unused_proposal_may_be_skipped": true,
+    "parent_state_after_failed_preflight": "exact same last accepted assembly/checkpoint retained",
+    "actual_motion_failure": "stop without rollback",
+    "actual_execution_guard_after_preflight": "normal strict initialization and full path/physics guards still mandatory"
+  },
+  "approved_attachment_transfer": {
+    "module": "eligible_attachment_transfer.py",
+    "source_plant": "Plant22",
+    "target_truss": "Truss01",
+    "eligibility": "exact near-side inventory; still-unbroken joints only",
+    "approved_source_template_force_n": 3.0,
+    "approved_source_template_torque_nm": 0.008,
+    "truss00_unchanged": true,
+    "truss02_parameters_unchanged": true,
+    "native_broken_joint_declarations_preserved": true,
+    "full_USD_property_geometry_independent_audit": true,
+    "native_validation": "pending",
+    "requires_dedicated_resume_authorization": true
+  },
+  "tests": {
+    "run_row_harvest": 20,
+    "eligible_attachment_transfer": 5,
+    "route_checkpoint": 11,
+    "native_route_start": 12,
+    "background_foliage": 4,
+    "total": 52,
+    "status": "PASS"
+  },
+  "native_campaign_launched": false,
+  "training_eligible": false,
+  "harvest_success": null,
+  "code_sha256": {
+    "run_row_harvest.py": "59960e242c7bb07430aee1627622e8338eb02f0c9c69534d72b8457e58a40bde",
+    "eligible_attachment_transfer.py": "df7c00addbb0d1d22bdf20fc8c24c0a525beecc06ee6b31b27eb12d72d947676",
+    "test_run_row_harvest.py": "8bc5e0a1190630201ae04c0d9c0cbd92ebc8d71db80ee407a1afb4ee8455f8e7",
+    "test_eligible_attachment_transfer.py": "bbd52d251eafd9ccdeb784060c5795b6596a6b4e1ce5bb49c9a2bb89ad8124a1"
+  }
+}

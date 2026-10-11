@@ -1,0 +1,233 @@
+{
+  "schema": "truss01-selection-identity-native-status-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_truss01_after_attempt6_transfer",
+  "plan_sha256": "550479b1aae18f9141f2cf1b97d4a42bb44638c43eb44c7a7cd1e9d3e3c616ba",
+  "manifest_sha256": "fe63b755a29c77c0d69100e0e3ac135fc295bd9c56073a2bc7f10ed6aabc7d09",
+  "actual_self_audit_sha256": "65b145564e5129fb748e6baecffabd5f7b287f3197bcd0a02425245fb8c06c18",
+  "native_summary_sha256": "2bd3a39864cf47555f864e50a62c7bd90d2505a3e857bd1184457a920e55f58b",
+  "scope": "Read-only actual completed stopped trial; no simulator run or physical change",
+  "identity": {
+    "actual_selected_fruits": [
+      "Truss_01_Fruit_01",
+      "Truss_01_Fruit_02"
+    ],
+    "actual_selected_body_joint_mapping": [
+      {
+        "name": "Truss_01_Fruit_01",
+        "path": "/World/ElasticTarget/Truss_01_Fruit_01",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_01_Fruit_01",
+        "anchor": "/World/ElasticTarget/Truss_01_Pedicel_distal_01_0"
+      },
+      {
+        "name": "Truss_01_Fruit_02",
+        "path": "/World/ElasticTarget/Truss_01_Fruit_02",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_01_Fruit_02",
+        "anchor": "/World/ElasticTarget/Truss_01_Pedicel_distal_02_0"
+      }
+    ],
+    "near_inventory_count": 20,
+    "active_plant_fruit_count": 30,
+    "excluded_truss": "Truss_00: fruit centroid behind gutter; placement scope exclusion, not absolute impossibility",
+    "legacy_manifest_target": "Truss_02_Fruit_11",
+    "legacy_manifest_target_already_detached": true,
+    "legacy_native_target_detached_is_not_current_success": true
+  },
+  "axis": {
+    "preselection_legacy_logged_yaw_deg": 163.90469118953092,
+    "actual_selected_plan_yaw_deg": 124.94449852287765,
+    "actual_selected_plan_direction": [
+      -0.5727826682860883,
+      0.819707273916164,
+      0.0
+    ],
+    "pitch_deg": 0.0,
+    "cross_truss_axis_reused": false,
+    "explanation": "Initial legacy axis is logged before near-scope selection; actual plan uses selected exact Truss01 measured PCA"
+  },
+  "selection": {
+    "initial_truss_key": "Truss_02",
+    "initial_truss_remaining": [
+      "Truss_02_Fruit_10"
+    ],
+    "initial_truss_attempt_exhausted": [
+      "Truss_02_Fruit_10"
+    ],
+    "initial_truss_rejected_exact_groups": [],
+    "max_attempts_per_fruit": 6,
+    "eligible_truss_keys": [
+      "Truss_01",
+      "Truss_02"
+    ],
+    "selection": "Initial exact truss first, then existing finite selection within other eligible trusses",
+    "measured_positions_preserved": true,
+    "attempt_counts_preserved": true,
+    "physical_state_reset": false,
+    "training_eligible": false,
+    "harvest_success": null,
+    "selected_truss_key": "Truss_01",
+    "switched_truss": true,
+    "reason": "initial_truss_finite_attempt_or_rejection_exhaustion",
+    "selection_exhausted": false
+  },
+  "depth_schedule": {
+    "enabled": true,
+    "base_depth_mm": 65.0,
+    "later_depth_mm": 50.0,
+    "completed_native_cycles": 0,
+    "effective_grasp_depth_mm": 65.0,
+    "source": "global_grasp_depth",
+    "cumulative_translation": false,
+    "scope": "Existing waypoint/IK/full-FCL replanning only; physical model and native detach criteria unchanged",
+    "selected_truss_key": "Truss_01",
+    "completed_cycle_count_scope": "Exact selected truss only; other trusses, stopped/rejected and mixed-truss records excluded"
+  },
+  "start": {
+    "native_initialization_valid": true,
+    "native_restore_bodies": 277,
+    "robot_q_max_error": 0.0,
+    "plant_q_max_error": 0.0,
+    "native_control_targets_verified": true,
+    "max_position_restore_error_m": 3.9649411128908605e-07,
+    "trial_physics_started": true,
+    "approach_started": false,
+    "belt_close_started": false,
+    "no_new_warmup_or_trial_breaks": true
+  },
+  "terminal": {
+    "completed": false,
+    "simulated_s": 9.658333333333333,
+    "stop_reason": "penetration_over_0_5mm",
+    "stop_phase": "prepare_joint_branch",
+    "raw_native_contact": {
+      "a": "/World/ActuatedTool/L/part_209",
+      "b": "/World/Greenhouse/Plants/Plant_34/Stem/mesh_132",
+      "separation_m": -0.0006101913750171661,
+      "max_single_contact_point_force_n": 70.09023609676173
+    },
+    "counts_by_exact_truss": {
+      "Truss_01": {
+        "eligible": 10,
+        "detached": 0,
+        "remaining": 10
+      },
+      "Truss_02": {
+        "eligible": 10,
+        "detached": 9,
+        "remaining": 1
+      }
+    },
+    "near_detached_count": 9,
+    "near_remaining_count": 11,
+    "new_native_break_count": 0,
+    "actual_self_audit_complete": true,
+    "actual_self_audit_passed": true
+  },
+  "checkpoint": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16/route_checkpoint",
+    "capture_reason": null,
+    "last_cycle_status": "stopped",
+    "accepted": false,
+    "expected_behavior": "Stopped cycle is preserved without completed_cycle marker; cannot be an accepted route parent"
+  },
+  "native_timing": [
+    {
+      "name": "ready_hold",
+      "runtime_start_s": 2.0,
+      "runtime_end_s": 2.5
+    },
+    {
+      "name": "prepare_lift_branch",
+      "runtime_start_s": 2.5,
+      "runtime_end_s": 6.5
+    },
+    {
+      "name": "prepare_gap",
+      "runtime_start_s": 6.5,
+      "runtime_end_s": 7.5
+    },
+    {
+      "name": "prepare_joint_branch",
+      "runtime_start_s": 7.5,
+      "runtime_end_s": 13.5
+    },
+    {
+      "name": "prepare_open",
+      "runtime_start_s": 13.5,
+      "runtime_end_s": 14.5
+    },
+    {
+      "name": "approach",
+      "runtime_start_s": 14.5,
+      "runtime_end_s": 18.5
+    },
+    {
+      "name": "belt_start_open",
+      "runtime_start_s": 18.5,
+      "runtime_end_s": 19.5
+    },
+    {
+      "name": "close",
+      "runtime_start_s": 19.5,
+      "runtime_end_s": 25.5
+    },
+    {
+      "name": "cycle_open",
+      "runtime_start_s": 25.5,
+      "runtime_end_s": 26.5
+    },
+    {
+      "name": "cycle_open_hold",
+      "runtime_start_s": 26.5,
+      "runtime_end_s": 27.0
+    },
+    {
+      "name": "cycle_reclose",
+      "runtime_start_s": 27.0,
+      "runtime_end_s": 33.0
+    },
+    {
+      "name": "belt_finish",
+      "runtime_start_s": 33.0,
+      "runtime_end_s": 35.0
+    },
+    {
+      "name": "release_open",
+      "runtime_start_s": 35.0,
+      "runtime_end_s": 36.0
+    },
+    {
+      "name": "withdraw",
+      "runtime_start_s": 36.0,
+      "runtime_end_s": 40.0
+    },
+    {
+      "name": "return_joint_branch",
+      "runtime_start_s": 40.0,
+      "runtime_end_s": 46.0
+    },
+    {
+      "name": "return_lift_branch",
+      "runtime_start_s": 46.0,
+      "runtime_end_s": 50.0
+    },
+    {
+      "name": "ready_close",
+      "runtime_start_s": 50.0,
+      "runtime_end_s": 51.0
+    },
+    {
+      "name": "hold",
+      "runtime_start_s": 51.0,
+      "runtime_end_s": 52.0
+    }
+  ],
+  "source_geometry_review": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_truss01_after_attempt6_continuation120_cpu16/plant22_truss01_after_attempt6_same_station_lift135120_cpu16/foreign_leaf132_source_review.json",
+  "reporting_limitations": [
+    "Selected-cycle legacy planned_manipulation_started field uses whole cycle start2s, including preparation. Actual approach starts14.5s; physical stop9.658333s precedes it. Phase-exact reporter correction pending owner.",
+    "Raw native contact-generation penetration is distinct from saved postsolve source surfaces, which are1.780203mmclear. Native cooked pieces remain unverified; stop retained.",
+    "Self-FCL PASS does not certify environment collision freedom. No harvest completion or rail movement credit."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

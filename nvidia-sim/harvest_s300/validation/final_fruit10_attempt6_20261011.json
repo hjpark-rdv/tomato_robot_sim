@@ -1,0 +1,97 @@
+{
+  "schema": "final-fruit10-attempt6-actual-measurement-20261011-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16",
+  "source_report_sha256": "b92c725a22ffc94d65bb5ae17d4661ee6f5f33ebaab674dd0b763b08070129e0",
+  "source_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_capture_review.json",
+  "source_native_scene_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "native_physics_runs_by_measurement": 0,
+  "selected_fruit": "Truss_02_Fruit_10",
+  "duration_s": 54.0,
+  "native_selected_joint_broken": false,
+  "existing_truss_detached_count": 9,
+  "requested_motion": {
+    "height_offset_mm": -1.5,
+    "depth_mm": 65.0,
+    "cad_x_lateral_offset_mm": -1.0
+  },
+  "measured_initial_entry_fruit_cad_x_mm": 1.0092522590196864,
+  "close": {
+    "fruit_center_tool_mm": [
+      -0.7444677757578801,
+      123.90377043073,
+      29.57039859749844
+    ],
+    "actual_mechanical_gap_mm": 31.828142166137695,
+    "commanded_mechanical_gap_mm": 28.0,
+    "right_belt_contact_points": 0,
+    "left_belt_contact_points": 811,
+    "simultaneous_bilateral_steps": 0,
+    "right_support_x_gap_lower_bound_mm": 0.9626247159744157
+  },
+  "fruit_displacement_max_mm": 35.103912353515625,
+  "fruit_rotation_relative_pedicel_max_deg": 33.590551447967755,
+  "largest_measured_closing_contact_pairs": [
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_10_0/Collider",
+      "points": 700,
+      "max_point_force_n": 3.014065348517172,
+      "first_s": 24.591666666666665,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.021241769194603e-05,
+      "phase_counts": {
+        "close": 230,
+        "cycle_reclose": 230,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_11_0/Collider",
+      "points": 1352,
+      "max_point_force_n": 1.8160456116956925,
+      "first_s": 21.875,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.5322992112487555e-05,
+      "phase_counts": {
+        "close": 556,
+        "cycle_reclose": 556,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+      "points": 2102,
+      "max_point_force_n": 1.5723620492877024,
+      "first_s": 23.833333333333332,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 2.71480530500412e-05,
+      "phase_counts": {
+        "close": 811,
+        "cycle_reclose": 811,
+        "belt_finish": 480
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R/part_304",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_07_0/Collider",
+      "points": 1326,
+      "max_point_force_n": 0.9822213381680546,
+      "first_s": 25.525,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.3204989954829216e-06,
+      "phase_counts": {
+        "close": 371,
+        "cycle_reclose": 345,
+        "belt_finish": 610
+      }
+    }
+  ],
+  "interpretation": "Lateral aim is physically commanded and observed at entry, but fruit then moves away from bilateral grip; no new native detachment. Finite six-attempt failure is not impossibility.",
+  "comparison_limit": "Resumed latest completed upper-height trial, including previous physical deformation; returning aim height and applying lateral offset are not an isolated one-variable A/B.",
+  "contact_force_note": "Per-contact-point native force magnitudes; target pedicel contact force is not native joint reaction and does not prove break threshold exceeded.",
+  "actual_self_audit_at_measurement": true,
+  "training_eligible": false,
+  "harvest_success": null
+}

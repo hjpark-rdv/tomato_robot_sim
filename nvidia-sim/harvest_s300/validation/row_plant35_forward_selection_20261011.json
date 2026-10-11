@@ -1,0 +1,31 @@
+{
+  "schema": "s300-plant35-preferred-order-validation-v1",
+  "passed": true,
+  "native_runs": 0,
+  "new_ik_or_fcl_queries": 0,
+  "source_proposal_count": 47,
+  "source_truss_count": 27,
+  "source_plant_count": 18,
+  "all_original_inputs_unchanged": true,
+  "source_candidate_multiset_preserved": true,
+  "parent_bound": false,
+  "first_selected": {
+    "plant_id": 35,
+    "truss_index": 2,
+    "station_y_m": 1.7779228352467091,
+    "preparation_variant": {
+      "name": "joint_seed6",
+      "horizontal_ready_connector": "joint",
+      "horizontal_ready_seed_index": 6
+    }
+  },
+  "selection_validation": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant35_after_truss02_operational_deferral/selection_validation.json",
+  "selection_validation_sha256": "c51c60ee65508992859b1806ca8f8741d9232fdae011e2cf114a50bc6771dcb0",
+  "preferred_selection": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant35_forward_selection.json",
+  "preferred_selection_sha256": "714d37f43d9c18c0234ca5cf41ef9cf36bfd207c4cb79800654461af3d89fff6",
+  "pending_recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant35_after_truss02_operational_deferral/recipe.json",
+  "pending_recipe_sha256": "018ad15ac3c9399df25cc64bdf657a19af4b23a712360a931ca3511893629f7e",
+  "exact_existing_selector_source_sha256": "53155ba064d6aae8009a02dc9946006b48419cc066d2da150332bf8f60a809f6",
+  "training_eligible": false,
+  "harvest_success": null
+}

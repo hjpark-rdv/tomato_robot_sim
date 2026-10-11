@@ -1,0 +1,27 @@
+{
+  "schema": "s300-original-v6-native-tool-capture-validation-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_usdc_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "capture": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_original_v6_native_tool_cooking025/original_v6_native_tool_cooking025_cpu16/native_tool_cooked_capture.json",
+  "capture_sha256": "39e6c1a6ab665b87fa254b0ba87170835710a9f3dbd18c4050a100d9bb361619",
+  "scoped_collider_count": 12,
+  "native_piece_count": 125,
+  "all_returned_pieces_retained": true,
+  "captured_before_first_trial_step": true,
+  "observational_trial_completed": true,
+  "initialization_valid": true,
+  "stop_reason": null,
+  "motion_executed": false,
+  "accepted_route_checkpoint": false,
+  "physics_unchanged": true,
+  "training_eligible": false,
+  "strict_background_model": true,
+  "functional_control_only": "Ran alongside full-truss trial; not an isolated performance comparison",
+  "runtime_optin_cache_wiring": "All three existing self-collision audit call sites use exact-source optional cache; default None retains historical conservative geometry",
+  "focused_tests": {
+    "command": "test_single_remaining_aim test_native_collider_capture test_diagnostic_motion_plan test_native_tool_hulls test_connect_s300_prefix",
+    "passed": 42,
+    "failed": 0
+  }
+}

@@ -102,9 +102,17 @@ def measure_cluster(states, contacts, breaks, fruits, belts):
     concurrent=set.intersection(*belt_times.values()) if belt_times else set()
     phases=np.asarray(states['phase'])
     bilateral_time=sum(dt for t,dt,p in zip(times[1:],np.diff(times),phases[1:]) if float(t) in concurrent and p=='belt_spin')
+    # Keep the historical single-phase metric; measure continuous-cycle commands
+    # separately so close/open contacts are not silently omitted or mislabeled.
+    active_bilateral_time=None
+    if 'belt_surface_velocity_local_y_m_s' in states:
+        speeds=np.asarray(states['belt_surface_velocity_local_y_m_s'])
+        active_bilateral_time=float(sum(dt for t,dt,v in zip(times[1:],np.diff(times),speeds[1:])
+                                       if float(t) in concurrent and np.any(np.abs(v)>0)))
     return dict(fruits=rows,fruit_count=len(rows),native_detached_count=sum(r['native_detached'] for r in rows),
         contacted_fruit_count=sum(r['tool_contact_points']>0 for r in rows),
         both_belts_touch_any_fruit_during_spin_s=float(bilateral_time),
+        both_belts_touch_any_fruit_while_commanded_s=active_bilateral_time,
         other_joint_breaks=[e for e in breaks if e['joint'] not in {f['joint'] for f in fruits}],
         policy='Neighboring fruit contact and displacement allowed. Penetration guard unchanged.',
         interpretation='Both belts may touch different fruit. Native detachment count is distinct from completed motion, collection and real crop safety.',
@@ -128,12 +136,27 @@ def analyze(assembly, trial):
     local=[np.asarray(joint.GetLocalPos0Attr().Get()),np.asarray(joint.GetLocalPos1Attr().Get())]
     names=json.loads((trial/'native_metadata.json').read_text())['robot_dofs']
     with np.load(trial/'states.npz') as states:
+        if summary.get('truss_sequence'):
+            from truss_sequence import truss_fruits,measured_sequence_evidence
+            evidence=measured_sequence_evidence(summary['truss_sequence'],states,truss_fruits(manifest),
+                json.loads((trial/'break_events.json').read_text()),summary['physics_settings']['hz'])
+            evidence.update(completed=summary['completed'],stop_reason=summary['stop_reason'],
+                actual_self_collision_audit_passed=summary.get('actual_self_collision_audit_passed'))
+            (trial/'truss_evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
         result=measure(states,json.loads((trial/'contacts.json').read_text()),
                        json.loads((trial/'break_events.json').read_text()),target,manifest['tool']['belts'],names,local)
         cluster=measure_cluster(states,json.loads((trial/'contacts.json').read_text()),
             json.loads((trial/'break_events.json').read_text()),manifest['plant']['fruits'],manifest['tool']['belts'])
+        if 'fruit_attachment' in manifest:
+            from fruit_attachment import analyze_rotations
+            attachment_evidence=analyze_rotations(stage,manifest,states,json.loads((trial/'break_events.json').read_text()))
+            (trial/'fruit_attachment_evidence.json').write_text(json.dumps(attachment_evidence,indent=2)+'\n')
     cluster.update(model_sha256=summary['model_sha256'],completed=summary['completed'],stop_reason=summary['stop_reason'],
-        grasp_reference=manifest.get('grasp_reference'),tread_prototype=manifest['tool'].get('tread_prototype'))
+        grasp_reference=manifest.get('grasp_reference'),
+        planned_grasp_center_world_m=plan.get('grasp_center_world_m'),
+        grasp_height_offset_m=plan.get('grasp_height_offset_m',0.),
+        commanded_grasp_gap_m=(plan.get('belt_spin') or {}).get('closed_gap_m'),
+        tread_prototype=manifest['tool'].get('tread_prototype'))
     if 'contact_guard' in summary:
         cluster['contact_guard']=summary['contact_guard']
     cluster['valid_complete_run_detachment_count']=cluster['native_detached_count'] if (
@@ -151,7 +174,7 @@ def analyze(assembly, trial):
     result.update(model_sha256=summary['model_sha256'],assembly=str(assembly),trial=str(trial),
         input_sha256={n:sha(trial/n) for n in ('plan.json','summary.json','states.npz','contacts.json','break_events.json')},
         analysis_source_sha256=sha(Path(__file__)),completed=summary['completed'],stop_reason=summary['stop_reason'],
-        requested_spin=plan.get('belt_spin'),
+        requested_spin=plan.get('belt_spin'),requested_cycle=plan.get('belt_cycle'),
         grip_geometry=dict(nominal_minimum_gap_mm=minimum,minimum_contact_gap_mm=contact_minimum,
             tread_prototype=manifest['tool'].get('tread_prototype'),target_width_along_grip_axis_mm=width*1000,
             target_maximum_point_distance_mm=float(pdist(points).max()*1000),
@@ -160,7 +183,9 @@ def analyze(assembly, trial):
             scope='Original mesh/convex hull support; PhysX cooking/contact offset and actual deformation are separate'),
         attachment=dict(type=joint.GetPrim().GetTypeName(),break_force_n=joint.GetBreakForceAttr().Get(),
             break_torque_nm=joint.GetBreakTorqueAttr().Get(),
-            behavior='Fixed before native break; no relative fruit-neck torsion compliance or cumulative twist fatigue'))
+            behavior='Passive soft angular limits, native break; no cumulative fatigue' if manifest.get('fruit_attachment',{}).get('kind')=='elastic'
+                else 'Fixed before native break; no relative fruit-neck torsion compliance or cumulative twist fatigue',
+            hypothesis=manifest.get('fruit_attachment')))
     (trial/'belt_evidence.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     return result
 

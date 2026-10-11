@@ -1,0 +1,27 @@
+{
+  "schema": "s300-opt-in-joint-turn-validation-v1",
+  "source_code_sha256": "d7b2015db1738dde367361383f5a4e7f14245eade7c428be776a51bc3d533dc7",
+  "tests": {
+    "passed": 53,
+    "new_turn_controls": 4,
+    "command": "OPENBLAS_NUM_THREADS=1 .asset-venv/bin/python -m unittest -q test_joint_turn_normalization test_motion_branch test_motion_ready test_motion_horizontal_entry test_grasp_lateral_offset"
+  },
+  "default_command_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b",
+  "default_flag": false,
+  "scope": "Only explicitly enabled horizontal-ready joint connector using existing belt profile",
+  "physical_initial_state_changed": false,
+  "joint_limits_changed": false,
+  "source_geometry_changed": false,
+  "collision_clearance_m": 0.002,
+  "physics_penetration_m": 0.0005,
+  "native_validation": "pending",
+  "training_eligible": false,
+  "harvest_success": null,
+  "proof": [
+    "Per-joint admissible integer2pi shift closest to branch_start; prismatic unchanged",
+    "All seven actual serial-FK link frames match raw endpoint within1e-10, source endpoint example2.45e-16",
+    "Negative nonperiodic-FK and unknown/nonfinite-joint controls reject",
+    "Enabled plan starts/ends at original q; return_joint_branch commands are exactreverse",
+    "Approach requested positions/orientations and all source joint limits preserved; native tracking/path collision separate"
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "schema": "s300-native-tool-hull-offline-validation-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves_accuracy_v2",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_usdc_sha256": "c8b34e38a6f36e85a6e657a3828084e94d5349ddb5eb378ec4ea0e2fc4a0297b",
+  "native_capture": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_accuracy_v2_cooking025/fresh_truss01_two_passive_leaves_accuracy_v2_cooking025_cpu16/native_tool_cooked_capture.json",
+  "native_capture_sha256": "861cc80e28c96291ff6d113ca946d883bdfb04c4fd432a40b9a7267041e6c9d0",
+  "geometry_reader_source": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss01_accuracy_v2_cooking025/fresh_truss01_two_passive_leaves_accuracy_v2_cooking025_cpu16/runtime_code_sources/leaf_contact_geometry.py",
+  "geometry_reader_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+  "scoped_colliders": [
+    "/World/ActuatedTool/fixed/part_9",
+    "/World/ActuatedTool/fixed/part_8",
+    "/World/ActuatedTool/L/part_214",
+    "/World/ActuatedTool/fixed/part_57",
+    "/World/ActuatedTool/fixed/part_58",
+    "/World/ActuatedTool/fixed/part_89",
+    "/World/ActuatedTool/fixed/part_32",
+    "/World/ActuatedTool/R/part_336",
+    "/World/ActuatedTool/L/part_193",
+    "/World/ActuatedTool/fixed/part_0",
+    "/World/ActuatedTool/fixed/part_3",
+    "/World/ActuatedTool/fixed/part_2"
+  ],
+  "native_piece_count": 125,
+  "checked_shapes": 906,
+  "checked_shape_pairs": 229297,
+  "planning_clearance_m": 0.002,
+  "source_visual_vs_native_aabb_max_discrepancy_m": 0.00472727045416832,
+  "visual_vs_native_discrepancy_is_diagnostic": true,
+  "importer_guard": "Exact immutable wrapper/USDC/source assembly + imported reader snapshot SHA + enabled rigid-owner mapping + every SDK-returned piece; owner-local vertices receive no second source transform",
+  "default_geometry_and_commands_unchanged": true,
+  "simulator_collision_geometry_or_masks_modified": false,
+  "contact_policy_modified": false,
+  "source_background_equilibrium_accepted": false,
+  "source_native_initialization_or_harvest_success_inferred": false,
+  "source_background_note": "Parent native accuracy_v2 passive-leaf control did not settle; offline source geometry clearance would not authorize actual execution",
+  "proposal_budget": {
+    "existing_direct": 3,
+    "exact_existing_manual": 8,
+    "new_routes_added": 0,
+    "physics_runs": 0
+  },
+  "counts": {
+    "self_blocked": 8,
+    "full_self_pass": 3,
+    "preparation_environment_blocked": 3,
+    "full_environment_pass": 0,
+    "native_execution": 0
+  },
+  "rows": [
+    {
+      "name": "seed1_retract250_lift135",
+      "kind": "unchanged_existing_direct",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_passive_leaves_three_direct/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "6a7ecde00f9c7747ff2da885f65a5ac6403424da631ea58ee6e740abeb2f7d92",
+      "self_audit_hz": 120,
+      "self_passed": false,
+      "self_complete": false,
+      "self_samples": 881,
+      "first_self_blocker": {
+        "phase": "prepare_joint_branch",
+        "clear": false,
+        "first_hit_fraction": 0.3013888888888889,
+        "hits": [
+          {
+            "a": "/World/ActuatedTool/fixed/part_9",
+            "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+            "a_name": "F01_rear_rail_backbone",
+            "b_name": null,
+            "intersection": false,
+            "distance_m": 0.0015429995057676144,
+            "required_planning_clearance_m": 0.002
+          }
+        ]
+      },
+      "environment_evaluated": false,
+      "native_executed": false
+    },
+    {
+      "name": "seed1_retract100_lift135",
+      "kind": "unchanged_existing_direct",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_passive_leaves_three_direct/seed1_retract100_lift135/plan.json",
+      "source_plan_sha256": "3e192ed56b6dda2a97f85960ca248041a0df37fb2effa0c2ef2d4bd12f4d48d8",
+      "self_audit_hz": 120,
+      "self_passed": false,
+      "self_complete": false,
+      "self_samples": 858,
+      "first_self_blocker": {
+        "phase": "prepare_joint_branch",
+        "clear": false,
+        "first_hit_fraction": 0.26944444444444443,
+        "hits": [
+          {
+            "a": "/World/ActuatedTool/L/part_214",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": "L_C14_rear_drive_cover",
+            "b_name": null,
+            "intersection": false,
+            "distance_m": 0.0018954304698167743,
+            "required_planning_clearance_m": 0.002
+          }
+        ]
+      },
+      "environment_evaluated": false,
+      "native_executed": false
+    },
+    {
+      "name": "seed5_retract100_lift135",
+      "kind": "unchanged_existing_direct",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_passive_leaves_three_direct/seed5_retract100_lift135/plan.json",
+      "source_plan_sha256": "a911b8a077fe0b2bdc92b8c62f163891088a7918a40d8f1487bd2c31337f2b3e",
+      "self_audit_hz": 120,
+      "self_passed": false,
+      "self_complete": false,
+      "self_samples": 858,
+      "first_self_blocker": {
+        "phase": "prepare_joint_branch",
+        "clear": false,
+        "first_hit_fraction": 0.26944444444444443,
+        "hits": [
+          {
+            "a": "/World/ActuatedTool/L/part_214",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": "L_C14_rear_drive_cover",
+            "b_name": null,
+            "intersection": false,
+            "distance_m": 0.001896316396268386,
+            "required_planning_clearance_m": 0.002
+          }
+        ]
+      },
+      "environment_evaluated": false,
+      "native_executed": false
+    },
+    {
+      "name": "wrist2_then_wrist1",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "manual_coarse_blocked",
+      "self_full_audit": null,
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/wrist2_then_wrist1/report.json",
+      "report_sha256": "e6cba2e8c975d9bcf2015b81b29d9eee7f7607df74452ef1c6caddaf026c3c30"
+    },
+    {
+      "name": "wrist1_then_wrist2",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "manual_coarse_blocked",
+      "self_full_audit": null,
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/wrist1_then_wrist2/report.json",
+      "report_sha256": "fdd26801b5c060ca9b42627f89c38674670979647816d54b45772df76f11877f"
+    },
+    {
+      "name": "arm_then_wrist_then_base",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "manual_coarse_blocked",
+      "self_full_audit": null,
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/arm_then_wrist_then_base/report.json",
+      "report_sha256": "1222336c537575a847f558e19b798fcafe72b1bd66b782bb76c40ae33d8f1aa0"
+    },
+    {
+      "name": "arm_then_base_then_wrist",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "manual_coarse_blocked",
+      "self_full_audit": null,
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/arm_then_base_then_wrist/report.json",
+      "report_sha256": "57a37ffebe64515d2e2fa9efb4bed9bfcb071ef975bec5a8f39cd653f7bb4084"
+    },
+    {
+      "name": "high_lift_arm_then_wrist_then_base",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "manual_coarse_blocked",
+      "self_full_audit": null,
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/high_lift_arm_then_wrist_then_base/report.json",
+      "report_sha256": "d621d39efe67be450d23e3d88a05df4c3c72e74c3d9c63acfa745fe7059d7d95"
+    },
+    {
+      "name": "unfold_then_wrist_then_base",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "retimed_complete_plan_audit_blocked_or_unknown",
+      "self_full_audit": {
+        "passed": true,
+        "complete": true,
+        "samples": 12386
+      },
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/unfold_then_wrist_then_base/report.json",
+      "report_sha256": "a77bcd9e8a19255e4c47e15d6c8fbbd36c832068a6618f6632c8b2450d08ad25",
+      "environment": {
+        "passed": false,
+        "complete": true,
+        "status": "blocked",
+        "hz": 120,
+        "samples": 4689,
+        "distance_queries": 142533,
+        "first_hard_hit": {
+          "robot_geom": "/World/ActuatedTool/L/part_178",
+          "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_180",
+          "obstacle_class": "static_leaf_obstacle",
+          "rail_position_m": 0.0,
+          "command_q": [
+            0.042236158450818684,
+            4.287530589162505,
+            -0.4008534552603599,
+            1.485998640032759,
+            0.6089446982317124,
+            0.5457212604703368,
+            3.141659076072764
+          ],
+          "gap_m": 0.044,
+          "closed_volume_containment": false,
+          "phase": "prepare_ompl_003",
+          "time_s": 35.016666666666666,
+          "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+          "representation": "exact_source_triangle_surface_and_closed_volume",
+          "native_cooking_verified": false
+        }
+      }
+    },
+    {
+      "name": "high_lift_unfold_then_wrist_then_base",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "retimed_complete_plan_audit_blocked_or_unknown",
+      "self_full_audit": {
+        "passed": true,
+        "complete": true,
+        "samples": 15162
+      },
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/high_lift_unfold_then_wrist_then_base/report.json",
+      "report_sha256": "61d8c88e7259e59cb16d478c3948a3c712126f6741168d4410dec29010e70922",
+      "environment": {
+        "passed": false,
+        "complete": true,
+        "status": "blocked",
+        "hz": 120,
+        "samples": 6077,
+        "distance_queries": 106340,
+        "first_hard_hit": {
+          "robot_geom": "/World/ActuatedTool/fixed/part_9",
+          "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_184",
+          "obstacle_class": "static_leaf_obstacle",
+          "rail_position_m": 0.0,
+          "command_q": [
+            0.35,
+            4.287530589162505,
+            0.0007528434125635974,
+            1.9470078640180821,
+            0.6089446982317124,
+            0.5457212604703368,
+            3.1416590760727634
+          ],
+          "gap_m": 0.044,
+          "closed_volume_containment": false,
+          "phase": "prepare_ompl_004",
+          "time_s": 42.15,
+          "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+          "representation": "exact_source_triangle_surface_and_closed_volume",
+          "native_cooking_verified": false
+        }
+      }
+    },
+    {
+      "name": "high_lift_clear_yaw_unfold",
+      "kind": "one_of_exact_original_eight_manual_orderings",
+      "source_plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_staging_branch_probe/seed1_retract250_lift135/plan.json",
+      "source_plan_sha256": "0d85d142568fdbec0c88e4a27e79afef4d43fe57f1d31ce716cffe857872d12d",
+      "proposal_status": "retimed_complete_plan_audit_blocked_or_unknown",
+      "self_full_audit": {
+        "passed": true,
+        "complete": true,
+        "samples": 17928
+      },
+      "native_eligible": false,
+      "native_executed": false,
+      "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/manual/high_lift_clear_yaw_unfold/report.json",
+      "report_sha256": "15b4ca85315960a40258624bba0ecda75c37dab95249f61e820f9a85fcd13cf2",
+      "environment": {
+        "passed": false,
+        "complete": true,
+        "status": "blocked",
+        "hz": 120,
+        "samples": 7460,
+        "distance_queries": 109106,
+        "first_hard_hit": {
+          "robot_geom": "/World/ActuatedTool/fixed/part_9",
+          "environment_geom": "/World/Greenhouse/Plants/Plant_20/Stem/mesh_184",
+          "obstacle_class": "static_leaf_obstacle",
+          "rail_position_m": 0.0,
+          "command_q": [
+            0.35,
+            4.287530589162505,
+            0.0007528434125635974,
+            1.9470078640180821,
+            0.6089446982317124,
+            0.5457212604703368,
+            3.1416590760727634
+          ],
+          "gap_m": 0.044,
+          "closed_volume_containment": false,
+          "phase": "prepare_ompl_005",
+          "time_s": 53.666666666666664,
+          "timestamp_scope": "relative to existing plan start; initial native settle is separate",
+          "representation": "exact_source_triangle_surface_and_closed_volume",
+          "native_cooking_verified": false
+        }
+      }
+    }
+  ],
+  "tests": {
+    "command": "python -m unittest test_native_tool_hulls test_connect_s300_prefix test_diagnostic_motion_plan test_rail_self_collision test_exact_self_query_cache -v",
+    "log": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/tests.log",
+    "log_sha256": "bf64bec3b971ce3287bf86a5485fca36b3e46cfcb0631f145aae508e745f503e",
+    "tail": [
+      "Ran 36 tests in 0.427s",
+      "",
+      "OK"
+    ]
+  },
+  "current_code_sha256": {
+    "native_tool_hulls.py": "979870f830f78e9cebfba76b94934cf056ea8678b262be22b2c71f74f2fd187a",
+    "test_native_tool_hulls.py": "85426b0609999ba1041c7c8393223fcac564e648b48702060e9f9aebfb6320f1",
+    "motion_self_collision.py": "a0807e3e20d990d1800d7d568563c93556be15b3d1d8e5b94e01deb5c1fa9511",
+    "connect_s300_prefix.py": "1ab0edad4fd1f1f38a7fe3faf9ccf326314177ebe6de4cc0a136f10e128346b9"
+  },
+  "executed_connector_snapshots_are_in_individual_code_folders": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "finite_search_failure_is_not_impossible": true,
+  "result": "Native tool unions provide three complete self-clear connector paths, but their unchanged preparation still intersects undeclared static leaves13/14; no model/physics success asserted",
+  "server_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_native_tool_piece_rescreen/report.json",
+  "server_report_sha256": "d92c42db0cd114229d1bdcc1d3451dcba08f23553cfe641ea6aa1cb577a2c59f"
+}

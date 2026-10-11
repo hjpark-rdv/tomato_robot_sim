@@ -1,0 +1,57 @@
+{
+  "schema": "s300-fresh-known9-last-lower85-depth80-native-result-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss02_known9_last_lower85_depth80/fresh_truss02_known9_last_lower85_depth80_cpu16",
+  "normal_start": true,
+  "imported_detachment_credits": 0,
+  "native_detached": [
+    "Truss_02_Fruit_01",
+    "Truss_02_Fruit_02",
+    "Truss_02_Fruit_03",
+    "Truss_02_Fruit_04",
+    "Truss_02_Fruit_05",
+    "Truss_02_Fruit_07",
+    "Truss_02_Fruit_08",
+    "Truss_02_Fruit_09",
+    "Truss_02_Fruit_11"
+  ],
+  "remaining": [
+    "Truss_02_Fruit_10"
+  ],
+  "completed": true,
+  "stop_reason": null,
+  "initialization_valid": true,
+  "physics_simulated_s": 418.0,
+  "physics_loop_wall_s": 1511.6542753465474,
+  "planning_paused_wall_s": 267.33869704045355,
+  "actual_self": {
+    "passed": true,
+    "complete": true,
+    "samples": 50161
+  },
+  "attempt_counts": {
+    "Truss_02_Fruit_01": 1,
+    "Truss_02_Fruit_02": 1,
+    "Truss_02_Fruit_04": 1,
+    "Truss_02_Fruit_05": 1,
+    "Truss_02_Fruit_09": 1,
+    "Truss_02_Fruit_10": 6
+  },
+  "terminal_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss02_known9_last_lower85_depth80/fresh_truss02_known9_last_lower85_depth80_cpu16/route_checkpoint",
+  "collection_verified": false,
+  "released_fruit_physics_verified": false,
+  "training_eligible": false,
+  "limitations": [
+    "Detached ownfruit vs exactpassive collectionsurfaces diagnosticallycontinued; rawcontacts retained. Active robot/plant0.5mm unchanged",
+    "Lastfruit notyetdetached. No claim all10complete",
+    "Wholefullscene contact solve RTFincludesfullphysicalfarm, no1.0RTF claim"
+  ],
+  "input_sha256": {
+    "summary.json": "ab6544fa8a2ff73281363bc2969018a325500c87f3d1ab9503e3a660a8c98903",
+    "self_collision_actual.json": "298ce6fcb803134952dd880dd463632d6f53e92b8a2f35d3d29d7fe02175f118",
+    "break_events.json": "e92918862a4777cc36e68b4cb4721f99deffd14327f36c5ad456218467e644c5",
+    "truss_sequence.json": "23cc36b1a04e12970bf61d72253019f0792b31376b70d5be94ff03bb48ca06aa",
+    "route_checkpoint/checkpoint.json": "70e13123244789fdc1dad7f03f7d3258f5e0a5e22acdce3c2385fde9a10c6c34",
+    "route_checkpoint/checkpoint.npz": "f339b7d95d649c988d1a09f01d4c28fd70cc401f41ea8b6ed0e0caa32dd48452"
+  }
+}

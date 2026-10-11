@@ -1,0 +1,557 @@
+{
+  "schema": "s300-inward-leaf-ignored-full-truss-v1",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "76479eef658275b0164cb23103aa48fcb9d1ef70",
+  "changes_committed": false,
+  "source_plant": "/World/Greenhouse/Plants/Plant_22",
+  "target_truss": "Truss_02",
+  "total_fruit": 10,
+  "unique_native_detached": 10,
+  "remaining": [],
+  "one_uninterrupted_engine_run": false,
+  "execution": "Fresh normal start: 9; same immutable assembly completed-cycle checkpoint resumed: 1 new. Native solver caches are not restored.",
+  "belt_surface_commands_mm_s": {
+    "initial": [
+      50,
+      50
+    ],
+    "remaining11": [
+      20,
+      50
+    ]
+  },
+  "all_belt_contact_surfaces_feed_inward": true,
+  "leaf_policy": {
+    "mode": "visual_only_leaf_collision",
+    "disabled_count": 8152,
+    "avoidance_offset_mm": 0,
+    "source_visuals_and_nonleaf_properties_preserved": true,
+    "approximation": "Leaf resistance omitted; not physical leaf folding"
+  },
+  "leaf_asset_audit": {
+    "only_changed_resolved_property": "physics:collisionEnabled on exact leaf shapes",
+    "all_other_properties_identical": true,
+    "restored_property_inventory": {
+      "prim_count": 96064,
+      "attribute_count": 1137351,
+      "relationship_count": 99696,
+      "sha256": "822efa099d08c31c77aaa5a29c2346ac939c407071635719e3a963c984d805d4"
+    },
+    "disabled_leaf_colliders": 8152,
+    "enabled_nonleaf_colliders": 23314,
+    "source_unchanged": true,
+    "training_eligible": false
+  },
+  "leaf_native_validation": [
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "total_contact_points": 2500842,
+      "disabled_leaf_contact_points": 0
+    },
+    {
+      "trial": "remaining11_inward_20_50",
+      "total_contact_points": 572446,
+      "disabled_leaf_contact_points": 0
+    }
+  ],
+  "new_break_events": [
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 23.908333333333335,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 24.283333333333335,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 32.075,
+      "phase": "cycle_reclose",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 32.36666666666667,
+      "phase": "cycle_reclose",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_04"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 76.825,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 76.83333333333333,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 77.33333333333333,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_05"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 78.90833333333333,
+      "phase": "cycle_open",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09"
+    },
+    {
+      "trial": "fresh_inward_leaf_ignored",
+      "t": 129.1,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_10"
+    },
+    {
+      "trial": "remaining11_inward_20_50",
+      "t": 26.083333333333332,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11"
+    }
+  ],
+  "runs": [
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/trials_leaf_ignored/fresh_inward_leaf_ignored",
+      "new_native_detachments": 9,
+      "prior_imported_detachments": 0,
+      "inventory": {
+        "detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08",
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10"
+        ],
+        "remaining": [
+          "Truss_02_Fruit_11"
+        ]
+      },
+      "termination": "attempt_budget_exhausted_remaining_fruit",
+      "completed": true,
+      "stop_reason": null,
+      "actual_self_collision": {
+        "passed": true,
+        "complete": true,
+        "samples": 31441,
+        "colliding_samples": [],
+        "geometry": {
+          "shapes": 793,
+          "checked_shape_pairs": 172191,
+          "clearance_m": 0.0,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/S300Carrier",
+              "/World/HarvestRobot/Robot/rail_anchor"
+            ],
+            [
+              "/World/HarvestRobot/Robot/S300Carrier",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/rail_anchor",
+              "/World/HarvestRobot/Robot/world"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false,
+        "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "input_sha256": "f2b4ba32e9cd18bb986039bf8de427bc5b1ba79b03f597d4f7d94be40643ed5d",
+        "physics_rerun": false
+      },
+      "simulated_s": 262.0,
+      "loop_wall_s": 856.4547597523779,
+      "planning_paused_wall_s": 155.5591757837683,
+      "save_wall_s": 65.68152534216642,
+      "strict_whole_scene_0_5mm_passed": false,
+      "released_contact_exception_points": 12,
+      "released_fruit_ground_impacts": [
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_03/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 36.875,
+          "last_t": 36.875,
+          "contact_points": 1,
+          "max_penetration_m": 0.0005176067352294922,
+          "max_point_force_n": 0.14371289871633114
+        },
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 77.83333333333333,
+          "last_t": 78.18333333333334,
+          "contact_points": 6,
+          "max_penetration_m": 0.001288294792175293,
+          "max_point_force_n": 0.4712657444179107
+        },
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 129.71666666666667,
+          "last_t": 129.71666666666667,
+          "contact_points": 1,
+          "max_penetration_m": 0.0005286633968353271,
+          "max_point_force_n": 0.0818932335823782
+        }
+      ],
+      "released_fruit_collection_impacts": [
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_03/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 36.875,
+          "last_t": 36.875,
+          "contact_points": 1,
+          "max_penetration_m": 0.0005176067352294922,
+          "max_point_force_n": 0.14371289871633114
+        },
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "ground_collider": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0496",
+          "first_t": 77.575,
+          "last_t": 77.575,
+          "contact_points": 4,
+          "max_penetration_m": 0.006789736449718475,
+          "max_point_force_n": 0.0
+        },
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_08/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 77.83333333333333,
+          "last_t": 78.18333333333334,
+          "contact_points": 6,
+          "max_penetration_m": 0.001288294792175293,
+          "max_point_force_n": 0.4712657444179107
+        },
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 129.71666666666667,
+          "last_t": 129.71666666666667,
+          "contact_points": 1,
+          "max_penetration_m": 0.0005286633968353271,
+          "max_point_force_n": 0.0818932335823782
+        }
+      ],
+      "input_hashes": {
+        "summary.json": "f25a99508af47f6bcc774f842d5d22cab6f05a3e0dc1b0f6e4f62dae73eeee9b",
+        "states.npz": "f2b4ba32e9cd18bb986039bf8de427bc5b1ba79b03f597d4f7d94be40643ed5d",
+        "break_events.json": "f32bde8c7a7efada825a7ac5f654b53a954865467052a4dbf5959a5dbacfe2a7",
+        "plan.json": "b956b0a6702d5120b2a9aa15450cadbc2cf7d7b0f0881daccddad70e05ecf651"
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/trials_remaining11_20_50/remaining11_inward_20_50",
+      "new_native_detachments": 1,
+      "prior_imported_detachments": 9,
+      "inventory": {
+        "detached": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05",
+          "Truss_02_Fruit_07",
+          "Truss_02_Fruit_08",
+          "Truss_02_Fruit_09",
+          "Truss_02_Fruit_10",
+          "Truss_02_Fruit_11"
+        ],
+        "remaining": []
+      },
+      "termination": "all_fruit_native_joints_detached",
+      "completed": true,
+      "stop_reason": null,
+      "actual_self_collision": {
+        "passed": true,
+        "complete": true,
+        "samples": 6481,
+        "colliding_samples": [],
+        "geometry": {
+          "shapes": 793,
+          "checked_shape_pairs": 172191,
+          "clearance_m": 0.0,
+          "excluded_body_pairs": [
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/L_belt"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/L_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/R_belt"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/ActuatedTool/fixed"
+            ],
+            [
+              "/World/ActuatedTool/R_belt",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/ActuatedTool/fixed",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/S300Carrier",
+              "/World/HarvestRobot/Robot/rail_anchor"
+            ],
+            [
+              "/World/HarvestRobot/Robot/S300Carrier",
+              "/World/HarvestRobot/Robot/world"
+            ],
+            [
+              "/World/HarvestRobot/Robot/farmily_lift_platform",
+              "/World/HarvestRobot/Robot/link1"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link1",
+              "/World/HarvestRobot/Robot/link2"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link2",
+              "/World/HarvestRobot/Robot/link3"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link3",
+              "/World/HarvestRobot/Robot/link4"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link4",
+              "/World/HarvestRobot/Robot/link5"
+            ],
+            [
+              "/World/HarvestRobot/Robot/link5",
+              "/World/HarvestRobot/Robot/link6"
+            ],
+            [
+              "/World/HarvestRobot/Robot/rail_anchor",
+              "/World/HarvestRobot/Robot/world"
+            ]
+          ],
+          "exclusions": "Same rigid/fixed component; exact disabled USD joint adjacency, matching existing rl/pose_collision convention",
+          "method": "FCL robot colliders + conservative per-part tool convex envelopes, discrete samples; native hull cooking remains separate; no physical collider changes"
+        },
+        "training_eligible": false,
+        "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "input_sha256": "45f830294bb55a4a547723de6f1f0883ce491333bf2ed641ab6cdbc728aa61f1",
+        "physics_rerun": false
+      },
+      "simulated_s": 54.0,
+      "loop_wall_s": 149.89218102768064,
+      "planning_paused_wall_s": 0.0,
+      "save_wall_s": 16.933348959311843,
+      "strict_whole_scene_0_5mm_passed": false,
+      "released_contact_exception_points": 7,
+      "released_fruit_ground_impacts": [
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 27.333333333333332,
+          "last_t": 27.766666666666666,
+          "contact_points": 7,
+          "max_penetration_m": 0.00160902738571167,
+          "max_point_force_n": 0.27257784269750435
+        }
+      ],
+      "released_fruit_collection_impacts": [
+        {
+          "fruit_collider": "/World/ElasticTarget/Truss_02_Fruit_11/Collider",
+          "ground_collider": "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh",
+          "first_t": 27.333333333333332,
+          "last_t": 27.766666666666666,
+          "contact_points": 7,
+          "max_penetration_m": 0.00160902738571167,
+          "max_point_force_n": 0.27257784269750435
+        }
+      ],
+      "input_hashes": {
+        "summary.json": "ae483277b8401170088d76203fe38b576fc7c6946f2eee2991b41962a664c18b",
+        "states.npz": "45f830294bb55a4a547723de6f1f0883ce491333bf2ed641ab6cdbc728aa61f1",
+        "break_events.json": "a6ca2d042c170ef5f9fe6af6f25c41d9dfc2ba2166ece95a1107416b56187ba4",
+        "plan.json": "a542e74fcd4e91001019240f2d67d03d302b6f3803b70dbd5228562436dc9e4c"
+      }
+    }
+  ],
+  "resume": {
+    "robot_q_max_abs_error": 0.0,
+    "plant_q_max_abs_error": 0.0,
+    "max_position_error_m": 3.9649411128908605e-07,
+    "bitwise_engine_continuity": false
+  },
+  "fruit11_comparison": {
+    "equal_inward_50_50": {
+      "max_abs_twist_before_or_at_break_deg": 9.188939197768052,
+      "max_bend_before_or_at_break_deg": 15.251520448844985
+    },
+    "unequal_inward_20_50": {
+      "max_abs_twist_before_or_at_break_deg": 13.213992042240006,
+      "max_bend_before_or_at_break_deg": 16.53178685710727
+    },
+    "break_cause": "Native force versus torsion versus bending contribution is not measured; angle comparison is diagnostic, not a causal proof."
+  },
+  "tests": {
+    "new_tests_passed": 3,
+    "git_diff_check": "passed"
+  },
+  "source_code": {
+    "leaf_contact_policy.py": "07d5dae3784eb76f1392c6708847f9ea5adc051e63504949c6684ba281227aff",
+    "test_leaf_contact_policy.py": "65fe5e8be3386ccfb2666d9e050a498453c94e922826e9a90859b978ec7d5cf4",
+    "run_motion.py": "4bf774f3c558441a51d6e0415fcd369d17c499629ed2693e294a2543e11ab908",
+    "motion_kinematics.py": "5b281f876360e14ab14fc084c2059529a53c1bd67bae6b07f65bd109dd87e271"
+  },
+  "source_assets": {
+    "scene.usda": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "composed.usdc": "841514d3b0ca105ac9a627a8109d151fc9fe0eb881f28db5f254a50ab3b24ef9",
+    "skin.npz": "885882dabe3384ffd6e8d7ea5b3d243beeee448287a97df500bc67000c48aaf0",
+    "motion_manifest.json": "446ebc2b62981d5b7795077928651fb31011523d34f783858ebf848af76efb34"
+  },
+  "superseded_leaf_avoidance": "trials_lateral_plus2 preserved, superseded by user request; not counted as final harvest evidence",
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "limitations": [
+    "One truss; repeatability and other placements untested.",
+    "Detached fruit may fall through passive collection/floor proxies under the existing recorded lifecycle exception; collection accuracy is not validated.",
+    "Native break does not separately identify axial force, twist torque or bending torque.",
+    "Resume used the measured state but restarted native solver caches.",
+    "Concurrent rendering during resumed execution: wall time is observational, not a controlled performance A/B."
+  ],
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/trials_leaf_ignored/fresh_inward_leaf_ignored/full_truss_inward_actual_top.mp4",
+      "sha256": "dbf848a202671ec0d5bbfca756b97d3158996f754e45ffed141fe1aed200de9f",
+      "bytes": 13095991,
+      "full_ffmpeg_decode_passed": true,
+      "frames": 1573,
+      "fps": 12,
+      "speed": 2.0,
+      "source": "stored measured physical body transforms",
+      "physics_rerun": false,
+      "source_native_scene_sha256": "841514d3b0ca105ac9a627a8109d151fc9fe0eb881f28db5f254a50ab3b24ef9"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/trials_remaining11_20_50/remaining11_inward_20_50/final_fruit11_inward_20_50_actual_top.mp4",
+      "sha256": "cf3ab1fc65b1d43a5073dd5d29f4155be978d9c1f7b620bec8b3d932e49ebf15",
+      "bytes": 2152056,
+      "full_ffmpeg_decode_passed": true,
+      "frames": 307,
+      "fps": 12,
+      "speed": 1.0,
+      "source": "stored measured physical body transforms",
+      "physics_rerun": false,
+      "source_native_scene_sha256": "841514d3b0ca105ac9a627a8109d151fc9fe0eb881f28db5f254a50ab3b24ef9"
+    }
+  ]
+}

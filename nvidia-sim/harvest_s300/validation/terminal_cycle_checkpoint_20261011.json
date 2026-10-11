@@ -1,0 +1,61 @@
+{
+  "schema": "s300-exact-terminal-cycle-publication-validation-v1",
+  "purpose": "Publish only a missed final cycle marker from an already measured, complete native final route snapshot; no new execution pipeline",
+  "guards": [
+    "Final native harvest summary completed/initialization/actual-self-audit all PASS",
+    "Last recorded cycle motion_completed at exact planned and measured endpoint",
+    "Every stored native timestamp contiguous at source Hz",
+    "Final actual body poses and native robot q equal raw checkpoint",
+    "Complete actual self audit binds model/trace SHA and sample count",
+    "Exact controller targets, body/articulation velocities, preload and native break events retained",
+    "Raw checkpoint unchanged and exclusive new cycle directory",
+    "Saved proof revalidated by prepare_resume and row initial validator"
+  ],
+  "tests": {
+    "test_terminal_cycle_checkpoint": 5,
+    "test_run_row_harvest": 21,
+    "test_eligible_attachment_transfer": 5,
+    "test_resume_native_state": 11,
+    "total": 42,
+    "status": "PASS"
+  },
+  "code_sha256": {
+    "terminal_cycle_checkpoint.py": "3bc49c44c4eb176892d0e429fd81604a1b532771437f1548be7d528b66a21ce7",
+    "test_terminal_cycle_checkpoint.py": "38890d48f169dacedae31b935dd47e034eb01988fffeea4d315289bc04d61805",
+    "run_row_harvest.py": "922a249a3ea2caf425d8e84710820b5ac1a5f3fef86ab671972a91be80c6273f",
+    "resume_native_state.py": "87288ff154c81a762a38ba591c31a4809f7ad11e55f566fe248cc42f918566f5"
+  },
+  "real_publication": {
+    "status": "PASS exact state/provenance publication; not new physics",
+    "checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_deeper65_resume120/final_fruit10_deeper65_resume120/cycle_checkpoints/000",
+    "metadata_sha256": "47030484466bb073715b5ade4f813bd2286226150bee3d4ec7c2965de5e20c07",
+    "actual_final_time_s": 54.0,
+    "actual_self_audit_samples": 6481,
+    "source_summary_sha256": "72aa9aa5aeaa23fba918284099ff3264b0d9cce68304025b85fc0db1bf63a8f3",
+    "actual_states_sha256": "49038575c28b3642bac4670e76d9d769dce9fef841c7591da7b7e3ba25eab79f",
+    "raw_metadata_sha256": "5f7bf617d150984f862eca9f5a3595a1199f864d06e73d2b6d37ea7590bde1ee",
+    "raw_npz_sha256": "eda4216b33ce677f6c06cb5611024651304a0215b80b51f0867bc6b7b8e730a1",
+    "row_parent_validation": true,
+    "raw_checkpoint_unchanged": true,
+    "native_new_break_events": 0,
+    "actual_inventory": {
+      "detached": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_11"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_10"
+      ]
+    },
+    "interpretation": "Nine prior detached fruits retained; Fruit10 still attached. No new success, velocity, controller target or cycle was synthesized."
+  },
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "s300-blocked-other-truss-operational-deferral-validation-20261011",
+  "tests": {
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest test_run_row_harvest test_rail_environment_preflight test_native_tool_hulls",
+    "count": 107,
+    "failures": 0,
+    "errors": 0,
+    "wall_s": 1.837
+  },
+  "changes": [
+    "Opt-in --defer-blocked-other-trusses retains exact completed native truss and remaining attached eligible truss identities with hash-bound finite blocked-plan evidence",
+    "Original all20 completion/exhaustion policy unchanged; no fabricated attempts, reset, or absolute-unreachable claim",
+    "Existing active-window builder/executor/preflight reused; no new physics or planner",
+    "ENV optional native_tool_cache passes through the existing verified hull reader with exact source/cache SHA and mutation guard"
+  ],
+  "pending": {
+    "actual_final_truss02_complete_parent": false,
+    "deferral_proof_bound": false,
+    "plant29_asset_built": false,
+    "plant29_native_started": false,
+    "plant29_rail_moved": false
+  },
+  "operational_recipe": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant29_after_truss02_operational_deferral/recipe.json",
+  "proof_template": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant29_after_truss02_operational_deferral/pending_deferral_template.json",
+  "model_change": false,
+  "actual_physics_runs": 0,
+  "training_eligible": false,
+  "harvest_success": null,
+  "source_sha256": {
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/run_row_harvest.py": "53155ba064d6aae8009a02dc9946006b48419cc066d2da150332bf8f60a809f6",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_run_row_harvest.py": "def82cb64b271d1d2203af4a40485796ca77f3945dd4f8d2b2bce20e0be0bec1",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/rail_environment_preflight.py": "4ce825e9a015fca933c06dd2e0bbad9b407ace2a9925a359b3ab634a985809e7",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_rail_environment_preflight.py": "21f7767cfb275bc9fdf53562e50a0f82879f6aa1ce85908380b293514c214a3d",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant29_after_truss02_operational_deferral/recipe.json": "f68e76bac447a5496f6dc155aa250c253985ac6da173d3ec9281986e1d977907",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant29_after_truss02_operational_deferral/pending_deferral_template.json": "61d99bd09baaf9ba49b67974d42469aa44b85929a07474225f07622cc1ba09b3",
+    "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_plant29_after_truss02_operational_deferral/motion_arguments.json": "c250bb3d14126a4d1bde1174530addd03f8211c6746b84ef66279f0b29791a06"
+  },
+  "limitations": [
+    "Pending template is not accepted proof and has explicit terminal-hash placeholders",
+    "8Hz historical blocked candidate is a finite diagnostic, not current-terminal reachability or native impossibility; prefer a native-piece accurate blocker when available",
+    "Any native-tool cache must match the exact new activated model and source assembly",
+    "Outgoing attached plant freezes at measured deformation under the existing active-window approximation; native-released fruit remains dynamic",
+    "Existing background-leaf idle guard coverage gap and failed stability remain separately documented"
+  ]
+}

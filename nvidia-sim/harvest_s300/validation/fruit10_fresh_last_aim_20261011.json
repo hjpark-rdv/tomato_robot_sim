@@ -1,0 +1,235 @@
+{
+  "schema": "fruit10-fresh-whole-truss-last-aim-proposal-v1",
+  "scope": "Read-only stored native trajectories plus one nominal FULL SELF120 reference screen; no simulator reruns/model changes",
+  "source_results": [
+    {
+      "source_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_deeper65_resume120/final_fruit10_deeper65_resume120/final_fruit10_depth65_capture_review.json",
+      "source_report_sha256": "c01a446b5cfa6bbe409d9af5e1ee27eb0146854952f3a8e43af170dcc3bdaef0",
+      "height_offset_mm": -1.5,
+      "depth_mm": 65.0,
+      "lateral_mm": 0.0,
+      "target_native_broken": false,
+      "actual_closing_jaw_gap_mm": 31.35995101928711,
+      "actual_tread_inner_gap_mm": 21.35990289454733,
+      "target_source_mesh_width_mm": 21.541769222092924,
+      "fruit_source_bbox_center_tool_mm": [
+        -0.970203763257401,
+        121.78163886425324,
+        38.45520175410969
+      ],
+      "right_source_bbox_to_tread_gap_mm": 0.7266865483651124,
+      "left_target_contact_steps": 323,
+      "right_target_contact_steps": 0,
+      "bilateral_target_contact_steps": 0,
+      "lift_drive_minus_measured_max_mm": 8.476892471313477,
+      "max_fruit_displacement_mm": 29.13161277770996
+    },
+    {
+      "source_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_upper23p5_resume120_cpu16/final_fruit10_upper23p5_resume120_cpu16/final_fruit10_upper22_capture_review.json",
+      "source_report_sha256": "efd4cd6daf232e69a0c7c6676a228ca0634ba98f8bc0432f05036cfdee80adcc",
+      "height_offset_mm": 22.0,
+      "depth_mm": 65.0,
+      "lateral_mm": 0.0,
+      "target_native_broken": false,
+      "actual_closing_jaw_gap_mm": 33.14501190185547,
+      "actual_tread_inner_gap_mm": 23.145072046805247,
+      "target_source_mesh_width_mm": 21.558997172037984,
+      "fruit_source_bbox_center_tool_mm": [
+        -2.01958402993578,
+        122.69662895512127,
+        7.287376014277086
+      ],
+      "right_source_bbox_to_tread_gap_mm": 2.6730413764175474,
+      "left_target_contact_steps": 287,
+      "right_target_contact_steps": 0,
+      "bilateral_target_contact_steps": 0,
+      "lift_drive_minus_measured_max_mm": 8.481590270996094,
+      "max_fruit_displacement_mm": 36.04545974731445
+    },
+    {
+      "source_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_resume120_cpu16/final_fruit10_lateral_minus1_capture_review.json",
+      "source_report_sha256": "b92c725a22ffc94d65bb5ae17d4661ee6f5f33ebaab674dd0b763b08070129e0",
+      "height_offset_mm": -1.5,
+      "depth_mm": 65.0,
+      "lateral_mm": -1.0,
+      "target_native_broken": false,
+      "actual_closing_jaw_gap_mm": 31.828142166137695,
+      "actual_tread_inner_gap_mm": 21.828114261147217,
+      "target_source_mesh_width_mm": 21.471827902799127,
+      "fruit_source_bbox_center_tool_mm": [
+        -0.9079936400538688,
+        123.58127435841459,
+        29.620222798503946
+      ],
+      "right_source_bbox_to_tread_gap_mm": 0.9626247159744157,
+      "left_target_contact_steps": 321,
+      "right_target_contact_steps": 0,
+      "bilateral_target_contact_steps": 0,
+      "lift_drive_minus_measured_max_mm": 1.833814024925232,
+      "max_fruit_displacement_mm": 35.103912353515625
+    }
+  ],
+  "nonisolated_comparison": true,
+  "latest_closing_blockers": [
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_10_0/Collider",
+      "points": 700,
+      "max_point_force_n": 3.014065348517172,
+      "first_s": 24.591666666666665,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.021241769194603e-05,
+      "phase_counts": {
+        "close": 230,
+        "cycle_reclose": 230,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_11_0/Collider",
+      "points": 1352,
+      "max_point_force_n": 1.8160456116956925,
+      "first_s": 21.875,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.5322992112487555e-05,
+      "phase_counts": {
+        "close": 556,
+        "cycle_reclose": 556,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+      "points": 2102,
+      "max_point_force_n": 1.5723620492877024,
+      "first_s": 23.833333333333332,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 2.71480530500412e-05,
+      "phase_counts": {
+        "close": 811,
+        "cycle_reclose": 811,
+        "belt_finish": 480
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R/part_304",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_07_0/Collider",
+      "points": 1326,
+      "max_point_force_n": 0.9822213381680546,
+      "first_s": 25.525,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.3204989954829216e-06,
+      "phase_counts": {
+        "close": 371,
+        "cycle_reclose": 345,
+        "belt_finish": 610
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_09_0/Collider",
+      "points": 1282,
+      "max_point_force_n": 0.790731048233281,
+      "first_s": 24.825,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 3.186083631590009e-05,
+      "phase_counts": {
+        "close": 401,
+        "cycle_reclose": 401,
+        "belt_finish": 480
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/R/part_249",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_07_0/Collider",
+      "points": 1059,
+      "max_point_force_n": 0.7640189785199515,
+      "first_s": 24.875,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 4.014058504253626e-06,
+      "phase_counts": {
+        "close": 274,
+        "cycle_reclose": 274,
+        "belt_finish": 511
+      }
+    }
+  ],
+  "root_cause_supported": "One-sided L target contact plus R retained-pedicel/tool obstruction; commanded28mm mechanical gap reaches31.83mm. Pointcontactforce is not native break-joint wrench.",
+  "wrong_center_excluded": "Exact source fruit bbox center is bodyorigin; meshcentroid offset magnitude~0.109mm. Large measured/manifest aim delta comes from measured plant translation and existing9mm grasp-reference offset, not a40mm fruitmesh offset.",
+  "candidate": {
+    "independent_fresh_campaign_required": true,
+    "all_first_nine_settings_unchanged": true,
+    "override_only_when_exact_truss_native_attached_count_is_one": true,
+    "last_height_offset_mm": -8.5,
+    "last_depth_mm": 80.0,
+    "lateral_offset_mm": 0.0,
+    "grasp_gap_mm": 28.0,
+    "belt_speed_m_s": 0.05,
+    "belt_seconds": 2.0,
+    "close_seconds": 6.0,
+    "belt_ramp_seconds": 0.5,
+    "orientation": "existing verified truss XY axis; yawonly; pitch/roll unchanged",
+    "force_material_collision_threshold_or_filter_changed": false,
+    "known_remaining_obstacle": "Exact R pedicel11 remains in beltband, exact L ownpedicel10 remains in beltband; native deformation required.",
+    "native_executed": false,
+    "bilateral_capture_verified": false,
+    "full_truss_success_verified": false
+  },
+  "reference_self120": {
+    "report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fruit10_new_fresh_last_aim_normal_start_reference_self120/self_collision_reference120.json",
+    "sha256": "84dd62d526fa3c1b08af4a6b29a38cb73193ab68665f02aeaf7efe2d3fd3eb3c",
+    "passed": true,
+    "complete": true,
+    "samples": 6260,
+    "hz": 120,
+    "clearance_m": 0.002,
+    "start": "normal source q; latest exhaustedCP targetposition/yaw geometry reference only",
+    "no_native_resume_authorized": true,
+    "environment_checked": false
+  },
+  "projections": {
+    "exact_capsule": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fruit10_frozen_actual_capsule_capture_projection.json",
+    "exact_capsule_sha256": "b8491eff274779b92cd0aee8600a92d6b65d4a49d281b79d0cb8986720323a57",
+    "source_cad": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fruit10_candidate80_cad_obstacle_projection.json",
+    "source_cad_sha256": "eeecb04277473b696f2d7f2ad4a8a116eea037a8acefcf5a4166ad51afcc94de",
+    "candidate_fruit_open_Z_mm": [
+      28.51498224,
+      49.89717989
+    ],
+    "candidate_fruit_finish_Z_mm": [
+      25.55764073,
+      47.01417564
+    ],
+    "latest_source_tread_L_Z_mm": [
+      9,
+      61
+    ],
+    "latest_source_tread_R_Z_mm": [
+      13,
+      65
+    ],
+    "candidate_retained07_R_top_arm_bbox_positive_axis_clearance_min_during_old_contact_window_mm": 4.069,
+    "candidate_retained07_R_upper_deck_bbox_positive_axis_clearance_min_during_old_contact_window_mm": 7.467,
+    "candidate_right09_vs_source_tread_primitive_distance_minus_radius_at_old_close_mm": 1.497,
+    "future_native_geometry_certificate": false
+  },
+  "closed_route_reference_failure": {
+    "latest_measured_lift_m": 0.14336629211902618,
+    "historical_ready_lift_offset_m": -0.15,
+    "computed_lift_m": -0.006633707880973816,
+    "reason": "below original unchanged lift bounds; failed before IK. Historical6attempt route remains closed.",
+    "retry_authorized": false
+  },
+  "success_test_required": [
+    "fresh independent authored start, no importednativebreaks",
+    "retain full pathSELF/environment ledgers and actual0.5mm activephysics guard",
+    "bothL/R belt↔Fruit10 simultaneous contact timestamps and forces",
+    "actualjawgap plus fruit/beltbounds at close/reclose/finish",
+    "exactFruit10 native fruit-pedicel jointbreak only",
+    "count all10 sourcefruit jointbreaks; do not count unrelated/importedbreaks"
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

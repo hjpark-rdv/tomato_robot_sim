@@ -1,0 +1,63 @@
+{
+  "schema": "s300-row-terminal-native-handoff-validation-v1",
+  "validation_date_kst": "2026-10-11",
+  "changes": [
+    "Require final actual-state audit PASS with exact model/states SHA and on-disk native summary",
+    "Accept explicitly completed final route_checkpoint at exact final native timestamp",
+    "Exclude exhausted current plant only after every exact eligible fruit/body/joint native event agrees with final inventory",
+    "Preserve side-policy exclusions, finite unknowns, and finite proposal budget; refill budget without reactivating completed current plant"
+  ],
+  "default_motion_arguments_changed": false,
+  "physics_geometry_thresholds_or_contact_masks_changed": false,
+  "accepted_history_rollback": false,
+  "native_executed_by_validation": false,
+  "tests": {
+    "command": "/root/farmily_tomato/nvidia-sim/.asset-venv/bin/python -m unittest test_run_row_harvest test_terminal_cycle_checkpoint test_eligible_attachment_transfer test_resume_native_state",
+    "passed": 48,
+    "cases": [
+      "Missing/pending/failed actual final audit rejected",
+      "Untagged idle/raw route snapshot rejected",
+      "Tagged exact terminal route snapshot accepted",
+      "Actual-state audit incomplete, wrong trace digest rejected",
+      "Earlier cycle cannot replace later physical state",
+      "Exact20 native joints and all20 final inventory skip current plant, refill finite budget",
+      "Completed10 cannot skip eligible20",
+      "Twenty native events on wrong truss joints cannot skip eligible20",
+      "Claimed detached list without native event rejected",
+      "Imported break without original native/source provenance rejected",
+      "Next window receives unchanged accepted terminal checkpoint; no duplicate current-plant harvest",
+      "Exact native fruit-body-harvestJoint mapping and source-summary SHA required"
+    ]
+  },
+  "real_read_only_verification": {
+    "checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_deeper65_resume120/final_fruit10_deeper65_resume120/cycle_checkpoints/000",
+    "final_time_s": 54.0,
+    "actual_audit_passed": true,
+    "measured_rail_y_m": 1.600000228881836,
+    "exact_eligible_native_fruits": 20,
+    "exact_detached_native_fruits": 9,
+    "eligible_remaining_native_fruits": 11,
+    "current_plant_skipped": false,
+    "interpretation": "This verified partial state is not a full20 row parent; no new native execution or successful harvest is claimed"
+  },
+  "future_recipe": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_campaign_after_verified20_recipe.json",
+    "sha256": "0ace7fbc4fbc606bb86c72718cdf820c0017a39c7f6b4f04a9c349734c629e57",
+    "execution": "not executed; waits for actual20 terminal + final native audit",
+    "proposal_plants": 18,
+    "proposal_trusses": 27,
+    "fullself_proposals": 47,
+    "finite_unknown_trusses": 19,
+    "side_policy_excluded_trusses": 60,
+    "first_new_plant_proposal": 29,
+    "startup_native_feasibility": "unverified; source self-clear paths are only proposals",
+    "historical_closed_plant25_and40_controls_preserved": true
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "code_sha256": {
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/run_row_harvest.py": "05d6786483ec05ecbfac6c45c09b337ee749b625365276254ab3242675ffb73e",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_run_row_harvest.py": "031c3b4d5d50be7390e597b37353965ff152ca83fb11a43abc9ece2b4a821e79",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/ROW_CONTINUATION_KO.md": "90757b625355457357f1419c4308cadba0c6dc087da74b79b961efcd0d17a1c3"
+  }
+}

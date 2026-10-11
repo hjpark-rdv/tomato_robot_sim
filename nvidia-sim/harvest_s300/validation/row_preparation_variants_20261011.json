@@ -1,0 +1,654 @@
+{
+  "schema": "bounded-row-preparation-branch-validation-v1",
+  "assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_manifest_sha256": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+  "materialized_dependency_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "source_screens": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_station_screen_v6_measured120/report.json",
+      "sha256": "b6c586fbd7ed0b67934ede14162a24e5f30234609176902d452871cfbfa9ede5",
+      "query_count": 91,
+      "status_counts": {
+        "self_path_blocked_coarse": 38,
+        "ik_path_not_found_finite": 32,
+        "self_path_clear_full": 21
+      },
+      "wall_s": 868.1087205056101
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/report.json",
+      "sha256": "72d6b00f70e9f15dc03e63fea1ae7a326afe7cf1e34917a1e7d427b2e0238a93",
+      "query_count": 6,
+      "status_counts": {
+        "self_path_blocked_coarse": 5,
+        "self_path_clear_full": 1
+      },
+      "wall_s": 204.30371300503612
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_seed8_followup/report.json",
+      "sha256": "edd820b2836e99242dd925373d0cf2dbeb090e5dbe4cb5556611d6c326505c61",
+      "query_count": 3,
+      "status_counts": {
+        "self_path_blocked_coarse": 2,
+        "self_path_clear_full": 1
+      },
+      "wall_s": 185.65618761070073
+    }
+  ],
+  "baseline_clear_proposals": 21,
+  "baseline_clear_trusses": 15,
+  "baseline_clear_plants": 12,
+  "bounded_additional_query_budget": 9,
+  "bounded_additional_queries": 9,
+  "bounded_additional_fullself_clear": 2,
+  "union_fullself_clear_proposals": 23,
+  "union_fullself_clear_trusses": 16,
+  "union_fullself_clear_plants": 13,
+  "union_total_queries": 100,
+  "union_status_counts": {
+    "self_path_blocked_coarse": 45,
+    "ik_path_not_found_finite": 32,
+    "self_path_clear_full": 23
+  },
+  "representatives": [
+    {
+      "identity": "plant_17_truss_00",
+      "queries": [
+        {
+          "variant": {
+            "name": "joint_seed0",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 0
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 0.5759310358721663,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.6666666666666666,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                "a_name": null,
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 0,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_17_truss_00/query_00/plan.json",
+          "plan_sha256": "6ac2295544de03c6aaf5904f3b32bc61c57438887c5c1982b5acb679adb299c1",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed6",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 6
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 0.5759310358721663,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.26666666666666666,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/L/part_122",
+                "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                "a_name": "L_C02_lower_deck",
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 6,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_17_truss_00/query_01/plan.json",
+          "plan_sha256": "bd5f3af6c445ad8f763fc8beeb454b8ab25194a3151700fc18ed61da5449d61d",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed8",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 8
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 0.5759310358721663,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": true,
+              "hits": []
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.5333333333333333,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+                "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                "a_name": null,
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 8,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_seed8_followup/plant_17_truss_00/query_00/plan.json",
+          "plan_sha256": "66d223e238ab23c2859af9ff88e8020863a957333dcbc8f63fc0675f2f63308b",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        }
+      ],
+      "q_staging_l2_differences_from_seed0": [
+        0.0,
+        10.570768677403738,
+        6.99039365162886
+      ],
+      "same_target_goal_translation_all_variants": true,
+      "entry_vertical_axis_error_max": 5.379907510373881e-07
+    },
+    {
+      "identity": "plant_35_truss_01",
+      "queries": [
+        {
+          "variant": {
+            "name": "joint_seed0",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 0
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 1.758074837245882,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.25,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/fixed/part_9",
+                "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+                "a_name": "F01_rear_rail_backbone",
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 0,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_35_truss_01/query_00/plan.json",
+          "plan_sha256": "aeef18836414cb9c1fce036ad148e8032df2604eaaf3264afb526411630697af",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed6",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 6
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 1.758074837245882,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_open",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": false,
+              "hits": [
+                {
+                  "a": "/World/HarvestRobot/Robot/link2/collisions/link2/node_STL_BINARY_/mesh",
+                  "b": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/mesh_0/box",
+                  "a_name": null,
+                  "b_name": null,
+                  "intersection": true,
+                  "distance_m": null,
+                  "required_planning_clearance_m": 0.002
+                }
+              ]
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.36666666666666664,
+            "hits": [
+              {
+                "a": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0118",
+                "b": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+                "a_name": "T_11_E_3030x800mm_V2NR-1",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 5.644920715109989e-05,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 6,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_35_truss_01/query_01/plan.json",
+          "plan_sha256": "bbf58744e0ebccdceefdb554240a1469c1aa3cdf5bfda962ff8e857eeb34e99a",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed8",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 8
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 1.758074837245882,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": true,
+              "hits": []
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.31666666666666665,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/fixed/part_9",
+                "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+                "a_name": "F01_rear_rail_backbone",
+                "b_name": null,
+                "intersection": false,
+                "distance_m": 0.0009737202145385348,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 8,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_seed8_followup/plant_35_truss_01/query_00/plan.json",
+          "plan_sha256": "17e2d8b05fdf5dfc86aebc16893d4b3e52d4b1ed7897d361720523812dd14805",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        }
+      ],
+      "q_staging_l2_differences_from_seed0": [
+        0.0,
+        8.901464968025783,
+        6.586430615237222
+      ],
+      "same_target_goal_translation_all_variants": true,
+      "entry_vertical_axis_error_max": 1.4060173685231814e-06
+    },
+    {
+      "identity": "plant_41_truss_00",
+      "queries": [
+        {
+          "variant": {
+            "name": "joint_seed0",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 0
+          },
+          "status": "self_path_blocked_coarse",
+          "station_y_m": 3.293768003804118,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": true,
+              "hits": []
+            }
+          ],
+          "first_path_block": {
+            "phase": "prepare_joint_branch",
+            "clear": false,
+            "first_hit_fraction": 0.4,
+            "hits": [
+              {
+                "a": "/World/ActuatedTool/L/part_122",
+                "b": "/World/HarvestRobot/Robot/link1/collisions/link1/node_STL_BINARY_/mesh",
+                "a_name": "L_C02_lower_deck",
+                "b_name": null,
+                "intersection": true,
+                "distance_m": null,
+                "required_planning_clearance_m": 0.002
+              }
+            ]
+          },
+          "selected_staging_seed_index": 0,
+          "full_audit_samples": null,
+          "full_audit_complete": null,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_41_truss_00/query_00/plan.json",
+          "plan_sha256": "66cb8f0862938f07b3e06e602ef644f3da7a0e1ec7b91ed8f87c23635146735f",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed6",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 6
+          },
+          "status": "self_path_clear_full",
+          "station_y_m": 3.293768003804118,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": true,
+              "hits": []
+            }
+          ],
+          "first_path_block": null,
+          "selected_staging_seed_index": 6,
+          "full_audit_samples": 9830,
+          "full_audit_complete": true,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_screen/plant_41_truss_00/query_01/plan.json",
+          "plan_sha256": "aed3b429e05c073029de296b7bd8c7bdac1d2324e83d2009204158270840a5d4",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        },
+        {
+          "variant": {
+            "name": "joint_seed8",
+            "horizontal_ready_connector": "joint",
+            "horizontal_ready_seed_index": 8
+          },
+          "status": "self_path_clear_full",
+          "station_y_m": 3.293768003804118,
+          "staging_goal_endpoints": [
+            {
+              "pose": "staging_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_open",
+              "clear": true,
+              "hits": []
+            },
+            {
+              "pose": "grasp_closed",
+              "clear": true,
+              "hits": []
+            }
+          ],
+          "first_path_block": null,
+          "selected_staging_seed_index": 8,
+          "full_audit_samples": 9830,
+          "full_audit_complete": true,
+          "plan": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_seed8_followup/plant_41_truss_00/query_00/plan.json",
+          "plan_sha256": "eee7e18cb7291e456774778844469cb5e28fd7e1bbfa3a4bf479504c4c1e23d9",
+          "physics_execution": false,
+          "environment_audit": "notperformed",
+          "harvest_success": null
+        }
+      ],
+      "q_staging_l2_differences_from_seed0": [
+        0.0,
+        8.306341629095357,
+        6.297634454592535
+      ],
+      "same_target_goal_translation_all_variants": true,
+      "entry_vertical_axis_error_max": 1.479915792033192e-07
+    }
+  ],
+  "validation_tests": {
+    "passed": 26,
+    "modules": [
+      "test_plan_row_stations",
+      "test_run_row_harvest",
+      "test_motion_branch"
+    ],
+    "default_command_golden_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b"
+  },
+  "baseline_source_provenance_limit": "This earlier screen version did not archive process-start code. Current source SHAs below are recorded after completion and are not a retroactive claim of executed source bytes. Actual per-query positions/rotations/FK/commands remain preserved.",
+  "added_code_snapshot": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_preparation_variants_sources/provenance.json",
+  "results": {
+    "union_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/row_station_screen_v6_union/report.json",
+    "union_report_sha256": "9a2f546223eda8dcc6366c2a8fdc192c73f6dbaafe66dcabc05607e216b8063b",
+    "next_row_selection": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/next_row_selection_variants.json",
+    "next_row_selection_sha256": "af67b3549a9200370c367d7801d77c7098793ebefe82a12f5965df72ee12c0a2"
+  },
+  "physics_execution": false,
+  "training_eligible": false,
+  "harvest_success": null,
+  "conclusion": "New Plant41/Truss00 fullself paths exist with jointseed6 andseed8 although baseline Cartesianprefix failed. Plant17/00 and35/01 seed8 endpoints are selfclear but directjointprefix fails. No targetis calleduniversallyunreachable. Nativewindow validity is separate."
+}

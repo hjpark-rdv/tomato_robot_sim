@@ -1,0 +1,46 @@
+{
+  "schema": "s300-measured-motion-continuation-regression-v1",
+  "archived_route_start_restore": "preserved as provenance; superseded by an explicit valid later same-plant checkpoint",
+  "planning_rail_origin": "measured saved moving-base world Y displacement",
+  "self_audit_rail_origin": "same measured displacement at every nominal sample; first phase starts at that nonzero offset",
+  "native_rail_controller": "separate proven prior position target; no new travel phase",
+  "legacy_default": "unchanged command arrays and original zero-relative rail behavior",
+  "tests": {
+    "test_motion_continuation": 16,
+    "test_rail_motion": 3,
+    "test_rail_self_collision": 4,
+    "test_exact_self_query_cache": 5,
+    "test_grasp_depth_schedule": 7,
+    "total": 35,
+    "status": "PASS"
+  },
+  "native_continuation_proof": "pending valid terminal whole-truss checkpoint; no native success claimed",
+  "code_sha256": {
+    "motion_continuation.py": "a00dc3007fc774231799a9c722aa847abfe5df1e37602628a70381d6df7120d8",
+    "rail_motion.py": "a7b602904bcddc59f70f3b69e68f2f546bd5f66d4d762fa8bf5ff4205918011b",
+    "run_motion.py": "bfb0f24695eac8e89cb83807a5fa77d5733047f79f2ed5c8f20c1e365a090514",
+    "motion_self_collision.py": "e8ba0183d3eeaf2e96e03ff0ada6e10d45307344a93a44bac8a43f42f56e0a83",
+    "test_motion_continuation.py": "cb3f884fee34a4ae3961a540b61182adee60b48b8c0ec07d5c3e1967daafaeee",
+    "test_grasp_depth_schedule.py": "f14478304f0390ea8eaf567f305f9087cd65093663c74d70e8a0fa21c68bbe81"
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "explicit_sameplant_rail_travel": {
+    "option": "--allow-resume-rail-travel",
+    "requires": [
+      "--resume-native-checkpoint",
+      "--rail-to-y"
+    ],
+    "default_resume_plus_rail_rejected": true,
+    "start_geometry": "measured saved physical moving-base displacement",
+    "start_command": "unchanged proven prior native drive position target",
+    "end_geometry_and_command": "explicit destination displacement from immutable source rail origin",
+    "duration": "smoothstep peak bounded for both measured-geometric and native-command displacement",
+    "plant_history": "exact same measured active plant, velocities, preload and native broken joints preserved",
+    "first_phase": "existing rail_move with saved arm q held fixed",
+    "subsequent_cycles": "hold destination; never re-execute rail prefix",
+    "native_validation": "pending; no native run launched by this change"
+  },
+  "native_initial_fk_parity": "Measured saved starting station, separately from newly requested future rail destination; default authored-origin parity unchanged",
+  "canonical_idle_first_selection": "Explicit validated canonical capture uses saved measured fruits/robot-side yaw with no entered-motion axis or fabricated cycle history; normal completed-cycle resume retains exact verified yaw/native breaks/budget"
+}

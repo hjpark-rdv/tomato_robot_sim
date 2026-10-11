@@ -1,0 +1,21 @@
+{
+  "schema": "s300-current-offline-unittest-v2",
+  "tests_run": 755,
+  "passed": true,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 1,
+  "skip_reason": "Installed Torch unsignedactorstorage test lacksTorch in asset Python",
+  "wall_s": 37.156,
+  "python": "/root/farmily_tomato/nvidia-sim/.asset-venv/bin/python",
+  "psutil_dependency_path": "/root/isaaclab_env/lib/python3.11/site-packages",
+  "exclusions": [
+    "test_motion_belt_control",
+    "test_motion_device"
+  ],
+  "exclusion_reason": "Require native Isaac Kit PhysxSchema app bootstrap",
+  "log_path": "/tmp/s300_row_offline_unittest_v2.log",
+  "log_sha256": "f8d9c04131097b81d59f8bf59a09c2cef144568c83f56b17ecb0e7fe2cd204d9",
+  "prior_failed_attempt": "plain unittest discover:3 environment importerrors +2 fixture missingdefaultfield; fixture corrected/13 focusedPASS",
+  "scope": "Unitchecks; actualwhole-truss physics/nativeSELF have separateevidence"
+}

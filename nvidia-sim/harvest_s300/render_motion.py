@@ -8,10 +8,12 @@ from pathlib import Path
 
 p=argparse.ArgumentParser();p.add_argument('assembly',type=Path);p.add_argument('trial',type=Path)
 p.add_argument('--fps',type=int,default=15);p.add_argument('--speed',type=float,default=2.)
-p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, mouth, belt_contact or grip_front')
+p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, mouth, belt_contact, grip_front, truss, truss_top or leaf_pulse')
 p.add_argument('--name',default='actual_motion',help='New output basename, never overwrites a video')
 p.add_argument('--review-light',action='store_true',help='Add replay-only fill light for contact inspection')
 p.add_argument('--contact-cutaway',action='store_true',help='Replay inspection only: hide background plants and active leaf visuals, record exact paths; source physics and saved poses unchanged')
+p.add_argument('--start-time',type=float,help='Replay-only clip start in recorded simulation seconds')
+p.add_argument('--end-time',type=float,help='Replay-only clip end in recorded simulation seconds')
 a=p.parse_args()
 if not a.name.replace('_','').isalnum():p.error('name must be an alphanumeric basename')
 output=a.trial/(a.name+'_frames');output.mkdir(exist_ok=False)
@@ -32,11 +34,23 @@ try:
     from motion_pose_display import MeasuredPoseDisplay, restore_recorded_display_fixture
     sys.path.insert(0,str(REPO/'nvidia-sim/rl'))
     from elastic_geometry import skin_points
-    data=np.load(a.trial/'states.npz');meta=json.loads((a.assembly/'motion_manifest.json').read_text())
+    # NPZ entries are compressed: repeated indexed access would decompress the
+    # full pose history for every rendered frame. Decode required measured
+    # arrays once; frame selection and all recorded values remain unchanged.
+    with np.load(a.trial/'states.npz',allow_pickle=False) as recorded:
+        data={key:recorded[key] for key in ('body_paths','time','phase','poses','robot_q','cycle_index')
+              if key in recorded}
+    meta=json.loads((a.assembly/'motion_manifest.json').read_text())
     summary=json.loads((a.trial/'summary.json').read_text())
     fruit_joints={f['joint'] for f in meta['plant']['fruits']}
     breaks=json.loads((a.trial/'break_events.json').read_text())
     if summary['model_sha256']!=sha(a.assembly/'scene.usda'):raise ValueError('Replay scene hash mismatch')
+    from native_stage_selection import select_native_scene
+    runtime=json.loads((a.trial/'runtime_settings.json').read_text()) if (a.trial/'runtime_settings.json').exists() else {}
+    selected_asset=select_native_scene(a.assembly,use_materialized=runtime.get('native_materialized_stage',False))
+    if (runtime.get('native_scene_sha256') and
+            selected_asset['native_scene_sha256']!=runtime['native_scene_sha256']):
+        raise ValueError('Replay native materialized asset SHA mismatch')
     omni.usd.get_context().open_stage(str(a.assembly/'scene.usda'))
     stage=omni.usd.get_context().get_stage()
     # Match the live viewer: all replay edits, including the transient fixture,
@@ -52,13 +66,47 @@ try:
         from pxr import Usd
         for prim in Usd.PrimRange(stage.GetPrimAtPath('/World/ElasticTarget')):
             source_name=str(prim.GetCustomDataByKey('sourceName') or '')
-            if prim.IsA(UsdGeom.Mesh) and any(x in source_name for x in ('CompoundLeaf','Apical_Young_Leaf')):
+            selected_pulse_leaf=(a.camera=='leaf_pulse' and summary.get('pulse_body') and
+                                 str(prim.GetPath()).startswith(summary['pulse_body']+'/'))
+            if prim.IsA(UsdGeom.Mesh) and not selected_pulse_leaf and any(x in source_name for x in ('CompoundLeaf','Apical_Young_Leaf')):
                 UsdGeom.Imageable(prim).MakeInvisible();cutaway_hidden.append(str(prim.GetPath()))
     pose_display=MeasuredPoseDisplay(stage,paths)
     native=json.loads((a.trial/'native_metadata.json').read_text());names=native['robot_dofs']
     lids=[names.index('jaw_L'),names.index('jaw_R')]
     visuals=DeformationVisuals(stage,a.assembly,paths)
-    if a.camera in ('motion','entry'):
+    if a.camera=='leaf_pulse':
+        leaf=next(r for r in meta['compliant_foliage']['leaves'] if r['path']==summary['pulse_body'])
+        center=(np.asarray(leaf['rest_position'])+np.asarray(leaf['pivot']))/2
+        branch=np.asarray(leaf['rest_position'])-np.asarray(leaf['pivot'])
+        side=np.cross(branch,[0.,0.,1.]);side=side/max(np.linalg.norm(side),1e-8)
+        eye=center+side*.5+np.array([0.,0.,.3])
+        camera(stage,'/World/LeafPulseReplayCamera',tuple(eye),tuple(center))
+        UsdGeom.Camera(stage.GetPrimAtPath('/World/LeafPulseReplayCamera')).GetFocalLengthAttr().Set(22.)
+        a.camera='/World/LeafPulseReplayCamera'
+    elif a.camera=='truss_top':
+        from truss_sequence import truss_fruits,horizontal_truss_direction
+        fruits=truss_fruits(meta)
+        points=np.array([f['center'] for f in fruits])
+        rotation=R.from_quat(data['poses'][0,index['/World/ActuatedTool/fixed'],3:]).as_matrix()
+        direction=np.array(horizontal_truss_direction(fruits,[],[f['path'] for f in fruits],
+            points,rotation[:,1])['direction_world'])
+        center=points.mean(axis=0)-direction*.08
+        eye=center+np.array([0.,0.,.85])
+        a.camera='/World/TrussTopReplayCamera'
+        cam=UsdGeom.Camera.Define(stage,a.camera)
+        cam.AddTransformOp().Set(Gf.Matrix4d().SetLookAt(Gf.Vec3d(*map(float,eye)),
+            Gf.Vec3d(*map(float,center)),Gf.Vec3d(*map(float,direction))).GetInverse())
+        cam.CreateFocalLengthAttr(22.);cam.CreateClippingRangeAttr(Gf.Vec2f(.02,100.))
+    elif a.camera=='truss':
+        from truss_sequence import truss_fruits
+        fruits=truss_fruits(meta)
+        center=np.mean([data['poses'][0,index[f['path']],:3] for f in fruits],axis=0)
+        rotation=R.from_quat(data['poses'][0,index['/World/ActuatedTool/fixed'],3:]).as_matrix()
+        eye=center+rotation@np.array([.32,.65,.18])
+        camera(stage,'/World/TrussReplayCamera',tuple(map(float,eye)),tuple(map(float,center)))
+        UsdGeom.Camera(stage.GetPrimAtPath('/World/TrussReplayCamera')).GetFocalLengthAttr().Set(22.)
+        a.camera='/World/TrussReplayCamera'
+    elif a.camera in ('motion','entry'):
         tool=data['poses'][:,index['/World/ActuatedTool/fixed'],:3]
         points=np.vstack((tool,np.array(meta['target']['center'])[None]))
         center=(points.min(0)+points.max(0))/2
@@ -101,10 +149,9 @@ try:
         UsdGeom.Xformable(light).AddTranslateOp().Set(Gf.Vec3d(*eye))
     vp=vu.get_active_viewport();vp.set_texture_resolution((960,720));vp.set_active_camera(a.camera)
     for _ in range(20):app.update()
-    stamps=data['time'];selection=np.searchsorted(stamps,np.arange(stamps[0],stamps[-1]+1e-8,a.speed/a.fps))
-    selection=np.minimum(selection,len(stamps)-1)
-    if selection[-1]!=len(stamps)-1:selection=np.r_[selection,len(stamps)-1]
-    if len(selection)<a.fps:selection=np.r_[selection,np.repeat(selection[-1],a.fps-len(selection))]
+    from motion_replay_clip import select_replay_ticks
+    stamps=data['time'];selection=select_replay_ticks(stamps,fps=a.fps,speed=a.speed,
+        start_time=a.start_time,end_time=a.end_time)
     subtitles=[]
     def srt_time(t):
         ms=round(t*1000);return f'{ms//3600000:02}:{ms//60000%60:02}:{ms//1000%60:02},{ms%1000:03}'
@@ -130,7 +177,12 @@ try:
         label=f"Actual physics | t={stamps[tick]:.3f}s | {data['phase'][tick]}"
         broken={e['joint'] for e in breaks if e['joint'] in fruit_joints and e['t']<=stamps[tick]}
         label+=f' | fruit joints broken: {len(broken)}'
+        if summary.get('truss_sequence'):
+            seq=summary['truss_sequence'];selected=set(seq['fruit_joints'].values())
+            label+=f' | truss detached: {len(broken & selected)}/{len(selected)} | cycle: {data["cycle_index"][tick]}'
         if meta['tool'].get('tread_prototype'):label+='\\NSEPARATE HARDWARE PROTOTYPE: added inner belt tread'
+        if meta.get('fruit_attachment'):label+='\\NATTACHMENT HYPOTHESIS: '+meta['fruit_attachment']['kind']+' (uncalibrated)'
+        if summary.get('belt_off_control'):label+='\\NBELT OFF CONTROL'
         if cutaway_hidden:label+='\\NCONTACT CUTAWAY: foliage hidden in replay display only'
         if (summary.get('belt_control') or {}).get('fixture_only'):
             label+='\\NLOADED BELT CONTROL FIXTURE - NOT FRUIT HARVEST'
@@ -148,6 +200,11 @@ try:
     (a.trial/(a.name+'_render.json')).write_text(json.dumps(dict(source='stored measured physical body transforms',
         frames=len(selection),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
         physics_rerun=False,replay_only_fill_light=a.review_light,
+        requested_clip_start_s=a.start_time,requested_clip_end_s=a.end_time,
+        actual_clip_start_s=float(stamps[selection[0]]),actual_clip_end_s=float(stamps[selection[-1]]),
+        source_trial_stop_time_s=float(stamps[-1]),source_scene_sha256=summary['model_sha256'],
+        source_native_scene_sha256=selected_asset['native_scene_sha256'],
+        materialized_dependency_sha_verified=bool(selected_asset['verified_materialized_dependency']),
         replay_only_hidden_paths=cutaway_hidden,source_geometry_modified=False,
         stop_reason=summary.get('stop_reason')),indent=2))
 except Exception:

@@ -1,0 +1,92 @@
+{
+  "schema": "final-fruit-measured-height-screen-v1",
+  "screen_queries": 2,
+  "native_executions": 0,
+  "results": [
+    {
+      "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_active_geometry120/whole_truss_active_geometry120/cycle_checkpoints/001",
+      "source_time_s": 154.0,
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_parent_all_refined",
+      "source_usdc_sha256": "f26d8f840b05e220f2a30ab2b913117ad6788835719ee10d007758a7576cd264",
+      "fruit_name": "Truss_02_Fruit_02",
+      "native_joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02",
+      "measured_fruit_center_world_m": [
+        -0.4908757507801056,
+        1.5411170721054077,
+        1.1333547830581665
+      ],
+      "actual_start_q": [
+        0.15198646485805511,
+        1.3419493436813354,
+        0.22032764554023743,
+        2.49516224861145,
+        0.42904502153396606,
+        2.983839750289917,
+        3.1408329010009766
+      ],
+      "axis_world": [
+        -0.9813427278227006,
+        0.1922666131950656,
+        0.0
+      ],
+      "grasp_height_offset_m": -0.001532505,
+      "reference_height_offset_m": 0.009,
+      "geometric_height_delta_from_prior_m": 0.008467495,
+      "physics_executed": false,
+      "training_eligible": false,
+      "ik": "passed",
+      "self_fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 22.00396846421063
+    },
+    {
+      "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_active_geometry120/whole_truss_active_geometry120/cycle_checkpoints/001",
+      "source_time_s": 154.0,
+      "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_parent_all_refined",
+      "source_usdc_sha256": "f26d8f840b05e220f2a30ab2b913117ad6788835719ee10d007758a7576cd264",
+      "fruit_name": "Truss_02_Fruit_02",
+      "native_joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02",
+      "measured_fruit_center_world_m": [
+        -0.4908757507801056,
+        1.5411170721054077,
+        1.1333547830581665
+      ],
+      "actual_start_q": [
+        0.15198646485805511,
+        1.3419493436813354,
+        0.22032764554023743,
+        2.49516224861145,
+        0.42904502153396606,
+        2.983839750289917,
+        3.1408329010009766
+      ],
+      "axis_world": [
+        -0.9813427278227006,
+        0.1922666131950656,
+        0.0
+      ],
+      "grasp_height_offset_m": 0.0,
+      "reference_height_offset_m": 0.009,
+      "geometric_height_delta_from_prior_m": 0.01,
+      "physics_executed": false,
+      "training_eligible": false,
+      "ik": "passed",
+      "self_fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 22.260228788480163
+    }
+  ],
+  "environment_clearance_verified": false,
+  "physical_contact_verified": false,
+  "nominal_vs_drive_distinction": "Geometric aim height variant only; no lift drive compensation was applied",
+  "training_eligible": false,
+  "scope": "Measured154s native checkpoint; same fixed horizontal yaw/depth/jaw profile; finite IK and complete120Hz2mm robot/tool self-collision only"
+}

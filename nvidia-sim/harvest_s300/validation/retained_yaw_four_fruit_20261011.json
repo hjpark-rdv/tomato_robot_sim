@@ -1,0 +1,160 @@
+{
+  "schema": "s300-retained-longitudinal-yaw-four-fruit-screen-v1",
+  "training_eligible": false,
+  "hook_success": null,
+  "source_checkpoint": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_resume120/whole_truss_resume120_individual/cycle_checkpoints/000",
+  "checkpoint_time_s": 54.0,
+  "source_initial_plan_sha256": "05b38da7d52926fb73ac357df709f5097b8ff34392260950334611e2978404fb",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_leaf03_refined",
+  "axis": {
+    "direction_world": [
+      -0.9813427278227006,
+      0.1922666131950656,
+      0.0
+    ],
+    "yaw_world_deg": 168.9149092063868,
+    "fruit_names": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04"
+    ],
+    "centers_world_m": [
+      [
+        -0.4990014433860779,
+        1.5736252069473267,
+        1.1387697458267212
+      ],
+      [
+        -0.4883587062358856,
+        1.5369555950164795,
+        1.1274019479751587
+      ],
+      [
+        -0.4516187310218811,
+        1.5582298040390015,
+        1.111575961112976
+      ],
+      [
+        -0.4469119906425476,
+        1.523493766784668,
+        1.099932312965393
+      ]
+    ],
+    "xy_singular_values_m": [
+      0.05216398180008703,
+      0.02833915593334913
+    ],
+    "fallback_reason": "insufficient_attached_fruits_for_longitudinal_axis",
+    "method": "attached-fruit XY principal axis; sign follows robot-side/previous entry",
+    "scope": "SIM-GT top-view yaw only; no realtime tracking within a motion cycle",
+    "axis_fit_evidence": {
+      "attached_fruit_count": 4,
+      "min_attached_fruits": 5,
+      "axis_fit_used": false,
+      "retained_previous_verified_direction": true,
+      "retained_direction_world": [
+        -0.9813427278227006,
+        0.1922666131950656,
+        0.0
+      ]
+    }
+  },
+  "actual_start_q": [
+    0.16045387089252472,
+    1.3419334888458252,
+    0.21966810524463654,
+    2.4949047565460205,
+    0.4288228750228882,
+    2.983747720718384,
+    3.140840768814087
+  ],
+  "measured_ready_start": true,
+  "ready_lift_offset_m": -0.15,
+  "grasp_reference_height_offset_m": 0.009,
+  "grasp_height_offset_m": -0.01,
+  "grasp_depth_m": 0.065,
+  "preparation_gap_m": 0.044,
+  "fcl_clearance_m": 0.002,
+  "queries": 4,
+  "ik_passed": 4,
+  "full_fcl_passed": 4,
+  "physics_executions": 0,
+  "notes": [
+    "The rejected143.4345deg partial-truss PCA was replaced only with previously recorded168.914909deg longitudinal direction; no physical state or collider changed.",
+    "Every accepted path has complete120Hz FCL sampling; environment contact and native tracking remain independent validation.",
+    "Rejected-group selector alternatives are scoped to unchanged native planning boundary; pair centering may become individual centering and unknown is never impossible."
+  ],
+  "results": [
+    {
+      "group": [
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_03"
+      ],
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 21.4236766602844,
+      "plan_sha256": "a31280302d93fc2c33a5d3f52f4cc412d60a2e4fc7661d7aae17da492cbc822f",
+      "audit_sha256": "1761f8e2020c06eb2ea6e701af1050afc0c3dfedb6b350f66967bd0d67977068",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/retained_yaw_screen/04_03"
+    },
+    {
+      "group": [
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_01"
+      ],
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 21.36295340768993,
+      "plan_sha256": "f2aff1ff43e8d30b43effa91006534f648587eedda487875490d346f20b5c1c1",
+      "audit_sha256": "1761f8e2020c06eb2ea6e701af1050afc0c3dfedb6b350f66967bd0d67977068",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/retained_yaw_screen/02_01"
+    },
+    {
+      "group": [
+        "Truss_02_Fruit_04"
+      ],
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 21.476346965879202,
+      "plan_sha256": "ef8f3ce7808dda914075f45aac4c48e80a65d22beecd42b89fb8561d8d193d43",
+      "audit_sha256": "1761f8e2020c06eb2ea6e701af1050afc0c3dfedb6b350f66967bd0d67977068",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/retained_yaw_screen/04"
+    },
+    {
+      "group": [
+        "Truss_02_Fruit_03"
+      ],
+      "ik": "passed",
+      "fcl": {
+        "passed": true,
+        "complete": true,
+        "samples": 6260,
+        "first_blocked": null
+      },
+      "wall_s": 21.31044951453805,
+      "plan_sha256": "d0b502b60def45f33239e247215667346201efbcaadae57460909e64f837a6d2",
+      "audit_sha256": "1761f8e2020c06eb2ea6e701af1050afc0c3dfedb6b350f66967bd0d67977068",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/retained_yaw_screen/03"
+    }
+  ],
+  "tests": {
+    "passed": 84,
+    "failed": 0
+  }
+}

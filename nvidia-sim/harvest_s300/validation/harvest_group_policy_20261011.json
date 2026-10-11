@@ -1,0 +1,101 @@
+{
+  "completed": true,
+  "stop_reason": null,
+  "initialization_valid": true,
+  "actual_self_collision_audit_passed": true,
+  "simulated_s": 54.0,
+  "physics_wall_s": 152.65590485557914,
+  "planning_paused_wall_s": 0.7670015208423138,
+  "save_wall_s": 12.428182169795036,
+  "aggregate_sim_s_per_wall_s": 0.3537367260774286,
+  "physics_settings": {
+    "hz": 120,
+    "solver": "TGS",
+    "armature": 0.0005,
+    "device": "cpu",
+    "scene_ccd": true,
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "gpu_partitions": 1,
+    "gpu_found_lost_aggregate_capacity": 16384,
+    "gpu_total_aggregate_capacity": 16384
+  },
+  "native_break_events": [
+    {
+      "t": 23.991666666666667,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+    },
+    {
+      "t": 24.266666666666666,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+    },
+    {
+      "t": 24.325,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+    },
+    {
+      "t": 25.158333333333335,
+      "phase": "close",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_04"
+    },
+    {
+      "t": 27.0,
+      "phase": "cycle_open",
+      "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_05"
+    }
+  ],
+  "native_plant_dofs": 693,
+  "training_eligible": false,
+  "harvest_success": null,
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_112538_ripe_group_harvest",
+  "minimum_fruits": 3,
+  "initial_selected": [
+    "Truss_02_Fruit_01",
+    "Truss_02_Fruit_02",
+    "Truss_02_Fruit_03",
+    "Truss_02_Fruit_04"
+  ],
+  "group_outcome": {
+    "eligible_detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04",
+      "Truss_02_Fruit_05"
+    ],
+    "ineligible_detached": [],
+    "eligible_remaining": [
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08"
+    ],
+    "ineligible_remaining": [
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11"
+    ],
+    "interpretation": "Native detachment counts; unripe incidental detachments remain visible; collection unverified"
+  },
+  "termination": "group_no_group_meets_minimum",
+  "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_sha256": {
+    "motion_manifest.json": "446ebc2b62981d5b7795077928651fb31011523d34f783858ebf848af76efb34",
+    "composed.usdc": "841514d3b0ca105ac9a627a8109d151fc9fe0eb881f28db5f254a50ab3b24ef9"
+  },
+  "offline_tests": {
+    "tests": 773,
+    "success": true,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "wall_s": 38.423035414889455,
+    "excluded": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ]
+  },
+  "eligibility": "Authored RGB proxy SIM-GT; no camera detector or biological calibration",
+  "collection_verified": false
+}

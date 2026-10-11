@@ -1,0 +1,40 @@
+{
+  "schema": "s300-environment-state-query-validation-v1",
+  "native_runs": 0,
+  "training_eligible": false,
+  "physics_unchanged": true,
+  "command_arrays_unchanged": true,
+  "function": "RailEnvironmentCheck.check_state(q,gap,rail_position_m=...,phase=prefix_search_state)",
+  "accepted_state": "complete and hard_clear; final120Hz self/preparation audit still required",
+  "tests": {
+    "command": "PYTHONPATH=nvidia-sim/harvest_s300 ./nvidia-sim/.asset-venv/bin/python -m unittest -q test_rail_environment_preflight",
+    "passed": 56,
+    "new_state_tests": 7,
+    "legacy_rail_and_preparation_tests": 48,
+    "new_declared_leaf_test": 1
+  },
+  "source_sha256": {
+    "rail_environment_preflight.py": "9a9c9f4bfd49c1ef0f49e2023d77678479b3b17975bb71e3b7b6ff1c78ae77c0",
+    "test_rail_environment_preflight.py": "beaf8592713c580797474ec8e3f9cb8e66a5a8ca600174a0003d681a8d92103f"
+  },
+  "full_environment_inventory": true,
+  "previous_path_sweep_used": false,
+  "sampled_timestamp_or_pair_ledger_modified": false,
+  "proposal_time_s": null,
+  "broadphase": "Exact current-state whole-moving-shape AABB then original shapewise AABB/FCL; inclusive bounds",
+  "shared_finite_fcl_query_budget": true,
+  "query_error_or_exhaustion": "incomplete/inconclusive, never clear",
+  "released_permission": "Existing exact HarvestContactScope; only releases already at imported checkpoint lifecycle boundary0, no future break",
+  "actual_arrival_proven": false,
+  "collection_verified": false,
+  "released_fruit_physics_verified": false,
+  "strict_whole_scene_physics_passed": null,
+  "evidence_directory": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/environment_declared_leaf_classification_validation",
+  "declared_leaf_classifier": "Exact manifest leaf owner+mesh validation covers Additional source names; dynamic enabled nonkinematic D6 remains required",
+  "classifier_negative_checks": [
+    "foreign same sourceName clone",
+    "wrong declared mesh",
+    "kinematic owner",
+    "fixed/undeclared owner"
+  ]
+}

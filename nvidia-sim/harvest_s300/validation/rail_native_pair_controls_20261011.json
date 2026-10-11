@@ -1,0 +1,48 @@
+{
+  "schema": "s300-native-chassis-platform-parity-20261011-v1",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6",
+  "source_materialized_dependency": {
+    "relative_path": "composed.usdc",
+    "sha256": "04f9bb327b765b569e935883268b62065727b0baf38859785413c6ee5d710583",
+    "format": "usdc",
+    "materialized": true,
+    "external_usd_sublayers": []
+  },
+  "cases": [
+    {
+      "case": "compound_adjacent",
+      "complete": true,
+      "steps": 12,
+      "duration_s": 0.2,
+      "exact_pair_contact_points": 0,
+      "exact_pair_active_points": 0,
+      "minimum_separation_m": null,
+      "expected_native_behavior_observed": true,
+      "native_initialization_lift_delta_m": -0.0017409511410957923,
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_pair_controls/native_compound_complete/summary.json"
+    },
+    {
+      "case": "external_carrier",
+      "complete": true,
+      "steps": 12,
+      "duration_s": 0.2,
+      "exact_pair_contact_points": 56,
+      "exact_pair_active_points": 56,
+      "minimum_separation_m": -0.018499869853258133,
+      "expected_native_behavior_observed": true,
+      "native_initialization_lift_delta_m": -0.010417196949697172,
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/rail_pair_controls/native_external_complete/summary.json"
+    }
+  ],
+  "native_probe_sha256": "6587e0c01d47a0c899fe84210f2e01087249dbe512c46755bcd146ae3e3bf25e",
+  "physical_geometry": "Identical actual source FlatRearDeck and platform box sizes; intentional fixture-only placement offset \u2212520.860 mm makes signed intersection \u221218.500 mm",
+  "interpretation": "PhysX suppressed adjacent articulation base/platform pair despite authored collisionEnabled=true. Separate external carrier actor produced exact native collider callbacks for the same intersecting source pair.",
+  "limits": [
+    "One exact box-pair control proves native actor-pair contact capability, not an empirical sweep of all 892 source shape combinations.",
+    "Intentional deep overlap is calibration only. Its force/penetration is not an operational harvest force, success, or safety limit.",
+    "SDK initialization advances physics: initialization callbacks have t=0 label. Explicit subsequent controls use 60Hz timestamps; no retention claim.",
+    "First external harness attempt aborted after initialization due inappropriate 5mm rest gate; preserved separately and excluded from complete comparison."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

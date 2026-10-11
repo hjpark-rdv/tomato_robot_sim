@@ -1,5 +1,167 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-11 최소 수량 기반 집단 수확 정책
+
+`--harvest-group-policy`로 동일 송이의 대상 열매가 그리퍼 범위 안에3개 이상인
+집단을 높은 쪽부터 선택하고, 실제 사이클 후 남은 수량/위치로 재평가한다.
+고정 위/아래2회나 남은1개까지 개별 수확하는 정책이 아니다. 원래 모드는 보존했다.
+현재 대상 표시는 자산의 빨간 RGB를 이용한 SIM-GT 대용 기준이며 카메라 숙도 인식은 아니다.
+Truss_02 한 사이클: 대상7개 중5개 분리, 남은2개로 종료, 대상 밖3개 분리0.
+초기/실측 자기충돌 검사PASS, 54sim초/152.656loop초. offline773테스트 PASS.
+상세: [HARVEST_GROUP_POLICY_KO.md](nvidia-sim/harvest_s300/HARVEST_GROUP_POLICY_KO.md).
+결과: `/root/docker_share/mujoko_debugging_data/20261011_112538_ripe_group_harvest/`.
+학습 데이터 아님, 분리와 포집 성공은 구별한다. 앞선 미커밋 수확 기반 작업을 함께 보존한다.
+
+## 2026-10-11 잎 접촉 제외 후 Truss_02 전체 10개 분리 확인
+
+사용자 확정: 잎 때문에 회피하거나 수확을 중단하지 않는다. `leaf_contact_policy.py`로
+별도 `assembly_leaves_visual_only`를 만들었다. 원본 잎 외형은 유지하고 정확한 잎 충돌체
+8,152개만 비활성화했다. 잎의 저항을 생략하는 근사이며 실제 잎 접힘 모델은 아니다.
+원래 주줄기·잘린 가지·꼭지·과실·로봇·거터 속성과 활성 접촉 0.5mm 기준은 유지한다.
+모든 비잎 속성 일치 검사, 잎 제외/거터 유지 등 자동 테스트3개 통과. 원본 자산 보존.
+
+정상 초기 상태에서 양쪽 안쪽50/50mm/s로9개 분리. 11번만2회 미분리였으며,
+262초 완료 체크포인트의 실제 상태를 복원해 안쪽20/50mm/s로1회 추가 시도했다.
+11번은26.083초 close 중 native 분리, 후퇴·복귀까지 완료. **같은 송이의 고유 열매10/10**,
+첫 실행9개+재개1개다. 단일 중단 없는 엔진 실행이나10개 신규 콜백으로 중복 집계하지 않는다.
+두 실행의 실측 전체 로봇 자기충돌 검사PASS, 잎 접촉 기록0건. 좌우 회피 보정0mm.
+추가2mm 잎 회피 시험은 사용자 지적으로 폐기 방향으로 분류해 결과 폴더에 보존했다.
+
+이미 분리된 열매의 바닥·기체 접촉에는 기존 진단 예외가 적용된다(첫 실행12접촉점,
+재개7접촉점). 낙과 충돌 정확도/포집/실물 파단/다른 송이 반복 성공은 미검증이다.
+`training_eligible=false`, `harvest_success=null`, `collection_verified=false` 유지.
+결과와 실제 저장 상태 영상:
+`/root/docker_share/mujoko_debugging_data/20261011_095724_inward_full_truss/index.html`.
+명령은 같은 폴더 `leaf_ignored_recipe.json`, `remaining11_20_50_recipe.json`.
+요약 `nvidia-sim/harvest_s300/validation/inward_leaf_ignored_full_truss_20261011.json`.
+현재 변경은 미커밋. 아래7/10 잎 중단 기록은 이 정책 적용 이전의 결과다.
+
+## 2026-10-11 양쪽 벨트 안쪽 이송 재시험 — 첫 닫힘 7/10 분리, 잎 접촉으로 중단
+
+기존 fresh Truss_02 9/10 모델/경로/120Hz/물성/0.5mm 기준으로 재시험했다.
+`--belt-speed-m-s 0 --belt-infeed-speed-m-s .05`가 양쪽 접촉면의 안쪽 이송이다.
+기존 common-infeed 부호 오류를 실제 native 구체 이송으로 확인해 수정했다:
+local-Y API 명령 -20mm/s는 구체를 입구(+Y)로40.008mm, +20mm/s는 안쪽(-Y)으로39.984mm 이동시켰다(2초).
+새 계획에 `native_positive_local_y_inward_v2`를 기록한다. infeed=0인 기존 반대 방향 명령은 그대로다.
+저장된 옛 음수 common-infeed 결과를 안쪽 이송 성공으로 해석하지 않는다.
+
+정상 초기 상태, 벨트 시작19.5초까지 기존 baseline의277바디 pose/관절/명령 완전 일치.
+수정 방향에서는 첫 close에서01,02,03,04,05,07,08번7개 native 분리(기존 같은 구간3개).
+26.025초에 `L/part_209`(CAD `L_C13_outer_finger_cover`)와 `Leaf_CompoundLeaf_04/Appendage_140_0`
+접촉으로 중단. post-solve convex 상한0.503177mm, callback 약0.506070mm, 최대 접촉점힘11.402N.
+09/10/11은 미분리. 실제 자기충돌 검사PASS, 전체 수확/포집 성공은 아니다.
+26.025sim초/102.392실행loop초. 기존418초9개 결과와 전체 성공률을 단순 비교하지 않는다.
+
+첫 부호 오해 실행과 중단한 재실행도 보존했다. 그 과정에서 이미 분리된 열매의 정적
+`Foundation_6x10m/Mesh` 낙과 분류 누락을 수정했다. 정확한 정적 바닥·native 파단 이후에만
+기존 opt-in 낙과 예외를 적용하며 벨트/팔/붙은 열매/잎의 물리와0.5mm 기준은 유지한다.
+관련95자동 검사PASS, 방향 native 대조PASS. 결과/동일 시점 실제 상태 영상:
+`/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest/index.html`.
+요약 `nvidia-sim/harvest_s300/validation/both_belts_inward_20261011.json`.
+이번 변경은 미커밋. `training_eligible=false`, `harvest_success=null`, `collection_verified=false`.
+
+## 2026-10-11 잎의 수동 탄성 연결과 수확 재시험 — 수확은 미완료
+
+`nvidia-sim/harvest_s300/compliant_foliage.py`로 별도 모델에 활성 식물의 잎27개를
+수동3축 연결로 분리했다(원래17+V9추가7+어린잎3). 초기 외형/충돌체/원래 충돌 제외 관계 보존.
+식물612→693DOF, 전체248→275강체. 잎 질량·강성은 미보정 추정이며 잎자루 회전만 표현한다.
+정지 통과. 초기17개 모델의0.05N/1초 하중은28.506° 회전 후 잔류0.021°로 복원했다.
+층별 USD overlay 초기 발산을 동일 합성 형상의 materialized USD로 해결했다. 내부 엔진 원인은 미확정.
+
+수평 송이 방향163.905°/상단01·02번 기존 경로 재사용(명령 동일성 확인).
+초기17개 모델에서 native callback1.415mm와 계산 후 cooked형상 겹침 상한0.304mm가 달랐다.
+`--verify-leaf-contact-after-step` 선택형 진단은 **판정 시점이 달라 기존 callback 검사와 동등하지 않다**.
+0.5mm 수치와 원래 기본 검사 보존. 확인 불가/초과는 중단, 스텝 사이 비관통 보증 아님.
+최종27개 모델도12.700초 진입 중 잎16/고정 배경 잎 접촉0.616mm에서 중단, 분리0.
+목표01/02 최대 이동82.0/79.3mm. 접촉점 최대힘은 초기17개6.021N→27개2.450N이나 정상 수확은 아니다.
+65→45mm 얕은 경로는 link4/link2 여유1.830mm<기존2mm로 계획 차단(실제 관통과 다름).
+주변 잎은 여전히 고정 triangle mesh. 잎의 국소 굽힘/축 방향 압축과 밀린 송이에 대한 접근은 미해결.
+
+최종55테스트PASS. 결과/실제 상태 영상:
+`/root/docker_share/mujoko_debugging_data/20261011_004347_compliant_leaf_harvest/index.html`.
+최종 모델 `assembly_all_leaves_v2`, 작은 요약 `nvidia-sim/harvest_s300/validation/compliant_foliage_20261011.json`.
+상세 `nvidia-sim/harvest_s300/CONTROLLED_BELT_HARVEST_KO.md` 마지막 절.
+별도 모델/결과만 생성, V6 사용자 작업 보존, 미커밋. `training_eligible=false`, `harvest_success=null`.
+
+## 2026-10-11 Isaac 그리퍼 탑뷰 송이 방향 yaw 정렬
+
+`nvidia-sim/harvest_s300/run_motion.py --approach-yaw-mode truss-axis` 추가.
+붙어 있는 열매의 XY 주축으로 그리퍼 yaw/전진 경로를 맞추고 pitch/roll은 수평 유지.
+기존 robot-radial 기본과 sequence60 명령은 보존. 현재 송이 전진각은 월드163.90°,
+기존175.94°와12.04° 차이. 아래10·11번은 자기충돌 계획 검사에서 차단, 위1·2번은
+계획 통과 후 실제60Hz에서 옆판/주줄기 부속 형상 겹침으로10.02초 중단(분리0).
+방향 수정 완료와 수확 성공을 구분한다. 관련43테스트와 기존 실제 USD 명령 회귀 통과.
+결과 `20261011_001548_truss_yaw_alignment/index.html` (docker_share 기존 data 아래),
+상세는 `nvidia-sim/harvest_s300/CONTROLLED_BELT_HARVEST_KO.md` 마지막 절.
+이번 변경은 아직 커밋하지 않았다. 사용자 gripper-design V6 작업은 보존한다.
+
+## 최신: 한 송이 전체 연속 수확 시도 — 미완료 (2026-10-10)
+
+`--whole-truss`로 같은 native scene에서 남은 열매 위치를 읽어 다음 접근을 계획한다.
+cycle 사이 식물/열매/로봇 상태 reset이나 파단 조인트 복구가 없다. 현 Truss_02의10개를 정확한
+native joint ID로 집계하며, 이미 분리된 열매는 다음 목표에서 제외한다. 기존 runner/IK/FCL/분석/영상 재사용.
+7회 물리 시험: 아래부터60/120/240Hz, 위부터60/120Hz, 위부터 높이 선이동60Hz,
+높이 선이동+진입 깊이65→35mm60Hz. **전체 수확 완료0회, 가장 많은 분리5/10개**.
+아래부터60Hz는7·8·9·10·11번 분리 후9번 낙하/바닥1.329mm 겹침 중단.
+120/240Hz는4개 분리 후7번 과실/9번 꼭지 가지0.534/0.588mm 겹침 중단.
+위쪽 직선 준비는잎에 차단. 높이 선이동으로 접근은 했지만 송이 밀림/주변잎1.831mm 겹침 중단.
+얕은 진입은 최대겹침0.279mm이나 분리0, 실제 재개방91.1mm로96mm 미도달하여 재닫기 전 중단.
+나머지01·02·03·04·05를 정상 수확했다고 보고하지 않는다. 다음은 움직인 송이를 고려한 포획 위치/장애물 회피 경로가 필요하다.
+물성·3N/0.008Nm·충돌체·actuator·0.5mm 기준 보존. 기존 탄성 연결과 벨트 접촉면 시험안을 재사용한 미보정 진단이다.
+자동 관련100테스트PASS, 실제 자기충돌7회PASS, 연속 timestamp/측정 위치 연결 확인.
+60Hz 첫39초 명령/관절/식물 pose가 이전2개 분리 실행과 bit-exact. 실패도 모두 보존.
+결과 `/root/docker_share/mujoko_debugging_data/20261010_203914_whole_truss_harvest/index.html`.
+상세는 [CONTROLLED_BELT_HARVEST_KO.md](nvidia-sim/harvest_s300/CONTROLLED_BELT_HARVEST_KO.md) 마지막 절.
+`training_eligible=false`, `harvest_success=null`. 현 턴에서 커밋/푸시하지 않음. 사용자 별도V6 변경 보존.
+
+
+## 최신: 연속 벨트 개폐 패턴 및 닫기 중 분리 허용 (2026-10-10)
+
+사용자 정정: 열린 채 벨트 시작 → 원래 최소28mm까지 닫기 → 벨트 유지하며96mm 완전 열기
+→ 다시28mm 닫기. 닫기/열기 중 분리는 실패가 아니다. 이후 벨트를 끄고 열어 후퇴한다.
+`belt_open_close_cycle`/live `cycle` opt-in 추가, 기존 명령/물성/파단값 보존.
+양쪽 표면−0.05/+0.05m/s, full612DOF, 같은 탄성 연결3N/0.008Nm·5mm 접촉면 시험안.
+60/120Hz 모두10·11번 분리 후39초 모션 완주. 모든 활성 접촉0.5mm 기준과 실제 자기충돌 통과.
+60Hz 최대겹침0.187mm/47.358초 계산(0.824배속),120Hz0.246mm/90.310초.
+60Hz 둘 다 첫 닫기 중 분리;120Hz10번 닫기 중/11번 재개방 시작 때 분리.
+재닫기 전 실제95.994mm 개방 확인. on/off 명령/시간 및 벨트 이전 실제상태 일치.
+벨트off도10번 분리이므로 모든 분리가 벨트 덕분인 것은 아님. 실물 보정·포집·240Hz 미검증.
+기존 이송(좌−0.10/우0)60Hz는2개 분리 후11번/벨트0.632mm 겹침 중단,120Hz 완료.
+headless5회와 실패를 모두 보존,91테스트PASS. training_eligible=false/harvest_success=null.
+결과 `/root/docker_share/mujoko_debugging_data/20261010_201647_continuous_belt_cycle/index.html`.
+실행 `bash /root/docker_share/mujoko_debugging_data/20261010_201647_continuous_belt_cycle/run_cycle_gui.sh`.
+상세: [CONTROLLED_BELT_HARVEST_KO.md](nvidia-sim/harvest_s300/CONTROLLED_BELT_HARVEST_KO.md) 마지막 절.
+기존 아래 기록의 '닫기 중 조기 파단' 표현은 벨트off 닫기였던 당시 비교의 해석이며 현재 성공 조건으로 적용하지 않는다.
+
+
+## 최신: 잡는 간격·높이 개선 및 실제 화면 재검증 (2026-10-10)
+
+같은 탄성 연결 시험안(3N/0.008Nm)에서 간격40mm/기준점보다10mm 낮은 진입으로
+60·120Hz 모두 닫기 중 조기 파단 없이10번 과실이 벨트 단계에 분리되고 후퇴까지 완료됐다.
+60Hz GUI도 원래0.5mm 기준으로 완료: 최대 겹침0.192mm,30.5sim초/38.586wall초(0.790배속).
+headless와 실제 robot q/식물 pose/명령/시간이 bit-exact. 두 Hz의 벨트off 대조는 분리0.
+전체 headless15회+GUI1회, 자동 테스트89개 통과. 실패/분리0도 모두 보존했다.
+240Hz/40mm는 닫기 중 조기 파단,41·42mm 비교도 주파수에 따라 분리 여부가 달라
+시간 간격에 수렴한 수확 모델을 완성한 것은 아니다. 실물 보정/포집/새 병렬 성능은 미검증.
+기존 원본·물성·충돌체·actuator 보존, 간격/높이 opt-in과 live 환경변수만 추가했다.
+target 복사 메타데이터의 파단값을 실제 USD와 맞춘 수정도 포함하며 USD 해시는 이전과 같다.
+상세/재실행: [CONTROLLED_BELT_HARVEST_KO.md](nvidia-sim/harvest_s300/CONTROLLED_BELT_HARVEST_KO.md).
+결과 `/root/docker_share/mujoko_debugging_data/20261010_185843_controlled_belt_harvest/index.html`.
+커밋 여부는 `git status`로 확인한다. 별도 gripper V6 작업은 수정하지 않았다.
+
+## 최신: 열매–꼭지 탄성 연결 비교 (2026-10-10)
+
+기준 `76479ee`, 별도 assembly에서 현재 송이10개 과실 연결만 고정→수동 탄성 회전으로 변경했다.
+3N 유지, 파단 토크0.08/0.008Nm를 고정/탄성으로 나누고 벨트off 대조 및120Hz를 포함해 농장6회 실행.
+60Hz 탄성/0.008Nm: 10번이벨트단계19.283초에 native 분리, 전체30.5초를37.469초에완료(0.814배속).
+같은명령/벨트이전실제상태가일치하는 off대조는분리0. 원래0.08Nm의탄성은11번비틀림46.35°이나분리0.
+고정약화는닫기중3개분리후2.098mm겹침중단. 120Hz탄성약화도닫기중8·10번분리후1.099mm겹침중단.
+따라서 한 사례의개선증거이며 시간간격에안정적인모델/실물파단/포집성공은아니다. 기본모델/물성/접촉기준보존.
+87자동검사와60/120Hz단독fixture통과. native이벤트만으로힘/비틀림/굽힘파단원인을구분할수없다.
+상세·영상·재실행: [FRUIT_ATTACHMENT_TEST_KO.md](nvidia-sim/harvest_s300/FRUIT_ATTACHMENT_TEST_KO.md).
+결과 `/root/docker_share/mujoko_debugging_data/20261010_182133_fruit_attachment/index.html`.
+현재 변경의커밋여부는 `git status`로확인한다. 사용자V6작업은수정하지않았다.
+
 ## 최신: 벨트 수확 속도·접촉 허용치 비교 (2026-10-10)
 
 같은 full612DOF/전체충돌/5mm 접촉면 시험안에서30.5초 동작을 비교했다.

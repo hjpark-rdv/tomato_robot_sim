@@ -1,0 +1,668 @@
+{
+  "schema": "s300-both-belts-inward-validation-v2",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest",
+  "source_branch": "codex/s300-harvest-isaac-20261009",
+  "source_head": "76479eef658275b0164cb23103aa48fcb9d1ef70",
+  "source_worktree_dirty": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "baseline": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_fresh_truss02_known9_last_lower85_depth80/fresh_truss02_known9_last_lower85_depth80_cpu16",
+    "completed": true,
+    "stop_reason": null,
+    "simulated_s": 418.0,
+    "execution_loop_wall_s": 1778.992972387001,
+    "planning_paused_wall_s": 267.33869704045355,
+    "save_wall_s": 107.60390875674784,
+    "actual_self_collision_passed": true,
+    "initialization_valid": true,
+    "detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04",
+      "Truss_02_Fruit_05",
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08",
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_11"
+    ],
+    "remaining": [
+      "Truss_02_Fruit_10"
+    ],
+    "native_break_events": [
+      {
+        "t": 24.35,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+      },
+      {
+        "t": 23.925,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+      },
+      {
+        "t": 25.175,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+      },
+      {
+        "t": 76.75,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_04"
+      },
+      {
+        "t": 76.81666666666666,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_05"
+      },
+      {
+        "t": 77.24166666666666,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07"
+      },
+      {
+        "t": 83.9,
+        "phase": "cycle_reclose",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+      },
+      {
+        "t": 130.04166666666666,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_09"
+      },
+      {
+        "t": 137.125,
+        "phase": "cycle_reclose",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_11"
+      }
+    ],
+    "fruit_count": 10,
+    "termination": "attempt_budget_exhausted_remaining_fruit",
+    "declared_inventory": {
+      "detached": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_11"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_10"
+      ]
+    },
+    "released_fruit_diagnostic_contact_points": 14,
+    "released_fruit_0_5mm_exceedance": true,
+    "exact_ground_colliders": [
+      "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh"
+    ],
+    "training_eligible": false,
+    "harvest_success": null,
+    "collection_verified": false,
+    "timestamp_max_gap_s": 0.008333333333382598,
+    "state_finite": true,
+    "belt_command_min_max_m_s": [
+      [
+        -0.05,
+        4.120370370362918e-05
+      ],
+      [
+        -4.120370370362918e-05,
+        0.05
+      ]
+    ],
+    "first_close_attached_fruit_motion": [
+      {
+        "fruit": "Truss_02_Fruit_01",
+        "start_s": 19.5,
+        "end_s": 24.341666666666665,
+        "local_y_start_mm": 143.40024869806135,
+        "local_y_end_mm": 109.54968889378378,
+        "inward_displacement_mm": 33.850559804277566
+      },
+      {
+        "fruit": "Truss_02_Fruit_02",
+        "start_s": 19.5,
+        "end_s": 23.916666666666668,
+        "local_y_start_mm": 124.01690047581019,
+        "local_y_end_mm": 100.23052514743739,
+        "inward_displacement_mm": 23.7863753283728
+      },
+      {
+        "fruit": "Truss_02_Fruit_03",
+        "start_s": 19.5,
+        "end_s": 25.166666666666668,
+        "local_y_start_mm": 95.81496932734996,
+        "local_y_end_mm": 71.85418996570282,
+        "inward_displacement_mm": 23.96077936164713
+      },
+      {
+        "fruit": "Truss_02_Fruit_04",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 83.04127892978707,
+        "local_y_end_mm": 82.10039320976787,
+        "inward_displacement_mm": 0.9408857200191856
+      },
+      {
+        "fruit": "Truss_02_Fruit_05",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 73.30793678576883,
+        "local_y_end_mm": 64.60006142520926,
+        "inward_displacement_mm": 8.707875360559573
+      },
+      {
+        "fruit": "Truss_02_Fruit_07",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 49.822378008701556,
+        "local_y_end_mm": 46.917456477142224,
+        "inward_displacement_mm": 2.904921531559329
+      },
+      {
+        "fruit": "Truss_02_Fruit_08",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 39.282835537973256,
+        "local_y_end_mm": 44.45507777940204,
+        "inward_displacement_mm": -5.17224224142878
+      },
+      {
+        "fruit": "Truss_02_Fruit_09",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 29.20161080237344,
+        "local_y_end_mm": 31.289744455343293,
+        "inward_displacement_mm": -2.0881336529698507
+      },
+      {
+        "fruit": "Truss_02_Fruit_10",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 29.897158037665204,
+        "local_y_end_mm": 39.77737800765541,
+        "inward_displacement_mm": -9.880219969990202
+      },
+      {
+        "fruit": "Truss_02_Fruit_11",
+        "start_s": 19.5,
+        "end_s": 26.5,
+        "local_y_start_mm": 18.84883030676411,
+        "local_y_end_mm": 26.573730147811744,
+        "inward_displacement_mm": -7.724899841047635
+      }
+    ]
+  },
+  "inward_trial": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest/trials_verified_inward/fresh_truss02_verified_inward50_cpu16",
+    "completed": false,
+    "stop_reason": "penetration_over_0_5mm",
+    "simulated_s": 26.025,
+    "execution_loop_wall_s": 102.39177652262151,
+    "planning_paused_wall_s": 0.0,
+    "save_wall_s": 5.704948015511036,
+    "actual_self_collision_passed": true,
+    "initialization_valid": true,
+    "detached": [
+      "Truss_02_Fruit_01",
+      "Truss_02_Fruit_02",
+      "Truss_02_Fruit_03",
+      "Truss_02_Fruit_04",
+      "Truss_02_Fruit_05",
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08"
+    ],
+    "remaining": [
+      "Truss_02_Fruit_09",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11"
+    ],
+    "native_break_events": [
+      {
+        "t": 24.341666666666665,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+      },
+      {
+        "t": 24.925,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+      },
+      {
+        "t": 24.083333333333332,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+      },
+      {
+        "t": 24.933333333333334,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_04"
+      },
+      {
+        "t": 25.133333333333333,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_05"
+      },
+      {
+        "t": 25.416666666666668,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07"
+      },
+      {
+        "t": 25.3,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+      }
+    ],
+    "fruit_count": 10,
+    "termination": "penetration_over_0_5mm",
+    "declared_inventory": {
+      "detached": [
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08"
+      ],
+      "remaining": [
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11"
+      ]
+    },
+    "released_fruit_diagnostic_contact_points": 0,
+    "released_fruit_0_5mm_exceedance": false,
+    "exact_ground_colliders": [
+      "/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh"
+    ],
+    "training_eligible": false,
+    "harvest_success": null,
+    "collection_verified": false,
+    "timestamp_max_gap_s": 0.008333333333336412,
+    "state_finite": true,
+    "belt_command_min_max_m_s": [
+      [
+        4.120370370369904e-05,
+        4.120370370369904e-05
+      ],
+      [
+        0.05,
+        0.05
+      ]
+    ],
+    "first_close_attached_fruit_motion": [
+      {
+        "fruit": "Truss_02_Fruit_01",
+        "start_s": 19.5,
+        "end_s": 24.333333333333332,
+        "local_y_start_mm": 143.40024869806135,
+        "local_y_end_mm": 152.9118257840087,
+        "inward_displacement_mm": -9.511577085947353
+      },
+      {
+        "fruit": "Truss_02_Fruit_02",
+        "start_s": 19.5,
+        "end_s": 24.916666666666668,
+        "local_y_start_mm": 124.01690047581019,
+        "local_y_end_mm": 132.7187897945368,
+        "inward_displacement_mm": -8.701889318726606
+      },
+      {
+        "fruit": "Truss_02_Fruit_03",
+        "start_s": 19.5,
+        "end_s": 24.075,
+        "local_y_start_mm": 95.81496932734996,
+        "local_y_end_mm": 104.18827579290368,
+        "inward_displacement_mm": -8.373306465553732
+      },
+      {
+        "fruit": "Truss_02_Fruit_04",
+        "start_s": 19.5,
+        "end_s": 24.925,
+        "local_y_start_mm": 83.04127892978707,
+        "local_y_end_mm": 88.77318373591035,
+        "inward_displacement_mm": -5.731904806123289
+      },
+      {
+        "fruit": "Truss_02_Fruit_05",
+        "start_s": 19.5,
+        "end_s": 25.125,
+        "local_y_start_mm": 73.30793678576883,
+        "local_y_end_mm": 69.5022307953503,
+        "inward_displacement_mm": 3.8057059904185313
+      },
+      {
+        "fruit": "Truss_02_Fruit_07",
+        "start_s": 19.5,
+        "end_s": 25.408333333333335,
+        "local_y_start_mm": 49.822378008701556,
+        "local_y_end_mm": 43.314831588929,
+        "inward_displacement_mm": 6.507546419772553
+      },
+      {
+        "fruit": "Truss_02_Fruit_08",
+        "start_s": 19.5,
+        "end_s": 25.291666666666668,
+        "local_y_start_mm": 39.282835537973256,
+        "local_y_end_mm": 32.45511301497554,
+        "inward_displacement_mm": 6.827722522997723
+      },
+      {
+        "fruit": "Truss_02_Fruit_09",
+        "start_s": 19.5,
+        "end_s": 26.025,
+        "local_y_start_mm": 29.20161080237344,
+        "local_y_end_mm": 38.14573086335071,
+        "inward_displacement_mm": -8.944120060977264
+      },
+      {
+        "fruit": "Truss_02_Fruit_10",
+        "start_s": 19.5,
+        "end_s": 26.025,
+        "local_y_start_mm": 29.897158037665204,
+        "local_y_end_mm": 38.2963575331298,
+        "inward_displacement_mm": -8.399199495464597
+      },
+      {
+        "fruit": "Truss_02_Fruit_11",
+        "start_s": 19.5,
+        "end_s": 26.025,
+        "local_y_start_mm": 18.84883030676411,
+        "local_y_end_mm": 26.534039335080863,
+        "inward_displacement_mm": -7.68520902831675
+      }
+    ]
+  },
+  "before_belt_motion": {
+    "frames": 2341,
+    "end_s": 19.5,
+    "body_mapping_equal": true,
+    "time_bit_exact": true,
+    "phase_bit_exact": true,
+    "poses_bit_exact": true,
+    "robot_q_bit_exact": true,
+    "command_bit_exact": true
+  },
+  "native_direction_verification": {
+    "completed": true,
+    "stop_reason": null,
+    "min_contact_separation_m": -0.00012291129678487778,
+    "phase": "control_infeed",
+    "time_s": [
+      1.0,
+      3.0
+    ],
+    "local_y_displacement_m": -0.03998422622680664,
+    "command": [
+      0.02,
+      0.02
+    ],
+    "belt_control": {
+      "transport_m": -0.03675574064254761,
+      "displacement_world_m": [
+        2.5486878232894306e-11,
+        0.03675574064254761,
+        0.0
+      ],
+      "fixture_only": true,
+      "harvest_success": false
+    },
+    "inward_confirmed": true,
+    "source": "/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest/control_positive_local_y"
+  },
+  "stop_contact": {
+    "stop_time_s": 26.025,
+    "reason": "penetration_over_0_5mm",
+    "solved_leaf_pair": {
+      "t": 26.025,
+      "a": "/World/ActuatedTool/L/part_209",
+      "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0",
+      "native_callback_separation_m": -0.0005060695111751556,
+      "certified_clear": false,
+      "certified_within_limit": false,
+      "limit_m": 0.0005,
+      "numerical_guard_m": 1e-06,
+      "contact_scope": "compliant_leaf",
+      "method": "Complete native convex pair coverage: strictly positive world-axis separation, otherwise full face-normal and edge-cross SAT at measured post-fetch poses",
+      "hull_pair_count": 256,
+      "positive_world_aabb_separated_pair_count": 254,
+      "complete_full_sat_pair_count": 2,
+      "minimum_positive_support_gap_is_not_euclidean_distance": true,
+      "helper_source_sha256": "f5b85c6491bd7efe9b224fbda4db50144ead8c7f56b90c7d73db6c2adf3f250c",
+      "minimum_certified_gap_m": -0.0005031768850642937,
+      "penetration_upper_bound_m": 0.0005031768850642937
+    },
+    "native_joint_breaks": [
+      {
+        "t": 24.083333333333332,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_03"
+      },
+      {
+        "t": 24.341666666666665,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+      },
+      {
+        "t": 24.925,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+      },
+      {
+        "t": 24.933333333333334,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_04"
+      },
+      {
+        "t": 25.133333333333333,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_05"
+      },
+      {
+        "t": 25.3,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_08"
+      },
+      {
+        "t": 25.416666666666668,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_07"
+      }
+    ],
+    "force_measure": "single native contact point magnitude, N",
+    "training_eligible": false,
+    "native_stop_contacts": [
+      {
+        "t": 26.025,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_209",
+        "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0",
+        "separation_m": -0.0005057579837739468,
+        "force_n": 11.40181423777831,
+        "impulse_ns": [
+          0.04121611267328262,
+          0.08561012148857117,
+          -0.00010920868953689933
+        ],
+        "position_world_m": [
+          -0.5602569580078125,
+          1.5099568367004395,
+          1.1281530857086182
+        ],
+        "normal_world": [
+          0.43378475308418274,
+          0.9010157585144043,
+          -0.001149382209405303
+        ]
+      },
+      {
+        "t": 26.025,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_209",
+        "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0",
+        "separation_m": -0.0005060332478024065,
+        "force_n": 0.11837113554967445,
+        "impulse_ns": [
+          0.0004278966225683689,
+          0.0008887855219654739,
+          -1.1337806427036412e-06
+        ],
+        "position_world_m": [
+          -0.5603553056716919,
+          1.5100042819976807,
+          1.128222942352295
+        ],
+        "normal_world": [
+          0.43378475308418274,
+          0.9010157585144043,
+          -0.001149382209405303
+        ]
+      },
+      {
+        "t": 26.025,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_209",
+        "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0",
+        "separation_m": -0.0005060695111751556,
+        "force_n": 0.0013748547338829254,
+        "impulse_ns": [
+          4.9699251576384995e-06,
+          1.0323048627469689e-05,
+          -1.3168613754999114e-08
+        ],
+        "position_world_m": [
+          -0.5603997707366943,
+          1.5100257396697998,
+          1.1282545328140259
+        ],
+        "normal_world": [
+          0.43378475308418274,
+          0.9010157585144043,
+          -0.001149382209405303
+        ]
+      },
+      {
+        "t": 26.025,
+        "phase": "close",
+        "a": "/World/ActuatedTool/L/part_209",
+        "b": "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0",
+        "separation_m": 0.000504871888551861,
+        "force_n": 0.0,
+        "impulse_ns": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position_world_m": [
+          -0.5655118227005005,
+          1.5124914646148682,
+          1.1318845748901367
+        ],
+        "normal_world": [
+          0.27597668766975403,
+          0.9611638784408569,
+          0.000998014467768371
+        ]
+      }
+    ],
+    "native_stop_max_single_point_force_n": 11.40181423777831,
+    "part_identity": {
+      "/World/ActuatedTool/L/part_209": {
+        "sourceName": "L_C13_outer_finger_cover",
+        "userDocBrief": "Encodes a mesh with optional subdivision properties and features."
+      },
+      "/World/ElasticTarget/Leaf_CompoundLeaf_04/Appendage_140_0": {
+        "userDocBrief": "Encodes a mesh with optional subdivision properties and features."
+      }
+    }
+  },
+  "recipe": {
+    "schema": "s300-native-verified-inward-v2",
+    "command": [
+      "/root/isaaclab_env/bin/python",
+      "-u",
+      "/root/farmily_tomato/nvidia-sim/harvest_s300/benchmark_motion.py",
+      "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_ground_v6_leaf_refined",
+      "/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest/cases_verified_inward.json",
+      "--output",
+      "/root/docker_share/mujoko_debugging_data/20261011_085604_both_belts_inward_harvest/trials_verified_inward",
+      "--timeout",
+      "3600"
+    ],
+    "local_surface_command_m_s": [
+      0.05,
+      0.05
+    ],
+    "physical_intention": "both interfaces pull fruit toward tool CAD -Y interior",
+    "native_direction_verification": "native_positive_sign_verification.json",
+    "argument_changes_from_baseline": [
+      {
+        "flag": "--belt-speed-m-s",
+        "old": ".05",
+        "new": "0"
+      },
+      {
+        "flag": "--belt-infeed-speed-m-s",
+        "old": "0",
+        "new": ".05"
+      }
+    ],
+    "source_hashes": {
+      "scene.usda": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed.usdc": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+      "motion_manifest.json": "d7e38dcc6ca2ee1ff3c985639a2f14be5185c22cb10b427ea17a3728ce53d1c1",
+      "skin.npz": "885882dabe3384ffd6e8d7ea5b3d243beeee448287a97df500bc67000c48aaf0"
+    },
+    "task_code_sha256": {
+      "motion_kinematics.py": "5b281f876360e14ab14fc084c2059529a53c1bd67bae6b07f65bd109dd87e271",
+      "run_motion.py": "4bf774f3c558441a51d6e0415fcd369d17c499629ed2693e294a2543e11ab908",
+      "test_motion_ready.py": "a943afa436aacf2afc0faea75fb43154c2d26b8039655e16927d1b756ccac8f0",
+      "harvest_contact_scope.py": "27e594705edd2ad39d3fda72d45922cab39b1647a52589c37ada6c3fd7593827",
+      "test_harvest_contact_scope.py": "981a2a0d2d3251a59d06d92c3a2edfea8145f1e5bac09b3ee002b5780f700ef4"
+    },
+    "prior_trials": [
+      "trials: wrong outward sign; stopped on unclassified foundation after first native break",
+      "trials_floor_scope: same wrong sign; explicitly interrupted; incomplete"
+    ],
+    "controlled_followup": "One corrected fresh-start whole-truss run; same scene/arm/jaw/timing/physical properties/0.5mm guard",
+    "training_eligible": false,
+    "collection_verified": false
+  },
+  "tests": {
+    "offline_passed": 95,
+    "first_mixed_environment_test_error": "test_motion_belt_control needs native PhysxSchema; asset venv import failed; excluded and 95 correct-environment tests rerun",
+    "native_control_completed": true
+  },
+  "attempts": [
+    {
+      "path": "trials/fresh_truss02_both_inward50_cpu16",
+      "classification": "incorrect_sign_outward_foundation_guard_stop",
+      "detached": 1,
+      "simulated_s": 26.358333333333334
+    },
+    {
+      "path": "trials_floor_scope/fresh_truss02_both_inward50_floor_scope_cpu16",
+      "classification": "incorrect_sign_outward_explicitly_interrupted",
+      "completed": false
+    },
+    {
+      "path": "control_positive_local_y",
+      "classification": "native_direction_control_not_harvest",
+      "completed": true
+    },
+    {
+      "path": "trials_verified_inward/fresh_truss02_verified_inward50_cpu16",
+      "classification": "corrected_inward_leaf_guard_stop",
+      "detached": 7,
+      "simulated_s": 26.025
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "s300-two-staging-leaf-physical-hypothesis-v1",
+  "native_runs": 0,
+  "native_validation": "pending parent strict3s startup",
+  "training_eligible": false,
+  "calibrated": false,
+  "harvest_success": null,
+  "asset": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01_passive_staging_leaves",
+  "source_asset": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_plant22_fresh_near20_truss01",
+  "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+  "source_manifest_sha256": "3ded653bfcddb6550bb4d217b928e7628db14f45dbab14c67980e6c9382527a1",
+  "scope_sha256": "3b501d62f0788402f89fc596862571e1e7d4ea82b817dc8c5e0ee37987a1287d",
+  "materialized_dependency_sha256": "2a7720d4864878fae9fa54eda784bd900a77020ae0c26436b3d7ac20d02fc2f8",
+  "background_scope": [
+    {
+      "plant": "Plant_20",
+      "group": "CompoundLeaf_01",
+      "source_meshes": [
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_127",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_128",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_129",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_130"
+      ],
+      "declared_body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_01",
+      "joint": "/World/BackgroundCompliantFoliage/Plant_20/Joints/Leaf_CompoundLeaf_01",
+      "stiffness": 0.005,
+      "damping": 0.0008
+    },
+    {
+      "plant": "Plant_20",
+      "group": "CompoundLeaf_02",
+      "source_meshes": [
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_131",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_132",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_133",
+        "/World/Greenhouse/Plants/Plant_20/Stem/mesh_134"
+      ],
+      "declared_body": "/World/BackgroundCompliantFoliage/Plant_20/Leaf_CompoundLeaf_02",
+      "joint": "/World/BackgroundCompliantFoliage/Plant_20/Joints/Leaf_CompoundLeaf_02",
+      "stiffness": 0.005,
+      "damping": 0.0008
+    }
+  ],
+  "changes": {
+    "standalone_world_d6_bodies": 2,
+    "enabled_mapped_mesh_colliders": 8,
+    "added_mass_kg": 0.005610211055245175,
+    "authored_source_points_triangles_world_error_m": 0.0,
+    "collision_proxy_revision": "Exact rendered Mesh points/triangles retained; static triangles use convexDecomposition when made dynamic",
+    "dynamics_revision": "2 scoped static leaf groups become standalone passive spring bodies; neighboring stems/trusses remain static",
+    "existing_body_masses_changed": false,
+    "main_articulation_added_dofs": 0,
+    "extra_filtered_pairs": []
+  },
+  "materialization": {
+    "mesh_count": 31941,
+    "world_vertices": 32649127,
+    "world_vertex_max_abs_error_m": 0.0,
+    "rigid_body_count": 279,
+    "rigid_pose_max_abs_error": 0.0,
+    "collider_count": 32142,
+    "collider_pose_max_abs_error": 0.0,
+    "geometry_sha256": "93be59e3a27986895ca1d3fa7f9a26caf30e139372c0c1c2b15465502d5fde03"
+  },
+  "cpu_exact_scope_registration": true,
+  "cpu_registration_colliders": 8,
+  "old_native_history_imported": false,
+  "source_first_endpoint_evidence": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/fresh_truss01_original_approach_representatives/report.json",
+  "prior_source_preserved": true,
+  "physics_unchanged": false,
+  "physical_revision_scope": "Two exact source leaf groups only; nearby stems/trusses/fruit/robot/structural properties unchanged",
+  "code_sha256_at_report": {
+    "background_foliage.py": "a1520733055eedad43991e777f15b2b4ec6007559267c6c02a5185cd5bfa734e",
+    "harvest_contact_scope.py": "65aa6eb18c9fadbf61b3a714257438b5288333923ff9a6efe40d3b7bb747e171",
+    "rail_environment_preflight.py": "9a9c9f4bfd49c1ef0f49e2023d77678479b3b17975bb71e3b7b6ff1c78ae77c0"
+  },
+  "code_hash_scope": "Current code after immutable builder completion; helper ownership stable; no unsupported import-time source-byte claim",
+  "limitations": [
+    "Full prefix/approach environment proof pending",
+    "Native startup/stability/contact/cooking pending",
+    "Leaf parameters remain an existing uncalibrated model hypothesis"
+  ]
+}

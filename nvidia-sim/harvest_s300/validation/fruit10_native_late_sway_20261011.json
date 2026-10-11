@@ -1,0 +1,238 @@
+{
+  "schema": "s300-native-late-grasp-sway-result-v1",
+  "trial": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_native_fruit10_late_sway15_same_ready/native_fruit10_late_sway15_same_ready_cpu16",
+  "source_resume_current_completed_418s": true,
+  "native_completed": true,
+  "initialization_valid": true,
+  "actual_self_collision_audit_passed": true,
+  "native_new_break_count": 0,
+  "target": "Truss_02_Fruit_10",
+  "native_target_joint_broken": false,
+  "whole_truss_total": 10,
+  "cumulative_detached": 9,
+  "actual_arm_sway_tracking": {
+    "close": {
+      "actual_cad_x_range_from_leading_hold_mm": [
+        -1.4682201658965177,
+        1.462785420451127
+      ],
+      "command_cad_x_range_from_leading_hold_mm": [
+        -1.4988391642700698,
+        1.4983594401275626
+      ],
+      "max_bias_removed_cad_x_tracking_error_mm": 0.2982584012731207,
+      "max_bias_removed_translation_tracking_error_mm": 0.29830946350394827,
+      "max_absolute_command_fk_to_actual_translation_error_mm": 9.347355857071394,
+      "leading_hold_actual_minus_command_xyz_world_mm": [
+        0.16403240130391517,
+        -0.10074511666680053,
+        -9.322687916904382
+      ],
+      "max_actual_command_orientation_error_rad": 0.0014234305364154564,
+      "min_x_time_s": 25.658333333333335,
+      "max_x_time_s": 24.891666666666666,
+      "nominal_path_is_not_actual_tracking": true,
+      "initial_hold_samples": 486,
+      "actual_command_joint_tracking_max_m_or_rad": [
+        0.008488217368721962,
+        0.002775907516479492,
+        0.0015394091606140137,
+        0.0015377998352050781,
+        0.001307368278503418,
+        0.002804279327392578,
+        7.3909759521484375e-06
+      ]
+    },
+    "cycle_reclose": {
+      "actual_cad_x_range_from_leading_hold_mm": [
+        -1.4939413062505063,
+        1.4365565604127046
+      ],
+      "command_cad_x_range_from_leading_hold_mm": [
+        -1.4988391642700698,
+        1.4983594401275626
+      ],
+      "max_bias_removed_cad_x_tracking_error_mm": 0.3166491732913521,
+      "max_bias_removed_translation_tracking_error_mm": 0.3168824355927791,
+      "max_absolute_command_fk_to_actual_translation_error_mm": 9.347293353288432,
+      "leading_hold_actual_minus_command_xyz_world_mm": [
+        0.1638833896919767,
+        -0.07428065438652709,
+        -9.322270684390954
+      ],
+      "max_actual_command_orientation_error_rad": 0.0014238819357567335,
+      "min_x_time_s": 33.15833333333333,
+      "max_x_time_s": 32.391666666666666,
+      "nominal_path_is_not_actual_tracking": true,
+      "initial_hold_samples": 486,
+      "actual_command_joint_tracking_max_m_or_rad": [
+        0.00848819687962532,
+        0.0027761459350585938,
+        0.0015394091606140137,
+        0.001537322998046875,
+        0.0013072490692138672,
+        0.0028133392333984375,
+        8.106231689453125e-06
+      ]
+    }
+  },
+  "actual_target_displacement_max_mm": 31.056554794311523,
+  "actual_target_relative_rotation_max_deg": 35.682297344507965,
+  "actual_closing": {
+    "close": {
+      "jaw_actual_min_mm": 31.144670486450195,
+      "jaw_actual_final_mm": 31.144670486450195,
+      "actual_contact_gap_at_last_frame_mm": 21.14477495868016,
+      "simultaneous_bilateral_positive_force_target_contact_steps": 0,
+      "exact_target_belt_contacts": {
+        "/World/ActuatedTool/L_belt": {
+          "points": 923,
+          "contact_steps": 321,
+          "first_s": 23.833333333333332,
+          "last_s": 26.5,
+          "max_point_force_n": 1.5405978005631884,
+          "max_sum_point_magnitudes_per_step_n": 1.5515257663105497,
+          "raw_max_penetration_mm": 0.013809651136398315
+        },
+        "/World/ActuatedTool/R_belt": {
+          "points": 10,
+          "contact_steps": 10,
+          "first_s": 26.425,
+          "last_s": 26.5,
+          "max_point_force_n": 0.0,
+          "max_sum_point_magnitudes_per_step_n": 0.0,
+          "raw_max_penetration_mm": 0
+        }
+      }
+    },
+    "cycle_reclose": {
+      "jaw_actual_min_mm": 31.144309997558594,
+      "jaw_actual_final_mm": 31.144309997558594,
+      "actual_contact_gap_at_last_frame_mm": 21.14426554220924,
+      "simultaneous_bilateral_positive_force_target_contact_steps": 0,
+      "exact_target_belt_contacts": {
+        "/World/ActuatedTool/L_belt": {
+          "points": 841,
+          "contact_steps": 322,
+          "first_s": 31.325,
+          "last_s": 34.0,
+          "max_point_force_n": 1.5336939659944404,
+          "max_sum_point_magnitudes_per_step_n": 1.546910166684391,
+          "raw_max_penetration_mm": 0.03516487777233124
+        },
+        "/World/ActuatedTool/R_belt": {
+          "points": 10,
+          "contact_steps": 10,
+          "first_s": 33.925,
+          "last_s": 34.0,
+          "max_point_force_n": 0.0,
+          "max_sum_point_magnitudes_per_step_n": 0.0,
+          "raw_max_penetration_mm": 0
+        }
+      }
+    },
+    "belt_finish": {
+      "jaw_actual_min_mm": 31.124446868896484,
+      "jaw_actual_final_mm": 31.128782272338867,
+      "actual_contact_gap_at_last_frame_mm": 21.128822472721026,
+      "simultaneous_bilateral_positive_force_target_contact_steps": 0,
+      "exact_target_belt_contacts": {
+        "/World/ActuatedTool/L_belt": {
+          "points": 720,
+          "contact_steps": 240,
+          "first_s": 34.00833333333333,
+          "last_s": 36.0,
+          "max_point_force_n": 0.5853051250541953,
+          "max_sum_point_magnitudes_per_step_n": 0.8200998374627416,
+          "raw_max_penetration_mm": 0.0007351900421781465
+        },
+        "/World/ActuatedTool/R_belt": {
+          "points": 240,
+          "contact_steps": 240,
+          "first_s": 34.00833333333333,
+          "last_s": 36.0,
+          "max_point_force_n": 0.0,
+          "max_sum_point_magnitudes_per_step_n": 0.0,
+          "raw_max_penetration_mm": 0
+        }
+      }
+    }
+  },
+  "largest_tool_contact_pairs": [
+    {
+      "a": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_11_0/Collider",
+      "points": 1314,
+      "max_point_force_n": 2.0789298177813382,
+      "first_s": 22.033333333333335,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 1.35627924464643e-05,
+      "phase_counts": {
+        "close": 537,
+        "cycle_reclose": 537,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Pedicel_distal_10_0/Collider",
+      "points": 702,
+      "max_point_force_n": 1.8449455164762456,
+      "first_s": 24.583333333333332,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 6.647314876317978e-06,
+      "phase_counts": {
+        "close": 231,
+        "cycle_reclose": 231,
+        "belt_finish": 240
+      }
+    },
+    {
+      "a": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "b": "/World/ElasticTarget/Truss_02_Fruit_10/Collider",
+      "points": 2484,
+      "max_point_force_n": 1.5405978005631884,
+      "first_s": 23.833333333333332,
+      "last_s": 36.0,
+      "raw_max_penetration_m": 3.516487777233124e-05,
+      "phase_counts": {
+        "close": 923,
+        "cycle_reclose": 841,
+        "belt_finish": 720
+      }
+    }
+  ],
+  "external_contact_moment": {
+    "native_joint_reaction_torque_available": false,
+    "maximum_sum_vector_magnitude_about_measured_joint_anchor_nm": 0.006533353164982896,
+    "maximum_sum_force_vector_n": 1.5515257663105497,
+    "note": "Reconstructed signed contact moment from callback impulse and actual anchor; body-A impulse sign not separately validated. Not native joint wrench, net joint load or a new break criterion."
+  },
+  "interpretation": "Real arm sway was tracked, but right belt still supplied zero contact force to target and the same retained distal11_0 limited closure. This does not establish impossibility; constant lateral/vertical changes need actual source clearance and new bounded native evidence.",
+  "source_native_scene_sha256": "2502dd8ee2ca800b0125fd8bdaefc974a414689f4900640e3413bc1e3f93d18b",
+  "measurement_report": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_native_fruit10_late_sway15_same_ready/native_fruit10_late_sway15_same_ready_cpu16/final_fruit10_late_sway_actual_capture_review.json",
+  "measurement_report_sha256": "555e224cbc660229dfc8527f411e70757fde4142ba7e7b7bae8c5c038058b844",
+  "input_sha256": {
+    "states.npz": "0b87aa4aca25ce9c5b56a85455b1c87cff428296a00b49eccb8885b288104b49",
+    "contacts.json": "e00f82f913e88c2150bd5cbfd487abfe06a58475149e3dc960cea93ec23fbd29",
+    "plan.json": "cffabb8d36de2142d8fd9204f2e03886b35d4d06293ac16d9d279812bb548608",
+    "break_events.json": "1d7d33adc6e8484b46231165300624e0c346d7b92e69302ec1aca42f75fd4afd"
+  },
+  "physics_settings": {
+    "hz": 120,
+    "solver": "TGS",
+    "armature": 0.0005,
+    "device": "cpu",
+    "scene_ccd": true,
+    "position_iterations": 64,
+    "velocity_iterations": 4,
+    "gpu_partitions": 1,
+    "gpu_found_lost_aggregate_capacity": 16384,
+    "gpu_total_aggregate_capacity": 16384
+  },
+  "physical_geometry_materials_filters_drive_break_thresholds_unchanged": true,
+  "previous_cpu_only_validation_preserved": "validation/last_fruit_grasp_sway_late_20261011.json",
+  "native_initial_and_final_robot_state_not_reset": true,
+  "training_eligible": false,
+  "harvest_success": null
+}

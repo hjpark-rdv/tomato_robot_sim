@@ -1,0 +1,26 @@
+{
+  "schema": "grasp-lateral-offset-validation-20261011-v1",
+  "scope": "Optional horizontal-ready belt-motion CAD-X arm-goal offset only",
+  "tests": {
+    "command": "python -m unittest test_grasp_lateral_offset test_motion_branch test_motion_ready test_motion_horizontal_entry test_motion_kinematics",
+    "count": 58,
+    "status": "PASS"
+  },
+  "legacy_phases_sha256": "e3f493070c892963f3d0874c431423cf0121df2e054cfb9ac1e5832993f80b6b",
+  "implementation_sha256": "771edb0d63d0b97ef5f0db9a4fd6c686b687ee0290c3380b81238d59e19efa61",
+  "test_sha256": "5241c1a33de41edc042dfe9acef4c045caf4723cc4612d0154001be5b1e89d5b",
+  "measured_recommendation": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/trials_final_fruit10_upper23p5_resume120_cpu16/final_fruit10_upper23p5_resume120_cpu16/final_fruit10_next_motion_recommendation.json",
+    "sha256": "00e7bf46ababec96ba87ee8118caaeb44afff2473984e0bab8c62c72cdf5ad0b"
+  },
+  "native_new_motion_validation": "Pending parent trial; no new physics run by this helper test",
+  "source_body_center_exact_bbox_offset_mm": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "older_right_gap_mm": 0.7266865483651124,
+  "upper_right_gap_mm": 2.6730413764175474,
+  "training_eligible": false,
+  "harvest_success": null
+}
