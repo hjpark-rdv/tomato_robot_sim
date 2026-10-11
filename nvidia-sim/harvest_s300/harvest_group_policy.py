@@ -37,6 +37,17 @@ def load_policy(path, assembly, fruits):
             raise ValueError('Missing or mismatched exact fruit eligibility')
         if not isinstance(e.get('eligible'), bool):
             raise ValueError('Explicit boolean fruit eligibility is required')
+    from truss_sequence import validated_rejected_groups
+    initial = policy.get('initial_rejected_groups', [])
+    validated_rejected_groups(fruits, initial)
+    if initial:
+        evidence = policy.get('initial_rejection_evidence')
+        if not isinstance(evidence, dict) or not evidence.get('reason') or not evidence.get('reports'):
+            raise ValueError('Initial group rejection requires its planning reason and report hashes')
+        for report in evidence['reports']:
+            source = Path(report['path'])
+            if not source.is_absolute() or sha(source) != report['sha256']:
+                raise ValueError('Initial group rejection evidence hash mismatch')
     return policy
 
 
@@ -72,6 +83,7 @@ class HarvestGroupSelector:
         self.output = Path(output) if output else None
         self.history = []
         self.last_decision = None
+        self.initial_rejected_groups = policy.get('initial_rejected_groups', [])
 
     def __call__(self, fruits, breaks, body_paths, poses, attempts, max_attempts=2,
                  order='highest-first', single_fruit_when_remaining=0, rejected_groups=()):
@@ -81,6 +93,11 @@ class HarvestGroupSelector:
         if order != 'highest-first' or single_fruit_when_remaining:
             raise ValueError('Group policy requires highest-first without single-fruit cleanup')
         rejected = validated_rejected_groups(fruits, rejected_groups)
+        # A recorded planning rejection is neither a physical attempt nor a
+        # permanent fruit exclusion. Reconsider after the next measured cycle.
+        initial_rejected = (validated_rejected_groups(fruits, self.initial_rejected_groups)
+                            if not self.history else set())
+        rejected = rejected | initial_rejected
         attached = set(inventory(fruits, breaks)['remaining'])
         candidates = []
         centering_rejections = dict(selected_fruit_outside=0, ineligible_fruit_inside=0)
@@ -185,6 +202,8 @@ class HarvestGroupSelector:
                   'group_planning_alternatives_exhausted' if best_geometric_count >= self.minimum else
                   'no_group_meets_minimum')
         self.last_decision = dict(index=len(self.history), reason=reason,
+            initial_planning_rejected_groups=[list(g) for g in sorted(initial_rejected)],
+            rejected_groups_are_physical_attempts=False,
             minimum_fruits=self.minimum, remaining=sorted(attached),
             eligible_remaining=eligible_remaining, ineligible_remaining=sorted(attached-self.eligible),
             best_geometric_count=best_geometric_count, candidate_aim_count=len(candidates),

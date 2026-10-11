@@ -16,7 +16,8 @@ class PreparationEnvironmentWiringTests(unittest.TestCase):
     def test_explicit_mode_only_and_actual120hz_single_environment(self):
         self.assertFalse(actual_cli([]).verify_preparation_environment_preflight)
         self.assertTrue(actual_cli(['--hz','120','--verify-preparation-environment-preflight']).verify_preparation_environment_preflight)
-        for args in (['--hz','60'],['--hz','240'],['--hz','120','--num-envs','2'],['--hz','120','--replicate']):
+        self.assertTrue(actual_cli(['--hz','60','--verify-preparation-environment-preflight']).verify_preparation_environment_preflight)
+        for args in (['--hz','30'],['--hz','240'],['--hz','120','--num-envs','2'],['--hz','120','--replicate']):
             with redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
                 actual_cli(args+['--verify-preparation-environment-preflight'])
 
@@ -29,7 +30,7 @@ class PreparationEnvironmentWiringTests(unittest.TestCase):
         module.audit_external_rail=audit
         context=dict(a=SimpleNamespace(verify_preparation_environment_preflight=enabled,
             assembly=Path('/fresh_model'),output=Path('/trial'),resume_native_checkpoint=None,
-            hz=120,released_fruit_ground_diagnostic=True,allow_resume_attachment_transfer=False,
+            hz=120,contact_limit_mm=1.,released_fruit_ground_diagnostic=True, released_fruit_gripper_support_diagnostic=True, released_fruit_same_truss_diagnostic=True,allow_resume_attachment_transfer=False,
             native_tool_collision_cache=native_cache),
             initial_sequence_group=dict(truss_key='Truss_01'))
         with patch.dict(sys.modules,rail_environment_preflight=module),redirect_stdout(io.StringIO()):
@@ -41,10 +42,11 @@ class PreparationEnvironmentWiringTests(unittest.TestCase):
         calls=self.run_wire(True);self.assertEqual(len(calls),1)
         args,kwargs=calls[0]
         self.assertEqual(args,(Path('/fresh_model'),Path('/trial/preparation_environment_preflight.json')))
-        self.assertEqual(kwargs['scope'],'preparation');self.assertEqual(kwargs['hz'],120)
+        self.assertEqual(kwargs['scope'],'preparation');self.assertEqual(kwargs['hz'],120);self.assertEqual(kwargs['native_hz'],120)
         self.assertEqual(kwargs['allowed_truss_key'],'Truss_01');self.assertIsNone(kwargs['checkpoint'])
         self.assertFalse(kwargs['allow_attachment_transfer'])
         self.assertEqual(kwargs['max_distance_queries'],2000000)
+        self.assertEqual(kwargs['wheel_floor_overlap_limit_m'],.001)
 
     def test_preparation_checker_receives_same_runtime_native_tool_pieces(self):
         path=Path('/measured-native-tool.json')

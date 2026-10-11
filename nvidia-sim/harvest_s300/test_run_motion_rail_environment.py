@@ -18,7 +18,8 @@ class RunMotionRailEnvironmentTests(unittest.TestCase):
     def test_default_is_unchanged_and_explicit_rail_sampling_matches_physics(self):
         self.assertFalse(actual_cli([]).verify_rail_environment_preflight)
         self.assertTrue(actual_cli(['--hz','120','--verify-rail-environment-preflight']).verify_rail_environment_preflight)
-        for arguments in (['--hz','240'], ['--hz','60'], ['--hz','120','--num-envs','2'],
+        self.assertTrue(actual_cli(['--hz','60','--verify-rail-environment-preflight']).verify_rail_environment_preflight)
+        for arguments in (['--hz','240'], ['--hz','30'], ['--hz','120','--num-envs','2'],
                           ['--hz','120','--replicate']):
             with self.subTest(arguments=arguments), redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 actual_cli(arguments+['--verify-rail-environment-preflight'])
@@ -33,7 +34,7 @@ class RunMotionRailEnvironmentTests(unittest.TestCase):
         module.audit_external_rail=audit
         namespace=dict(a=SimpleNamespace(verify_rail_environment_preflight=enabled,
             assembly=Path('/model'),output=Path('/result'),resume_native_checkpoint=Path('/measured-final'),
-            hz=120,released_fruit_ground_diagnostic=released,native_tool_collision_cache=native_cache,
+            hz=120,contact_limit_mm=1.,released_fruit_ground_diagnostic=released, released_fruit_gripper_support_diagnostic=released, released_fruit_same_truss_diagnostic=released,native_tool_collision_cache=native_cache,
             allow_resume_attachment_transfer=attachment_transfer),
             planning=dict(phases=[dict(name=name) for name in phases]),initial_sequence_group=group)
         with patch.dict(sys.modules,rail_environment_preflight=module),redirect_stdout(io.StringIO()):
@@ -56,6 +57,8 @@ class RunMotionRailEnvironmentTests(unittest.TestCase):
         self.assertEqual(kw['allowed_truss_key'],'Truss_01')
         self.assertTrue(kw['released_fruit_collection_diagnostic'])
         self.assertEqual(kw['hz'],120)
+        self.assertEqual(kw['native_hz'],120)
+        self.assertEqual(kw['wheel_floor_overlap_limit_m'],.001)
 
     def test_rail_checker_receives_same_runtime_native_tool_pieces(self):
         path=Path('/measured-native-tool.json')

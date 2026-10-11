@@ -101,6 +101,8 @@ def _property_differences(source,derived,limit=30):
 
 def validate_snapshot(metadata,arrays,manifest):
     """Reject missing/invented native state; no guessed zero velocities."""
+    if manifest.get('elastic_neighbors'):
+        raise ValueError('Neighbor comparison checkpoint lacks complete extra articulation restore support')
     if metadata['scene_sha256']!=manifest['scene_sha256']:
         raise ValueError('Checkpoint/model SHA mismatch')
     if metadata['source_plant']!=manifest['plant']['source_plant']:
@@ -384,6 +386,24 @@ def _apply_attachment_template(stage,manifest,template,*,selected_names=None,sel
         calibrated=False,training_eligible=False)
 
 
+def inherit_leaf_contact_policy(stage,manifest,parent_policy):
+    """Reapply the exact authorized leaf rule to the newly built active plant.
+
+    Plant construction creates new colliders. Copying the old manifest alone
+    would leave those leaves physical while claiming the visual-only policy.
+    """
+    if parent_policy is None:return
+    if (parent_policy.get('schema')!='s300-leaf-contact-ignore-v1' or
+            parent_policy.get('mode')!='visual_only_leaf_collision'):
+        raise ValueError('Unsupported inherited leaf contact policy')
+    from leaf_contact_policy import apply_policy
+    policy=apply_policy(stage,manifest)
+    policy.update(inherited_rule=parent_policy['mode'],
+        parent_disabled_count=parent_policy['disabled_count'],
+        scope='Newly enabled leaf colliders disabled after active-window construction; existing nonleaf states preserved')
+    manifest['leaf_contact_policy']=policy
+
+
 def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_trusses_metadata=None):
     """Build new immutable asset; caller performs native startup and rail travel."""
     from native_route_checkpoint import load_checkpoint
@@ -412,6 +432,10 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
     next_path=f'/World/Greenhouse/Plants/Plant_{int(next_plant_id):02d}'
     if next_path==manifest['plant']['source_plant']:raise ValueError('Use continuous current-plant runner; do not reset its fruit inventory')
     original=Usd.Stage.Open(str(source));require_motion_units(original)
+    interaction_policy=copy.deepcopy(manifest.get('plant_interaction_variant'))
+    if interaction_policy and interaction_policy.get('mode')=='target_truss_and_own_stem_only':
+        from plant_interaction_variants import verified_disabled_colliders
+        verified_disabled_colliders(original,manifest)
     stage=Usd.Stage.Open(original.Flatten());next_prim=stage.GetPrimAtPath(next_path)
     if not next_prim or not next_prim.IsActive():raise ValueError('Next source plant unavailable or already visited')
     output.mkdir(parents=True,exist_ok=False)
@@ -423,6 +447,7 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
     attachment=copy.deepcopy(manifest.get('fruit_attachment'))
     foliage=copy.deepcopy(manifest.get('compliant_foliage'))
     leaf_proxy=copy.deepcopy(manifest.get('leaf_collision_geometry'))
+    leaf_policy=copy.deepcopy(manifest.get('leaf_contact_policy'))
     # Same planning/GLB asset helper path used by motion_assets.build; calling
     # only build_plant avoids its full-build mount/tool side effects.
     if str(REPO/'mujoco-benchmark/scripts') not in sys.path:
@@ -449,7 +474,10 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
         manifest['leaf_collision_geometry']=apply_refinement(stage,manifest,selection)
         manifest['leaf_collision_geometry'].update(source_window_rule=leaf_proxy,
             scope='Same explicit compliant-leaf collision rule applied to the next active window; native cooking remains pending')
+    inherit_leaf_contact_policy(stage,manifest,leaf_policy)
     target=select_build_target(manifest['plant']['fruits'],target_name);manifest['target']=target
+    from plant_interaction_variants import inherit_target_only_contacts
+    inherit_target_only_contacts(stage,manifest,interaction_policy)
     prefix=target['name'].split('_Fruit_')[0]+'_Fruit_'
     selected=sorted([f for f in manifest['plant']['fruits'] if f['name'].startswith(prefix)],key=lambda f:f['center'][2],reverse=True)[:2]
     manifest['grasp_reference']=grasp_reference(manifest,[f['name'] for f in selected],manifest['grasp_reference'].get('height_offset_m',0.))

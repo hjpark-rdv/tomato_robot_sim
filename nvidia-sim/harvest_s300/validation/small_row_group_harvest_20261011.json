@@ -1,0 +1,419 @@
+{
+  "schema": "s300-small-row-group-harvest-20261011-v1",
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest",
+  "source": {
+    "branch": "codex/s300-harvest-isaac-20261009",
+    "base_commit": "e47a04f231efb8ac87e182ef7f8ea9aae48dadd3",
+    "uncommitted": true,
+    "files": {
+      "nvidia-sim/harvest_s300/RAIL_ENVIRONMENT_PREFLIGHT_KO.md": "044d4e7168875125ab101277a42d90c277b05da8c3a5fe57a0294a77e7b6bb46",
+      "nvidia-sim/harvest_s300/ROW_CONTINUATION_KO.md": "42377c0462b58b0d7c63ccd199d8d4090554e9c2e7f1edc0858d4c28233937bc",
+      "nvidia-sim/harvest_s300/rail_environment_preflight.py": "96a95b907bbf88ea9d5a316779f35ef6a0e4c01445d7d5033565f0f48f919a7c",
+      "nvidia-sim/harvest_s300/route_checkpoint.py": "2e0dad5e88ae065e00bf301115917919427dbade9ca674060537791a79a27508",
+      "nvidia-sim/harvest_s300/run_motion.py": "0cce4de053395f78aec31dfffe273248728115e740b7719a68852f56d0504ce1",
+      "nvidia-sim/harvest_s300/test_native_route_start.py": "42b7dab34a8132d8f6c2ba54b31b1c4605661b57d177d937cda4bed47692be53",
+      "nvidia-sim/harvest_s300/test_rail_environment_preflight.py": "294071bfbec0292bb6884cef37947f44a031508a70b9af6bd1390b7c9e40ee3b",
+      "nvidia-sim/harvest_s300/test_route_checkpoint.py": "4258280446a42dee48598c090a833bdb5cd66c2612804a76cc325c37eac26aaf",
+      "nvidia-sim/harvest_s300/test_run_motion_preparation_environment.py": "51c4fd44305f132b258ecf11b815f50b4080320376164067fb95d6c1da2313ff",
+      "nvidia-sim/harvest_s300/test_run_motion_rail_environment.py": "a0465f915924afbf94b51af2cfcc2396007a33fb0156f1ecaf29587e4e834488"
+    }
+  },
+  "targets": 2,
+  "harvest_path_proposals": 3,
+  "harvest_physics_executions": 0,
+  "rail_only_physics_executions": 2,
+  "rail_runs_are_independent_ab": true,
+  "tests": {
+    "tests": 793,
+    "success": true,
+    "errors": [],
+    "failures": [],
+    "skipped": 0,
+    "wall_s": 32.31816747225821,
+    "excluded_native_sdk_modules": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ],
+    "modules": [
+      "test_background_foliage",
+      "test_background_leaf_proxy_accuracy",
+      "test_belt_evidence",
+      "test_benchmark_motion",
+      "test_collision_proxy_accuracy",
+      "test_common_contact_limit",
+      "test_compact_byte_copy",
+      "test_compact_motion_assets",
+      "test_compare_motion_runs",
+      "test_compliant_foliage",
+      "test_conditioned_start_checkpoint",
+      "test_connect_s300_prefix",
+      "test_consolidate_background",
+      "test_convex_pair_shortcut",
+      "test_diagnostic_motion_plan",
+      "test_eligible_attachment_transfer",
+      "test_entry_retract",
+      "test_exact_self_query_cache",
+      "test_foliage_conditioning",
+      "test_fruit_attachment",
+      "test_grasp_depth_schedule",
+      "test_grasp_lateral_offset",
+      "test_harvest_contact_scope",
+      "test_harvest_group_policy",
+      "test_joint_turn_normalization",
+      "test_last_fruit_grasp_sway",
+      "test_leaf_collision_geometry",
+      "test_leaf_contact_geometry",
+      "test_leaf_contact_policy",
+      "test_lift_position_feedforward",
+      "test_max_fruit_attempts",
+      "test_motion_app",
+      "test_motion_branch",
+      "test_motion_collision_groups",
+      "test_motion_compiled_audit",
+      "test_motion_contact_buffer",
+      "test_motion_contact_guard",
+      "test_motion_contacts",
+      "test_motion_continuation",
+      "test_motion_gpu_diagnostics",
+      "test_motion_horizontal_entry",
+      "test_motion_initialization",
+      "test_motion_kinematics",
+      "test_motion_live",
+      "test_motion_materialize",
+      "test_motion_ready",
+      "test_motion_replay_clip",
+      "test_motion_replication",
+      "test_motion_resolution",
+      "test_motion_self_collision",
+      "test_motion_stage_metrics",
+      "test_motion_timing",
+      "test_motion_visuals",
+      "test_native_collider_capture",
+      "test_native_contact_copy_cli",
+      "test_native_initialization_geometry",
+      "test_native_leaf_cover_query",
+      "test_native_leaf_scene_query",
+      "test_native_route_checkpoint",
+      "test_native_route_start",
+      "test_native_stage_selection",
+      "test_native_tool_hulls",
+      "test_near_scope_runner_continuation",
+      "test_passive_collection_surfaces",
+      "test_plan_row_stations",
+      "test_planning_rejection_alternatives",
+      "test_rail_assets",
+      "test_rail_chassis_body",
+      "test_rail_environment_preflight",
+      "test_rail_filter_parity",
+      "test_rail_ground_alignment",
+      "test_rail_motion",
+      "test_rail_self_collision",
+      "test_report_performance",
+      "test_report_row_harvest",
+      "test_resume_axis",
+      "test_resume_native_state",
+      "test_robot_controller_state",
+      "test_route_checkpoint",
+      "test_row_harvest_targets",
+      "test_run_motion_conditioning",
+      "test_run_motion_joint_turns",
+      "test_run_motion_preparation_environment",
+      "test_run_motion_rail_environment",
+      "test_run_row_harvest",
+      "test_runtime_query_provenance",
+      "test_screen_fresh_truss_preparation",
+      "test_selected_cycle_evidence",
+      "test_single_fruit_aim",
+      "test_single_remaining_aim",
+      "test_staged_aabb_screen",
+      "test_terminal_cycle_checkpoint",
+      "test_truss_sequence",
+      "test_unproductive_pairs"
+    ]
+  },
+  "trials": [
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant35_native60/plant35_truss02",
+      "physical_execution": false,
+      "self_collision_preflight": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "rail_environment_preflight": {
+        "status": "sampled_clear",
+        "passed": true,
+        "complete": true,
+        "wall_s": 12.259372550994158,
+        "error": null,
+        "hard_intersection_sample_pairs": 0
+      },
+      "preparation_environment_preflight": {
+        "status": "blocked",
+        "passed": false,
+        "complete": true,
+        "wall_s": 68.46608758717775,
+        "error": null,
+        "hard_intersection_sample_pairs": 10306
+      },
+      "runtime_error": {
+        "error": "Traceback (most recent call last):\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/run_motion.py\", line 621, in <module>\n    audit_external_rail(a.assembly,a.output/'preparation_environment_preflight.json',\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/rail_environment_preflight.py\", line 721, in audit_external_rail\n    raise RuntimeError('Rail environment preflight blocked commanded travel: '+str(output))\nRuntimeError: Rail environment preflight blocked commanded travel: /root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant35_native60/plant35_truss02/preparation_environment_preflight.json\n",
+        "elapsed_s": 118.4782590046525
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant37/plant37_truss00",
+      "physical_execution": false,
+      "self_collision_preflight": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "rail_environment_preflight": {
+        "status": "sampled_clear",
+        "passed": true,
+        "complete": true,
+        "wall_s": 17.44548145122826,
+        "error": null,
+        "hard_intersection_sample_pairs": 0
+      },
+      "preparation_environment_preflight": {
+        "status": "blocked",
+        "passed": false,
+        "complete": true,
+        "wall_s": 70.30547152459621,
+        "error": null,
+        "hard_intersection_sample_pairs": 235
+      },
+      "runtime_error": {
+        "error": "Traceback (most recent call last):\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/run_motion.py\", line 621, in <module>\n    audit_external_rail(a.assembly,a.output/'preparation_environment_preflight.json',\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/rail_environment_preflight.py\", line 721, in audit_external_rail\n    raise RuntimeError('Rail environment preflight blocked commanded travel: '+str(output))\nRuntimeError: Rail environment preflight blocked commanded travel: /root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant37/plant37_truss00/preparation_environment_preflight.json\n",
+        "elapsed_s": 127.33672288991511
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant37_retract50/plant37_truss00_retract50",
+      "physical_execution": false,
+      "self_collision_preflight": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "rail_environment_preflight": {
+        "status": "sampled_clear",
+        "passed": true,
+        "complete": true,
+        "wall_s": 17.47788269817829,
+        "error": null,
+        "hard_intersection_sample_pairs": 0
+      },
+      "preparation_environment_preflight": {
+        "status": "blocked",
+        "passed": false,
+        "complete": true,
+        "wall_s": 74.17083739116788,
+        "error": null,
+        "hard_intersection_sample_pairs": 587
+      },
+      "runtime_error": {
+        "error": "Traceback (most recent call last):\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/run_motion.py\", line 621, in <module>\n    audit_external_rail(a.assembly,a.output/'preparation_environment_preflight.json',\n  File \"/root/farmily_tomato/nvidia-sim/harvest_s300/rail_environment_preflight.py\", line 721, in audit_external_rail\n    raise RuntimeError('Rail environment preflight blocked commanded travel: '+str(output))\nRuntimeError: Rail environment preflight blocked commanded travel: /root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_plant37_retract50/plant37_truss00_retract50/preparation_environment_preflight.json\n",
+        "elapsed_s": 131.4241055585444
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_rail_hold_fix/rail_only_451mm",
+      "physical_execution": true,
+      "self_collision_preflight": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "rail_environment_preflight": {
+        "status": "sampled_clear",
+        "passed": true,
+        "complete": true,
+        "wall_s": 17.609840715304017,
+        "error": null,
+        "hard_intersection_sample_pairs": 0
+      },
+      "self_collision_actual": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "completed": true,
+      "stop_reason": null,
+      "execution_scope": "idle",
+      "initialization_valid": true,
+      "actual_self_collision_audit_passed": true,
+      "simulated_s": 11.45,
+      "physics_wall_s": 11.930553551763296,
+      "group_outcome": null,
+      "sequence_termination": null,
+      "group_cycles": null,
+      "realtime_factor": 0.9597207665446276,
+      "rail": {
+        "status": "measured_native_physical_rail_dof",
+        "dof_name": "root_joint",
+        "start_time_s": 0.0,
+        "end_time_s": 11.45,
+        "start_relative_m": 0.0,
+        "end_relative_m": 0.450956791639328,
+        "measured_travel_m": 0.450956791639328,
+        "measured_range_relative_m": [
+          -9.440412895855843e-08,
+          0.450992226600647
+        ],
+        "final_station_y_m": 2.050957258939743,
+        "source": "states.npz robot_q in exact native_metadata robot_dofs order",
+        "maximum_measured_speed_m_s": 0.0800049304962161
+      },
+      "lift": {
+        "start_m": 0.16892099380493164,
+        "end_m": 0.16892091929912567,
+        "range_m": [
+          0.16892088949680328,
+          0.16892105340957642
+        ],
+        "travel_span_m": 1.6391277313232422e-07,
+        "maximum_deviation_from_start_mm": 0.0001043081283569336
+      },
+      "phases": [
+        "initial",
+        "settle",
+        "rail_move",
+        "rail_hold"
+      ],
+      "source_states_sha256": "b62ca179c737f616c23bd121fad604da63ac0cea6228a9a2486e64ac44f5d045",
+      "source_summary_sha256": "95f1d2e5f35f18a65b9cb7d22a8334cfff1b5173965f973a9e0cd55a4393adce",
+      "native_new_break_events": []
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_rail_only/rail_only_451mm",
+      "physical_execution": true,
+      "self_collision_preflight": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "rail_environment_preflight": {
+        "status": "sampled_clear",
+        "passed": true,
+        "complete": true,
+        "wall_s": 17.6230394449085,
+        "error": null,
+        "hard_intersection_sample_pairs": 0
+      },
+      "self_collision_actual": {
+        "status": null,
+        "passed": true,
+        "complete": true,
+        "wall_s": null,
+        "error": null,
+        "hard_intersection_sample_pairs": null
+      },
+      "completed": true,
+      "stop_reason": null,
+      "execution_scope": "idle",
+      "initialization_valid": true,
+      "actual_self_collision_audit_passed": true,
+      "simulated_s": 11.45,
+      "physics_wall_s": 11.43951758928597,
+      "group_outcome": null,
+      "sequence_termination": null,
+      "group_cycles": null,
+      "realtime_factor": 1.000916333283481,
+      "rail": {
+        "status": "measured_native_physical_rail_dof",
+        "dof_name": "root_joint",
+        "start_time_s": 0.0,
+        "end_time_s": 11.45,
+        "start_relative_m": 0.0,
+        "end_relative_m": 0.4509567320346832,
+        "measured_travel_m": 0.4509567320346832,
+        "measured_range_relative_m": [
+          -5.640139875140449e-07,
+          0.4509904086589813
+        ],
+        "final_station_y_m": 2.050957199335098,
+        "source": "states.npz robot_q in exact native_metadata robot_dofs order",
+        "maximum_measured_speed_m_s": 0.08000582456588773
+      },
+      "lift": {
+        "start_m": 0.16892099380493164,
+        "end_m": 0.1606057584285736,
+        "range_m": [
+          0.16055075824260712,
+          0.16892102360725403
+        ],
+        "travel_span_m": 0.008370265364646912,
+        "maximum_deviation_from_start_mm": 8.370235443115234
+      },
+      "phases": [
+        "initial",
+        "settle",
+        "rail_move",
+        "rail_hold"
+      ],
+      "source_states_sha256": "af8b1326e2fe491cd87fd538833a94f900244e7740b5997717c1f11ecea920c3",
+      "source_summary_sha256": "4021be4f7b105365072500354efbe9577b108902f5d359cf882d3756ba065f38",
+      "native_new_break_events": []
+    }
+  ],
+  "rail_drive_fix": {
+    "before_lift_deviation_mm": 8.370235443115234,
+    "after_lift_deviation_mm": 0.0001043081283569336,
+    "actuator_properties_changed": false
+  },
+  "model_policy": {
+    "hz": 60,
+    "threads": 16,
+    "solver": "TGS",
+    "iterations": [
+      64,
+      4
+    ],
+    "contact_limits_mm": 1,
+    "leaves": "existing visual-only policy reapplied to newly built active plant",
+    "harvest_profile": "belt_open_close_cycle; ready opening; two close/open cycles; inward belts; group centering"
+  },
+  "limitations": [
+    "No successful new-truss harvest or combined lift/rail/harvest cycle yet",
+    "Two rail-only A/B runs begin at the same measured parent; not a continuous90cm route",
+    "Camera-based selection has not been implemented in this test",
+    "Old active attached plant is frozen at measured geometry; detached fruits remain dynamic; native solver caches restart",
+    "Ideal physical rail joint; wheel slip and odometry are not evaluated",
+    "Source mesh/FCL overlap is planning evidence, not a measured physics penetration depth",
+    "Loop timing excludes scene generation/loading, planning, startup, recording export and video render"
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "video": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_rail_hold_fix/rail_only_451mm/actual_motion.mp4",
+    "sha256": "cf6aafa520c026aee479b06810a53588e300a0bedbf82c38e1f663173f2f804a",
+    "render_metadata": "/root/docker_share/mujoko_debugging_data/20261011_131243_small_row_group_harvest/trials_rail_hold_fix/rail_only_451mm/actual_motion_render.json",
+    "frames": 70,
+    "fps": 6,
+    "speed": 1.0,
+    "full_decode_passed": true,
+    "replay_only_cutaway": true,
+    "physics_rerun": false
+  }
+}

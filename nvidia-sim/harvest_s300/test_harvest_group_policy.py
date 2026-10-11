@@ -119,6 +119,40 @@ class GroupPolicyTests(unittest.TestCase):
         result=harvest_group_outcome(self.policy,dict(detached=names,remaining=[]))
         self.assertEqual(result['ineligible_detached'],names[3:])
 
+    def test_initial_planning_rejection_is_not_an_attempt_or_permanent_exclusion(self):
+        self.fixture([[0,0,1.1],[.015,.01,1.08],[-.01,.02,1.06],
+                      [0,0,.8],[.01,0,.78],[0,.02,.76]])
+        upper = [f['name'] for f in self.fruits[:3]]
+        self.policy['initial_rejected_groups'] = [upper]
+        self.selector = HarvestGroupSelector(self.policy,lambda *args:[0,1,0],height_offset_m=.0075)
+        attempts = {}
+        result = self.select(attempts=attempts)
+        self.assertEqual(set(result['fruits']), {f['name'] for f in self.fruits[3:]})
+        self.assertEqual(attempts, {})
+        self.assertEqual(self.selector.last_decision['initial_planning_rejected_groups'], [upper])
+        self.assertEqual(set(self.select()['fruits']), set(upper))
+        self.assertEqual(len(self.selector.eligible), 6)
+
+    def test_initial_rejection_requires_unchanged_report_and_known_fruit(self):
+        self.fixture([[0,0,1]]*3)
+        with tempfile.TemporaryDirectory() as folder:
+            p=Path(folder)
+            for name in ('motion_manifest.json','composed.usdc'):(p/name).write_text('fixture')
+            self.policy.update(schema='s300-harvest-group-policy-v1',source_sha256={n:sha(p/n) for n in ('motion_manifest.json','composed.usdc')},
+                               initial_rejected_groups=[[f['name'] for f in self.fruits]])
+            def load():
+                (p/'policy.json').write_text(json.dumps(self.policy))
+                return load_policy(p/'policy.json',p,self.fruits)
+            with self.assertRaisesRegex(ValueError,'planning reason'):load()
+            report=p/'obstacle.json';report.write_text('{"blocked":true}')
+            self.policy['initial_rejection_evidence']=dict(reason='Recorded obstacle intersection',
+                reports=[dict(path=str(report),sha256=sha(report))])
+            self.assertEqual(load(),self.policy)
+            report.write_text('changed')
+            with self.assertRaisesRegex(ValueError,'evidence hash'):load()
+            self.policy['initial_rejected_groups']=[['unknown']]
+            with self.assertRaisesRegex(ValueError,'unknown'):load()
+
     def test_policy_model_hash_and_identity_fail_closed(self):
         self.fixture([[0,0,1]]*3)
         with tempfile.TemporaryDirectory() as folder:

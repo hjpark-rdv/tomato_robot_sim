@@ -1,0 +1,493 @@
+{
+  "schema": "s300-move-harvest-repeat-20261011-v1",
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat",
+  "corrected_sequence_complete": true,
+  "independent_failures_not_added_to_sequence_counts": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "collection_verified": false,
+  "collision_threshold_mm": 1,
+  "model": "Isaac Sim 6.1 full active plant, frozen passive background, guide-joint rail",
+  "limitations": [
+    "SIM-GT ripe group selection; camera selection unimplemented",
+    "Native fruit detachment is not validated collected harvest",
+    "Fixed rail guide; no wheel rolling, suspension, slip or odometry validation",
+    "Active window handoff preserves measured poses/q/velocities/drive and released fruit; native contact caches restart",
+    "Reported RTF excludes assembly construction, startup, planning, audits, saving and rendering",
+    "Harvest ready-return retains about 8.47mm lift height bias per execution; long sequences need controller correction. Rail-only load-hold fix is separate."
+  ],
+  "correction": "Separate fresh installation: robot/tool/guide raised2mm to clear existing floor seams; shape/material/friction/actuator unchanged. Cannot mix previous stopped trials as continuous success.",
+  "source_branch": "codex/s300-harvest-isaac-20261009",
+  "base_commit": "e47a04f231efb8ac87e182ef7f8ea9aae48dadd3",
+  "source_uncommitted": true,
+  "sequence_totals": {
+    "new_ripe_detached": 12,
+    "new_ineligible_detached": 0,
+    "sim_s": 139.79166666666669,
+    "loop_wall_s": 316.66430852748454,
+    "absolute_base_travel_m": 1.6623860597610474,
+    "net_base_delta_y_m": 1.6223863363265991
+  },
+  "trials": [
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_close8/corrected22_close8",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "sim_s": 27.5,
+      "loop_wall_s": 37.72986773215234,
+      "rtf": 0.7288655289020605,
+      "measured_base_delta_y_m": -0.019991278648376465,
+      "lift_initial_final_m": [
+        0.1772361546754837,
+        0.01889069378376007
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": {
+        "actual_q_m": [
+          -0.019884129986166954
+        ],
+        "target_q_m": -0.019999999552965164,
+        "tolerance_m": 0.002,
+        "absolute_error_m": [
+          0.00011586956679821014
+        ],
+        "reached": true,
+        "scope": "Measured rail DOF at rail-to-manipulation boundary; not a collision tolerance",
+        "t": 3.0,
+        "phase": "ready_hold",
+        "checked_before_motion_command": true
+      },
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "d475db1ba6210707ac8d4f3ba4f537147ec7b8bce78d0af95c5f15fff748eb66",
+      "videos": [],
+      "new_ripe_detached": [
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_04"
+      ],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08"
+      ],
+      "full_environment_preflight": {
+        "passed": true,
+        "complete": true,
+        "eligible_for_native_execution": true,
+        "scope": "all nominal phases including approach/grasp/opening/withdrawal",
+        "requested_hz": 60,
+        "samples": 3320,
+        "distance_queries": 125791,
+        "wall_s": 58.96653190255165
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120",
+      "completed": true,
+      "stop_reason": null,
+      "sim_s": 57.0,
+      "loop_wall_s": 151.1384428795427,
+      "rtf": 0.37713766870966764,
+      "measured_base_delta_y_m": -0.01999986171722412,
+      "lift_initial_final_m": [
+        0.1772361546754837,
+        0.16876868903636932
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": {
+        "actual_q_m": [
+          -0.01991322450339794
+        ],
+        "target_q_m": -0.019999999552965164,
+        "tolerance_m": 0.002,
+        "absolute_error_m": [
+          8.67750495672226e-05
+        ],
+        "reached": true,
+        "scope": "Measured rail DOF at rail-to-manipulation boundary; not a collision tolerance",
+        "t": 3.0,
+        "phase": "ready_hold",
+        "checked_before_motion_command": true
+      },
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "0ef402c50afb768ba03caa6ca403390722417276e8536977e6beaa573e9a467c",
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120/actual_move_harvest.mp4",
+        "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120/actual_harvest_top.mp4"
+      ],
+      "new_ripe_detached": [
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_05"
+      ],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_02_Fruit_07"
+      ],
+      "full_environment_preflight": {
+        "passed": true,
+        "complete": true,
+        "eligible_for_native_execution": true,
+        "scope": "all nominal phases including approach/grasp/opening/withdrawal",
+        "requested_hz": 120,
+        "samples": 6620,
+        "distance_queries": 250935,
+        "wall_s": 106.7675267495215
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_station158/corrected22_station158",
+      "completed": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "sim_s": 32.45,
+      "loop_wall_s": 47.264042461290956,
+      "rtf": 0.6865684421000682,
+      "measured_base_delta_y_m": -0.01999032497406006,
+      "lift_initial_final_m": [
+        0.1772361546754837,
+        0.01888667233288288
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": {
+        "actual_q_m": [
+          -0.019884129986166954
+        ],
+        "target_q_m": -0.019999999552965164,
+        "tolerance_m": 0.002,
+        "absolute_error_m": [
+          0.00011586956679821014
+        ],
+        "reached": true,
+        "scope": "Measured rail DOF at rail-to-manipulation boundary; not a collision tolerance",
+        "t": 3.0,
+        "phase": "ready_hold",
+        "checked_before_motion_command": true
+      },
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "5cd9f247abbb9b12667763153f1b5ffb36dc7d2d1e80a6c81a64fb6faccdf661",
+      "videos": [],
+      "new_ripe_detached": [
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_07"
+      ],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_02_Fruit_08"
+      ],
+      "full_environment_preflight": {
+        "passed": true,
+        "complete": true,
+        "eligible_for_native_execution": true,
+        "scope": "all nominal phases including approach/grasp/opening/withdrawal",
+        "requested_hz": 60,
+        "samples": 3080,
+        "distance_queries": 103460,
+        "wall_s": 55.67840298637748
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29/plant29_move_harvest",
+      "completed": false,
+      "stop_reason": "entry_open_not_reached",
+      "sim_s": 33.93333333333333,
+      "loop_wall_s": 37.622879261150956,
+      "rtf": 0.901933451126708,
+      "measured_base_delta_y_m": 0.7980375289916992,
+      "lift_initial_final_m": [
+        0.16892099380493164,
+        0.16060605645179749
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "6fa035946ad8462b0189f59ecbf64391d0fb8db7f1db16e6bab27ba54b7c065e",
+      "videos": [],
+      "new_ripe_detached": [],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ]
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29_corrected_continued/plant29_corrected_continued_move_harvest",
+      "completed": true,
+      "stop_reason": null,
+      "sim_s": 82.79166666666667,
+      "loop_wall_s": 165.52586564794183,
+      "rtf": 0.5001735912546554,
+      "measured_base_delta_y_m": 1.6423861980438232,
+      "lift_initial_final_m": [
+        0.16876868903636932,
+        0.16030113399028778
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": {
+        "actual_q_m": [
+          1.6423825025558472
+        ],
+        "target_q_m": 1.6423842906951904,
+        "tolerance_m": 0.002,
+        "absolute_error_m": [
+          1.7881393432617188e-06
+        ],
+        "reached": true,
+        "scope": "Measured rail DOF at rail-to-manipulation boundary; not a collision tolerance",
+        "t": 32.8,
+        "phase": "ready_hold",
+        "checked_before_motion_command": true
+      },
+      "physics_settings": {
+        "hz": 120,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "627506059e9849950f6cf5fb406b7bf85e301293e32888a6c15c0d2118dcb77e",
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29_corrected_continued/plant29_corrected_continued_move_harvest/actual_move_harvest.mp4"
+      ],
+      "new_ripe_detached": [
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07"
+      ],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_00_Fruit_01"
+      ],
+      "full_environment_preflight": {
+        "passed": true,
+        "complete": true,
+        "eligible_for_native_execution": true,
+        "scope": "all nominal phases including approach/grasp/opening/withdrawal",
+        "requested_hz": 120,
+        "samples": 9716,
+        "distance_queries": 254166,
+        "wall_s": 295.6018468160182
+      }
+    },
+    {
+      "trial": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29_open_hold/plant29_open_hold",
+      "completed": false,
+      "stop_reason": "cycle_reopen_not_reached",
+      "sim_s": 56.93333333333333,
+      "loop_wall_s": 65.71219874545932,
+      "rtf": 0.8664043270545319,
+      "measured_base_delta_y_m": 0.7980329990386963,
+      "lift_initial_final_m": [
+        0.16892099380493164,
+        0.02216007560491562
+      ],
+      "actual_self_audit": true,
+      "initialization_valid": true,
+      "arrival": null,
+      "physics_settings": {
+        "hz": 60,
+        "solver": "TGS",
+        "armature": 0.0005,
+        "device": "cpu",
+        "scene_ccd": true,
+        "position_iterations": 64,
+        "velocity_iterations": 4,
+        "gpu_partitions": 1,
+        "gpu_found_lost_aggregate_capacity": 16384,
+        "gpu_total_aggregate_capacity": 16384
+      },
+      "threshold_mm": 1.0,
+      "source_states_sha256": "c7b379a240903d168ffda086476e9443e4395593214e818bc14a02fe63f366b4",
+      "videos": [],
+      "new_ripe_detached": [],
+      "new_ineligible_detached": [],
+      "ripe_remaining_in_selected_trusses": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ]
+    }
+  ],
+  "corrected_sequence_trials": [
+    "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120",
+    "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29_corrected_continued/plant29_corrected_continued_move_harvest"
+  ],
+  "tests": {
+    "offline_tests": 808,
+    "offline_passed": true,
+    "excluded_native_sdk_modules": [
+      "test_motion_belt_control",
+      "test_motion_device"
+    ],
+    "followup_floor_tests": 5,
+    "followup_new_test_count": 1,
+    "followup_passed": true,
+    "not_a_single_809_test_run": true
+  },
+  "source_hashes": {
+    "nvidia-sim/harvest_s300/harvest_group_policy.py": "c5a5e5f464d68f2dd84923a6aca68a6a8b403713a2b289f771d98aa05ecf4291",
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "acd74326bdc9788c9d721618b16d8ef84d5a70da2b806bebecfc4e6b9140a0e7",
+    "nvidia-sim/harvest_s300/rail_environment_preflight.py": "64b57a55e8d3f0cd4e4f9c1b8917e6138bd9bde65c6a7601c1092463448f7c28",
+    "nvidia-sim/harvest_s300/rail_ground_alignment.py": "e427198fc5e9e11d3d69ec5671dafc5d82d84c26b98390c37ca9d3c5d714ddf5",
+    "nvidia-sim/harvest_s300/rail_motion.py": "68762b63ef401d9349eb7ba20f9eb6c74ecdf0fdd552ab98f2b9546d486390cb",
+    "nvidia-sim/harvest_s300/route_checkpoint.py": "2e0dad5e88ae065e00bf301115917919427dbade9ca674060537791a79a27508",
+    "nvidia-sim/harvest_s300/run_motion.py": "b2577f9abfc6d94ce4fbefb5a0121993792c408945c21052771826e60f8bef21",
+    "nvidia-sim/harvest_s300/test_entry_retract.py": "93fa7e4ee1718168c5d2ee3313f37b30ed61c1b06adcc00b920523c4769fe17f",
+    "nvidia-sim/harvest_s300/test_grasp_lateral_offset.py": "7e7d9ee2a99fc4bb523264031f79e80a6015b7a8c347b17e5b717d595848f808",
+    "nvidia-sim/harvest_s300/test_harvest_group_policy.py": "63b11adb60cd9b1635cb8e3598fa75c2a2a3f460361fde9cdb0be9cee689ad00",
+    "nvidia-sim/harvest_s300/test_joint_turn_normalization.py": "4bc4cf43f13cb349835a09411df76f2ae46631522438866f3727b26834ad5e08",
+    "nvidia-sim/harvest_s300/test_last_fruit_grasp_sway.py": "48f5de536787fcf1f5449e04d81281db67d4b7846dbeba91306dc6d17123da4d",
+    "nvidia-sim/harvest_s300/test_motion_branch.py": "c006b7822d3dc894daeefc40b29a81c8ec17a6cd6f0b088a338bf38efbedfedc",
+    "nvidia-sim/harvest_s300/test_motion_ready.py": "a78e6d8f1f10577d276f0d0ed1e5059f09ae3fb79df2bd02ad6d8ab47d42f309",
+    "nvidia-sim/harvest_s300/test_native_route_start.py": "42b7dab34a8132d8f6c2ba54b31b1c4605661b57d177d937cda4bed47692be53",
+    "nvidia-sim/harvest_s300/test_rail_environment_preflight.py": "8016508953a4b9752e1240ebe3be09f433cf141657b2481a338dd702b805b854",
+    "nvidia-sim/harvest_s300/test_rail_ground_alignment.py": "e49d8d6862e9b6d2f020ae56c6b0acad2dcf3629c2e74b821613649aab9f8594",
+    "nvidia-sim/harvest_s300/test_rail_motion.py": "b0ac5fe8e4f50d32c26ea6bc1c8542f96c58c65551073eb200b29cb55c78e877",
+    "nvidia-sim/harvest_s300/test_route_checkpoint.py": "4258280446a42dee48598c090a833bdb5cd66c2612804a76cc325c37eac26aaf",
+    "nvidia-sim/harvest_s300/test_run_motion_full_environment.py": "915f15d2bc91bba877e117b915935bfa092770adecbada29682f2cd725ea9d9a",
+    "nvidia-sim/harvest_s300/test_run_motion_preparation_environment.py": "1c6a2a43aef10f03016bc16fbd97ad7249277875f247dfe945f1e86a0e3d5a34",
+    "nvidia-sim/harvest_s300/test_run_motion_rail_arrival.py": "f76f329fbfa9b3b667a098fa4c57b03e9a1e1222c1f274db29653214242290d9",
+    "nvidia-sim/harvest_s300/test_run_motion_rail_environment.py": "22b11260372a8799da2e25034a1e98e0a1d0c32c5dec37f322de5c8ff6c58a11"
+  },
+  "evidence_hashes": {
+    "experiment.json": "db9f2f4726de5139e2067a954b574761b000149cdd9cae7ab386f8b02d7bd989",
+    "corrected_first_state_proof.json": "068bad6e3d54328535ebc731453d3803b70398dbae2fe8a10ed0876d7724bd56",
+    "installation_floor_instance_review.json": "78c93fd26cd5ec300639419a2a6c8b633639b569d41003abd31a95073e0f0c0d",
+    "build29_corrected_continued_report.json": "f4e196410442c4729d42b431704082f252d7337e11901ee43092f2dc5f472c25",
+    "corrected22_hz120_cases.json": "54aca7f1a6ef958ebc97b115c0cd5c9ff8d7f3781242852dfc57f2afb19962fd",
+    "plant29_corrected_continued_cases.json": "e3b857e3195eb2dc94aa39b8886bda760a4ea65bc8a5b5b5b59643ae956c43a6",
+    "policy29_corrected_continued.json": "64e6ff2b7d2be40a5c8dbdfb34a8eb83e01c398c14ef5786eac05e4d9cacbb33",
+    "video_verification.json": "5c2d900b7cedad1dda54e85026c05a80ff80edbac20c968ba6c7f53eff19712a"
+  },
+  "videos_verified": [
+    {
+      "file": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120/actual_move_harvest.mp4",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "6/1",
+        "duration": "57.166667",
+        "nb_frames": "343"
+      },
+      "source": "stored measured physical body transforms",
+      "speed": 1.0,
+      "sha256": "bad291a732bacbec06e701c0f0c5969bb361f35c06890ae7c740dbbaff222930"
+    },
+    {
+      "file": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_corrected22_hz120/corrected22_hz120/actual_harvest_top.mp4",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "10/1",
+        "duration": "32.100000",
+        "nb_frames": "321"
+      },
+      "source": "stored measured physical body transforms",
+      "speed": 1.0,
+      "sha256": "3681d8dd054b68270a5f2fd2426c010cd4c3c60616ccb80ee7b7af5eaebd7769"
+    },
+    {
+      "file": "/root/docker_share/mujoko_debugging_data/20261011_140011_move_harvest_repeat/trials_plant29_corrected_continued/plant29_corrected_continued_move_harvest/actual_move_harvest.mp4",
+      "decode_passed": true,
+      "stream": {
+        "width": 960,
+        "height": 720,
+        "r_frame_rate": "6/1",
+        "duration": "83.000000",
+        "nb_frames": "498"
+      },
+      "source": "stored measured physical body transforms",
+      "speed": 1.0,
+      "sha256": "678e5574ebf33cc092d91f38b0e9f55b58cd4bc43ffe19ac229d709cbee5f7c0"
+    }
+  ],
+  "floor_issue": {
+    "original_actual_move_m": 0.798,
+    "original_commanded_move_m": 1.622,
+    "fresh_installation_raise_m": 0.002,
+    "original_instance_floor_clearance_m": -0.000750311,
+    "corrected_instance_floor_clearance_m": 0.00125,
+    "old_results_preserved": true
+  }
+}

@@ -54,7 +54,10 @@ class MotionBranchTests(unittest.TestCase):
         self.assertEqual(am['phases'],bm['phases'])
         # Fixed commands for the requested two complete close/open repetitions
         # (2026-10-11); catches unintended changes shared by both current calls.
-        digest=hashlib.sha256(json.dumps(am['phases'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+        # Apart from the explicit stationary opening settle, all historical
+        # waypoint arrays and phase durations remain byte-for-byte identical.
+        legacy_phases=[p for p in am['phases'] if p['name']!='prepare_open_hold']
+        digest=hashlib.sha256(json.dumps(legacy_phases,sort_keys=True,separators=(',',':')).encode()).hexdigest()
         self.assertEqual(digest,'d7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         for p,q in zip(a,b):
             self.assertEqual(p[:2],q[:2]);np.testing.assert_array_equal(p[2],q[2]);self.assertEqual(p[3:],q[3:])
@@ -118,7 +121,11 @@ class MotionBranchTests(unittest.TestCase):
                     self.assertEqual(contract['location'],'ready')
                     self.assertEqual(contract['requested_transfer_gap_m'],.044)
                     self.assertEqual(contract['effective_transfer_gap_m'],.096)
-                    for phase in phases[2:labels.index('approach')+1]:
+                    self.assertEqual(phases[2][:2],('prepare_open_hold',.5))
+                    np.testing.assert_array_equal(phases[2][2],[self.start,self.start])
+                    self.assertEqual(phases[2][3:],(.096,0.,0.))
+                    self.assertNotIn('prepare_open_hold',contract['feedback_before_phases'])
+                    for phase in phases[3:labels.index('approach')+1]:
                         self.assertEqual(phase[3],.096)
                         self.assertIn(phase[0],contract['feedback_before_phases'])
                         original=next(p for p in old if p[0]==phase[0])

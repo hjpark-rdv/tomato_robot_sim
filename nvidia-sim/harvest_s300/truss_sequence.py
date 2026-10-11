@@ -25,6 +25,23 @@ def inventory(fruits,breaks):
                 remaining=[f['name'] for f in fruits if f['joint'] not in broken])
 
 
+def entry_direction(axis, yaw_offset_deg=0.):
+    """Explicit world-Z deviation from the measured truss axis, never pitch.
+
+    Keep the natural axis separate so sparse-group re-evaluation and checkpoint
+    resumes cannot apply the offset repeatedly. Collision checks still decide
+    whether this entry direction is usable.
+    """
+    direction=np.asarray(axis['direction_world'],float)
+    if (direction.shape!=(3,) or not np.isfinite(direction).all() or
+            abs(direction[2])>1e-12 or abs(np.linalg.norm(direction)-1.)>1e-6 or
+            not np.isfinite(yaw_offset_deg) or abs(yaw_offset_deg)>90.):
+        raise ValueError('Unit horizontal truss axis and finite yaw offset within +/-90 degrees required')
+    if yaw_offset_deg==0.:return direction.copy()
+    theta=np.radians(yaw_offset_deg);c,s=np.cos(theta),np.sin(theta)
+    return np.array([c*direction[0]-s*direction[1],s*direction[0]+c*direction[1],0.])
+
+
 def horizontal_truss_direction(fruits, breaks, body_paths, poses, reference_direction,
                                fallback_direction=None, min_attached_fruits=2):
     """Top-view fruit long axis, signed toward the plant from the robot side.

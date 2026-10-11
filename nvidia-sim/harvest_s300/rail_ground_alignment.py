@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import re
 from pathlib import Path
 
 import numpy as np
@@ -124,27 +125,36 @@ def placement_geometry(source,placed,delta):
 
 def ground_clearance(stage):
     cache=UsdGeom.XformCache();rows=[]
-    for path in (*GROUND_PATHS,*WHEEL_PATHS):
+    seams=tuple(str(p.GetPath()) for p in Usd.PrimRange.Stage(stage,Usd.TraverseInstanceProxies()) if re.fullmatch(
+        r'/World/Greenhouse/House/Environment/CoverLap_1_\d+(?:_2)?/Mesh', str(p.GetPath())))
+    ground_paths=(*GROUND_PATHS,*seams)
+    for path in (*ground_paths,*WHEEL_PATHS):
         prim=stage.GetPrimAtPath(path)
         if not prim or not prim.IsA(UsdGeom.Mesh):continue
         points=np.asarray(UsdGeom.Mesh(prim).GetPointsAttr().Get(),float)
         tf=np.asarray(cache.GetLocalToWorldTransform(prim)).T;world=points@tf[:3,:3].T+tf[:3,3]
         rows.append(dict(path=path,bounds_world_m=[world.min(0).tolist(),world.max(0).tolist()]))
-    ground=[r for r in rows if r['path'] in GROUND_PATHS];wheels=[r for r in rows if r['path'] in WHEEL_PATHS]
+    ground=[r for r in rows if r['path'] in ground_paths];wheels=[r for r in rows if r['path'] in WHEEL_PATHS]
     clearance=min(r['bounds_world_m'][0][2] for r in wheels)-max(r['bounds_world_m'][1][2] for r in ground) if ground and wheels else None
     return dict(source_mesh_world_bounds=rows,wheel_bottom_to_highest_ground_top_m=clearance,
         scope='Authored exact mesh bounds; native cooked convex/triangle contacts must be checked separately')
 
 
-def revise(assembly,output,*,lift_m=.003):
+def revise(assembly,output,*,lift_m=.003,additional_installation_lift=False):
     assembly,output=Path(assembly).resolve(),Path(output).resolve()
     manifest=json.loads((assembly/'motion_manifest.json').read_text());digest=file_sha256(assembly/'scene.usda')
     if digest!=manifest['scene_sha256']:raise ValueError('Source scene SHA mismatch')
     verify_compact_dependencies(assembly,manifest)
-    if output.exists() or manifest.get('rail_ground_alignment'):raise ValueError('Use original placement and immutable new output')
+    if output.exists() or (manifest.get('rail_ground_alignment') and not additional_installation_lift):
+        raise ValueError('Use original placement and immutable new output')
+    if manifest.get('route_checkpoint'):
+        raise ValueError('Installation correction requires a fresh assembly, never a measured route continuation')
     original=Usd.Stage.Open(str(assembly/'scene.usda'));require_motion_units(original)
     stage=Usd.Stage.Open(original.Flatten(addSourceFileComment=False));copy_stage_metrics(original,stage)
     report=align_ground(stage,lift_m=lift_m);report['before']=ground_clearance(original);report['after']=ground_clearance(stage)
+    report['prior_installation_alignment']=manifest.get('rail_ground_alignment')
+    report['additional_installation_lift']=additional_installation_lift
+    report['continuous_with_prior_native_trial']=False
     properties=property_inventory(stage);output.mkdir(parents=True,exist_ok=False)
     layer=stage.Flatten(addSourceFileComment=False)
     if layer.subLayerPaths or any(layer.GetExternalReferences()):raise RuntimeError('Ground placement must be fully materialized')
@@ -179,4 +189,6 @@ def revise(assembly,output,*,lift_m=.003):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('assembly',type=Path)
     parser.add_argument('output',type=Path);parser.add_argument('--lift-mm',type=float,default=3.)
-    args=parser.parse_args();print(json.dumps(revise(args.assembly,args.output,lift_m=args.lift_mm/1000),indent=2))
+    parser.add_argument('--additional-installation-lift',action='store_true')
+    args=parser.parse_args();print(json.dumps(revise(args.assembly,args.output,lift_m=args.lift_mm/1000,
+        additional_installation_lift=args.additional_installation_lift),indent=2))

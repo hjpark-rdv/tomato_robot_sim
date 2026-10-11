@@ -14,7 +14,14 @@ p.add_argument('--review-light',action='store_true',help='Add replay-only fill l
 p.add_argument('--contact-cutaway',action='store_true',help='Replay inspection only: hide background plants and active leaf visuals, record exact paths; source physics and saved poses unchanged')
 p.add_argument('--start-time',type=float,help='Replay-only clip start in recorded simulation seconds')
 p.add_argument('--end-time',type=float,help='Replay-only clip end in recorded simulation seconds')
+p.add_argument('--camera-eye',type=float,nargs=3,help='Optional fixed world-space replay camera position, shared across comparisons')
+p.add_argument('--camera-target',type=float,nargs=3,help='World-space look-at point; requires --camera-eye')
 a=p.parse_args()
+if (a.camera_eye is None)!=(a.camera_target is None):p.error('Provide both camera-eye and camera-target')
+if a.camera_eye is not None:
+    import math
+    if not all(math.isfinite(x) for x in a.camera_eye+a.camera_target) or a.camera_eye==a.camera_target:
+        p.error('Finite distinct camera position and target required')
 if not a.name.replace('_','').isalnum():p.error('name must be an alphanumeric basename')
 output=a.trial/(a.name+'_frames');output.mkdir(exist_ok=False)
 if (a.trial/(a.name+'.mp4')).exists():raise FileExistsError(a.trial/(a.name+'.mp4'))
@@ -57,6 +64,10 @@ try:
     # belong to the strongest session layer rather than the immutable source.
     stage.SetEditTarget(stage.GetSessionLayer())
     restore_recorded_display_fixture(stage,a.trial)
+    if a.camera_eye is not None:
+        a.camera='/World/FixedComparisonReplayCamera'
+        camera(stage,a.camera,tuple(a.camera_eye),tuple(a.camera_target))
+        UsdGeom.Camera(stage.GetPrimAtPath(a.camera)).CreateFocalLengthAttr(24.)
     paths=data['body_paths'].tolist();index={p:i for i,p in enumerate(paths)}
     cutaway_hidden=[]
     if a.contact_cutaway:
@@ -187,19 +198,27 @@ try:
         if (summary.get('belt_control') or {}).get('fixture_only'):
             label+='\\NLOADED BELT CONTROL FIXTURE - NOT FRUIT HARVEST'
         if summary.get('fixture_only'):label+='\\NCOMPONENT FIXTURE - NOT FARM HARVEST'
+        if meta.get('plant_interaction_variant',{}).get('mode')=='target_truss_and_own_stem_only':
+            label+='\\NNON-TARGET PLANT CONTACTS OFF'
+        elif meta.get('elastic_neighbors'):
+            label+=f'\\NDYNAMIC PLANTS: {1+len(meta["elastic_neighbors"])}'
         if summary.get('stop_reason'):label+='\\NStopped: '+summary['stop_reason']
         subtitles.append(f'{frame+1}\n{srt_time(frame/a.fps)} --> {srt_time((frame+1)/a.fps)}\n'+label.replace('\\N','\n')+'\n')
         if frame%30==0:print('[RENDER]',frame,'/',len(selection),flush=True)
     caption=a.trial/(a.name+'.srt');caption.write_text('\n'.join(subtitles))
+    # Keep the diagnostic captions readable without covering the harvest view.
+    # libass FontSize is relative to its script resolution, not output pixels.
+    subtitle_style='FontSize=10,Outline=1,Shadow=0,MarginV=6'
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-framerate',str(a.fps),'-i',str(output/'%05d.png'),
-                    '-vf','subtitles='+str(caption.resolve()),'-frames:v',str(len(selection)),
+                    '-vf','subtitles='+str(caption.resolve())+":force_style='"+subtitle_style+"'",'-frames:v',str(len(selection)),
                     '-c:v','libx264','-pix_fmt','yuv420p','-crf','22',str(a.trial/(a.name+'.mp4'))],check=True)
     probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-select_streams','v:0',
         '-show_entries','stream=nb_read_frames','-of','json',str(a.trial/(a.name+'.mp4'))]))
     if int(probe['streams'][0]['nb_read_frames'])!=len(selection):raise RuntimeError('Encoded frame count mismatch')
     (a.trial/(a.name+'_render.json')).write_text(json.dumps(dict(source='stored measured physical body transforms',
         frames=len(selection),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
-        physics_rerun=False,replay_only_fill_light=a.review_light,
+        physics_rerun=False,replay_only_fill_light=a.review_light,subtitle_style=subtitle_style,
+        replay_camera_eye=a.camera_eye,replay_camera_target=a.camera_target,
         requested_clip_start_s=a.start_time,requested_clip_end_s=a.end_time,
         actual_clip_start_s=float(stamps[selection[0]]),actual_clip_end_s=float(stamps[selection[-1]]),
         source_trial_stop_time_s=float(stamps[-1]),source_scene_sha256=summary['model_sha256'],

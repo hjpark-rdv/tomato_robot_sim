@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 from scipy.spatial.transform import Rotation
 from motion_kinematics import plan_motion, grasp_pose, belt_speed_fraction, cycle_opening_check
+from truss_sequence import entry_direction
 
 
 class CartesianRobot:
@@ -21,6 +22,26 @@ class ReadyTests(unittest.TestCase):
         self.pose=grasp_pose(self.center,self.center.copy())
         self.pose[:3,3]-=self.pose[:3,1]*.3
         self.q=self.kin.ik(self.pose,np.zeros(7))[0]
+
+    def test_stem_avoidance_yaw_changes_entry_fk_preserving_shallow_depth_and_level(self):
+        axis=dict(direction_world=self.pose[:3,1].tolist())
+        original=list(axis['direction_world'])
+        np.testing.assert_array_equal(entry_direction(axis),original)
+        for yaw in (-60.,30.):
+            direction=entry_direction(axis,yaw)
+            _,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',
+                harvest_profile='belt_open_close_cycle',approach_direction_world=direction,
+                grasp_depth_m=.015)
+            goal=np.asarray(meta['goal_pose'])
+            np.testing.assert_allclose(goal[:3,1],direction,atol=1e-12)
+            np.testing.assert_allclose(goal[:3,2],[0,0,1],atol=1e-12)
+            # Fruit center is only15mm behind the existing158mm belt nose.
+            np.testing.assert_allclose(goal[:3,:3].T@(self.center-goal[:3,3]),
+                [0,.143,.037],atol=1e-12)
+            self.assertEqual(axis['direction_world'],original)
+            np.testing.assert_array_equal(entry_direction(axis,yaw),direction)
+        for yaw in (91.,float('nan'),float('inf')):
+            with self.assertRaises(ValueError):entry_direction(axis,yaw)
 
     def test_truss_yaw_rotates_preparation_and_actual_entry_without_pitch_roll(self):
         direction=Rotation.from_euler('z',35,degrees=True).apply(self.pose[:3,1])
@@ -48,8 +69,8 @@ class ReadyTests(unittest.TestCase):
 
     def test_ready_to_entry_is_level_continuous_and_retracted(self):
         phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready')
-        self.assertEqual([p[0] for p in phases[:4]],
-                         ['ready_hold','prepare_open','prepare_horizontal','approach'])
+        self.assertEqual([p[0] for p in phases[:5]],
+                         ['ready_hold','prepare_open','prepare_open_hold','prepare_horizontal','approach'])
         np.testing.assert_allclose(phases[1][2],[self.q,self.q])
         self.assertEqual(phases[2][3],.096)
         previous=self.q
@@ -223,9 +244,9 @@ class ReadyTests(unittest.TestCase):
                      belt_speed_m_s=.05,belt_infeed_speed_m_s=.05,belt_ramp_seconds=.5)
         old,_=plan_motion(self.kin,self.center,self.q,'horizontal_ready',harvest_profile='belt_spin_release',**options)
         phases,meta=plan_motion(self.kin,self.center,self.q,'horizontal_ready',harvest_profile='belt_open_close_cycle',**options)
-        for a,b in zip(old[:4],phases[:4]):
+        for a,b in zip(old[:5],phases[:5]):
             self.assertEqual(a[:2],b[:2]);np.testing.assert_array_equal(a[2],b[2]);self.assertEqual(a[3:],b[3:])
-        window=meta['belt_cycle'];cycle=phases[4:12]
+        window=meta['belt_cycle'];cycle=phases[5:13]
         self.assertEqual([p[0] for p in cycle],['belt_start_open','close','cycle_open','cycle_open_hold','cycle_reclose','belt_finish','cycle_open_final','cycle_open_final_hold'])
         self.assertEqual([p[3] for p in cycle],[.096,.028,.096,.096,.028,.028,.096,.096])
         elapsed=0.
@@ -242,10 +263,10 @@ class ReadyTests(unittest.TestCase):
         self.assertTrue(window['detachment_during_close_is_allowed'])
         self.assertEqual(window['close_open_repetitions'],2)
         self.assertTrue(window['withdraw_requires_measured_open'])
-        self.assertEqual(phases[12][0],'withdraw')
-        self.assertEqual(phases[12][3],.096)
+        self.assertEqual(phases[13][0],'withdraw')
+        self.assertEqual(phases[13][3],.096)
         self.assertNotIn('release_open',[p[0] for p in phases])
-        for step in phases[12:]:self.assertEqual(step[4:],(0.,0.))
+        for step in phases[13:]:self.assertEqual(step[4:],(0.,0.))
         for bad in ({'entry_only':True},{'preparation':'direct'}):
             settings=dict(preparation='horizontal_ready',harvest_profile='belt_open_close_cycle',**options);settings.update(bad)
             with self.assertRaises(ValueError):plan_motion(self.kin,self.center,self.q,**settings)

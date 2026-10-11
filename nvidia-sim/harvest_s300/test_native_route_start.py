@@ -26,6 +26,30 @@ class NewPlant:
     def set_dof_actuation_forces(self,*args):raise AssertionError('New active plant preload must not be overwritten')
 
 
+class RouteIdleDriveHoldTests(unittest.TestCase):
+    def test_actual_runner_preserves_loaded_targets_only_for_rail_idle(self):
+        import ast
+        from test_run_motion_conditioning import code,MAIN
+        hold=next(node for node in ast.walk(MAIN) if isinstance(node,ast.If)
+            and 'route_start_context' in ast.unparse(node.test)
+            and any(isinstance(item,ast.Assign) and 'qcommand[0, rids]' in ast.unparse(item)
+                    for item in node.body))
+        rail=next(node for node in ast.walk(MAIN) if isinstance(node,ast.Assign)
+                  and ast.unparse(node).startswith('qcommand[0, railid] = rail_command('))
+        for mode,context,preserve in [('idle',{},True),('idle',None,False),('harvest',{},False)]:
+            targets=np.array([[0.,.17723615,.2,.3]])
+            expected=targets.copy()
+            ns=dict(a=SimpleNamespace(mode=mode),route_start_context=context,qcommand=targets,
+                    rids=[1,2],qs=np.array([[.168921,.15],[.268921,.25]]),lo=0,f=.25,
+                    railid=0,phase_index=0,planning={'phases':[{}]},u=.5,
+                    rail_command=lambda phase,u:.45*u)
+            exec(code([hold,rail]),ns)
+            self.assertEqual(targets[0,0],.225)
+            self.assertEqual(targets[0,3],expected[0,3])
+            if preserve:np.testing.assert_array_equal(targets[:,1:],expected[:,1:])
+            else:np.testing.assert_allclose(targets[0,[1,2]],[.193921,.175])
+
+
 class NativeRouteStartTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);self.assembly=self.root/'assembly';self.assembly.mkdir()

@@ -23,13 +23,14 @@ def prepare_display_meshes(stage):
     elsewhere, including any background collision proxy, remain untouched.
     """
     selected=[]
-    for root in ('/World/ElasticTarget', '/World/ActuatedTool/fixed/Transmission'):
+    for root in ('/World/ElasticTarget', '/World/ElasticNeighbors', '/World/ActuatedTool/fixed/Transmission'):
         prim=stage.GetPrimAtPath(root)
         if not prim:
             continue
         for child in Usd.PrimRange(prim):
             path=str(child.GetPath())
             display_only=(path.startswith('/World/ElasticTarget/Skin/') or
+                          (path.startswith('/World/ElasticNeighbors/') and '/Skin/' in path) or
                           '/Visual_' in path or
                           path.startswith('/World/ActuatedTool/fixed/Transmission/'))
             if not display_only or not child.IsA(UsdGeom.Mesh):
@@ -62,16 +63,17 @@ class DeformationVisuals:
         index={p:i for i,p in enumerate(body_paths)}
         meta=json.loads((assembly/'motion_manifest.json').read_text())
         self.bound=[]
-        with np.load(assembly/'skin.npz') as skins:
-            for i,path in enumerate(meta['plant']['skin_paths']):
-                mesh=UsdGeom.Mesh(stage.GetPrimAtPath(path))
-                ids=skins[f'{i}_ids']
-                # Rest offsets and mesh attributes are invariant across frames.
-                # Cache them instead of repeating USD queries and NumPy gathers.
-                offsets=skins[f'{i}_vertices'][:,None]-skins[f'{i}_rest'][ids]
-                self.bound.append((mesh.GetPointsAttr(),mesh.GetExtentAttr(),offsets,
-                    ids,skins[f'{i}_weights'],
-                    np.array([index[x] for x in skins[f'{i}_body_paths']])))
+        sources=[(meta['plant'], 'skin.npz')]+[(row['plant'],row['skin_file'])
+                    for row in meta.get('elastic_neighbors',[])]
+        for plant,skin_file in sources:
+            with np.load(assembly/skin_file) as skins:
+                for i,path in enumerate(plant['skin_paths']):
+                    mesh=UsdGeom.Mesh(stage.GetPrimAtPath(path))
+                    ids=skins[f'{i}_ids']
+                    offsets=skins[f'{i}_vertices'][:,None]-skins[f'{i}_rest'][ids]
+                    self.bound.append((mesh.GetPointsAttr(),mesh.GetExtentAttr(),offsets,
+                        ids,skins[f'{i}_weights'],
+                        np.array([index[x] for x in skins[f'{i}_body_paths']])))
         self.transmission={name:UsdGeom.Xformable(stage.GetPrimAtPath(
             '/World/ActuatedTool/fixed/Transmission/'+name)).MakeMatrixXform()
             for name in ('crank','linkL','linkR')}

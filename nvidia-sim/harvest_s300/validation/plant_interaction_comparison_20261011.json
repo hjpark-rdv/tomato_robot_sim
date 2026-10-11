@@ -1,0 +1,413 @@
+{
+  "schema": "plant-interaction-comparison-v1",
+  "method": "Same authored source checkpoint and commands, policy, 60Hz CPU16 TGS64/4, full nominal audit, fresh native run per variant; sequential measurement. D native initialization changes after collision removal.",
+  "limits": [
+    "One trial per configuration, one target and one motion; not general farm throughput",
+    "D disables non-target plant contacts, not real obstacle avoidance",
+    "Extra plants reuse full existing spring-rod converter; not measured biology or FEM",
+    "Static source triangle colliders become standard dynamic capsule/convex proxies; not a DOF-only change",
+    "No robot contact with the added elastic neighbors on this path; heavy neighbor pushing cost is unmeasured",
+    "D original-body native initial positions differ by up to5.2823mm after collision removal; same authored start is not identical realized start",
+    "Fresh baseline detached5 vs previous identical-source run4; one run does not establish a harvest-count advantage",
+    "Common-prefix timing uses console progress rounded to0.01s; complete-loop timings retain full precision",
+    "Extra articulation checkpoint continuation not supported",
+    "Raw maximum includes authorized released-fruit impacts; use actual stop/audit evidence",
+    "Preparation is derived-asset construction/copy, not full original route-window build"
+  ],
+  "native_runs": 4,
+  "compatibility_preflight_failures_without_native_physics": 1,
+  "initial_state_comparison": {
+    "rows": [
+      {
+        "body": "/World/ElasticTarget/Leaf_Apical_Young_Leaf_1",
+        "position_m": 0.005282301921397448,
+        "angle_rad": 0.00413089621028557
+      },
+      {
+        "body": "/World/ElasticTarget/Leaf_Apical_Young_Leaf_3",
+        "position_m": 0.005268029402941465,
+        "angle_rad": 0.004123877376147387
+      },
+      {
+        "body": "/World/ElasticTarget/Leaf_Apical_Young_Leaf_2",
+        "position_m": 0.005250322166830301,
+        "angle_rad": 0.0044542605942546635
+      },
+      {
+        "body": "/World/ElasticTarget/Leaf_CompoundLeaf_10",
+        "position_m": 0.005241294391453266,
+        "angle_rad": 0.004493057296475552
+      },
+      {
+        "body": "/World/ElasticTarget/Stem_MainStem_15",
+        "position_m": 0.005160326138138771,
+        "angle_rad": 0.0045233004760320515
+      },
+      {
+        "body": "/World/ElasticTarget/Leaf_CompoundLeaf_09",
+        "position_m": 0.0050517488270998,
+        "angle_rad": 0.005686235207136217
+      },
+      {
+        "body": "/World/ElasticTarget/Leaf_CompoundLeaf_08",
+        "position_m": 0.0050177620723843575,
+        "angle_rad": 0.0015752915651008836
+      },
+      {
+        "body": "/World/ElasticTarget/Stem_MainStem_14",
+        "position_m": 0.004949730820953846,
+        "angle_rad": 0.004524860552097115
+      }
+    ],
+    "max_position_m": 0.005282301921397448,
+    "max_angle_rad": 0.04452968942242397,
+    "note": "Same authored model transforms; collision removal changes native zero-gravity initialization response before t0. No pose reset used to hide this difference."
+  },
+  "neighbor_collider_conversion": {
+    "A_current": {
+      "('Mesh', 'none')": 237
+    },
+    "B_plus_one": {
+      "('Capsule', 'None')": 79,
+      "('Mesh', 'convexHull')": 64
+    }
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "output": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison",
+  "rows": [
+    {
+      "name": "A_current",
+      "trial_name": "A_current",
+      "label": "현재: 타깃 1그루 탄성",
+      "complete": true,
+      "stop_reason": null,
+      "initialization_valid": true,
+      "actual_self_audit": true,
+      "plan_audit_complete": true,
+      "plan_audit_pass": true,
+      "plan_audit_wall_s": 155.28675062209368,
+      "plan_obstacle_shapes": 22427,
+      "physics_sim_s": 82.8,
+      "physics_wall_s": 93.0076852478087,
+      "rtf": 0.8902490130722913,
+      "subprocess_wall_s": 426.47036563418806,
+      "returncode": 0,
+      "detached": [
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ],
+      "unripe_detached": [],
+      "remaining": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_05"
+      ],
+      "total_plant_dofs": 315,
+      "peak_rss_gib": 9.324249267578125,
+      "peak_process_tree_cpu_percent": 624.3,
+      "preparation_wall_s": 1.6099292989820242,
+      "materialized_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+      "collision_mode": "current_baseline",
+      "neighbors": [],
+      "finite_saved_state": true,
+      "frames": 4969,
+      "physics_interval_s": 0.01666666666666572,
+      "planned_phases_sha256": "6f5795e1aec3920ab0dd921e5ef97a5a675079cfe0d618ce3ff5e5fda4c758f3",
+      "same_command_prefix": true,
+      "same_belt_prefix": true,
+      "neighbor_nonleaf_max_displacement_m": {},
+      "neighbor_contact_count": 0,
+      "neighbor_robot_contact_count": 0,
+      "common_progress_sim_s": 54.02,
+      "common_progress_wall_s": 60.55,
+      "common_progress_rtf": 0.8921552436003304,
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/A_current/full_farm_review_actual.mp4"
+      ]
+    },
+    {
+      "name": "B_plus_one",
+      "trial_name": "B_plus_one",
+      "label": "주변 1그루 추가: 총 2그루",
+      "complete": false,
+      "stop_reason": "penetration_over_contact_policy",
+      "initialization_valid": true,
+      "actual_self_audit": true,
+      "plan_audit_complete": true,
+      "plan_audit_pass": true,
+      "plan_audit_wall_s": 155.9651586562395,
+      "plan_obstacle_shapes": 22333,
+      "physics_sim_s": 55.93333333333333,
+      "physics_wall_s": 83.51306059770286,
+      "rtf": 0.669755520070975,
+      "subprocess_wall_s": 376.69783729687333,
+      "returncode": 0,
+      "detached": [
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_08"
+      ],
+      "unripe_detached": [],
+      "remaining": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07"
+      ],
+      "total_plant_dofs": 630,
+      "peak_rss_gib": 7.4453582763671875,
+      "peak_process_tree_cpu_percent": 628.3,
+      "preparation_wall_s": 25.679337853565812,
+      "materialized_sha256": "58e542ac52ee1bc9279614af996f2777bf28a327ebb8cb3899cebd201889431f",
+      "collision_mode": "elastic_neighbors",
+      "neighbors": [
+        "/World/Greenhouse/Plants/Plant_09"
+      ],
+      "finite_saved_state": true,
+      "frames": 3357,
+      "physics_interval_s": 0.01666666666666572,
+      "planned_phases_sha256": "6f5795e1aec3920ab0dd921e5ef97a5a675079cfe0d618ce3ff5e5fda4c758f3",
+      "same_command_prefix": true,
+      "same_belt_prefix": true,
+      "neighbor_nonleaf_max_displacement_m": {
+        "/World/Greenhouse/Plants/Plant_09": 7.420854672091082e-05
+      },
+      "neighbor_contact_count": 10068,
+      "neighbor_robot_contact_count": 0,
+      "common_progress_sim_s": 54.02,
+      "common_progress_wall_s": 80.03,
+      "common_progress_rtf": 0.6749968761714358,
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/B_plus_one/full_farm_review_actual.mp4"
+      ]
+    },
+    {
+      "name": "C_plus_two",
+      "trial_name": "C_plus_two",
+      "label": "주변 2그루 추가: 총 3그루",
+      "complete": true,
+      "stop_reason": null,
+      "initialization_valid": true,
+      "actual_self_audit": true,
+      "plan_audit_complete": true,
+      "plan_audit_pass": true,
+      "plan_audit_wall_s": 147.68559352867305,
+      "plan_obstacle_shapes": 22239,
+      "physics_sim_s": 82.8,
+      "physics_wall_s": 123.60035862028599,
+      "rtf": 0.6699009689314154,
+      "subprocess_wall_s": 428.48796909675,
+      "returncode": 0,
+      "detached": [
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_08"
+      ],
+      "unripe_detached": [],
+      "remaining": [
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07"
+      ],
+      "total_plant_dofs": 945,
+      "peak_rss_gib": 7.856620788574219,
+      "peak_process_tree_cpu_percent": 558.8,
+      "preparation_wall_s": 48.64806046523154,
+      "materialized_sha256": "a6df43f9642cc88c4e80f0eed0d0aab03a7c3874d7d71ba525c5292e8656a0e7",
+      "collision_mode": "elastic_neighbors",
+      "neighbors": [
+        "/World/Greenhouse/Plants/Plant_09",
+        "/World/Greenhouse/Plants/Plant_28"
+      ],
+      "finite_saved_state": true,
+      "frames": 4969,
+      "physics_interval_s": 0.01666666666666572,
+      "planned_phases_sha256": "6f5795e1aec3920ab0dd921e5ef97a5a675079cfe0d618ce3ff5e5fda4c758f3",
+      "same_command_prefix": true,
+      "same_belt_prefix": true,
+      "neighbor_nonleaf_max_displacement_m": {
+        "/World/Greenhouse/Plants/Plant_09": 7.420854672091082e-05,
+        "/World/Greenhouse/Plants/Plant_28": 4.6854900574544445e-05
+      },
+      "neighbor_contact_count": 39744,
+      "neighbor_robot_contact_count": 0,
+      "common_progress_sim_s": 54.02,
+      "common_progress_wall_s": 80.93,
+      "common_progress_rtf": 0.6674904238230569,
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/C_plus_two/full_farm_review_actual.mp4"
+      ]
+    },
+    {
+      "name": "D_target_only",
+      "trial_name": "D_target_only_connected",
+      "label": "타깃 송이·주줄기 외 식물 통과",
+      "complete": true,
+      "stop_reason": null,
+      "initialization_valid": true,
+      "actual_self_audit": true,
+      "plan_audit_complete": true,
+      "plan_audit_pass": true,
+      "plan_audit_wall_s": 75.69867468252778,
+      "plan_obstacle_shapes": 1240,
+      "physics_sim_s": 82.8,
+      "physics_wall_s": 76.51654159091413,
+      "rtf": 1.0821189546527021,
+      "subprocess_wall_s": 287.7080598734319,
+      "returncode": 0,
+      "detached": [
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ],
+      "unripe_detached": [
+        "Truss_00_Fruit_09"
+      ],
+      "remaining": [
+        "Truss_00_Fruit_01"
+      ],
+      "total_plant_dofs": 315,
+      "peak_rss_gib": 7.142314910888672,
+      "peak_process_tree_cpu_percent": 575.8,
+      "preparation_wall_s": 3.796009846031666,
+      "materialized_sha256": "e5697c6111478627272ca1d6e9f62fc0a72d195bce64707223def4eaaa9d9971",
+      "collision_mode": "target_truss_and_own_stem_only",
+      "neighbors": [],
+      "finite_saved_state": true,
+      "frames": 4969,
+      "physics_interval_s": 0.01666666666666572,
+      "planned_phases_sha256": "6f5795e1aec3920ab0dd921e5ef97a5a675079cfe0d618ce3ff5e5fda4c758f3",
+      "same_command_prefix": true,
+      "same_belt_prefix": true,
+      "neighbor_nonleaf_max_displacement_m": {},
+      "neighbor_contact_count": 0,
+      "neighbor_robot_contact_count": 0,
+      "common_progress_sim_s": 54.02,
+      "common_progress_wall_s": 49.36,
+      "common_progress_rtf": 1.0944084278768234,
+      "videos": [
+        "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected/full_farm_review_actual.mp4"
+      ]
+    }
+  ],
+  "code_basis": "e47a04f231efb8ac87e182ef7f8ea9aae48dadd3",
+  "branch": "codex/s300-harvest-isaac-20261009",
+  "tested_working_tree_not_committed": true,
+  "unittest_count": 89,
+  "unittest_log": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/tests_connected.log",
+  "video_validation": [
+    {
+      "trial": "A_current",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/A_current/full_farm_review_actual.mp4",
+      "sha256": "0b7e00473e28ee3d97e4969c25103a5b2699a1686d9b366d0a6bc733769f01bc",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_read_frames": "301"
+          }
+        ],
+        "format": {
+          "duration": "50.167000"
+        }
+      },
+      "full_decode": true,
+      "full_background": true,
+      "physics_rerun": false
+    },
+    {
+      "trial": "B_plus_one",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/B_plus_one/full_farm_review_actual.mp4",
+      "sha256": "536d91eb45a9e56d75e95f1f3b49b8884014a1ef7a0c80673c165dcc46a4e23c",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_read_frames": "140"
+          }
+        ],
+        "format": {
+          "duration": "23.334000"
+        }
+      },
+      "full_decode": true,
+      "full_background": true,
+      "physics_rerun": false
+    },
+    {
+      "trial": "C_plus_two",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/C_plus_two/full_farm_review_actual.mp4",
+      "sha256": "142da5837d09a5a98c5e5646a37594bd2a7ada48d3b526f4476d6b959dc6872e",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_read_frames": "301"
+          }
+        ],
+        "format": {
+          "duration": "50.167000"
+        }
+      },
+      "full_decode": true,
+      "full_background": true,
+      "physics_rerun": false
+    },
+    {
+      "trial": "D_target_only_connected",
+      "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected/full_farm_review_actual.mp4",
+      "sha256": "fdb24a4d28cdc106ee920450cde0f5b17b1e61db94891976731d4053e5890557",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "6/1",
+            "nb_read_frames": "301"
+          }
+        ],
+        "format": {
+          "duration": "50.167000"
+        }
+      },
+      "full_decode": true,
+      "full_background": true,
+      "physics_rerun": false
+    }
+  ],
+  "B_stop": {
+    "phase": "cycle_open",
+    "time_s": 55.93333333333333,
+    "released_fruit": "Truss_00_Fruit_03",
+    "tool_body": "/World/ActuatedTool/fixed/part_9",
+    "tool_part": "F01_rear_rail_backbone",
+    "postfetch_penetration_upper_bound_m": 0.002157021943,
+    "policy_limit_m": 0.001
+  },
+  "prior_baseline_comparison": {
+    "original_materialized_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+    "baseline_materialized_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+    "same_phases": true,
+    "same_model": true,
+    "prior_detached_count": 4,
+    "fresh_baseline_detached_count": 5,
+    "interpretation": "Identical model and nominal phases do not establish bitwise native replay; one-trial detachment counts are not statistical superiority."
+  }
+}

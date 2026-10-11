@@ -573,6 +573,11 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
             else:
                 prefix=[prefix[0],('prepare_lift_branch',4.,lift_branch,.044,0.,0.),*prefix[1:]]
             return_phases += [('return_lift_branch',4.,lift_branch[::-1],approach_gap,0.,0.)]
+        if preparation_opening=='ready':
+            # Give the physical jaws time to settle at the commanded maximum
+            # before checking feedback or moving the lift/arm. Do not loosen
+            # the measured opening tolerance to hide tracking lag.
+            prefix.insert(2,('prepare_open_hold',.5,np.array([start,start]),approach_gap,0.,0.))
     entry_seconds=4. if preparation=='horizontal_ready' else 8.
     phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.),
             ('close',3.,np.array([q,q]),.028,0.,0.),
@@ -669,7 +674,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                        preparation_opening=(dict(location=preparation_opening,
                            requested_transfer_gap_m=preparation_gap_m,
                            effective_transfer_gap_m=(approach_gap if preparation_opening=='ready' or preparation_gap_m is None else float(preparation_gap_m)),
-                           feedback_before_phases=([p[0] for p in prefix if p[0] not in ('ready_hold','prepare_open')]+['approach']
+                           feedback_before_phases=([p[0] for p in prefix if p[0] not in ('ready_hold','prepare_open','prepare_open_hold')]+['approach']
                                if preparation_opening=='ready' else ['approach']),
                            required_gap_m=approach_gap,tracking_tolerance_m=.0005)
                            if preparation=='horizontal_ready' else None),

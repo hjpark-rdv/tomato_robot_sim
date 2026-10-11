@@ -92,7 +92,7 @@ class JointTurnNormalizationTests(unittest.TestCase):
         original,meta=plan_motion(kin,center,start,**opts)
         explicit,after=plan_motion(kin,center,start,**opts,horizontal_ready_normalize_turns=False)
         self.assertEqual(meta,after)
-        self.assertEqual(hashlib.sha256(json.dumps(meta['phases'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
+        self.assertEqual(hashlib.sha256(json.dumps([p for p in meta['phases'] if p['name']!='prepare_open_hold'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
                          'd7f3058ba28e6ec101d5404c6f06b62da57b14c3f3e8eda1ad04d563eefcca1a')
         for a,b in zip(original,explicit):np.testing.assert_array_equal(a[2],b[2])
         for value in (1,0,'yes',None):

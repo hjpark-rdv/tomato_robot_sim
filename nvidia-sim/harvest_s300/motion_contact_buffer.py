@@ -13,7 +13,7 @@ import sys
 from typing import NamedTuple
 
 
-ACTIVE_PATH_MARKERS = ('/ActuatedTool/', '/HarvestRobot/', '/ElasticTarget/')
+ACTIVE_PATH_MARKERS = ('/ActuatedTool/', '/HarvestRobot/', '/ElasticTarget/', '/ElasticNeighbors/')
 
 
 class RawContact(NamedTuple):

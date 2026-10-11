@@ -5,6 +5,15 @@ from rail_motion import rail_destination,station_kinematics,attach_rail_commands
 
 
 class RailMotionTest(unittest.TestCase):
+    def test_observed_floor_snag_cannot_be_mistaken_for_commanded_arrival(self):
+        from rail_motion import rail_arrival_check
+        report=rail_arrival_check([.798033],1.622384)
+        self.assertFalse(report['reached'])
+        self.assertGreater(report['absolute_error_m'][0],.82)
+        self.assertTrue(rail_arrival_check([1.6223],1.622384)['reached'])
+        for values in ([],[float('nan')]):
+            with self.assertRaises(ValueError):rail_arrival_check(values,1.)
+
     def setUp(self):
         self.manifest={'rail':{'initial_station_y_m':1.6,'limits_relative_m':[-1.6,3.4],
             'dof_name':'root_joint','axis_world':[0,1,0]}}

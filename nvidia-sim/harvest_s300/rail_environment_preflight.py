@@ -34,6 +34,26 @@ def below(path, root):
     return path == root or path.startswith(root + '/')
 
 
+def wheel_floor_overlap_evidence(shape, row, wheel_low_z, limit_m):
+    """Conservative vertical separation bound for exact wheels vs floor seams.
+
+    This changes only the nominal screen. Actual colliders, contacts and the
+    native penetration guard remain active. Every permitted overlap is saved.
+    """
+    from rail_ground_alignment import WHEEL_PATHS
+    floor = r'/World/Greenhouse/House/Environment/(?:GroundCover_1(?:_2)?|CoverLap_1_\d+(?:_2)?)/Mesh'
+    if (limit_m <= 0 or shape['path'] not in WHEEL_PATHS or
+            'Wheel' not in (shape.get('name') or '') or not re.fullmatch(floor, row['path'])):
+        return None
+    upper = float(row['bounds'][1][2] - wheel_low_z)
+    if not np.isfinite(upper) or not 0 <= upper <= limit_m:
+        return None
+    return dict(penetration_upper_bound_m=upper, limit_m=float(limit_m),
+                method='Floor world maximum Z minus conservative wheel world minimum Z',
+                scope='Exact S300 wheels against floor/support seams only; actual native contact check required',
+                actual_native_penetration_m=None, physical_collision_disabled=False)
+
+
 def matrix(pose):
     pose = np.asarray(pose, float)
     if pose.shape != (7,) or not np.isfinite(pose).all() or abs(np.linalg.norm(pose[3:])-1) > 1e-4:
@@ -99,8 +119,8 @@ def preparation_leaf_class(stage, prim, owner, manifest):
 
 def scoped_plan(plan, scope):
     """Select an existing prefix; never alter its positions, gaps or timing."""
-    if scope not in ('rail', 'preparation'):
-        raise ValueError('Environment scope must be rail or preparation')
+    if scope not in ('rail', 'preparation', 'full'):
+        raise ValueError('Environment scope must be rail, preparation or full')
     phases = plan.get('phases', [])
     if scope == 'rail':
         indices = [i for i, p in enumerate(phases) if p.get('name') == 'rail_move']
@@ -109,6 +129,9 @@ def scoped_plan(plan, scope):
         if indices != [0]:
             raise ValueError('Only one initial rail_move is supported')
         selected = phases[:1]
+    elif scope == 'full':
+        if not phases: raise ValueError('Full environment scope requires nonempty phases')
+        selected = phases
     else:
         indices = [i for i, p in enumerate(phases) if p.get('name') == 'approach']
         if not indices:
@@ -117,7 +140,7 @@ def scoped_plan(plan, scope):
         if not selected:
             return None
     result = copy.deepcopy(plan); result['phases'] = copy.deepcopy(selected)
-    if scope == 'preparation':
+    if scope in ('preparation', 'full'):
         # Supply explicit constant rail coordinates for phases which inherited
         # the rail position. This preserves check_plan's original semantics
         # while allowing the same environment callback for non-travel prefixes.
@@ -246,11 +269,12 @@ def collider_geometry(prim, transform):
     return obj, bounds, dict(representation=representation, native_cooking_verified=False), triangles, components
 
 
-def verified_release_context(stage, manifest, checkpoint_proof):
+def verified_release_context(stage, manifest, checkpoint_proof, *, collection_enabled=True, gripper_support_enabled=False, same_truss_enabled=False):
     """Reuse native lifecycle policy, without expanding its permitted pairs."""
     from harvest_contact_scope import HarvestContactScope, collection_colliders_from_stage
     approved = collection_colliders_from_stage(stage, manifest)
-    scope = HarvestContactScope(manifest, approved, enabled=True, stage=stage)
+    scope = HarvestContactScope(manifest, approved, enabled=collection_enabled, stage=stage,
+                                gripper_support_enabled=gripper_support_enabled,same_truss_enabled=same_truss_enabled)
     breaks = [] if checkpoint_proof is None else checkpoint_proof.get('native_break_events', [])
     by_joint = {f['joint']:f for f in manifest['plant']['fruits']}
     for event in breaks:
@@ -263,10 +287,13 @@ def verified_release_context(stage, manifest, checkpoint_proof):
         if (list(map(str, joint.GetBody0Rel().GetTargets())) != [fruit['anchor']] or
                 list(map(str, joint.GetBody1Rel().GetTargets())) != [fruit['path']]):
             raise ValueError('Measured released fruit/source joint body mapping mismatch')
-    return dict(scope=scope, breaks=breaks, passive_colliders=set(approved),
+    return dict(scope=scope, breaks=breaks, passive_colliders=set(approved if collection_enabled else ())|set(scope.gripper_supports),
                 metadata=dict(enabled=True, source='Existing HarvestContactScope and exact passive S300 source inventory',
                     verified_exact_collection_colliders=sorted(approved),
                     verified_passive_source_cad_proofs=scope.collection_surface_proofs,
+                    verified_gripper_support_proofs=scope.gripper_supports,
+                    same_truss_enabled=same_truss_enabled,verified_same_truss_inventory=scope.same_truss_contacts,
+                    collection_enabled=collection_enabled,gripper_support_enabled=gripper_support_enabled,
                     verified_prior_route_releases=scope.prior_releases,
                     current_native_breaks=breaks, collection_verified=False,
                     released_fruit_physics_verified=False, physics_response_unchanged=True))
@@ -300,12 +327,16 @@ def verify_initial_alignment(checker, plan, manifest, checkpoint_poses=None, tol
 
 class RailEnvironmentCheck:
     def __init__(self, stage, manifest, moving, *, allowed_truss_key, checkpoint_poses=None,
-                 max_distance_queries=200000, release_context=None, released_colliders=(), scope='rail'):
-        if scope not in ('rail', 'preparation'):
-            raise ValueError('Environment scope must be rail or preparation')
+                 max_distance_queries=200000, release_context=None, released_colliders=(), scope='rail',
+                 wheel_floor_overlap_limit_m=0.):
+        if scope not in ('rail', 'preparation', 'full'):
+            raise ValueError('Environment scope must be rail, preparation or full')
         if isinstance(max_distance_queries, bool) or not isinstance(max_distance_queries, (int, np.integer)) or max_distance_queries < 1:
             raise ValueError('Positive finite query budget required')
         self.moving = moving; self.fcl = moving.fcl; self.rows = []; self.objects = {}
+        if not np.isfinite(wheel_floor_overlap_limit_m) or not 0 <= wheel_floor_overlap_limit_m <= .001:
+            raise ValueError('Wheel/floor diagnostic must be within the approved 0..1mm limit')
+        self.wheel_floor_overlap_limit_m = float(wheel_floor_overlap_limit_m)
         self.queries = 0; self.max_queries = max_distance_queries; self.hits = []; self.diagnostics = []
         self.hit_pairs = {}; self.diagnostic_pairs = {}
         self.total_hits = self.total_diagnostics = self.filtered_pairs = 0
@@ -334,7 +365,7 @@ class RailEnvironmentCheck:
             if measured:
                 transform = checkpoint_poses[body] @ np.linalg.inv(np.asarray(cache.GetLocalToWorldTransform(owner)).T) @ transform
             label, hard = obstacle_class(prim, manifest, allowed_truss_key)
-            if scope == 'preparation' and (label == 'soft_leaf' or body in declared_leaf_owners):
+            if scope in ('preparation', 'full') and (label == 'soft_leaf' or body in declared_leaf_owners):
                 label, hard = preparation_leaf_class(stage, prim, body, manifest)
             # Source bounds are derived from the actual primitive/mesh points,
             # never authored display extents. Geometry is built only nearby.
@@ -360,9 +391,16 @@ class RailEnvironmentCheck:
             released_fruit_collection_diagnostic=None if release_context is None else release_context['metadata'],
             support_contact_permission='Exact authored filters only; ground/rail support is never silently exempted',
             scope='Initial rail_move only; frozen source/checkpoint geometry; conservative moving CAD envelopes')
-        if scope == 'preparation':
+        if scope in ('preparation', 'full'):
             self.metadata.update(scope='All existing phases before first approach; frozen source/checkpoint geometry; conservative moving CAD envelopes',
                 leaf_obstacle_policy='Static/kinematic/unverified leaf owners are obstacles; only exact declared dynamic D6 leaf groups are diagnostic')
+        if scope == 'full':
+            self.metadata['scope']='All nominal phases including approach, grasp, opening and withdrawal; active plant frozen at source/checkpoint for this audit'
+        self.metadata['wheel_floor_overlap_limit_m'] = self.wheel_floor_overlap_limit_m
+        if self.wheel_floor_overlap_limit_m:
+            self.metadata['support_contact_permission'] = 'Exact four S300 wheel/floor pairs only, bounded by explicit overlap limit; recorded diagnostic with native collisions retained'
+        self.metadata['native_penetration_guard_m'] = None
+        self.metadata['native_penetration_guard_scope'] = 'Configured and enforced by the native runner, not inferred by this nominal checker'
         if moving.metadata.get('native_tool_hull_import') is not None:
             self.metadata.update(native_tool_hull_import=moving.metadata['native_tool_hull_import'],
                 moving_shape_pieces=len(moving.shapes),
@@ -544,6 +582,10 @@ class RailEnvironmentCheck:
                             'relative to rail_move; native settle is separate' if self.scope == 'rail'
                             else 'relative to existing plan start; initial native settle is separate'),
                         **representation)
+                    support = wheel_floor_overlap_evidence(shape, row, low[2], self.wheel_floor_overlap_limit_m)
+                    if support is not None:
+                        hard = False
+                        hit.update(obstacle_class='wheel_floor_support_within_limit', wheel_floor_support=support)
                     if self.release_context is not None and shape['path'] in self.release_context['passive_colliders']:
                         # This distance belongs to the conservative FCL query,
                         # never to a fabricated native contact callback.
@@ -578,27 +620,33 @@ class RailEnvironmentCheck:
             obstacle_class=key[2], sample_pairs=0, first_time_s=self.current_time_s,
             last_time_s=self.current_time_s))
         item['sample_pairs'] += 1; item['last_time_s'] = self.current_time_s
-        if self.scope == 'preparation':
+        if 'wheel_floor_support' in hit:
+            bound=hit['wheel_floor_support']['penetration_upper_bound_m']
+            item['maximum_penetration_upper_bound_m']=max(item.get('maximum_penetration_upper_bound_m',0.),bound)
+            item['wheel_floor_overlap_limit_m']=self.wheel_floor_overlap_limit_m
+        if self.scope in ('preparation', 'full'):
             counts = item.setdefault('phase_sample_pairs', {})
             counts[self.current_phase] = counts.get(self.current_phase, 0)+1
 
 
-def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, scope='rail'):
+def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, scope='rail', native_hz=120):
     result = dict(schema='s300-rail-environment-preflight-v1', passed=False, complete=False,
                   status='inconclusive', scope='initial rail_move only', native_runs=0,
-                  physics_unchanged=True, training_eligible=False, harvest_success=None)
-    if scope == 'preparation':
+                  physics_unchanged=True, training_eligible=False, harvest_success=None,
+                  native_hz=native_hz, requested_hz=hz)
+    if scope in ('preparation', 'full'):
         result.update(scope='all existing phases before first approach', requested_hz=hz,
-            strict_native_period_sampling=hz == 120, eligible_for_native_execution=False)
+            strict_native_period_sampling=hz == native_hz, eligible_for_native_execution=False)
     try:
         selected = scoped_plan(plan, scope)
         if selected is None:
             return dict(result, status='not_applicable', reason='No physical rail_move phase' if scope == 'rail' else 'Empty preparation prefix')
         if adapter.scope != scope:
             raise ValueError('Environment inventory policy and requested scope mismatch')
-        if (isinstance(hz, bool) or not isinstance(hz, (int, np.integer)) or
-                hz < 1 or hz > 120 or scope == 'rail' and hz != 120):
-            raise ValueError('Rail requires actual120Hz; preparation supports1..120Hz diagnostic samples')
+        if (isinstance(native_hz, bool) or native_hz not in (60,120) or
+                isinstance(hz, bool) or not isinstance(hz, (int, np.integer)) or
+                hz < 1 or hz > 120 or scope == 'rail' and hz != native_hz):
+            raise ValueError('Rail samples must match declared native60/120Hz; preparation supports1..120Hz diagnostic samples')
         result['initial_alignment'] = verify_initial_alignment(adapter.moving, selected, manifest, checkpoint_poses)
         if scope == 'rail':
             adapter.prepare_sweep(selected['phases'][0], hz)
@@ -606,13 +654,13 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
             result.update(scope='all existing phases before first approach', requested_hz=hz,
                 nominal_prefix_duration_s=sum(p['duration_s'] for p in selected['phases']),
                 selected_phases=[p['name'] for p in selected['phases']],
-                strict_native_period_sampling=hz == 120, eligible_for_native_execution=False)
+                strict_native_period_sampling=hz == native_hz, eligible_for_native_execution=False)
             adapter.prepare_path_sweep(selected, hz)
         sampled = check_plan(adapter, selected, hz=hz)
         result.update(complete=sampled['complete'], samples=sampled['samples'], sampling=sampled,
                       status='blocked' if adapter.total_hits else 'sampled_clear', passed=not adapter.total_hits)
-        if scope == 'preparation':
-            result['eligible_for_native_execution'] = bool(result['complete'] and result['passed'] and hz == 120)
+        if scope in ('preparation', 'full'):
+            result['eligible_for_native_execution'] = bool(result['complete'] and result['passed'] and hz == native_hz)
     except Exception as error:
         result.update(error=type(error).__name__ + ': ' + str(error), status='blocked' if adapter.total_hits else 'inconclusive')
     result.update(hard_intersection_sample_pairs=adapter.total_hits, hard_hits=adapter.hits,
@@ -627,11 +675,14 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
                   released_fruit_collection_diagnostic_sample_pairs=adapter.release_diagnostics,
                   collection_verified=False, released_fruit_physics_verified=False,
                   strict_whole_scene_physics_passed=None)
+    if scope == 'full':
+        result['scope']='all nominal phases including approach/grasp/opening/withdrawal'
+        result['nominal_full_path_duration_s']=result.pop('nominal_prefix_duration_s', None)
     return result
 
 
-def screen_preparation_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120):
-    return screen_rail_plan(adapter, plan, manifest, checkpoint_poses=checkpoint_poses, hz=hz, scope='preparation')
+def screen_preparation_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, native_hz=120):
+    return screen_rail_plan(adapter, plan, manifest, checkpoint_poses=checkpoint_poses, hz=hz, scope='preparation', native_hz=native_hz)
 
 
 def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfer=False):
@@ -683,7 +734,8 @@ def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfe
 def audit_external_rail(assembly, output, *, plan, checkpoint=None, hz=120,
                         allowed_truss_key=None, max_distance_queries=200000,
                         released_fruit_collection_diagnostic=False, scope='rail', allow_attachment_transfer=False,
-                        native_tool_cache=None):
+                        native_tool_cache=None, native_hz=120, wheel_floor_overlap_limit_m=0.,
+                        released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False):
     """Use the existing asset-Python boundary; refuse incomplete/blocked travel.
 
     This is an opt-in preflight, not a replacement executor or path planner.
@@ -701,13 +753,17 @@ def audit_external_rail(assembly, output, *, plan, checkpoint=None, hz=120,
         env.pop(key, None)
     command = [str(python), str(Path(__file__).resolve()), str(assembly),
                '--plan', str(plan), '--output', str(output), '--hz', str(hz),
-               '--max-distance-queries', str(max_distance_queries)]
+               '--max-distance-queries', str(max_distance_queries), '--native-hz', str(native_hz)]
     if scope != 'rail': command += ['--scope', scope]
     if allow_attachment_transfer: command += ['--allow-resume-attachment-transfer']
     if checkpoint is not None: command += ['--checkpoint', str(checkpoint)]
     if allowed_truss_key is not None: command += ['--allowed-truss-key', allowed_truss_key]
     if released_fruit_collection_diagnostic: command += ['--released-fruit-collection-diagnostic']
+    if released_fruit_gripper_support_diagnostic: command += ['--released-fruit-gripper-support-diagnostic']
+    if released_fruit_same_truss_diagnostic: command += ['--released-fruit-same-truss-diagnostic']
     if native_tool_cache is not None: command += ['--native-tool-cache', str(native_tool_cache)]
+    if wheel_floor_overlap_limit_m:
+        command += ['--wheel-floor-overlap-limit-m', str(wheel_floor_overlap_limit_m)]
     process = subprocess.run(command, env=env, capture_output=True, text=True)
     with log.open('x') as stream: stream.write(process.stdout+process.stderr)
     if process.returncode not in (0, 2) or not output.exists():
@@ -715,7 +771,7 @@ def audit_external_rail(assembly, output, *, plan, checkpoint=None, hz=120,
     report = json.loads(output.read_text())
     if report.get('status') == 'not_applicable': return report
     if (not report.get('complete') or not report.get('passed') or
-            scope == 'preparation' and not report.get('eligible_for_native_execution')):
+            scope in ('preparation', 'full') and not report.get('eligible_for_native_execution')):
         raise RuntimeError('Rail environment preflight blocked commanded travel: '+str(output))
     return report
 
@@ -738,7 +794,8 @@ def _finish(result, started, output):
 def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=120,
                       allowed_truss_key=None, max_distance_queries=200000,
                       released_fruit_collection_diagnostic=False, scope='rail', allow_attachment_transfer=False,
-                      native_tool_cache=None):
+                      native_tool_cache=None, native_hz=120, wheel_floor_overlap_limit_m=0.,
+                      released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False):
     """Read-only source/trace/checkpoint verification and the existing FK sampler."""
     started = time.perf_counter(); assembly = Path(assembly).resolve(); plan_path = Path(plan_path)
     result = dict(schema='s300-rail-environment-preflight-v1', passed=False, complete=False,
@@ -771,14 +828,17 @@ def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=
         moving = (MotionSelfCollision(stage, ToolKinematics(stage)) if native_tool_cache is None else
             MotionSelfCollision(stage, ToolKinematics(stage), native_tool_cache=native_tool_cache, assembly=assembly))
         truss = allowed_truss(manifest, plan, allowed_truss_key)
-        release_context = verified_release_context(stage, manifest, checkpoint_proof) if released_fruit_collection_diagnostic else None
+        release_context = verified_release_context(stage, manifest, checkpoint_proof,
+            collection_enabled=released_fruit_collection_diagnostic,
+            gripper_support_enabled=released_fruit_gripper_support_diagnostic,
+            same_truss_enabled=released_fruit_same_truss_diagnostic) if (released_fruit_collection_diagnostic or released_fruit_gripper_support_diagnostic or released_fruit_same_truss_diagnostic) else None
         current_breaks = set(e['joint'] for e in (checkpoint_proof or {}).get('native_break_events', []))
         released_colliders = {f['path']+'/Collider' for f in manifest['plant']['fruits']
                               if f.get('joint') in current_breaks}
         adapter = RailEnvironmentCheck(stage, manifest, moving, allowed_truss_key=truss,
             checkpoint_poses=poses, max_distance_queries=max_distance_queries, release_context=release_context,
-            released_colliders=released_colliders, scope=scope)
-        result = screen_rail_plan(adapter, plan, manifest, checkpoint_poses=poses, hz=hz, scope=scope)
+            released_colliders=released_colliders, scope=scope, wheel_floor_overlap_limit_m=wheel_floor_overlap_limit_m)
+        result = screen_rail_plan(adapter, plan, manifest, checkpoint_poses=poses, hz=hz, scope=scope, native_hz=native_hz)
         result.update(allowed_truss_key=truss, checkpoint_proof=checkpoint_proof,
             source_sha256=dict(scene=manifest['scene_sha256'], manifest=manifest_hash,
                               materialized_dependency=None if dependency is None else dependency['sha256'], plan=plan_hash),
@@ -807,16 +867,23 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('assembly', type=Path)
     parser.add_argument('--plan', type=Path, required=True); parser.add_argument('--checkpoint', type=Path)
     parser.add_argument('--output', type=Path, required=True); parser.add_argument('--hz', type=int, default=120)
+    parser.add_argument('--native-hz', type=int, choices=(60,120), default=120)
+    parser.add_argument('--wheel-floor-overlap-limit-m', type=float, default=0.)
     parser.add_argument('--allowed-truss-key'); parser.add_argument('--max-distance-queries', type=int, default=200000)
-    parser.add_argument('--scope', choices=('rail', 'preparation'), default='rail')
+    parser.add_argument('--scope', choices=('rail', 'preparation', 'full'), default='rail')
     parser.add_argument('--allow-resume-attachment-transfer', action='store_true')
     parser.add_argument('--released-fruit-collection-diagnostic', action='store_true')
+    parser.add_argument('--released-fruit-gripper-support-diagnostic', action='store_true')
+    parser.add_argument('--released-fruit-same-truss-diagnostic', action='store_true')
     parser.add_argument('--native-tool-cache',type=Path,
         help='Opt-in exact existing native cooked tool pieces, bound to this immutable assembly/model; no physical collider change')
     args = parser.parse_args(); report = audit_rail_transit(args.assembly, args.plan, checkpoint=args.checkpoint,
         output=args.output, hz=args.hz, allowed_truss_key=args.allowed_truss_key,
         max_distance_queries=args.max_distance_queries,
         released_fruit_collection_diagnostic=args.released_fruit_collection_diagnostic, scope=args.scope,
-        allow_attachment_transfer=args.allow_resume_attachment_transfer,native_tool_cache=args.native_tool_cache)
+        released_fruit_gripper_support_diagnostic=args.released_fruit_gripper_support_diagnostic,
+        released_fruit_same_truss_diagnostic=args.released_fruit_same_truss_diagnostic,
+        allow_attachment_transfer=args.allow_resume_attachment_transfer,native_tool_cache=args.native_tool_cache,native_hz=args.native_hz,
+        wheel_floor_overlap_limit_m=args.wheel_floor_overlap_limit_m)
     print(json.dumps({k:report[k] for k in ('status','passed','complete')}), flush=True)
     raise SystemExit(0 if report['passed'] or report['status'] == 'not_applicable' else 2)

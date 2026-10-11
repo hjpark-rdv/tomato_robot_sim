@@ -34,7 +34,7 @@ DEFAULT_ARGUMENTS = ['--headless', '--physics-only', '--native-materialized-stag
     '--grasp-gap-mm', '28', '--grasp-depth-mm', '65', '--grasp-height-offset-mm', '-10',
     '--preparation-gap-mm', '44', '--ready-lift-offset-mm', '-150',
     '--preparation-height-first', '--gravity-neutral-warmup', '--armature-setup', 'authored',
-    '--released-fruit-ground-diagnostic', '--verify-leaf-contact-after-step',
+    '--released-fruit-ground-diagnostic', '--released-fruit-gripper-support-diagnostic', '--released-fruit-same-truss-diagnostic', '--verify-leaf-contact-after-step',
     '--verify-harvest-contact-after-step', '--verify-background-leaf-enclosures', '--verify-structural-scene-query',
     '--buffer-contact-events', '--whole-truss', '--truss-order', 'lowest-first',
     '--max-truss-cycles', '20', '--max-fruit-attempts', '6', '--max-aim-translation-m', '1.5',
@@ -618,7 +618,7 @@ def startup_preflight_arguments(base):
     not used to skip initialization or the normal guards on the actual run.
     """
     value_options={'--mode','--seconds','--approach-yaw-mode','--approach-pitch-deg',
-        '--approach-yaw-offset-deg','--harvest-profile','--belt-speed-m-s','--belt-seconds',
+        '--approach-yaw-offset-deg','--truss-entry-yaw-offset-deg','--harvest-profile','--belt-speed-m-s','--belt-seconds',
         '--close-seconds','--grasp-gap-mm','--grasp-depth-mm','--later-grasp-depth-mm',
         '--grasp-height-offset-mm','--belt-ramp-seconds','--belt-infeed-speed-m-s',
         '--preparation-gap-mm','--ready-lift-offset-mm','--horizontal-ready-connector',

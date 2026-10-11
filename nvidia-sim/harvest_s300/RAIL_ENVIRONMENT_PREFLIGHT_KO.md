@@ -1,5 +1,17 @@
 # 레일 이동의 기존 FCL 환경 사전검사
 
+## 2026-10-11 후속: 현재60Hz 수확 실행 연결
+
+`run_motion.py`의 두 opt-in 환경 검사는 이제 단일60/120Hz 실행에서 실제 물리 주기와
+같은 간격으로 검사한다. 외부 검사기에 `--hz`와 `--native-hz`를 함께 전달하며,
+독립 검사기의 기본 native 주기는120Hz로 유지한다. 따라서 기존120Hz 실행을 대상으로
+60Hz만 샘플링한 자료가 실행 승인으로 바뀌지 않는다. 준비 구간의 저밀도 검사는
+계속 진단용이고, 불완전 검사/예산 소진/충돌은 실행을 막는다.
+
+이 변경은 물리 Hz를 자동 변경하지 않는다. 현재 집단 수확 시험은 사용자가 승인한
+공통1mm native 관통 중단값을 명시적으로 사용한다. 아래0.5mm/120Hz 기록은 이전
+실험 당시 조건이다. 환경 교차 검사, 충돌체, 물성과 접촉 허용 범위는 유지한다.
+
 2026-10-11. 수확이 끝난 실제 상태를 다음 레일 위치로 이동하기 전에, 기존 FK·FCL·120 Hz 경로 샘플러로 **첫 `rail_move`만** 검사하는 opt-in 어댑터를 추가했다. 새 계획기나 물리 실행기를 만들지 않았다. 실제 이동 성공은 아직 확인하지 않았다.
 
 `rail_environment_preflight.py`는 S300 Carrier/차체·리프트·팔·그리퍼의 활성 충돌체를 모두 포함한다. 농장 충돌체는 원본 USD와 저장된 실제 바디 자세를 사용한다. 두꺼운 주줄기, 거터, 다른 송이의 열매·가지와의 교차는 차단한다. 부드러운 잎과 현재 허용 송이에 대한 그리퍼 접촉은 별도 진단으로 남기며, 이를 팔·리프트·차체 허용으로 확대하지 않는다. 원본 filteredPairs와 collision-group 관계를 재사용한다.
@@ -80,3 +92,39 @@ runner의 opt-in `--verify-rail-environment-preflight`는 로봇 자체 검사 �
 이는 **잎 동역학과 collision proxy의 명시적인 변경**이다. 기존 static triangle을 동적으로 사용하기 위해 convexDecomposition으로 변경했으며, 점·triangle·world 위치 오차는 0이다. 잎 충돌을 무시하거나 관통 기준을 완화한 것이 아니다. 원래 모델과 이전 native 결과는 보존했다. source 시작에서 새로 시험하는 자산이므로 과거 9/10 분리를 이 모델의 결과로 가져오지 않는다.
 
 새 자산은 `assembly_plant22_fresh_near20_truss01_passive_staging_leaves`이며 직접 materialized USDC를 사용한다. 전체 materialization 검증에서 32,649,127 vertices·32,142 colliders·279 rigid bodies의 형상/자세 오차가 0이었고, 기존 native scope의 정확한 2 body/8 collider CPU 등록을 통과했다. native 초기 안정성·실제 잎 밀림·120 Hz 전체 준비/진입 검사와 수확 동작은 별도 검증 대상이다. 요약은 `validation/staging_leaves_physical_hypothesis_20261011.json`에 저장했다.
+
+## 2026-10-11 실제 이동 후 수확에서 발견한 차이
+
+`--scope full` / 실행기의 `--verify-full-environment-preflight`를 추가했다.
+기존 `rail`과 `preparation`의 범위는 유지한다. full은 같은 FCL/FK/형상/필터로
+진입·닫기·재개방·후퇴까지 포함한 모든 명목 경유점을 검사한다. 자기 송이에 대한
+그리퍼 접촉 범위만 기존대로 유지하며 다른 송이와 팔/기체 충돌은 허용하지 않는다.
+4Hz 결과는 후보 선별용이고, 실제 실행 전에는 실제 native 60/120Hz와 같은 간격으로
+완료한 검사만 인정한다. 움직일 식물은 초기/인계 상태에 고정한 명목 검사이므로
+실제 변형·추종·낙하 물리를 대신하지 않는다.
+
+원본 Plant29 경로는 명목 전체 검사도 통과했지만 실제 기체는 바닥 이음부에서
+약798mm만 이동했다. 명령은1622mm였고 실제 오차는824mm였다. 이후 명령 위치를
+기준으로 팔을 움직여 다른 Plant23의 꽃받침과 충돌했다. 바퀴–바닥 최대 단일
+접촉점 힘은 약20.94kN, 그리퍼–다른 송이는 약2.51kN이었다. 실제 로봇의 손상
+한계 측정값이 아니라, 레일로 높이가 고정된 차체가 턱에 걸린 수치적 제약력이다.
+단순히 침투가 작다고 이동이 완료되는 것은 아니다.
+
+- 정확한 네 바퀴와 GroundCover/CoverLap 사이에만 명시적 최대1mm 명목 겹침
+  진단을 기록할 수 있다. 물리 충돌은 유지하며, 이것은 이동 완료 인증이 아니다.
+  다른 robot/tool/거터 형상에 이 예외를 전파하지 않는다. 기본값은0이다.
+- `rail_motion.rail_arrival_check`는 레일 뒤 첫 조작 명령 전에 측정된 rail DOF를
+  확인한다. 목표와2mm 이내여야 진행하며, 실패하면 `rail_arrival_not_reached`다.
+  2mm는 정차 위치 추종 허용값으로,1mm 접촉 유효성 기준과 다른 값이다.
+- `rail_ground_alignment.ground_clearance`는 평판뿐 아니라 실제 CoverLap 이음부도
+  포함한다. 설치 높이 수정은 기존 `revise --additional-installation-lift --lift-mm 2`로
+  **별도 fresh 장면**에 적용했다. robot/tool/레일 지지 프레임만 함께 이동하며
+  mesh/collider/질량/마찰/강성/actuator는 유지했다. 측정 route checkpoint를 임의로
+  이동시키는 것은 거부한다. 원래 실패 실행은 보존한다.
+
+추가 설치 보정의 실제 이음부 포함 명목 여유는약-0.75→+1.25mm다.
+인스턴스화된 House의 CoverLap을 `TraverseInstanceProxies`로 포함해야 한다.
+초기 설치 보고서는 이 인스턴스 안의 이음부를 놓쳐0.75→2.75mm로 표시했으므로,
+원본은 보존하고 별도 `installation_floor_instance_review.json`으로 정정했다.
+이 수정은 읽기 전용 높이 보고서의 범위 수정이며 장면/물리는 바꾸지 않았다.
+새 장면도 실제 native 접촉과 측정 도착을 확인한 뒤에만 다음 행동으로 인계한다.

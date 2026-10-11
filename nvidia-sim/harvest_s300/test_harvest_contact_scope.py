@@ -292,6 +292,128 @@ class HarvestContactScopeTests(unittest.TestCase):
 
 
 
+class ReleasedGripperSupportTests(unittest.TestCase):
+    def fixture(self):
+        from pxr import Usd, UsdGeom, UsdPhysics
+        stage=Usd.Stage.CreateInMemory()
+        for side,number,source in [('L',117,'C01_carriage_saddle'),('L',122,'C02_lower_deck'),
+                                   ('R',239,'C01_carriage_saddle'),('R',244,'C02_lower_deck')]:
+            body='/World/ActuatedTool/'+side
+            UsdPhysics.RigidBodyAPI.Apply(UsdGeom.Xform.Define(stage,body).GetPrim())
+            mesh=UsdGeom.Mesh.Define(stage,body+'/part_'+str(number))
+            mesh.CreatePointsAttr([(0,0,0),(1,0,0),(0,1,0)])
+            mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+            mesh.GetPrim().SetCustomDataByKey('sourceName',side+'_'+source)
+            UsdPhysics.CollisionAPI.Apply(mesh.GetPrim()).CreateCollisionEnabledAttr(True)
+        return stage
+
+    def test_native_release_and_separate_opt_in_required_both_contact_orders(self):
+        stage=self.fixture();old=HarvestContactScope(manifest(),[FLOOR],enabled=True,stage=stage)
+        scope=HarvestContactScope(manifest(),[FLOOR],stage=stage,gripper_support_enabled=True)
+        for path in scope.gripper_supports:
+            for reverse in (False,True):
+                event=contact(b=path)
+                if reverse:event['a'],event['b']=event['b'],event['a']
+                self.assertEqual(old.filter_invalid([event],[dict(joint=JOINT,t=1.)]),[event])
+                for breaks in ([],[dict(joint=JOINT,t=3.)],[dict(joint=JOINT+'_other',t=1.)]):
+                    self.assertEqual(scope.filter_invalid([event],breaks),[event])
+                self.assertEqual(scope.filter_invalid([event],[dict(joint=JOINT,t=1.)]),[])
+        summary=scope.summarize();self.assertEqual(len(summary['released_fruit_gripper_support_impacts']),4)
+        self.assertFalse(summary['collection_verified']);self.assertFalse(summary['released_fruit_physics_verified'])
+        # Enabling supports alone cannot accidentally authorize even a known floor.
+        self.assertEqual(scope.filter_invalid([contact()],[dict(joint=JOINT,t=1.)]),[contact()])
+
+    def test_other_contacts_and_nonfinite_evidence_remain_strict(self):
+        scope=HarvestContactScope(manifest(),stage=self.fixture(),gripper_support_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.)]
+        for path in ['/World/ActuatedTool/L/part_127','/World/ActuatedTool/L_belt/PrototypeTread',
+                     '/World/HarvestRobot/Robot/link4/Collider',ROOT+'/Stem/Collider',
+                     ROOT+'/Truss_02_Fruit_10/Collider','/World/Greenhouse/House/Gutter/Mesh']:
+            event=contact(b=path);self.assertEqual(scope.filter_invalid([event],breaks),[event])
+        for key in ['t','separation_m']:
+            event=contact(b='/World/ActuatedTool/L/part_122');event[key]=float('nan')
+            self.assertFalse(scope.classify(event,breaks)['continuation_authorized'])
+        event=contact(a='/World/ActuatedTool/L/part_122',b='/World/HarvestRobot/Robot/link4/Collider')
+        self.assertEqual(scope.filter_invalid([event],breaks),[event])
+
+    def test_wrong_source_owner_disabled_or_missing_mesh_rejected(self):
+        from pxr import UsdPhysics
+        from harvest_contact_scope import gripper_support_inventory
+        with self.assertRaises(ValueError):gripper_support_inventory(None)
+        path='/World/ActuatedTool/L/part_122'
+        for mutation in ['name','owner','disabled','missing']:
+            stage=self.fixture();prim=stage.GetPrimAtPath(path)
+            if mutation=='name':prim.SetCustomDataByKey('sourceName','L_C02_upper_deck')
+            elif mutation=='owner':UsdPhysics.RigidBodyAPI.Apply(prim)
+            elif mutation=='disabled':UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Set(False)
+            else:stage.RemovePrim(path)
+            with self.assertRaises(ValueError):gripper_support_inventory(stage)
+
+
+class ReleasedSameTrussTests(unittest.TestCase):
+    def fixture(self):
+        from pxr import Usd,UsdPhysics
+        stage=Usd.Stage.CreateInMemory();m=manifest();m['plant']['bodies']=[]
+        for name in ['Truss_02_Fruit_03','Truss_03_Fruit_03']:
+            m['plant']['fruits'].append(dict(name=name,path=ROOT+'/'+name,joint=ROOT+'/HarvestJoints/'+name))
+        for name in ['Truss_02_Pedicel_proximal_09_2','Truss_02_Rachis_0','Truss_02_Truss_01_Peduncle_0','Truss_03_Rachis_0','Stem_MainStem_0']:
+            m['plant']['bodies'].append(dict(name=name,path=ROOT+'/'+name))
+        for row in m['plant']['fruits']+m['plant']['bodies']:
+            UsdPhysics.RigidBodyAPI.Apply(stage.DefinePrim(row['path'],'Xform'))
+            prim=stage.DefinePrim(row['path']+'/Collider','Mesh' if '_Fruit_'in row['name']else 'Capsule')
+            UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(True)
+        return stage,m
+
+    def test_own_branch_and_fruit_require_native_release_both_callback_orders(self):
+        stage,m=self.fixture();scope=HarvestContactScope(m,stage=stage,same_truss_enabled=True)
+        joint=ROOT+'/HarvestJoints/Truss_02_Fruit_03';fruit=ROOT+'/Truss_02_Fruit_03/Collider'
+        for other in [FRUIT+'/Collider',ROOT+'/Truss_02_Pedicel_proximal_09_2/Collider',
+                      ROOT+'/Truss_02_Rachis_0/Collider',ROOT+'/Truss_02_Truss_01_Peduncle_0/Collider']:
+            for reverse in (False,True):
+                event=contact(a=other if reverse else fruit,b=fruit if reverse else other)
+                for breaks in ([],[dict(joint=joint,t=3.)],[dict(joint=joint+'_bad',t=1.)]):
+                    self.assertEqual(scope.filter_invalid([event],breaks),[event])
+                self.assertEqual(scope.filter_invalid([event],[dict(joint=joint,t=1.)]),[])
+                self.assertEqual(scope.records[-1]['fruit_collider'],fruit)
+        self.assertEqual(len(scope.summarize()['released_fruit_same_truss_impacts']),4)
+        self.assertEqual(scope.summarize()['released_fruit_collection_impacts'],[])
+        self.assertFalse(scope.summarize()['released_fruit_physics_verified'])
+
+    def test_default_strict_and_other_truss_stem_robot_unknown_remain_strict(self):
+        stage,m=self.fixture();strict=HarvestContactScope(m,stage=stage);scope=HarvestContactScope(m,stage=stage,same_truss_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.)];own=contact(b=ROOT+'/Truss_02_Rachis_0/Collider')
+        self.assertEqual(strict.filter_invalid([own],breaks),[own])
+        for other in [ROOT+'/Truss_03_Rachis_0/Collider',ROOT+'/Truss_03_Fruit_03/Collider',ROOT+'/Stem_MainStem_0/Collider',
+                      ROOT+'/Truss_02_Rachis_999/Collider','/World/ActuatedTool/L_belt/PrototypeTread',
+                      '/World/Greenhouse/Plants/Plant_22/Truss_02_Rachis_0/Collider',FLOOR]:
+            event=contact(b=other);self.assertEqual(scope.filter_invalid([event],breaks),[event])
+        for key in ['t','separation_m']:
+            event=own.copy();event[key]=float('nan');self.assertFalse(scope.classify(event,breaks)['continuation_authorized'])
+
+    def test_source_mapping_collider_owner_or_missing_stage_fail(self):
+        from pxr import UsdPhysics
+        stage,m=self.fixture()
+        with self.assertRaises(ValueError):HarvestContactScope(m,same_truss_enabled=True)
+        for mutation in ['path','disabled','owner']:
+            stage,m=self.fixture();path=ROOT+'/Truss_02_Rachis_0/Collider';prim=stage.GetPrimAtPath(path)
+            if mutation=='path':m['plant']['bodies'][0]['path']=ROOT+'/Stem_MainStem_0'
+            elif mutation=='disabled':UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Set(False)
+            else:UsdPhysics.RigidBodyAPI.Apply(prim)
+            with self.assertRaises(ValueError):HarvestContactScope(m,stage=stage,same_truss_enabled=True)
+
+    def test_frozen_release_loads_without_floor_permission_and_never_aliases_active_truss(self):
+        from pxr import UsdPhysics
+        with tempfile.TemporaryDirectory() as temp:
+            m,stage,frozen,_=HarvestContactScopeTests().route_fixture(Path(temp))
+            UsdPhysics.RigidBodyAPI.Apply(stage.DefinePrim(FRUIT,'Xform'))
+            UsdPhysics.CollisionAPI.Apply(stage.DefinePrim(FRUIT+'/Collider','Mesh')).CreateCollisionEnabledAttr(True)
+            scope=HarvestContactScope(m,stage=stage,same_truss_enabled=True)
+            self.assertEqual(len(scope.prior_releases),1)
+            event=contact(a=frozen+'/Collider',b=FRUIT+'/Collider')
+            self.assertEqual(scope.filter_invalid([event],[]),[event])
+            self.assertNotEqual(scope.same_truss_contacts[frozen+'/Collider']['truss_identity'],scope.same_truss_contacts[FRUIT+'/Collider']['truss_identity'])
+
+
 class DeclaredPassiveLeafTests(unittest.TestCase):
     def fixture(self):
         from pxr import Usd,UsdGeom,UsdPhysics

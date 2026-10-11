@@ -89,6 +89,25 @@ class Kinematics:
 
 
 class RouteCheckpointTests(unittest.TestCase):
+    def test_next_window_inherits_leaf_ignore_without_removing_obstacles(self):
+        stage=Usd.Stage.CreateInMemory()
+        for name,source in [('leaf','CompoundLeaf_01'),('stem','MainStem_01'),('fruit','Fruit_01')]:
+            prim=UsdGeom.Mesh.Define(stage,'/World/ElasticTarget/'+name).GetPrim()
+            prim.SetCustomDataByKey('sourceName',source)
+            UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(True)
+        manifest={}
+        rc.inherit_leaf_contact_policy(stage,manifest,None)
+        self.assertTrue(UsdPhysics.CollisionAPI(stage.GetPrimAtPath('/World/ElasticTarget/leaf')).GetCollisionEnabledAttr().Get())
+        parent=dict(schema='s300-leaf-contact-ignore-v1',mode='visual_only_leaf_collision',disabled_count=100)
+        rc.inherit_leaf_contact_policy(stage,manifest,parent)
+        for name in ('leaf','stem','fruit'):
+            self.assertEqual(UsdPhysics.CollisionAPI(stage.GetPrimAtPath('/World/ElasticTarget/'+name)).GetCollisionEnabledAttr().Get(),name!='leaf')
+        self.assertEqual(manifest['leaf_contact_policy']['disabled_count'],1)
+        self.assertEqual(manifest['leaf_contact_policy']['parent_disabled_count'],100)
+        self.assertEqual(parent['disabled_count'],100)
+        with self.assertRaisesRegex(ValueError,'Unsupported inherited'):
+            rc.inherit_leaf_contact_policy(stage,manifest,dict(mode='ignore_all'))
+
     def test_target_attachment_scope_keeps_excluded_obstacle_joints_exact(self):
         stage=Usd.Stage.CreateInMemory();root='/World/ElasticTarget'
         body(stage,root+'/neck',(0,0,0));fruits=[]

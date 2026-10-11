@@ -173,13 +173,13 @@ class RunRowHarvestTests(unittest.TestCase):
 
     def test_idle_preflight_keeps_physics_and_removes_all_rail_and_harvest_commands(self):
         source=motion_arguments(DEFAULT_ARGUMENTS+['--later-grasp-depth-mm','50',
-            '--split-unproductive-pairs'],self.inventory_path,dict(station_y_m=.81,
+            '--split-unproductive-pairs','--truss-entry-yaw-offset-deg','-30'],self.inventory_path,dict(station_y_m=.81,
                 preparation_variant=dict(name='joint6',horizontal_ready_connector='joint',
                     horizontal_ready_seed_index=6)))
         arguments=startup_preflight_arguments(source)
         for option in ('--rail-to-y','--whole-truss','--harvest-profile',
                        '--save-route-checkpoint','--near-trusses-metadata',
-                       '--horizontal-ready-connector','--later-grasp-depth-mm','--split-unproductive-pairs'):
+                       '--horizontal-ready-connector','--later-grasp-depth-mm','--split-unproductive-pairs','--truss-entry-yaw-offset-deg'):
             self.assertNotIn(option,arguments)
         self.assertEqual(arguments[-4:],['--mode','idle','--seconds','3'])
         for option in ('--hz','--threads','--solver','--position-iterations',

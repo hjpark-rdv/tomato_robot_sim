@@ -59,6 +59,55 @@ def run(stage, manifest, plan, **kwargs):
     return screen_rail_plan(adapter, plan, manifest), adapter
 
 
+class WheelFloorSupportTests(unittest.TestCase):
+    def scene(self, top=.00375):
+        s,m,p=fixture()
+        s.RemovePrim('/World/HarvestRobot/Robot/S300Carrier/shape')
+        from rail_ground_alignment import WHEEL_PATHS
+        for path,extents,center,source in [
+            (WHEEL_PATHS[0],[.08,.08,.1],[0,0,.053],'T_01_S300_8inch_Wheel_V2NR-1'),
+            ('/World/Greenhouse/House/Environment/CoverLap_1_6/Mesh',
+             [.12,.12,.0015],[.2,0,top-.00075],None)]:
+            mesh=trimesh.creation.box(extents=extents);v=mesh.vertices+center
+            shape=UsdGeom.Mesh.Define(s,path)
+            shape.CreatePointsAttr(v.tolist());shape.CreateFaceVertexCountsAttr([3]*len(mesh.faces))
+            shape.CreateFaceVertexIndicesAttr(mesh.faces.reshape(-1).tolist())
+            UsdPhysics.CollisionAPI.Apply(shape.GetPrim()).CreateCollisionEnabledAttr(True)
+            if source:
+                shape.GetPrim().SetCustomDataByKey('sourceName',source)
+                UsdPhysics.MeshCollisionAPI.Apply(shape.GetPrim()).CreateApproximationAttr('convexHull')
+        return s,m,p
+
+    def test_actual_fcl_overlap_is_recorded_under_explicit_one_mm(self):
+        s,m,p=self.scene()
+        report,_=run(s,m,p,wheel_floor_overlap_limit_m=.001)
+        self.assertTrue(report['passed'])
+        hits=report['diagnostic_only_hits']
+        self.assertTrue(hits)
+        self.assertEqual(hits[0]['obstacle_class'],'wheel_floor_support_within_limit')
+        self.assertAlmostEqual(hits[0]['wheel_floor_support']['penetration_upper_bound_m'],.00075,places=7)
+        self.assertFalse(hits[0]['wheel_floor_support']['physical_collision_disabled'])
+
+    def test_legacy_zero_and_half_mm_still_block_and_deeper_contact_stays_hard(self):
+        for limit,top in [(0.,.00375),(.0005,.00375),(.001,.0045)]:
+            with self.subTest(limit=limit,top=top):
+                s,m,p=self.scene(top);report,_=run(s,m,p,wheel_floor_overlap_limit_m=limit)
+                self.assertFalse(report['passed'])
+                self.assertGreater(report['hard_intersection_sample_pairs'],0)
+
+    def test_no_permission_for_tool_or_gutter_or_wrong_wheel_identity(self):
+        from rail_environment_preflight import wheel_floor_overlap_evidence
+        from rail_ground_alignment import WHEEL_PATHS
+        wheel=dict(path=WHEEL_PATHS[0],name='S300_Wheel')
+        row=dict(path='/World/Greenhouse/House/Environment/CoverLap_1_6/Mesh',
+                 bounds=np.array([[0,0,0],[1,1,.00375]]))
+        self.assertIsNotNone(wheel_floor_overlap_evidence(wheel,row,.003,.001))
+        for shape,obj in [(dict(path='/World/ActuatedTool/fixed/part_9',name='Wheel'),row),
+                          (dict(wheel,name='frame'),row),
+                          (wheel,dict(row,path='/World/Greenhouse/House/Environment/Gutter/Mesh'))]:
+            self.assertIsNone(wheel_floor_overlap_evidence(shape,obj,.003,.001))
+
+
 def completed(time_s=1.):
     return dict(time_s=time_s, sequence=dict(checkpoint_capture_reason='completed_cycle',
         checkpoint_physics_valid=True, cycle_plans=[dict(status='motion_completed',
@@ -84,6 +133,21 @@ def release_fixture(xyz=(.2, .5, 0)):
 
 
 class RailEnvironmentTests(unittest.TestCase):
+    def test_60hz_rail_checks_actual_motion_and_rejects_period_mismatch(self):
+        stage, manifest, plan = fixture()
+        cube(stage, '/World/Greenhouse/House/Gutter', (0, .5, 0))
+        def check(hz,native_hz):
+            moving=MotionSelfCollision(stage,Kinematics())
+            adapter=RailEnvironmentCheck(stage,manifest,moving,allowed_truss_key='Truss_02')
+            return screen_rail_plan(adapter,plan,manifest,hz=hz,native_hz=native_hz)
+        blocked=check(60,60)
+        self.assertTrue(blocked['complete']);self.assertFalse(blocked['passed'])
+        self.assertGreater(blocked['hard_intersection_sample_pairs'],0)
+        self.assertEqual(blocked['samples'],61)
+        mismatched=check(60,120)
+        self.assertFalse(mismatched['complete']);self.assertFalse(mismatched['passed'])
+        self.assertIn('must match',mismatched['error'])
+
     def test_real_mid_path_gutter_intersection_is_complete_blocked_not_impossible(self):
         s, m, p = fixture(); cube(s, '/World/Greenhouse/House/Gutter', (0, .5, 0))
         report, adapter = run(s, m, p)
@@ -482,6 +546,33 @@ class RailEnvironmentTests(unittest.TestCase):
                 self.assertTrue(report['passed'])
                 self.assertEqual('--released-fruit-collection-diagnostic' in process.call_args.args[0], enabled)
 
+    def test_support_policy_separate_external_forwarding(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as directory:
+            for enabled in (False, True):
+                output=Path(directory)/('support_'+str(enabled)+'.json')
+                def publish(*args,**kwargs):
+                    output.write_text(json.dumps(dict(status='sampled_clear',passed=True,complete=True)))
+                    return SimpleNamespace(returncode=0,stdout='',stderr='')
+                with patch('subprocess.run',side_effect=publish) as process:
+                    audit_external('/assembly',output,plan='/plan',released_fruit_gripper_support_diagnostic=enabled)
+                self.assertEqual('--released-fruit-gripper-support-diagnostic' in process.call_args.args[0],enabled)
+                self.assertNotIn('--released-fruit-collection-diagnostic',process.call_args.args[0])
+
+    def test_same_truss_policy_separate_external_forwarding(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as directory:
+            for enabled in (False,True):
+                output=Path(directory)/('truss_'+str(enabled)+'.json')
+                def publish(*args,**kwargs):
+                    output.write_text(json.dumps(dict(status='sampled_clear',passed=True,complete=True)))
+                    return SimpleNamespace(returncode=0,stdout='',stderr='')
+                with patch('subprocess.run',side_effect=publish)as process:
+                    audit_external('/assembly',output,plan='/plan',released_fruit_same_truss_diagnostic=enabled)
+                self.assertEqual('--released-fruit-same-truss-diagnostic'in process.call_args.args[0],enabled)
+                self.assertNotIn('--released-fruit-collection-diagnostic',process.call_args.args[0])
+                self.assertNotIn('--released-fruit-gripper-support-diagnostic',process.call_args.args[0])
+
     def test_exact_native_released_fruit_passive_carrier_is_optional_diagnostic(self):
         s, m, p, proofs, native = release_fixture()
         strict, _ = run(s, m, p); self.assertFalse(strict['passed'])
@@ -731,6 +822,44 @@ class EnvironmentStateQueryTests(unittest.TestCase):
 
 
 class PreparationEnvironmentTests(unittest.TestCase):
+    def test_full_scope_blocks_obstacle_only_in_approach_and_preserves_prefix(self):
+        stage, manifest, _ = fixture()
+        cube(stage, '/World/Greenhouse/House/ApproachObstacle', (3., .65, 0), .1)
+        class ApproachKinematics(Kinematics):
+            def fk(self, q):
+                transform = super().fk(q); transform[1, 3] += q[0]
+                return transform
+        plan = self.plan()
+        plan['phases'][3]['waypoint_q'] = [[0.]*7, [1.]+[0.]*6]
+        plan['phases'][4]['waypoint_q'] = [[1.]+[0.]*6]*2
+        original = copy.deepcopy(plan)
+        reports = {}
+        for scope in ('preparation', 'full'):
+            moving = MotionSelfCollision(stage, ApproachKinematics())
+            adapter = RailEnvironmentCheck(stage, manifest, moving,
+                allowed_truss_key='Truss_02', scope=scope)
+            reports[scope] = screen_rail_plan(adapter, plan, manifest,
+                scope=scope, hz=60, native_hz=60)
+        self.assertTrue(reports['preparation']['passed'])
+        self.assertTrue(reports['full']['complete'])
+        self.assertFalse(reports['full']['passed'])
+        self.assertFalse(reports['full']['eligible_for_native_execution'])
+        self.assertEqual(reports['full']['all_hard_pair_counts'][0]['phase_sample_pairs'].keys(), {'approach'})
+        self.assertEqual(plan, original)
+
+    def test_full_scope_clear_coarse_result_is_not_native_certificate(self):
+        stage, manifest, _ = fixture()
+        cube(stage, '/World/Greenhouse/House/Far', (50, 50, 0))
+        for hz in (4, 60):
+            moving = MotionSelfCollision(stage, Kinematics())
+            adapter = RailEnvironmentCheck(stage, manifest, moving,
+                allowed_truss_key='Truss_02', scope='full')
+            report = screen_rail_plan(adapter, self.plan(), manifest,
+                scope='full', hz=hz, native_hz=60)
+            self.assertTrue(report['passed']); self.assertTrue(report['complete'])
+            self.assertEqual(report['eligible_for_native_execution'], hz == 60)
+            self.assertIn('close', report['selected_phases'])
+
     def plan(self):
         return dict(phases=[dict(name=name, duration_s=duration, waypoint_q=[[0.]*7]*2,
                                 end_gap_m=gap)
@@ -738,13 +867,13 @@ class PreparationEnvironmentTests(unittest.TestCase):
                         ('prepare_joint_branch', 1., .044), ('prepare_open', .25, .096),
                         ('approach', 1., .096), ('close', 1., .028)]])
 
-    def screen(self, stage, manifest, plan=None, hz=120, **kwargs):
+    def screen(self, stage, manifest, plan=None, hz=120, native_hz=120, **kwargs):
         if not stage.GetPrimAtPath('/World/Greenhouse/House/DistantObstacle'):
             cube(stage, '/World/Greenhouse/House/DistantObstacle', (50., 50., 0.))
         moving = MotionSelfCollision(stage, Kinematics())
         adapter = RailEnvironmentCheck(stage, manifest, moving,
             allowed_truss_key='Truss_02', scope='preparation', **kwargs)
-        return screen_preparation_plan(adapter, self.plan() if plan is None else plan, manifest, hz=hz), adapter
+        return screen_preparation_plan(adapter, self.plan() if plan is None else plan, manifest, hz=hz, native_hz=native_hz), adapter
 
     def test_whole_prefix_before_approach_has_exact_all_phase_timestamps(self):
         stage, manifest, _ = fixture()
@@ -854,6 +983,19 @@ class PreparationEnvironmentTests(unittest.TestCase):
         self.assertFalse(report['strict_native_period_sampling'])
         self.assertFalse(report['eligible_for_native_execution'])
         self.assertEqual(report['samples'], 5+9+3)
+
+    def test_60hz_requires_explicit_matching_native_period(self):
+        stage, manifest, _ = fixture()
+        diagnostic, _ = self.screen(stage, manifest, hz=60)
+        self.assertTrue(diagnostic['passed'])
+        self.assertFalse(diagnostic['eligible_for_native_execution'])
+        report, _ = self.screen(stage, manifest, hz=60, native_hz=60)
+        self.assertTrue(report['passed']); self.assertTrue(report['complete'])
+        self.assertTrue(report['strict_native_period_sampling'])
+        self.assertTrue(report['eligible_for_native_execution'])
+        self.assertEqual(report['samples'],31+61+16)
+        self.assertEqual(report['last_sample_time_s'],1.75)
+        self.assertEqual(report['native_hz'],60)
 
     def test_prefix_query_exhaustion_keeps_unknown_even_after_first_hit(self):
         stage, manifest, _ = fixture()

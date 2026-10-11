@@ -33,6 +33,7 @@ p.add_argument('--approach-pitch-deg',type=float,default=0.,help='Fixed entry pi
 p.add_argument('--approach-yaw-offset-deg',type=float,default=0.,help='Explicit horizontal entry direction offset about world +Z, relative to robot-to-target direction')
 p.add_argument('--approach-yaw-mode',choices=['robot-radial','truss-axis'],default='robot-radial',help='truss-axis fits attached-fruit XY direction; horizontal yaw only, no extra radial offset')
 p.add_argument('--truss-axis-min-fruits',type=int,default=2,help='Opt-in retain the last verified longitudinal yaw when fewer attached fruit remain; default historical two-fruit fit')
+p.add_argument('--truss-entry-yaw-offset-deg',type=float,default=0.,help='Explicit +/-90 degree horizontal deviation from truss direction to avoid the own stem; full path checks still required')
 p.add_argument('--sparse-entry-duration-scale',type=float,default=1.,help='Opt-in slower approach/withdraw for a sparse remainder retaining its longitudinal yaw; preserves all waypoint positions/rotations and physical properties')
 p.add_argument('--entry-only',action='store_true',help='Horizontal-ready approach/hold/return demonstration, with open jaws; not a harvest attempt')
 p.add_argument('--harvest-profile',choices=['legacy','belt_spin_release','belt_open_close_cycle'],default='legacy',help='Opt-in belt_spin_release or continuous belt_open_close_cycle; native breakage only')
@@ -54,10 +55,13 @@ p.add_argument('--belt-off-control',action='store_true',help='Belt-spin diagnost
 p.add_argument('--whole-truss',action='store_true',help='Repeat the existing belt cycle on measured remaining fruit in one native scene; no reset')
 p.add_argument('--harvest-group-policy',type=Path,help='SIM-GT ripe-group policy JSON: count only eligible fruit in the existing belt footprint; stop below its minimum; legacy selection remains available without this flag')
 p.add_argument('--released-fruit-ground-diagnostic','--released-fruit-collection-diagnostic',dest='released_fruit_ground_diagnostic',action='store_true',help='Continue active harvesting after exact native-detached fruit hits verified floor or passive S300 collection deck; preserve raw impact violations as unverified collection diagnostics')
+p.add_argument('--released-fruit-gripper-support-diagnostic',action='store_true',help='Record native-detached fruit impacts on exact gripper lower decks and carriage saddles without stopping; attached fruit and other pairs retain their contact limits')
+p.add_argument('--released-fruit-same-truss-diagnostic',action='store_true',help='After verified native release, record own-truss fruit/branch impacts without stopping; keep physical collisions and other-truss/main-stem/robot guards')
 p.add_argument('--rail-to-y',type=float,help='World-Y rail station: actuate the derived physical base joint before harvest; idle mode tests only rail travel')
 p.add_argument('--rail-speed-m-s',type=float,default=.08,help='Smoothstep peak command rail speed, within (0,.2]m/s')
 p.add_argument('--verify-rail-environment-preflight',action='store_true',help='Opt-in full frozen source/checkpoint farm collision screen of the initial physical rail_move at120Hz, before native initialization; native contact guards remain separate')
 p.add_argument('--verify-preparation-environment-preflight',action='store_true',help='Opt-in120Hz farm screen of every initial phase before approach, including physically static leaf obstacles; native contact guards remain separate')
+p.add_argument('--verify-full-environment-preflight',action='store_true',help='Opt-in full nominal farm collision check including approach/grasp/withdrawal; current truss tool contact only, actual physics guards retained')
 p.add_argument('--horizontal-ready-normalize-turns',action='store_true',help='Opt-in nearest admissible2pi-equivalent staging joint angles before fixed-pose approach IK; same FK endpoint, exact reverse return, existing collision audits required')
 p.add_argument('--diagnostic-motion-plan',type=Path,help='Import one independently audited OMPL preparation/reverse route into the existing initial-cycle runner; requires exact fresh model and one-cycle budget')
 p.add_argument('--native-tool-collision-cache',type=Path,help='Opt-in exact existing native cooked tool pieces for offline self-collision audits; verified source hashes and all pieces are required, native physics stays unchanged')
@@ -154,6 +158,9 @@ if not 0<=a.single_fruit_when_remaining<=3:p.error('Individual sparse-fruit thre
 if a.harvest_group_policy is not None and (not a.whole_truss or a.truss_order!='highest-first' or a.approach_yaw_mode!='truss-axis' or a.single_fruit_when_remaining or a.split_unproductive_pairs or a.near_trusses_metadata is not None or a.last_fruit_height_offset_mm is not None or a.last_fruit_depth_mm is not None or a.last_fruit_grasp_sway_mm or a.grasp_lateral_offset_mm):
     p.error('Ripe-group pilot requires one exact truss, whole-truss, highest-first, truss-axis; disable individual cleanup, lateral offsets and near-truss continuation')
 if not 2<=a.truss_axis_min_fruits<=10:p.error('Truss-axis fitting minimum must be 2..10 fruit')
+if (not math.isfinite(a.truss_entry_yaw_offset_deg) or abs(a.truss_entry_yaw_offset_deg)>90 or
+        (a.truss_entry_yaw_offset_deg and a.approach_yaw_mode!='truss-axis')):
+    p.error('--truss-entry-yaw-offset-deg requires truss-axis and finite +/-90 degrees')
 if not math.isfinite(a.sparse_entry_duration_scale) or not 1<=a.sparse_entry_duration_scale<=8:p.error('Sparse entry duration scale must be finite within 1..8')
 if a.verify_background_leaf_enclosures and not a.verify_leaf_contact_after_step:p.error('Background leaf enclosure check requires solved leaf verification')
 if a.capture_leaf_colliders and not a.verify_leaf_contact_after_step:p.error('Native leaf cooking capture requires solved leaf geometry reader')
@@ -207,8 +214,8 @@ if any(not math.isfinite(v) or v<.5 for v in (a.fruit_contact_limit_mm,a.fruit_f
 if (a.fruit_contact_limit_mm!=a.contact_limit_mm or a.fruit_fruit_limit_mm!=a.contact_limit_mm) and (a.contact_backend!='callback' or a.num_envs!=1 or a.replicate):
     p.error('Fruit contact override requires exact native callback mapping in one unreplicated environment')
 if a.scene_ccd and a.device!='cpu':p.error('--scene-ccd is validated here only for CPU trials')
-if (a.verify_rail_environment_preflight or a.verify_preparation_environment_preflight) and (a.hz!=120 or a.num_envs!=1 or a.replicate):
-    p.error('Rail environment preflight currently requires one unreplicated120Hz environment')
+if (a.verify_rail_environment_preflight or a.verify_preparation_environment_preflight or a.verify_full_environment_preflight) and (a.hz not in (60,120) or a.num_envs!=1 or a.replicate):
+    p.error('Rail environment preflight requires one unreplicated60/120Hz environment')
 if a.entry_only and (a.mode!='harvest' or a.preparation!='horizontal_ready'):
     p.error('--entry-only requires --mode harvest --preparation horizontal_ready')
 if a.harvest_profile in ('belt_spin_release','belt_open_close_cycle') and (a.mode!='harvest' or a.preparation!='horizontal_ready' or a.entry_only):
@@ -271,6 +278,8 @@ try:
     from motion_assets import ROBOT,sha
 
     manifest=json.loads((a.assembly/'motion_manifest.json').read_text())
+    if manifest.get('elastic_neighbors') and (a.num_envs!=1 or a.replicate or a.resume_native_checkpoint or a.plant_dynamics!='full' or a.isolate_background):
+        raise ValueError('Neighbor comparison requires one full world, no replication/resume/isolation')
     scene=a.assembly/'scene.usda'
     if sha(scene)!=manifest['scene_sha256']:raise ValueError('Scene hash mismatch')
     from compact_motion_assets import verify_compact_dependencies
@@ -413,6 +422,9 @@ try:
                     initial_attempt_counts[fruit_name]=initial_attempt_counts.get(fruit_name,0)+1
     from truss_sequence import truss_fruits,select_group
     sequence_fruits=truss_fruits(manifest);sequence_selector=select_group;near_truss_scope=None
+    if (manifest.get('plant_interaction_variant',{}).get('mode')=='target_truss_and_own_stem_only'
+            and a.near_trusses_metadata is not None):
+        raise ValueError('Target-only collision assets require one exact target truss per active window; broader near-truss selection would include disabled colliders')
     if a.near_trusses_metadata is not None:
         from row_harvest_targets import scoped_trusses,eligible_truss_fruits,select_scoped_group,group_truss_fruits
         near_truss_scope=scoped_trusses(manifest,json.loads(a.near_trusses_metadata.read_text()))
@@ -423,9 +435,11 @@ try:
     reference_center=np.array(manifest.get('grasp_reference',manifest['target'])['center'])
     initial_axis=None
     if a.approach_yaw_mode=='truss-axis':
-        from truss_sequence import truss_fruits,horizontal_truss_direction
+        from truss_sequence import truss_fruits,horizontal_truss_direction,entry_direction
         axis_fruits=truss_fruits(manifest)
-        axis_hint=reference_center-kin.world[:3,3]
+        # Entry happens at the planned rail station. Using the departure base
+        # can reverse the PCA axis when the next truss is farther along the row.
+        axis_hint=reference_center-planning_kin.world[:3,3]
         if resume_context is not None and resume_context.get('checkpoint_kind')!='canonical_conditioned_start':
             from resume_axis import resolve_resume_axis
             previous_axis,axis_provenance=resolve_resume_axis(resume_context,a.resume_native_checkpoint)
@@ -444,9 +458,10 @@ try:
         group_policy=load_policy(a.harvest_group_policy,a.assembly,sequence_fruits)
         shutil.copyfile(a.harvest_group_policy,a.output/'harvest_group_policy.json')
         def group_direction(key,fruits,breaks,paths,poses):
-            return horizontal_truss_direction(fruits,breaks,paths,poses,
+            natural_axis=horizontal_truss_direction(fruits,breaks,paths,poses,
                 last_axis['direction_world'],fallback_direction=last_axis['direction_world'],
-                min_attached_fruits=a.truss_axis_min_fruits)['direction_world']
+                min_attached_fruits=a.truss_axis_min_fruits)
+            return entry_direction(natural_axis,a.truss_entry_yaw_offset_deg)
         group_policy_selector=HarvestGroupSelector(group_policy,group_direction,
             depth_m=a.grasp_depth_mm/1000,
             height_offset_m=manifest['grasp_reference'].get('height_offset_m',0.)+a.grasp_height_offset_mm/1000,
@@ -462,6 +477,7 @@ try:
             a.grasp_depth_mm,a.later_grasp_depth_mm,prior_completed_native_cycles)
     if group_policy_selector is not None:group_policy_selector.depth_m=initial_grasp_depth_mm/1000
     def make_plan(translation=(0.,0.,0.),axis=None,move_rail_first=False,grasp_depth_mm=None,depth_evidence=None,grasp_height_mm=None,last_aim_evidence=None):
+        from truss_sequence import entry_direction
         effective_depth_mm=initial_grasp_depth_mm if grasp_depth_mm is None else grasp_depth_mm
         effective_height_mm=a.grasp_height_offset_mm if grasp_height_mm is None else grasp_height_mm
         result,metadata=plan_motion(planning_kin,reference_center,start=initial_robot_q,preparation=a.preparation,
@@ -482,11 +498,14 @@ try:
             horizontal_ready_connector=a.horizontal_ready_connector,
             horizontal_ready_seed_index=a.horizontal_ready_seed_index,
             horizontal_ready_normalize_turns=a.horizontal_ready_normalize_turns,
-            approach_direction_world=axis['direction_world'] if axis is not None else None)
+            approach_direction_world=entry_direction(axis,a.truss_entry_yaw_offset_deg) if axis is not None else None)
         if a.later_grasp_depth_mm is not None:
             metadata['grasp_depth_schedule']=depth_evidence if depth_evidence is not None else initial_depth_evidence
         if last_aim_evidence is not None:metadata['last_remaining_fruit_aim']=last_aim_evidence
         if axis is not None:metadata['truss_axis']=axis
+        if axis is not None and a.truss_entry_yaw_offset_deg:
+            metadata['truss_entry_yaw_offset_deg']=a.truss_entry_yaw_offset_deg
+            metadata['entry_orientation_policy']='explicit_world_z_offset_from_truss_axis'
         if a.sparse_entry_duration_scale!=1. and axis is not None and axis.get('fallback_reason') in ('insufficient_attached_fruits_for_longitudinal_axis','fewer_than_two_attached_fruits'):
             from motion_timing import retime_entry
             result,metadata=retime_entry(result,metadata,a.sparse_entry_duration_scale)
@@ -609,22 +628,41 @@ try:
             from rail_environment_preflight import audit_external_rail
             print('[MOTION] checking initial physical rail path against farm obstacles',flush=True)
             rail_environment_report=audit_external_rail(a.assembly,a.output/'rail_environment_preflight.json',
-                plan=a.output/'plan.json',checkpoint=a.resume_native_checkpoint,hz=a.hz,
+                plan=a.output/'plan.json',checkpoint=a.resume_native_checkpoint,hz=a.hz,native_hz=a.hz,
                 allowed_truss_key=None if initial_sequence_group is None else initial_sequence_group.get('truss_key'),
                 released_fruit_collection_diagnostic=a.released_fruit_ground_diagnostic,
+                released_fruit_gripper_support_diagnostic=a.released_fruit_gripper_support_diagnostic,
+                released_fruit_same_truss_diagnostic=a.released_fruit_same_truss_diagnostic,
                 allow_attachment_transfer=a.allow_resume_attachment_transfer,
+                wheel_floor_overlap_limit_m=min(.001,a.contact_limit_mm/1000),
                 native_tool_cache=a.native_tool_collision_cache)
             print('[MOTION] rail environment',rail_environment_report['status'],flush=True)
         if a.verify_preparation_environment_preflight:
             from rail_environment_preflight import audit_external_rail
             print('[MOTION] checking initial preparation against the full farm',flush=True)
             audit_external_rail(a.assembly,a.output/'preparation_environment_preflight.json',
-                plan=a.output/'plan.json',checkpoint=a.resume_native_checkpoint,hz=a.hz,
+                plan=a.output/'plan.json',checkpoint=a.resume_native_checkpoint,hz=a.hz,native_hz=a.hz,
                 allowed_truss_key=None if initial_sequence_group is None else initial_sequence_group.get('truss_key'),
                 released_fruit_collection_diagnostic=a.released_fruit_ground_diagnostic,
+                released_fruit_gripper_support_diagnostic=a.released_fruit_gripper_support_diagnostic,
+                released_fruit_same_truss_diagnostic=a.released_fruit_same_truss_diagnostic,
                 allow_attachment_transfer=a.allow_resume_attachment_transfer,
+                wheel_floor_overlap_limit_m=min(.001,a.contact_limit_mm/1000),
                 native_tool_cache=a.native_tool_collision_cache,
                 scope='preparation',max_distance_queries=2000000)
+        if a.verify_full_environment_preflight:
+            from rail_environment_preflight import audit_external_rail
+            print('[MOTION] checking all commanded phases against the full farm',flush=True)
+            audit_external_rail(a.assembly,a.output/'full_environment_preflight.json',
+                plan=a.output/'plan.json',checkpoint=a.resume_native_checkpoint,hz=a.hz,native_hz=a.hz,
+                allowed_truss_key=None if initial_sequence_group is None else initial_sequence_group.get('truss_key'),
+                released_fruit_collection_diagnostic=a.released_fruit_ground_diagnostic,
+                released_fruit_gripper_support_diagnostic=a.released_fruit_gripper_support_diagnostic,
+                released_fruit_same_truss_diagnostic=a.released_fruit_same_truss_diagnostic,
+                allow_attachment_transfer=a.allow_resume_attachment_transfer,
+                wheel_floor_overlap_limit_m=min(.001,a.contact_limit_mm/1000),
+                native_tool_cache=a.native_tool_collision_cache,
+                scope='full',max_distance_queries=4000000)
         if a.mode=='harvest':
             print('[MOTION] fixed entry pitch',planning['pitch_deg'],'yaw offset',planning['yaw_offset_deg'],
                   'world direction',planning['approach_direction_world'],flush=True)
@@ -904,6 +942,10 @@ try:
     if initialization_capture['enabled']:
         initialization_capture['preload_command']=dict(value=preload.tolist(),clock=initialization_clock(),
             source='Exact recorded runner set_dof_actuation_forces command after native initialization')
+    from neighbor_plant_runtime import initialize as initialize_neighbors
+    neighbor_handles,neighbor_records=initialize_neighbors(view,manifest,arr=arr,tensor=tensor,indices=ids)
+    if neighbor_records:
+        (a.output/'neighbor_initialization.json').write_text(json.dumps(neighbor_records,indent=2))
     if warmup is not None:
         warmup.restore()
         (a.output/'warmup.json').write_text(json.dumps(warmup.metadata,indent=2))
@@ -957,7 +999,7 @@ try:
         # not be removed by the measured old-robot state restore.
         warmup_events=[e for e in (contact_buffer.materialize() if contact_buffer is not None else events) if e['t']==0.]
         violations=[e for e in warmup_events if e['separation_m'] < -a.contact_limit_mm/1000 and
-            any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))]
+            any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/','/ElasticNeighbors/'))]
         (a.output/'pre_restore_initialization.json').write_text(json.dumps(dict(
             schema='s300-pre-restore-initialization-v1',state_scope='pre_restore',
             timestamp_scope='Native initialization warmup; before measured old state restore',
@@ -1018,7 +1060,7 @@ try:
             scene_path=scene,native_scene_path=native_scene,body_paths=body_paths,poses=initial,
             timestamp_s=0.,effective_hz=1/effective_dt,output=a.output/'native_tool_cooked_capture.json')
     from harvest_contact_scope import HarvestContactScope,collection_colliders_from_stage
-    contact_scope=HarvestContactScope(manifest,collection_colliders_from_stage(stage,manifest),enabled=a.released_fruit_ground_diagnostic,stage=stage)
+    contact_scope=HarvestContactScope(manifest,collection_colliders_from_stage(stage,manifest),enabled=a.released_fruit_ground_diagnostic,stage=stage,gripper_support_enabled=a.released_fruit_gripper_support_diagnostic,same_truss_enabled=a.released_fruit_same_truss_diagnostic)
     from passive_collection_surfaces import save_imported_source as save_passive_surface_source
     passive_source_provenance=save_passive_surface_source(a.output)
     (a.output/'passive_surface_source_provenance.json').write_text(
@@ -1044,7 +1086,7 @@ try:
         events.extend(initial_tensor_events)
     initialization_events=[e for e in (contact_buffer.materialize() if contact_buffer is not None else events) if e['t']==0.]
     initialization_invalid=[e for e in initialization_events if e['separation_m'] < -a.contact_limit_mm/1000 and
-        any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))]
+        any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/','/ElasticNeighbors/'))]
     if tensor_contacts is not None and tensor_contacts.last_summary.get('raw_minimum_separation_m') is not None:
         if tensor_contacts.last_summary['raw_minimum_separation_m'] < -a.contact_limit_mm/1000 and not initialization_invalid:
             initialization_invalid=[dict(raw_sensor_summary=tensor_contacts.last_summary)]
@@ -1185,6 +1227,7 @@ try:
             if time.perf_counter()-waiting>a.gate_timeout:raise TimeoutError('CPU pool start barrier timed out')
             time.sleep(.05)
     started=time.perf_counter()
+    rail_arrival_feedback=None
     cycle_open_feedback=None;cycle_final_open_feedback=None;entry_open_feedback=None;preparation_open_feedback={}
     last_display=-float('inf')
     last_publish=-float('inf')
@@ -1349,10 +1392,19 @@ try:
                 if offset<duration:
                     phase=label;u=offset/duration;u=u*u*(3-2*u)
                     f=u*(len(qs)-1);lo=min(int(f),len(qs)-2)
-                    qcommand[0,rids]=qs[lo]*(1-(f-lo))+qs[lo+1]*(f-lo)
+                    # Rail-only continuation holds the proven loaded lift/arm
+                    # drive targets. Replacing them with measured q would drop
+                    # the inherited gravity compensation when rail_move begins.
+                    if not (route_start_context is not None and a.mode=='idle'):
+                        qcommand[0,rids]=qs[lo]*(1-(f-lo))+qs[lo+1]*(f-lo)
                     if railid is not None:
                         qcommand[0,railid]=rail_command(planning['phases'][phase_index],u)
                     gap=previous_gap+(nextgap-previous_gap)*u;speed=(lvel,rvel)
+                    if rail_destination is not None and label!='rail_move' and rail_arrival_feedback is None:
+                        from rail_motion import rail_arrival_check
+                        rail_arrival_feedback=rail_arrival_check(q[:,railid],qcommand[0,railid])
+                        rail_arrival_feedback.update(t=t,phase=label,checked_before_motion_command=True)
+                        if not rail_arrival_feedback['reached']:stop_reason='rail_arrival_not_reached'
                     opening=planning.get('preparation_opening')
                     if opening and label in opening['feedback_before_phases'] and label not in preparation_open_feedback:
                         feedback=cycle_opening_check(.044+q[:,jawids[1]]-q[:,jawids[0]],
@@ -1382,7 +1434,7 @@ try:
                         speed=(lvel*factor,rvel*factor)
                     break
                 offset-=duration;previous_gap=nextgap
-        if stop_reason in ('cycle_reopen_not_reached','cycle_final_open_not_reached','entry_open_not_reached'):break
+        if stop_reason in ('rail_arrival_not_reached','cycle_reopen_not_reached','cycle_final_open_not_reached','entry_open_not_reached'):break
         if a.num_envs>1:qcommand[1:]=qcommand[0]
         if a.belt_off_control:speed=(0.,0.)
         if not (route_start_context is not None and a.mode=='idle'):
@@ -1421,14 +1473,14 @@ try:
         # Report all contacts; stop on robot or active-target gross penetration.
         invalid=([e for e in step_events if contact_guard.invalid(e)] if contact_guard else
                  [e for e in step_events if e['separation_m'] < -a.contact_limit_mm/1000 and
-                  any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/'))])
+                  any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/','/ElasticNeighbors/'))])
         raw_conditioning_invalid=None
         if foliage_conditioner is not None:
             # Passive compliant leaves must remain in the unchanged strict
             # final guard even though the historical active-root guard did
             # not know their new exact namespace.
             invalid=[e for e in step_events if e['separation_m'] < -a.contact_limit_mm/1000 and
-                (any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/')) or
+                (any(x in e['a'] or x in e['b'] for x in ('/ActuatedTool/','/HarvestRobot/','/ElasticTarget/','/ElasticNeighbors/')) or
                  e['a'] in foliage_conditioner.leaves or e['b'] in foliage_conditioner.leaves)]
             raw_conditioning_invalid=invalid.copy()
             conditioning_step=foliage_conditioner.before_geometry(current_time,invalid,breaks,
@@ -1583,7 +1635,7 @@ try:
                  entry_open_feedback=entry_open_feedback,preparation_open_feedback=preparation_open_feedback,
                  preparation_opening=a.preparation_opening,preparation_gap_mm=a.preparation_gap_mm,
                  contact_lifecycle_scope=contact_scope.summarize(breaks),
-                 rail_destination=rail_destination,
+                 rail_destination=rail_destination,rail_arrival_feedback=rail_arrival_feedback,
                  native_resume=resume_validation,
                  native_route_start=route_start_validation,
                  route_start_source=None if route_start_context is None else route_start_context['report'],
@@ -1638,6 +1690,16 @@ try:
                  contact_events=len(events),min_contact_separation_m=min((e['separation_m'] for e in events),default=None),
                  limitations=['Not a validated grasp/detach detector','No real fruit damage calibration',
                               'Motion diagnostic; dynamic belt-loop deformation not modeled'])
+    if manifest.get('plant_interaction_variant'):
+        summary['plant_interaction_variant']=manifest['plant_interaction_variant']
+    if neighbor_records:
+        for (neighbor_view,_),record in zip(neighbor_handles,neighbor_records):
+            record['final_q']=arr(neighbor_view.get_dof_positions())[0].tolist()
+            record['final_qvel']=arr(neighbor_view.get_dof_velocities())[0].tolist()
+        summary['elastic_neighbors']=neighbor_records
+        summary['native_total_plant_dofs']=plant.max_dofs+sum(x['dof_count'] for x in neighbor_records)
+        summary['neighbor_checkpoint_continuation_supported']=False
+        (a.output/'neighbor_dynamics.json').write_text(json.dumps(neighbor_records,indent=2))
     if sequence is not None and a.whole_truss:
         from selected_cycle_evidence import build_selected_cycle_evidence
         selected_evidence=build_selected_cycle_evidence(

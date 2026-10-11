@@ -3,6 +3,17 @@ import copy
 import numpy as np
 
 
+def rail_arrival_check(measured_q, target_q, *, tolerance_m=.002):
+    """Manipulation starts only after measured arrival, never on elapsed time alone."""
+    actual=np.asarray(measured_q,float).reshape(-1)
+    if not len(actual) or not np.isfinite(np.r_[actual,target_q,tolerance_m]).all() or tolerance_m<=0:
+        raise ValueError('Finite measured rail coordinates and positive arrival tolerance required')
+    error=np.abs(actual-float(target_q))
+    return dict(actual_q_m=actual.tolist(),target_q_m=float(target_q),tolerance_m=float(tolerance_m),
+        absolute_error_m=error.tolist(),reached=bool(np.all(error<=tolerance_m)),
+        scope='Measured rail DOF at rail-to-manipulation boundary; not a collision tolerance')
+
+
 def rail_destination(manifest, station_y_m, speed_m_s=.08):
     rail=manifest.get('rail')
     if not rail:raise ValueError('Rail motion requires a derived physical rail assembly')
