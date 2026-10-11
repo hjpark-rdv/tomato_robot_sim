@@ -1,0 +1,1220 @@
+{
+  "schema": "s300-mujoco-315-smoke-v1",
+  "root": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke",
+  "results": [
+    {
+      "experiment": "idle315_discrete60",
+      "mode": "idle",
+      "hz": 60,
+      "repeat": 0,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.24264320731163025,
+      "reset_s": 0.006778856739401817,
+      "simulated_s": 4.999999999999988,
+      "loop_wall_s": 1.558238023892045,
+      "physics_wall_s": 1.0443256311118603,
+      "adapter_wall_s": 0.05941803753376007,
+      "realtime_factor": 3.208752400683548,
+      "process_cpu_percent": 99.99270760369707,
+      "rss_mib": 691.95703125,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": null,
+      "valid_physics": true,
+      "active_tool_penetration_m": 0.0,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.0,
+      "max_contact_force_n": 0.0,
+      "max_belt_contact_force_n": 0.0,
+      "worst_pair": {
+        "t": 0.0,
+        "geom1": "g0115",
+        "geom2": "g0196",
+        "source1": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+        "source2": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+        "penetration_m": 0.00022795629095559823
+      },
+      "fruit_max_displacement_m": 0.03310329610882745,
+      "breaks": [],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "1mm criterion retained. Diagnostic continuation after violation, abort at 10mm; no invalid run is harvest success.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "states_sha256": "6e2fd5031cc24ade661856cec343c94f8e631c35f9e289d9befe19553e2a783d",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.00022795629095559823,
+        "released_penetration_m": 0.0,
+        "active_tool_force_n": 0.0,
+        "released_tool_force_n": 0.0,
+        "largest_tool_force": null
+      }
+    },
+    {
+      "experiment": "inward60",
+      "mode": "inward",
+      "hz": 60,
+      "repeat": 0,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.29147240705788136,
+      "reset_s": 0.007378986105322838,
+      "simulated_s": 36.799999999999194,
+      "loop_wall_s": 12.167490439489484,
+      "physics_wall_s": 7.963032029569149,
+      "adapter_wall_s": 0.43810570053756237,
+      "realtime_factor": 3.0244527565491333,
+      "process_cpu_percent": 99.97852825525135,
+      "rss_mib": 704.75,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": {
+        "t": 24.216666666666665,
+        "phase": "close",
+        "max_penetration_m": 0.0016910086856301246
+      },
+      "valid_physics": false,
+      "active_tool_penetration_m": 0.0027589258350226376,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.06547335076813637,
+      "max_contact_force_n": 7.1102474095714205,
+      "max_belt_contact_force_n": 7.1102474095714205,
+      "worst_pair": {
+        "t": 35.583333333333336,
+        "geom1": "g0166",
+        "geom2": "g0627",
+        "source1": "/World/ElasticTarget/Truss_00_Pedicel_distal_06_0/Collider",
+        "source2": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "penetration_m": 0.0027589258350226376
+      },
+      "fruit_max_displacement_m": 1.2342844408915687,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_03",
+          "solver_time_s": 24.9,
+          "phase": "close",
+          "constraint_force_n": 0.5933306482680444,
+          "passive_torque_nm": 0.00811044425158826,
+          "cause": "torque",
+          "release_effective_time_s": 24.916666666666533
+        },
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 24.9,
+          "phase": "close",
+          "constraint_force_n": 0.5000450364815701,
+          "passive_torque_nm": 0.008102111919289884,
+          "cause": "torque",
+          "release_effective_time_s": 24.916666666666533
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "solver_time_s": 25.0,
+          "phase": "close",
+          "constraint_force_n": 0.13018950895337547,
+          "passive_torque_nm": 0.008287413798203571,
+          "cause": "torque",
+          "release_effective_time_s": 25.016666666666527
+        },
+        {
+          "name": "Truss_00_Fruit_09",
+          "solver_time_s": 25.05,
+          "phase": "close",
+          "constraint_force_n": 0.0839211425753512,
+          "passive_torque_nm": 0.010412002675227343,
+          "cause": "torque",
+          "release_effective_time_s": 25.066666666666524
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "solver_time_s": 25.066666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.059146775004967914,
+          "passive_torque_nm": 0.00871429429941064,
+          "cause": "torque",
+          "release_effective_time_s": 25.08333333333319
+        },
+        {
+          "name": "Truss_00_Fruit_11",
+          "solver_time_s": 25.066666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.12208353613280451,
+          "passive_torque_nm": 0.012826861634961988,
+          "cause": "torque",
+          "release_effective_time_s": 25.08333333333319
+        },
+        {
+          "name": "Truss_00_Fruit_08",
+          "solver_time_s": 25.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.26843453649343557,
+          "passive_torque_nm": 0.012033199747428136,
+          "cause": "torque",
+          "release_effective_time_s": 25.099999999999856
+        },
+        {
+          "name": "Truss_00_Fruit_10",
+          "solver_time_s": 25.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.2466270912992971,
+          "passive_torque_nm": 0.015757878902905555,
+          "cause": "torque",
+          "release_effective_time_s": 25.099999999999856
+        },
+        {
+          "name": "Truss_00_Fruit_01",
+          "solver_time_s": 36.166666666666664,
+          "phase": "cycle_open_final",
+          "constraint_force_n": 0.14895680800425964,
+          "passive_torque_nm": 0.008462280267320672,
+          "cause": "torque",
+          "release_effective_time_s": 36.18333333333256
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "1mm criterion retained. Diagnostic continuation after violation, abort at 10mm; no invalid run is harvest success.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "883f5c2fad909f4d70e11ec91998e637c69679cca96a115d2a021e692842af0e",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.0027589258350226376,
+        "released_penetration_m": 0.06547335076813637,
+        "active_tool_force_n": 7.1102474095714205,
+        "released_tool_force_n": 5.671739465609027,
+        "largest_tool_force": {
+          "t": 25.583333333333332,
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L_belt"
+          ],
+          "force_n": 7.1102474095714205,
+          "penetration_m": 0.0,
+          "released": false
+        }
+      }
+    },
+    {
+      "experiment": "inward60",
+      "mode": "inward",
+      "hz": 60,
+      "repeat": 1,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.29147240705788136,
+      "reset_s": 0.007208388298749924,
+      "simulated_s": 36.799999999999194,
+      "loop_wall_s": 12.138565132394433,
+      "physics_wall_s": 7.960165241733193,
+      "adapter_wall_s": 0.437244089320302,
+      "realtime_factor": 3.0316598048141863,
+      "process_cpu_percent": 99.98074874279666,
+      "rss_mib": 711.1640625,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": {
+        "t": 24.216666666666665,
+        "phase": "close",
+        "max_penetration_m": 0.0016910086856301246
+      },
+      "valid_physics": false,
+      "active_tool_penetration_m": 0.0027589258350226376,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.06547335076813637,
+      "max_contact_force_n": 7.1102474095714205,
+      "max_belt_contact_force_n": 7.1102474095714205,
+      "worst_pair": {
+        "t": 35.583333333333336,
+        "geom1": "g0166",
+        "geom2": "g0627",
+        "source1": "/World/ElasticTarget/Truss_00_Pedicel_distal_06_0/Collider",
+        "source2": "/World/ActuatedTool/L_belt/PrototypeTread",
+        "penetration_m": 0.0027589258350226376
+      },
+      "fruit_max_displacement_m": 1.2342844408915687,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_03",
+          "solver_time_s": 24.9,
+          "phase": "close",
+          "constraint_force_n": 0.5933306482680444,
+          "passive_torque_nm": 0.00811044425158826,
+          "cause": "torque",
+          "release_effective_time_s": 24.916666666666533
+        },
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 24.9,
+          "phase": "close",
+          "constraint_force_n": 0.5000450364815701,
+          "passive_torque_nm": 0.008102111919289884,
+          "cause": "torque",
+          "release_effective_time_s": 24.916666666666533
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "solver_time_s": 25.0,
+          "phase": "close",
+          "constraint_force_n": 0.13018950895337547,
+          "passive_torque_nm": 0.008287413798203571,
+          "cause": "torque",
+          "release_effective_time_s": 25.016666666666527
+        },
+        {
+          "name": "Truss_00_Fruit_09",
+          "solver_time_s": 25.05,
+          "phase": "close",
+          "constraint_force_n": 0.0839211425753512,
+          "passive_torque_nm": 0.010412002675227343,
+          "cause": "torque",
+          "release_effective_time_s": 25.066666666666524
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "solver_time_s": 25.066666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.059146775004967914,
+          "passive_torque_nm": 0.00871429429941064,
+          "cause": "torque",
+          "release_effective_time_s": 25.08333333333319
+        },
+        {
+          "name": "Truss_00_Fruit_11",
+          "solver_time_s": 25.066666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.12208353613280451,
+          "passive_torque_nm": 0.012826861634961988,
+          "cause": "torque",
+          "release_effective_time_s": 25.08333333333319
+        },
+        {
+          "name": "Truss_00_Fruit_08",
+          "solver_time_s": 25.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.26843453649343557,
+          "passive_torque_nm": 0.012033199747428136,
+          "cause": "torque",
+          "release_effective_time_s": 25.099999999999856
+        },
+        {
+          "name": "Truss_00_Fruit_10",
+          "solver_time_s": 25.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.2466270912992971,
+          "passive_torque_nm": 0.015757878902905555,
+          "cause": "torque",
+          "release_effective_time_s": 25.099999999999856
+        },
+        {
+          "name": "Truss_00_Fruit_01",
+          "solver_time_s": 36.166666666666664,
+          "phase": "cycle_open_final",
+          "constraint_force_n": 0.14895680800425964,
+          "passive_torque_nm": 0.008462280267320672,
+          "cause": "torque",
+          "release_effective_time_s": 36.18333333333256
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "1mm criterion retained. Diagnostic continuation after violation, abort at 10mm; no invalid run is harvest success.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "883f5c2fad909f4d70e11ec91998e637c69679cca96a115d2a021e692842af0e",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.0027589258350226376,
+        "released_penetration_m": 0.06547335076813637,
+        "active_tool_force_n": 7.1102474095714205,
+        "released_tool_force_n": 5.671739465609027,
+        "largest_tool_force": {
+          "t": 25.583333333333332,
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L_belt"
+          ],
+          "force_n": 7.1102474095714205,
+          "penetration_m": 0.0,
+          "released": false
+        }
+      }
+    },
+    {
+      "experiment": "verified_inward120",
+      "mode": "inward",
+      "hz": 120,
+      "repeat": 0,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.27166595309972763,
+      "reset_s": 0.007329240441322327,
+      "simulated_s": 36.799999999998555,
+      "loop_wall_s": 24.517609940841794,
+      "physics_wall_s": 16.660309033468366,
+      "adapter_wall_s": 0.8708130903542042,
+      "realtime_factor": 1.500961965248357,
+      "process_cpu_percent": 99.98355811250966,
+      "rss_mib": 711.04296875,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": null,
+      "active_contact_criterion_passed": true,
+      "full_physics_validated": false,
+      "active_tool_penetration_m": 0.0009542371001099391,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.030421219415345903,
+      "max_contact_force_n": 315.37129063642095,
+      "max_belt_contact_force_n": 315.37129063642095,
+      "worst_pair": {
+        "t": 26.058333333333334,
+        "geom1": "g0515",
+        "geom2": "g0232",
+        "source1": "/World/ActuatedTool/R/part_244",
+        "source2": "/World/ElasticTarget/Truss_00_Fruit_07/Collider",
+        "penetration_m": 0.0009542371001099391
+      },
+      "fruit_max_displacement_m": 1.1967676893550117,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 24.816666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.47812571468246334,
+          "passive_torque_nm": 0.0080134679996357,
+          "cause": "torque",
+          "release_effective_time_s": 24.824999999999232
+        },
+        {
+          "name": "Truss_00_Fruit_03",
+          "solver_time_s": 24.833333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.6069461540798626,
+          "passive_torque_nm": 0.008204500026134659,
+          "cause": "torque",
+          "release_effective_time_s": 24.841666666665898
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "solver_time_s": 25.15,
+          "phase": "close",
+          "constraint_force_n": 6.955478902172307,
+          "passive_torque_nm": 0.0023759768765945345,
+          "cause": "force",
+          "release_effective_time_s": 25.158333333332546
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "solver_time_s": 26.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.6264798683398891,
+          "passive_torque_nm": 0.008014853875391692,
+          "cause": "torque",
+          "release_effective_time_s": 26.091666666665827
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "Active-contact 1mm criterion retained. Released fruit reported separately. Diagnostic continuation after violation; no run establishes full physics equivalence or validated harvest.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "3eac7ae4403091db38406b7b1c04b8489023378ca0b47d948560e8f563378f8a",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.0009542371001099391,
+        "released_penetration_m": 0.030421219415345903,
+        "active_tool_force_n": 10.648205301267044,
+        "released_tool_force_n": 315.37129063642095,
+        "largest_tool_force": {
+          "t": 26.341666666666665,
+          "bodies": [
+            "Tool_R_belt",
+            "Truss_00_Fruit_04"
+          ],
+          "force_n": 315.37129063642095,
+          "penetration_m": 0.001268814192899377,
+          "released": true
+        }
+      }
+    },
+    {
+      "experiment": "verified_inward120",
+      "mode": "inward",
+      "hz": 120,
+      "repeat": 1,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.27166595309972763,
+      "reset_s": 0.006908036768436432,
+      "simulated_s": 36.799999999998555,
+      "loop_wall_s": 24.502068042755127,
+      "physics_wall_s": 16.669075367972255,
+      "adapter_wall_s": 0.8694923296570778,
+      "realtime_factor": 1.5019140398999802,
+      "process_cpu_percent": 99.97803154515067,
+      "rss_mib": 715.84765625,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": null,
+      "active_contact_criterion_passed": true,
+      "full_physics_validated": false,
+      "active_tool_penetration_m": 0.0009542371001099391,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.030421219415345903,
+      "max_contact_force_n": 315.37129063642095,
+      "max_belt_contact_force_n": 315.37129063642095,
+      "worst_pair": {
+        "t": 26.058333333333334,
+        "geom1": "g0515",
+        "geom2": "g0232",
+        "source1": "/World/ActuatedTool/R/part_244",
+        "source2": "/World/ElasticTarget/Truss_00_Fruit_07/Collider",
+        "penetration_m": 0.0009542371001099391
+      },
+      "fruit_max_displacement_m": 1.1967676893550117,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 24.816666666666666,
+          "phase": "close",
+          "constraint_force_n": 0.47812571468246334,
+          "passive_torque_nm": 0.0080134679996357,
+          "cause": "torque",
+          "release_effective_time_s": 24.824999999999232
+        },
+        {
+          "name": "Truss_00_Fruit_03",
+          "solver_time_s": 24.833333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.6069461540798626,
+          "passive_torque_nm": 0.008204500026134659,
+          "cause": "torque",
+          "release_effective_time_s": 24.841666666665898
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "solver_time_s": 25.15,
+          "phase": "close",
+          "constraint_force_n": 6.955478902172307,
+          "passive_torque_nm": 0.0023759768765945345,
+          "cause": "force",
+          "release_effective_time_s": 25.158333333332546
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "solver_time_s": 26.083333333333332,
+          "phase": "close",
+          "constraint_force_n": 0.6264798683398891,
+          "passive_torque_nm": 0.008014853875391692,
+          "cause": "torque",
+          "release_effective_time_s": 26.091666666665827
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "Active-contact 1mm criterion retained. Released fruit reported separately. Diagnostic continuation after violation; no run establishes full physics equivalence or validated harvest.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "3eac7ae4403091db38406b7b1c04b8489023378ca0b47d948560e8f563378f8a",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.0009542371001099391,
+        "released_penetration_m": 0.030421219415345903,
+        "active_tool_force_n": 10.648205301267044,
+        "released_tool_force_n": 315.37129063642095,
+        "largest_tool_force": {
+          "t": 26.341666666666665,
+          "bodies": [
+            "Tool_R_belt",
+            "Truss_00_Fruit_04"
+          ],
+          "force_n": 315.37129063642095,
+          "penetration_m": 0.001268814192899377,
+          "released": true
+        }
+      }
+    },
+    {
+      "experiment": "inward240",
+      "mode": "inward",
+      "hz": 240,
+      "repeat": 0,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.2473047710955143,
+      "reset_s": 0.007046854123473167,
+      "simulated_s": 36.80000000000232,
+      "loop_wall_s": 48.67375451512635,
+      "physics_wall_s": 32.9849978107959,
+      "adapter_wall_s": 1.7441866006702185,
+      "realtime_factor": 0.7560542712719229,
+      "process_cpu_percent": 99.98316155552826,
+      "rss_mib": 718.28515625,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": null,
+      "valid_physics": true,
+      "active_tool_penetration_m": 0.0,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.017509437418698662,
+      "max_contact_force_n": 1169.7128159778958,
+      "max_belt_contact_force_n": 1169.7128159778958,
+      "worst_pair": {
+        "t": 0.0,
+        "geom1": "g0115",
+        "geom2": "g0196",
+        "source1": "/World/ElasticTarget/Truss_00_Rachis_4/Collider",
+        "source2": "/World/ElasticTarget/Truss_00_Fruit_02/Collider",
+        "penetration_m": 0.00022795629095559823
+      },
+      "fruit_max_displacement_m": 1.2828289377817617,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 24.775,
+          "phase": "close",
+          "constraint_force_n": 0.46982991440407446,
+          "passive_torque_nm": 0.008054383427297968,
+          "cause": "torque",
+          "release_effective_time_s": 24.77916666666558
+        },
+        {
+          "name": "Truss_00_Fruit_03",
+          "solver_time_s": 24.9,
+          "phase": "close",
+          "constraint_force_n": 0.5659457447105245,
+          "passive_torque_nm": 0.008120115213924806,
+          "cause": "torque",
+          "release_effective_time_s": 24.904166666665574
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "solver_time_s": 25.1375,
+          "phase": "close",
+          "constraint_force_n": 3.5631768519085614,
+          "passive_torque_nm": 0.0022947543229613876,
+          "cause": "force",
+          "release_effective_time_s": 25.14166666666556
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "solver_time_s": 26.225,
+          "phase": "close",
+          "constraint_force_n": 1.3521168800582533,
+          "passive_torque_nm": 0.008008780133684392,
+          "cause": "torque",
+          "release_effective_time_s": 26.2291666666655
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "1mm criterion retained. Diagnostic continuation after violation, abort at 10mm; no invalid run is harvest success.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "0d8114750f0aa315ed9fadd9c0a9f4d55ad01e7329b2a93ae2eee72bc51f46ee",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.00022795629095559823,
+        "released_penetration_m": 0.017509437418698662,
+        "active_tool_force_n": 7.196215810134982,
+        "released_tool_force_n": 1169.7128159778958,
+        "largest_tool_force": {
+          "t": 26.279166666666665,
+          "bodies": [
+            "Tool_R_belt",
+            "Truss_00_Fruit_04"
+          ],
+          "force_n": 1169.7128159778958,
+          "penetration_m": 0.001170691698940434,
+          "released": true
+        }
+      }
+    },
+    {
+      "experiment": "off120",
+      "mode": "off",
+      "hz": 120,
+      "repeat": 0,
+      "mujoco_version": "3.15.0",
+      "integrator": "discrete",
+      "model_dir": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/model315",
+      "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+      "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+      "load_s": 0.27571073919534683,
+      "reset_s": 0.007319282740354538,
+      "simulated_s": 36.799999999998555,
+      "loop_wall_s": 24.18065739236772,
+      "physics_wall_s": 16.2952342890203,
+      "adapter_wall_s": 0.882349556311965,
+      "realtime_factor": 1.5218775653144132,
+      "process_cpu_percent": 99.98327672692224,
+      "rss_mib": 710.15625,
+      "stop": null,
+      "completed_recorded_trace": true,
+      "first_1mm_violation": null,
+      "valid_physics": true,
+      "active_tool_penetration_m": 0.0007276045832770809,
+      "active_plant_penetration_m": 0.00022795629095559823,
+      "released_penetration_m": 0.03779756193443042,
+      "max_contact_force_n": 23.61345357138155,
+      "max_belt_contact_force_n": 23.61345357138155,
+      "worst_pair": {
+        "t": 36.05,
+        "geom1": "g0629",
+        "geom2": "g0205",
+        "source1": "/World/ActuatedTool/R_belt/PrototypeTread",
+        "source2": "/World/ElasticTarget/Truss_00_Fruit_03/Collider",
+        "penetration_m": 0.0007276045832770809
+      },
+      "fruit_max_displacement_m": 1.2269203396272224,
+      "breaks": [
+        {
+          "name": "Truss_00_Fruit_05",
+          "solver_time_s": 25.041666666666668,
+          "phase": "close",
+          "constraint_force_n": 1.0039700772303795,
+          "passive_torque_nm": 0.008016872745680489,
+          "cause": "torque",
+          "release_effective_time_s": 25.04999999999922
+        },
+        {
+          "name": "Truss_00_Fruit_02",
+          "solver_time_s": 25.058333333333334,
+          "phase": "close",
+          "constraint_force_n": 1.3634503458998097,
+          "passive_torque_nm": 0.00815990316811768,
+          "cause": "torque",
+          "release_effective_time_s": 25.066666666665885
+        }
+      ],
+      "nbody": 95,
+      "nv": 294,
+      "ngeom": 631,
+      "training_eligible": false,
+      "harvest_success": null,
+      "scope": "Prescribed recorded tool, selected truss/main stem; not full robot nor PhysX equivalence",
+      "validity_note": "1mm criterion retained. Diagnostic continuation after violation, abort at 10mm; no invalid run is harvest success.",
+      "attachment_note": "Uncalibrated MuJoCo passive spring/connect break adapter; source raw angular stiffness used in N m/rad. Self angular damping implicit; parent reaction sampled explicitly.",
+      "boundary_note": "Native surfacevel handles tangent velocity; prescribed mocap normal velocity and finite robot inertia absent.",
+      "belt_sign_mapping": "MuJoCo local-Y = -PhysX authored local-Y; matched to measured PhysX control CAD-Y displacement, not API sign",
+      "states_sha256": "7b90f5bfb360af6c57ab607b97592a583419e68fdb627cbaa042fe9c8cd703b8",
+      "timestamp_reclassified": {
+        "active_penetration_m": 0.0007276045832770809,
+        "released_penetration_m": 0.03779756193443042,
+        "active_tool_force_n": 23.61345357138155,
+        "released_tool_force_n": 21.29603106164152,
+        "largest_tool_force": {
+          "t": 34.36666666666667,
+          "bodies": [
+            "Tool_R_belt",
+            "Truss_00_Fruit_03"
+          ],
+          "force_n": 23.61345357138155,
+          "penetration_m": 0.0,
+          "released": false
+        }
+      }
+    }
+  ],
+  "reproducibility": {
+    "inward60": {
+      "time": true,
+      "qpos": true,
+      "eq_active": true,
+      "fruit_positions": true,
+      "mocap_pos": true,
+      "mocap_quat": true
+    },
+    "verified_inward120": {
+      "time": true,
+      "qpos": true,
+      "eq_active": true,
+      "fruit_positions": true,
+      "mocap_pos": true,
+      "mocap_quat": true
+    }
+  },
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/inward60/repeat_00/actual_top.mp4",
+      "sha256": "efb6778b5b09e298c9090d0ca686841983e26345b4f8182293919e59b0d2e45a"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/verified_inward120/repeat_00/actual_top.mp4",
+      "sha256": "2fc740caf0549f5e94168cc6fca0f3d6681412d72c7fe107af987196be1020bc"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_mujoco_belt_smoke/off120/repeat_00/actual_top.mp4",
+      "sha256": "821c1934d3cd3de6069e01d3675f40b86e1b37505d35d82f740aaa621905ba41"
+    }
+  ],
+  "source": {
+    "schema": "s300-mujoco-small-smoke-v1",
+    "source_assembly": "/root/docker_share/mujoko_debugging_data/20261011_205000_target_only_row_harvest/assembly_step01_plant41",
+    "source_trial": "/root/docker_share/mujoko_debugging_data/20261011_205000_target_only_row_harvest/trials/step01_plant41_shallow_yaw_minus45_runtimefix",
+    "source_usdc_sha256": "0bbc67f62fd7b967b9c3506a5c53558a3f4da0babdc33fb1d29f5d6f0ea1daaa",
+    "source_states_sha256": "cdc9b30ec372ab01d55290338ebfbdecac5857a6ab7c2cff9cb0b62b57ff44b1",
+    "model_sha256": "9745d3a5f91d57df66ec5db4548a89560f0a551035483365fb941e425f36a7d6",
+    "trace_sha256": "c39fc954d45d7148e1df873ee4c49ebb4042517700f85abf8a2013017abcf9c2",
+    "tools": [
+      "Tool_fixed",
+      "Tool_L",
+      "Tool_R",
+      "Tool_L_belt",
+      "Tool_R_belt"
+    ],
+    "rods": [
+      "Stem_MainStem_0",
+      "Stem_MainStem_1",
+      "Stem_MainStem_2",
+      "Stem_MainStem_3",
+      "Stem_MainStem_4",
+      "Stem_MainStem_5",
+      "Stem_MainStem_6",
+      "Stem_MainStem_7",
+      "Stem_MainStem_8",
+      "Stem_MainStem_9",
+      "Stem_MainStem_10",
+      "Stem_MainStem_11",
+      "Stem_MainStem_12",
+      "Stem_MainStem_13",
+      "Stem_MainStem_14",
+      "Stem_MainStem_15",
+      "Truss_00_Truss_01_Peduncle_0",
+      "Truss_00_Truss_01_Peduncle_1",
+      "Truss_00_Truss_01_Peduncle_2",
+      "Truss_00_Truss_01_Peduncle_3",
+      "Truss_00_Truss_01_Peduncle_4",
+      "Truss_00_Rachis_0",
+      "Truss_00_Rachis_1",
+      "Truss_00_Rachis_2",
+      "Truss_00_Rachis_3",
+      "Truss_00_Rachis_4",
+      "Truss_00_Rachis_5",
+      "Truss_00_Rachis_6",
+      "Truss_00_Rachis_7",
+      "Truss_00_Rachis_8",
+      "Truss_00_Rachis_9",
+      "Truss_00_Rachis_10",
+      "Truss_00_Rachis_11",
+      "Truss_00_Rachis_12",
+      "Truss_00_Rachis_13",
+      "Truss_00_Pedicel_proximal_01_0",
+      "Truss_00_Pedicel_proximal_01_1",
+      "Truss_00_Pedicel_proximal_01_2",
+      "Truss_00_Pedicel_distal_01_0",
+      "Truss_00_Pedicel_proximal_02_0",
+      "Truss_00_Pedicel_proximal_02_1",
+      "Truss_00_Pedicel_proximal_02_2",
+      "Truss_00_Pedicel_distal_02_0",
+      "Truss_00_Pedicel_proximal_03_0",
+      "Truss_00_Pedicel_proximal_03_1",
+      "Truss_00_Pedicel_proximal_03_2",
+      "Truss_00_Pedicel_distal_03_0",
+      "Truss_00_Pedicel_proximal_04_0",
+      "Truss_00_Pedicel_proximal_04_1",
+      "Truss_00_Pedicel_proximal_04_2",
+      "Truss_00_Pedicel_distal_04_0",
+      "Truss_00_Pedicel_proximal_05_0",
+      "Truss_00_Pedicel_proximal_05_1",
+      "Truss_00_Pedicel_proximal_05_2",
+      "Truss_00_Pedicel_distal_05_0",
+      "Truss_00_Pedicel_proximal_06_0",
+      "Truss_00_Pedicel_proximal_06_1",
+      "Truss_00_Pedicel_proximal_06_2",
+      "Truss_00_Pedicel_distal_06_0",
+      "Truss_00_Pedicel_proximal_07_0",
+      "Truss_00_Pedicel_proximal_07_1",
+      "Truss_00_Pedicel_proximal_07_2",
+      "Truss_00_Pedicel_distal_07_0",
+      "Truss_00_Pedicel_proximal_08_0",
+      "Truss_00_Pedicel_proximal_08_1",
+      "Truss_00_Pedicel_proximal_08_2",
+      "Truss_00_Pedicel_distal_08_0",
+      "Truss_00_Pedicel_proximal_09_0",
+      "Truss_00_Pedicel_proximal_09_1",
+      "Truss_00_Pedicel_proximal_09_2",
+      "Truss_00_Pedicel_distal_09_0",
+      "Truss_00_Pedicel_proximal_10_0",
+      "Truss_00_Pedicel_proximal_10_1",
+      "Truss_00_Pedicel_proximal_10_2",
+      "Truss_00_Pedicel_distal_10_0",
+      "Truss_00_Pedicel_proximal_11_0",
+      "Truss_00_Pedicel_proximal_11_1",
+      "Truss_00_Pedicel_proximal_11_2",
+      "Truss_00_Pedicel_distal_11_0"
+    ],
+    "fruits": [
+      "Truss_00_Fruit_01",
+      "Truss_00_Fruit_02",
+      "Truss_00_Fruit_03",
+      "Truss_00_Fruit_04",
+      "Truss_00_Fruit_05",
+      "Truss_00_Fruit_07",
+      "Truss_00_Fruit_08",
+      "Truss_00_Fruit_09",
+      "Truss_00_Fruit_10",
+      "Truss_00_Fruit_11"
+    ],
+    "attachments": [
+      {
+        "name": "Truss_00_Fruit_01",
+        "anchor": "Truss_00_Pedicel_distal_01_0",
+        "local_rot0": [
+          0.5871793627738953,
+          -0.4407840073108673,
+          -0.3939802348613739,
+          -0.5529100298881531
+        ],
+        "local_rot1": [
+          0.5871793627738953,
+          -0.4407840073108673,
+          -0.3939802348613739,
+          -0.5529100298881531
+        ],
+        "initial_gap_m": 3.89175278552804e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_02",
+        "anchor": "Truss_00_Pedicel_distal_02_0",
+        "local_rot0": [
+          0.6306743621826172,
+          -0.4857477843761444,
+          -0.3197652995586395,
+          -0.5138570666313171
+        ],
+        "local_rot1": [
+          0.6306743621826172,
+          -0.4857477843761444,
+          -0.3197652995586395,
+          -0.5138570666313171
+        ],
+        "initial_gap_m": 2.1286653801232573e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_03",
+        "anchor": "Truss_00_Pedicel_distal_03_0",
+        "local_rot0": [
+          -0.5586311221122742,
+          0.37970662117004395,
+          0.433510422706604,
+          0.5965089201927185
+        ],
+        "local_rot1": [
+          -0.5586311221122742,
+          0.37970662117004395,
+          0.433510422706604,
+          0.5965089201927185
+        ],
+        "initial_gap_m": 2.38307851385345e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_04",
+        "anchor": "Truss_00_Pedicel_distal_04_0",
+        "local_rot0": [
+          -0.1541896015405655,
+          0.6150668263435364,
+          -0.12426185607910156,
+          0.7632020711898804
+        ],
+        "local_rot1": [
+          -0.1541896015405655,
+          0.6150668263435364,
+          -0.12426185607910156,
+          0.7632020711898804
+        ],
+        "initial_gap_m": 1.313999289403507e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_05",
+        "anchor": "Truss_00_Pedicel_distal_05_0",
+        "local_rot0": [
+          0.6187689900398254,
+          -0.3726506531238556,
+          -0.3422352373600006,
+          -0.6009421944618225
+        ],
+        "local_rot1": [
+          0.6187689900398254,
+          -0.3726506531238556,
+          -0.3422352373600006,
+          -0.6009421944618225
+        ],
+        "initial_gap_m": 2.381186015095799e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_07",
+        "anchor": "Truss_00_Pedicel_distal_07_0",
+        "local_rot0": [
+          0.6292336583137512,
+          -0.3832474946975708,
+          -0.32259106636047363,
+          -0.594240128993988
+        ],
+        "local_rot1": [
+          0.6292336583137512,
+          -0.3832474946975708,
+          -0.32259106636047363,
+          -0.594240128993988
+        ],
+        "initial_gap_m": 3.5441383553071416e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_08",
+        "anchor": "Truss_00_Pedicel_distal_08_0",
+        "local_rot0": [
+          0.6006042957305908,
+          -0.381442666053772,
+          -0.37319496273994446,
+          -0.5954002737998962
+        ],
+        "local_rot1": [
+          0.6006042957305908,
+          -0.381442666053772,
+          -0.37319496273994446,
+          -0.5954002737998962
+        ],
+        "initial_gap_m": 2.5591467297718005e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_09",
+        "anchor": "Truss_00_Pedicel_distal_09_0",
+        "local_rot0": [
+          0.6312505006790161,
+          -0.40554437041282654,
+          -0.31862643361091614,
+          -0.5792527794837952
+        ],
+        "local_rot1": [
+          0.6312505006790161,
+          -0.40554437041282654,
+          -0.31862643361091614,
+          -0.5792527794837952
+        ],
+        "initial_gap_m": 1.0736432188232678e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_10",
+        "anchor": "Truss_00_Pedicel_distal_10_0",
+        "local_rot0": [
+          -0.1857341229915619,
+          0.572519838809967,
+          -0.13510514795780182,
+          0.7870644927024841
+        ],
+        "local_rot1": [
+          -0.1857341229915619,
+          0.572519838809967,
+          -0.13510514795780182,
+          0.7870644927024841
+        ],
+        "initial_gap_m": 2.36738077530313e-10,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      },
+      {
+        "name": "Truss_00_Fruit_11",
+        "anchor": "Truss_00_Pedicel_distal_11_0",
+        "local_rot0": [
+          -0.5509956479072571,
+          0.37999579310417175,
+          0.44317466020584106,
+          0.5963247418403625
+        ],
+        "local_rot1": [
+          -0.5509956479072571,
+          0.37999579310417175,
+          0.44317466020584106,
+          0.5963247418403625
+        ],
+        "initial_gap_m": 5.2177718355108187e-11,
+        "force_n": 3.0,
+        "torque_nm": 0.008,
+        "stiffness": [
+          0.009999999776482582,
+          0.029999999329447746,
+          0.029999999329447746
+        ],
+        "damping": 0.0001500000071246177,
+        "deadband_deg": 1.0
+      }
+    ],
+    "export_wall_s": 2.531503912061453,
+    "training_eligible": false,
+    "harvest_success": null,
+    "differences": [
+      "Prescribed recorded tool body poses; robot/lift/rail/chassis/farm absent. Not full-system speed comparison.",
+      "One selected truss and its 16-segment main stem; other truss mass/dynamics omitted. Leaves visual-only.",
+      "D6 rods use existing MuJoCo three-hinge convention with source stiffness/damping; no DOF merging.",
+      "Tool per-mesh convex hull replaces PhysX convex decomposition. Concave-part collision equivalence NOT established.",
+      "Fruit inertia is estimated from source dimensions/mass; native cooked inertia not exported.",
+      "Contact friction .5, MuJoCo solver-specific solref/solimp. Neither contact equivalence nor tissue calibration claimed.",
+      "Fruit connect constraint + passive angular spring + measured force/torque threshold is a MuJoCo adapter, not native PhysX breaking.",
+      "Native surfacevel supplies belt and prescribed tool tangential velocity; mocap normal-velocity and finite robot inertia are not represented.",
+      "Discrete integrator accounts for damping in constraint effective inertia. No gravity preload: this selected plant settles under gravity.",
+      "Source replay ends at its original 36.8s stop; no unrecorded withdrawal is invented."
+    ],
+    "geometry_inventory_count": 630
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "full_physics_validated": false,
+  "conclusion": "120 Hz selected-truss smoke runs faster than real time; full robot migration/equivalence is not established.",
+  "historical_attempts": {
+    "idle240, idle240_implicit, idle315_960": "Pre-discrete attachment instability; all fruit released at idle. Rejected.",
+    "inward315_discrete60, inward315_discrete240": "API sign copied before measured PhysX/MuJoCo direction mapping. Actually outward; excluded from final inward comparison.",
+    "inward120": "First correctly directed 120Hz run. Final verified_inward120 repeats save code hashes and use start-of-step release classification."
+  },
+  "limitations": [
+    "Only one truss, main stem and prescribed gripper; no robot arm, lift, base, farm, robot tracking or arm collisions.",
+    "Per-mesh tool convex hulls differ from PhysX decomposition; collider equivalence not established.",
+    "Fruit-neck soft spring/break model and fruit inertia are uncalibrated porting approximations.",
+    "Prescribed mocap normal velocity and finite robot inertia are absent; native surfacevel covers tangent transport.",
+    "Gravity settlement differs from original three-truss continuation; initial poses are source geometry.",
+    "60Hz violates the retained 1mm active-contact criterion and releases nine fruit vs four at 120/240Hz. Not a valid speed setting.",
+    "Detached fruit/floor penetration is large, separately reported, not hidden as validated physics.",
+    "Prescribed jaw poses do not yield to new contact: released fruit tool-force spikes reach 315N at 120Hz and 1170N at 240Hz. Not a realistic gripper load result.",
+    "The 36.8s source trace stops during final opening. This is not a completed withdrawal or whole-truss harvest.",
+    "Belt-off still releases fruit by jaw/branch loading. Separation alone does not prove belt rotation harvesting."
+  ],
+  "official_version_check": {
+    "version": "3.15.0",
+    "release_date": "2026-10-05",
+    "checked_date": "2026-10-12",
+    "url": "https://github.com/google-deepmind/mujoco/releases/tag/3.15.0",
+    "python": "3.11.14 (main, Oct 10 2025, 08:54:03) [GCC 11.4.0]",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.35",
+    "old_environment_unchanged": "mujoco-benchmark/.venv: MuJoCo 3.13.0"
+  },
+  "tests": {
+    "native_controls": 6,
+    "passed": true,
+    "old_isaac_tests_before_commit": 176,
+    "old_commit": "ca3a716"
+  },
+  "artifact_manifest": {
+    "model315/export.json": "5fda0b217445015ee0581d440134a7bb345c7e230d294addff9a1980172934fb"
+  }
+}
