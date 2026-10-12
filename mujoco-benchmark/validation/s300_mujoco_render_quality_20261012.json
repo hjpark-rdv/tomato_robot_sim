@@ -300,7 +300,8 @@
     "Neutral render lighting/+1EV is not a measured farm sensor calibration.",
     "Source currently has no connected texture/normal map; none invented.",
     "Full source-visible geometry retained; source-hidden collider proxies visually hidden only.",
-    "Filament PBR is not equivalent to RTX path tracing."
+    "Filament PBR is not equivalent to RTX path tracing.",
+    "Filament startup reports handle-arena overflow with system-heap fallback and graphics worker-pool clamp to31; rendering continues, no geometry truncation. This is a remaining native render warning, not suppressed."
   ],
   "training_eligible": false,
   "gui": [

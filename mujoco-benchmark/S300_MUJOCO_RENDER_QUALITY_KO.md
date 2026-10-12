@@ -147,6 +147,10 @@ GUI 수치는 첫 프레임 비용과 종료 비용을 포함한 짧은 서버 �
 만들거나 원본에 없는 표면 디테일을 추가하지 않는다. 재질이 없던 CAD 부품의
 기본 PBR 값도 실제 도장·금속의 계측값이 아니다.
 RTX 경로 추적과 같은 렌더러·광학 결과를 보장하지 않는다.
+전체 장면 초기화 때 Filament의 HandleAllocator 기본 arena가 차서 system heap으로
+전환한다는 비치명적 메시지가 남는다. 실행·전체 영상 저장·디코딩·GUI는 계속 정상 동작했다.
+형상을 버리는 경로가 아니라 메모리 할당의 fallback이다. 48CPU 서버의 Filament
+job pool도 공식 상한 31로 자동 제한된다. 이를 물리 worker 수로 해석하지 않는다.
 
 공식 근거:
 [MuJoCo Filament](https://mujoco.readthedocs.io/en/latest/programming/visualization.html#filament-rendering),
