@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
-SCHEMA = 's300-authored-render-assets-v6'
+SCHEMA = 's300-authored-render-assets-v7-face-colours'
 DEFAULT_CACHE = Path('/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/asset_cache')
 _TRANSMISSION_CONTEXTS = weakref.WeakKeyDictionary()
 ASSET_PYTHON = Path(__file__).resolve().parents[3] / 'nvidia-sim/.asset-venv/bin/python'
@@ -182,7 +182,8 @@ def read_usd_material(prim):
 
 def extract_render_assets(model_dir, output):
     """USD-side extraction: compact metadata plus exact original skin weights."""
-    from pxr import Usd, UsdGeom
+    from pxr import Usd, UsdGeom, UsdPhysics
+    from source_face_colors import extract_face_colors
     model_dir, output = Path(model_dir), Path(output)
     output.mkdir(parents=True, exist_ok=True)
     meta = json.loads((model_dir / 'export.json').read_text())
@@ -204,6 +205,7 @@ def extract_render_assets(model_dir, output):
                                          source_manifest=meta['source_manifest'])]
     window_by_prefix = sorted(windows, key=lambda w: len(w['prefix']), reverse=True)
     materials, hidden, skipped = {}, [], []
+    face_colors, color_arrays = [], {}
     for row in meta.get('geometry', []):
         window = next((w for w in window_by_prefix
                        if not w['prefix'] or row['name'].startswith(w['prefix'])), windows[0])
@@ -214,6 +216,24 @@ def extract_render_assets(model_dir, output):
         if UsdGeom.Imageable(prim).ComputeVisibility() == UsdGeom.Tokens.invisible:
             hidden.append(row['name'])
         materials[row['name']] = read_usd_material(prim)
+        if row['name'] not in hidden:
+            colours = extract_face_colors(prim, read_usd_material)
+            if colours:
+                owner = prim
+                while owner and not owner.HasAPI(UsdPhysics.RigidBodyAPI):
+                    owner = owner.GetParent()
+                if not owner:
+                    raise ValueError('Face colour mesh has no source rigid owner: ' + row['source'])
+                transforms = UsdGeom.XformCache()
+                parent = np.asarray(transforms.GetLocalToWorldTransform(owner), float).T
+                world = np.asarray(transforms.GetLocalToWorldTransform(prim), float).T
+                local = np.linalg.inv(parent) @ world
+                key = 'face_colour_' + row['name']
+                vertices = colours.pop('vertices')
+                color_arrays[key + '_vertices'] = vertices @ local[:3, :3].T + local[:3, 3]
+                for field in ('faces', 'labels', 'palette'):
+                    color_arrays[key + '_' + field] = colours.pop(field)
+                face_colors.append(dict(key=key, geometry=row['name'], **colours))
 
     # The exact static farm adapter groups meshes by scalar material. Recover
     # each authored tuple from the source group, matched to its existing MJCF
@@ -291,7 +311,7 @@ def extract_render_assets(model_dir, output):
                         parent_in_tool=parent_in_tool.tolist(), components=components,
                         geoms=transmission_geoms, function_source=str(linkage_file),
                         function_source_sha256=file_sha(linkage_file))
-    skins, arrays = [], {}
+    skins, arrays = [], color_arrays
     for window_index, window in enumerate(windows):
         assembly = Path(window['source_assembly'])
         manifest = json.loads(Path(window['source_manifest']).read_text())
@@ -329,6 +349,7 @@ def extract_render_assets(model_dir, output):
                   source_xml_sha256=file_sha(model_dir / 'scene.xml'),
                   export_sha256=file_sha(model_dir / 'export.json'), source_files=source_files,
                   geometry_materials=materials, source_invisible_geometry=hidden,
+                  face_colors=face_colors,
                   skins=skins, transmission=transmission, skipped=skipped, source_skin_arrays_sha256=file_sha(output / 'skin_arrays.npz'),
                   limitations=['Connected source textures/normal maps are not synthesized.',
                                'Source RGB/PBR constants are retained; renderer illumination and response differ.'])
@@ -484,6 +505,9 @@ def compile_render_model(original, model_dir, assets, arrays, *, profile=None):
     for geom_name in assets['source_invisible_geometry']:
         spec.geom(geom_name).rgba[3] = 0.
         spec.geom(geom_name).material = ''  # Filament material RGBA overrides geom alpha.
+    from source_face_colors import apply_face_palettes
+    palette_meshes, palette_evidence = apply_face_palettes(
+        spec, original, assets.get('face_colors', []), arrays, filament_rgba)
     render_skin_vertices = 0; skin_padding = 0; removed_unreferenced_vertices = 0; skin_zero_uv = 0
     for skin in assets['skins']:
         key = skin['key']; ids = arrays[key + '_ids']; weights = arrays[key + '_weights']
@@ -517,6 +541,8 @@ def compile_render_model(original, model_dir, assets, arrays, *, profile=None):
     # Explicitly retain any original UV values/face mapping from the recorded
     # MJB even if they differ from an exported OBJ's visual data.
     for mesh_id in range(original.nmesh):
+        if mesh_id in palette_meshes:
+            continue  # Untextured source face colours now have explicit palette UVs.
         count = int(original.mesh_texcoordnum[mesh_id])
         if not count:
             continue
@@ -533,6 +559,7 @@ def compile_render_model(original, model_dir, assets, arrays, *, profile=None):
         model.geom_rgba[geom_id, 3] = 0.
         model.geom_matid[geom_id] = -1
     return model, dict(materials_added=len(source_materials), original_skin_meshes=len(assets['skins']),
+                       face_colour_recovery=palette_evidence,
                        original_skin_vertices=sum(s['vertices'] for s in assets['skins']),
                        render_skin_vertices=render_skin_vertices,
                        filament_skin_padding_vertices=skin_padding,

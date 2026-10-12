@@ -1,0 +1,377 @@
+{
+  "schema": "s300-source-face-colour-validation-v1",
+  "title": "RB5 부위 재질 · S300 정점 색상 복원",
+  "summary": "이전 변환기의 첫 색상만 읽던 누락을 수정했습니다. RB5 7메시의 38재질 구역과 S300 20다색 메시를 복원했습니다. 아래 전후 사진은 동일 카메라·54.03초·조명입니다. 원본 physics와 기록 상태는 동일합니다. balanced/ultra에 적용되며 fast는 기존 간이 표시입니다.",
+  "profiles": [
+    {
+      "name": "balanced",
+      "backend": "Filament PBR",
+      "video_size": [
+        1920,
+        1080
+      ],
+      "supersample": 1
+    },
+    {
+      "name": "ultra",
+      "backend": "Filament PBR",
+      "video_size": [
+        3840,
+        2160
+      ],
+      "supersample": 2
+    }
+  ],
+  "snapshots": [
+    {
+      "name": "수정 전 · 단일 회색",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors/before_aisle.png",
+      "time": 54.03
+    },
+    {
+      "name": "수정 후 · 원본 색상",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors/after_aisle.png",
+      "time": 54.03
+    },
+    {
+      "name": "수정 후 · 최대 품질 4K",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors/after_ultra_4k.png",
+      "time": 54.03
+    }
+  ],
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors/actual_source_colors.mp4",
+      "sha256": "825d3d3f9855cbe50bd1e319b944c49238194b464c6cf2a3419111285f744e1f",
+      "frames": 181,
+      "fps": 30,
+      "playback_rate": 1
+    }
+  ],
+  "physics_unchanged": {
+    "mesh_vert": true,
+    "mesh_face": true,
+    "mesh_normal": true,
+    "mesh_facenormal": true,
+    "geom_contype": true,
+    "geom_conaffinity": true,
+    "geom_pos": true,
+    "geom_quat": true,
+    "body_mass": true,
+    "eq_data": true,
+    "physics_parameter_sha256": "287e3e9ce4b99432bfa06d175a27a30a4062cc6528f045d0f35219e91eab9db8",
+    "original_mjb_sha256": "6467d1f80736b2cbe97015e715d274bbf20ea9ccfde04ea81c8e1bf6be297769",
+    "original_states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c"
+  },
+  "visual_restore": {
+    "rb5_meshes": 7,
+    "rb5_material_regions": 38,
+    "rb5_triangles": 142146,
+    "s300_multicolour_meshes": 20,
+    "s300_triangles": 844171,
+    "source_native_triangle_max_error_m": 3.710989404659415e-08,
+    "encoded_srgb_quantization_max_error": 0.0007421857511619723,
+    "colour_encoding": "Source face colours stored as padded sRGB 8-bit palette; constant UV on each triangle. Source raw colours/subsets retained in source asset NPZ/JSON.",
+    "native_positions_faces_normals_unchanged": true,
+    "physics_parameter_sha256": "287e3e9ce4b99432bfa06d175a27a30a4062cc6528f045d0f35219e91eab9db8",
+    "source_appearance_cache": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/asset_cache/364e8d6900ce6c47d6ca6e087352ee9cefc7ecdd7c0472acaf73972c66e1ac6d",
+    "material_fields_not_authored_use_declared_defaults": true,
+    "per_geometry": [
+      {
+        "geometry": "s300_g0002",
+        "source": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/link0/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 33076,
+        "colours": 2,
+        "subsets": 4,
+        "source_native_triangle_max_error_m": 4.632497330181451e-09,
+        "encoded_rgb_max_quantization_error": 0.00044940637161594577
+      },
+      {
+        "geometry": "s300_g0005",
+        "source": "/World/HarvestRobot/Robot/link1/visuals/link1/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 16980,
+        "colours": 3,
+        "subsets": 4,
+        "source_native_triangle_max_error_m": 4.0054942765377355e-09,
+        "encoded_rgb_max_quantization_error": 0.0004822248529042783
+      },
+      {
+        "geometry": "s300_g0007",
+        "source": "/World/HarvestRobot/Robot/link2/visuals/link2/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 34258,
+        "colours": 4,
+        "subsets": 9,
+        "source_native_triangle_max_error_m": 1.4892832245205767e-08,
+        "encoded_rgb_max_quantization_error": 0.0007421857511619723
+      },
+      {
+        "geometry": "s300_g0009",
+        "source": "/World/HarvestRobot/Robot/link3/visuals/link3/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 26188,
+        "colours": 3,
+        "subsets": 9,
+        "source_native_triangle_max_error_m": 1.490077405907897e-08,
+        "encoded_rgb_max_quantization_error": 0.0004822248529042783
+      },
+      {
+        "geometry": "s300_g0011",
+        "source": "/World/HarvestRobot/Robot/link4/visuals/link4/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 12654,
+        "colours": 3,
+        "subsets": 5,
+        "source_native_triangle_max_error_m": 3.6565209610150973e-09,
+        "encoded_rgb_max_quantization_error": 0.0004822248529042783
+      },
+      {
+        "geometry": "s300_g0013",
+        "source": "/World/HarvestRobot/Robot/link5/visuals/link5/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 12654,
+        "colours": 3,
+        "subsets": 5,
+        "source_native_triangle_max_error_m": 3.682291423168227e-09,
+        "encoded_rgb_max_quantization_error": 0.0004822248529042783
+      },
+      {
+        "geometry": "s300_g0016",
+        "source": "/World/HarvestRobot/Robot/link6/visuals/link6/Scene/mesh",
+        "method": "material_subsets",
+        "triangles": 6336,
+        "colours": 2,
+        "subsets": 2,
+        "source_native_triangle_max_error_m": 1.8670649054586264e-09,
+        "encoded_rgb_max_quantization_error": 0.0004822248529042783
+      },
+      {
+        "geometry": "s300_g0026",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0008",
+        "method": "face_constant_vertex_colors",
+        "triangles": 84942,
+        "colours": 9,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 3.207303411745244e-08,
+        "encoded_rgb_max_quantization_error": 1.0427388651146341e-05
+      },
+      {
+        "geometry": "s300_g0044",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0026",
+        "method": "face_constant_vertex_colors",
+        "triangles": 84942,
+        "colours": 9,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 3.183904406789395e-08,
+        "encoded_rgb_max_quantization_error": 1.0427388651146341e-05
+      },
+      {
+        "geometry": "s300_g0062",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0044",
+        "method": "face_constant_vertex_colors",
+        "triangles": 84942,
+        "colours": 9,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 3.7104231687123956e-08,
+        "encoded_rgb_max_quantization_error": 1.0427388651146341e-05
+      },
+      {
+        "geometry": "s300_g0080",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0062",
+        "method": "face_constant_vertex_colors",
+        "triangles": 84942,
+        "colours": 9,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 3.710989404659415e-08,
+        "encoded_rgb_max_quantization_error": 1.0427388651146341e-05
+      },
+      {
+        "geometry": "s300_g0098",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0090",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24820,
+        "colours": 8,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.2854065811751525e-08,
+        "encoded_rgb_max_quantization_error": 6.408788921201912e-05
+      },
+      {
+        "geometry": "s300_g0099",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0091",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24236,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.2387156911319863e-08,
+        "encoded_rgb_max_quantization_error": 4.770547188948093e-06
+      },
+      {
+        "geometry": "s300_g0101",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0093",
+        "method": "face_constant_vertex_colors",
+        "triangles": 6764,
+        "colours": 3,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.361829726764796e-08,
+        "encoded_rgb_max_quantization_error": 1.5337235113072056e-05
+      },
+      {
+        "geometry": "s300_g0102",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0094",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24820,
+        "colours": 8,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.2852708730637374e-08,
+        "encoded_rgb_max_quantization_error": 6.408788921201912e-05
+      },
+      {
+        "geometry": "s300_g0103",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0095",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24236,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.2389053116734772e-08,
+        "encoded_rgb_max_quantization_error": 4.770547188948093e-06
+      },
+      {
+        "geometry": "s300_g0105",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0097",
+        "method": "face_constant_vertex_colors",
+        "triangles": 6764,
+        "colours": 3,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.3521126995819088e-08,
+        "encoded_rgb_max_quantization_error": 1.5337235113072056e-05
+      },
+      {
+        "geometry": "s300_g0106",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0098",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24820,
+        "colours": 8,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.8131755702709427e-08,
+        "encoded_rgb_max_quantization_error": 6.408788921201912e-05
+      },
+      {
+        "geometry": "s300_g0107",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0099",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24236,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.647184393911317e-08,
+        "encoded_rgb_max_quantization_error": 4.770547188948093e-06
+      },
+      {
+        "geometry": "s300_g0109",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0101",
+        "method": "face_constant_vertex_colors",
+        "triangles": 6764,
+        "colours": 3,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.7894836551745072e-08,
+        "encoded_rgb_max_quantization_error": 1.5337235113072056e-05
+      },
+      {
+        "geometry": "s300_g0110",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0102",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24820,
+        "colours": 8,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.8147731034877665e-08,
+        "encoded_rgb_max_quantization_error": 6.408788921201912e-05
+      },
+      {
+        "geometry": "s300_g0111",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0103",
+        "method": "face_constant_vertex_colors",
+        "triangles": 24236,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.6494330285231626e-08,
+        "encoded_rgb_max_quantization_error": 4.770547188948093e-06
+      },
+      {
+        "geometry": "s300_g0113",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0105",
+        "method": "face_constant_vertex_colors",
+        "triangles": 6764,
+        "colours": 3,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.789956221604939e-08,
+        "encoded_rgb_max_quantization_error": 1.5337235113072056e-05
+      },
+      {
+        "geometry": "s300_g0151",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0143",
+        "method": "face_constant_vertex_colors",
+        "triangles": 221908,
+        "colours": 4,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.3798944209497677e-08,
+        "encoded_rgb_max_quantization_error": 6.200191134128619e-05
+      },
+      {
+        "geometry": "s300_g0184",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0178",
+        "method": "face_constant_vertex_colors",
+        "triangles": 6656,
+        "colours": 6,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 1.2856231079716451e-08,
+        "encoded_rgb_max_quantization_error": 6.408788921201912e-05
+      },
+      {
+        "geometry": "s300_g0191",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0185",
+        "method": "face_constant_vertex_colors",
+        "triangles": 52139,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.7643916489239473e-08,
+        "encoded_rgb_max_quantization_error": 8.006867610141355e-06
+      },
+      {
+        "geometry": "s300_g0193",
+        "source": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0187",
+        "method": "face_constant_vertex_colors",
+        "triangles": 420,
+        "colours": 2,
+        "subsets": 0,
+        "source_native_triangle_max_error_m": 2.881000427112923e-08,
+        "encoded_rgb_max_quantization_error": 4.770547188948093e-06
+      }
+    ]
+  },
+  "tests": {
+    "native_pass": 33,
+    "native_gpu_test_skipped_here": 1,
+    "usd_pass": 7,
+    "actual_gpu_new_test_pass": 1,
+    "report_pass": 4,
+    "unique_pass": 45,
+    "duplicate_cpu_tests_during_gpu_run": 2,
+    "video_full_decode_pass": true,
+    "physics_reexecuted": false
+  },
+  "limitations": [
+    "Appearance recovery applies to balanced and ultra. Fast displays the original physical model.",
+    "Source PBR constants are preserved; lighting response is not Isaac RTX equivalence or measured paint calibration.",
+    "Future source colour gradients/differing per-face PBR/textured subset bindings are rejected explicitly.",
+    "Existing nonfatal Filament allocator system-heap fallback and CPU worker clamping messages remain."
+  ],
+  "branch": "codex/s300-mujoco-belt-smoke-20261012",
+  "base_commit": "12df73b",
+  "code_sha256": {
+    "mujoco-benchmark/scripts/s300_smoke/render_assets.py": "9b6982db520c41f4839f45617b48847e4219dcbf81831edfb9a000aef3a608e2",
+    "mujoco-benchmark/scripts/s300_smoke/source_face_colors.py": "a0cc1dd37c003c2415061ca64c43cab21c5082c8b24b1c5959add660aa06273d",
+    "mujoco-benchmark/scripts/s300_smoke/make_report.py": "83eca6f288ecd51d6b33f7de74269e905bafe052cd9fda36ea5d5e53df18a59a"
+  },
+  "output": "/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors"
+}

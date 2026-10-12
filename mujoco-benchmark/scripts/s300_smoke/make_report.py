@@ -319,6 +319,10 @@ ultra: Filament PBR, 고품질 AO·PCSS 그림자·실제 공간 supersampling.
 RTX 경로 추적 렌더러와 같은 결과를 보장하는 설정은 아닙니다.</p>
 <h2>품질 옵션</h2><table><tr><th>옵션</th><th>렌더러</th><th>영상 출력</th>
 <th>GUI 출력</th><th>가로·세로 supersampling 배율</th><th>측정 렌더 초</th></tr>'''
+    if report.get('title'):
+        text = text.replace('MuJoCo — fast / balanced / ultra', esc(report['title']))
+    if report.get('summary'):
+        text = text.replace('<h2>품질 옵션</h2>', '<p class="note">' + esc(report['summary']) + '</p><h2>품질 옵션</h2>')
     text+=''.join(profile_rows)+'''</table>
 <p><code>./mujoco-benchmark/run_s300_mujoco.sh replay --quality ultra</code><br>
 <code>./mujoco-benchmark/run_s300_mujoco.sh replay --quality balanced</code><br>

@@ -1,5 +1,13 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-12: RB5 부위 재질·S300 정점 색상 복원
+
+- v6의 메시당 첫 색상만 읽던 누락 수정: RB5 7메시/38재질 구역, S300 20다색 메시.
+- balanced/ultra v7 캐시에서 원본 면별 색을 팔레트 UV로 복원. fast는 기존 간이 표시.
+- 986,317면의 원본/변환 좌표 대조, 물리 배열·정점·면·법선·원본 MJB/states SHA 동일.
+- 비교/영상: `/root/docker_share/mujoko_debugging_data/20261012_rb5_source_colors/index.html`.
+- 세부: [S300_MUJOCO_RENDER_QUALITY_KO.md](mujoco-benchmark/S300_MUJOCO_RENDER_QUALITY_KO.md).
+
 ## 2026-10-12: MuJoCo 표시 품질 fast / balanced / ultra
 
 - 물리 기준 `3e37040` 이후 표시 기능 확장. 기존 physics 모델/원본 결과는 보존.
