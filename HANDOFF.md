@@ -1,5 +1,21 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-12: MuJoCo 표시 품질 fast / balanced / ultra
+
+- 물리 기준 `3e37040` 이후 표시 기능 확장. 기존 physics 모델/원본 결과는 보존.
+- `./mujoco-benchmark/run_s300_mujoco.sh replay --quality ultra`(기본값), `balanced`, `fast` 선택.
+- PBR 표시용 Python3.12 `.mujoco315-render-venv` 분리. 물리 Python3.11/MuJoCo3.15 유지.
+- balanced/ultra: 원본 5,082geom 재질, 98줄기 skin, 15CAD 링크 시각 동작 복원.
+- source-hidden 186충돌 프록시의 표시 material을 해제해 Filament의 흰 hull 표시 오류 수정.
+  충돌 masks/물성/actuator/관절/기존 1mm 물리 기준은 변경하지 않았다.
+- USD linear 색상 → Filament sRGB 경계 변환, 중립 표시 조명, +1EV 실제 적용.
+  3.15 indexed-skin/최초 색보정 setter 오류를 표시 어댑터에서 회피.
+- ultra GUI1920×1080 요청/2×SSAA, 영상4K/내부8K. 높은 표시 비용이 있으므로 실제 FPS는 문서 참조.
+- 공유 결과 `/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/index.html`.
+- 상세 [S300_MUJOCO_RENDER_QUALITY_KO.md](mujoco-benchmark/S300_MUJOCO_RENDER_QUALITY_KO.md).
+- `replay/render`는 실제 저장 상태 표시이며 `test`의 새 물리 실행과 구분한다.
+
+
 ## 2026-10-12: S300 전체 농장·연속 수확 MuJoCo 3.15 연결 완료
 
 - `codex/s300-mujoco-belt-smoke-20261012`, Isaac 보존 `ca3a716`, 이전 소규모 시험 `51e22eb` 후속.

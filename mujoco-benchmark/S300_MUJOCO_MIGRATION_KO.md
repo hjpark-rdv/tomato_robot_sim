@@ -31,7 +31,7 @@ MuJoCo **3.15.0**의 유한 힘 actuator로 연결했다. 전체 농장 외형�
 ```bash
 cd /root/farmily_tomato
 # 저장된 실제 결과를 1배속 GUI로 보기. 카메라 이동은 물리에 영향을 주지 않는다.
-./mujoco-benchmark/run_s300_mujoco.sh replay
+./mujoco-benchmark/run_s300_mujoco.sh replay --quality ultra
 
 # 화면 없이 새 초기 상태부터 실제 물리 시험. 새 날짜 폴더, 5sim초마다 진행 로그.
 ./mujoco-benchmark/run_s300_mujoco.sh test
@@ -41,6 +41,8 @@ cd /root/farmily_tomato
 ```
 
 `replay`는 저장 qpos/qvel/attachment 상태의 표시이며 새로운 물리 계산이 아니다.
+표시 기본값은 Filament PBR `ultra`이며 `--quality balanced` 또는 `--quality fast`로
+선택한다. 별도 표시 환경·화질·실제 FPS는 [표시 품질 문서](S300_MUJOCO_RENDER_QUALITY_KO.md) 참조.
 새 결과의 MJB·NPZ 해시를 재생 전에 검사한다. 해시가 없던 옛 smoke 결과는
 호환 목적으로 열 수 있지만 해시 검사 완료로 기록하지 않는다.
 `test`는 실제 물리 계산이다. 각 결과 폴더에 `index.html`, `summary.json`,

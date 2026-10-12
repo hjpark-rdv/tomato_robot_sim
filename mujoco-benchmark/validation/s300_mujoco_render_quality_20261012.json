@@ -1,0 +1,349 @@
+{
+  "schema": "s300-render-quality-20261012",
+  "branch": "codex/s300-mujoco-belt-smoke-20261012",
+  "physics_baseline_commit": "3e37040add0aedd25d9a465f0690797a87b3590a",
+  "backend": "MuJoCo 3.15 official Filament OpenGL, isolated Python3.12",
+  "gpu": "NVIDIA RTX3090Ti24GB / driver570.211.01",
+  "profiles": {
+    "fast": {
+      "backend": "classic",
+      "video_size": [
+        960,
+        720
+      ],
+      "gui_size": [
+        1280,
+        720
+      ],
+      "supersample": 1,
+      "restore_source_visuals": false,
+      "numeric_flags": {},
+      "text_flags": {},
+      "name": "fast",
+      "measured_render_s": 0.5368624702095985
+    },
+    "balanced": {
+      "backend": "filament",
+      "video_size": [
+        1920,
+        1080
+      ],
+      "gui_size": [
+        1280,
+        720
+      ],
+      "supersample": 1,
+      "restore_source_visuals": true,
+      "numeric_flags": {
+        "filament.ao.enabled": 1,
+        "filament.ao.quality": 2,
+        "filament.ao.low_pass_filter": 2,
+        "filament.ao.upsampling": 2,
+        "filament.ao.bent_normals": 0,
+        "filament.ao.ssct": 0,
+        "filament.shadows.type": 0,
+        "filament.shadows.map_size": 2048,
+        "filament.cg.exposure": 1.0,
+        "filament.bloom.enabled": 0
+      },
+      "text_flags": {
+        "filament.cg.tone_mapping": "pbr_neutral"
+      },
+      "name": "balanced",
+      "measured_render_s": 1.4764660727232695
+    },
+    "ultra": {
+      "backend": "filament",
+      "video_size": [
+        3840,
+        2160
+      ],
+      "gui_size": [
+        1920,
+        1080
+      ],
+      "supersample": 2,
+      "restore_source_visuals": true,
+      "numeric_flags": {
+        "filament.ao.enabled": 1,
+        "filament.ao.quality": 3,
+        "filament.ao.low_pass_filter": 3,
+        "filament.ao.upsampling": 3,
+        "filament.ao.bent_normals": 1,
+        "filament.ao.ssct": 1,
+        "filament.shadows.type": 3,
+        "filament.shadows.map_size": 8192,
+        "filament.cg.exposure": 1.0,
+        "filament.bloom.enabled": 0
+      },
+      "text_flags": {
+        "filament.cg.tone_mapping": "pbr_neutral"
+      },
+      "name": "ultra",
+      "measured_render_s": 3.793617496266961
+    }
+  },
+  "snapshots": [
+    {
+      "quality": "fast",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/fast_aisle.png",
+      "sha256": "a8d0b04770fb512f0b716c2ffaa6ebe06af3ab38398ceab0276b719559d10729",
+      "time": 54.033333333323675,
+      "camera": "aisle",
+      "width": 1920,
+      "height": 1080,
+      "render_wall_s": 0.5368624702095985,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/fast_aisle.json",
+      "raw_scene": [
+        {
+          "t": 54.033333333323675,
+          "min": 0,
+          "max": 255,
+          "mean": 58.13169495884774,
+          "std": 69.37256622168562
+        }
+      ],
+      "source_geometry_hidden": false
+    },
+    {
+      "quality": "balanced",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/balanced_aisle.png",
+      "sha256": "9140a102eb5d5d872c949e8b89a132ac7bfa7e9f0f6fdaec3e4d56daf2eb86e3",
+      "time": 54.033333333323675,
+      "camera": "aisle",
+      "width": 1920,
+      "height": 1080,
+      "render_wall_s": 1.4764660727232695,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/balanced_aisle.json",
+      "raw_scene": [
+        {
+          "t": 54.033333333323675,
+          "min": 0,
+          "max": 222,
+          "mean": 120.00463316615226,
+          "std": 85.16098617427603
+        }
+      ],
+      "source_geometry_hidden": false
+    },
+    {
+      "quality": "ultra",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/ultra_aisle.png",
+      "sha256": "c8a7cc2d53cf8987625bcbd9c7c848d653512f842cd7b1616378c552ebca38e1",
+      "time": 54.033333333323675,
+      "camera": "aisle",
+      "width": 3840,
+      "height": 2160,
+      "render_wall_s": 3.793617496266961,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/ultra_aisle.json",
+      "raw_scene": [
+        {
+          "t": 54.033333333323675,
+          "min": 0,
+          "max": 255,
+          "mean": 113.17114615483538,
+          "std": 85.81031599679548
+        }
+      ],
+      "source_geometry_hidden": false
+    },
+    {
+      "quality": "balanced",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/balanced_harvest.png",
+      "sha256": "56f0d916272dc73456e255a5ff13d2e3df45a7ada56c6cae7e89bfb82e454823",
+      "time": 107.0333333332988,
+      "camera": "harvest",
+      "width": 1920,
+      "height": 1080,
+      "render_wall_s": 1.5142122879624367,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/balanced_harvest.json",
+      "raw_scene": [
+        {
+          "t": 107.0333333332988,
+          "min": 0,
+          "max": 222,
+          "mean": 69.96691663451647,
+          "std": 52.45640246258604
+        }
+      ],
+      "source_geometry_hidden": false
+    }
+  ],
+  "videos": [
+    {
+      "quality": "ultra",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/actual_aisle_ultra_4k.mp4",
+      "sha256": "47096e1a47892b1a4b25f118b39b2e67613d871d61bd4b5d9cce842483c33ee3",
+      "camera": "aisle",
+      "width": 3840,
+      "height": 2160,
+      "frames": 181,
+      "fps": 30,
+      "playback_rate": 1,
+      "duration_s": 6.034,
+      "render_wall_s": 158.87706485576928,
+      "raw_scene_checked_frames": 181,
+      "full_decode_pass": true,
+      "physics_reexecuted": false,
+      "caption_font_px": 15,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/actual_aisle_ultra_4k.json",
+      "render_model_sha256": "a4b3d0c27de78a77558a280a479725bae59fe2708354a72a15e1849a7f919ac4"
+    },
+    {
+      "quality": "balanced",
+      "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/actual_harvest_balanced.mp4",
+      "sha256": "9a709a3f99a6a6237ba602b4761bf381174daa15a7964567e0fa7addf2a25ad9",
+      "camera": "harvest",
+      "width": 1920,
+      "height": 1080,
+      "frames": 391,
+      "fps": 30,
+      "playback_rate": 1,
+      "duration_s": 13.034,
+      "render_wall_s": 58.51201553083956,
+      "raw_scene_checked_frames": 391,
+      "full_decode_pass": true,
+      "physics_reexecuted": false,
+      "caption_font_px": 15,
+      "metadata": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/actual_harvest_balanced.json",
+      "render_model_sha256": "3e96e5de0f44db205987cef7964125ecc8c97bf3f08b56cf391d3059d8c00bb9"
+    }
+  ],
+  "visual_restore": {
+    "schema": "s300-authored-render-assets-v6",
+    "materials_added": 99,
+    "source_material_count": 5082,
+    "original_skin_meshes": 98,
+    "original_skin_vertices": 86624,
+    "render_skin_vertices": 388752,
+    "filament_skin_padding_vertices": 302128,
+    "hidden_source_collision_visuals": 186,
+    "lighting_policy": {
+      "name": "neutral_daylight",
+      "environment_lux": 15000.0,
+      "source_key_light_intensity": 15000.0,
+      "source_key_light_intensity_unit": "candela",
+      "source_key_light_types": [
+        "spot",
+        "spot"
+      ],
+      "source_key_lights": 2,
+      "ibl_rgb": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "cubemap_face_size": 32,
+      "render_only": true,
+      "interpretation": "Neutral display lighting; not a measured farm illumination calibration"
+    },
+    "untextured_mesh_zero_uv0_assets": 1851,
+    "untextured_skin_zero_uv0_assets": 98,
+    "uv0_compatibility": "Zero UV0 for untextured meshes/skins; authored UVs retained; official PBR shader requires UV0",
+    "filament_colour_transfer": "USD scene-linear Rec.709 RGB encoded to sRGB at native Filament API; alpha unchanged",
+    "connected_source_texture_geoms": 0,
+    "limitations": [
+      "Connected source textures/normal maps are not synthesized.",
+      "Source RGB/PBR constants are retained; renderer illumination and response differ."
+    ],
+    "physics_parameter_hash_schema": "s300-physical-arrays-v2 (all texture coordinate fields excluded)",
+    "transmission_visual_geoms": 15,
+    "shader_attribute_warning_count": {
+      "filament_gpu_tests.log": 0,
+      "balanced_aisle_v6.log": 0,
+      "ultra_aisle_v6.log": 0,
+      "balanced_harvest_v6.log": 0,
+      "gui_balanced_v6.log": 0,
+      "gui_ultra_v6.log": 0,
+      "actual_aisle_ultra_4k_v6.log": 0,
+      "actual_harvest_balanced.log": 0
+    },
+    "colour_grading_configure_calls": 2,
+    "full_geometry_enumeration": {
+      "geoms": 5101,
+      "skins": 98,
+      "mechanism": "Official ModelRenderables iterates model.ngeom/model.nskin; no MjvScene capacity limit"
+    }
+  },
+  "tests": {
+    "native": {
+      "passed": 66,
+      "log": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/native_regression_tests.log"
+    },
+    "usd_and_existing_cad": {
+      "passed": 28,
+      "log": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/usd_and_source_regression_tests.log"
+    },
+    "filament_gpu_and_camera": {
+      "passed": 7,
+      "log": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/filament_gpu_tests.log"
+    },
+    "total_passed": 101
+  },
+  "code_hashes": {
+    "mujoco-benchmark/scripts/s300_smoke/view_smoke.py": "ec0d70de455d48d454283361d390e2415a9287a2cfeb23f54816e3a20ce41da4",
+    "mujoco-benchmark/scripts/s300_smoke/filament_backend.py": "a4029e2336b5fdfcfeb0eb92293b981ebecd132204ebe9f0f4714ed8cd063ed9",
+    "mujoco-benchmark/scripts/s300_smoke/render_assets.py": "8430dcdffc6af1e4931884fef6ff63a4f26d10be001c598b5294de4fca0285e6",
+    "mujoco-benchmark/scripts/s300_smoke/quality_profiles.py": "b5a7c347b7d45be0af3f7f61b787447ea7f9d861f8b0d600218189656a62c56c",
+    "mujoco-benchmark/scripts/s300_smoke/make_report.py": "4992e8b8f4455498a4d4c490b559a48be7769951ef804eb8e9200c47e18b34f7",
+    "mujoco-benchmark/scripts/s300_smoke/requirements-render-lock.txt": "b791029e7b89669dd8bbe0e1b722f17e06ad1f2b10044f7da2c9483706aae85d",
+    "mujoco-benchmark/run_s300_mujoco.sh": "b7397e97acfe2066127574e1b7d3c76f84967105c1f1327c6246711ffa8418c4",
+    "mujoco-benchmark/setup_s300_render.sh": "a3534e26b9fafe264c86738de62fe251554ce2612afe2cce8ef4670b2a81848a",
+    "nvidia-sim/harvest_s300/transmission_geometry.py": "6dae93b22743c4639436f4b150aed7f56ad97966002df904231bf71922d99382",
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "31245d4b7c0d4b493ec857f645811b5783e11529e6d0f255e10943ea4db9cff0"
+  },
+  "source_material_evidence": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_quality/asset_cache/a87649761bdd7ce203fd5ff2ebcb7a8b5b9bb7e31421460fd89e26afa54f6349/render_assets.json",
+  "limitations": [
+    "Maximum quality is costly; measured GUI FPS is separate from physics throughput.",
+    "Ultra requested GUI1920x1080; desktop actual1850x1016 with2x supersampling.",
+    "Native viewer sync frequency is not measured presented FPS.",
+    "Neutral render lighting/+1EV is not a measured farm sensor calibration.",
+    "Source currently has no connected texture/normal map; none invented.",
+    "Full source-visible geometry retained; source-hidden collider proxies visually hidden only.",
+    "Filament PBR is not equivalent to RTX path tracing."
+  ],
+  "training_eligible": false,
+  "gui": [
+    {
+      "quality": "fast",
+      "presented_fps": null,
+      "display_wall_s": 5.016090791672468,
+      "viewer_sync_fps": 22.52750292869469
+    },
+    {
+      "quality": "balanced",
+      "presented_frames": 81,
+      "presented_fps": 7.88686628088386,
+      "presented_size": [
+        1280,
+        720
+      ],
+      "display_wall_s": 10.270238788798451
+    },
+    {
+      "quality": "ultra",
+      "presented_frames": 37,
+      "presented_fps": 3.586176036720758,
+      "presented_size": [
+        1850,
+        1016
+      ],
+      "display_wall_s": 10.31739647500217
+    }
+  ],
+  "physics_unchanged": {
+    "source_model": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/model.mjb",
+    "source_states": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_full/campaign_final/states.npz",
+    "source_model_sha256": "6467d1f80736b2cbe97015e715d274bbf20ea9ccfde04ea81c8e1bf6be297769",
+    "source_states_sha256": "2a88c5ecb605e6684aca1cba4e016937c97ad7b56cbfdcde285326841bee240c",
+    "source_bytes_rechecked_after_all_renders": true,
+    "original_vs_render_physics_parameter_sha256": "287e3e9ce4b99432bfa06d175a27a30a4062cc6528f045d0f35219e91eab9db8",
+    "physics_hash_schema": "s300-physical-arrays-v2 (all texture coordinate fields excluded)",
+    "physics_parameters_unchanged": true,
+    "physical_object_order_verified": true,
+    "physics_reexecuted": false,
+    "penetration_policy_unchanged": true,
+    "original_physics_loop_rtf": 0.78,
+    "note": "RTF .780 belongs to original saved execution, not a new physics benchmark"
+  }
+}

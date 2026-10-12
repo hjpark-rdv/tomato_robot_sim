@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -172,43 +173,138 @@ def load_replay_states(path):
         return {key:archive[key] for key in keys if key in archive}
 
 
+def render_rgb(renderer, profile):
+    """Real spatial antialiasing after the complete high-resolution scene."""
+    rgb=renderer.render()
+    scene_pixels(rgb)
+    if profile['supersample']>1:
+        from PIL import Image
+        rgb=np.asarray(Image.fromarray(rgb).resize(
+            (profile['width'],profile['height']),Image.Resampling.LANCZOS))
+    return rgb
+
+
+def filament_gui(model,data,camera,states,frame,start,end,profile,duration=None):
+    """Interactive display of saved states through the same PBR video backend."""
+    from filament_backend import FilamentRenderer,FilamentWindow
+    renderer=FilamentRenderer(model,height=profile['internal_height'],
+                              width=profile['internal_width'],quality=profile['name'])
+    count=0;render_s=0.;origin=time.perf_counter();last=origin;clock=start
+    width,height=profile['width'],profile['height']
+    try:
+        with FilamentWindow(camera,width=profile['width'],height=profile['height'],
+                title='Farmily MuJoCo | '+profile['name']+' | Filament | saved states') as window:
+            try:
+                while window.is_running():
+                    tick=time.perf_counter();window.poll_events()
+                    if duration is not None and tick-origin>=duration:break
+                    if not window.paused:clock+=tick-last
+                    last=tick
+                    t=start+(clock-start)%max(end-start,1/profile['fps'])
+                    i=int(np.clip(np.searchsorted(states['time'],t),0,len(states['time'])-1))
+                    frame(i)
+                    width,height=window.size
+                    if width<=0 or height<=0:
+                        time.sleep(.05);continue
+                    active={**profile,'width':width,'height':height}
+                    renderer.resize(width*profile['supersample'],height*profile['supersample'])
+                    renderer.update_scene(data,camera=camera)
+                    begin=time.perf_counter();rgb=render_rgb(renderer,active)
+                    render_s+=time.perf_counter()-begin
+                    window.present(rgb);count+=1
+                    delay=1/profile['fps']-(time.perf_counter()-tick)
+                    if delay>0:time.sleep(delay)
+            except KeyboardInterrupt:
+                pass
+    finally:
+        renderer.close()
+    wall=time.perf_counter()-origin
+    return dict(quality=profile['name'],renderer='filament',presented_frames=count,
+                display_wall_s=wall,presented_fps=count/wall,render_wall_s=render_s,
+                presented_size=[width,height],supersample=profile['supersample'],
+                renderer_initialization_s=renderer.initialization_s,
+                color_grading_configure_calls=renderer.color_grading_configure_calls,
+                physics_reexecuted=False,playback_rate=1)
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('trial',type=Path)
     p.add_argument('--gui',action='store_true');p.add_argument('--camera',default='auto',
                     help='auto, top, side, farm, aisle, front, belt, fruit, harvest '
                          '(diagnostic jaw camera with render-only headlight), or a named saved model camera')
-    p.add_argument('--fps',type=int,default=30);p.add_argument('--start',type=float,default=0)
+    p.add_argument('--fps',type=int);p.add_argument('--start',type=float,default=0)
     p.add_argument('--end',type=float);p.add_argument('--output',type=Path)
-    p.add_argument('--width',type=int,default=960);p.add_argument('--height',type=int,default=720)
+    p.add_argument('--width',type=int);p.add_argument('--height',type=int)
+    p.add_argument('--quality',choices=('fast','balanced','ultra'),default='fast',
+                   help='Display only: classic fast, authored PBR balanced, 4K/2x supersampled PBR ultra')
+    p.add_argument('--image',action='store_true',help='Save a single PNG at --start instead of MP4')
+    p.add_argument('--render-cache',type=Path,help='Separate source-visual render cache; physics files stay immutable')
+    p.add_argument('--gui-metrics',type=Path,help='Save measured GUI display throughput as JSON')
     p.add_argument('--gui-duration-s',type=float,
                    help='Optional wall-clock limit for a graceful GUI connection check')
     a=p.parse_args()
-    if a.gui_duration_s is not None and a.gui_duration_s<=0:
+    if a.gui_duration_s is not None and (not math.isfinite(a.gui_duration_s) or a.gui_duration_s<=0):
         p.error('--gui-duration-s must be positive')
+    if not math.isfinite(a.start) or (a.end is not None and not math.isfinite(a.end)):
+        p.error('--start and --end must be finite seconds')
     folder=a.trial.resolve()
     summary=json.loads((folder/'summary.json').read_text())
     model_path=resolve_model(folder,summary)
+    print('Verifying saved model and state hashes...',flush=True)
     integrity=verify_replay_integrity(folder,summary,model_path)
-    if a.gui:
+    from quality_profiles import quality_profile
+    profile=quality_profile(a.quality,gui=a.gui,width=a.width,height=a.height,fps=a.fps)
+    a.width,a.height,a.fps=profile['width'],profile['height'],profile['fps']
+    if profile['backend']=='filament' and sys.version_info<(3,12):
+        render_python=Path(__file__).resolve().parents[2]/'.mujoco315-render-venv/bin/python'
+        if not render_python.is_file():
+            raise RuntimeError('Run mujoco-benchmark/setup_s300_render.sh to prepare the PBR Python environment')
+        if Path(sys.executable).absolute()==render_python.absolute():
+            raise RuntimeError('PBR display environment requires Python >=3.12; recreate it with setup_s300_render.sh')
+        os.execv(str(render_python),[str(render_python),str(Path(__file__).resolve()),*sys.argv[1:]])
+    if profile['backend']=='filament':
+        from filament_backend import configure_graphics_environment
+        configure_graphics_environment()
+    elif a.gui:
         os.environ['MUJOCO_GL']='glfw'
     else:
         sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
         import render_backend
     import mujoco as mj
+    print(f'Loading saved-state display: {profile["name"]} / {profile["backend"]} / '
+          f'{a.width}x{a.height}, supersampling {profile["supersample"]}x',flush=True)
     model=mj.MjModel.from_binary_path(str(model_path))
+    visual_evidence=None
+    if profile['restore_source_visuals']:
+        print('Loading source materials and surface cache (first build takes longer)...',flush=True)
+        from render_assets import load_render_model
+        kwargs=dict(original_mjb=model_path,quality=profile['name'])
+        if a.render_cache is not None:kwargs['cache_root']=a.render_cache
+        model,visual_evidence=load_render_model(model,Path(summary.get('model_dir',model_path.parent)),**kwargs)
     d=mj.MjData(model);z=load_replay_states(folder/'states.npz')
     ts=z['time'];end=min(ts[-1],a.end) if a.end is not None else ts[-1]
     if a.fps<=0 or a.start<ts[0] or a.start>end:
         raise ValueError('Positive fps and start/end within the saved time range are required')
     def frame(i):
         restore_frame(mj,model,d,z,i)
+        if visual_evidence is not None:
+            from render_assets import update_render_visuals
+            update_render_visuals(model,d,visual_evidence)
     frame(int(np.clip(np.searchsorted(ts,a.start),0,len(ts)-1)))
     camera,camera_name=make_camera(mj,model,d,a.camera,summary)
     attachment_ids=np.array([i for i in range(model.neq)
                              if (mj.mj_id2name(model,mj.mjtObj.mjOBJ_EQUALITY,i) or '').endswith('_attachment')],dtype=int)
-    if a.gui:
+    if a.gui and profile['backend']=='filament':
+        print('Opening PBR viewer; mouse rotates/pans/zooms, Space pauses, Escape closes.',flush=True)
+        result=filament_gui(model,d,camera,z,frame,a.start,end,profile,a.gui_duration_s)
+        result.update(**integrity,source_model=str(model_path),quality_profile=profile,
+                      visual_restore=visual_evidence)
+        if a.gui_metrics:a.gui_metrics.write_text(json.dumps(result,indent=2)+'\n')
+        print(json.dumps(result,indent=2))
+    elif a.gui:
         import mujoco.viewer
         prior_threads=set(threading.enumerate())
+        sync_count=0;sync_s=0.;display_wall_s=0.
         try:
             with mujoco.viewer.launch_passive(model,d) as viewer:
                 for key in ('type','fixedcamid','trackbodyid','distance','azimuth','elevation'):
@@ -217,14 +313,20 @@ def main():
                 origin=time.perf_counter()
                 try:
                     while viewer.is_running():
+                        tick=time.perf_counter()
                         elapsed=time.perf_counter()-origin
                         if a.gui_duration_s is not None and elapsed>=a.gui_duration_s:break
                         t=a.start+elapsed%max(end-a.start,1/a.fps)
                         i=int(np.clip(np.searchsorted(ts,t),0,len(ts)-1))
                         with viewer.lock():frame(i)
-                        viewer.sync();time.sleep(1/a.fps)
+                        sync_start=time.perf_counter();viewer.sync()
+                        sync_s+=time.perf_counter()-sync_start;sync_count+=1
+                        delay=1/a.fps-(time.perf_counter()-tick)
+                        if delay>0:time.sleep(delay)
                 except KeyboardInterrupt:
                     pass
+                finally:
+                    display_wall_s=time.perf_counter()-origin
         finally:
             # launch_passive owns daemon render/reload threads. Keep the native
             # model alive until these new threads finish their GLFW cleanup;
@@ -232,42 +334,76 @@ def main():
             for thread in threading.enumerate():
                 if thread not in prior_threads and thread.daemon:
                     thread.join(timeout=5.)
+        result=dict(quality='fast',renderer='classic',viewer_sync_calls=sync_count,
+                    viewer_sync_fps=sync_count/max(display_wall_s,1e-9),
+                    display_wall_s=display_wall_s,viewer_sync_wall_s=sync_s,
+                    presented_fps=None,actual_presented_fps_measured=False,
+                    physics_reexecuted=False,playback_rate=1,quality_profile=profile,**integrity)
+        if a.gui_metrics:a.gui_metrics.write_text(json.dumps(result,indent=2)+'\n')
+        print(json.dumps(result,indent=2))
     else:
         import imageio.v2 as imageio
         from PIL import Image,ImageDraw,ImageFont
-        output=a.output or folder/f'actual_{camera_name}.mp4'
+        suffix=('.png' if a.image else '.mp4')
+        quality_suffix='' if a.quality=='fast' else '_'+a.quality
+        output=a.output or folder/f'actual_{camera_name}{quality_suffix}{suffix}'
         if output.exists():raise FileExistsError(output)
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',15)
         model.vis.global_.offwidth=max(model.vis.global_.offwidth,a.width)
         model.vis.global_.offheight=max(model.vis.global_.offheight,a.height)
-        opt=mj.MjvOption();renderer=mj.Renderer(model,height=a.height,width=a.width)
-        started=time.perf_counter();count=0;checks=[]
-        with imageio.get_writer(output,fps=a.fps,codec='libx264',quality=7,macro_block_size=1,
-                               ffmpeg_params=['-movflags','+faststart']) as writer:
-            for t in replay_times(a.start,end,a.fps):
+        opt=mj.MjvOption()
+        if profile['backend']=='filament':
+            from filament_backend import FilamentRenderer
+            renderer=FilamentRenderer(model,height=profile['internal_height'],
+                width=profile['internal_width'],quality=profile['name'])
+        else:renderer=mj.Renderer(model,height=a.height,width=a.width)
+        started=time.perf_counter();last_progress=started;count=0;checks=[]
+        writer=None if a.image else imageio.get_writer(output,fps=a.fps,codec='libx264',
+            macro_block_size=1,ffmpeg_params=['-movflags','+faststart','-crf','16' if a.quality=='ultra' else '20'])
+        try:
+            for t in ([a.start] if a.image else replay_times(a.start,end,a.fps)):
                 i=int(np.clip(np.searchsorted(ts,t),0,len(ts)-1));frame(i)
                 renderer.update_scene(d,camera=camera,scene_option=opt)
-                rgb=renderer.render();pixels=scene_pixels(rgb)
+                rgb=render_rgb(renderer,profile);pixels=scene_pixels(rgb)
                 if count%(a.fps*5)==0:checks.append(dict(t=float(ts[i]),**pixels))
                 im=Image.fromarray(rgb);draw=ImageDraw.Draw(im)
                 lines=caption_lines(summary,z,i,attachment_ids)
+                if a.quality!='fast':lines.append('Display: '+a.quality+' | Filament PBR | restored source surfaces')
                 if camera_name=='harvest':
-                    lines.append('Diagnostic virtual camera at jaw opening | render-only headlight')
+                    lighting='neutral daylight' if profile['backend']=='filament' else 'render-only headlight'
+                    lines.append('Diagnostic virtual camera at jaw opening | '+lighting)
                 draw.rectangle((0,0,a.width,4+20*len(lines)),fill=(25,25,25))
                 for j,line in enumerate(lines):draw.text((8,3+20*j),line,font=font,fill=(255,240,200))
-                writer.append_data(np.asarray(im));count+=1
-        renderer.close()
+                if a.image:im.save(output)
+                else:writer.append_data(np.asarray(im))
+                count+=1
+                now=time.perf_counter()
+                if not a.image and (count%(a.fps*5)==0 or now-last_progress>=10):
+                    print(f'render {a.quality}: {count} frames, saved physics t={ts[i]:.2f}s, '
+                          f'{now-started:.1f}s rendering',flush=True)
+                    last_progress=now
+        finally:
+            if writer is not None:writer.close()
+            renderer.close()
         report=dict(video=str(output),frames=count,fps=a.fps,playback_rate=1,render_wall_s=time.perf_counter()-started,
+                    renderer_initialization_s=getattr(renderer,'initialization_s',None),
+                    color_grading_configure_calls=getattr(renderer,'color_grading_configure_calls',None),
                     state_source=str(folder/'states.npz'),physics_reexecuted=False,
                     raw_scene_checked_frames=count,raw_scene_samples=checks,
                     camera_light_transforms_updated=True,model_source=str(model_path),
+                    display_model_source=visual_evidence['render_cache'] if visual_evidence else str(model_path),
                     camera=camera_name,width=a.width,height=a.height,caption_font_px=15,
                     execution_mode=summary.get('mode'),
+                    quality_profile=profile,visual_restore=visual_evidence,
                     render_only_headlight=dict(active=int(model.vis.headlight.active),
+                        applied_by_backend=profile['backend']=='classic',
                         ambient=model.vis.headlight.ambient.tolist(),
                         diffuse=model.vis.headlight.diffuse.tolist(),
                         specular=model.vis.headlight.specular.tolist()) if camera_name=='harvest' else None,
-                    geometry_hidden=False,**integrity)
+                    geometry_hidden=bool(visual_evidence and visual_evidence.get('hidden_source_collision_visuals')),
+                    source_visual_geometry_hidden=False,
+                    collision_proxies_hidden_for_visual_replacement=visual_evidence.get('hidden_source_collision_visuals',0) if visual_evidence else 0,
+                    **integrity)
         output.with_suffix('.json').write_text(json.dumps(report,indent=2)+'\n')
         print(json.dumps(report,indent=2))
 

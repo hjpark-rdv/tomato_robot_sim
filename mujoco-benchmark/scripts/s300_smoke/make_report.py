@@ -227,9 +227,120 @@ def build_harvest(root,primary):
     return report
 
 
+def build_quality_report(root):
+    """Present measured display presets without implying new physics trials."""
+    root=Path(root).resolve()
+    manifest_path=root/'quality_validation.json'
+    report=json.loads(manifest_path.read_text())
+    def esc(value):return html.escape(str(value),quote=True)
+    def entries(value,label):
+        if isinstance(value,dict):
+            return [{**item,'name':item.get('name',name)} if isinstance(item,dict)
+                    else dict(name=name,value=item) for name,item in value.items()]
+        if isinstance(value,list):return value
+        return []
+    def asset_path(row):
+        if isinstance(row,str):return Path(row)
+        for key in ('path','output','image','video','file'):
+            if row.get(key):return Path(row[key])
+        return None
+    def link(path):
+        path=Path(path)
+        absolute=path if path.is_absolute() else root/path
+        try:target=str(absolute.relative_to(root))
+        except ValueError:target=absolute.as_uri()
+        return '<a href="'+esc(target)+'">'+esc(absolute)+'</a>'
+    def target(path):
+        path=Path(path)
+        absolute=path if path.is_absolute() else root/path
+        try:return str(absolute.relative_to(root))
+        except ValueError:return absolute.as_uri()
+    def detail(value):
+        return '<pre>'+esc(json.dumps(value,ensure_ascii=False,indent=2))+'</pre>'
+    profiles=entries(report.get('profiles',{}),'profile')
+    snapshots=entries(report.get('snapshots',[]),'snapshot')
+    videos=entries(report.get('videos',[]),'video')
+    gui=entries(report.get('gui',[]),'gui')
+    profile_rows=[]
+    for row in profiles:
+        name=row.get('name',row.get('quality','?'))
+        values=(name,row.get('backend',row.get('renderer','')),
+                row.get('video_size',row.get('size',
+                    [row.get('width','?'),row.get('height','?')])),
+                row.get('gui_size',''),row.get('supersample',''),
+                row.get('measured_render_s',row.get('render_wall_s','')))
+        profile_rows.append('<tr>'+''.join('<td>'+esc(v)+'</td>' for v in values)+'</tr>')
+    image_sections=[]
+    for row in snapshots:
+        path=asset_path(row)
+        if path is None:continue
+        quality=(row.get('quality',row.get('name','')) if isinstance(row,dict) else '')
+        stamp=row.get('time',row.get('t',row.get('start',''))) if isinstance(row,dict) else ''
+        label=str(quality)+((' / t='+str(stamp)+'s') if stamp!='' else '')
+        image_sections.append('<figure><figcaption>'+esc(label)+'</figcaption>'
+            '<a href="'+esc(target(path))+'"><img loading="lazy" src="'+esc(target(path))+'"></a>'
+            '<p>'+link(path)+'</p></figure>')
+    video_sections=[]
+    for row in videos:
+        path=asset_path(row)
+        if path is None:continue
+        label=(row.get('quality',row.get('name',path.name)) if isinstance(row,dict) else path.name)
+        video_sections.append('<section><h3>'+esc(label)+'</h3>'
+            '<video controls preload="metadata" src="'+esc(target(path))+'"></video>'
+            '<p>'+link(path)+'</p></section>')
+    gui_rows=[]
+    for row in gui:
+        if not isinstance(row,dict):continue
+        fps=row.get('presented_fps')
+        if fps is None:fps='미계측 (native sync '+str(round(row.get('viewer_sync_fps',0),2))+'회/s)'
+        values=(row.get('quality',row.get('name','')),row.get('presented_frames',''),
+                row.get('display_wall_s',''),fps,
+                row.get('render_wall_s',''))
+        gui_rows.append('<tr>'+''.join('<td>'+esc(v)+'</td>' for v in values)+'</tr>')
+    # The manifest is the complete evidence source. Unknown fields remain
+    # available instead of being replaced with guessed timing or PASS values.
+    text='''<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Farmily MuJoCo 표시 품질 비교</title><style>
+body{font:16px system-ui,sans-serif;margin:24px;background:#f6f7f9;color:#17222e}
+table{border-collapse:collapse;background:white}td,th{padding:8px;border:1px solid #ccc}
+.note{background:#fff1cf;padding:16px;line-height:1.55}.images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+figure{margin:0;background:white;padding:10px}figcaption{font-weight:bold;margin-bottom:8px}
+img{width:100%;height:auto}video{width:min(1280px,100%)}p,a,pre{overflow-wrap:anywhere}
+pre{white-space:pre-wrap;background:white;padding:12px}code{font-size:14px}
+@media(max-width:1000px){.images{grid-template-columns:1fr}}section{margin-top:24px}
+</style><h1>MuJoCo — fast / balanced / ultra</h1>
+<p class="note">동일하게 저장된 실제 qpos를 서로 다른 표시 설정으로 재생했습니다.
+물리 시험을 다시 실행한 결과가 아닙니다. GUI는 저장 timestamp를 1배속으로 표시하며,
+표시 FPS와 기존 물리 계산 속도는 다른 수치입니다. 최대 품질의 렌더링 비용이 더 큽니다.</p>
+<p>fast: 기존 OpenGL 표시. balanced: Filament PBR, 원본 재질·줄기 표면 복원.
+ultra: Filament PBR, 고품질 AO·PCSS 그림자·실제 공간 supersampling.
+공식 RGB RenderTarget에서 MSAA는 비활성화되므로 MSAA 적용으로 보고하지 않습니다.
+RTX 경로 추적 렌더러와 같은 결과를 보장하는 설정은 아닙니다.</p>
+<h2>품질 옵션</h2><table><tr><th>옵션</th><th>렌더러</th><th>영상 출력</th>
+<th>GUI 출력</th><th>가로·세로 supersampling 배율</th><th>측정 렌더 초</th></tr>'''
+    text+=''.join(profile_rows)+'''</table>
+<p><code>./mujoco-benchmark/run_s300_mujoco.sh replay --quality ultra</code><br>
+<code>./mujoco-benchmark/run_s300_mujoco.sh replay --quality balanced</code><br>
+<code>./mujoco-benchmark/run_s300_mujoco.sh replay --quality fast</code></p>
+<h2>동일 상태 이미지</h2><p>이미지를 클릭하면 원본 해상도로 확인합니다.</p><div class="images">'''
+    text+=''.join(image_sections)+'</div><h2>실제 상태 영상</h2>'+''.join(video_sections)
+    text+='''<h2>측정 GUI 표시 비용</h2><table><tr><th>옵션</th><th>표시 프레임</th>
+<th>표시 wall초</th><th>표시 FPS</th><th>렌더 wall초</th></tr>'''+''.join(gui_rows)+'</table>'
+    text+='<h2>원본·물리 보존 확인</h2>'+detail(report.get('physics_unchanged',{}))
+    text+='<h2>원본 외형·재질 복원</h2>'+detail(report.get('visual_restore',report.get('assets',{})))
+    text+='<h2>검증</h2>'+detail(report.get('tests',{}))
+    text+='<p>'+link(manifest_path)+'</p></html>'
+    (root/'index.html').write_text(text)
+    return report
+
+
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('root',type=Path)
     p.add_argument('--harvest-primary',type=Path)
+    p.add_argument('--quality-report',action='store_true')
     a=p.parse_args()
-    if a.harvest_primary:build_harvest(a.root,a.harvest_primary)
+    if a.quality_report and a.harvest_primary:p.error('Choose one report mode')
+    if a.quality_report:build_quality_report(a.root)
+    elif a.harvest_primary:build_harvest(a.root,a.harvest_primary)
     else:build(a.root)

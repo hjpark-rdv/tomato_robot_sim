@@ -12,3 +12,4 @@
 # Python generated files
 __pycache__/
 *.py[cod]
+mujoco-benchmark/.mujoco315-render-venv/

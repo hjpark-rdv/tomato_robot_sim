@@ -46,6 +46,19 @@ class ReplayIntegrity(unittest.TestCase):
             self.assertEqual(verify_replay_integrity(folder,summary),
                              dict(model_sha256_verified=True,states_sha256_verified=True))
 
+    def test_old_render_python_is_rejected_without_recursive_reexec(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder,_=self.fixture(directory)
+            render_python=Path(__file__).resolve().parents[2]/'.mujoco315-render-venv/bin/python'
+            with mock.patch.object(sys,'argv',['view_smoke.py',str(folder),'--quality','ultra']), \
+                 mock.patch.object(sys,'version_info',(3,11,0)), \
+                 mock.patch.object(sys,'executable',str(render_python)), \
+                 mock.patch.object(Path,'is_file',return_value=True), \
+                 mock.patch('view_smoke.os.execv') as restart:
+                with self.assertRaisesRegex(RuntimeError,'requires Python >=3.12'):
+                    main()
+                restart.assert_not_called()
+
     def test_changed_model_rejected_before_native_load(self):
         with tempfile.TemporaryDirectory() as directory:
             folder,_=self.fixture(directory)
