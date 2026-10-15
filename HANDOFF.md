@@ -1,5 +1,35 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-16: S300 Newton 단일 실행·GUI 일치·CPU 병렬 검증
+
+- 브랜치 `codex/s300-newton-20261016`. Isaac 원본 `ca3a716`과 기존 결과 보존,
+  기존 MuJoCo portable 자산·sample_plan·제어·분리·영상 경로 재사용.
+- 별도 Newton1.7.0 /MuJoCo·MJWarp3.15.0 /Warp1.17.0. **권장 CPU는 Newton framework +
+  native MuJoCo CPU**이며 GPU 가속 결과로 설명하지 않는다. 실제 Newton GPU도 시험했지만
+  재검증 단일 실행이 활성 겹침 기준 초과로 중단되어 N8/32는 미평가다.
+- 기준 CPU400Hz 접촉/free60Hz 이동: 82.795sim /66.733loop초=1.241×,
+  실제 Isaac GUI 표시68.037초=1.217×. 13,806스텝+초기 상태 전체가 명령·q/v·pose·
+  equality·접촉·분리 이벤트까지 정확히 같다. GUI는 별도 표시 전용 프로세스다.
+- 한 번 진입/두 차례 개폐에서6열매 분리, 활성 최대 겹침0.681mm. **전체10열매 수확 아님**.
+  전체 평균은 실시간 이상이나, 접촉 구간은 약0.30~0.65×로 아직 느리다.
+- CPU1/8/24/48 독립 환경 총81회 완주·동일 저장 상태. 합산1.249/9.673/26.272/35.907
+  sim초/실제초. 24환경 환경당1.095×,48환경.748×. 최대RSS75.71GiB.
+  `cpu_scaling/evidence_identity.json`에서 상태NPZ·매step physics 지표NPZ의 SHA256이 각각1종임을 확인.
+  같은 장면/명령 복제 처리량이며 다양한 장면·정책 검증이 아니다.
+- 결과가 정확히 같은 선택 최적화: native-observables1.306×,
+  비충돌 시각geom3,819개만 물리에서 분리1.336×. 활성901개와 질량·관절·물성 유지,
+  정적12,370항목·전체 실행 상태/접촉 동등성 확인. 최적화 GUI도1.304×·전체13,806step
+  정확 일치라 현재 기본은 `inputs_render_separated` +native-observables. 원본 입력도 보존한다.
+- 120/240/300Hz·CG는1mm 초과 중단, dense는5개 분리로 동작 달라 기본 채택 안 함.
+  분리3N/.008Nm·활성1mm·전체 농장 외형·타깃 송이/자기 주줄기만 충돌 정책 유지.
+- 실행 `./nvidia-sim/run_s300_newton.sh run --gui` (headless는 `--gui` 생략).
+  매번 새 출력, source/cache 덮어쓰기 없음. 자세한 명령 [S300_NEWTON.md](nvidia-sim/S300_NEWTON.md),
+  결과 [S300_NEWTON_RESULTS_KO.md](nvidia-sim/S300_NEWTON_RESULTS_KO.md).
+- 원자료 `/root/docker_share/mujoko_debugging_data/20261016_s300_newton/`.
+  실제 상태1배속 영상2개는 `cpu400_render_separated_gui/newton_actual_entry.mp4`,
+  `newton_actual_truss_top.mp4`. 후자는 재생 화면만 배경/잎133경로를 숨긴 접촉 탑뷰다.
+  `training_eligible=false`, `harvest_success=null`. 전체행 수확·포집·RGB-D 판단·GPU 병렬은 미완료.
+
 ## 2026-10-12: S300 전체 농장·연속 수확 MuJoCo 3.15 연결 완료
 
 - `codex/s300-mujoco-belt-smoke-20261012`, Isaac 보존 `ca3a716`, 이전 소규모 시험 `51e22eb` 후속.

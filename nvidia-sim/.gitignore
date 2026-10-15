@@ -1,2 +1,3 @@
 .asset-venv/
+.newton-venv/
 harvest_s300/generated/

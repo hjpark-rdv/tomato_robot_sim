@@ -9,11 +9,13 @@ import argparse
 import asyncio
 import json
 import os
+import signal
 import time
 import traceback
 from pathlib import Path
 
 from motion_live import MotionLiveReader
+from newton_live import display_publication_metrics, write_display_ack
 
 p = argparse.ArgumentParser()
 p.add_argument('trial', type=Path)
@@ -23,6 +25,8 @@ p.add_argument('--camera', default='/World/HarvestCloseCamera')
 p.add_argument('--ready-file', type=Path, help='Publish display readiness after showing the first measured frame; an external launcher may then release the producer start gate')
 p.add_argument('--headless', action='store_true', help='render/capture validation without a display window')
 p.add_argument('--capture', type=Path, help='save a PNG of the final displayed measured frame')
+p.add_argument('--review-light', action='store_true',
+               help='Add the existing replay inspection fill light in this display session only')
 p.add_argument('--wait-seconds', type=float, default=60., help='wait for the producer to create its live metadata')
 a = p.parse_args()
 if not 0 < a.fps <= 60 or a.seconds < 0 or a.wait_seconds < 0:
@@ -48,7 +52,7 @@ from isaacsim import SimulationApp
 app = SimulationApp({'headless': a.headless, 'width': 960, 'height': 720,
                      'renderer': 'RaytracedLighting'})
 exit_code = 0
-report = dict(source='latest completed measured native physics frame',
+report = dict(source=reader.metadata.get('source', 'latest completed measured native physics frame'),
               model_sha256=reader.metadata['model_sha256'], scene=str(scene),
               physics_rerun=False, physics_steps=0, frame_cap_fps=a.fps,
               original_visual_geometry=True, display_environment=0,
@@ -68,8 +72,11 @@ try:
     timeline = omni.timeline.get_timeline_interface()
     timeline.set_auto_update(False)
     timeline.stop()
+    blocked_play_events = 0
     def keep_display_stopped(event):
+        global blocked_play_events
         if event.type == int(omni.timeline.TimelineEventType.PLAY):
+            blocked_play_events += 1
             timeline.stop()
     subscription = timeline.get_timeline_event_stream().create_subscription_to_pop(
         keep_display_stopped, name='Measured live display: no simulation playback')
@@ -107,24 +114,47 @@ try:
     if not stage.GetPrimAtPath(a.camera):
         raise ValueError('Live camera does not exist: ' + a.camera)
     viewport.set_active_camera(a.camera)
+    if a.review_light:
+        # Reuse render_motion.py's inspection light, with all edits confined to
+        # this independent viewer's anonymous session layer.
+        from pxr import Gf, UsdGeom, UsdLux
+        eye = np.asarray(UsdGeom.XformCache().GetLocalToWorldTransform(
+            stage.GetPrimAtPath(a.camera)))[3, :3]
+        light = UsdLux.SphereLight.Define(stage, '/World/LiveReviewFillLight')
+        light.CreateIntensityAttr(1800.)
+        light.CreateRadiusAttr(.5)
+        UsdGeom.Xformable(light).AddTranslateOp().Set(Gf.Vec3d(*eye))
+        report['display_review_fill_light'] = dict(path=str(light.GetPath()),
+            intensity=1800., radius_m=.5, world_position=eye.tolist(),
+            source='existing render_motion.py --review-light parameters',
+            physical_source_modified=False)
     window = ui.Window('Measured physics live display', width=450, height=140)
     with window.frame:
         with ui.VStack():
-            ui.Label('Separate viewer · measured native poses · physics remains in producer')
+            ui.Label('Separate viewer · measured poses · physics remains in producer')
             ui.Label(f"Physics: {runtime.get('solver','?')} / {runtime.get('hz','?')} Hz / {runtime.get('plant_dynamics','?')} plant")
             if report['fixture_only']:
                 ui.Label('COMPONENT FIXTURE — NOT A VALIDATED FARM HARVEST')
             status_label = ui.Label('Waiting for the first completed measured frame')
             ui.Label('Space / Play does not start physics in this viewer')
     last = None
+    observed_sequences = []
     updates = 0
     render_updates = 0
     update_wall = []
     first_running = None
     last_notice = -float('inf')
     ready_written = False
+    last_ack_sequence = None
+    received_stop_signal = None
+    def request_viewer_stop(signum, frame):
+        global received_stop_signal
+        received_stop_signal = signum
+    previous_signal_handlers = {signum: signal.signal(signum, request_viewer_stop)
+                                for signum in (signal.SIGINT, signal.SIGTERM)}
     started = time.monotonic()
-    while app.is_running() and (not a.seconds or time.monotonic() - started < a.seconds):
+    while (app.is_running() and received_stop_signal is None
+           and (not a.seconds or time.monotonic() - started < a.seconds)):
         frame_start = time.monotonic()
         snapshot = reader.read()
         if snapshot is not None and (last is None or snapshot['sequence'] != last['sequence']):
@@ -133,6 +163,8 @@ try:
             visuals.update(snapshot['poses'], snapshot['gap'])
             update_wall.append(time.perf_counter() - update_start)
             last = snapshot
+            observed_sequences.append(dict(sequence=last['sequence'], time_s=last['time'],
+                                           status=last['status']))
             updates += 1
             now = time.monotonic()
             if first_running is None and last['time'] > 0:
@@ -147,6 +179,13 @@ try:
         timeline.stop()
         app.update()
         render_updates += 1
+        if timeline.get_current_time() != 0.:
+            raise RuntimeError('Live display timeline unexpectedly advanced')
+        if last is not None and last['sequence'] != last_ack_sequence:
+            write_display_ack(a.trial, last, displayed_count=updates,
+                              render_updates=render_updates,
+                              timeline_time_s=timeline.get_current_time())
+            last_ack_sequence = last['sequence']
         if a.ready_file and not ready_written and last is not None:
             a.ready_file.parent.mkdir(parents=True,exist_ok=True)
             # This is a readiness signal, not a command or physics step.
@@ -154,8 +193,6 @@ try:
                 json.dump(dict(pid=os.getpid(),model_sha256=reader.metadata['model_sha256'],
                                measured_time_s=last['time'],physics_steps=0),stream)
             ready_written = True
-        if timeline.get_current_time() != 0.:
-            raise RuntimeError('Live display timeline unexpectedly advanced')
         remaining = 1 / a.fps - (time.monotonic() - frame_start)
         if remaining > 0:
             time.sleep(remaining)
@@ -181,7 +218,7 @@ try:
             timeline.stop()
             app.update()
         import hashlib
-        capture_report = dict(source='latest completed measured native physics frame',
+        capture_report = dict(source=reader.metadata.get('source', 'latest completed measured native physics frame'),
             model_sha256=reader.metadata['model_sha256'], camera=a.camera,
             sequence=last['sequence'], measured_time_s=last['time'], measured_gap_m=last['gap'],
             status=last['status'], pose_sha256=hashlib.sha256(last['poses'].astype('<f8').tobytes()).hexdigest(),
@@ -194,7 +231,15 @@ try:
                   last_status=None if last is None else last['status'],
                   display_update_mean_s=float(np.mean(update_wall)) if update_wall else None,
                   display_update_max_s=max(update_wall) if update_wall else None,
-                  timeline_time_s=timeline.get_current_time())
+                  timeline_time_s=timeline.get_current_time(), timeline_auto_update=False,
+                  blocked_play_events=blocked_play_events,
+                  last_acknowledged_sequence=last_ack_sequence,
+                  received_stop_signal=received_stop_signal,
+                  display_publications=display_publication_metrics(observed_sequences,
+                      json.loads((a.trial / 'live.json').read_text())),
+                  displayed_sequence_timestamps=observed_sequences)
+    for signum, handler in previous_signal_handlers.items():
+        signal.signal(signum, handler)
 except Exception:
     exit_code = 1
     report['error'] = traceback.format_exc()

@@ -32,6 +32,7 @@ try:
     import sys
     import numpy as np
     import omni.usd
+    import omni.timeline
     import omni.kit.viewport.utility as vu
     from pxr import Gf,UsdGeom,Vt,UsdPhysics,UsdLux
     from scipy.spatial.transform import Rotation as R
@@ -58,6 +59,9 @@ try:
     if (runtime.get('native_scene_sha256') and
             selected_asset['native_scene_sha256']!=runtime['native_scene_sha256']):
         raise ValueError('Replay native materialized asset SHA mismatch')
+    timeline=omni.timeline.get_timeline_interface()
+    timeline.set_auto_update(False)
+    timeline.stop()
     omni.usd.get_context().open_stage(str(a.assembly/'scene.usda'))
     stage=omni.usd.get_context().get_stage()
     # Match the live viewer: all replay edits, including the transient fixture,
@@ -215,6 +219,7 @@ try:
     probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-select_streams','v:0',
         '-show_entries','stream=nb_read_frames','-of','json',str(a.trial/(a.name+'.mp4'))]))
     if int(probe['streams'][0]['nb_read_frames'])!=len(selection):raise RuntimeError('Encoded frame count mismatch')
+    if timeline.get_current_time()!=0.:raise RuntimeError('Replay display advanced physical time')
     (a.trial/(a.name+'_render.json')).write_text(json.dumps(dict(source='stored measured physical body transforms',
         frames=len(selection),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
         physics_rerun=False,replay_only_fill_light=a.review_light,subtitle_style=subtitle_style,
@@ -222,6 +227,7 @@ try:
         requested_clip_start_s=a.start_time,requested_clip_end_s=a.end_time,
         actual_clip_start_s=float(stamps[selection[0]]),actual_clip_end_s=float(stamps[selection[-1]]),
         source_trial_stop_time_s=float(stamps[-1]),source_scene_sha256=summary['model_sha256'],
+        physics_steps=0,timeline_time_s=timeline.get_current_time(),timeline_auto_update=False,
         source_native_scene_sha256=selected_asset['native_scene_sha256'],
         materialized_dependency_sha_verified=bool(selected_asset['verified_materialized_dependency']),
         replay_only_hidden_paths=cutaway_hidden,source_geometry_modified=False,

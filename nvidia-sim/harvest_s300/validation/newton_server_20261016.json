@@ -1,0 +1,1075 @@
+{
+  "schema": "s300-newton-server-validation-v1",
+  "date_kst": "2026-10-16",
+  "branch": "codex/s300-newton-20261016",
+  "code_base_before_server_changes": "6b32dd0d0c6c21aa0405c5b49f54fe189bbb58d3",
+  "preserved_isaac_commit": "ca3a716",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton",
+  "hardware": {
+    "cpu": "AMD Ryzen Threadripper 3960X",
+    "physical_cores": 24,
+    "logical_cpus": 48,
+    "gpu": "NVIDIA GeForce RTX 3090 Ti",
+    "gpu_memory_gib": 24,
+    "driver": "570.211.01"
+  },
+  "versions": {
+    "isaac": "6.1.0",
+    "bundled_newton": "1.5.0",
+    "isolated_newton": "1.7.0",
+    "mujoco": "3.15.0",
+    "mujoco_warp": "3.15.0",
+    "warp": "1.17.0"
+  },
+  "interpretation": {
+    "cpu_backend": "Newton SolverMuJoCo framework with authoritative native MuJoCo CPU data",
+    "gpu_backend": "Actual Newton SolverMuJoCo with MuJoCo Warp CUDA; no validated parallel throughput result",
+    "whole_motion_realtime": true,
+    "every_contact_phase_realtime": false,
+    "gui_headless_identical_verified": true,
+    "all_fruit_harvest_verified": false,
+    "whole_row_harvest_verified": false
+  },
+  "source": {
+    "model_directory": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/window_00",
+    "input_json_sha256": "49cb69a37ed6ddc2ac03ecc19e8f95f79e517034f0a8ba1de5b6e142f919ca2d",
+    "files": {
+      "model_xml": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/window_00/scene.xml",
+        "sha256": "9567f71adbc35b9ad5d487652d4c5286a60a6fd19366bf48f99f9b4414c0aff4"
+      },
+      "export_metadata": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/window_00/export.json",
+        "sha256": "123948dcb18a0159ecf3205b88408b91a0606901bdf37271f98dfe38d7b94513"
+      },
+      "source_usdc": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/D_target_only/composed.usdc",
+        "sha256": "e5697c6111478627272ca1d6e9f62fc0a72d195bce64707223def4eaaa9d9971"
+      },
+      "source_states": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected/states.npz",
+        "sha256": "85180d63e7cb15deded63f19cddd53b5384b983d998a41688fbad00f42ecdb22"
+      },
+      "source_manifest": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/D_target_only/motion_manifest.json",
+        "sha256": "d65fd8dad2f6db802f334c904d92b93f6d2eb235f19a6818797132623bf21dfd"
+      },
+      "source_plan": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/window_00/source_plan.json",
+        "sha256": "c971050daeb909356e27a4e59117034b6255834535ec3b8f61eeb02aa28645bf"
+      },
+      "tool_trace": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261012_s300_mujoco_rebuilt/window_00/tool_trace.npz",
+        "sha256": "2d2b00d26b1ebb6d04bcd2546487c99e7d376b65ec330d7c91b68f7830221c68"
+      },
+      "source_trial_plan": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261011_194707_plant_interaction_comparison/trials/D_target_only_connected/plan.json",
+        "sha256": "73ce81127f8d4dd12340a46e6d8060877bf1a6564922a8cbd9a8d7029cc6b914"
+      }
+    },
+    "physical_model_mjb_sha256": "8da08f7637f77c55f34946bea216e867f65d2cbbdab62c42d2f6a65327fd6ed5",
+    "model_counts": {
+      "nbody": 132,
+      "nq": 395,
+      "nv": 385,
+      "ngeom": 4720,
+      "nu": 10,
+      "neq": 10
+    },
+    "active_collision_geoms": 901,
+    "display_meshes": 29357,
+    "display_vertices": 27049149,
+    "display_triangles": 48671177,
+    "collision_scope": "Original approved target truss and own main stem; other plants visual-only, leaf collisions ignored; robot/gutters/floor retained",
+    "historical_released_bodies_already_excluded": 5
+  },
+  "unchanged_semantics": {
+    "release_force_n": 3.0,
+    "release_torque_nm": 0.008,
+    "active_penetration_limit_m": 0.001,
+    "material_or_collision_proxy_relaxation": false,
+    "plant_topology_reduction": false
+  },
+  "gui_equivalence": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gui_equivalence.json",
+    "sha256": "cef43bef95006b7fa08ba3764d23f33dfbc4f9add53f7a7a167c8489adc80362",
+    "passed": true,
+    "steps": 13806,
+    "state_samples": 13807,
+    "full_trace": true,
+    "gui_physics_equivalence_verified": true
+  },
+  "phase_performance_reference": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_native_observables/summary.json",
+    "phases": {
+      "rail_move": {
+        "steps": 1848,
+        "simulated_s": 30.799999999999997,
+        "loop_wall_s": 7.082680372521281,
+        "physics_step_wall_s": 6.461510898545384,
+        "max_solver_iterations": 3,
+        "realtime_factor": 4.348636163152999,
+        "mean_solver_iterations": 1.0032467532467533
+      },
+      "approach": {
+        "steps": 1598,
+        "simulated_s": 3.9950000000000045,
+        "loop_wall_s": 6.156922889873385,
+        "physics_step_wall_s": 5.606510108336806,
+        "max_solver_iterations": 4,
+        "realtime_factor": 0.648863088178478,
+        "mean_solver_iterations": 1.0043804755944932
+      },
+      "close": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "loop_wall_s": 12.802136797457933,
+        "physics_step_wall_s": 11.673224546015263,
+        "max_solver_iterations": 18,
+        "realtime_factor": 0.4686717612009422,
+        "mean_solver_iterations": 4.312916666666666
+      },
+      "cycle_reclose": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "loop_wall_s": 11.31664801388979,
+        "physics_step_wall_s": 9.277693497017026,
+        "max_solver_iterations": 18,
+        "realtime_factor": 0.5301923319198176,
+        "mean_solver_iterations": 3.3158333333333334
+      },
+      "belt_finish": {
+        "steps": 800,
+        "simulated_s": 2.0,
+        "loop_wall_s": 6.653977381065488,
+        "physics_step_wall_s": 5.8192804381251335,
+        "max_solver_iterations": 16,
+        "realtime_factor": 0.3005721067960324,
+        "mean_solver_iterations": 8.5375
+      },
+      "withdraw": {
+        "steps": 1600,
+        "simulated_s": 4.0,
+        "loop_wall_s": 6.209465324878693,
+        "physics_step_wall_s": 4.7841591611504555,
+        "max_solver_iterations": 1,
+        "realtime_factor": 0.6441778463555787,
+        "mean_solver_iterations": 1.0
+      }
+    }
+  },
+  "cpu_scaling": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu_scaling/summary.json",
+    "run_count": 81,
+    "every_run_completed_valid": true,
+    "state_record_stride": 5,
+    "physics_metric_stride": 1,
+    "identical_saved_state_sha256": "d1f2d1cd0c5a1a869b0527c90ecbb569b577d41d3acdd23c495f3fff74d82ec4",
+    "same_scene_and_commands": true,
+    "config": "Original inputs_300hz / CPU 400Hz contact +60Hz free / native metadata synchronization enabled / threads0 / setup_workers4",
+    "cases": [
+      {
+        "name": "cpu_processes_001",
+        "worlds": 1,
+        "throughput_eligible": true,
+        "measured_concurrent_physics_window_s": 66.26769013889134,
+        "process_total_wall_s": 79.27105373516679,
+        "measured_aggregate_sim_s_per_wall_s": 1.2494022324675698,
+        "measured_per_environment_realtime_factor": 1.2494022324675698,
+        "all_member_states_sha256_identical": true,
+        "resources": {
+          "sample_count": 98,
+          "cpu_percent_max": 1173.2,
+          "cpu_percent_mean": 117.56734693877551,
+          "rss_bytes_max": 2610176000,
+          "rss_bytes_mean": 1401239343.0204082,
+          "gpu_percent_max": 0.0,
+          "gpu_percent_mean": 0.0,
+          "gpu_memory_mib_max": 255.0,
+          "gpu_memory_mib_mean": 239.4591836734694
+        }
+      },
+      {
+        "name": "cpu_processes_008",
+        "worlds": 8,
+        "throughput_eligible": true,
+        "measured_concurrent_physics_window_s": 68.47570316679776,
+        "process_total_wall_s": 92.95767991431057,
+        "measured_aggregate_sim_s_per_wall_s": 9.672920019332677,
+        "measured_per_environment_realtime_factor": 1.2091150024165846,
+        "all_member_states_sha256_identical": true,
+        "resources": {
+          "sample_count": 137,
+          "cpu_percent_max": 3789.1,
+          "cpu_percent_mean": 729.9021897810219,
+          "rss_bytes_max": 15333588992,
+          "rss_bytes_mean": 9691936902.540146,
+          "gpu_percent_max": 9.0,
+          "gpu_percent_mean": 0.2116788321167883,
+          "gpu_memory_mib_max": 703.0,
+          "gpu_memory_mib_mean": 244.24087591240877
+        }
+      },
+      {
+        "name": "cpu_processes_024",
+        "worlds": 24,
+        "throughput_eligible": true,
+        "measured_concurrent_physics_window_s": 75.63365072198212,
+        "process_total_wall_s": 140.96376230940223,
+        "measured_aggregate_sim_s_per_wall_s": 26.272432720512274,
+        "measured_per_environment_realtime_factor": 1.0946846966880115,
+        "all_member_states_sha256_identical": true,
+        "resources": {
+          "sample_count": 240,
+          "cpu_percent_max": 3436.0,
+          "cpu_percent_mean": 1132.91,
+          "rss_bytes_max": 41678893056,
+          "rss_bytes_mean": 25046976460.8,
+          "gpu_percent_max": 14.0,
+          "gpu_percent_mean": 0.2708333333333333,
+          "gpu_memory_mib_max": 467.0,
+          "gpu_memory_mib_mean": 239.9375
+        }
+      },
+      {
+        "name": "cpu_processes_048",
+        "worlds": 48,
+        "throughput_eligible": true,
+        "measured_concurrent_physics_window_s": 110.68049862794578,
+        "process_total_wall_s": 239.26570012792945,
+        "measured_aggregate_sim_s_per_wall_s": 35.906596457965016,
+        "measured_per_environment_realtime_factor": 0.7480540928742712,
+        "all_member_states_sha256_identical": true,
+        "resources": {
+          "sample_count": 339,
+          "cpu_percent_max": 4771.3,
+          "cpu_percent_mean": 1437.3191740412979,
+          "rss_bytes_max": 81294233600,
+          "rss_bytes_mean": 46487649699.87021,
+          "gpu_percent_max": 9.0,
+          "gpu_percent_mean": 0.24778761061946902,
+          "gpu_memory_mib_max": 455.0,
+          "gpu_memory_mib_mean": 243.67256637168143
+        }
+      }
+    ],
+    "full_saved_evidence_identity": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu_scaling/evidence_identity.json",
+      "sha256": "7c13978f5cfd2754f260cef432dee538cb9267ac2290e2873236915710e419cc",
+      "workers": 81,
+      "state_record_stride": 5,
+      "physics_metric_stride": 1,
+      "unique_state_archives": 1,
+      "unique_physics_metric_archives": 1,
+      "state_archive_sha256": "d1f2d1cd0c5a1a869b0527c90ecbb569b577d41d3acdd23c495f3fff74d82ec4",
+      "physics_metrics_archive_sha256": "388e002c693542e707a6e26d582fa71d8c5c2c52302768d9d28d16c1600bb710"
+    }
+  },
+  "gpu_diagnostics": {
+    "legacy_uniform300": {
+      "status": "completed",
+      "physics_hz": 300.0,
+      "requested_steps": 24839,
+      "actual_steps": 24839,
+      "simulated_s": 82.79666666666667,
+      "loop_wall_s": 232.89057818055153,
+      "setup_wall_s": 18.74292180687189,
+      "realtime_factor": 0.3555174593730342,
+      "max_active_penetration_m": 0.0008506515878252685,
+      "max_released_penetration_m": 0.00944933108985424,
+      "max_contact_force_n": 13.9756441116333,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "stop": null,
+      "states_sha256": "febb5d49212ca33f2c960809931323be623601a9622027f7463f9d9b716c60dd",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu300_full/summary.json",
+      "summary_sha256": "2ce4bf8ff545a23b3f31d8b5f9c8900a18be0bc4a51b257dabb28d7dc047d744",
+      "detached_count": 5,
+      "detached_names": [
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ]
+    },
+    "strict_repeat_cases": [
+      {
+        "report": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu_scaling/summary.json",
+        "worlds": 1,
+        "status": "stopped",
+        "throughput_eligible": false,
+        "exclusion_reasons": [
+          "executor_nonzero_exit",
+          "summary_missing_or_invalid"
+        ],
+        "not_evaluated_world_counts": [
+          8,
+          32
+        ],
+        "resources": {
+          "sample_count": 1,
+          "cpu_percent_max": 0.0,
+          "cpu_percent_mean": 0.0,
+          "rss_bytes_max": 4395008,
+          "rss_bytes_mean": 4395008.0,
+          "gpu_percent_max": 0.0,
+          "gpu_percent_mean": 0.0,
+          "gpu_memory_mib_max": 239.0,
+          "gpu_memory_mib_mean": 239.0
+        }
+      },
+      {
+        "report": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu_scaling_verified/summary.json",
+        "worlds": 1,
+        "status": "stopped",
+        "throughput_eligible": false,
+        "exclusion_reasons": [
+          "executor_not_completed_without_stop",
+          "active_contact_criterion_passed_false_or_unknown",
+          "requested_trace_not_completed",
+          "active_penetration_invalid_or_above_existing_1mm"
+        ],
+        "not_evaluated_world_counts": [
+          8,
+          32
+        ],
+        "resources": {
+          "sample_count": 104,
+          "cpu_percent_max": 415.9,
+          "cpu_percent_mean": 105.01346153846154,
+          "rss_bytes_max": 3054788608,
+          "rss_bytes_mean": 1843330166.1538463,
+          "gpu_percent_max": 100.0,
+          "gpu_percent_mean": 74.03846153846153,
+          "gpu_memory_mib_max": 1199.0,
+          "gpu_memory_mib_mean": 1077.3461538461538
+        }
+      },
+      {
+        "report": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu300_scaling/summary.json",
+        "worlds": 1,
+        "status": "stopped",
+        "throughput_eligible": false,
+        "exclusion_reasons": [
+          "executor_not_completed_without_stop",
+          "active_contact_criterion_passed_false_or_unknown",
+          "requested_trace_not_completed",
+          "active_penetration_invalid_or_above_existing_1mm"
+        ],
+        "not_evaluated_world_counts": [
+          8,
+          32
+        ],
+        "resources": {
+          "sample_count": 160,
+          "cpu_percent_max": 416.1,
+          "cpu_percent_mean": 103.27625,
+          "rss_bytes_max": 3059585024,
+          "rss_bytes_mean": 1837125708.8,
+          "gpu_percent_max": 100.0,
+          "gpu_percent_mean": 82.55,
+          "gpu_memory_mib_max": 1231.0,
+          "gpu_memory_mib_mean": 1148.925
+        }
+      }
+    ],
+    "strict400": {
+      "status": "stopped",
+      "backend": "gpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 7378,
+      "simulated_s": 56.51804733276367,
+      "loop_wall_s": 82.20980985090137,
+      "setup_wall_s": 21.13183183968067,
+      "realtime_factor": 0.6874854404269614,
+      "max_active_penetration_m": 0.004246259108185768,
+      "max_released_penetration_m": 0.008360747247934341,
+      "max_contact_force_n": 15.421537399291992,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "38f1610e3b6b48275e92379c0bb4774630e692c84e1c7665e8a5f4265578cd6d",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu_scaling_verified/gpu_worlds_001/summary.json",
+      "summary_sha256": "fd5ccf3b1cc47fc393e65330a7f094dded4d55d641efe45fef3679620efef80c",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_09"
+      ]
+    },
+    "strict300": {
+      "status": "stopped",
+      "backend": "gpu",
+      "physics_hz": 300.0,
+      "free_hz": 300.0,
+      "requested_steps": 24839,
+      "actual_steps": 16470,
+      "simulated_s": 54.90800857543945,
+      "loop_wall_s": 138.70196783542633,
+      "setup_wall_s": 21.627775801345706,
+      "realtime_factor": 0.39587043668038874,
+      "max_active_penetration_m": 0.0010276313405483961,
+      "max_released_penetration_m": 0.01029121968895197,
+      "max_contact_force_n": 10.345662117004395,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "eebd5b255bef62872dd13e975c59b7cea05ad7e531e14fb5ca1bd041c2bacebd",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu300_scaling/gpu_worlds_001/summary.json",
+      "summary_sha256": "3569d317fedfec15b6c84d7aaaad5a9dc49ee7b37851fbcce208583ea55502b2",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ]
+    },
+    "parallel_8_32": "Not evaluated after N1 validity failure; no GPU speedup claimed"
+  },
+  "rejected_alternatives": {
+    "cpu120_feasibility": {
+      "status": "stopped",
+      "backend": "cpu",
+      "physics_hz": 120.0,
+      "free_hz": 60.0,
+      "requested_steps": 6528,
+      "actual_steps": 3665,
+      "simulated_s": 52.94166666666667,
+      "loop_wall_s": 14.163343010470271,
+      "setup_wall_s": 5.817801624536514,
+      "realtime_factor": 3.7379357844775396,
+      "max_active_penetration_m": 0.001078553169921405,
+      "max_released_penetration_m": 0.0,
+      "max_contact_force_n": 0.6763736724819922,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "254386f84301cb1bab21e65ae08fcc35db935e6bd3524527a855e09d02051303",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu120_feasibility/summary.json",
+      "summary_sha256": "27b2ef11af206ce291f734865296f740ad52afcd652a27de68f2fca24117e7f0",
+      "detached_count": 0,
+      "detached_names": [],
+      "first_violation": {
+        "t": 52.93333333333333,
+        "phase": "close",
+        "bodies": [
+          "Tool_L_belt",
+          "Truss_00_Fruit_04"
+        ],
+        "geoms": [
+          "s300_g0814",
+          "g0346"
+        ],
+        "geom_ids": [
+          4150,
+          3840
+        ],
+        "solver_step": 3664,
+        "penetration_m": 0.001078553169921405
+      }
+    },
+    "cpu_hybrid_full": {
+      "status": "stopped",
+      "backend": "cpu",
+      "physics_hz": 300.0,
+      "free_hz": 60.0,
+      "requested_steps": 11207,
+      "actual_steps": 5900,
+      "simulated_s": 55.50666666666667,
+      "loop_wall_s": 25.76590138860047,
+      "setup_wall_s": 6.554258858785033,
+      "realtime_factor": 2.1542683808929084,
+      "max_active_penetration_m": 0.0010189814159837374,
+      "max_released_penetration_m": 0.01295294499773754,
+      "max_contact_force_n": 12.908010227859,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "593b550473d3e65c410a479635778157624ae383250f065ed2a31586fdeb2cc2",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu_hybrid_full/summary.json",
+      "summary_sha256": "f150834feb6a3f9af62e1739ecb81f9e41914cda74116d400adf64b0637a4af0",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ],
+      "first_violation": {
+        "t": 55.50333333333333,
+        "phase": "close",
+        "bodies": [
+          "Truss_00_Pedicel_distal_04_0",
+          "Tool_L_belt"
+        ],
+        "geoms": [
+          "g0158",
+          "s300_g0814"
+        ],
+        "geom_ids": [
+          3760,
+          4150
+        ],
+        "solver_step": 5899,
+        "penetration_m": 0.0010189814159837374
+      }
+    },
+    "cpu240_tolerance_profile": {
+      "status": "stopped",
+      "backend": "cpu",
+      "physics_hz": 240.0,
+      "free_hz": 60.0,
+      "requested_steps": 9647,
+      "actual_steps": 5002,
+      "simulated_s": 54.44166666666667,
+      "loop_wall_s": 17.73398084565997,
+      "setup_wall_s": 4.290775353088975,
+      "realtime_factor": 3.069906702870391,
+      "max_active_penetration_m": 0.001354201958931045,
+      "max_released_penetration_m": 0.0005484980420048119,
+      "max_contact_force_n": 10.788683946547707,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "ad69d7b92a92ca7033a29a53aca4822a9b6f8754d333e5c36e6e3ee97c5206c0",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu240_tolerance_profile/summary.json",
+      "summary_sha256": "2720eb296747dd4ef53745b87d3899538f71892f69ccaf0a48c899ecd8afb42b",
+      "detached_count": 3,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_03"
+      ],
+      "first_violation": {
+        "t": 54.4375,
+        "phase": "close",
+        "bodies": [
+          "Tool_R_belt",
+          "Truss_00_Fruit_07"
+        ],
+        "geoms": [
+          "s300_g0816",
+          "g0364"
+        ],
+        "geom_ids": [
+          454,
+          103
+        ],
+        "solver_step": 5001,
+        "penetration_m": 0.001354201958931045
+      }
+    },
+    "cpu400_cg": {
+      "status": "stopped",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 6106,
+      "simulated_s": 53.345,
+      "loop_wall_s": 18.624249635264277,
+      "setup_wall_s": 6.993517687544227,
+      "realtime_factor": 2.8642764699090675,
+      "max_active_penetration_m": 0.004187582879190581,
+      "max_released_penetration_m": 0.03213048668750493,
+      "max_contact_force_n": 25.766227832345052,
+      "active_contact_criterion_passed": false,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": "active_contact_penetration_1mm",
+      "states_sha256": "a57a130a7017156b8989e1b831145374934867edf166883002a55ef68b18a69f",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_cg/summary.json",
+      "summary_sha256": "108f8ece2e5466b7c36c93ab01f46454600975974c308f1b720d1ff82801a187",
+      "detached_count": 10,
+      "detached_names": [
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_10",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_11",
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_09"
+      ],
+      "first_violation": {
+        "t": 53.3425,
+        "phase": "close",
+        "bodies": [
+          "world",
+          "Truss_00_Fruit_01"
+        ],
+        "geoms": [
+          "farm_structural_17",
+          "g0319"
+        ],
+        "geom_ids": [
+          3491,
+          3813
+        ],
+        "solver_step": 6105,
+        "penetration_m": 0.004187582879190581
+      }
+    },
+    "cpu400_dense": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 63.094936069101095,
+      "setup_wall_s": 4.94626378454268,
+      "realtime_factor": 1.3122289229253445,
+      "max_active_penetration_m": 0.0005933389422280343,
+      "max_released_penetration_m": 0.00826076792907883,
+      "max_contact_force_n": 13.741512533880021,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": null,
+      "states_sha256": "ebf4f687535ddd35c74e05d236efd4800763549614a6831ba9a39b28f2f6ad73",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_dense/summary.json",
+      "summary_sha256": "acbdb20760a9f13cee93534b06e7f127f5d22e15f9ba56c1a1dc21ff2c7fb95c",
+      "detached_count": 5,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08"
+      ],
+      "first_violation": null
+    }
+  },
+  "other_diagnostic_failures": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/direct_usd_probe/budget_stop.json",
+      "reason": "Direct USD convex decomposition exceeded eight-minute budget; zero completed physics"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu300_prefix24/summary.json",
+      "reason": "Result phase-array np.r_ string construction error; fixed and tested, no harvest credit"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gpu_scaling/summary.json",
+      "reason": "Wrong child Python path lacked MuJoCo; interpreter path fixed, no physics credit"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_free60_gui/summary.json",
+      "reason": "Viewer ACK compared shell wrapper PID with child Python PID; fixed and rerun with full verified GUI"
+    }
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "limitations": [
+    "Measured one existing entry with two close/open cycles; not full truss ten-fruit harvest or whole-row autonomous harvest.",
+    "Full-motion average real-time does not imply contact phases run at real-time.",
+    "CPU replicas share identical inputs and commands, not diverse scene/policy trials.",
+    "Setup/render/output compression excluded from physics-loop RTF; process totals are separately recorded.",
+    "Released-fruit floor/chassis/same-truss contact diagnostics can exceed 1mm under the prior approved lifecycle scope.",
+    "RAM/CPU resource statistics include owned startup/waiting/saving process lifetime; GPU statistics cover the entire GPU.",
+    "No new RGB-D dataset, policy training, actual collection or field damage validation."
+  ],
+  "reference_unoptimized": {
+    "inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_300hz",
+    "contact_hz": 400,
+    "free_hz": 60,
+    "headless": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 66.73308866657317,
+      "setup_wall_s": 6.9191066436469555,
+      "realtime_factor": 1.2406888644654073,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_free60_full/summary.json",
+      "summary_sha256": "b1e9e5d2771e2ffc4a8ad2e311fbfa49fbf5e2fc91fd5cda34593905663ed5f1",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ],
+      "first_violation": null
+    },
+    "gui": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 68.03720681555569,
+      "setup_wall_s": 33.58240621164441,
+      "realtime_factor": 1.2169076873548277,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "gui_status": "final_frame_displayed",
+      "gui_live_verified": true,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_free60_gui_verified/summary.json",
+      "summary_sha256": "acf3db7d3316a89c0439dadf8e2460914c63d81edf0c83c5e9bd5b2880262c7e",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ],
+      "first_violation": null
+    }
+  },
+  "canonical": {
+    "inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+    "native_observables_only": true,
+    "contact_hz": 400,
+    "free_hz": 60,
+    "headless": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 61.99372263439,
+      "setup_wall_s": 4.926381167024374,
+      "realtime_factor": 1.3355384461792401,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated/summary.json",
+      "summary_sha256": "eea51752da8e0d5321f5734ec8f319222f012662ec5b9e0e53ec595f0da6999e",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ]
+    },
+    "gui": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 63.47598661109805,
+      "setup_wall_s": 31.56969967111945,
+      "realtime_factor": 1.3043515259914722,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "gui_status": "final_frame_displayed",
+      "gui_live_verified": true,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated_gui/summary.json",
+      "summary_sha256": "50502564b8bfd93113c093cf7167a120034e32a04b1c06a945aec9b6d3eae458",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ]
+    }
+  },
+  "gui_optimized_equivalence": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/gui_optimized_equivalence.json",
+    "sha256": "3df35e907922a96e2e772ca66678dbaec40084390a2bbf7ce6323bdd48ef67f6",
+    "passed": true,
+    "full_requested_physics_trace_matches": true,
+    "gui_physics_equivalence_verified": true,
+    "steps": 13806,
+    "state_samples": 13807
+  },
+  "safe_adopted_optimizations": {
+    "native_observables": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 63.392050717025995,
+      "setup_wall_s": 6.9408339988440275,
+      "realtime_factor": 1.3060785865657871,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_native_observables/summary.json",
+      "summary_sha256": "e63253477f9176afd65fa27a43e19d321a5d38b5d985e4da7c857611223625a5",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ],
+      "first_violation": null
+    },
+    "native_observables_equivalence": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/native_observables_equivalence.json",
+      "passed": true
+    },
+    "render_separated": {
+      "status": "completed",
+      "backend": "cpu",
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.795,
+      "loop_wall_s": 61.99372263439,
+      "setup_wall_s": 4.926381167024374,
+      "realtime_factor": 1.3355384461792401,
+      "max_active_penetration_m": 0.0006806358504814377,
+      "max_released_penetration_m": 0.009681487748984557,
+      "max_contact_force_n": 13.095477958721368,
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "stop": null,
+      "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+      "gui_status": "not_requested",
+      "gui_live_verified": false,
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated/summary.json",
+      "summary_sha256": "eea51752da8e0d5321f5734ec8f319222f012662ec5b9e0e53ec595f0da6999e",
+      "detached_count": 6,
+      "detached_names": [
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_02"
+      ],
+      "first_violation": null
+    },
+    "render_separation_proof": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated/physics_semantic_proof.json",
+      "passed": true,
+      "checks": 12370,
+      "source_active_geoms": 901,
+      "variant_active_geoms": 901,
+      "removed_visual_geoms": 3819,
+      "physical_mesh_assets_compared": 810,
+      "source_semantic_sha256": "880fdb633cf1b79ed9a3a689a09998de8315e3050cad6a14057ea01bfa9efe15",
+      "variant_semantic_sha256": "880fdb633cf1b79ed9a3a689a09998de8315e3050cad6a14057ea01bfa9efe15",
+      "restored_dof_lengths": 121
+    },
+    "render_separation_runtime_equivalence": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/render_separation_runtime_equivalence.json",
+      "all_shared_arrays_exact": true
+    }
+  },
+  "automated_validation": {
+    "physics_tests": 83,
+    "usd_display_tests": 11,
+    "total_passed": 94,
+    "pip_check": "passed",
+    "bash_syntax": "passed",
+    "logs": [
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/tests_final_physics.log",
+        "sha256": "6f7a6343e9bd943c70a36a73fd2b43b601d65d1a32b9890892fef0bbd32f7dec"
+      },
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/tests_final_usd.log",
+        "sha256": "664a6036f35625e73a7d4f9a9167462bcbeb8e013de2cd83ea9b84e51d4bda44"
+      },
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/environment_final.log",
+        "sha256": "0a53e969355c79c8d5f771b3b679eba42cb9df03b3bd9c988c28db940143b8fd"
+      }
+    ]
+  },
+  "videos": {
+    "status": "verified",
+    "report": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/video_validation.json",
+    "report_sha256": "eb5d06f2ce263945e40e36ccdc806370be2c33e05b26389db88845f185f5a617",
+    "schema": "newton-stored-state-video-validation-v1",
+    "files": [
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated_gui/newton_actual_entry.mp4",
+        "sha256": "5e578b075cf7e656620fb808ad318441d5910fc2f46fac40e097f31a4af6d81b",
+        "stream": {
+          "width": 960,
+          "height": 720,
+          "avg_frame_rate": "15/1",
+          "duration": "82.866667",
+          "nb_read_frames": "1243"
+        },
+        "full_decode_passed": true,
+        "render_evidence_path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated_gui/newton_actual_entry_render.json",
+        "render_evidence_sha256": "d5b75d97c3182c3cd9842e44d302f77560b990befa0a250438d8ec893942e637",
+        "physics_steps": 0,
+        "speed": 1.0,
+        "start_s": 0.0,
+        "end_s": 82.795,
+        "replay_only_hidden_path_count": 0,
+        "timeline_time_s": 0.0,
+        "timeline_auto_update": false,
+        "subtitle_style": "FontSize=10,Outline=1,Shadow=0,MarginV=6",
+        "physics_rerun": false,
+        "view_interpretation": "Original complete scene, foreground foliage can obscure contact"
+      },
+      {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated_gui/newton_actual_truss_top.mp4",
+        "sha256": "6fcde6a34227e3c496628aaf0e7eead74783ddf66f507ff9aeef5bd1c891b1f5",
+        "stream": {
+          "width": 960,
+          "height": 720,
+          "avg_frame_rate": "15/1",
+          "duration": "27.066667",
+          "nb_read_frames": "406"
+        },
+        "full_decode_passed": true,
+        "render_evidence_path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated_gui/newton_actual_truss_top_render.json",
+        "render_evidence_sha256": "8f13ed104c65067d54a582523ad9f673eac83453e78974e774f510c23993cfdd",
+        "physics_steps": 0,
+        "speed": 1.0,
+        "start_s": 45.0,
+        "end_s": 71.995,
+        "replay_only_hidden_path_count": 133,
+        "timeline_time_s": 0.0,
+        "timeline_auto_update": false,
+        "subtitle_style": "FontSize=10,Outline=1,Shadow=0,MarginV=6",
+        "physics_rerun": false,
+        "view_interpretation": "Replay-only cutaway hides background plants and target leaves; original physics/state unchanged"
+      }
+    ],
+    "stored_physics_states_sha_unchanged": true,
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "failed_setting_native_profile": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu240_tolerance_profile/summary.json",
+    "phase": "close",
+    "native_timer_ms": {
+      "mjTIMER_STEP": 4077.3380336761475,
+      "mjTIMER_FORWARD": 4072.937961578369,
+      "mjTIMER_INVERSE": 0.0,
+      "mjTIMER_POSITION": 513.7939300537109,
+      "mjTIMER_VELOCITY": 16.5346736907959,
+      "mjTIMER_ACTUATION": 1.628580093383789,
+      "mjTIMER_CONSTRAINT": 3055.9693546295166,
+      "mjTIMER_ADVANCE": 2.3103389739990234,
+      "mjTIMER_POS_KINEMATICS": 30.587987899780273,
+      "mjTIMER_POS_INERTIA": 155.3332347869873,
+      "mjTIMER_POS_COLLISION": 299.6600036621094,
+      "mjTIMER_POS_MAKE": 23.742523193359375,
+      "mjTIMER_POS_PROJECT": 0.2710285186767578,
+      "mjTIMER_COL_BROAD": 55.36903762817383,
+      "mjTIMER_COL_NARROW": 243.4414520263672
+    },
+    "interpretation": "Diagnostic of an invalid 240Hz/tolerance1e-6 run, not a clean benchmark of the canonical400Hz configuration. Constraint timer dominated this setting."
+  },
+  "dashboard": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/index.html",
+  "launcher_final_smoke": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/launcher_final_smoke",
+    "interpretation": "One-second wrapper connection test only; not a performance or harvest measurement"
+  },
+  "final_source_sha256": {
+    "nvidia-sim/harvest_s300/benchmark_newton.py": "752566e27c707c3241443f820228b48210cf1d033e3a96fa22e52e26845c521f",
+    "nvidia-sim/harvest_s300/compare_newton_runs.py": "bb275c5aefe0284e5124a7f1cea5fdb385435ef77d2fad4d8875f4d349335452",
+    "nvidia-sim/harvest_s300/newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+    "nvidia-sim/harvest_s300/newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+    "nvidia-sim/harvest_s300/newton_kernels.py": "1a9a800802a1281344cfd94a5034c9c76da1c1277d1844e2042549a91e5f3a7c",
+    "nvidia-sim/harvest_s300/newton_live.py": "bd37e3dc10d930d20ebaaac4109f2f3ad22a788a70a83857913c036bf528b24d",
+    "nvidia-sim/harvest_s300/newton_mjcf.py": "f2252a66f442474a26d688548c1323cb7e5e93a3eefc23ccdc354feaf83ae1a3",
+    "nvidia-sim/harvest_s300/newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+    "nvidia-sim/harvest_s300/render_motion.py": "27020df857d95eb912982bc857f352ff03afc3aa357e8cf9dc195c6db5984276",
+    "nvidia-sim/harvest_s300/run_newton_harvest.py": "1f456236a49d34d17975796ad7b7b37b59874c7972fb0970b38d19e684afadae",
+    "nvidia-sim/harvest_s300/view_motion_live.py": "6f9000160c05d243fe4f79a4d75c175edabb835cc58d50e4aa1df4de9f634285",
+    "nvidia-sim/newton-requirements.lock.txt": "4cc95a0d3b2729718c7759f45a65db00b663074a37136b5f898f5abf43aae5f3",
+    "nvidia-sim/run_s300_newton.sh": "c5574ccb56c2a6e649c968d2f8d0699ec933199edfed0b392444f8e199084927",
+    "nvidia-sim/setup_s300_newton.sh": "c28045957f92bf3dac8958c209e038af99b62f4e05e4ad4aba757cee5993c114"
+  },
+  "post_run_changes": "Validated CPU/backend/GUI core files match the optimized GUI invocation. Afterwards only CLI default/CPU-only option validation, shell defaults/help, tests and reports changed; no physical algorithm changed."
+}
