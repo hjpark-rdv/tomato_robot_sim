@@ -86,11 +86,15 @@ def summarize_run(path, *, worlds, returncode=0, termination=None):
         row['summary_sha256'] = sha256(source)
     row.update(case_assessment(row))
     summary = row.get('summary', {})
+    row['backend'] = summary.get('backend')
     row['phase_performance'] = summary.get('phase_performance')
     row['setup_wall_s'] = summary.get('setup_wall_s')
     row['loop_wall_s'] = summary.get('loop_wall_s')
     row['realtime_factor'] = summary.get('realtime_factor')
-    row['profile_instrumented'] = summary.get('profile_instrumented')
+    instrumented = summary.get('profile_instrumented')
+    if instrumented is None and summary.get('backend') == 'cpu':
+        instrumented = summary.get('profile_timers_enabled')
+    row['profile_instrumented'] = instrumented
     command_file = path / 'executed_commands.npz'
     full_steps = None
     expected_end_phase = None
@@ -112,7 +116,7 @@ def summarize_run(path, *, worlds, returncode=0, termination=None):
         and actual_end_phase == expected_end_phase and state_samples == full_steps + 1)
     row['expected_final_phase'] = expected_end_phase
     row['recorded_final_phase'] = actual_end_phase
-    row['clean_throughput_eligible'] = bool(row['throughput_eligible'] and summary.get('profile_instrumented') is False
+    row['clean_throughput_eligible'] = bool(row['throughput_eligible'] and instrumented is False
                                           and row['full_existing_sequence_completed'])
     row['clean_harvest_throughput_eligible'] = row['clean_throughput_eligible']
     row['max_active_penetration_m'] = summary.get('max_active_penetration_m')
@@ -197,7 +201,7 @@ def write_comparison_summary(paths, output):
     write_json(output / 'summary.json', dict(schema='s300-solver-comparison-summary-v1',
         training_eligible=False, harvest_success=None, runs=runs,
         interpretation='Per-run validity and rates only; changed representations require separate calibration and dynamic qualification.'))
-    keys = ('name', 'output', 'status', 'stop', 'worlds', 'nv', 'actual_steps', 'requested_steps',
+    keys = ('name', 'output', 'backend', 'status', 'stop', 'worlds', 'nv', 'actual_steps', 'requested_steps',
             'setup_wall_s', 'loop_wall_s', 'realtime_factor', 'aggregate_sim_s_per_wall_s',
             'max_active_penetration_m', 'detached_per_world', 'throughput_eligible',
             'profile_instrumented', 'clean_throughput_eligible',

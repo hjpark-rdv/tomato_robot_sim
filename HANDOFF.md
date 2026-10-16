@@ -1,5 +1,22 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-17: Newton GPU 솔버·식물 표현 비교
+
+- 브랜치 `codex/s300-newton-solver-compare-20261017`, 시작 `7930cb0`, 구현 `507653e`.
+  원본 물리/제어/자산과 미커밋 gripper 작업을 보존하고, 공식 Isaac importer·XPBD·VBD·양방향 ADMM·식물 좌표/충돌 표현을 실제 시험했다.
+- 원본 GPU 전체1.556배속 → 133DOF+보수적0.1mm 열매 proxy 약2.50배속. 접촉400Hz/이동60Hz·활성1mm·3N/.008Nm 분리 조건 유지.
+  벨트 마지막 단계는 약0.62배속으로 **접촉 실시간 목표 미달성**. 6개 연결 해제이며 전체 송이 수확 성공이 아니다.
+- 변경 모델은 질량/관성/외부 collider를 보존하지만 독립 잎/막대 굽힘 자유도를 줄이고 새 강체 내부의 기존 충돌 가능55pair가 억제된다.
+  동일 모델의 속도 향상이라고 해석하지 말 것. 정적 compliance와 동일 CPU의 밀기/복원/회전 반응을 별도 비교했다. 실물 보정은 미완료.
+- `./nvidia-sim/run_s300_newton.sh gpu-fast --gui`는 opt-in 변경 모델. 기존 `gpu`는 원본 유지.
+  133DOF 원형 후보의 실제 카메라 이동 GUI/headless 전체 상태·접촉·힘·분리 정확 일치. 최종 proxy 반복/GUI 증거는 보고서/검증 JSON 참조.
+- 같은133DOF 원형의 실제GPU1/2/4/8환경 합산처리량1.229/2.187/3.629/5.356. 모든 환경의 전체 시간열·힘·분리 이벤트가 단일 환경과 정확 일치.
+  이는 서로 다른 장면 시험이나 메모리 최대 N 검증이 아니며 환경당 속도는 N 증가 시 감소한다.
+- [솔버·표현 결과 보고서](nvidia-sim/S300_NEWTON_SOLVER_COMPARISON_KO.md),
+  [작은 검증 요약](nvidia-sim/validation/s300_newton_solver_comparison.json).
+  원자료/실제 상태 영상 `/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/index.html`.
+  `training_eligible=false`, `harvest_success=null`. RL/새 수확 알고리즘/대규모 수집은 하지 않았다.
+
 ## 2026-10-17: Newton GPU 전체 평균 실시간 초과, 접촉 구간은 미달
 
 - 브랜치 `codex/s300-newton-gpu-realtime-20261016`, 출발 `1868610`.

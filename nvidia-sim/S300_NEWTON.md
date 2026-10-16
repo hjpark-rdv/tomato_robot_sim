@@ -1,5 +1,12 @@
 # S300 농장 수확 · Newton 실행
 
+2026-10-17 솔버·식물 표현 비교는 [S300_NEWTON_SOLVER_COMPARISON_KO.md](S300_NEWTON_SOLVER_COMPARISON_KO.md)에 있다.
+원본을 보존한 opt-in `./nvidia-sim/run_s300_newton.sh gpu-fast --gui`는
+133자유도·보수적 열매 proxy 모델을 사용하며 전체 약2.50배속이다.
+원본과 물리 표현이 다르고 접촉 구간은 약0.62배속으로 남아 있다.
+실제 GPU8환경까지 상태·접촉·힘·분리 이벤트 일치를 확인했지만,
+병렬 시험은 proxy 없는 별도133자유도 입력/수치 경로다. 아래 과거 수치를 현재 최선으로 읽지 않는다.
+
 2026-10-17 GPU 후속 검증은 `codex/s300-newton-gpu-realtime-20261016`에서 진행했다.
 실제 구성은 **Isaac 장면 표시 → Newton → MuJoCo Warp CUDA 물리**이며,
 전체 GUI/headless 상태 일치는 통과했다. 접촉 구간의 실시간 성능은 아직 미달성이다.
