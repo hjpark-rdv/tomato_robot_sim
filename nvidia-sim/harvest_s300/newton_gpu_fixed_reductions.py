@@ -8,7 +8,7 @@ Float32 sum grouping changes; equations and physical parameters do not.
 from __future__ import annotations
 
 import mujoco_warp as mw
-from mujoco_warp._src import solver as ms, types as mt
+from mujoco_warp._src import solver as ms, types as mt, constraint as mc
 import warp as wp
 
 
@@ -77,6 +77,42 @@ def _qfrc_fixed(nefc: wp.array[int], nnz: wp.array2d[int], adr: wp.array2d[int],
     output[world, dof] = total
 
 
+@wp.kernel(enable_backward=False)
+def _index_csr(nv: int, nefc: wp.array[int], nnz: wp.array2d[int], adr: wp.array2d[int],
+               cols: wp.array3d[int], index: wp.array3d[int]):
+    world, row = wp.tid()
+    if row >= nefc[world]:
+        return
+    count, start = nnz[world, row], adr[world, row]
+    if count < 0 or start < 0 or start + count > cols.shape[2]:
+        return  # Existing per-rebuild validation latches the invalid row.
+    for entry in range(count):
+        col = cols[world, 0, start + entry]
+        if col >= 0 and col < nv:
+            index[world, row, col] = start + entry
+
+
+@wp.kernel(enable_backward=False)
+def _qfrc_indexed(nefc: wp.array[int], index: wp.array3d[int], values: wp.array3d[float],
+                  force: wp.array2d[float], changed: wp.array[int], done: wp.array[bool],
+                  failure: wp.array[int], output: wp.array2d[float]):
+    world, dof = wp.tid()
+    if done[world] or changed[world] == 0:
+        return
+    if failure[0] != 2147483647:
+        output[world, dof] = wp.nan
+        return
+    total = float(0.)
+    for row in range(wp.min(nefc[world], index.shape[1])):
+        f = force[world, row]
+        if f == 0.:
+            continue
+        address = index[world, row, dof]
+        if address >= 0:
+            total += values[world, 0, address] * f
+    output[world, dof] = total
+
+
 def validate_fixed_reductions(solver):
     if solver.use_mujoco_cpu or int(solver._step):
         raise ValueError("Install GPU fixed reductions before stepping")
@@ -110,8 +146,15 @@ def _gradient_dispatch(m, d, ctx, compact=False):
     return _owner.original_gradient(m, d, ctx, compact=compact)
 
 
+def _make_dispatch(m, d):
+    result = _owner.original_make(m, d)
+    if m is _owner.model:
+        _owner.reindex(d)
+    return result
+
+
 class FixedSolverReductions:
-    def __init__(self, solver):
+    def __init__(self, solver, *, indexed=False):
         global _owner
         self.model = validate_fixed_reductions(solver)
         if _owner is not None:
@@ -120,16 +163,20 @@ class FixedSolverReductions:
         if not self.device.is_cuda:
             raise ValueError("Fixed reductions require CUDA arrays")
         self.stream = wp.get_stream(self.device)
+        self.indexed = indexed
         if self.stream.is_capturing:
             raise ValueError("Create fixed reductions outside capture")
         with wp.ScopedDevice(self.device):
             self.failure = wp.array([2147483647], dtype=int)
             self.counters = wp.zeros(2, dtype=int)
+            self.index = wp.full((solver.mjw_data.nworld, solver.mjw_data.njmax,
+                                 self.model.nv), -1, dtype=int) if indexed else None
             for kernel in (_validate_rows, _qfrc_fixed, ms._update_gradient_grad_tiled):
                 wp.load_module(module=kernel.module, device=self.device)
         self.qfrc_kernel = ms._update_constraint_init_qfrc_constraint_sparse(False)
         self.gradient_kernel = ms._update_gradient_grad(False)
         self.original_constraint, self.original_gradient = ms._update_constraint, ms._update_gradient
+        self.original_make = mc.make_constraint
         self.closed, self.active = False, False
         self.constraint_capture_calls, self.gradient_capture_calls = 0, 0
         self.evidence = dict(schema="s300-fixed-solver-reductions-v1", enabled=True,
@@ -144,8 +191,16 @@ class FixedSolverReductions:
             done_and_no_change_preserve_existing_values=True,
             float32_grouping_changed=True, physical_parameters_changed=False,
             installed_library_modified=False, farm_physics_verified=False)
+        self.evidence['csr_index_rebuilt_per_physics_step'] = indexed
         _owner = self
         ms._update_constraint, ms._update_gradient = _constraint_dispatch, _gradient_dispatch
+        if indexed:
+            mc.make_constraint = _make_dispatch
+
+    def reindex(self, d):
+        self.index.fill_(-1)
+        wp.launch(_index_csr, (d.nworld, d.njmax), inputs=[self.model.nv, d.nefc,
+            d.efc.J_rownnz, d.efc.J_rowadr, d.efc.J_colind, self.index], device=self.device)
 
     def _scope_call(self, original, selected_kernel, replacement, *args, **kwargs):
         if self.closed or self.active:
@@ -182,9 +237,14 @@ class FixedSolverReductions:
             wp.launch(_validate_rows, (d.nworld, d.njmax), inputs=[m.nv, d.nefc,
                 d.efc.J_rownnz, d.efc.J_rowadr, d.efc.J_colind, changed, ctx.done,
                 self.failure, self.counters], device=self.device)
-            wp.launch(_qfrc_fixed, (d.nworld, m.nv), inputs=[d.nefc,
-                d.efc.J_rownnz, d.efc.J_rowadr, d.efc.J_colind, d.efc.J,
-                d.efc.force, changed, ctx.done, self.failure, d.qfrc_constraint], device=self.device)
+            if self.indexed:
+                wp.launch(_qfrc_indexed, (d.nworld, m.nv), inputs=[d.nefc,
+                    self.index, d.efc.J, d.efc.force, changed, ctx.done,
+                    self.failure, d.qfrc_constraint], device=self.device)
+            else:
+                wp.launch(_qfrc_fixed, (d.nworld, m.nv), inputs=[d.nefc,
+                    d.efc.J_rownnz, d.efc.J_rowadr, d.efc.J_colind, d.efc.J,
+                    d.efc.force, changed, ctx.done, self.failure, d.qfrc_constraint], device=self.device)
         result = self._scope_call(self.original_constraint, self.qfrc_kernel,
             replace, m, d, ctx, track_changes=track_changes, stable_fast=stable_fast)
         self.constraint_capture_calls += 1
@@ -230,6 +290,10 @@ class FixedSolverReductions:
             if ms._update_constraint is not _constraint_dispatch or ms._update_gradient is not _gradient_dispatch:
                 raise RuntimeError("Fixed reductions hooks replaced; close owners in reverse installation order")
             ms._update_constraint, ms._update_gradient = self.original_constraint, self.original_gradient
+            if self.indexed:
+                if mc.make_constraint is not _make_dispatch:
+                    raise RuntimeError('Close profiler before indexed constraint hook')
+                mc.make_constraint = self.original_make
             _owner = None
         self.closed = True
 

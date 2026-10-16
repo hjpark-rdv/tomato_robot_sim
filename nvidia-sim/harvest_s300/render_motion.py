@@ -216,7 +216,7 @@ try:
     caption=a.trial/(a.name+'.srt');caption.write_text('\n'.join(subtitles))
     # Keep the diagnostic captions readable without covering the harvest view.
     # libass FontSize is relative to its script resolution, not output pixels.
-    subtitle_style='FontSize=10,Outline=1,Shadow=0,MarginV=6'
+    subtitle_style='FontSize=6,Outline=1,Shadow=0,MarginV=6'
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-framerate',str(a.fps),'-i',str(output/'%05d.png'),
                     '-vf','subtitles='+str(caption.resolve())+":force_style='"+subtitle_style+"'",'-frames:v',str(len(selection)),
                     '-c:v','libx264','-pix_fmt','yuv420p','-crf','22',str(a.trial/(a.name+'.mp4'))],check=True)

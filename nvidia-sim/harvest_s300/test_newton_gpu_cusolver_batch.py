@@ -1,5 +1,6 @@
 """Multi-world controls; CUDA tests require explicit opt-in and a free GPU."""
 import ctypes
+import json
 import os
 from types import SimpleNamespace
 import unittest
@@ -10,6 +11,41 @@ import warp as wp
 
 import newton_gpu_cusolver_batch as batch
 from test_newton_gpu_cusolver import dummy_solver
+
+
+@unittest.skipUnless(os.getenv('S300_CUSOLVER_CUDA_TEST') == '1', 'Explicit CUDA opt-in')
+class SingleBatchedApiTests(unittest.TestCase):
+    def test_one_world_batched_residual_repeat_and_timing(self):
+        device = wp.get_device('cuda:0')
+        with wp.ScopedDevice(device):
+            n, nv = 400, 385
+            rng = np.random.default_rng(71)
+            a = rng.normal(size=(nv, nv)).astype(np.float32)/np.sqrt(nv)
+            h = np.eye(n, dtype=np.float32)
+            h[:nv, :nv] = a @ a.T + 2*np.eye(nv)
+            grad = rng.normal(size=(1, n)).astype(np.float32)
+            model = dummy_solver(nv, n, device)
+            data = SimpleNamespace(nworld=1, nefc=wp.array([10], int))
+            oracle = np.linalg.solve(h[:nv, :nv].astype(np.float64), grad[0, :nv])
+            times = {}
+            for force in (False, True):
+                ctx = context(h[None], grad, nv, device)
+                with batch.CuSolverCholeskyBatch(model, force_batched_single=force) as backend:
+                    backend.factorize_solve(model.mjw_model, data, ctx)
+                    backend.check_health()
+                    np.testing.assert_allclose(ctx.search.numpy()[0], -oracle, rtol=2e-4, atol=2e-6)
+                    reference = ctx.search.numpy()
+                    with wp.ScopedCapture(device=device) as cap:
+                        for _ in range(100): backend.factorize_solve(model.mjw_model, data, ctx)
+                    wp.capture_launch(cap.graph)
+                    start, end = wp.Event(device, enable_timing=True), wp.Event(device, enable_timing=True)
+                    wp.record_event(start)
+                    wp.capture_launch(cap.graph)
+                    wp.record_event(end)
+                    times['batched' if force else 'regular'] = wp.get_event_elapsed_time(start, end)/100
+                    backend.check_health()
+                    np.testing.assert_array_equal(ctx.search.numpy(), reference)
+            print('SINGLE_API_MATRIX_MS=' + json.dumps(times))
 
 
 def context(h, grad, nv, device="cpu", done=None, changed=None):

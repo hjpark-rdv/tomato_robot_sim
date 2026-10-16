@@ -164,6 +164,33 @@ class FixedReductionCpuControls(unittest.TestCase):
 
 @unittest.skipUnless(os.getenv("S300_FIXED_REDUCTIONS_CUDA_TEST") == "1", "Explicit CUDA test opt-in required")
 class FixedReductionCudaControls(unittest.TestCase):
+    def test_indexed_lookup_exact_and_rebuild_removes_disappeared_rows(self):
+        with wp.ScopedDevice('cuda:0'):
+            for descending in (False, True):
+                d, ctx, failure, counts = fixture('cuda:0', 385, 80, 93, descending)
+                index = wp.full((1, 80, 385), -1, dtype=int)
+                def indexed():
+                    index.fill_(-1)
+                    wp.launch(fr._index_csr, (1, 80), inputs=[385, d.nefc,
+                        d.efc.J_rownnz, d.efc.J_rowadr, d.efc.J_colind, index])
+                    wp.launch(fr._qfrc_indexed, (1, 385), inputs=[d.nefc, index,
+                        d.efc.J, d.efc.force, ctx.state_changed_count, ctx.done,
+                        failure, d.qfrc_constraint])
+                with wp.ScopedCapture(device='cuda:0') as cap:
+                    indexed()
+                for rowcount in (80, 3, 0, 37, 80):
+                    d.nefc.assign([rowcount])
+                    qfrc(d, ctx, failure, counts, True)
+                    expected = d.qfrc_constraint.numpy()
+                    wp.capture_launch(cap.graph)
+                    np.testing.assert_array_equal(d.qfrc_constraint.numpy(), expected)
+                    self.assertTrue((index.numpy()[:, rowcount:] == -1).all())
+                for done, changed in [(True, 1), (False, 0)]:
+                    ctx.done.assign([done]); ctx.state_changed_count.assign([changed])
+                    d.qfrc_constraint.fill_(123.)
+                    wp.capture_launch(cap.graph)
+                    np.testing.assert_array_equal(d.qfrc_constraint.numpy(), np.full((1, 385), 123.))
+
     def test_native_385_dof_parity_and_graph_repeat(self):
         with wp.ScopedDevice("cuda:0"):
             d, ctx, failure, counts = fixture("cuda:0", 385, 80, 93, descending=True)

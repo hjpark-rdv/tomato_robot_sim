@@ -110,13 +110,14 @@ def _pointer_values(base, count, stride_bytes):
 class CuSolverCholeskyBatch(single.CuSolverCholesky):
     """Preserve single-world behavior and add explicit multi-world GPU modes."""
 
-    def __init__(self, solver, *, precision="float32", library_path=None, batch_mode="batched"):
+    def __init__(self, solver, *, precision="float32", library_path=None, batch_mode="batched", force_batched_single=False):
         worlds = int(solver.mjw_data.nworld)
         if worlds < 1:
             raise ValueError("cuSOLVER requires a positive number of worlds")
         if batch_mode not in ("batched", "loop"):
             raise ValueError("batch_mode must be batched or loop")
         self.worlds = 1
+        self.force_batched_single = False  # Parent's scratch-only initialization.
         self.batch_mode = batch_mode
         # Reuse handle, public API binding, warmup, ownership and cleanup from
         # the unchanged N=1 implementation. This setup view controls only its
@@ -125,11 +126,12 @@ class CuSolverCholeskyBatch(single.CuSolverCholesky):
             _step=getattr(solver, "_step", 0), mjw_model=solver.mjw_model,
             mjw_data=SimpleNamespace(nworld=1, qpos=solver.mjw_data.qpos))
         super().__init__(setup_view, precision=precision, library_path=library_path)
-        if worlds == 1:
+        if worlds == 1 and not force_batched_single:
             self.evidence["requested_batch_mode"] = batch_mode
             self.evidence["single_world_implementation_unchanged"] = True
             return
         try:
+            self.force_batched_single = bool(force_batched_single)
             self.worlds = worlds
             with wp.ScopedDevice(self.device):
                 self.factor = wp.empty((worlds, self.n, self.n), dtype=self.dtype, device=self.device)
@@ -160,7 +162,7 @@ class CuSolverCholeskyBatch(single.CuSolverCholesky):
                 per_world_factor_status=True,
                 solve_status_scope="global_argument_status" if batch_mode == "batched" else "per_world",
                 workspace_shared_in_stream_order=batch_mode == "loop",
-                single_world_implementation_unchanged=True)
+                single_world_implementation_unchanged=not force_batched_single)
         except BaseException:
             super().close()
             raise
@@ -176,7 +178,7 @@ class CuSolverCholeskyBatch(single.CuSolverCholesky):
         self._potrs_batched.restype = i
 
     def _factor_and_solve(self):
-        if self.worlds == 1:
+        if self.worlds == 1 and not getattr(self, 'force_batched_single', False):
             return super()._factor_and_solve()
         if self.batch_mode == "batched":
             self.api.checked(self._potrf_batched(self.handle, 0, self.n,
@@ -194,7 +196,7 @@ class CuSolverCholeskyBatch(single.CuSolverCholesky):
                 self.api.solve(self.handle, self.n, factor, rhs, self.solve_info.ptr + 4 * world)
 
     def factorize_solve(self, m, d, ctx, skip_unchanged=False, skip_noflip=False):
-        if self.worlds == 1:
+        if self.worlds == 1 and not getattr(self, 'force_batched_single', False):
             return super().factorize_solve(m, d, ctx, skip_unchanged, skip_noflip)
         if self.closed or m is not self.model or int(d.nworld) != self.worlds:
             raise RuntimeError("cuSOLVER batch used outside its selected model/world count")
@@ -215,7 +217,7 @@ class CuSolverCholeskyBatch(single.CuSolverCholesky):
         self.calls += 1
 
     def check_health(self):
-        if self.worlds == 1:
+        if self.worlds == 1 and not getattr(self, 'force_batched_single', False):
             return super().check_health()
         if wp.get_stream(self.device).is_capturing:
             raise RuntimeError("Do not read cuSOLVER health during graph capture")

@@ -54,6 +54,8 @@ def run(args, *, session_cache=None):
     viewer = publisher = linear_backend = deterministic_adapter = inertia_backend = None
     tree_backend = contact_order = None
     hessian_backend = fixed_reductions = None
+    event_profile = None
+    constraint_order = None
     previous_interrupt_handler = None
     try:
         p = args.inputs.resolve()
@@ -113,7 +115,8 @@ def run(args, *, session_cache=None):
                     'refresh_connect_velocity','cholesky_block_dim','mathdx_gemm',
                     'linear_algebra','broadphase','aabb_filter','fused_sparse_factor',
                     'inertia_linear_algebra','tree_sums','canonical_contacts','dense_hessian',
-                    'fixed_solver_reductions')})
+                    'fixed_solver_reductions', 'indexed_qfrc', 'cache_hessian', 'native_integer_atomics',
+                    'canonical_constraints')})
             engine,session_evidence=session_cache.acquire(signature,engine_factory,initial)
         else:
             engine=engine_factory()
@@ -121,7 +124,8 @@ def run(args, *, session_cache=None):
         solver, d = engine.solver, engine.solver.mjw_data
         if args.deterministic_scope is not None:
             from newton_gpu_deterministic import BoundedDeterministicExecution
-            deterministic_adapter=BoundedDeterministicExecution(solver,scope=args.deterministic_scope)
+            deterministic_adapter=BoundedDeterministicExecution(solver,scope=args.deterministic_scope,
+                native_integer_atomics=args.native_integer_atomics)
         if args.fused_sparse_factor:
             from newton_gpu_sparse_factor import FusedSparseInertiaFactor
             inertia_backend=FusedSparseInertiaFactor(solver)
@@ -159,8 +163,7 @@ def run(args, *, session_cache=None):
         d.eq_active.assign(np.tile(initial['eq_active'], (args.worlds, 1)))
         d.ctrl.assign(np.tile(initial['ctrl'], (args.worlds, 1)).astype(np.float32))
         controller_initial = dict(initial, preload=initial['plant_preload'])
-        # Pad commands only for the unexecuted end of a captured graph. The
-        # runner executes the remainder one real step at a time.
+        # Commands are indexed by the GPU tick, including phase-boundary tails.
         ctrl = HarvestGPUController(solver, p, controller_initial, metadata,
             timeline['command'][:steps], timeline['belt_surface_velocity_local_y_m_s'][:steps],
             steps, worlds=args.worlds)
@@ -172,9 +175,15 @@ def run(args, *, session_cache=None):
             raise RuntimeError('Native belt surface velocity feature disabled')
         mw.kinematics(solver.mjw_model, d)
         if args.linear_algebra != 'warp':
-            if args.linear_algebra=='woodbury':
+            if args.cache_hessian:
+                from newton_gpu_factor_cache import CachedCuSolverCholesky
+                linear_backend=CachedCuSolverCholesky(solver)
+            elif args.linear_algebra=='woodbury':
                 from newton_gpu_woodbury import WoodburyCholesky
                 linear_backend=WoodburyCholesky(solver,rank_capacity=128)
+            elif args.linear_algebra=='cusolver32-batched':
+                from newton_gpu_cusolver_batch import CuSolverCholeskyBatch
+                linear_backend=CuSolverCholeskyBatch(solver,force_batched_single=True)
             elif args.linear_algebra=='cusolver32-equilibrated':
                 from newton_gpu_equilibrate import EquilibratedCuSolverCholesky
                 linear_backend=EquilibratedCuSolverCholesky(solver)
@@ -186,8 +195,14 @@ def run(args, *, session_cache=None):
             from newton_gpu_dense_hessian import DenseConstraintHessian
             hessian_backend=DenseConstraintHessian(solver,capacity=128)
         if args.fixed_solver_reductions:
+            if args.canonical_constraints:
+                from newton_gpu_constraint_order import CanonicalConstraintOrder
+                constraint_order=CanonicalConstraintOrder(solver)
             from newton_gpu_fixed_reductions import FixedSolverReductions
-            fixed_reductions=FixedSolverReductions(solver)
+            fixed_reductions=FixedSolverReductions(solver,indexed=args.indexed_qfrc)
+        if args.profile_gpu_events:
+            from newton_gpu_profile import GraphEventProfile
+            event_profile = GraphEventProfile(solver.mjw_model, args.device)
         stride = args.record_stride
         rows = steps // stride + 1
         qlog = wp.zeros((rows, source.nq), float, device=args.device)
@@ -209,7 +224,9 @@ def run(args, *, session_cache=None):
         # Capture does not execute the graph. Kernel compilation belongs to
         # setup, and there are zero unrecorded integrated warmup steps.
         graphs = {}
+        tail_graphs = {}
         durations = np.round(timesteps[:steps], 12)
+        graph_capture_started = time.perf_counter()
         if not args.no_graph:
             print('Capturing fixed Newton physics graph...', flush=True)
             for dt in np.unique(durations):
@@ -217,7 +234,19 @@ def run(args, *, session_cache=None):
                     for _ in range(args.batch):
                         step(float(dt))
                 graphs[float(dt)] = capture.graph
+                if args.native_observables_only:
+                    # Native MjData is authoritative in this mode; Newton's
+                    # alternating metadata buffers are neither read nor written.
+                    # Capture the remainder as well: an uncaptured deterministic
+                    # step incurs host reductions/module switching, even though
+                    # the exact same kernels already exist in the main graph.
+                    states = (engine.state_0, engine.state_1)
+                    with wp.ScopedCapture(device=args.device) as tail_capture:
+                        step(float(dt))
+                    tail_graphs[float(dt)] = tail_capture.graph
+                    engine.state_0, engine.state_1 = states
         wp.synchronize()
+        graph_capture_wall_s = time.perf_counter() - graph_capture_started
         if int(ctrl.tick.numpy()[0]) != 0:
             raise RuntimeError('Graph capture advanced unrecorded physical time')
         if linear_backend is not None and not args.no_graph and linear_backend.calls == 0:
@@ -244,6 +273,7 @@ def run(args, *, session_cache=None):
             commands_sha256=sha256(p/'commands.npz'), engine=engine.evidence,
             executed_commands_sha256=sha256(out/'executed_commands.npz'),
             cuda_graph=bool(graphs), graph_steps=args.batch if graphs else 0,
+            cuda_tail_graph=bool(tail_graphs), graph_capture_wall_s=graph_capture_wall_s,
             free_hz=args.free_hz, timestep_counts={str(dt):int(np.sum(durations==dt)) for dt in np.unique(durations)},
             effective_gpu_options=effective_gpu_options,
             gpu_compatibility=compatibility,
@@ -252,6 +282,7 @@ def run(args, *, session_cache=None):
             gpu_sparse_factor=inertia_backend.evidence if inertia_backend else {},
             gpu_tree_sums=tree_backend.evidence if tree_backend else {},
             gpu_canonical_contacts=contact_order.evidence if contact_order else {},
+            gpu_canonical_constraints=constraint_order.evidence if constraint_order else {},
             gpu_dense_hessian=hessian_backend.evidence if hessian_backend else {},
             gpu_fixed_solver_reductions=fixed_reductions.evidence if fixed_reductions else {},
             gpu_session=session_evidence,
@@ -269,6 +300,8 @@ def run(args, *, session_cache=None):
         display_errors = []
         phase_performance = {}
         gpu_profile = {}
+        event_samples = {}
+        execution_batches = dict(full_graph_steps=0, tail_graph_steps=0, uncaptured_steps=0)
         phase_counts = {phase:int(np.sum(timeline['phase'][:steps] == phase))
                         for phase in np.unique(timeline['phase'][:steps])}
         interruption_requested=[False]
@@ -304,11 +337,18 @@ def run(args, *, session_cache=None):
                                 for r in timer.timing_results])
                 write(out/'gpu_profile.json',gpu_profile)
                 batch = 1
+                execution_batches['uncaptured_steps'] += 1
             elif graphs and batch == args.batch:
                 wp.capture_launch(graphs[dt])
+                execution_batches['full_graph_steps'] += batch
+            elif tail_graphs:
+                for _ in range(batch):
+                    wp.capture_launch(tail_graphs[dt])
+                execution_batches['tail_graph_steps'] += batch
             else:
                 for _ in range(batch):
                     step(dt)
+                execution_batches['uncaptured_steps'] += batch
             actual += batch
             wp.launch(pack_runtime_status, args.worlds, inputs=[nonfinite,
                 ctrl.first_qacc_nonfinite, ctrl.first_capacity_overflow,
@@ -356,6 +396,15 @@ def run(args, *, session_cache=None):
             perf['steps'] += batch
             perf['simulated_s'] += float(np.sum(timesteps[actual-batch:actual]))
             perf['wall_s'] += time.perf_counter()-batch_started
+            if (event_profile is not None and phase not in event_samples
+                    and perf['steps'] >= phase_counts[phase]//2):
+                event_samples[phase] = dict(solver_step=actual-1,
+                    solver_iterations=d.solver_niter.numpy().tolist(),
+                    constraints=d.nefc.numpy().tolist(),
+                    last_invocation_cuda_ms=event_profile.read())
+                write(out/'gpu_graph_event_profile.json', dict(
+                    diagnostic_instrumented=True, nested_intervals_overlap=True,
+                    samples=event_samples))
             if time.perf_counter()-last_progress >= 5 or stop:
                 elapsed = time.perf_counter()-loop
                 print(f'Newton {args.worlds} env | {float(edges[actual]):.2f}/{float(edges[steps]):.2f}s | '
@@ -370,6 +419,7 @@ def run(args, *, session_cache=None):
         for perf in phase_performance.values():
             perf['realtime_factor'] = perf['simulated_s']/perf['wall_s']
         write(out/'phase_performance.json', phase_performance)
+        report['execution_batches'] = execution_batches
         if args.profile_gpu:
             write(out/'gpu_profile.json', gpu_profile)
         simulated_s = float(d.time.numpy()[0])
@@ -451,7 +501,7 @@ def run(args, *, session_cache=None):
         report.update(status='stopped' if stop else 'completed', stop=stop,
             simulated_s=simulated_s, scheduled_simulated_s=float(edges[actual]), actual_steps=actual, loop_wall_s=loop_s,
             realtime_factor=simulated_s/loop_s, aggregate_sim_s_per_wall_s=args.worlds*simulated_s/loop_s,
-            phase_performance=phase_performance, profile_instrumented=args.profile_gpu,
+            phase_performance=phase_performance, profile_instrumented=args.profile_gpu or args.profile_gpu_events,
             deterministic_mode=args.deterministic,
             resource_scope='CPU/RSS: owned process tree; GPU: whole device including live Isaac display',
             display_errors=display_errors, display_health_passed=not display_errors,
@@ -487,8 +537,12 @@ def run(args, *, session_cache=None):
         if previous_interrupt_handler is not None:
             signal.signal(signal.SIGINT,previous_interrupt_handler)
         # Fixed reductions wrap the Hessian hook; restore the outer owner first.
+        if event_profile is not None:
+            event_profile.close()
         if fixed_reductions is not None:
             fixed_reductions.close()
+        if constraint_order is not None:
+            constraint_order.close()
         if linear_backend is not None:
             linear_backend.close()
         if deterministic_adapter is not None:
@@ -519,7 +573,9 @@ def arguments(argv=None):
     p.add_argument('--native-control-callback',action='store_true',help='GPU callback owns every actuator; skip unused Newton control readback')
     p.add_argument('--deterministic', choices=('NOT_GUARANTEED','RUN_TO_RUN'),default='NOT_GUARANTEED')
     p.add_argument('--deterministic-scope',choices=('solver','constraints','dynamics','all'),help='Bounded pinned-backend kernels; narrowed scopes require separate tree/contact handling')
+    p.add_argument('--native-integer-atomics',action='store_true',help='Avoid deterministic scatter machinery in reviewed integer-only/no-scatter solver specializations')
     p.add_argument('--profile-gpu',action='store_true',help='Instrument one recorded actual step per phase; diagnostic timing only')
+    p.add_argument('--profile-gpu-events',action='store_true',help='CUDA event timings inside actual graphs, including external CUDA libraries')
     p.add_argument('--jacobian',choices=('sparse','dense'),help='Explicit native constraint storage comparison')
     p.add_argument('--profile-timers',action='store_true',help='Diagnostic native C timers; not a clean throughput benchmark')
     p.add_argument('--solver-tolerance',type=float,help='Explicit convergence tolerance comparison')
@@ -531,13 +587,16 @@ def arguments(argv=None):
     p.add_argument('--cholesky-block-dim',type=int,choices=(32,64,128,256),help='GPU threads per blocked constraint factorization')
     p.add_argument('--refresh-connect-velocity',action=argparse.BooleanOptionalAction,default=True,help='Refresh current CONNECT velocity cache before constraint reference assembly')
     p.add_argument('--mathdx-gemm',action=argparse.BooleanOptionalAction,default=None,help='Explicit tile GEMM compiler comparison, original default unchanged')
-    p.add_argument('--linear-algebra',choices=('warp','cusolver32','cusolver64','cusolver32-equilibrated','woodbury'),default='warp',help='Opt-in GPU SPD factor/solve implementation; same Newton equations')
+    p.add_argument('--linear-algebra',choices=('warp','cusolver32','cusolver32-batched','cusolver64','cusolver32-equilibrated','woodbury'),default='warp',help='Opt-in GPU SPD factor/solve implementation; same Newton equations')
     p.add_argument('--fused-sparse-factor',action='store_true',help='Opt-in one-CTA sparse inertia factor with fixed update order')
     p.add_argument('--inertia-linear-algebra',choices=('warp','cusolver32'),default='warp')
     p.add_argument('--tree-sums',choices=('levels','flat'),help='Opt-in fixed-order tree equations')
     p.add_argument('--canonical-contacts',action='store_true',help='Stable contact record order; no contact values changed')
+    p.add_argument('--canonical-constraints',action='store_true',help='Canonicalize native constraint rows and dependent pointers after parallel allocation')
     p.add_argument('--dense-hessian',action='store_true',help='Opt-in equivalent dense GPU product for sparse constraint curvature')
     p.add_argument('--fixed-solver-reductions',action='store_true',help='Opt-in fixed-order sparse force and native tiled gradient reductions')
+    p.add_argument('--indexed-qfrc',action='store_true',help='Reuse per-step sparse column lookup during Newton iterations')
+    p.add_argument('--cache-hessian',action='store_true',help='Reuse factors only for bit-identical upper H; GPU comparison and conditional execution')
     p.add_argument('--repeats',type=int,default=1,help='GPU trials in one process with retained model and full resets')
     p.add_argument('--gui-repeat-index',type=int,help='Show live GUI only for this zero-based repeat')
     p.add_argument('--diagnostic-data-snapshot',action='store_true',help='Save final native GPU intermediate arrays for short reproducibility diagnostics')
@@ -552,12 +611,20 @@ def arguments(argv=None):
     p.add_argument('--camera',default='entry')
     p.add_argument('--camera-test-motion',action='store_true',help='Move display camera automatically and require recorded movement ACK')
     args=p.parse_args(argv)
+    if args.canonical_constraints and (args.deterministic_scope!='solver' or not args.fixed_solver_reductions):
+        p.error('--canonical-constraints requires --deterministic-scope solver and --fixed-solver-reductions')
+    if args.native_integer_atomics and not args.deterministic_scope:
+        p.error('--native-integer-atomics requires --deterministic-scope')
+    if args.indexed_qfrc and not args.fixed_solver_reductions:
+        p.error('--indexed-qfrc requires --fixed-solver-reductions')
+    if args.cache_hessian and (args.backend!='gpu' or args.linear_algebra!='cusolver32'):
+        p.error('--cache-hessian requires GPU --linear-algebra cusolver32')
     if args.worlds<1 or args.record_stride<1:p.error('positive worlds and record stride required')
     if args.backend=='gpu' and args.record_stride!=1:p.error('GPU evidence currently requires record stride 1')
     cpu_only=('profile_timers','threads','start_gate','ready_file')
     if args.backend=='gpu' and any(getattr(args,key) for key in cpu_only):
         p.error('CPU-only diagnostics/gates cannot be applied to the GPU backend')
-    if args.backend=='cpu' and (args.native_control_callback or args.profile_gpu or args.deterministic!='NOT_GUARANTEED' or args.ls_iterations or args.broadphase or args.aabb_filter or args.cholesky_block_dim or args.mathdx_gemm is not None or args.linear_algebra!='warp'):
+    if args.backend=='cpu' and (args.native_control_callback or args.profile_gpu or args.profile_gpu_events or args.deterministic!='NOT_GUARANTEED' or args.ls_iterations or args.broadphase or args.aabb_filter or args.cholesky_block_dim or args.mathdx_gemm is not None or args.linear_algebra!='warp'):
         p.error('GPU callback/profiling/determinism require --backend gpu')
     if args.ls_iterations is not None and args.ls_iterations<1:p.error('Positive line-search budget required')
     if args.deterministic_scope and (args.backend!='gpu' or args.deterministic!='RUN_TO_RUN'):

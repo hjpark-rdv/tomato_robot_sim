@@ -166,12 +166,20 @@ class RigidBounds:
 class BoundedDeterministicExecution:
     """Own an opt-in per-solver launch scope; close after captured work ends."""
 
-    def __init__(self, solver, *, scope="solver"):
+    def __init__(self, solver, *, scope="solver", native_integer_atomics=False):
         if scope not in ("solver", "constraints", "dynamics", "all"):
             raise ValueError("deterministic scope must be solver, constraints, dynamics or all")
         self.selected_scope = scope
         self.bounds = RigidBounds.from_solver(solver)
         self.solver = solver
+        self.native_integer_atomics = native_integer_atomics
+        from mujoco_warp._src import solver as native_solver
+        # These specialized sparse/elliptic kernels contain no active floating
+        # scatter sum or atomic reservation whose returned order is consumed.
+        self.no_scatter_kernels = {
+            native_solver._update_constraint_efc(False),
+            native_solver._linesearch_jv_fused_kernel(True, self.bounds.nv, self.bounds.nv, False),
+        }
         self.original_scope = solver._scoped_deterministic_config
         self.original_bound = solver._deterministic_max_records
         self.original_options = {m: dict(o) for m, o in solver._module_options.items()}
@@ -186,6 +194,7 @@ class BoundedDeterministicExecution:
                              overflow_checks_preserved=True,
                              in_kernel_scatter_dependency_guard=True,
                              repeatability_verified=False)
+        self.evidence['native_integer_atomics'] = native_integer_atomics
         solver._deterministic_max_records = 0
         # Override stored source-module bounds too, so Newton's normal option
         # reapplication cannot restore the old global Hessian bound to smooth.
@@ -209,6 +218,11 @@ class BoundedDeterministicExecution:
             return
         key = str(kernel.key)
         selected = _selected_source(self.selected_scope, source)
+        integer_native = self.native_integer_atomics and source == 'mujoco_warp._src.solver' and (
+            kernel in self.no_scatter_kernels or key.startswith('_linesearch_iterative_kernel__')
+            or key.startswith('_solve_done__'))
+        if integer_native:
+            selected = False
         if selected and "_solve_LD_sparse_fused" in key:
             # Warp deterministic scatter atomics with discarded return values
             # are reduced after the kernel, but this backend kernel reads its
@@ -222,6 +236,10 @@ class BoundedDeterministicExecution:
         else:
             bound, proof = 0, "outside explicitly selected deterministic diagnostic scope"
             mode = wp.DeterministicMode.NOT_GUARANTEED
+            if integer_native:
+                proof = ('MW3.15 reviewed specialization: integer OR/decrement only, or '
+                         'no active atomic scatter in sparse elliptic specialization; '
+                         'floating reductions and reservation atomics remain scoped')
         if math.prod(_dimensions(dim)) * bound > 2**31 - 1:
             raise ValueError("Proven deterministic bound exceeds supported int32 capacity: " + key)
         options = dict(deterministic=mode,

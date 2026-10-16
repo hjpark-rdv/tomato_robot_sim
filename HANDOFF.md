@@ -1,5 +1,22 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-17: Newton GPU 전체 평균 실시간 초과, 접촉 구간은 미달
+
+- 브랜치 `codex/s300-newton-gpu-realtime-20261016`, 출발 `1868610`.
+  기존 동일 입력/명령·400/60Hz·활성1mm·분리 규칙·전체 Isaac 농장 외형을 유지했다.
+- CUDA graph 나머지 스텝 포함, sparse 합산 색인, 불필요한 결정성 처리 제거,
+  제약 생성 후 행/포인터 정렬 적용. 실제 GPU 전체 실행 **83.983→53.052초(1.561×)**,
+  카메라 이동 GUI **95.780→61.267초(1.351×)**. 각6개 분리·활성 최대.794207mm.
+- 전체13,806step의 상태/힘/접촉/분리 기록은 이전 GPU와 정확히 같고 새 GUI 쌍도 정확 일치.
+  그러나 belt_finish는 headless.382×/GUI.328×로 **접촉 실시간 목표 미달**, 실제N환경 수확 미실행.
+  대표 접촉 스텝 GPU solver4.921ms로400Hz 예산2.5ms 초과. 평균 속도로 목표 완료를 주장하지 않는다.
+- `./nvidia-sim/run_s300_newton.sh gpu --gui`에 검증한 설정 적용.
+  CPU 비교 모드는 그대로 유지. 단일 환경만 검증, `training_eligible=false`, `harvest_success=null`.
+- 결과 [S300_NEWTON_GPU_REALTIME_KO.md](nvidia-sim/S300_NEWTON_GPU_REALTIME_KO.md),
+  검증 [s300_newton_gpu_realtime.json](nvidia-sim/validation/s300_newton_gpu_realtime.json).
+  원자료/영상 `/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/`.
+  폴더는 작업 시작일10/16 표기이며 최종 실행/검증은10/17 KST에 완료했다.
+
 ## 2026-10-16: 실제 Newton GPU 실행·전체 GUI 일치 확보, 접촉 속도 미달성
 
 - 브랜치 `codex/s300-newton-gpu-20261016`, 출발 `f1941f5`. 기존 CPU 결과와 사용자 미커밋

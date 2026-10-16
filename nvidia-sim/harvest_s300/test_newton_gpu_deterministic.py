@@ -6,7 +6,10 @@ NEWTON_GPU_STAGE_DEVICE=cuda:0 for the same small backend integration control.
 """
 
 from contextlib import contextmanager
+import ast
+import inspect
 import os
+import textwrap
 from types import SimpleNamespace
 import unittest
 from unittest import mock
@@ -57,6 +60,22 @@ class TestBoundedDeterministicExecution(unittest.TestCase):
             backend_model = mw.put_model(model)
             backend_data = mw.put_data(model, data, nconmax=8, njmax=32)
         return FixtureSolver(model, backend_model, backend_data)
+
+    def test_native_integer_kernel_proofs_exclude_float_scatter_and_reservations(self):
+        for function, operation, target in [
+            (native_solver._linesearch_iterative_kernel, 'atomic_or', 'overflow_out'),
+            (native_solver._solve_done, 'atomic_add', 'nsolving_out')]:
+            source = ast.parse(textwrap.dedent(inspect.getsource(function)))
+            calls = [n for n in ast.walk(source) if isinstance(n, ast.Call)
+                     and isinstance(n.func, ast.Attribute) and n.func.attr.startswith('atomic_')]
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(calls[0].func.attr, operation)
+            self.assertEqual(calls[0].args[0].id, target)
+            arguments = [n for n in ast.walk(source) if isinstance(n, ast.arg) and n.arg == target]
+            self.assertEqual(ast.unparse(arguments[0].annotation), 'wp.array[int]')
+            # Return value is discarded; no row-order reservation semantics.
+            self.assertTrue(any(isinstance(n, ast.Expr) and n.value is calls[0]
+                                for n in ast.walk(source)))
 
     def test_broadphase_bounds_follow_actual_reservation_loops(self):
         bounds = RigidBounds(385, 901, 114, 847, 512)

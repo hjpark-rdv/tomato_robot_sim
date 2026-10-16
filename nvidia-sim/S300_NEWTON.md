@@ -1,9 +1,10 @@
 # S300 농장 수확 · Newton 실행
 
-2026-10-16 GPU 후속 검증은 `codex/s300-newton-gpu-20261016`에서 진행했다.
+2026-10-17 GPU 후속 검증은 `codex/s300-newton-gpu-realtime-20261016`에서 진행했다.
 실제 구성은 **Isaac 장면 표시 → Newton → MuJoCo Warp CUDA 물리**이며,
 전체 GUI/headless 상태 일치는 통과했다. 접촉 구간의 실시간 성능은 아직 미달성이다.
-최신 수치·실패 대조·실제 GPU 영상은 [GPU 결과 보고서](S300_NEWTON_GPU_RESULTS_KO.md)를 참조한다.
+전체 평균은 headless1.561배속/GUI1.351배속이다. 벨트 구간은.382/.328배속으로 남아 있다.
+최신 수치·실패 대조·실제 GPU 영상은 [GPU 결과 보고서](S300_NEWTON_GPU_REALTIME_KO.md)를 참조한다.
 
 ```bash
 cd /root/farmily_tomato

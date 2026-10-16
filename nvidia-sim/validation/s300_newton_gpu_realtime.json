@@ -1,0 +1,4178 @@
+{
+  "schema": "s300-newton-gpu-realtime-followup-v1",
+  "generated_at_utc": "2026-10-16T15:30:35.580067+00:00",
+  "branch": "codex/s300-newton-gpu-realtime-20261016",
+  "base_commit": "18686103228103de2b64ff1ebbbb88ddf9f594a9",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery",
+  "training_eligible": false,
+  "harvest_success": null,
+  "goal_status": {
+    "full_headless_average_realtime": true,
+    "full_gui_average_realtime": true,
+    "gui_full_trace_equivalence": true,
+    "contact_phase_realtime": false,
+    "gpu_multiworld_harvest_tested": false,
+    "overall_goal_achieved": false
+  },
+  "configuration": {
+    "structure": "Isaac display process + Newton SolverMuJoCo -> MuJoCo Warp CUDA physics",
+    "hardware": {
+      "gpu": "NVIDIA GeForce RTX3090Ti",
+      "gpu_memory_MiB": 24564,
+      "driver": "570.211.01",
+      "cpu": "AMD Ryzen Threadripper3960X",
+      "physical_cpu_cores": 24,
+      "logical_cpu_threads": 48,
+      "ram_GiB": 125.7
+    },
+    "versions": {
+      "newton_version": "1.7.0",
+      "warp_version": "1.17.0",
+      "mujoco_version": "3.15.0"
+    },
+    "source_counts": {
+      "nbody": 132,
+      "njnt": 335,
+      "nq": 395,
+      "nv": 385,
+      "ngeom": 901,
+      "nu": 10,
+      "neq": 10,
+      "nexclude": 105,
+      "nmesh": 810
+    },
+    "source_model_array_sha256": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9",
+    "source_model_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+    "source_xml_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+    "source_input": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+    "active_penetration_limit_m": 0.001,
+    "attachment_force_limit_n": 3.0,
+    "attachment_torque_limit_nm": 0.008,
+    "retained_policy": "target truss and own main stem; leaves ignored; other plants visual-only; structures retained",
+    "changed_physical_parameters": false,
+    "canonical_constraints_single_world_only": true
+  },
+  "prior_gpu_runs": [
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 83.98347387462854,
+      "realtime_factor": 0.9858263479489442,
+      "setup_wall_s": 15.233837716281414,
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": false,
+        "acquisition": 1,
+        "signature_sha256": "1dd7b44c768a142df5d08d5aa48119781a6fbb0ad60de0e4062fc82eb95fecb0",
+        "initial_state_sha256": "99d0f9ec8ecc2d192059eda7c8228987de9949dd6d610c11beeb94562eb920b8",
+        "model_load_wall_s": 5.258649034425616,
+        "reset_wall_s": 0.010411404073238373,
+        "acquisition_wall_s": 5.269155187532306,
+        "initial_buffer_snapshot_bytes": 971586,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400/repeat_000/summary.json",
+        "sha256": "61beb79bf200c3353628d65b8ca64896b3d6cd4c11302758295133243fdd17e8",
+        "bytes": 80342
+      },
+      "name": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400/repeat_000",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400",
+          "--backend",
+          "gpu",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--batch",
+          "10",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--repeats",
+          "2",
+          "--gui-repeat-index",
+          "1",
+          "--camera-test-motion"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "79537e0f461e6c2909acd2e16d5fcee82bbd8c51fe593b9bcbe12841c68459cb",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8d0ccf53d7e541c69b2b7b048093698331d8c5124590e8bb25e5aca0078dcab9",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": true,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 95.77980049140751,
+      "realtime_factor": 0.8644110857729137,
+      "setup_wall_s": 34.25761413015425,
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": true,
+        "acquisition": 2,
+        "signature_sha256": "1dd7b44c768a142df5d08d5aa48119781a6fbb0ad60de0e4062fc82eb95fecb0",
+        "initial_state_sha256": "99d0f9ec8ecc2d192059eda7c8228987de9949dd6d610c11beeb94562eb920b8",
+        "model_load_wall_s": 0.0,
+        "reset_wall_s": 0.9781243223696947,
+        "acquisition_wall_s": 0.9782265406101942,
+        "initial_buffer_snapshot_bytes": 971586,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400/repeat_001/summary.json",
+        "sha256": "d4f7ce6a7e86444376fe7ba58971ddaa26c479001240516a72c1fedf713ce050",
+        "bytes": 80322
+      },
+      "name": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400/repeat_001",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400",
+          "--backend",
+          "gpu",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--batch",
+          "10",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--repeats",
+          "2",
+          "--gui-repeat-index",
+          "1",
+          "--camera-test-motion"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "79537e0f461e6c2909acd2e16d5fcee82bbd8c51fe593b9bcbe12841c68459cb",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8d0ccf53d7e541c69b2b7b048093698331d8c5124590e8bb25e5aca0078dcab9",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    }
+  ],
+  "final_gpu_runs": [
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 53.05238880030811,
+      "realtime_factor": 1.5605917699489111,
+      "setup_wall_s": 13.78450071811676,
+      "graph_capture_wall_s": 5.802093032747507,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": false,
+        "acquisition": 1,
+        "signature_sha256": "5d69b3ef920e9d212e887c0a955eda2de971eb20b805278b8e8522e9769d455a",
+        "initial_state_sha256": "99d0f9ec8ecc2d192059eda7c8228987de9949dd6d610c11beeb94562eb920b8",
+        "model_load_wall_s": 5.261047462001443,
+        "reset_wall_s": 0.010240882635116577,
+        "acquisition_wall_s": 5.271382957696915,
+        "initial_buffer_snapshot_bytes": 971586,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_000/summary.json",
+        "sha256": "88e7602c8d65f6d97f7625d015d24673b65c0079607e46972a77ff25fdcc2c6b",
+        "bytes": 81434
+      },
+      "name": "final_session/repeat_000",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_001345_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--native-integer-atomics",
+          "--canonical-constraints",
+          "--deterministic-scope",
+          "solver",
+          "--repeats",
+          "2",
+          "--gui-repeat-index",
+          "1",
+          "--camera-test-motion",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "25bf879cd645f4f5ad1dcf7a948142589f8f651d044a37ffb0957930b4e97897",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "dd68d212c044aa422459cb793a479d11f893a35de27ad52d8b87625bdfec41e0",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_constraint_order.py": "70f1bc99d3da33f082e6ebd08c60b35d66352cbb05214dec3b8d1ac6417ca8b0",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": true,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 61.26727673225105,
+      "realtime_factor": 1.3513432578325844,
+      "setup_wall_s": 33.86738499626517,
+      "graph_capture_wall_s": 4.611540632322431,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": true,
+        "acquisition": 2,
+        "signature_sha256": "5d69b3ef920e9d212e887c0a955eda2de971eb20b805278b8e8522e9769d455a",
+        "initial_state_sha256": "99d0f9ec8ecc2d192059eda7c8228987de9949dd6d610c11beeb94562eb920b8",
+        "model_load_wall_s": 0.0,
+        "reset_wall_s": 0.9777884483337402,
+        "acquisition_wall_s": 0.9778898637741804,
+        "initial_buffer_snapshot_bytes": 971586,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/summary.json",
+        "sha256": "5e4e63c658081b20da8a26bc43fc647e97a58933c0ada09b5c16324cd64b793f",
+        "bytes": 81411
+      },
+      "name": "final_session/repeat_001",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_001345_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--native-integer-atomics",
+          "--canonical-constraints",
+          "--deterministic-scope",
+          "solver",
+          "--repeats",
+          "2",
+          "--gui-repeat-index",
+          "1",
+          "--camera-test-motion",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "25bf879cd645f4f5ad1dcf7a948142589f8f651d044a37ffb0957930b4e97897",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "dd68d212c044aa422459cb793a479d11f893a35de27ad52d8b87625bdfec41e0",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_constraint_order.py": "70f1bc99d3da33f082e6ebd08c60b35d66352cbb05214dec3b8d1ac6417ca8b0",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    }
+  ],
+  "wall_reduction_fraction": [
+    0.36829966238946843,
+    0.3603319654257644
+  ],
+  "comparison_scope": "Individual complete runs, not statistical confidence intervals; CPU/GPU numerical precision differs",
+  "cpu_reference": {
+    "status": "completed",
+    "stop": null,
+    "backend": "cpu",
+    "worlds": 1,
+    "gui_requested": false,
+    "physics_hz": 400.0,
+    "free_hz": 60.0,
+    "requested_steps": 13806,
+    "actual_steps": 13806,
+    "simulated_s": 82.795,
+    "loop_wall_s": 61.99372263439,
+    "realtime_factor": 1.3355384461792401,
+    "setup_wall_s": 4.926381167024374,
+    "max_active_penetration_m": 0.0006806358504814377,
+    "max_released_penetration_m": 0.009681487748984557,
+    "max_contact_force_n": 13.095477958721368,
+    "detached_per_world": [
+      6
+    ],
+    "active_contact_criterion_passed": true,
+    "finite_recorded_state": true,
+    "solver_capacity_valid": true,
+    "qacc_finite": true,
+    "states_sha256": "ede510c929a11a1ebd4797893d1bca120754921f4a4b431695933dd77fc72ece",
+    "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+    "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+    "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "summary": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated/summary.json",
+      "sha256": "eea51752da8e0d5321f5734ec8f319222f012662ec5b9e0e53ec595f0da6999e",
+      "bytes": 46600
+    },
+    "name": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated",
+    "invocation": {
+      "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+      "argv": [
+        "nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--backend",
+        "cpu",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--native-observables-only",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/cpu400_render_separated"
+      ],
+      "code_sha256": {
+        "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+        "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+        "newton_live.py": "bd37e3dc10d930d20ebaaac4109f2f3ad22a788a70a83857913c036bf528b24d",
+        "newton_kernels.py": "1a9a800802a1281344cfd94a5034c9c76da1c1277d1844e2042549a91e5f3a7c",
+        "newton_mjcf.py": "f2252a66f442474a26d688548c1323cb7e5e93a3eefc23ccdc354feaf83ae1a3",
+        "newton_cpu.py": "70cc7794b0ef7f0ac8a3198d3635756852f479c4175167a96569c8e834193dc2",
+        "run_newton_harvest.py": "ba66e9633f0764644b0e7afdea343576f7607f5ae053102e72276a88e053d888"
+      }
+    }
+  },
+  "cpu_comparability": {
+    "same_prepared_model_and_command_source": true,
+    "native_gpu_arrays_bit_equivalent_expected": false,
+    "cpu_native_tolerance": 1e-08,
+    "gpu_upload_effective_minimum_tolerance": 1e-06,
+    "tolerance_difference_source": "Installed mujoco_warp/_src/io.py lines428-431 clamps tolerance>=1e-6 for float32 GPU. Not a newly relaxed penetration threshold.",
+    "gpu_precision": "float32 state/Hessian; optional float64 factor only",
+    "native_cpu_precision": "float64",
+    "contact_hz": 400,
+    "free_hz": 60,
+    "requested_steps": 13806,
+    "full_scheduled_duration_s": 82.795,
+    "caveat": "CPU/GPU use same source model/commands but implementation precision and upload tolerance differ. No engine-speed claim from old two-truss739DOF baseline."
+  },
+  "full_gui_comparison": {
+    "schema": "s300-newton-full-trace-comparison-v1",
+    "baseline": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_000",
+    "candidate": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001",
+    "passed": true,
+    "full_requested_physics_trace_matches": true,
+    "recorded_evidence_matches": true,
+    "gui_headless_pair": true,
+    "gui_physics_equivalence_verified": true,
+    "coverage": {
+      "reference": {
+        "passed": true,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "full_command_schedule_requested": true,
+        "status": "completed",
+        "stop": null,
+        "record_stride": 1,
+        "recorded_every_physics_step": true,
+        "starts_at_zero": true,
+        "samples": 13807,
+        "exact_expected_timestamps": false,
+        "expected_timestamp_error_within_roundoff": false,
+        "measured_timestamps_strictly_increasing": true,
+        "explicit_solver_step_coverage": true,
+        "explicit_scheduled_time_coverage": true,
+        "cpu_float64_clock_coverage_fallback": false,
+        "maximum_expected_clock_error_s": 0.011065673828127842,
+        "recorded_clock_drift_diagnostic_only": true,
+        "schedule_uses_saved_nonuniform_time_edges": true,
+        "saved_timestep_schedule_verified": true,
+        "state_commands_follow_executed_schedule": true,
+        "executed_commands_sha_matches_summary": true,
+        "state_sample_lengths": {
+          "time": 13807,
+          "qpos": 13807,
+          "qvel": 13807,
+          "eq_active": 13807,
+          "poses": 13807,
+          "robot_q": 13807,
+          "phase": 13807,
+          "command": 13807,
+          "belt_surface_velocity_local_y_m_s": 13807,
+          "scheduled_time": 13807,
+          "solver_step": 13807
+        },
+        "every_state_array_has_all_samples": true,
+        "physics_metric_coverage": {
+          "active_penetration_m": true,
+          "released_penetration_m": true,
+          "max_contact_force_n": true,
+          "attachment_force_n": true,
+          "attachment_torque_nm": true,
+          "break_step": true,
+          "first_event": true,
+          "nonfinite_step": true
+        },
+        "all_physics_metrics_cover_run": true,
+        "states_sha_matches_summary": true,
+        "unrecorded_warmup_steps": 0,
+        "load_errors": []
+      },
+      "actual": {
+        "passed": true,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "full_command_schedule_requested": true,
+        "status": "completed",
+        "stop": null,
+        "record_stride": 1,
+        "recorded_every_physics_step": true,
+        "starts_at_zero": true,
+        "samples": 13807,
+        "exact_expected_timestamps": false,
+        "expected_timestamp_error_within_roundoff": false,
+        "measured_timestamps_strictly_increasing": true,
+        "explicit_solver_step_coverage": true,
+        "explicit_scheduled_time_coverage": true,
+        "cpu_float64_clock_coverage_fallback": false,
+        "maximum_expected_clock_error_s": 0.011065673828127842,
+        "recorded_clock_drift_diagnostic_only": true,
+        "schedule_uses_saved_nonuniform_time_edges": true,
+        "saved_timestep_schedule_verified": true,
+        "state_commands_follow_executed_schedule": true,
+        "executed_commands_sha_matches_summary": true,
+        "state_sample_lengths": {
+          "time": 13807,
+          "qpos": 13807,
+          "qvel": 13807,
+          "eq_active": 13807,
+          "poses": 13807,
+          "robot_q": 13807,
+          "phase": 13807,
+          "command": 13807,
+          "belt_surface_velocity_local_y_m_s": 13807,
+          "scheduled_time": 13807,
+          "solver_step": 13807
+        },
+        "every_state_array_has_all_samples": true,
+        "physics_metric_coverage": {
+          "active_penetration_m": true,
+          "released_penetration_m": true,
+          "max_contact_force_n": true,
+          "attachment_force_n": true,
+          "attachment_torque_nm": true,
+          "break_step": true,
+          "first_event": true,
+          "nonfinite_step": true
+        },
+        "all_physics_metrics_cover_run": true,
+        "states_sha_matches_summary": true,
+        "unrecorded_warmup_steps": 0,
+        "load_errors": []
+      }
+    },
+    "physical_validity": {
+      "reference": {
+        "passed": true,
+        "checks": {
+          "active_contact_criterion_passed": true,
+          "finite_recorded_state": true,
+          "solver_capacity_valid": true,
+          "qacc_finite": true,
+          "active_penetration_within_existing_1mm": true
+        }
+      },
+      "actual": {
+        "passed": true,
+        "checks": {
+          "active_contact_criterion_passed": true,
+          "finite_recorded_state": true,
+          "solver_capacity_valid": true,
+          "qacc_finite": true,
+          "active_penetration_within_existing_1mm": true
+        }
+      }
+    },
+    "settings": {
+      "input_sha256": {
+        "reference": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "actual": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "matches": true
+      },
+      "commands_sha256": {
+        "reference": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "actual": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "matches": true
+      },
+      "executed_commands_sha256": {
+        "reference": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "actual": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "matches": true
+      },
+      "physics_hz": {
+        "reference": 400.0,
+        "actual": 400.0,
+        "matches": true
+      },
+      "worlds": {
+        "reference": 1,
+        "actual": 1,
+        "matches": true
+      },
+      "newton_version": {
+        "reference": "1.7.0",
+        "actual": "1.7.0",
+        "matches": true
+      },
+      "warp_version": {
+        "reference": "1.17.0",
+        "actual": "1.17.0",
+        "matches": true
+      },
+      "mujoco_version": {
+        "reference": "3.15.0",
+        "actual": "3.15.0",
+        "matches": true
+      },
+      "cuda_graph": {
+        "reference": true,
+        "actual": true,
+        "matches": true
+      },
+      "graph_steps": {
+        "reference": 10,
+        "actual": 10,
+        "matches": true
+      },
+      "engine.source_xml_sha256": {
+        "reference": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+        "actual": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+        "matches": true
+      },
+      "engine.source_model_array_sha256": {
+        "reference": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9",
+        "actual": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9",
+        "matches": true
+      },
+      "engine.backend": {
+        "reference": "mujoco_warp_cuda",
+        "actual": "mujoco_warp_cuda",
+        "matches": true
+      },
+      "engine.source_counts": {
+        "reference": {
+          "nbody": 132,
+          "njnt": 335,
+          "nq": 395,
+          "nv": 385,
+          "ngeom": 901,
+          "nu": 10,
+          "neq": 10,
+          "nexclude": 105,
+          "nmesh": 810
+        },
+        "actual": {
+          "nbody": 132,
+          "njnt": 335,
+          "nq": 395,
+          "nv": 385,
+          "ngeom": 901,
+          "nu": 10,
+          "neq": 10,
+          "nexclude": 105,
+          "nmesh": 810
+        },
+        "matches": true
+      },
+      "effective_gpu_options": {
+        "matches": true
+      },
+      "gpu_linear_algebra": {
+        "matches": true
+      },
+      "gpu_sparse_factor": {
+        "matches": true
+      },
+      "gpu_tree_sums": {
+        "matches": true
+      },
+      "gpu_canonical_contacts": {
+        "matches": true
+      },
+      "gpu_dense_hessian": {
+        "matches": true
+      },
+      "gpu_fixed_solver_reductions": {
+        "matches": true
+      },
+      "gpu_canonical_constraints": {
+        "matches": true
+      },
+      "gpu_deterministic_bounds": {
+        "matches": true
+      }
+    },
+    "body_path_order_matches": true,
+    "state_arrays": {
+      "time": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "qpos": {
+        "reference_shape": [
+          13807,
+          395
+        ],
+        "actual_shape": [
+          13807,
+          395
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "qvel": {
+        "reference_shape": [
+          13807,
+          385
+        ],
+        "actual_shape": [
+          13807,
+          385
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "eq_active": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "poses": {
+        "reference_shape": [
+          13807,
+          131,
+          7
+        ],
+        "actual_shape": [
+          13807,
+          131,
+          7
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "robot_q": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "phase": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": null,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "command": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "belt_surface_velocity_local_y_m_s": {
+        "reference_shape": [
+          13807,
+          2
+        ],
+        "actual_shape": [
+          13807,
+          2
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "scheduled_time": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "solver_step": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      }
+    },
+    "pose_metrics": {
+      "available": true,
+      "passed": true,
+      "maximum_position_error_m": 0.0,
+      "maximum_orientation_error_rad": 0.0,
+      "all_values_finite": true
+    },
+    "physics_metrics": {
+      "active_penetration_m": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "released_penetration_m": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "max_contact_force_n": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "attachment_force_n": {
+        "reference_shape": [
+          1,
+          13806,
+          10
+        ],
+        "actual_shape": [
+          1,
+          13806,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "attachment_torque_nm": {
+        "reference_shape": [
+          1,
+          13806,
+          10
+        ],
+        "actual_shape": [
+          1,
+          13806,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "break_step": {
+        "reference_shape": [
+          1,
+          10
+        ],
+        "actual_shape": [
+          1,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "first_event": {
+        "reference_shape": [
+          1
+        ],
+        "actual_shape": [
+          1
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "nonfinite_step": {
+        "reference_shape": [
+          1
+        ],
+        "actual_shape": [
+          1
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      }
+    },
+    "break_events_exact": true,
+    "gui_evidence": {
+      "reference": {
+        "requested": false,
+        "passed": true,
+        "scope": "No GUI requested in this trial"
+      },
+      "actual": {
+        "requested": true,
+        "passed": true,
+        "viewer_ready": true,
+        "live_viewer_reports": [
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/live_viewer_455672.json"
+        ],
+        "valid_live_viewer_reports": 1,
+        "last_displayed_physics_time_s": 82.79312133789062,
+        "final_physics_time_s": 82.79312133789062,
+        "final_measured_frame_seen": true,
+        "viewer_physics_steps": 0,
+        "scope": "A concurrent isolated GUI consuming measured Newton state; no second physics run"
+      }
+    },
+    "numeric_tolerances": {
+      "qpos_abs": 0.0,
+      "qvel_abs": 0.0,
+      "position_m": 0.0,
+      "rotation_rad": 0.0,
+      "penetration_m": 0.0,
+      "force_n": 0.0,
+      "torque_nm": 0.0,
+      "timestamp_s": 1e-09
+    },
+    "partial_common_prefix_only": false,
+    "same_sample_count": true,
+    "all_compared_arrays_exact": true,
+    "interpretation": "Finite complete requested-run regression; no replayed or common-prefix success, no validated harvest claim",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "prior_to_final_comparison": {
+    "schema": "s300-newton-full-trace-comparison-v1",
+    "baseline": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/repro_fixed_reductions_session400/repeat_000",
+    "candidate": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_000",
+    "passed": false,
+    "full_requested_physics_trace_matches": false,
+    "recorded_evidence_matches": true,
+    "gui_headless_pair": false,
+    "gui_physics_equivalence_verified": false,
+    "coverage": {
+      "reference": {
+        "passed": true,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "full_command_schedule_requested": true,
+        "status": "completed",
+        "stop": null,
+        "record_stride": 1,
+        "recorded_every_physics_step": true,
+        "starts_at_zero": true,
+        "samples": 13807,
+        "exact_expected_timestamps": false,
+        "expected_timestamp_error_within_roundoff": false,
+        "measured_timestamps_strictly_increasing": true,
+        "explicit_solver_step_coverage": true,
+        "explicit_scheduled_time_coverage": true,
+        "cpu_float64_clock_coverage_fallback": false,
+        "maximum_expected_clock_error_s": 0.011065673828127842,
+        "recorded_clock_drift_diagnostic_only": true,
+        "schedule_uses_saved_nonuniform_time_edges": true,
+        "saved_timestep_schedule_verified": true,
+        "state_commands_follow_executed_schedule": true,
+        "executed_commands_sha_matches_summary": true,
+        "state_sample_lengths": {
+          "time": 13807,
+          "qpos": 13807,
+          "qvel": 13807,
+          "eq_active": 13807,
+          "poses": 13807,
+          "robot_q": 13807,
+          "phase": 13807,
+          "command": 13807,
+          "belt_surface_velocity_local_y_m_s": 13807,
+          "scheduled_time": 13807,
+          "solver_step": 13807
+        },
+        "every_state_array_has_all_samples": true,
+        "physics_metric_coverage": {
+          "active_penetration_m": true,
+          "released_penetration_m": true,
+          "max_contact_force_n": true,
+          "attachment_force_n": true,
+          "attachment_torque_nm": true,
+          "break_step": true,
+          "first_event": true,
+          "nonfinite_step": true
+        },
+        "all_physics_metrics_cover_run": true,
+        "states_sha_matches_summary": true,
+        "unrecorded_warmup_steps": 0,
+        "load_errors": []
+      },
+      "actual": {
+        "passed": true,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "full_command_schedule_requested": true,
+        "status": "completed",
+        "stop": null,
+        "record_stride": 1,
+        "recorded_every_physics_step": true,
+        "starts_at_zero": true,
+        "samples": 13807,
+        "exact_expected_timestamps": false,
+        "expected_timestamp_error_within_roundoff": false,
+        "measured_timestamps_strictly_increasing": true,
+        "explicit_solver_step_coverage": true,
+        "explicit_scheduled_time_coverage": true,
+        "cpu_float64_clock_coverage_fallback": false,
+        "maximum_expected_clock_error_s": 0.011065673828127842,
+        "recorded_clock_drift_diagnostic_only": true,
+        "schedule_uses_saved_nonuniform_time_edges": true,
+        "saved_timestep_schedule_verified": true,
+        "state_commands_follow_executed_schedule": true,
+        "executed_commands_sha_matches_summary": true,
+        "state_sample_lengths": {
+          "time": 13807,
+          "qpos": 13807,
+          "qvel": 13807,
+          "eq_active": 13807,
+          "poses": 13807,
+          "robot_q": 13807,
+          "phase": 13807,
+          "command": 13807,
+          "belt_surface_velocity_local_y_m_s": 13807,
+          "scheduled_time": 13807,
+          "solver_step": 13807
+        },
+        "every_state_array_has_all_samples": true,
+        "physics_metric_coverage": {
+          "active_penetration_m": true,
+          "released_penetration_m": true,
+          "max_contact_force_n": true,
+          "attachment_force_n": true,
+          "attachment_torque_nm": true,
+          "break_step": true,
+          "first_event": true,
+          "nonfinite_step": true
+        },
+        "all_physics_metrics_cover_run": true,
+        "states_sha_matches_summary": true,
+        "unrecorded_warmup_steps": 0,
+        "load_errors": []
+      }
+    },
+    "physical_validity": {
+      "reference": {
+        "passed": true,
+        "checks": {
+          "active_contact_criterion_passed": true,
+          "finite_recorded_state": true,
+          "solver_capacity_valid": true,
+          "qacc_finite": true,
+          "active_penetration_within_existing_1mm": true
+        }
+      },
+      "actual": {
+        "passed": true,
+        "checks": {
+          "active_contact_criterion_passed": true,
+          "finite_recorded_state": true,
+          "solver_capacity_valid": true,
+          "qacc_finite": true,
+          "active_penetration_within_existing_1mm": true
+        }
+      }
+    },
+    "settings": {
+      "input_sha256": {
+        "reference": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "actual": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "matches": true
+      },
+      "commands_sha256": {
+        "reference": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "actual": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "matches": true
+      },
+      "executed_commands_sha256": {
+        "reference": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "actual": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "matches": true
+      },
+      "physics_hz": {
+        "reference": 400.0,
+        "actual": 400.0,
+        "matches": true
+      },
+      "worlds": {
+        "reference": 1,
+        "actual": 1,
+        "matches": true
+      },
+      "newton_version": {
+        "reference": "1.7.0",
+        "actual": "1.7.0",
+        "matches": true
+      },
+      "warp_version": {
+        "reference": "1.17.0",
+        "actual": "1.17.0",
+        "matches": true
+      },
+      "mujoco_version": {
+        "reference": "3.15.0",
+        "actual": "3.15.0",
+        "matches": true
+      },
+      "cuda_graph": {
+        "reference": true,
+        "actual": true,
+        "matches": true
+      },
+      "graph_steps": {
+        "reference": 10,
+        "actual": 10,
+        "matches": true
+      },
+      "engine.source_xml_sha256": {
+        "reference": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+        "actual": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+        "matches": true
+      },
+      "engine.source_model_array_sha256": {
+        "reference": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9",
+        "actual": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9",
+        "matches": true
+      },
+      "engine.backend": {
+        "reference": "mujoco_warp_cuda",
+        "actual": "mujoco_warp_cuda",
+        "matches": true
+      },
+      "engine.source_counts": {
+        "reference": {
+          "nbody": 132,
+          "njnt": 335,
+          "nq": 395,
+          "nv": 385,
+          "ngeom": 901,
+          "nu": 10,
+          "neq": 10,
+          "nexclude": 105,
+          "nmesh": 810
+        },
+        "actual": {
+          "nbody": 132,
+          "njnt": 335,
+          "nq": 395,
+          "nv": 385,
+          "ngeom": 901,
+          "nu": 10,
+          "neq": 10,
+          "nexclude": 105,
+          "nmesh": 810
+        },
+        "matches": true
+      },
+      "effective_gpu_options": {
+        "matches": true
+      },
+      "gpu_linear_algebra": {
+        "matches": true
+      },
+      "gpu_sparse_factor": {
+        "matches": true
+      },
+      "gpu_tree_sums": {
+        "matches": true
+      },
+      "gpu_canonical_contacts": {
+        "matches": true
+      },
+      "gpu_dense_hessian": {
+        "matches": true
+      },
+      "gpu_fixed_solver_reductions": {
+        "matches": false
+      },
+      "gpu_canonical_constraints": {
+        "matches": false
+      },
+      "gpu_deterministic_bounds": {
+        "matches": false
+      }
+    },
+    "body_path_order_matches": true,
+    "state_arrays": {
+      "time": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "qpos": {
+        "reference_shape": [
+          13807,
+          395
+        ],
+        "actual_shape": [
+          13807,
+          395
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "qvel": {
+        "reference_shape": [
+          13807,
+          385
+        ],
+        "actual_shape": [
+          13807,
+          385
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "eq_active": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "poses": {
+        "reference_shape": [
+          13807,
+          131,
+          7
+        ],
+        "actual_shape": [
+          13807,
+          131,
+          7
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "robot_q": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "phase": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": null,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "command": {
+        "reference_shape": [
+          13807,
+          10
+        ],
+        "actual_shape": [
+          13807,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "belt_surface_velocity_local_y_m_s": {
+        "reference_shape": [
+          13807,
+          2
+        ],
+        "actual_shape": [
+          13807,
+          2
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "scheduled_time": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "solver_step": {
+        "reference_shape": [
+          13807
+        ],
+        "actual_shape": [
+          13807
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      }
+    },
+    "pose_metrics": {
+      "available": true,
+      "passed": true,
+      "maximum_position_error_m": 0.0,
+      "maximum_orientation_error_rad": 0.0,
+      "all_values_finite": true
+    },
+    "physics_metrics": {
+      "active_penetration_m": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "released_penetration_m": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "max_contact_force_n": {
+        "reference_shape": [
+          1,
+          13806
+        ],
+        "actual_shape": [
+          1,
+          13806
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "attachment_force_n": {
+        "reference_shape": [
+          1,
+          13806,
+          10
+        ],
+        "actual_shape": [
+          1,
+          13806,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "attachment_torque_nm": {
+        "reference_shape": [
+          1,
+          13806,
+          10
+        ],
+        "actual_shape": [
+          1,
+          13806,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0.0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "break_step": {
+        "reference_shape": [
+          1,
+          10
+        ],
+        "actual_shape": [
+          1,
+          10
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "first_event": {
+        "reference_shape": [
+          1
+        ],
+        "actual_shape": [
+          1
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      },
+      "nonfinite_step": {
+        "reference_shape": [
+          1
+        ],
+        "actual_shape": [
+          1
+        ],
+        "same_shape": true,
+        "exact": true,
+        "passed": true,
+        "maximum_abs_error": 0,
+        "tolerance": 0.0,
+        "all_values_finite": true
+      }
+    },
+    "break_events_exact": true,
+    "gui_evidence": {
+      "reference": {
+        "requested": false,
+        "passed": true,
+        "scope": "No GUI requested in this trial"
+      },
+      "actual": {
+        "requested": false,
+        "passed": true,
+        "scope": "No GUI requested in this trial"
+      }
+    },
+    "numeric_tolerances": {
+      "qpos_abs": 0.0,
+      "qvel_abs": 0.0,
+      "position_m": 0.0,
+      "rotation_rad": 0.0,
+      "penetration_m": 0.0,
+      "force_n": 0.0,
+      "torque_nm": 0.0,
+      "timestamp_s": 1e-09
+    },
+    "partial_common_prefix_only": false,
+    "same_sample_count": true,
+    "all_compared_arrays_exact": true,
+    "interpretation": "Finite complete requested-run regression; no replayed or common-prefix success, no validated harvest claim",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "comparison_note": "Prior settings differ intentionally so strict passed=false; all recorded arrays/events exact. Final GUI pair strict passed=true.",
+  "phase_performance": [
+    {
+      "settle": {
+        "steps": 120,
+        "simulated_s": 2.0,
+        "wall_s": 0.4195457510650158,
+        "realtime_factor": 4.767060552807424
+      },
+      "rail_move": {
+        "steps": 1848,
+        "simulated_s": 30.799999999999997,
+        "wall_s": 6.069557148963213,
+        "realtime_factor": 5.074505313004785
+      },
+      "ready_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.09937642700970173,
+        "realtime_factor": 5.031374291120237
+      },
+      "prepare_open": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.20344191417098045,
+        "realtime_factor": 4.915407938796532
+      },
+      "prepare_open_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.10333935916423798,
+        "realtime_factor": 4.838427526973014
+      },
+      "prepare_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.838303105905652,
+        "realtime_factor": 4.7715438149052805
+      },
+      "prepare_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.1479157358407974,
+        "realtime_factor": 5.226864492457946
+      },
+      "approach": {
+        "steps": 1598,
+        "simulated_s": 3.9950000000000045,
+        "wall_s": 4.567569099366665,
+        "realtime_factor": 0.8746446770896028
+      },
+      "belt_start_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.1196322441101074,
+        "realtime_factor": 0.8931504118969064
+      },
+      "close": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 12.019455580040812,
+        "realtime_factor": 0.49919066300835124
+      },
+      "cycle_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 2.0818986296653748,
+        "realtime_factor": 0.48033078352173697
+      },
+      "cycle_open_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.8403424341231585,
+        "realtime_factor": 0.5949955395525359
+      },
+      "cycle_reclose": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 9.154184063896537,
+        "realtime_factor": 0.6554379896798865
+      },
+      "belt_finish": {
+        "steps": 800,
+        "simulated_s": 2.0,
+        "wall_s": 5.236914342269301,
+        "realtime_factor": 0.3819042797506106
+      },
+      "cycle_open_final": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.4994700960814953,
+        "realtime_factor": 0.6669022627481933
+      },
+      "cycle_open_final_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.5526913125067949,
+        "realtime_factor": 0.904664120252212
+      },
+      "withdraw": {
+        "steps": 1600,
+        "simulated_s": 4.0,
+        "wall_s": 4.378829423338175,
+        "realtime_factor": 0.9134861428218466
+      },
+      "return_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.0369839537888765,
+        "realtime_factor": 5.786010456649325
+      },
+      "return_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.7639121934771538,
+        "realtime_factor": 5.236203891173558
+      },
+      "ready_close": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.18537066504359245,
+        "realtime_factor": 5.394596819107469
+      },
+      "hold": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.18766065314412117,
+        "realtime_factor": 5.32876755593519
+      }
+    },
+    {
+      "settle": {
+        "steps": 120,
+        "simulated_s": 2.0,
+        "wall_s": 0.48879160545766354,
+        "realtime_factor": 4.091723298167872
+      },
+      "rail_move": {
+        "steps": 1848,
+        "simulated_s": 30.799999999999997,
+        "wall_s": 7.020833363756537,
+        "realtime_factor": 4.386943601168206
+      },
+      "ready_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.12426707334816456,
+        "realtime_factor": 4.0235919824001
+      },
+      "prepare_open": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.231138464063406,
+        "realtime_factor": 4.326411028350866
+      },
+      "prepare_open_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.11675610765814781,
+        "realtime_factor": 4.282431215195683
+      },
+      "prepare_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.9728235937654972,
+        "realtime_factor": 4.111742381285435
+      },
+      "prepare_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.3106935042887926,
+        "realtime_factor": 4.577729255823019
+      },
+      "approach": {
+        "steps": 1598,
+        "simulated_s": 3.9950000000000045,
+        "wall_s": 5.264367073774338,
+        "realtime_factor": 0.7588756528590153
+      },
+      "belt_start_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.3035828284919262,
+        "realtime_factor": 0.7671165791259067
+      },
+      "close": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 13.897036790847778,
+        "realtime_factor": 0.4317467162461167
+      },
+      "cycle_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 2.4130093660205603,
+        "realtime_factor": 0.4144202729097403
+      },
+      "cycle_open_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.9688449297100306,
+        "realtime_factor": 0.5160784607188346
+      },
+      "cycle_reclose": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 10.549198538064957,
+        "realtime_factor": 0.5687635869540267
+      },
+      "belt_finish": {
+        "steps": 800,
+        "simulated_s": 2.0,
+        "wall_s": 6.091063480824232,
+        "realtime_factor": 0.3283498860743056
+      },
+      "cycle_open_final": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.724930314347148,
+        "realtime_factor": 0.5797335647025719
+      },
+      "cycle_open_final_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.6314305458217859,
+        "realtime_factor": 0.7918527276016819
+      },
+      "withdraw": {
+        "steps": 1600,
+        "simulated_s": 4.0,
+        "wall_s": 5.031123558059335,
+        "realtime_factor": 0.7950510365805701
+      },
+      "return_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.1954348236322403,
+        "realtime_factor": 5.019094208557053
+      },
+      "return_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.8915976714342833,
+        "realtime_factor": 4.48632845077459
+      },
+      "ready_close": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.2119130603969097,
+        "realtime_factor": 4.718916324114315
+      },
+      "hold": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.22483138740062714,
+        "realtime_factor": 4.44777756149367
+      }
+    }
+  ],
+  "resources": [
+    {
+      "source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_000/resources.json",
+        "sha256": "cb3e04499f9d0b760c6ccaf79e093256fe895a1684fc17da95cc5b341b72c476",
+        "bytes": 1781
+      },
+      "samples": 10,
+      "scope": "CPU/RSS: owned process tree; GPU: whole device including live Isaac display",
+      "statistics": {
+        "cpu_percent": {
+          "minimum": 98.6,
+          "maximum_sampled": 100.1,
+          "unweighted_sample_mean": 99.08
+        },
+        "rss_bytes": {
+          "minimum": 1637871616,
+          "maximum_sampled": 1663283200,
+          "unweighted_sample_mean": 1660660940.8
+        },
+        "gpu_percent": {
+          "minimum": 54.0,
+          "maximum_sampled": 100.0,
+          "unweighted_sample_mean": 81.6
+        },
+        "gpu_memory_mib": {
+          "minimum": 4729.0,
+          "maximum_sampled": 4765.0,
+          "unweighted_sample_mean": 4761.2
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/resources.json",
+        "sha256": "027df78463f45ee767a6cb88798495c4aecbfda00b337378d98b17bc1cef1e9a",
+        "bytes": 2178
+      },
+      "samples": 12,
+      "scope": "CPU/RSS: owned process tree; GPU: whole device including live Isaac display",
+      "statistics": {
+        "cpu_percent": {
+          "minimum": 100.8,
+          "maximum_sampled": 322.8,
+          "unweighted_sample_mean": 289.05833333333334
+        },
+        "rss_bytes": {
+          "minimum": 10531086336,
+          "maximum_sampled": 10579025920,
+          "unweighted_sample_mean": 10565774677.333334
+        },
+        "gpu_percent": {
+          "minimum": 49.0,
+          "maximum_sampled": 100.0,
+          "unweighted_sample_mean": 91.08333333333333
+        },
+        "gpu_memory_mib": {
+          "minimum": 7509.0,
+          "maximum_sampled": 7511.0,
+          "unweighted_sample_mean": 7510.833333333333
+        }
+      }
+    }
+  ],
+  "camera_motion": {
+    "enabled": true,
+    "camera_path": "/World/LiveEntryCamera",
+    "source": "Actual USD camera world transform after completed render update",
+    "edit_layer": "isolated display USD session layer",
+    "sample_count": 649,
+    "movement_count": 649,
+    "initial_world_position_m": [
+      -0.4705074646023018,
+      0.6280251311379448,
+      1.4080395599994677
+    ],
+    "last_world_position_m": [
+      -0.4229691915603317,
+      0.6368581136037909,
+      1.4805118740900667
+    ],
+    "maximum_displacement_m": 0.16959412135092336,
+    "physics_steps": 0,
+    "timeline_time_s": 0.0
+  },
+  "camera_motion_source": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/live_camera_motion.json",
+    "sha256": "482913652a526badc089ef6aa6f7eb5c0926bc9ea3b4170bc3117c032c844a8c",
+    "bytes": 197897
+  },
+  "attempts": [
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 82.01399439759552,
+      "realtime_factor": 1.0094999267627178,
+      "setup_wall_s": 15.275541825219989,
+      "graph_capture_wall_s": 7.408179825171828,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": true,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/cached_aabb_profile/summary.json",
+        "sha256": "a8e39c32e04cc2626e2a7a7b2a5ad93698e565fa95e3411af1244b2dc4de1a8f",
+        "bytes": 80254
+      },
+      "name": "cached_aabb_profile",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_000153_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--cache-hessian",
+          "--aabb-filter",
+          "--profile-gpu-events",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/cached_aabb_profile"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "c0b9c64b5ac8e33c0957c8b29e473eb8efdec365b9cf315a54c094387c0fadee",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 53.29388953745365,
+      "realtime_factor": 1.5535199636668595,
+      "setup_wall_s": 13.764115987345576,
+      "graph_capture_wall_s": 5.760457411408424,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/canonical_constraints/summary.json",
+        "sha256": "792275478be148b945ca570c85e4fb2c41afe0ad3a31c3f2d857abb4b731c4af",
+        "bytes": 80699
+      },
+      "name": "canonical_constraints",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_000951_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--native-integer-atomics",
+          "--canonical-constraints",
+          "--deterministic-scope",
+          "solver",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/canonical_constraints"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "0db5d3d970be97744f64a41e7e76f8c16748aeecc21541e52864d8d5c0513183",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_constraint_order.py": "70f1bc99d3da33f082e6ebd08c60b35d66352cbb05214dec3b8d1ac6417ca8b0",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 81.13391152955592,
+      "realtime_factor": 1.020450262745317,
+      "setup_wall_s": 14.530790761113167,
+      "graph_capture_wall_s": 6.4954439383000135,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/captured_tails/summary.json",
+        "sha256": "d97d1e02fb9c44a99f1463e1287b8607e799d7c3a08d7668c438e472b2510fa4",
+        "bytes": 79798
+      },
+      "name": "captured_tails",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_235204_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/captured_tails"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "0d29945444caccadb2f6ffd1c2b04339e1d88e0ae69d865d1c6f37ec3d3a774e",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8d0ccf53d7e541c69b2b7b048093698331d8c5124590e8bb25e5aca0078dcab9",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 159.19406907260418,
+      "realtime_factor": 0.5200766700682228,
+      "setup_wall_s": 13.90841617807746,
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": true,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_config_profile/summary.json",
+        "sha256": "84d1cba804e720a378e3eedc787895e07ff639211fe398998fe1a85579f0e0f2",
+        "bytes": 79614
+      },
+      "name": "final_config_profile",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_234756_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--profile-gpu",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_config_profile"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "79537e0f461e6c2909acd2e16d5fcee82bbd8c51fe593b9bcbe12841c68459cb",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8d0ccf53d7e541c69b2b7b048093698331d8c5124590e8bb25e5aca0078dcab9",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 54.30155977234244,
+      "realtime_factor": 1.5246914026963156,
+      "setup_wall_s": 13.828618476167321,
+      "graph_capture_wall_s": 5.873636048287153,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": true,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_graph_profile/summary.json",
+        "sha256": "664439a53cbb3538ccda2b2f35f1d926015e15dde4d452d1d6ec27cfc65b3b13",
+        "bytes": 80701
+      },
+      "name": "final_graph_profile",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_001649_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "solver",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--indexed-qfrc",
+          "--native-integer-atomics",
+          "--canonical-constraints",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--profile-gpu-events",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_graph_profile"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "25bf879cd645f4f5ad1dcf7a948142589f8f651d044a37ffb0957930b4e97897",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "dd68d212c044aa422459cb793a479d11f893a35de27ad52d8b87625bdfec41e0",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_constraint_order.py": "70f1bc99d3da33f082e6ebd08c60b35d66352cbb05214dec3b8d1ac6417ca8b0",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 82.22991947643459,
+      "realtime_factor": 1.0068491111877769,
+      "setup_wall_s": 14.53691821359098,
+      "graph_capture_wall_s": 6.533438833430409,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": true,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/graph_events/summary.json",
+        "sha256": "b419cbcf0b47deece57d472c9a968da38a43b13b4c49198fc2efb5ae94569bed",
+        "bytes": 79800
+      },
+      "name": "graph_events",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_235432_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--profile-gpu-events",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/graph_events"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "659cdba7024d0b248554e42478772cac481c678f97d8896d49852c63e409be9d",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "dd763d8307a57e2256b53690da3d161ed8e1ea5b8ad094e40231ba37c59dcd53",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8d0ccf53d7e541c69b2b7b048093698331d8c5124590e8bb25e5aca0078dcab9",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 80.1422052513808,
+      "realtime_factor": 1.0330776533811958,
+      "setup_wall_s": 14.389361457899213,
+      "graph_capture_wall_s": 6.460886932909489,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/indexed_clean/summary.json",
+        "sha256": "71c340420d30e41990c43b69239c4349de7773e67902c2d9d6a3e3430799f664",
+        "bytes": 79839
+      },
+      "name": "indexed_clean",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_235841_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/indexed_clean"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "a80d1d5ebfd434a1d96d81e2daa825fd11e62dace746c82d8f215728890c2a15",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "3cf93c43eb071650b16f1ea8432ffcb9219dd8ab16bc635c959887aea95b2c1f",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "error",
+      "error": "RuntimeError('Conditional body graph contains an unsupported operation (event record)')",
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/indexed_graph_events/summary.json",
+        "sha256": "f39bab1089adaf454a095050dacdf914e8b73773826ceb1853c10b68a271320e",
+        "bytes": 3684
+      },
+      "name": "indexed_graph_events",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_235743_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--profile-gpu-events",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/indexed_graph_events"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "11f7a036246948901599d65cb1c5b3c95255833f38099a8d1261a27baf77b5d8",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "f67ac5643bfb897f0bdb89a8f49d6de5a19291ee23fe1dabf81388d34d4bf541",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "93ac80a31e8430612f9ab56b306d2241fdd3c9dc5f73872f38313dfc92779499",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    },
+    {
+      "status": "completed",
+      "stop": null,
+      "backend": "gpu",
+      "worlds": 1,
+      "gui_requested": false,
+      "physics_hz": 400.0,
+      "free_hz": 60.0,
+      "requested_steps": 13806,
+      "actual_steps": 13806,
+      "simulated_s": 82.79312133789062,
+      "scheduled_simulated_s": 82.795,
+      "loop_wall_s": 68.87355775386095,
+      "realtime_factor": 1.202103158860693,
+      "setup_wall_s": 13.975913574919105,
+      "graph_capture_wall_s": 6.057215431705117,
+      "execution_batches": {
+        "full_graph_steps": 13790,
+        "tail_graph_steps": 16,
+        "uncaptured_steps": 0
+      },
+      "gpu_session": {},
+      "max_active_penetration_m": 0.0007942071533761919,
+      "max_released_penetration_m": 0.010234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detached_per_world": [
+        6
+      ],
+      "active_contact_criterion_passed": true,
+      "finite_recorded_state": true,
+      "solver_capacity_valid": true,
+      "qacc_finite": true,
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+      "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+      "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "gpu_timestamp_drift_s": -0.0018786621093767053,
+      "profile_instrumented": false,
+      "summary": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/integer_native_clean/summary.json",
+        "sha256": "b75af5e289defd347d00605617c13f11b1356b175e0cbffd08caa9fe2a0220f7",
+        "bytes": 80332
+      },
+      "name": "integer_native_clean",
+      "invocation": {
+        "python": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python",
+        "argv": [
+          "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261017_000434_s300_newton_gpu",
+          "--backend",
+          "gpu",
+          "--native-observables-only",
+          "--native-control-callback",
+          "--linear-algebra",
+          "cusolver32",
+          "--hz",
+          "400",
+          "--free-hz",
+          "60",
+          "--inertia-linear-algebra",
+          "cusolver32",
+          "--tree-sums",
+          "flat",
+          "--canonical-contacts",
+          "--deterministic",
+          "RUN_TO_RUN",
+          "--deterministic-scope",
+          "constraints",
+          "--dense-hessian",
+          "--fixed-solver-reductions",
+          "--nconmax",
+          "128",
+          "--njmax",
+          "256",
+          "--viewer-fps",
+          "15",
+          "--indexed-qfrc",
+          "--native-integer-atomics",
+          "--output",
+          "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/integer_native_clean"
+        ],
+        "code_sha256": {
+          "run_newton_harvest.py": "5b1a2190d94d30cf04f6ae7a6f969386743ab599bb274fb0f217e725ba3666c8",
+          "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+          "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+          "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+          "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+          "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+          "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+          "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+          "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+          "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+          "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+          "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+          "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+          "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+          "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+          "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+          "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+          "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+          "newton_gpu_cusolver_batch.py": "b0b453d84f8ed5201a9057854424ae1c9c78b760bed46069485f8a58d35aa7c2",
+          "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+          "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+          "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+        }
+      }
+    }
+  ],
+  "attempt_notes": {
+    "final_config_profile": "Uncaptured old diagnostic, not clean throughput",
+    "graph_events": "Unused CUDA event read produced error400 in initial instrumentation; do not use as valid timing evidence",
+    "indexed_graph_events": "Conditional CUDA graph rejected event record; failed during setup, not harvest failure",
+    "cached_aabb_profile": "Combined cache+AABB+profiling, no isolated AABB causal claim. Cache reused8312/51176 factors; not default",
+    "final_graph_profile": "Valid actual-graph GPU event/globaltimer instrumentation; intervals nested and overlapping"
+  },
+  "final_gpu_profile": {
+    "diagnostic_instrumented": true,
+    "nested_intervals_overlap": true,
+    "samples": {
+      "settle": {
+        "solver_step": 59,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          33
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12390399724245071,
+          "forward.fwd_position": 1.3127679824829102,
+          "forward.fwd_velocity": 0.11776000261306763,
+          "forward.fwd_actuation": 0.23654399812221527,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.9461759924888611,
+          "constraint.make_constraint": 0.19046400487422943,
+          "solver.solve": 0.8857600092887878,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 5.740544,
+            "invocations": 133
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 43.483136,
+            "invocations": 133
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 29.74208,
+            "invocations": 133
+          },
+          "solver._linesearch": {
+            "last_ms": 0.074752,
+            "cumulative_ms": 5.797888,
+            "invocations": 73
+          }
+        }
+      },
+      "rail_move": {
+        "solver_step": 1049,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          33
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.3824000358581543,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.23756800591945648,
+          "forward.fwd_acceleration": 0.3123199939727783,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 1.0147839784622192,
+          "constraint.make_constraint": 0.18943999707698822,
+          "solver.solve": 0.886784017086029,
+          "solver._update_constraint": {
+            "last_ms": 0.04096,
+            "cumulative_ms": 89.719808,
+            "invocations": 2151
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 681.508864,
+            "invocations": 2151
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 464.416768,
+            "invocations": 2151
+          },
+          "solver._linesearch": {
+            "last_ms": 0.074752,
+            "cumulative_ms": 84.826112,
+            "invocations": 1101
+          }
+        }
+      },
+      "ready_hold": {
+        "solver_step": 1987,
+        "solver_iterations": [
+          2
+        ],
+        "constraints": [
+          34
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.316864013671875,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.23756800591945648,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.9461759924888611,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 1.3260799646377563,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 184.80128,
+            "invocations": 4424
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.30208,
+            "cumulative_ms": 1395.53792,
+            "invocations": 4424
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 953.572352,
+            "invocations": 4424
+          },
+          "solver._linesearch": {
+            "last_ms": 0.080896,
+            "cumulative_ms": 188.639232,
+            "invocations": 2436
+          }
+        }
+      },
+      "prepare_open": {
+        "solver_step": 2027,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          34
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.3148159980773926,
+          "forward.fwd_velocity": 0.11776000261306763,
+          "forward.fwd_actuation": 0.23654399812221527,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.9441279768943787,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 0.8878080248832703,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 188.83072,
+            "invocations": 4520
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 1425.703936,
+            "invocations": 4520
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.212992,
+            "cumulative_ms": 974.2336,
+            "invocations": 4520
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 192.970752,
+            "invocations": 2492
+          }
+        }
+      },
+      "prepare_open_hold": {
+        "solver_step": 2077,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          35
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.1960320472717285,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.23654399812221527,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.826367974281311,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 0.8878080248832703,
+          "solver._update_constraint": {
+            "last_ms": 0.04096,
+            "cumulative_ms": 194.7392,
+            "invocations": 4661
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 1469.77792,
+            "invocations": 4661
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 1004.573696,
+            "invocations": 4661
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 200.082432,
+            "invocations": 2583
+          }
+        }
+      },
+      "prepare_lift_branch": {
+        "solver_step": 2207,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          34
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.3383680582046509,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.23654399812221527,
+          "forward.fwd_acceleration": 0.3123199939727783,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.9676799774169922,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 0.8898559808731079,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 209.411072,
+            "invocations": 5011
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 1579.3408,
+            "invocations": 5011
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 1079.866368,
+            "invocations": 5011
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 217.245696,
+            "invocations": 2803
+          }
+        }
+      },
+      "prepare_joint_branch": {
+        "solver_step": 2507,
+        "solver_iterations": [
+          2
+        ],
+        "constraints": [
+          34
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12390399724245071,
+          "forward.fwd_position": 1.0004479885101318,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.23756800591945648,
+          "forward.fwd_acceleration": 0.31334400177001953,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.6287360191345215,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 1.321984052658081,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 243.386368,
+            "invocations": 5823
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.30208,
+            "cumulative_ms": 1833.467904,
+            "invocations": 5823
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 1254.52288,
+            "invocations": 5823
+          },
+          "solver._linesearch": {
+            "last_ms": 0.0768,
+            "cumulative_ms": 257.184768,
+            "invocations": 3315
+          }
+        }
+      },
+      "approach": {
+        "solver_step": 3487,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          35
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 0.9799680113792419,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.2385919988155365,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.609279990196228,
+          "constraint.make_constraint": 0.19148799777030945,
+          "solver.solve": 0.8857600092887878,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 334.450688,
+            "invocations": 7997
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 2518.785024,
+            "invocations": 7997
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 1722.65472,
+            "invocations": 7997
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 349.011968,
+            "invocations": 4509
+          }
+        }
+      },
+      "belt_start_open": {
+        "solver_step": 4485,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          35
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 0.9379839897155762,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.23756800591945648,
+          "forward.fwd_acceleration": 0.3112959861755371,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.567296028137207,
+          "constraint.make_constraint": 0.19251200556755066,
+          "solver.solve": 0.886784017086029,
+          "solver._update_constraint": {
+            "last_ms": 0.041984,
+            "cumulative_ms": 419.219456,
+            "invocations": 10023
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 3159.745536,
+            "invocations": 10023
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 2159.131648,
+            "invocations": 10023
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 427.74528,
+            "invocations": 5537
+          }
+        }
+      },
+      "close": {
+        "solver_step": 5885,
+        "solver_iterations": [
+          9
+        ],
+        "constraints": [
+          58
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 1.7797119617462158,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.2385919988155365,
+          "forward.fwd_acceleration": 0.3123199939727783,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 1.3998080492019653,
+          "constraint.make_constraint": 0.19968000054359436,
+          "solver.solve": 4.388864040374756,
+          "solver._update_constraint": {
+            "last_ms": 0.043008,
+            "cumulative_ms": 588.307456,
+            "invocations": 14043
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.303104,
+            "cumulative_ms": 4415.886336,
+            "invocations": 14043
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 3023.535104,
+            "invocations": 14043
+          },
+          "solver._linesearch": {
+            "last_ms": 0.077824,
+            "cumulative_ms": 631.220224,
+            "invocations": 8157
+          }
+        }
+      },
+      "cycle_open": {
+        "solver_step": 7285,
+        "solver_iterations": [
+          5
+        ],
+        "constraints": [
+          36
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 0.8765439987182617,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.5457919836044312,
+          "constraint.make_constraint": 0.15052799880504608,
+          "solver.solve": 2.5722880363464355,
+          "solver._update_constraint": {
+            "last_ms": 0.033792,
+            "cumulative_ms": 1058.312192,
+            "invocations": 24947
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.303104,
+            "cumulative_ms": 7761.570816,
+            "invocations": 24947
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 5361.23904,
+            "invocations": 24947
+          },
+          "solver._linesearch": {
+            "last_ms": 0.073728,
+            "cumulative_ms": 1422.311424,
+            "invocations": 17661
+          }
+        }
+      },
+      "cycle_open_hold": {
+        "solver_step": 7585,
+        "solver_iterations": [
+          4
+        ],
+        "constraints": [
+          50
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 0.9093120098114014,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.289792001247406,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.5765119791030884,
+          "constraint.make_constraint": 0.15462400019168854,
+          "solver.solve": 2.1637120246887207,
+          "solver._update_constraint": {
+            "last_ms": 0.03584,
+            "cumulative_ms": 1120.318464,
+            "invocations": 26753
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.30208,
+            "cumulative_ms": 8316.55936,
+            "invocations": 26753
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.21504,
+            "cumulative_ms": 5748.645888,
+            "invocations": 26753
+          },
+          "solver._linesearch": {
+            "last_ms": 0.074752,
+            "cumulative_ms": 1541.203968,
+            "invocations": 19167
+          }
+        }
+      },
+      "cycle_reclose": {
+        "solver_step": 8885,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          64
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 0.9492480158805847,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.6154239773750305,
+          "constraint.make_constraint": 0.15360000729560852,
+          "solver.solve": 0.8908799886703491,
+          "solver._update_constraint": {
+            "last_ms": 0.044032,
+            "cumulative_ms": 1286.788096,
+            "invocations": 30906
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 9609.381888,
+            "invocations": 30906
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 6641.32096,
+            "invocations": 30906
+          },
+          "solver._linesearch": {
+            "last_ms": 0.075776,
+            "cumulative_ms": 1764.923392,
+            "invocations": 22020
+          }
+        }
+      },
+      "belt_finish": {
+        "solver_step": 10485,
+        "solver_iterations": [
+          10
+        ],
+        "constraints": [
+          85
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 1.7551360130310059,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.2396160066127777,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 1.3752319812774658,
+          "constraint.make_constraint": 0.2027519941329956,
+          "solver.solve": 4.921343803405762,
+          "solver._update_constraint": {
+            "last_ms": 0.049152,
+            "cumulative_ms": 1780.466688,
+            "invocations": 40959
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.303104,
+            "cumulative_ms": 12702.11584,
+            "invocations": 40959
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 8797.637632,
+            "invocations": 40959
+          },
+          "solver._linesearch": {
+            "last_ms": 0.079872,
+            "cumulative_ms": 2485.361664,
+            "invocations": 30473
+          }
+        }
+      },
+      "cycle_open_final": {
+        "solver_step": 11085,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          69
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12697599828243256,
+          "forward.fwd_position": 1.0393600463867188,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.289792001247406,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.7055360078811646,
+          "constraint.make_constraint": 0.15462400019168854,
+          "solver.solve": 0.8929280042648315,
+          "solver._update_constraint": {
+            "last_ms": 0.044032,
+            "cumulative_ms": 2012.452864,
+            "invocations": 45628
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 14134.738944,
+            "invocations": 45628
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.212992,
+            "cumulative_ms": 9798.648832,
+            "invocations": 45628
+          },
+          "solver._linesearch": {
+            "last_ms": 0.0768,
+            "cumulative_ms": 2834.569216,
+            "invocations": 34542
+          }
+        }
+      },
+      "cycle_open_final_hold": {
+        "solver_step": 11385,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          70
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 0.9359359741210938,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.6010879874229431,
+          "constraint.make_constraint": 0.15667200088500977,
+          "solver.solve": 0.894976019859314,
+          "solver._update_constraint": {
+            "last_ms": 0.045056,
+            "cumulative_ms": 2040.912896,
+            "invocations": 46257
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 14333.45024,
+            "invocations": 46257
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.212992,
+            "cumulative_ms": 9934.125056,
+            "invocations": 46257
+          },
+          "solver._linesearch": {
+            "last_ms": 0.077824,
+            "cumulative_ms": 2860.294144,
+            "invocations": 34871
+          }
+        }
+      },
+      "withdraw": {
+        "solver_step": 12285,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          71
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12595200538635254,
+          "forward.fwd_position": 0.9308159947395325,
+          "forward.fwd_velocity": 0.11878400295972824,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.2908160090446472,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.5949440002441406,
+          "constraint.make_constraint": 0.15769599378108978,
+          "solver.solve": 0.894976019859314,
+          "solver._update_constraint": {
+            "last_ms": 0.045056,
+            "cumulative_ms": 2124.325888,
+            "invocations": 48091
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 14913.527808,
+            "invocations": 48091
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 10329.204736,
+            "invocations": 48091
+          },
+          "solver._linesearch": {
+            "last_ms": 0.077824,
+            "cumulative_ms": 2933.568512,
+            "invocations": 35805
+          }
+        }
+      },
+      "return_joint_branch": {
+        "solver_step": 13265,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          86
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.070080041885376,
+          "forward.fwd_velocity": 0.11673600226640701,
+          "forward.fwd_actuation": 0.24063999950885773,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.013311999849975109,
+          "collision_driver.collision": 0.7331839799880981,
+          "constraint.make_constraint": 0.15769599378108978,
+          "solver.solve": 0.9041919708251953,
+          "solver._update_constraint": {
+            "last_ms": 0.050176,
+            "cumulative_ms": 2216.828928,
+            "invocations": 50094
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 15546.949632,
+            "invocations": 50094
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 10760.710144,
+            "invocations": 50094
+          },
+          "solver._linesearch": {
+            "last_ms": 0.0768,
+            "cumulative_ms": 3013.731328,
+            "invocations": 36828
+          }
+        }
+      },
+      "return_lift_branch": {
+        "solver_step": 13565,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          85
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.3783040046691895,
+          "forward.fwd_velocity": 0.11776000261306763,
+          "forward.fwd_actuation": 0.2396160066127777,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 1.0424319505691528,
+          "constraint.make_constraint": 0.158720001578331,
+          "solver.solve": 0.9041919708251953,
+          "solver._update_constraint": {
+            "last_ms": 0.050176,
+            "cumulative_ms": 2246.874112,
+            "invocations": 50696
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.305152,
+            "cumulative_ms": 15737.59488,
+            "invocations": 50696
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.214016,
+            "cumulative_ms": 10890.404864,
+            "invocations": 50696
+          },
+          "solver._linesearch": {
+            "last_ms": 0.0768,
+            "cumulative_ms": 3037.436928,
+            "invocations": 37130
+          }
+        }
+      },
+      "ready_close": {
+        "solver_step": 13715,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          85
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.307647943496704,
+          "forward.fwd_velocity": 0.11776000261306763,
+          "forward.fwd_actuation": 0.2396160066127777,
+          "forward.fwd_acceleration": 0.2887679934501648,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.971776008605957,
+          "constraint.make_constraint": 0.15769599378108978,
+          "solver.solve": 0.9041919708251953,
+          "solver._update_constraint": {
+            "last_ms": 0.050176,
+            "cumulative_ms": 2261.804032,
+            "invocations": 50996
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.304128,
+            "cumulative_ms": 15832.534016,
+            "invocations": 50996
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.212992,
+            "cumulative_ms": 10955.039744,
+            "invocations": 50996
+          },
+          "solver._linesearch": {
+            "last_ms": 0.077824,
+            "cumulative_ms": 3049.198592,
+            "invocations": 37280
+          }
+        }
+      },
+      "hold": {
+        "solver_step": 13775,
+        "solver_iterations": [
+          1
+        ],
+        "constraints": [
+          85
+        ],
+        "last_invocation_cuda_ms": {
+          "forward.fwd_kinematics": 0.12492799758911133,
+          "forward.fwd_position": 1.3312000036239624,
+          "forward.fwd_velocity": 0.11776000261306763,
+          "forward.fwd_actuation": 0.2396160066127777,
+          "forward.fwd_acceleration": 0.289792001247406,
+          "forward.discrete": 0.01228800043463707,
+          "collision_driver.collision": 0.9943040013313293,
+          "constraint.make_constraint": 0.158720001578331,
+          "solver.solve": 1.1028480529785156,
+          "solver._update_constraint": {
+            "last_ms": 0.050176,
+            "cumulative_ms": 2267.789312,
+            "invocations": 51116
+          },
+          "solver._update_gradient": {
+            "last_ms": 0.503808,
+            "cumulative_ms": 15870.705664,
+            "invocations": 51116
+          },
+          "solver._cholesky_factorize_solve": {
+            "last_ms": 0.21504,
+            "cumulative_ms": 10980.8896,
+            "invocations": 51116
+          },
+          "solver._linesearch": {
+            "last_ms": 0.0768,
+            "cumulative_ms": 3053.904896,
+            "invocations": 37340
+          }
+        }
+      }
+    }
+  },
+  "final_gpu_profile_source": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_graph_profile/gpu_graph_event_profile.json",
+    "sha256": "852785545898df3900d5d3d6531ee8127cefd2ae5ee1032fa2bde64464fcdbe1",
+    "bytes": 26772
+  },
+  "rejected_batched_single_microbenchmark": {
+    "units": "ms per captured factor/solve synthetic SPD385/400",
+    "regular": 0.223047676,
+    "batched_N1": 0.813977585,
+    "adopted": false,
+    "not_multiworld_harvest": true
+  },
+  "tests": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/host_tests.log",
+      "sha256": "c6c7fb203ee9c261a60f5a2c8b8ba59c369636fde169e2d13d0c180e87afc596",
+      "bytes": 46495,
+      "run": 184,
+      "skipped": 17,
+      "wall_s": 7.906,
+      "passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/indexed_qfrc_tests.log",
+      "sha256": "b188378975fef226788cf7f8630a26dbc1556527108180faeed719601ee496fc",
+      "bytes": 2676,
+      "run": 9,
+      "skipped": 1,
+      "wall_s": 3.711,
+      "passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/factor_cache_tests.log",
+      "sha256": "0d0eac87ee601a0b644120b2489e68daea70fb73cbcd01bb6b603e420cebcf30",
+      "bytes": 915,
+      "run": 1,
+      "skipped": 0,
+      "wall_s": 1.034,
+      "passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/constraint_order_tests.log",
+      "sha256": "2abd4e87c5c4c9d824317f505db1fed6dd5f97ac4f4e66f5f51fb31baa7d0a92",
+      "bytes": 847,
+      "run": 2,
+      "skipped": 0,
+      "wall_s": 3.666,
+      "passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/batched_single_test.log",
+      "sha256": "c10cfbd11a935109c563ff92dda39c5b5dd5c62ad2f4571a1ae864b359381897",
+      "bytes": 1195,
+      "run": 1,
+      "skipped": 0,
+      "wall_s": 0.833,
+      "passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_comparator_guards.log",
+      "sha256": "c6ccad1c0d8767fb444ee62a932c9a06d432a32fc2917925053d94101a2a2575",
+      "bytes": 4711,
+      "run": 26,
+      "skipped": 0,
+      "wall_s": 0.23,
+      "passed": true
+    }
+  ],
+  "tests_overlap": true,
+  "executed_physics_code_sha256": {
+    "run_newton_harvest.py": "25bf879cd645f4f5ad1dcf7a948142589f8f651d044a37ffb0957930b4e97897",
+    "newton_inputs.py": "6e9827bc381ab9378f5b14cc8b815b5bd06323fcbdf4a181dd332ec3ac5ca6e0",
+    "newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+    "newton_probe.py": "11405aebe7e4b3f974fa8a0d0e2e513ccb5941bdb077a832dfe08460580e3836",
+    "newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+    "newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+    "newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+    "newton_live.py": "aa683c77892761f5a1dc5f7c9a5d67de3e9363b715b94f03e297d3eb032649a4",
+    "newton_kernels.py": "24395c8a20e60fc9a5a8547f201b02e5d0bd6d0b6208e0808819e17486ae3012",
+    "newton_gpu_deterministic.py": "254e4cf416271901178fd1cfb2784caaa4db19a44f54023b69645ff2378484d0",
+    "newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+    "newton_gpu_profile.py": "28623911a4e07c0a8e56621589e3a457f51568b2fe21b3436fa81902fab1f382",
+    "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+    "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+    "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+    "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+    "newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+    "newton_gpu_inertia_cusolver.py": "cca33e357b6e9bfb8886b457833d17e0fbfbf17a3bc087c92adccb999c08d754",
+    "newton_gpu_cusolver_batch.py": "dd68d212c044aa422459cb793a479d11f893a35de27ad52d8b87625bdfec41e0",
+    "newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+    "newton_gpu_constraint_order.py": "70f1bc99d3da33f082e6ebd08c60b35d66352cbb05214dec3b8d1ac6417ca8b0",
+    "newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+    "newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7"
+  },
+  "wrapper": {
+    "path": "/root/farmily_tomato/nvidia-sim/run_s300_newton.sh",
+    "sha256": "0e21b8e65de8992c3401acd7e34fa66e4f06b86d83fe881dca05fb1ce46f0561",
+    "bytes": 3736
+  },
+  "renderer": {
+    "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/render_motion.py",
+    "sha256": "ef6d4efd57dfdfe77be4777e7a36e5268c24f3c71d1aa480e3c133a517474dc2",
+    "bytes": 16514
+  },
+  "comparator": {
+    "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/compare_newton_runs.py",
+    "sha256": "d424ee094961d081d5fc18fbf646e8a6158375a5205f6a58ecbf6d7d9ba1568d",
+    "bytes": 20726
+  },
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_full_1x.mp4",
+      "sha256": "b7b0599f9fb1fb07f2e06bdd9f772e2899e856150bdee5b6de19fd5d4cf1e0f9",
+      "bytes": 4671828,
+      "title": "전체 농장·전체 동작 (일부 잎 가림)",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "r_frame_rate": "15/1",
+            "duration": "82.866667",
+            "nb_read_frames": "1243"
+          }
+        ]
+      },
+      "black_events": [],
+      "metadata": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_full_1x_render.json",
+        "sha256": "bb483bed0a2cb4695369d842a3f643760b067819e2844182f793ece2534f42dc",
+        "bytes": 13530
+      },
+      "sample": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_full_1x_sample_small.png",
+        "sha256": "60c14bd06780993f510e6dfae4b1946a7ce717d7f28c9a63c0d8ee3306c23235",
+        "bytes": 615653
+      },
+      "speed": 1.0,
+      "subtitle_style": "FontSize=6,Outline=1,Shadow=0,MarginV=6",
+      "physics_rerun": false,
+      "hidden_paths_count": 0,
+      "actual_clip_start_s": 0.0,
+      "actual_clip_end_s": 82.79312133789062,
+      "visual_review": "nonblack; full view partly occluded by foreground leaf; contact cutaway clear"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_contact_1x.mp4",
+      "sha256": "facadb52fb0ec5efb971e892d121d42c035003160c60a36fcaec28791d07353f",
+      "bytes": 2392722,
+      "title": "접촉 탑뷰 40~72초 (화면에서만 잎 숨김)",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "r_frame_rate": "15/1",
+            "duration": "32.066667",
+            "nb_read_frames": "481"
+          }
+        ]
+      },
+      "black_events": [],
+      "metadata": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_contact_1x_render.json",
+        "sha256": "5899ec8e1a5717fa0bf87024b08cc87c880795587ab8d7812b520b2f4fa705db",
+        "bytes": 14526
+      },
+      "sample": {
+        "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_contact_1x_sample_small.png",
+        "sha256": "ac09d515e35b4e3ba99cda99e2c22300201505fdd2dd889206885b8bfdb44176",
+        "bytes": 645558
+      },
+      "speed": 1.0,
+      "subtitle_style": "FontSize=6,Outline=1,Shadow=0,MarginV=6",
+      "physics_rerun": false,
+      "hidden_paths_count": 133,
+      "actual_clip_start_s": 40.01622772216797,
+      "actual_clip_end_s": 71.99081420898438,
+      "visual_review": "nonblack; full view partly occluded by foreground leaf; contact cutaway clear"
+    }
+  ],
+  "limitations": [
+    "Contact realtime unmet; representative belt solve4.921ms exceeds entire400Hz step budget2.5ms.",
+    "Six attachments released; no full-ten-fruit harvest/collection/real-world damage validation.",
+    "JIT alone not isolated; setup/graph capture includes compilation/module preparation.",
+    "Known float32 clock drift retained; coverage established from explicit steps and nonuniform schedule.",
+    "Single pinned GPU/model qualification. Other scenes/hardware/multiworld not established.",
+    "Saved-state 1x MP4 is review evidence, not a realtime performance measurement."
+  ]
+}

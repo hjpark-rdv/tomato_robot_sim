@@ -45,8 +45,8 @@ case "$mode" in
       runner_options=(--backend gpu --native-observables-only --native-control-callback
         --linear-algebra cusolver32 --hz 400 --free-hz 60
         --inertia-linear-algebra cusolver32 --tree-sums flat --canonical-contacts
-        --deterministic RUN_TO_RUN --deterministic-scope constraints --dense-hessian
-        --fixed-solver-reductions
+        --deterministic RUN_TO_RUN --deterministic-scope solver --dense-hessian
+        --fixed-solver-reductions --indexed-qfrc --native-integer-atomics --canonical-constraints
         --nconmax 128 --njmax 256 --viewer-fps 15)
       printf '%s\n' 'Newton GPU: actual CUDA physics, verified single-world GUI equivalence; contact-phase realtime target is not met.' >&2
     else

@@ -276,7 +276,8 @@ def compare_runs(baseline, candidate, tolerances=None):
         settings["engine." + key] = dict(reference=a, actual=b, matches=a is not None and a == b)
     for key in ('effective_gpu_options','gpu_linear_algebra','gpu_sparse_factor',
                 'gpu_tree_sums','gpu_canonical_contacts','gpu_dense_hessian',
-                'gpu_fixed_solver_reductions'):
+                'gpu_fixed_solver_reductions', 'gpu_canonical_constraints',
+                'gpu_deterministic_bounds'):
         if key in ref['summary'] or key in new['summary']:
             a,b=ref['summary'].get(key),new['summary'].get(key)
             settings[key]=dict(matches=a is not None and a==b)
