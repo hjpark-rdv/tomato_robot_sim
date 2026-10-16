@@ -116,7 +116,7 @@ def run(args, *, session_cache=None):
                     'linear_algebra','broadphase','aabb_filter','fused_sparse_factor',
                     'inertia_linear_algebra','tree_sums','canonical_contacts','dense_hessian',
                     'fixed_solver_reductions', 'indexed_qfrc', 'cache_hessian', 'native_integer_atomics',
-                    'canonical_constraints')})
+                    'canonical_constraints', 'experimental_multiworld_order')})
             engine,session_evidence=session_cache.acquire(signature,engine_factory,initial)
         else:
             engine=engine_factory()
@@ -125,7 +125,7 @@ def run(args, *, session_cache=None):
         if args.deterministic_scope is not None:
             from newton_gpu_deterministic import BoundedDeterministicExecution
             deterministic_adapter=BoundedDeterministicExecution(solver,scope=args.deterministic_scope,
-                native_integer_atomics=args.native_integer_atomics)
+                native_integer_atomics=args.native_integer_atomics, allow_cg=args.solver=='CG')
         if args.fused_sparse_factor:
             from newton_gpu_sparse_factor import FusedSparseInertiaFactor
             inertia_backend=FusedSparseInertiaFactor(solver)
@@ -152,7 +152,7 @@ def run(args, *, session_cache=None):
             compatibility = install_connect_velocity_cache_refresh(solver.mjw_model,d)
         if args.canonical_contacts:
             from newton_gpu_deterministic import CanonicalContactOrder
-            contact_order=CanonicalContactOrder(solver)
+            contact_order=CanonicalContactOrder(solver, allow_cg=args.solver=='CG')
         effective_gpu_options = {key: int(getattr(solver.mjw_model.opt,key)) for key in
             ('solver','integrator','iterations','ls_iterations','broadphase','broadphase_filter')}
         effective_gpu_options['tolerance'] = solver.mjw_model.opt.tolerance.numpy().tolist()
@@ -197,7 +197,8 @@ def run(args, *, session_cache=None):
         if args.fixed_solver_reductions:
             if args.canonical_constraints:
                 from newton_gpu_constraint_order import CanonicalConstraintOrder
-                constraint_order=CanonicalConstraintOrder(solver)
+                constraint_order=CanonicalConstraintOrder(solver,
+                    allow_multiworld=args.experimental_multiworld_order)
             from newton_gpu_fixed_reductions import FixedSolverReductions
             fixed_reductions=FixedSolverReductions(solver,indexed=args.indexed_qfrc)
         if args.profile_gpu_events:
@@ -209,12 +210,21 @@ def run(args, *, session_cache=None):
         vlog = wp.zeros((rows, source.nv), float, device=args.device)
         elog = wp.zeros((rows, source.neq), bool, device=args.device)
         plog = wp.zeros((rows, source.nbody), wp.transform, device=args.device)
+        world_trace = None
+        if args.all_world_trace:
+            world_trace = (wp.zeros((args.worlds, steps+1, source.nq), float, device=args.device),
+                           wp.zeros((args.worlds, steps+1, source.nv), float, device=args.device),
+                           wp.zeros((args.worlds, steps+1, source.neq), bool, device=args.device))
         nonfinite = wp.array(np.full(args.worlds, np.iinfo(np.int32).max, np.int32), dtype=int, device=args.device)
         packed_status = wp.zeros((args.worlds,4), wp.uint64, device=args.device)
         def record():
             wp.launch(save_trace, (args.worlds, max(source.nq, source.nv, source.nbody)),
                 inputs=[ctrl.tick, stride, d.qpos, d.qvel, d.eq_active, d.xpos, d.xquat,
                         qlog, vlog, elog, plog, nonfinite], device=args.device)
+            if world_trace is not None:
+                from newton_kernels import save_all_world_trace
+                wp.launch(save_all_world_trace, (args.worlds, max(source.nq, source.nv)),
+                    inputs=[ctrl.tick, d.qpos, d.qvel, d.eq_active, *world_trace], device=args.device)
         record()
         def step(dt):
             ctrl.pre_step()
@@ -486,6 +496,12 @@ def run(args, *, session_cache=None):
                 phase=str(timeline['phase'][tick]), constraint_force_n=float(f[w,tick,i]),
                 passive_torque_nm=float(torque[w,tick,i])))
         np.savez_compressed(out/'final_states.npz', time=d.time.numpy(), qpos=d.qpos.numpy(), qvel=d.qvel.numpy(), eq_active=d.eq_active.numpy())
+        if world_trace is not None:
+            np.savez_compressed(out/'all_world_states.npz',
+                time=ctrl.time_log.numpy()[:,:actual],
+                qpos=world_trace[0].numpy()[:,:actual+1],
+                qvel=world_trace[1].numpy()[:,:actual+1],
+                eq_active=world_trace[2].numpy()[:,:actual+1])
         if args.diagnostic_data_snapshot:
             from newton_gpu_session import _arrays
             np.savez_compressed(out/'native_data_debug.npz',**{name:array.numpy() for name,array in _arrays(d)})
@@ -517,6 +533,8 @@ def run(args, *, session_cache=None):
             max_total_contacts=int(ctrl.nacon_log.numpy().max(initial=0)),
             gpu_timestamp_drift_s=float(actual_times[-1]-edges[actual]),
             states_sha256=sha256(out/'states.npz'), final_time_per_world_s=d.time.numpy().tolist(),
+            all_world_temporal_state_recorded=world_trace is not None,
+            all_world_states_sha256=sha256(out/'all_world_states.npz') if world_trace is not None else None,
             body_paths_mapped=bool(len(provenance['source_body_to_native_name'])==source.nbody-1),
             detached_per_world=(break_step>=0).sum(axis=1).tolist(),
             final_world_qpos_spread_abs=float(np.max(np.abs(d.qpos.numpy()-d.qpos.numpy()[0]))),
@@ -593,6 +611,7 @@ def arguments(argv=None):
     p.add_argument('--tree-sums',choices=('levels','flat'),help='Opt-in fixed-order tree equations')
     p.add_argument('--canonical-contacts',action='store_true',help='Stable contact record order; no contact values changed')
     p.add_argument('--canonical-constraints',action='store_true',help='Canonicalize native constraint rows and dependent pointers after parallel allocation')
+    p.add_argument('--experimental-multiworld-order',action='store_true',help='Opt-in world-indexed constraint canonicalization; requires separate full harvest qualification')
     p.add_argument('--dense-hessian',action='store_true',help='Opt-in equivalent dense GPU product for sparse constraint curvature')
     p.add_argument('--fixed-solver-reductions',action='store_true',help='Opt-in fixed-order sparse force and native tiled gradient reductions')
     p.add_argument('--indexed-qfrc',action='store_true',help='Reuse per-step sparse column lookup during Newton iterations')
@@ -604,6 +623,7 @@ def arguments(argv=None):
     p.add_argument('--start-gate-timeout',type=float,default=300.)
     p.add_argument('--seconds',type=float); p.add_argument('--batch',type=int,default=10)
     p.add_argument('--record-stride',type=int,default=1)
+    p.add_argument('--all-world-trace',action='store_true',help='Record every world q/v/equality at each physics step for batch qualification')
     p.add_argument('--nconmax',type=int,default=512); p.add_argument('--njmax',type=int,default=2048)
     p.add_argument('--no-graph',action='store_true');p.add_argument('--diagnostic-continue',action='store_true')
     p.add_argument('--gui',action='store_true');p.add_argument('--viewer-fps',type=float,default=15.)
@@ -613,6 +633,8 @@ def arguments(argv=None):
     args=p.parse_args(argv)
     if args.canonical_constraints and (args.deterministic_scope!='solver' or not args.fixed_solver_reductions):
         p.error('--canonical-constraints requires --deterministic-scope solver and --fixed-solver-reductions')
+    if args.experimental_multiworld_order and not args.canonical_constraints:
+        p.error('--experimental-multiworld-order requires --canonical-constraints')
     if args.native_integer_atomics and not args.deterministic_scope:
         p.error('--native-integer-atomics requires --deterministic-scope')
     if args.indexed_qfrc and not args.fixed_solver_reductions:
@@ -621,6 +643,7 @@ def arguments(argv=None):
         p.error('--cache-hessian requires GPU --linear-algebra cusolver32')
     if args.worlds<1 or args.record_stride<1:p.error('positive worlds and record stride required')
     if args.backend=='gpu' and args.record_stride!=1:p.error('GPU evidence currently requires record stride 1')
+    if args.all_world_trace and args.backend!='gpu':p.error('--all-world-trace requires GPU')
     cpu_only=('profile_timers','threads','start_gate','ready_file')
     if args.backend=='gpu' and any(getattr(args,key) for key in cpu_only):
         p.error('CPU-only diagnostics/gates cannot be applied to the GPU backend')

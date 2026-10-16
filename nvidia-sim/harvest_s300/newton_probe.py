@@ -10,6 +10,7 @@ Run with the installed Isaac Sim ``python.sh`` rather than the MuJoCo venv.
 from __future__ import annotations
 
 import argparse
+import faulthandler
 import hashlib
 import json
 from pathlib import Path
@@ -82,11 +83,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--newton-contacts", action="store_true",
                         help="Explicit collision-pipeline comparison; default uses MuJoCo contacts.")
     parser.add_argument("--no-cuda-graph", action="store_true")
+    parser.add_argument("--minimal-rendering", action="store_true",
+                        help="Use Isaac's supported minimal renderer for a physics connection diagnostic.")
+    parser.add_argument("--stack-dump-seconds", type=float, default=0.0,
+                        help="Optional periodic Python stack dumps for a bounded import diagnosis.")
+    parser.add_argument("--preserve-unordered-bodies", action="store_true",
+                        help="Use public USD parser bodies_follow_joint_ordering=False to preserve loop-only endpoints.")
     args = parser.parse_args(argv)
     if args.steps < 0 or not 0 < args.hz <= 2000 or args.render_every <= 0:
         parser.error("steps >= 0, 0 < hz <= 2000, render-every > 0 required")
     if args.nconmax <= 0 or args.njmax <= 0:
         parser.error("positive contact/constraint capacities required")
+    if args.stack_dump_seconds < 0:
+        parser.error("stack-dump-seconds must be nonnegative")
     source = args.scene.resolve(strict=True)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -94,6 +103,9 @@ def main(argv: list[str] | None = None) -> int:
               "source_scene": str(source), "source_sha256": _sha256(source),
               "arguments": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
               "training_eligible": False, "harvest_success": None,
+              "physics_validity_evaluated": False,
+              "code_files": {str(path): _sha256(path) for path in
+                             (Path(__file__).resolve(), Path(__file__).with_name("native_newton_import.py").resolve())},
               "controller": "idle; no harvest command applied", "requested_steps": args.steps,
               "recorded_steps": 0, "warmup_steps": 0, "dropped_steps": 0, "resets": 0,
               "exceptions": [], "notes": [
@@ -105,6 +117,8 @@ def main(argv: list[str] | None = None) -> int:
     app = None
     times, body_q, joint_q, joint_qd, step_times, render_times = [], [], [], [], [], []
     started = time.perf_counter()
+    if args.stack_dump_seconds:
+        faulthandler.dump_traceback_later(args.stack_dump_seconds, repeat=True)
     try:
         from isaacsim import SimulationApp
 
@@ -113,8 +127,11 @@ def main(argv: list[str] | None = None) -> int:
                       "--/app/player/useFixedTimeStepping=false", "--/app/asyncRendering=false",
                       "--/app/asyncRenderingLowLatency=false", "--/app/settings/persistent=false"]
         app = SimulationApp({"headless": not args.gui, "width": 1280, "height": 720,
+                             "disable_viewport_updates": not args.gui,
+                             "renderer": "MinimalRendering" if args.minimal_rendering else "RealTimePathTracing",
                              "extra_args": extra_args})
         import numpy as np
+        import newton
         import omni.timeline
         import omni.usd
         import warp as wp
@@ -122,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
                                             acquire_stage, configure_newton, get_active_physics_engine,
                                             switch_newton_solver)
         from pxr import Usd, UsdPhysics
+        from native_newton_import import preserve_unordered_bodies
 
         solver_cfg = (MuJoCoSolverConfig(nconmax=args.nconmax, njmax=args.njmax,
                                         use_mujoco_cpu=args.mujoco_cpu,
@@ -134,6 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         configure_newton(cfg)
         report.update(phase="open_source", bootstrap_seconds=time.perf_counter() - started)
         _save_report(output, report)
+        print(f"Newton probe opening {source}", flush=True)
         context = omni.usd.get_context()
         if not context.open_stage(str(source)):
             raise RuntimeError("USD context refused source stage")
@@ -143,6 +162,8 @@ def main(argv: list[str] | None = None) -> int:
         if stage is None:
             raise RuntimeError("No USD stage after open")
         report["source_inventory"] = _source_inventory(stage, Usd, UsdPhysics)
+        report["source_open_seconds"] = time.perf_counter() - started - report["bootstrap_seconds"]
+        print(f"Newton probe source open; {report['source_inventory']['counts']}", flush=True)
         # Never persist Newton opinions into an original execution asset.
         stage.SetEditTarget(stage.GetSessionLayer())
         scenes = [p for p in stage.Traverse() if p.IsA(UsdPhysics.Scene)]
@@ -155,8 +176,12 @@ def main(argv: list[str] | None = None) -> int:
         if ns is None:
             raise RuntimeError("Newton extension has no stage")
         # Render updates can dispatch timeline events, but automatic stepping is off.
+        report["phase"] = "initialize_newton"
+        _save_report(output, report)
         omni.timeline.get_timeline_interface().play()
-        app.update()
+        # time_step_app=False permits manual initialization without an app
+        # update that could dispatch costly rendering work before the phase is
+        # recorded. step_sim synchronizes the timeline playing flag itself.
         before_init_steps = int(ns.simulation_step_count)
         if before_init_steps != 0:
             raise RuntimeError(f"Unexpected autonomous pre-initialization steps: {before_init_steps}")
@@ -164,7 +189,9 @@ def main(argv: list[str] | None = None) -> int:
                       time_step_app=ns.cfg.time_step_app, init_start_seconds=time.perf_counter() - started)
         _save_report(output, report)
         initialize_started = time.perf_counter()
-        ns.initialize_newton(args.device)
+        with preserve_unordered_bodies(newton.ModelBuilder, args.preserve_unordered_bodies) as import_audit:
+            ns.initialize_newton(args.device)
+        report["native_import_compatibility"] = import_audit
         wp.synchronize()
         report["initialize_seconds"] = time.perf_counter() - initialize_started
         if not ns.initialized or ns.model is None or ns.state_0 is None or getattr(ns, "_init_failed", False):
@@ -179,6 +206,26 @@ def main(argv: list[str] | None = None) -> int:
                                       joint_type=model.joint_type.numpy().tolist(),
                                       joint_q_start=model.joint_q_start.numpy().tolist(),
                                       joint_qd_start=model.joint_qd_start.numpy().tolist())
+        report["newton_model"].update(shape_body=model.shape_body.numpy().tolist(),
+                                      body_mass=model.body_mass.numpy().tolist(),
+                                      joint_parent=model.joint_parent.numpy().tolist(),
+                                      joint_child=model.joint_child.numpy().tolist())
+        shape_flags = model.shape_flags.numpy()
+        report["newton_model"]["colliding_shape_count"] = int(
+            np.count_nonzero(shape_flags & int(newton.ShapeFlags.COLLIDE_SHAPES)))
+        source_target_fruits = [x["path"] for x in report["source_inventory"]["rigid_bodies"]
+                                if x["enabled"] and not x["kinematic"] and
+                                x["path"].startswith("/World/ElasticTarget/") and
+                                "/Truss_" in x["path"] and "_Fruit_" in x["path"]]
+        labels = set(report["newton_model"]["body_labels"])
+        report["active_target_fruit_body_mapping"] = {
+            "source_paths": source_target_fruits,
+            "mapped_paths": [p for p in source_target_fruits if p in labels],
+            "missing_paths": [p for p in source_target_fruits if p not in labels],
+            "all_mapped": bool(source_target_fruits) and all(p in labels for p in source_target_fruits)}
+        if source_target_fruits and not report["active_target_fruit_body_mapping"]["all_mapped"]:
+            raise RuntimeError("Active target fruit bodies were lost by USD import; "
+                               "use --preserve-unordered-bodies for the explicit compatibility diagnostic")
         report["parser_results"] = {k: v for k, v in ns.parsing_results.items()
                                     if isinstance(v, (str, int, float, bool, type(None)))}
         report["parser_mapping"] = {k: {str(kk): str(vv) for kk, vv in v.items()}
@@ -244,6 +291,8 @@ def main(argv: list[str] | None = None) -> int:
                                      "message": str(exc), "traceback": traceback.format_exc()})
         print(traceback.format_exc(), file=sys.stderr, flush=True)
     finally:
+        if args.stack_dump_seconds:
+            faulthandler.cancel_dump_traceback_later()
         if times and not (output / "states.npz").exists():
             # Preserve all completed finite states even when a later step fails.
             import numpy as np

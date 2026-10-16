@@ -52,8 +52,10 @@ class TestBoundedDeterministicExecution(unittest.TestCase):
         wp.init()
         cls.device = os.environ.get("NEWTON_GPU_STAGE_DEVICE", "cpu")
 
-    def fixture(self):
-        model = mj.MjModel.from_xml_string(CONNECT_XML.replace('jacobian="dense"', 'jacobian="sparse"'))
+    def fixture(self, solver='Newton'):
+        xml = CONNECT_XML.replace('jacobian="dense"', 'jacobian="sparse"')
+        xml = xml.replace('solver="Newton"', 'solver="' + solver + '"')
+        model = mj.MjModel.from_xml_string(xml)
         data = mj.MjData(model)
         mj.mj_forward(model, data)
         with wp.ScopedDevice(self.device):
@@ -107,6 +109,55 @@ class TestBoundedDeterministicExecution(unittest.TestCase):
         run.mj_model.opt.cone = mj.mjtCone.mjCONE_PYRAMIDAL
         with self.assertRaisesRegex(ValueError, "elliptic"):
             BoundedDeterministicExecution(run)
+
+    def test_cg_requires_explicit_opt_in_and_preserves_native_solver(self):
+        run = self.fixture()
+        run.mj_model.opt.solver = mj.mjtSolver.mjSOL_CG
+        with self.assertRaisesRegex(ValueError, 'Newton constraint solver'):
+            BoundedDeterministicExecution(run)
+        adapter = BoundedDeterministicExecution(run, allow_cg=True)
+        try:
+            self.assertTrue(adapter.evidence['experimental_cg_solver'])
+            self.assertEqual(int(run.mj_model.opt.solver), int(mj.mjtSolver.mjSOL_CG))
+            self.assertEqual(adapter.bounds.nv, run.mj_model.nv)
+            # CG tiled direction kernels loop over DOFs and reduce one tile;
+            # they allocate no sparse Hessian. The generic bound remains nv.
+            count, proof = adapter.bounds.records('mujoco_warp._src.solver',
+                '_solve_search_update_cg_tiled', (1, 32))
+            self.assertEqual(count, run.mj_model.nv)
+        finally:
+            adapter.close()
+
+    def test_cg_direction_kernels_have_no_float_scatter(self):
+        for function in (native_solver._solve_init_search_cg_tiled,
+                         native_solver._solve_search_update_cg_tiled,
+                         native_solver._solve_beta_finalize_tiled):
+            source = ast.parse(textwrap.dedent(inspect.getsource(function)))
+            calls = [node for node in ast.walk(source) if isinstance(node, ast.Call)
+                     and isinstance(node.func, ast.Attribute) and node.func.attr.startswith('atomic_')]
+            for call in calls:
+                self.assertIn(call.args[0].id, ('nsolving_out', 'overflow_out'))
+                self.assertIn(call.func.attr, ('atomic_sub', 'atomic_add', 'atomic_or'))
+
+    def test_actual_cg_connect_step_matches_native_float32_control(self):
+        run = self.fixture(solver='CG')
+        velocity = np.array([1., -.4, .2, 3., -2., 4., -.6, .9, -.2, -2., 1., -3.], np.float32)
+        run.mjw_data.qvel.assign(velocity[None, :])
+        native = mj.MjData(run.mj_model)
+        native.qvel[:] = velocity
+        install_connect_velocity_cache_refresh(run.mjw_model, run.mjw_data)
+        adapter = BoundedDeterministicExecution(run, scope='solver', allow_cg=True)
+        try:
+            with wp.ScopedDevice(self.device), run._scoped_deterministic_config():
+                mw.step(run.mjw_model, run.mjw_data)
+            wp.synchronize_device(self.device)
+            mj.mj_step(run.mj_model, native)
+            np.testing.assert_allclose(run.mjw_data.qpos.numpy()[0], native.qpos, rtol=3e-5, atol=3e-5)
+            np.testing.assert_allclose(run.mjw_data.qvel.numpy()[0], native.qvel, rtol=3e-5, atol=3e-5)
+            self.assertTrue(np.isfinite(run.mjw_data.qacc.numpy()).all())
+            self.assertEqual(int(run.mjw_model.opt.solver), int(mj.mjtSolver.mjSOL_CG))
+        finally:
+            adapter.close()
 
     def test_scope_restores_global_launches_and_settings_even_on_error(self):
         run = self.fixture()

@@ -227,6 +227,20 @@ def save_trace(tick: wp.array[int], stride: int, q: wp.array2d[float], v: wp.arr
             pose_log[row, i] = wp.transform(xpos[w, i], wp.quat(z[1], z[2], z[3], z[0]))
 
 
+@wp.kernel
+def save_all_world_trace(tick: wp.array[int], q: wp.array2d[float], v: wp.array2d[float],
+        eq: wp.array2d[bool], q_log: wp.array3d[float], v_log: wp.array3d[float],
+        eq_log: wp.array3d[bool]):
+    w, i = wp.tid()
+    t = tick[0]
+    if i < q.shape[1]:
+        q_log[w, t, i] = q[w, i]
+    if i < v.shape[1]:
+        v_log[w, t, i] = v[w, i]
+    if i < eq.shape[1]:
+        eq_log[w, t, i] = eq[w, i]
+
+
 class HarvestGPUController:
     def __init__(self, solver, inputs, initial, metadata, command, belt, steps, worlds=1):
         import mujoco as mj

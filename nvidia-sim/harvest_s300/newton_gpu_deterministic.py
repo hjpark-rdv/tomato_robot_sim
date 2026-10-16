@@ -66,7 +66,7 @@ def _chain_union_width(model):
     return max((len(a | b) for a in chains for b in chains), default=1)
 
 
-def validate_features(solver):
+def validate_features(solver, *, allow_cg=False):
     """Host checks only; never initialize CUDA or advance simulation."""
     if solver.use_mujoco_cpu:
         raise ValueError("Bounded deterministic mode requires MuJoCo Warp execution")
@@ -81,7 +81,10 @@ def validate_features(solver):
         raise ValueError("Bound proofs require no tendons, flex, sensors or heightfields")
     if int(m.opt.integrator) != int(mj.mjtIntegrator.mjINT_DISCRETE):
         raise ValueError("Bound proofs require the existing discrete integrator")
-    if int(m.opt.solver) != int(mj.mjtSolver.mjSOL_NEWTON):
+    allowed_solvers = [int(mj.mjtSolver.mjSOL_NEWTON)]
+    if allow_cg:
+        allowed_solvers.append(int(mj.mjtSolver.mjSOL_CG))
+    if int(m.opt.solver) not in allowed_solvers:
         raise ValueError("Bound proofs require the existing Newton constraint solver")
     if int(m.opt.cone) != int(mj.mjtCone.mjCONE_ELLIPTIC):
         raise ValueError("Bound proofs require elliptic contact groups")
@@ -110,8 +113,8 @@ class RigidBounds:
     naconmax: int
 
     @classmethod
-    def from_solver(cls, solver):
-        m = validate_features(solver)
+    def from_solver(cls, solver, *, allow_cg=False):
+        m = validate_features(solver, allow_cg=allow_cg)
         d = solver.mjw_data
         # CONNECT: one three-row group/equality. Joint friction and limits:
         # at most one group per enabled DOF/joint. Elliptic contacts: one group
@@ -166,11 +169,11 @@ class RigidBounds:
 class BoundedDeterministicExecution:
     """Own an opt-in per-solver launch scope; close after captured work ends."""
 
-    def __init__(self, solver, *, scope="solver", native_integer_atomics=False):
+    def __init__(self, solver, *, scope="solver", native_integer_atomics=False, allow_cg=False):
         if scope not in ("solver", "constraints", "dynamics", "all"):
             raise ValueError("deterministic scope must be solver, constraints, dynamics or all")
         self.selected_scope = scope
-        self.bounds = RigidBounds.from_solver(solver)
+        self.bounds = RigidBounds.from_solver(solver, allow_cg=allow_cg)
         self.solver = solver
         self.native_integer_atomics = native_integer_atomics
         from mujoco_warp._src import solver as native_solver
@@ -195,6 +198,8 @@ class BoundedDeterministicExecution:
                              in_kernel_scatter_dependency_guard=True,
                              repeatability_verified=False)
         self.evidence['native_integer_atomics'] = native_integer_atomics
+        if int(solver.mj_model.opt.solver) == int(mj.mjtSolver.mjSOL_CG):
+            self.evidence['experimental_cg_solver'] = True
         solver._deterministic_max_records = 0
         # Override stored source-module bounds too, so Newton's normal option
         # reapplication cannot restore the old global Hessian bound to smooth.
@@ -443,8 +448,8 @@ class CanonicalContactOrder:
     scenes. Existing contact-filter and velocity-cache callbacks are preserved.
     """
 
-    def __init__(self, solver):
-        validate_features(solver)
+    def __init__(self, solver, *, allow_cg=False):
+        validate_features(solver, allow_cg=allow_cg)
         self.model, self.data = solver.mjw_model, solver.mjw_data
         if self.data.naconmax < 1 or self.data.naconmax > 4096:
             raise ValueError("Canonical rank ordering supports contact capacities 1..4096")

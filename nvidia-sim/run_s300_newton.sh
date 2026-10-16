@@ -11,10 +11,13 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     'Usage: run_s300_newton.sh prepare [MODEL OUTPUT] [prepare options]' \
     '       run_s300_newton.sh run [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
+    '       run_s300_newton.sh gpu-fast [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh check' \
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
     'gpu runs actual CUDA physics: cuSOLVER32, fixed tree/contact/force order, dense Hessian, 400/60 Hz, capacities128/256.' \
+    'gpu-fast uses the separately calibrated 133-DOF plant and conservative fruit proxies (outward bound 0.1mm). This changes the physical representation.' \
+    'gpu-fast inputs can be overridden with S300_NEWTON_FAST_INPUTS; gpu keeps the original model default.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
     'GPU single-world full GUI/headless equivalence passed; contact-phase realtime remains below target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
@@ -38,9 +41,13 @@ case "$mode" in
     exec env -u PYTHONPATH "$python" -u "$scripts/newton_inputs.py" \
       "$model_dir" "$output_dir" --hz 300 "$@"
     ;;
-  run|gpu)
+  run|gpu|gpu-fast)
     input_dir="${S300_NEWTON_INPUTS:-$data_dir/20261016_s300_newton/inputs_render_separated}"
-    if [[ "$mode" == 'gpu' ]]; then
+    if [[ "$mode" == 'gpu-fast' ]]; then
+      input_dir="${S300_NEWTON_FAST_INPUTS:-$data_dir/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01}"
+      printf '%s\n' 'Experimental GPU-fast: changed plant coordinates and conservatively enlarged fruit collision proxies; not an identical-model acceleration.' >&2
+    fi
+    if [[ "$mode" == 'gpu' || "$mode" == 'gpu-fast' ]]; then
       output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_gpu}"
       runner_options=(--backend gpu --native-observables-only --native-control-callback
         --linear-algebra cusolver32 --hz 400 --free-hz 60

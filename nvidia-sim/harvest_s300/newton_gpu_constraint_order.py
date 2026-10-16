@@ -108,11 +108,11 @@ def _contact_addresses(nacon: wp.array[int], worldid: wp.array[int], nefc: wp.ar
 
 
 class CanonicalConstraintOrder:
-    def __init__(self, solver):
+    def __init__(self, solver, *, allow_multiworld=False):
         validate_features(solver)
         self.model, self.data = solver.mjw_model, solver.mjw_data
-        if self.data.nworld != 1:
-            raise ValueError('Constraint canonicalization qualified for one world only')
+        if self.data.nworld != 1 and not allow_multiworld:
+            raise ValueError('Multiworld constraint canonicalization requires explicit diagnostic opt-in')
         expected = set(Rows.vars) | {'jtdaj_adr', 'jtdaj_nrow', 'jtdaj_nblock', 'J_colind', 'J', 'Ma'}
         if set(self.data.efc.__dataclass_fields__) != expected:
             raise ValueError('Constraint schema changed; permutation requires review')
@@ -133,6 +133,8 @@ class CanonicalConstraintOrder:
             row_fields=list(Rows.vars), sparse_arena_values_unchanged=True,
             contact_and_group_addresses_remapped=True, capacity_guards_unchanged=True,
             physical_parameters_changed=False)
+        if self.data.nworld != 1:
+            self.evidence.update(nworld=self.data.nworld, multiworld_experimental=True)
 
     def make(self, m, d):
         result = self.original(m, d)

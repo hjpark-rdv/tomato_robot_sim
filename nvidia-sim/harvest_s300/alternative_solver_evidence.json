@@ -1,0 +1,957 @@
+{
+  "schema": "s300_alternative_solver_evidence_v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "fixture_only": true,
+  "source_data_root": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives",
+  "notes": [
+    "Fixture RTF is never a full harvest throughput claim",
+    "Failed and connection-error outputs are preserved; dispositions distinguish them",
+    "No full harvest promotion for alternative solvers",
+    "Legacy VBD and explicit modern compliant-ALM are separated"
+  ],
+  "code_sha256": {
+    "alternative_solver_drive_control.py": "b5796fbfcf502ef33ae94f8a8c6772fdd356afc25c85ff74f11ad53752695fb6",
+    "alternative_solver_probe.py": "b6b620f371ebb868bd89b5a23a4a8d5a289ef33fc6dde3ee4f10cbd3208f3abb",
+    "alternative_solver_reference.py": "51a677edcf338c6928412fcb21288e1f7698a1d469df503562b9ea1aa253796f"
+  },
+  "tests": {
+    "command": "nvidia-sim/.newton-venv/bin/python -m unittest discover -s nvidia-sim/harvest_s300 -p test_alternative_solver_probe.py -v",
+    "passed": 6
+  },
+  "trials": [
+    {
+      "trial": "coarse4_coupled_vbd16_exact_inertia",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_coupled_vbd16_exact_inertia/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "b27ddae66760d5720cd4dbbd3bab3b0650d8170b948ea7a21b2fb2420246892e",
+      "fixture_sha256": "7346d1a42954b68d74c8f8392c9292ec2c2f3e65db1b866ac931789c975ed36e",
+      "model_body_count": 117,
+      "collider_shape_count": 90,
+      "model_dof_count": 154,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 2.2059087455272675,
+      "fixture_RTF": 0.45332790942853574,
+      "finite": true,
+      "qualification": "reject_attachment_gap",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 518.8003540039062,
+      "max_attachment_gap_m": 63.202184512033185,
+      "max_pre_step_contact_penetration_m": 0.04879489913582802,
+      "push_body_max_displacement_m": 518.8003540039062,
+      "push_body_final_displacement_m": 1.2757452726364136,
+      "steps_with_probe_contact": 5,
+      "probe_final_displacement_x_m": -9.613302230834961,
+      "probe_final_velocity_x_m_s": -9.659374237060547,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 8.05345859445e-11,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 79,
+        "max_finalizer_error_kg_m2": 1.0000194434321277e-06,
+        "restored_source_tensors": true,
+        "meaning": "Restore native positive physical inertia and inverse after generic finalizer absolute-floor inflation; no source mass or inertia weakening."
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "target-only probe clearance did not exclude initial neighbor overlap"
+    },
+    {
+      "trial": "coarse4_coupled_vbd_collapsed_valid_start",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_coupled_vbd_collapsed_valid_start/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "dc968f52d1fe187c2ef6f41bf8cca59f0656b6bda0f934fd710289e37dfee047",
+      "fixture_sha256": "3769c4b7f0fab015bb273d5cf879e2e096688e2268ae73c22d96978b0a5e3317",
+      "model_body_count": 32,
+      "collider_shape_count": 90,
+      "model_dof_count": 154,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 2.4550636745989323,
+      "fixture_RTF": 0.4073214109867694,
+      "finite": true,
+      "qualification": "fixture_valid_response_comparison_pending_runtime_features",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.260907381772995,
+      "max_attachment_gap_m": 2.54151390310461e-05,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 0.2613385319709778,
+      "push_body_final_displacement_m": 0.10569566488265991,
+      "steps_with_probe_contact": 0,
+      "probe_final_displacement_x_m": 0.09888961911201477,
+      "probe_final_velocity_x_m_s": 0.15790770947933197,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "source_joint_feature_audit": {
+        "native_plant_dof_count": 123,
+        "nonzero_armature_dof_count": 0,
+        "max_armature": 0.0,
+        "nonzero_frictionloss_dof_count": 0,
+        "generic_solver_armature_supported": false,
+        "full_robot_actuator_effort_limit_portability": "not established by isolated plant fixture"
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "no_probe_contacts_so_not_coupling_contact_evidence"
+    },
+    {
+      "trial": "coarse4_native_reference",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_native_reference/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_native_reference_v1",
+      "solver": "native MuJoCo CPU fixture reference",
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "code_sha256": "51a677edcf338c6928412fcb21288e1f7698a1d469df503562b9ea1aa253796f",
+      "fixture_sha256": "294a539790976a444f7b6526fee5b6d35e66a28e99471fc484c0241811044450",
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 0.29958456568419933,
+      "fixture_RTF": 3.337955671101323,
+      "finite": true,
+      "max_idle_body_displacement_m": 0.00475733068631665,
+      "max_attachment_gap_m": 1.121719796541356e-06,
+      "push_body_max_displacement_m": 0.010975360532833546,
+      "push_body_final_displacement_m": 0.004499638777635933,
+      "comparison_disposition": "CPU_physical_response_reference_only"
+    },
+    {
+      "trial": "coarse4_vbd16_collapsed_exact",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_vbd16_collapsed_exact/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "b27ddae66760d5720cd4dbbd3bab3b0650d8170b948ea7a21b2fb2420246892e",
+      "fixture_sha256": "294a539790976a444f7b6526fee5b6d35e66a28e99471fc484c0241811044450",
+      "model_body_count": 31,
+      "collider_shape_count": 89,
+      "model_dof_count": 153,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 1.138370357453823,
+      "fixture_RTF": 0.8784487345899324,
+      "finite": true,
+      "qualification": "fixture_valid_response_comparison_pending_runtime_features",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.2607555687427521,
+      "max_attachment_gap_m": 6.372780743456251e-05,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 0.2491195648908615,
+      "push_body_final_displacement_m": 0.11270240694284439,
+      "steps_with_probe_contact": 0,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "finite_but_source_response_not_qualified_and_full_runtime_missing"
+    },
+    {
+      "trial": "coarse4_vbd16_exact_inertia",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_vbd16_exact_inertia/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "b27ddae66760d5720cd4dbbd3bab3b0650d8170b948ea7a21b2fb2420246892e",
+      "fixture_sha256": "294a539790976a444f7b6526fee5b6d35e66a28e99471fc484c0241811044450",
+      "model_body_count": 116,
+      "collider_shape_count": 89,
+      "model_dof_count": 153,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 1.0612029302865267,
+      "fixture_RTF": 0.942326836329031,
+      "finite": true,
+      "qualification": "reject_attachment_gap",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.12635672092437744,
+      "max_attachment_gap_m": 21.729466087218782,
+      "max_pre_step_contact_penetration_m": 0.006288301665335894,
+      "push_body_max_displacement_m": 14.54123592376709,
+      "push_body_final_displacement_m": 4.194498538970947,
+      "steps_with_probe_contact": 0,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 8.05345859445e-11,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 79,
+        "max_finalizer_error_kg_m2": 1.0000194434321277e-06,
+        "restored_source_tensors": true,
+        "meaning": "Restore native positive physical inertia and inverse after generic finalizer absolute-floor inflation; no source mass or inertia weakening."
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "reject_attachment_and_contact_instability"
+    },
+    {
+      "trial": "coarse4_vbd64_collapsed_exact",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_vbd64_collapsed_exact/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "dc968f52d1fe187c2ef6f41bf8cca59f0656b6bda0f934fd710289e37dfee047",
+      "fixture_sha256": "294a539790976a444f7b6526fee5b6d35e66a28e99471fc484c0241811044450",
+      "model_body_count": 31,
+      "collider_shape_count": 89,
+      "model_dof_count": 153,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 4.1565128192305565,
+      "fixture_RTF": 0.24058629035700113,
+      "finite": true,
+      "qualification": "fixture_valid_response_comparison_pending_runtime_features",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.06578453630208969,
+      "max_attachment_gap_m": 0.00020073511686313577,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 0.03557099774479866,
+      "push_body_final_displacement_m": 0.023652536794543266,
+      "steps_with_probe_contact": 0,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "source_joint_feature_audit": {
+        "native_plant_dof_count": 123,
+        "nonzero_armature_dof_count": 0,
+        "max_armature": 0.0,
+        "nonzero_frictionloss_dof_count": 0,
+        "generic_solver_armature_supported": false,
+        "full_robot_actuator_effort_limit_portability": "not established by isolated plant fixture"
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "finite_but_source_response_not_qualified_and_full_runtime_missing"
+    },
+    {
+      "trial": "coarse4_vbd_alm16_collapsed",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coarse4_vbd_alm16_collapsed/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "vbd_mode": "compliant-alm",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "b6b620f371ebb868bd89b5a23a4a8d5a289ef33fc6dde3ee4f10cbd3208f3abb",
+      "fixture_sha256": "294a539790976a444f7b6526fee5b6d35e66a28e99471fc484c0241811044450",
+      "model_body_count": 31,
+      "collider_shape_count": 89,
+      "model_dof_count": 153,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 1.3002112489193678,
+      "fixture_RTF": 0.7691057901791886,
+      "finite": true,
+      "qualification": "fixture_valid_response_comparison_pending_runtime_features",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.236749067902565,
+      "max_attachment_gap_m": 1.109676497187464e-05,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 0.22434300184249878,
+      "push_body_final_displacement_m": 0.08069414645433426,
+      "steps_with_probe_contact": 0,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "source_joint_feature_audit": {
+        "native_plant_dof_count": 123,
+        "nonzero_armature_dof_count": 0,
+        "max_armature": 0.0,
+        "nonzero_frictionloss_dof_count": 0,
+        "generic_solver_armature_supported": false,
+        "full_robot_actuator_effort_limit_portability": "not established by isolated plant fixture"
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "finite_but_source_response_not_qualified_and_full_runtime_missing"
+    },
+    {
+      "trial": "coupled_contact_early",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coupled_contact_early/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "1789b69677cf1e1babaad8838f8946eaf9e4a58d6c2f4786c0027058af2e10a6",
+      "fixture_sha256": "3769c4b7f0fab015bb273d5cf879e2e096688e2268ae73c22d96978b0a5e3317",
+      "model_body_count": 32,
+      "collider_shape_count": 90,
+      "model_dof_count": 154,
+      "physics_steps": 80,
+      "physics_seconds": 0.2,
+      "physics_wall_s": 0.5967443250119686,
+      "fixture_RTF": 0.33515190948148305,
+      "finite": true,
+      "qualification": "reject_active_penetration",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": null,
+      "max_attachment_gap_m": 9.118219018098593e-05,
+      "max_pre_step_contact_penetration_m": 0.0010225772857666016,
+      "push_body_max_displacement_m": 0.06449419260025024,
+      "push_body_final_displacement_m": 0.06449419260025024,
+      "steps_with_probe_contact": 56,
+      "probe_final_displacement_x_m": 0.04924917221069336,
+      "probe_final_velocity_x_m_s": 0.12196220457553864,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "source_joint_feature_audit": {
+        "native_plant_dof_count": 123,
+        "nonzero_armature_dof_count": 0,
+        "max_armature": 0.0,
+        "nonzero_frictionloss_dof_count": 0,
+        "generic_solver_armature_supported": false,
+        "full_robot_actuator_effort_limit_portability": "not established by isolated plant fixture"
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "two_way_contact_demonstrated_but_1mm_physics_limit_exceeded"
+    },
+    {
+      "trial": "coupled_mujoco_vbd16",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coupled_mujoco_vbd16/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "e5d89d83f7e01ae9f2a627cdf69ba2111b58f9a0852463e2442c5039e1de3ac0",
+      "fixture_sha256": "10cebd282a820b9892ef582d3c9e25fe8f34ccaf4791caf240866f2b2e7b9175",
+      "model_body_count": 117,
+      "collider_shape_count": 90,
+      "model_dof_count": 406,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 2.3109067659825087,
+      "fixture_RTF": 0.4327305691083727,
+      "finite": true,
+      "qualification": "reject_idle_attachment_drift",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 1429560.25,
+      "max_attachment_gap_m": 451345.49156556546,
+      "push_body_max_displacement_m": 1429560.25,
+      "push_body_final_displacement_m": 1.0636368989944458,
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 315,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 315,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 210,
+        "explicit_remaining_nonzero_dof_count": 0,
+        "meaning": "Constant preload is algebraically folded into the same spring: -k*(q-(q0+preload/k)). No mass/stiffness reduction."
+      },
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "source inertia not preserved and target-only probe clearance did not exclude neighbor overlap"
+    },
+    {
+      "trial": "coupled_no_contact_early",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/coupled_no_contact_early/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_scene_sha256": "7f533b67637bcb65a748944586a2b76be268a7c8abd8dfcf887113283d7aa586",
+      "code_sha256": "90da08226440bdbbdf95835f5ad6cd68f975daf99d9092d5d1174c69aacbab2a",
+      "fixture_sha256": "6cbf46fbaea2062d5eb7830763e8a4b14dc4059be76b6e779982115b3811b618",
+      "model_body_count": 32,
+      "collider_shape_count": 90,
+      "model_dof_count": 154,
+      "physics_steps": 80,
+      "physics_seconds": 0.2,
+      "physics_wall_s": 0.5804849117994308,
+      "fixture_RTF": 0.3445395322679877,
+      "finite": true,
+      "qualification": "fixture_valid_response_comparison_pending_runtime_features",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": null,
+      "max_attachment_gap_m": 7.414249137216252e-06,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 0.08461010456085205,
+      "push_body_final_displacement_m": 0.08461010456085205,
+      "steps_with_probe_contact": 0,
+      "probe_final_displacement_x_m": 0.09711310267448425,
+      "probe_final_velocity_x_m_s": 0.6474221348762512,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 1.0071368739e-10,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 0,
+        "max_finalizer_error_kg_m2": 0.0,
+        "restored_source_tensors": true,
+        "meaning": "Restore official fixed-group aggregate of source tensors and inverse after finalizer inflation; no mass/inertia weakening."
+      },
+      "source_joint_feature_audit": {
+        "native_plant_dof_count": 123,
+        "nonzero_armature_dof_count": 0,
+        "max_armature": 0.0,
+        "nonzero_frictionloss_dof_count": 0,
+        "generic_solver_armature_supported": false,
+        "full_robot_actuator_effort_limit_portability": "not established by isolated plant fixture"
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 63,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 63,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 42,
+        "explicit_remaining_nonzero_dof_count": 6,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "negative_control_for_two_way_contact_only"
+    },
+    {
+      "trial": "drive_sanity",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/drive_sanity/summary.json",
+      "selected_for_full_harvest": false,
+      "methods": {
+        "xpbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.001254735606460078,
+            -0.0002620154649594794,
+            0.00014693090347328366
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.005293292714279418,
+          "model_joint_type": [
+            6
+          ]
+        },
+        "vbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            -0.09854525098401498,
+            1.2858283879298255e-08,
+            -8.826840948787302e-09
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.09916736388040702,
+          "model_joint_type": [
+            6
+          ]
+        }
+      },
+      "native_final_joint_q": [
+        0.0006221128963920403,
+        6.191566792565464e-09,
+        -4.043150238444184e-09
+      ],
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "one-joint control had inconsistent model FK before VBD rest-angle cache construction; excluded"
+    },
+    {
+      "trial": "drive_sanity_cpu",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/drive_sanity_cpu/summary.json",
+      "selected_for_full_harvest": false,
+      "methods": {
+        "xpbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.0012548234583806789,
+            -0.00026201405448413105,
+            0.0001469531184518076
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.0052933671539597965,
+          "model_joint_type": [
+            6
+          ]
+        },
+        "vbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            -0.09854523610093918,
+            1.2844909610403935e-08,
+            -8.829273767639424e-09
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.09916734899733122,
+          "model_joint_type": [
+            6
+          ]
+        }
+      },
+      "native_final_joint_q": [
+        0.0006221128963920403,
+        6.191566792565464e-09,
+        -4.043150238444184e-09
+      ],
+      "device": "cpu",
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "one-joint control had inconsistent model FK before VBD rest-angle cache construction; excluded"
+    },
+    {
+      "trial": "drive_sanity_cpu_consistent",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/drive_sanity_cpu_consistent/summary.json",
+      "selected_for_full_harvest": false,
+      "methods": {
+        "xpbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.0012548234583806789,
+            -0.00026201405448413105,
+            0.0001469531184518076
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.0052933671539597965,
+          "model_joint_type": [
+            6
+          ]
+        },
+        "vbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.0007273759954286372,
+            6.532885943947538e-09,
+            -4.254061803999747e-09
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.0011498598390807732,
+          "model_joint_type": [
+            6
+          ]
+        }
+      },
+      "native_final_joint_q": [
+        0.0006221128963920403,
+        6.191566792565464e-09,
+        -4.043150238444184e-09
+      ],
+      "device": "cpu",
+      "comparison_disposition": "one_joint_material_binding_control_only"
+    },
+    {
+      "trial": "drive_sanity_gpu_consistent",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/drive_sanity_gpu_consistent/summary.json",
+      "selected_for_full_harvest": false,
+      "methods": {
+        "xpbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.001254735606460078,
+            -0.0002620154649594794,
+            0.00014693090347328366
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.005293292714279418,
+          "model_joint_type": [
+            6
+          ]
+        },
+        "vbd": {
+          "finite": true,
+          "final_body_rotvec_rad": [
+            0.0007273758790133307,
+            6.5329432314531745e-09,
+            -4.251368403060816e-09
+          ],
+          "max_abs_x_angle_error_to_native_rad": 0.0011498635637212234,
+          "model_joint_type": [
+            6
+          ]
+        }
+      },
+      "native_final_joint_q": [
+        0.0006221128963920403,
+        6.191566792565464e-09,
+        -4.043150238444184e-09
+      ],
+      "device": "cuda:0",
+      "comparison_disposition": "one_joint_material_binding_control_only"
+    },
+    {
+      "trial": "native_reference",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/native_reference/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_native_reference_v1",
+      "solver": "native MuJoCo CPU fixture reference",
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "code_sha256": "51a677edcf338c6928412fcb21288e1f7698a1d469df503562b9ea1aa253796f",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 2.428405240178108,
+      "fixture_RTF": 0.41179288508150985,
+      "finite": true,
+      "max_idle_body_displacement_m": 0.004715819838230699,
+      "max_attachment_gap_m": 1.1022611628804145e-06,
+      "push_body_max_displacement_m": 0.011004829888611012,
+      "push_body_final_displacement_m": 0.004460616198843586,
+      "comparison_disposition": "CPU_physical_response_reference_only"
+    },
+    {
+      "trial": "vbd16",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/vbd16/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "8e269d427c9262ea9ccedab6c24bf8793e21239c0bc5b26eceadc0d1c79ff1e6",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "error_type": "AttributeError",
+      "error": "Control.joint_target_pos was removed in Newton 1.5; use Control.joint_target_q instead.",
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "connection error: removed Control.joint_target_pos API"
+    },
+    {
+      "trial": "vbd16_materials",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/vbd16_materials/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "vbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "b2ef688f3e380cb5e9c34d47602c22a797e4049bffbfa25156626830d3b88b11",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "model_body_count": 116,
+      "collider_shape_count": 89,
+      "model_dof_count": 405,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 1.0975746922194958,
+      "fixture_RTF": 0.9110997247739177,
+      "finite": true,
+      "qualification": "idle_attachment_pass_runtime_features_pending",
+      "first_nonfinite_time_s": null,
+      "max_idle_body_displacement_m": 0.26953884959220886,
+      "max_attachment_gap_m": 144.11067624854206,
+      "max_pre_step_contact_penetration_m": 0.0011455040657892823,
+      "push_body_max_displacement_m": 242.602294921875,
+      "push_body_final_displacement_m": 46.511741638183594,
+      "steps_with_probe_contact": 0,
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 315,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 315,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 210,
+        "explicit_remaining_nonzero_dof_count": 13,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "generic finalizer inflated source inertia; material mismatch"
+    },
+    {
+      "trial": "xpbd16",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/xpbd16/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "xpbd",
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "model_body_count": 116,
+      "collider_shape_count": 89,
+      "model_dof_count": 405,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 0.17441422119736671,
+      "fixture_RTF": 5.733477425951421,
+      "finite": false,
+      "qualification": "reject_idle_attachment_drift",
+      "max_idle_body_displacement_m": null,
+      "max_attachment_gap_m": null,
+      "push_body_max_displacement_m": null,
+      "push_body_final_displacement_m": null,
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "raw generic importer omitted passive springs; finalizer inertia change; not a qualified solver test"
+    },
+    {
+      "trial": "xpbd16_exact_inertia",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/xpbd16_exact_inertia/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "xpbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "b27ddae66760d5720cd4dbbd3bab3b0650d8170b948ea7a21b2fb2420246892e",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "model_body_count": 116,
+      "collider_shape_count": 89,
+      "model_dof_count": 405,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 0.1841351669281721,
+      "fixture_RTF": 5.430793132471444,
+      "finite": false,
+      "qualification": "reject_nonfinite",
+      "first_nonfinite_time_s": 0.005,
+      "max_idle_body_displacement_m": null,
+      "max_attachment_gap_m": null,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 5.094233512878418,
+      "push_body_final_displacement_m": 5.094233512878418,
+      "steps_with_probe_contact": 0,
+      "source_inertia_adapter": {
+        "source_min_principal_kg_m2": 8.05345859445e-11,
+        "positive_and_triangle_valid": true,
+        "finalizer_changed_body_count": 79,
+        "max_finalizer_error_kg_m2": 1.0000194434321277e-06,
+        "restored_source_tensors": true,
+        "meaning": "Restore native positive physical inertia and inverse after generic finalizer absolute-floor inflation; no source mass or inertia weakening."
+      },
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 315,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 315,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 210,
+        "explicit_remaining_nonzero_dof_count": 13,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "reject_nonfinite_at_5ms"
+    },
+    {
+      "trial": "xpbd16_implicit_preload",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/xpbd16_implicit_preload/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "xpbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "8e269d427c9262ea9ccedab6c24bf8793e21239c0bc5b26eceadc0d1c79ff1e6",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "error_type": "AttributeError",
+      "error": "Control.joint_target_pos was removed in Newton 1.5; use Control.joint_target_q instead.",
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "connection error: removed Control.joint_target_pos API"
+    },
+    {
+      "trial": "xpbd16_materials",
+      "summary_path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/alternatives/xpbd16_materials/summary.json",
+      "selected_for_full_harvest": false,
+      "schema": "s300_alternative_solver_qualification_v1",
+      "solver": "xpbd",
+      "versions": {
+        "newton": "1.7.0",
+        "warp-lang": "1.17.0",
+        "mujoco": "3.15.0"
+      },
+      "source_model_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "source_scene_sha256": "c5cd0c760329296a9501978c0c9e55a9a193e4ab0c66d1a3887560a88dbc8733",
+      "code_sha256": "b2ef688f3e380cb5e9c34d47602c22a797e4049bffbfa25156626830d3b88b11",
+      "fixture_sha256": "fadd280e79b29d7616eb7dcd54d01bebf211fdacd1dd9faa23da0c12b47c0cb6",
+      "model_body_count": 116,
+      "collider_shape_count": 89,
+      "model_dof_count": 405,
+      "physics_steps": 400,
+      "physics_seconds": 1.0,
+      "physics_wall_s": 0.18278036825358868,
+      "fixture_RTF": 5.471047079917272,
+      "finite": false,
+      "qualification": "reject_nonfinite",
+      "first_nonfinite_time_s": 0.005,
+      "max_idle_body_displacement_m": null,
+      "max_attachment_gap_m": null,
+      "max_pre_step_contact_penetration_m": 0.00032281153835356236,
+      "push_body_max_displacement_m": 5.094303607940674,
+      "push_body_final_displacement_m": 5.094303607940674,
+      "steps_with_probe_contact": 0,
+      "passive_material_adapter": {
+        "imported_nonzero_stiffness_dofs": 0,
+        "source_nonzero_stiffness_dofs": 315,
+        "imported_nonzero_drive_damping_dofs": 0,
+        "source_nonzero_damping_dofs": 315,
+        "meaning": "Preserve exact source scalar joint stiffness/damping through supported generic drives; no gain tuning."
+      },
+      "preload_adapter": {
+        "mode": "implicit-drive",
+        "implicit_dof_count": 210,
+        "explicit_remaining_nonzero_dof_count": 13,
+        "meaning": "Constant preload is algebraically folded into the same spring; targets respect unchanged source limits and any clamped remainder stays explicit. No mass/stiffness reduction."
+      },
+      "comparison_disposition": "exclude_setup_or_material_mismatch",
+      "reason": "generic finalizer inflated source inertia; material mismatch"
+    }
+  ]
+}

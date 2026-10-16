@@ -115,6 +115,19 @@ class CuSolverInertiaFactor:
             raise ValueError('Initialize reverse-Cholesky outside graph capture')
         source = solver.mj_model
         self.nv, self.n = int(source.nv), int(self.model.nv_pad)
+        self.block_total=int(self.model.qLD_block_total)
+        self.native_dense_only=self.block_total==solver.mjw_data.qLD.shape[1]
+        if self.native_dense_only:
+            # Each articulation fits an existing native dense block. There is
+            # no sparse suffix to intercept (an empty Warp slice is invalid).
+            # Keep the native factor/solve dispatchers entirely untouched.
+            self.closed,self.calls=False,0
+            self.evidence=dict(schema='s300-newton-cusolver-inertia-v1',enabled=False,
+                nv=self.nv,padded=self.n,packed_dense_prefix=self.block_total,
+                native_dense_blocks_only=True,sparse_suffix_entries=0,
+                implementation='Unmodified native MuJoCo Warp dense-block factor/solve',
+                physical_parameters_changed=False,host_solve=False,simulation_warmup_steps=0)
+            return
         rows = np.repeat(np.arange(self.nv, dtype=np.int32), source.M_rownnz)
         cols = np.asarray(source.M_colind, dtype=np.int32)
         if len(rows) != len(cols) or np.any(cols > rows) or np.any(cols < 0):
@@ -219,12 +232,17 @@ class CuSolverInertiaFactor:
         return self.original_public_solve(m, d, factor, reciprocal, output, rhs)
 
     def check_health(self):
+        if self.native_dense_only:
+            return
         if int(self.failure.numpy()[0]):
             raise RuntimeError('Reverse-Cholesky inertia factor failed')
 
     def close(self):
         global _owner
         if self.closed:
+            return
+        if self.native_dense_only:
+            self.closed=True
             return
         wp.synchronize_stream(self.stream)
         if _owner is self:

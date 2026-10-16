@@ -104,6 +104,26 @@ class InertiaAlgebraCpuControls(unittest.TestCase):
 @unittest.skipUnless(os.environ.get("S300_CUSOLVER_CUDA_TEST") == "1",
     "Explicit CUDA test opt-in required")
 class InertiaCudaControls(unittest.TestCase):
+    def test_all_dense_blocks_leave_native_dispatch_untouched(self):
+        xml='''<mujoco><worldbody><body><joint axis="0 1 0" armature=".001"/>
+          <geom type="capsule" size=".01 .1" mass=".1"/></body></worldbody></mujoco>'''
+        solver=fixture('cuda:0',xml)
+        original=(smooth._factor_i_sparse,smooth._solve_LD_sparse,smooth.solve_LD)
+        self.assertEqual(solver.mjw_model.qLD_block_total,solver.mjw_data.qLD.shape[1])
+        owner=CuSolverInertiaFactor(solver)
+        try:
+            self.assertTrue(owner.native_dense_only)
+            self.assertFalse(owner.evidence['enabled'])
+            self.assertEqual(original,(smooth._factor_i_sparse,smooth._solve_LD_sparse,smooth.solve_LD))
+            d,m=solver.mjw_data,solver.mjw_model
+            rhs=wp.array([[1.]],dtype=float,device='cuda:0');output=wp.zeros_like(rhs)
+            with wp.ScopedCapture(device='cuda:0') as capture:
+                smooth.factor_solve_i(m,d,d.M,d.qLD,d.qLDiagInv,output,rhs)
+            wp.capture_launch(capture.graph);owner.check_health()
+            self.assertTrue(np.isfinite(output.numpy()).all())
+        finally:
+            owner.close()
+
     def test_real_75dof_native_factor_solve_residual_two_buffers_and_graph_repeat(self):
         self.run_solve_control(fixture("cuda:0"))
 
