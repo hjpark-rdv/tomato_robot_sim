@@ -15,13 +15,16 @@ import traceback
 from pathlib import Path
 
 from motion_live import MotionLiveReader
-from newton_live import display_publication_metrics, write_display_ack
+from newton_live import (CameraMotionEvidence, camera_test_position,
+                        display_publication_metrics, write_display_ack)
 
 p = argparse.ArgumentParser()
 p.add_argument('trial', type=Path)
 p.add_argument('--fps', type=float, default=10., help='wall-clock display cap only')
 p.add_argument('--seconds', type=float, default=0., help='0 leaves the window open; otherwise bounded wall time')
 p.add_argument('--camera', default='/World/HarvestCloseCamera')
+p.add_argument('--camera-test-motion', action='store_true',
+               help='Move only the display camera and record actual post-render transforms; physics stays stopped')
 p.add_argument('--ready-file', type=Path, help='Publish display readiness after showing the first measured frame; an external launcher may then release the producer start gate')
 p.add_argument('--headless', action='store_true', help='render/capture validation without a display window')
 p.add_argument('--capture', type=Path, help='save a PNG of the final displayed measured frame')
@@ -114,6 +117,24 @@ try:
     if not stage.GetPrimAtPath(a.camera):
         raise ValueError('Live camera does not exist: ' + a.camera)
     viewport.set_active_camera(a.camera)
+    camera_motion = None
+    if a.camera_test_motion:
+        from pxr import Gf, UsdGeom
+        camera_prim = stage.GetPrimAtPath(a.camera)
+        if not camera_prim.IsA(UsdGeom.Camera):
+            raise ValueError('Camera motion test requires an actual USD Camera prim')
+        base_camera_world = UsdGeom.XformCache().GetLocalToWorldTransform(camera_prim)
+        base_camera_array = np.asarray(base_camera_world)
+        base_camera_eye = base_camera_array[3, :3].copy()
+        camera_right = base_camera_array[0, :3].copy()
+        camera_up = base_camera_array[1, :3].copy()
+        camera_backward = base_camera_array[2, :3].copy()
+        camera_target = base_camera_eye - 1.8 * camera_backward / np.linalg.norm(camera_backward)
+        camera_parent_inverse = UsdGeom.XformCache().GetLocalToWorldTransform(
+            camera_prim.GetParent()).GetInverse()
+        camera_transform = UsdGeom.Xformable(camera_prim).MakeMatrixXform()
+        camera_motion = CameraMotionEvidence(a.camera, base_camera_eye)
+    report['camera_test_motion'] = dict(enabled=False) if camera_motion is None else camera_motion.summary()
     if a.review_light:
         # Reuse render_motion.py's inspection light, with all edits confined to
         # this independent viewer's anonymous session layer.
@@ -176,15 +197,28 @@ try:
             if now-last_notice >= 1. or last['status'] in ('completed','stopped'):
                 print(f"[LIVE] measured t={last['time']:.3f}s · {rate:.2f}x realtime · {last['status']}", flush=True)
                 last_notice = now
+        if camera_motion is not None:
+            moved_eye = camera_test_position(base_camera_eye, camera_right, camera_up,
+                                            time.monotonic() - started)
+            moved_world = Gf.Matrix4d().SetLookAt(Gf.Vec3d(*moved_eye),
+                Gf.Vec3d(*camera_target), Gf.Vec3d(*camera_up)).GetInverse()
+            # USD row-vector convention: local * parent_world = world.
+            camera_transform.Set(moved_world * camera_parent_inverse)
         timeline.stop()
         app.update()
         render_updates += 1
         if timeline.get_current_time() != 0.:
             raise RuntimeError('Live display timeline unexpectedly advanced')
-        if last is not None and last['sequence'] != last_ack_sequence:
+        if camera_motion is not None and last is not None:
+            actual_camera_world = UsdGeom.XformCache().GetLocalToWorldTransform(camera_prim)
+            camera_motion.record(np.asarray(actual_camera_world)[3, :3],
+                render_update=render_updates, elapsed_wall_s=time.monotonic() - started,
+                measured_time_s=last['time'], timeline_time_s=timeline.get_current_time())
+        if last is not None and (last['sequence'] != last_ack_sequence or camera_motion is not None):
             write_display_ack(a.trial, last, displayed_count=updates,
                               render_updates=render_updates,
-                              timeline_time_s=timeline.get_current_time())
+                              timeline_time_s=timeline.get_current_time(),
+                              camera_motion=None if camera_motion is None else camera_motion.summary())
             last_ack_sequence = last['sequence']
         if a.ready_file and not ready_written and last is not None:
             a.ready_file.parent.mkdir(parents=True,exist_ok=True)
@@ -223,6 +257,8 @@ try:
             sequence=last['sequence'], measured_time_s=last['time'], measured_gap_m=last['gap'],
             status=last['status'], pose_sha256=hashlib.sha256(last['poses'].astype('<f8').tobytes()).hexdigest(),
             physics_rerun=False, physics_steps=0)
+        if camera_motion is not None:
+            capture_report['camera_test_motion'] = camera_motion.summary()
         a.capture.with_suffix('.json').write_text(json.dumps(capture_report, indent=2) + '\n')
     report.update(displayed_measured_frames=updates, render_updates=render_updates,
                   elapsed_wall_s=time.monotonic()-started,
@@ -238,6 +274,13 @@ try:
                   display_publications=display_publication_metrics(observed_sequences,
                       json.loads((a.trial / 'live.json').read_text())),
                   displayed_sequence_timestamps=observed_sequences)
+    if camera_motion is not None:
+        motion_report = camera_motion.summary()
+        motion_report['samples'] = camera_motion.samples
+        motion_path = a.trial / 'live_camera_motion.json'
+        motion_path.write_text(json.dumps(motion_report, indent=2, allow_nan=False) + '\n')
+        report['camera_test_motion'] = camera_motion.summary()
+        report['camera_test_motion']['evidence_file'] = str(motion_path)
     for signum, handler in previous_signal_handlers.items():
         signal.signal(signum, handler)
 except Exception:

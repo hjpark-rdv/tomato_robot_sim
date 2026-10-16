@@ -16,15 +16,40 @@ class NativeGuardTests(unittest.TestCase):
         self.assertEqual(arguments(['inputs','--output','out']).backend,'cpu')
 
     def test_gpu_rejects_cpu_options_instead_of_silently_ignoring_them(self):
-        for option in (['--solver','CG'],['--solver-iterations','1'],
-                       ['--solver-tolerance','1e-6'],['--jacobian','dense'],
-                       ['--profile-timers'],['--threads','4'],
-                       ['--native-observables-only'],['--start-gate','gate'],
+        for option in (['--profile-timers'],['--threads','4'],['--start-gate','gate'],
                        ['--ready-file','ready']):
             with self.subTest(option=option),contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit) as error:
                     arguments(['inputs','--output','out','--backend','gpu',*option])
                 self.assertEqual(error.exception.code,2)
+
+    def test_gpu_accepts_explicit_native_optimizations_and_numerical_diagnostics(self):
+        args=arguments(['inputs','--output','out','--backend','gpu',
+            '--native-observables-only','--native-control-callback',
+            '--solver','Newton','--solver-iterations','64',
+            '--solver-tolerance','1e-6','--deterministic','RUN_TO_RUN'])
+        self.assertTrue(args.native_observables_only)
+        self.assertTrue(args.native_control_callback)
+        self.assertEqual(args.deterministic,'RUN_TO_RUN')
+
+    def test_cpu_rejects_gpu_math_hooks_instead_of_silently_ignoring_them(self):
+        for option in (['--fixed-solver-reductions'],['--dense-hessian'],
+                       ['--tree-sums','flat'],['--inertia-linear-algebra','cusolver32'],
+                       ['--canonical-contacts']):
+            with self.subTest(option=option),contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as error:
+                    arguments(['inputs','--output','out','--backend','cpu',*option])
+                self.assertEqual(error.exception.code,2)
+
+    def test_reproducible_gpu_hooks_are_explicitly_accepted_together(self):
+        args=arguments(['inputs','--output','out','--backend','gpu',
+            '--linear-algebra','cusolver32','--inertia-linear-algebra','cusolver32',
+            '--tree-sums','flat','--canonical-contacts',
+            '--deterministic','RUN_TO_RUN','--deterministic-scope','constraints',
+            '--dense-hessian','--fixed-solver-reductions'])
+        self.assertTrue(args.fixed_solver_reductions)
+        self.assertTrue(args.dense_hessian)
+        self.assertEqual(args.deterministic_scope,'constraints')
 
     def state(self):
         return SimpleNamespace(time=1., qpos=np.zeros(2), qvel=np.zeros(2), qacc=np.zeros(2))

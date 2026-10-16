@@ -38,6 +38,8 @@ class CompareNewtonTests(unittest.TestCase):
             input_sha256="input", commands_sha256="commands", worlds=1,
             newton_version="1.7", warp_version="1.10", mujoco_version="3.15",
             cuda_graph=True, graph_steps=10, gui_requested=False,
+            active_contact_criterion_passed=True,finite_recorded_state=True,
+            solver_capacity_valid=True,qacc_finite=True,max_active_penetration_m=0.,
             engine=dict(source_xml_sha256="xml", source_model_array_sha256="model",
                         backend="mujoco_warp_cuda", source_counts=dict(nq=3, nv=3, neq=1)))
         self.write(self.a)
@@ -74,6 +76,39 @@ class CompareNewtonTests(unittest.TestCase):
         self.assertFalse(result["passed"])
         self.assertTrue(result["partial_common_prefix_only"])
         self.assertFalse(result["same_sample_count"])
+
+    def test_identical_invalid_full_trials_do_not_validate_physics(self):
+        summary=dict(self.summary,active_contact_criterion_passed=False,
+                     max_active_penetration_m=.002)
+        self.write(self.a,summary=summary)
+        self.write(self.b,summary=summary)
+        result=compare_runs(self.a,self.b)
+        self.assertTrue(result['full_requested_physics_trace_matches'])
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['physical_validity']['actual']['passed'])
+
+    def test_identical_float32_quaternion_has_zero_orientation_error(self):
+        states=copy.deepcopy(self.states)
+        states['poses']=states['poses'].astype(np.float32)
+        quaternion=np.array([.347, .129, .517, .771],np.float32)
+        quaternion/=np.linalg.norm(quaternion)
+        states['poses'][...,3:]=quaternion
+        self.write(self.a,states=states)
+        self.write(self.b,states=states)
+        result=compare_runs(self.a,self.b)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['pose_metrics']['maximum_orientation_error_rad'],0.)
+
+    def test_seconds_limited_matching_runs_cannot_prove_full_harvest_equivalence(self):
+        states={key:value[:3] if key!='body_paths' else value
+                for key,value in self.states.items()}
+        metrics={key:(value[:,:2] if value.ndim>=2 and key not in ('break_step',) else value)
+                 for key,value in self.metrics.items()}
+        summary=dict(self.summary,requested_steps=2,actual_steps=2,simulated_s=2/60)
+        self.write(self.a,states=states,metrics=metrics,summary=summary)
+        self.write(self.b,states=states,metrics=metrics,summary=summary)
+        result=compare_runs(self.a,self.b)
+        self.assertFalse(result['passed'])
 
     def test_identically_stopped_full_arrays_still_cannot_pass_requested_run(self):
         summary = dict(self.summary, status="stopped", requested_steps=10, stop="contact")

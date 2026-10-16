@@ -185,6 +185,25 @@ def advance_tick(tick: wp.array[int]):
 
 
 @wp.kernel
+def finish_step(tick: wp.array[int], niter: wp.array[int], log: wp.array2d[int]):
+    t = tick[0]
+    for w in range(niter.shape[0]):
+        log[w, t] = niter[w]
+    tick[0] = t + 1
+
+
+@wp.kernel
+def pack_runtime_status(nonfinite: wp.array[int], qacc_nonfinite: wp.array[int],
+        capacity: wp.array[int], first_event: wp.array[wp.uint64],
+        packed: wp.array2d[wp.uint64]):
+    w = wp.tid()
+    packed[w, 0] = wp.uint64(nonfinite[w])
+    packed[w, 1] = wp.uint64(qacc_nonfinite[w])
+    packed[w, 2] = wp.uint64(capacity[w])
+    packed[w, 3] = first_event[w]
+
+
+@wp.kernel
 def save_trace(tick: wp.array[int], stride: int, q: wp.array2d[float], v: wp.array2d[float],
         eq: wp.array2d[bool], xpos: wp.array2d[wp.vec3], xquat: wp.array2d[wp.quat],
         q_log: wp.array2d[float], v_log: wp.array2d[float], eq_log: wp.array2d[bool],
@@ -277,6 +296,7 @@ class HarvestGPUController:
         self.overflow_log = wp.zeros_like(self.nefc_log)
         self.qacc_abs_max = wp.zeros((worlds, steps), float, device=self.device)
         self.time_log = wp.zeros_like(self.qacc_abs_max)
+        self.solver_niter_log = wp.zeros((worlds, steps), int, device=self.device)
         self.first_qacc_nonfinite = arr(np.full(worlds, np.iinfo(np.int32).max, np.int32), int)
         self.first_capacity_overflow = wp.zeros_like(self.first_qacc_nonfinite)
         self.first_capacity_overflow.assign(np.full(worlds, np.iinfo(np.int32).max, np.int32))
@@ -292,6 +312,11 @@ class HarvestGPUController:
             self.torque, self.implicit, self.magnitude, self.attached], device=self.device)
         wp.launch(apply_torques, (self.worlds, self.solver.mj_model.nbody), inputs=[self.bodies,
             self.parents, self.torque, self.implicit, data.xfrc_applied], device=self.device)
+    def pre_step(self):
+        # MuJoCo Warp assembles the contact velocity constraints in
+        # fwd_position, before callback.control. Set prescribed surface speeds
+        # before that assembly so transitions use the current command tick.
+        model = self.solver.mjw_model
         if self.beltids.shape[0]:
             wp.launch(belt_velocities, (model.geom_surfacevel.shape[0], self.beltids.shape[0]), inputs=[
                 self.tick, self.belts, self.beltids, self.beltside, self.local_y, model.geom_surfacevel], device=self.device)
@@ -312,4 +337,5 @@ class HarvestGPUController:
             d.contact.dim, d.contact.efc_address, d.contact.adhesion, d.efc.force,
             self.geom_body, self.body_fruit, self.allowed_release, self.attached,
             self.active_max, self.released_max, self.force_max, self.first_event], device=self.device)
-        wp.launch(advance_tick, 1, inputs=[self.tick], device=self.device)
+        wp.launch(finish_step, 1, inputs=[self.tick, d.solver_niter,
+            self.solver_niter_log], device=self.device)

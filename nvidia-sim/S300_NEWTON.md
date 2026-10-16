@@ -1,7 +1,21 @@
 # S300 농장 수확 · Newton 실행
 
-2026-10-16 서버 검증. 작업 브랜치는 `codex/s300-newton-20261016`이다.
-현재 권장 실행은 **Newton 1.7의 CPU MuJoCo 백엔드 + 별도 Isaac 실시간 화면**이다.
+2026-10-16 GPU 후속 검증은 `codex/s300-newton-gpu-20261016`에서 진행했다.
+실제 구성은 **Isaac 장면 표시 → Newton → MuJoCo Warp CUDA 물리**이며,
+전체 GUI/headless 상태 일치는 통과했다. 접촉 구간의 실시간 성능은 아직 미달성이다.
+최신 수치·실패 대조·실제 GPU 영상은 [GPU 결과 보고서](S300_NEWTON_GPU_RESULTS_KO.md)를 참조한다.
+
+```bash
+cd /root/farmily_tomato
+./nvidia-sim/run_s300_newton.sh gpu --gui
+```
+
+`--gui`를 생략하면 같은 GPU 물리를 화면 없이 실행한다. CPU fallback은 없다.
+원본의 농장 외형·활성 충돌 범위·1mm 관통 기준·분리 규칙을 유지한다.
+GPU 모드는 검증한 단일 환경 구성이다. 여러 환경 수확의 성능 검증은 아직 하지 않았다.
+
+아래는 출발 브랜치 `codex/s300-newton-20261016`의 **CPU 비교 실행** 설명이다.
+Newton 1.7의 CPU MuJoCo 백엔드 + 별도 Isaac 실시간 화면을 사용한다.
 동등성을 확인한 최적화 구성에서 기존 수확 동작82.795초를 화면 없이61.994초,
 화면을 켜서63.476초에 실행했다. 각각 실시간의 **1.336배 /1.304배**다.
 초기 로딩·GUI 준비·결과 압축 시간은 별도다.
@@ -124,10 +138,10 @@ MJB 크기는 1,150,100,042→595,926,694바이트다. 준비 중 물리 적분�
 | 기본 `--backend cpu` | Newton `SolverMuJoCo.step`을 통한 native MuJoCo CPU | 별도 Isaac 프로세스가 실제 측정 자세 표시 |
 | `--backend gpu` | Newton `SolverMuJoCo.step`을 통한 MuJoCo Warp CUDA | 같은 실제 측정 자세 표시 방식 |
 
-**기본 실행을 GPU Newton 성능이라고 설명하면 안 된다.** 실시간을 통과한 현재 권장안은
-Newton 프레임워크의 CPU 백엔드다. GPU 백엔드도 실제 Newton/MuJoCo Warp로 실행했지만,
-단일 환경의 전체 300Hz 실행은 약 0.356배속이었다. GPU 병렬 환경 수별 성능·유효성은
-별도 결과로 판단한다. 1개 환경에서 느린 계산을 환경 수만 곱해 빠르다고 표시하지 않는다.
+**`run`의 기본 CPU 실행을 GPU Newton 성능이라고 설명하면 안 된다.**
+최신 GPU 구성은 별도 `gpu` 명령이며, 예전300Hz 진단과 구분한다.
+GPU 병렬 환경 수별 성능·유효성은 별도 결과로 판단한다.
+1개 환경에서 느린 계산을 환경 수만 곱해 빠르다고 표시하지 않는다.
 
 물리 실행 프로세스는 Kit를 import하지 않는다. 단일 소유자가 정해진 순서로
 명령 적용 → 접촉 계산 → 실제 적분 → 분리·물리 검사 → 상태 기록을 수행한다.
@@ -223,11 +237,12 @@ GUI 비교는 초기 포함 13,807개 상태 표본, 13,806개 실제 물리 스
 명목 계획 영상이나 두 번째 물리 실행이 아니다. 동영상의1배속과 실제 물리 계산의 실시간 배율은 별개다.
 동영상 생성 시간도 물리 처리 시간에 포함하지 않는다.
 
-GPU는 진단 전용이다. 재검증에서 단일 환경이 활성1mm 기준으로 중단되어
-8/32환경 수확 성능은 확인하지 않았다. 진단을 재실행하는 경우에는 CPU 전용 최적화를 해제한다.
+GPU 후속 결과는 [GPU 결과 보고서](S300_NEWTON_GPU_RESULTS_KO.md)에 따로 보존한다.
+전체 물리·GUI 일치를 확보했으나 접촉 구간의 실시간 조건을 충족하지 못해
+8/32환경 수확 처리량으로 확장하지 않았다.
 
 ```bash
-./nvidia-sim/run_s300_newton.sh run --backend gpu --no-native-observables-only --worlds 1
+./nvidia-sim/run_s300_newton.sh gpu --gui
 ```
 
 GPU는 최초 kernel compile과 메모리 준비가 필요하다.

@@ -2,11 +2,14 @@
 
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 import mujoco
 import newton
 import numpy as np
+import warp as wp
 
 from newton_mjcf import SourceModelSolverMuJoCo, create_newton_mjcf, model_array_digest
 
@@ -166,6 +169,71 @@ class TestNewtonMJCF(unittest.TestCase):
         run.solver.update_data_interval = 1
         with self.assertRaisesRegex(RuntimeError, "update_data_interval=0"):
             run.solver._update_newton_state(run.model, run.state_1, run.solver.mj_data, run.state_0)
+
+    def test_native_callback_control_is_opt_in_and_rejects_cpu_backend(self):
+        run = self.create()
+        self.assertFalse(run.evidence["native_control_callback"])
+        self.assertFalse(run.evidence["native_control_callback_writes_every_actuator"])
+        run.control.mujoco.ctrl.assign(np.asarray([.025], dtype=np.float32))
+        run.solver._apply_mjc_control(run.model, run.state_0, run.control, run.solver.mj_data)
+        np.testing.assert_array_equal(run.solver.mj_data.ctrl, np.asarray([.025], dtype=np.float32))
+        with self.assertRaisesRegex(ValueError, "requires the MuJoCo Warp GPU backend"):
+            self.create(native_control_callback=True)
+
+    def test_native_callback_control_skips_metadata_copy_with_explicit_owner(self):
+        # These ownership checks use CPU data and a fake GPU callback container;
+        # the test does not initialize or launch a CUDA workload.
+        run = self.create()
+        run.solver.mj_data.ctrl[:] = -.015
+        callback_model = SimpleNamespace(callback=SimpleNamespace(control=lambda m, d: None),
+                                         opt=SimpleNamespace(disableflags=0))
+        unreadable_metadata = SimpleNamespace()
+        with mock.patch.object(run.solver, "native_control_callback", True), \
+             mock.patch.object(run.solver, "use_mujoco_cpu", False), \
+             mock.patch.object(run.solver, "mjw_model", callback_model):
+            run.solver._apply_mjc_control(run.model, run.state_0, unreadable_metadata,
+                                          run.solver.mj_data)
+            np.testing.assert_array_equal(run.solver.mj_data.ctrl, [-.015])
+
+    def test_native_callback_control_guard_runs_before_physics(self):
+        run = self.create()
+        initial_time = float(run.solver.mj_data.time)
+        callback_model = SimpleNamespace(callback=SimpleNamespace(control=None),
+                                         opt=SimpleNamespace(disableflags=0))
+        with mock.patch.object(run.solver, "native_control_callback", True), \
+             mock.patch.object(run.solver, "use_mujoco_cpu", False), \
+             mock.patch.object(run.solver, "mjw_model", callback_model):
+            with self.assertRaisesRegex(RuntimeError, "installed control callback"):
+                run.step(run.solver.mj_model.opt.timestep)
+            self.assertEqual(float(run.solver.mj_data.time), initial_time)
+            callback_model.callback.control = lambda m, d: None
+            callback_model.opt.disableflags = int(mujoco.mjtDisableBit.mjDSBL_ACTUATION)
+            with self.assertRaisesRegex(RuntimeError, "ACTUATION is disabled"):
+                run.step(run.solver.mj_model.opt.timestep)
+            self.assertEqual(float(run.solver.mj_data.time), initial_time)
+
+    def test_deterministic_mode_is_explicit_enum_and_preserves_source_model(self):
+        ordinary = self.create()
+        deterministic = self.create(deterministic=wp.DeterministicMode.RUN_TO_RUN)
+        self.assertEqual(ordinary.evidence["deterministic_mode"], "NOT_GUARANTEED")
+        self.assertEqual(deterministic.evidence["deterministic_mode"], "RUN_TO_RUN")
+        self.assertEqual(ordinary.evidence["source_model_array_sha256"],
+                         deterministic.evidence["source_model_array_sha256"])
+        self.assertIs(SourceModelSolverMuJoCo.step, newton.solvers.SolverMuJoCo.step)
+        with self.assertRaisesRegex(ValueError, "warp.DeterministicMode enum"):
+            self.create(deterministic=True)
+
+    def test_deterministic_gpu_compilation_restores_dynamic_record_bound(self):
+        run = self.create(deterministic=wp.DeterministicMode.RUN_TO_RUN)
+        # No GPU work: the bound is a host-side function of the source topology
+        # and allocated constraint capacity. Both compiler hooks are mocked.
+        with mock.patch.object(run.solver, "mjw_data", SimpleNamespace(njmax=31)), \
+             mock.patch.object(run.solver, "_set_mujoco_warp_module_options") as options, \
+             mock.patch.object(run.solver, "_prepare_generated_kernels") as generated:
+            run.solver._configure_native_gpu_compilation()
+            self.assertEqual(run.solver._deterministic_max_records, 31)
+            options.assert_called_once_with()
+            generated.assert_called_once_with()
 
 
 if __name__ == "__main__":

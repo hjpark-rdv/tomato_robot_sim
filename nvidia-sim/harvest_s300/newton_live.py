@@ -61,8 +61,63 @@ def process_is_running(pid):
         return False
 
 
+def camera_test_position(base_position, right, up, elapsed_wall_s):
+    """Small display-camera motion, independent of simulation state/time."""
+    base, right, up = (np.asarray(v, dtype=float) for v in (base_position, right, up))
+    if any(v.shape != (3,) or not np.isfinite(v).all() for v in (base, right, up)):
+        raise ValueError('Camera test needs finite xyz vectors')
+    if (not math.isfinite(elapsed_wall_s) or elapsed_wall_s < 0
+            or np.linalg.norm(right) < 1e-12 or np.linalg.norm(up) < 1e-12):
+        raise ValueError('Camera test elapsed time/basis is invalid')
+    phase = 2. * math.pi * elapsed_wall_s / 6.
+    return (base + .15 * math.sin(phase) * right / np.linalg.norm(right)
+            + .08 * math.sin(.7 * phase) * up / np.linalg.norm(up))
+
+
+class CameraMotionEvidence:
+    """Record actual post-render camera positions; never touch physics data."""
+    def __init__(self, camera_path, base_position):
+        self.camera_path = str(camera_path)
+        self.base = np.asarray(base_position, dtype=float).copy()
+        if not self.camera_path.startswith('/') or self.base.shape != (3,) or not np.isfinite(self.base).all():
+            raise ValueError('Camera evidence needs an absolute USD path and finite position')
+        self.samples = []
+        self.movement_count = 0
+        self.maximum_displacement_m = 0.
+
+    def record(self, actual_position, *, render_update, elapsed_wall_s,
+               measured_time_s, timeline_time_s, physics_steps=0):
+        if physics_steps != 0 or timeline_time_s != 0.:
+            raise RuntimeError('Camera-motion evidence requires zero display physics steps and stopped timeline')
+        position = np.asarray(actual_position, dtype=float)
+        if (position.shape != (3,) or not np.isfinite(position).all()
+                or not math.isfinite(elapsed_wall_s) or elapsed_wall_s < 0
+                or not math.isfinite(measured_time_s) or measured_time_s < 0
+                or render_update <= 0
+                or (self.samples and render_update <= self.samples[-1]['render_update'])):
+            raise ValueError('Camera observation must follow a new completed render update')
+        previous = np.asarray(self.samples[-1]['world_position_m']) if self.samples else self.base
+        if np.linalg.norm(position - previous) > 1e-9:
+            self.movement_count += 1
+        self.maximum_displacement_m = max(self.maximum_displacement_m,
+                                         float(np.linalg.norm(position - self.base)))
+        self.samples.append(dict(render_update=int(render_update), elapsed_wall_s=float(elapsed_wall_s),
+            measured_time_s=float(measured_time_s), world_position_m=position.tolist(),
+            physics_steps=0, timeline_time_s=0.))
+
+    def summary(self):
+        return dict(enabled=True, camera_path=self.camera_path,
+            source='Actual USD camera world transform after completed render update',
+            edit_layer='isolated display USD session layer',
+            sample_count=len(self.samples), movement_count=self.movement_count,
+            initial_world_position_m=self.base.tolist(),
+            last_world_position_m=None if not self.samples else self.samples[-1]['world_position_m'],
+            maximum_displacement_m=self.maximum_displacement_m,
+            physics_steps=0, timeline_time_s=0.)
+
+
 def write_display_ack(output, snapshot, *, displayed_count, render_updates,
-                      timeline_time_s, physics_steps=0, pid=None):
+                      timeline_time_s, physics_steps=0, pid=None, camera_motion=None):
     """Acknowledge a new measured pose only after its app/render update returned.
 
     Called by the isolated viewer, never the producer. This records the
@@ -86,6 +141,11 @@ def write_display_ack(output, snapshot, *, displayed_count, render_updates,
         physics_steps=0, timeline_time_s=0., render_update_completed=True,
         pose_sha256=hashlib.sha256(poses.astype('<f8').tobytes()).hexdigest(),
         acknowledged_monotonic_s=time.monotonic())
+    if camera_motion is not None:
+        if (camera_motion.get('physics_steps') != 0 or camera_motion.get('timeline_time_s') != 0.
+                or camera_motion.get('enabled') is not True):
+            raise RuntimeError('Camera-motion acknowledgement lacks stopped-physics proof')
+        acknowledgement['camera_test_motion'] = dict(camera_motion)
     output = Path(output)
     # A distinct temporary path prevents another review viewer from corrupting
     # this tiny file. Consumers also verify the actual launched viewer PID.
@@ -324,9 +384,11 @@ class NewtonViewerProcess:
     """
     def __init__(self, trial, *, isaac_python='/root/isaac-sim-6.1.0/python.sh',
                  display=':0', fps=15., seconds=0., camera='entry', capture=None,
-                 viewer_script=None, extra_env=None, review_light=True):
+                 viewer_script=None, extra_env=None, review_light=True, camera_test_motion=False):
         if not math.isfinite(fps) or not 0 < fps <= 60 or not math.isfinite(seconds) or seconds < 0:
             raise ValueError('Viewer FPS/seconds are invalid')
+        if not isinstance(camera_test_motion, bool):
+            raise ValueError('camera_test_motion must be bool')
         self.trial = Path(trial).resolve()
         if not (self.trial / 'live.json').is_file():
             raise FileNotFoundError('Publish an initial measured frame before launching its viewer')
@@ -354,6 +416,8 @@ class NewtonViewerProcess:
             command.extend(['--capture', str(capture)])
         if review_light:
             command.append('--review-light')
+        if camera_test_motion:
+            command.append('--camera-test-motion')
         environment = os.environ.copy()
         environment.update(extra_env or {})
         environment.update(DISPLAY=str(display), OMNI_KIT_ALLOW_ROOT='1')
@@ -363,7 +427,7 @@ class NewtonViewerProcess:
         self.report = dict(schema='s300-newton-viewer-process-v1', command=command,
             display=str(display), viewer_owns_physics=False, producer_owns_physics=True,
             readiness_timeout_is_bounded=True, log=str(self.log), ready=False,
-            display_review_fill_light=bool(review_light))
+            display_review_fill_light=bool(review_light), camera_test_motion_requested=camera_test_motion)
         with self.log.open('x') as stream:
             self.process = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT,
                 env=environment, start_new_session=True)
@@ -452,10 +516,25 @@ class NewtonViewerProcess:
                     last_ack = acknowledgement
                     if (acknowledgement['last_sim_time_s'] >= stamp
                             and (minimum_sequence is None or acknowledgement['sequence'] >= minimum_sequence)):
-                        self.report.update(final_display_ack=acknowledgement,
-                                           requested_display_time_s=stamp)
-                        _write_json(self.report_path, self.report)
-                        return acknowledgement
+                        motion_ready = True
+                        if self.report.get('camera_test_motion_requested'):
+                            motion = acknowledgement.get('camera_test_motion') or {}
+                            if (motion.get('enabled') is not True
+                                    or motion.get('physics_steps') != 0
+                                    or motion.get('timeline_time_s') != 0.):
+                                self.report['display_error'] = 'viewer_camera_motion_proof_missing'
+                                _write_json(self.report_path, self.report)
+                                raise RuntimeError('Requested camera test lacks stopped-physics camera evidence')
+                            # A camera setup flag or one sampled position alone
+                            # is not proof that it actually moved after rendering.
+                            motion_ready = (motion.get('sample_count', 0) >= 2
+                                and motion.get('movement_count', 0) >= 1
+                                and motion.get('maximum_displacement_m', 0.) > 0.)
+                        if motion_ready:
+                            self.report.update(final_display_ack=acknowledgement,
+                                               requested_display_time_s=stamp)
+                            _write_json(self.report_path, self.report)
+                            return acknowledgement
             code = self.process.poll()
             if code is not None:
                 self.report.update(display_error='viewer_exited_before_requested_frame',

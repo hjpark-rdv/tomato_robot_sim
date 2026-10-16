@@ -155,12 +155,14 @@ def _coverage(run, timestamp_tolerance=1e-9):
             metric_lengths[key] = bool(value is not None and value.ndim >= 2 and
                                        value.shape[0] == worlds and value.shape[1] == actual)
     metrics_complete = all(metric_lengths.values())
-    full = bool(valid_metadata and actual == requested and summary.get("status") == "completed"
+    full_schedule_requested = bool(valid_schedule and requested == len(dt))
+    full = bool(valid_metadata and full_schedule_requested and actual == requested and summary.get("status") == "completed"
                 and summary.get("stop") is None and stride == 1 and complete_time
                 and arrays_complete and metrics_complete and commands_follow_schedule
                 and summary.get("unrecorded_warmup_steps") == 0
                 and run["states_sha_matches_summary"] and not run["errors"])
     return dict(passed=full, requested_steps=requested, actual_steps=actual,
+        full_command_schedule_requested=full_schedule_requested,
         status=summary.get("status"), stop=summary.get("stop"), record_stride=stride,
         recorded_every_physics_step=stride == 1, starts_at_zero=bool(len(time) and time[0] == 0),
         samples=len(time), exact_expected_timestamps=bool(same_time_shape and np.array_equal(time, expected)),
@@ -245,7 +247,11 @@ def compare_runs(baseline, candidate, tolerances=None):
                            np.all(np.linalg.norm(a[..., 3:], axis=-1) > 1e-12) and
                            np.all(np.linalg.norm(b[..., 3:], axis=-1) > 1e-12))
             position = maximum(np.linalg.norm(a[..., :3] - b[..., :3], axis=-1))
-            angle = maximum(quaternion_angle(a[..., 3:], b[..., 3:])) if finite else None
+            # Identical stored float32 quaternions denote exactly the same
+            # orientation. Renormalizing/dotting them can round below one and
+            # fabricate a nonzero angle, even when every saved bit agrees.
+            angle = (0. if np.array_equal(a[..., 3:], b[..., 3:]) else
+                maximum(quaternion_angle(a[..., 3:].astype(float), b[..., 3:].astype(float)))) if finite else None
             passed = bool(finite and position <= limits["position_m"] and angle <= limits["rotation_rad"])
             pose_metrics = dict(available=True, passed=passed, maximum_position_error_m=position,
                                 maximum_orientation_error_rad=angle, all_values_finite=finite)
@@ -268,6 +274,12 @@ def compare_runs(baseline, candidate, tolerances=None):
         a = ref["summary"].get("engine", {}).get(key)
         b = new["summary"].get("engine", {}).get(key)
         settings["engine." + key] = dict(reference=a, actual=b, matches=a is not None and a == b)
+    for key in ('effective_gpu_options','gpu_linear_algebra','gpu_sparse_factor',
+                'gpu_tree_sums','gpu_canonical_contacts','gpu_dense_hessian',
+                'gpu_fixed_solver_reductions'):
+        if key in ref['summary'] or key in new['summary']:
+            a,b=ref['summary'].get(key),new['summary'].get(key)
+            settings[key]=dict(matches=a is not None and a==b)
     breaks_match = ref["breaks"] is not None and ref["breaks"] == new["breaks"]
     trace_matches = bool(paths_match and all(row["passed"] for row in arrays.values()) and
                          all(row["passed"] for row in metrics.values()) and breaks_match)
@@ -276,11 +288,20 @@ def compare_runs(baseline, candidate, tolerances=None):
     gui = dict(reference=_gui_evidence(ref), actual=_gui_evidence(new))
     gui_pair = bool(ref["summary"].get("gui_requested") != new["summary"].get("gui_requested")
                     and any(run["summary"].get("gui_requested") for run in (ref, new)))
-    passed = bool(full_trace and all(row["passed"] for row in gui.values()))
+    validity={}
+    for label,run in (('reference',ref),('actual',new)):
+        flags={key:run['summary'].get(key) is True for key in
+            ('active_contact_criterion_passed','finite_recorded_state','solver_capacity_valid','qacc_finite')}
+        pen=run['summary'].get('max_active_penetration_m')
+        flags['active_penetration_within_existing_1mm']=bool(isinstance(pen,(int,float)) and np.isfinite(pen) and 0<=pen<=.001)
+        validity[label]=dict(passed=all(flags.values()),checks=flags)
+    passed = bool(full_trace and all(row["passed"] for row in gui.values())
+        and all(row['passed'] for row in validity.values()))
     return json_safe(dict(schema="s300-newton-full-trace-comparison-v1", baseline=str(baseline),
         candidate=str(candidate), passed=passed, full_requested_physics_trace_matches=full_trace,
         recorded_evidence_matches=trace_matches, gui_headless_pair=gui_pair,
         gui_physics_equivalence_verified=bool(passed and gui_pair), coverage=coverage,
+        physical_validity=validity,
         settings=settings, body_path_order_matches=paths_match, state_arrays=arrays,
         pose_metrics=pose_metrics, physics_metrics=metrics, break_events_exact=breaks_match,
         gui_evidence=gui, numeric_tolerances=limits,

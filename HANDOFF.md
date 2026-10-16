@@ -1,5 +1,31 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-16: 실제 Newton GPU 실행·전체 GUI 일치 확보, 접촉 속도 미달성
+
+- 브랜치 `codex/s300-newton-gpu-20261016`, 출발 `f1941f5`. 기존 CPU 결과와 사용자 미커밋
+  gripper-design 자산은 보존했다. 이번 물리는 **Newton → MuJoCo Warp CUDA**이며,
+  별도 Isaac 프로세스가 전체 농장과 실제 측정 상태를 표시한다. CPU fallback은 없다.
+- 같은 132바디/385DOF/활성901geom/10열매 입력과 명령, 접촉400Hz/이동60Hz,
+  활성 관통1mm·3N/.008Nm 분리·분리 열매 접촉 예외·타깃 송이/자기 주줄기 충돌 정책 유지.
+  CUDA graph, cuSOLVER32 factor, 고정 순서 tree/contact/force reduction, 동등한 Hessian 행렬곱을 적용했다.
+- 최종 headless/실제 카메라 이동 GUI를 각각 새 초기화해 전체13,806step+초기 상태 비교:
+  q/v·body pose·명령·접촉·힘·분리 이벤트 **bit-exact**. 각6열매 분리, 활성 최대.794207mm.
+  저장 영상 재생을 GUI/headless 검증으로 대신하지 않았다. `harvest_success=null`, `training_eligible=false`.
+- 속도: 82.793sim초를 headless83.983초(**.986×**), GUI95.780초(**.864×**).
+  headless 닫기.333×/재닫기.420×/벨트 끝.244×로 **실시간 목표 미달성**.
+  단일 환경 속도 조건 미충족이므로 실제 N환경 수확 확장은 하지 않았다. N4 행렬 대조 시험은 수확 성능이 아니다.
+- 모델 한 번 로딩5.259초, 반복 로딩0초. 두 번째 reset.978초, 첫 reset.010초.
+  초기 setup과 physics loop는 분리했지만 JIT만의 독립 시간은 미측정이다. 미기록 물리 warmup은0step.
+- 실행: `./nvidia-sim/run_s300_newton.sh gpu --gui` (화면 없이 실행은 `--gui` 생략).
+  한 프로세스 반복/GUI 대조: `gpu --repeats 2 --gui-repeat-index 1 --camera-test-motion`.
+  CPU 비교 모드 `run`은 보존한다. 기존 CPU 결과를 GPU 목표 달성으로 사용하지 않는다.
+- 보고서 [S300_NEWTON_GPU_RESULTS_KO.md](nvidia-sim/S300_NEWTON_GPU_RESULTS_KO.md),
+  작은 검증 자료 [s300_newton_gpu_recovery.json](nvidia-sim/validation/s300_newton_gpu_recovery.json).
+  원자료·로그·실제 상태 영상: `/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_recovery/`.
+  최종 대표 `repro_fixed_reductions_session400`, 이전 재현성 통과 `repro_dense_hessian_session400`.
+- Float32 합산 순서를 바꾸면 유효한 실행끼리도5/6개 분리 차이가 있다. CPU와 GPU trajectory 동일성이나
+  PhysX와의 동일성을 주장하지 않는다. pinned backend/GPU의 GUI 대조 결과다. 전체10열매·포집 성공 미검증.
+
 ## 2026-10-16: S300 Newton 단일 실행·GUI 일치·CPU 병렬 검증
 
 - 브랜치 `codex/s300-newton-20261016`. Isaac 원본 `ca3a716`과 기존 결과 보존,

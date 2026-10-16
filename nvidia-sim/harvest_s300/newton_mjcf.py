@@ -23,6 +23,7 @@ import mujoco
 import newton
 import numpy as np
 import warp as wp
+from newton._src.solvers.mujoco.solver_mujoco import _mujoco_warp_deterministic_max_records
 
 
 @wp.kernel(enable_backward=False)
@@ -99,8 +100,15 @@ class SourceModelSolverMuJoCo(newton.solvers.SolverMuJoCo):
     """Preserve source MJCF while using Newton's actual SolverMuJoCo.step."""
 
     def __init__(self, model, source_model, *, nconmax=512, njmax=2048,
-                 njmax_nnz=None, use_mujoco_cpu=False, native_observables_only=False):
+                 njmax_nnz=None, use_mujoco_cpu=False, native_observables_only=False,
+                 native_control_callback=False,
+                 deterministic=wp.DeterministicMode.NOT_GUARANTEED):
         self.native_observables_only = bool(native_observables_only)
+        self.native_control_callback = bool(native_control_callback)
+        if not isinstance(deterministic, wp.DeterministicMode):
+            raise ValueError("deterministic must be a warp.DeterministicMode enum value")
+        if self.native_control_callback and use_mujoco_cpu:
+            raise ValueError("native_control_callback requires the MuJoCo Warp GPU backend")
         self.source_model = source_model
         self.source_array_digest = model_array_digest(source_model)
         if use_mujoco_cpu and model.world_count > 1:
@@ -108,7 +116,8 @@ class SourceModelSolverMuJoCo(newton.solvers.SolverMuJoCo):
         super().__init__(model, use_mujoco_cpu=use_mujoco_cpu,
                          use_mujoco_contacts=True, update_data_interval=0,
                          nconmax=nconmax, njmax=njmax, njmax_nnz=njmax_nnz,
-                         skip_visual_only_geoms=False, include_sites=True)
+                         skip_visual_only_geoms=False, include_sites=True,
+                         deterministic=deterministic)
         if model_array_digest(self.mj_model) != self.source_array_digest:
             raise RuntimeError("Source physical model changed during Newton initialization")
 
@@ -225,10 +234,25 @@ class SourceModelSolverMuJoCo(newton.solvers.SolverMuJoCo):
         self.nvmax = self.mjw_data.nvmax
         self._expand_option_fields(self.mjw_model, world_count)
         if not self.use_mujoco_cpu:
-            self._set_mujoco_warp_module_options()
-            self._prepare_generated_kernels()
+            self._configure_native_gpu_compilation()
+
+    def _configure_native_gpu_compilation(self):
+        # The source-model upload bypasses Newton's ordinary model conversion.
+        # Reproduce its model-derived atomic-record bound before compiling any
+        # deterministic generated kernels; zero is unsafe for dynamic loops.
+        if self._deterministic != wp.DeterministicMode.NOT_GUARANTEED:
+            self._deterministic_max_records = _mujoco_warp_deterministic_max_records(
+                self.mj_model, self.mjw_data)
+        self._set_mujoco_warp_module_options()
+        self._prepare_generated_kernels()
 
     def _apply_mjc_control(self, model, state, control, mj_data):
+        if self.native_control_callback:
+            # This explicit opt-in asserts that the installed callback writes
+            # every native actuator at MuJoCo's normal forward-control phase.
+            # Newton control metadata is therefore neither read nor copied.
+            self._validate_native_control_callback()
+            return
         # Native controller callbacks may overwrite these ten finite commands at
         # the normal forward-control phase; no effort gains are synthesized.
         if control is None:
@@ -245,9 +269,21 @@ class SourceModelSolverMuJoCo(newton.solvers.SolverMuJoCo):
     def _update_mjc_data(self, *args, **kwargs):
         raise RuntimeError("SourceModelSolverMuJoCo requires authoritative native data / update_data_interval=0")
 
+    def _validate_native_control_callback(self):
+        if not self.native_control_callback:
+            return
+        if self.use_mujoco_cpu:
+            raise RuntimeError("native_control_callback requires the MuJoCo Warp GPU backend")
+        callback = getattr(getattr(self.mjw_model, "callback", None), "control", None)
+        if not callable(callback):
+            raise RuntimeError("native_control_callback requires an installed control callback that writes every actuator")
+        if self.mjw_model.opt.disableflags & int(mujoco.mjtDisableBit.mjDSBL_ACTUATION):
+            raise RuntimeError("native_control_callback cannot run while ACTUATION is disabled")
+
     def validate_observables(self, observables, contacts=None):
         # The inherited public step calls this before any physics. Reject an
         # unsupported metadata request before advancing time, not at readback.
+        self._validate_native_control_callback()
         if self.native_observables_only:
             if self.update_data_interval != 0:
                 raise RuntimeError("native_observables_only requires authoritative native data / update_data_interval=0")
@@ -287,7 +323,9 @@ class SourceModelSolverMuJoCo(newton.solvers.SolverMuJoCo):
 
 def create_newton_mjcf(scene, *, device="cuda:0", world_count=1, nconmax=512,
                        njmax=2048, njmax_nnz=None, use_mujoco_cpu=False,
-                       source_model=None, configure_source=None, native_observables_only=False):
+                       source_model=None, configure_source=None, native_observables_only=False,
+                       native_control_callback=False,
+                       deterministic=wp.DeterministicMode.NOT_GUARANTEED):
     """Build Newton metadata and an unmodified source-model SolverMuJoCo.
 
     ``native_observables_only`` skips coordinate/FK/body-copy readback into the
@@ -295,6 +333,11 @@ def create_newton_mjcf(scene, *, device="cuda:0", world_count=1, nconmax=512,
     callers must read mapped native solver arrays and cannot request Newton
     observables. Native post-step kinematics and inherited solver integration
     remain unchanged.
+
+    ``native_control_callback`` explicitly asserts that a native GPU control
+    callback overwrites every actuator on every step. The caller must install
+    that callback before stepping. In this mode Newton control metadata is not
+    copied into native data; callback presence is checked before integration.
     """
     scene = Path(scene).resolve(strict=True)
     if not isinstance(world_count, int) or world_count <= 0:
@@ -319,7 +362,9 @@ def create_newton_mjcf(scene, *, device="cuda:0", world_count=1, nconmax=512,
         model = builder.finalize(device=device)
         solver = SourceModelSolverMuJoCo(model, source, nconmax=nconmax, njmax=njmax,
                                          njmax_nnz=njmax_nnz, use_mujoco_cpu=use_mujoco_cpu,
-                                         native_observables_only=native_observables_only)
+                                         native_observables_only=native_observables_only,
+                                         native_control_callback=native_control_callback,
+                                         deterministic=deterministic)
         state_0, state_1 = model.state(), model.state()
         control = model.control()
         solver._update_newton_state(model, state_0,
@@ -333,6 +378,10 @@ def create_newton_mjcf(scene, *, device="cuda:0", world_count=1, nconmax=512,
                 "backend": "native_mujoco_cpu" if use_mujoco_cpu else "mujoco_warp_cuda",
                 "world_count": world_count, "native_data_authoritative": True,
                 "native_observables_only": bool(native_observables_only),
+                "native_control_callback": bool(native_control_callback),
+                "native_control_callback_writes_every_actuator": bool(native_control_callback),
+                "deterministic_mode": solver._deterministic.name,
+                "deterministic_max_records": int(solver._deterministic_max_records),
                 "newton_state_metadata_current": not bool(native_observables_only),
                 "native_kinematics_refreshed_after_each_step": True,
                 "source_fields_preserved": True, "metadata_mesh_shapes_omitted": True,

@@ -10,10 +10,13 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
   printf '%s\n' \
     'Usage: run_s300_newton.sh prepare [MODEL OUTPUT] [prepare options]' \
     '       run_s300_newton.sh run [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
+    '       run_s300_newton.sh gpu [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh check' \
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
-    'GPU backend is diagnostic: single-world physics validity has not passed repeat validation.' \
+    'gpu runs actual CUDA physics: cuSOLVER32, fixed tree/contact/force order, dense Hessian, 400/60 Hz, capacities128/256.' \
+    'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
+    'GPU single-world full GUI/headless equivalence passed; contact-phase realtime remains below target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
     'Defaults can be overridden with S300_NEWTON_MODEL, S300_NEWTON_INPUTS, S300_NEWTON_OUTPUT.'
   exit 0
@@ -35,9 +38,21 @@ case "$mode" in
     exec env -u PYTHONPATH "$python" -u "$scripts/newton_inputs.py" \
       "$model_dir" "$output_dir" --hz 300 "$@"
     ;;
-  run)
+  run|gpu)
     input_dir="${S300_NEWTON_INPUTS:-$data_dir/20261016_s300_newton/inputs_render_separated}"
-    output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_harvest}"
+    if [[ "$mode" == 'gpu' ]]; then
+      output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_gpu}"
+      runner_options=(--backend gpu --native-observables-only --native-control-callback
+        --linear-algebra cusolver32 --hz 400 --free-hz 60
+        --inertia-linear-algebra cusolver32 --tree-sums flat --canonical-contacts
+        --deterministic RUN_TO_RUN --deterministic-scope constraints --dense-hessian
+        --fixed-solver-reductions
+        --nconmax 128 --njmax 256 --viewer-fps 15)
+      printf '%s\n' 'Newton GPU: actual CUDA physics, verified single-world GUI equivalence; contact-phase realtime target is not met.' >&2
+    else
+      output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_harvest}"
+      runner_options=(--backend cpu --hz 400 --free-hz 60 --viewer-fps 15 --native-observables-only)
+    fi
     if (($#)) && [[ "$1" != -* ]]; then input_dir="$1"; shift; fi
     if [[ ! -f "$input_dir/inputs.json" ]]; then
       printf 'Prepared inputs missing: %s/inputs.json\nUse the prepare command first.\n' "$input_dir" >&2
@@ -45,7 +60,7 @@ case "$mode" in
     fi
     export DISPLAY="${S300_NEWTON_DISPLAY:-:0}"
     exec env -u PYTHONPATH "$python" -u "$scripts/run_newton_harvest.py" \
-      "$input_dir" --output "$output_dir" --backend cpu --hz 400 --free-hz 60 --viewer-fps 15 --native-observables-only "$@"
+      "$input_dir" --output "$output_dir" "${runner_options[@]}" "$@"
     ;;
   *)
     printf 'Unknown mode: %s\nUse %s --help.\n' "$mode" "$0" >&2

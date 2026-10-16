@@ -10,6 +10,7 @@ p=argparse.ArgumentParser();p.add_argument('assembly',type=Path);p.add_argument(
 p.add_argument('--fps',type=int,default=15);p.add_argument('--speed',type=float,default=2.)
 p.add_argument('--camera',default='/World/HarvestCloseCamera',help='USD camera path, motion, entry, jaw, mouth, belt_contact, grip_front, truss, truss_top or leaf_pulse')
 p.add_argument('--name',default='actual_motion',help='New output basename, never overwrites a video')
+p.add_argument('--frames-dir',type=Path,help='New directory for temporary PNG frames, e.g. on /dev/shm; MP4 and evidence still go to the trial folder')
 p.add_argument('--review-light',action='store_true',help='Add replay-only fill light for contact inspection')
 p.add_argument('--contact-cutaway',action='store_true',help='Replay inspection only: hide background plants and active leaf visuals, record exact paths; source physics and saved poses unchanged')
 p.add_argument('--start-time',type=float,help='Replay-only clip start in recorded simulation seconds')
@@ -23,7 +24,8 @@ if a.camera_eye is not None:
     if not all(math.isfinite(x) for x in a.camera_eye+a.camera_target) or a.camera_eye==a.camera_target:
         p.error('Finite distinct camera position and target required')
 if not a.name.replace('_','').isalnum():p.error('name must be an alphanumeric basename')
-output=a.trial/(a.name+'_frames');output.mkdir(exist_ok=False)
+output=a.frames_dir if a.frames_dir is not None else a.trial/(a.name+'_frames')
+output=output.resolve();output.mkdir(exist_ok=False)
 if (a.trial/(a.name+'.mp4')).exists():raise FileExistsError(a.trial/(a.name+'.mp4'))
 from isaacsim import SimulationApp
 app=SimulationApp({'headless':True,'width':960,'height':720,'renderer':'RaytracedLighting'})
@@ -189,7 +191,9 @@ try:
         while not png.exists() or png.read_bytes()[-12:]!=b'\x00\x00\x00\x00IEND\xaeB`\x82':
             if time.monotonic()>deadline:raise RuntimeError('PNG write incomplete: '+str(png))
             app.update()
-        label=f"Actual physics | t={stamps[tick]:.3f}s | {data['phase'][tick]}"
+        actual_label='Actual Newton GPU physics' if (summary.get('backend')=='gpu' and
+            summary.get('physics_engine')=='Newton SolverMuJoCo') else 'Actual physics'
+        label=f"{actual_label} | t={stamps[tick]:.3f}s | {data['phase'][tick]}"
         broken={e['joint'] for e in breaks if e['joint'] in fruit_joints and e['t']<=stamps[tick]}
         label+=f' | fruit joints broken: {len(broken)}'
         if summary.get('truss_sequence'):
@@ -221,7 +225,7 @@ try:
     if int(probe['streams'][0]['nb_read_frames'])!=len(selection):raise RuntimeError('Encoded frame count mismatch')
     if timeline.get_current_time()!=0.:raise RuntimeError('Replay display advanced physical time')
     (a.trial/(a.name+'_render.json')).write_text(json.dumps(dict(source='stored measured physical body transforms',
-        frames=len(selection),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
+        frames=len(selection),frames_directory=str(output),fps=a.fps,speed=a.speed,render_ticks=selection.tolist(),camera=a.camera,
         physics_rerun=False,replay_only_fill_light=a.review_light,subtitle_style=subtitle_style,
         replay_camera_eye=a.camera_eye,replay_camera_target=a.camera_target,
         requested_clip_start_s=a.start_time,requested_clip_end_s=a.end_time,
