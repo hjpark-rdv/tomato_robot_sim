@@ -1,0 +1,3416 @@
+{
+  "schema": "s300-gripper-independent-evidence-v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "variants": [
+    {
+      "mode": "buried_gripper_convex_colliders",
+      "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+      "collision_decomposition_changed": true,
+      "exterior_union_unchanged": true,
+      "physical_model_changed": true,
+      "exact_trajectory_equivalence_claimed": false,
+      "original_nv": 385,
+      "variant_nv": 385,
+      "source_ngeom": 901,
+      "variant_ngeom": 786,
+      "source_nmesh": 810,
+      "variant_nmesh": 695,
+      "retained_body_mass_inertia_joints": true,
+      "belt_surface_geometry_unchanged": true,
+      "initial_body_transforms_bit_exact": true,
+      "training_eligible": false,
+      "harvest_success": null,
+      "input": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_buried_1mm",
+      "inputs_sha256": "5e5b99f89063721d7b53d204093c38d0188b7e9003a3b16427effecd5b7ba7b7",
+      "mjb_sha256": "93f78027d1de5f3a291a4dcb60dfec6f536bf443882aa2b27a1c78819da1a2ed",
+      "invariant_checks": 24121,
+      "invariants_passed": true,
+      "containment": {
+        "schema": "s300-gripper-buried-collider-proof-v1",
+        "minimum_clearance_m": 0.001,
+        "selected_tool_bodies": [
+          "Tool_fixed",
+          "Tool_L",
+          "Tool_R"
+        ],
+        "selected_source_mesh_colliders": 333,
+        "removed_colliders": 115,
+        "retained_tool_mesh_colliders": 218,
+        "exterior_union_unchanged": true,
+        "protected_belt_colliders": true,
+        "proof": "Each removed complete convex hull lies strictly inside one retained hull on the same body with identical contact parameters; all removed vertices satisfy every normalized containing halfspace. Convexity and shared rigid transform extend containment to every point and pose.",
+        "caveat": "Contact manifolds and force contributions can differ during deep interpenetration even though the occupied exterior union is unchanged."
+      }
+    },
+    {
+      "mode": "buried_gripper_convex_colliders",
+      "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+      "collision_decomposition_changed": true,
+      "exterior_union_unchanged": true,
+      "physical_model_changed": true,
+      "exact_trajectory_equivalence_claimed": false,
+      "original_nv": 385,
+      "variant_nv": 385,
+      "source_ngeom": 901,
+      "variant_ngeom": 769,
+      "source_nmesh": 810,
+      "variant_nmesh": 678,
+      "retained_body_mass_inertia_joints": true,
+      "belt_surface_geometry_unchanged": true,
+      "initial_body_transforms_bit_exact": true,
+      "training_eligible": false,
+      "harvest_success": null,
+      "input": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_buried_1um",
+      "inputs_sha256": "d40b5f24dafbce128de82d4ce17c0e05425de0fb5491e99f2c922ece20a26f40",
+      "mjb_sha256": "d2d6dcc807b8d12867ee90c3eb3af8c15f179f0530ab28903abdcb25e6f3269f",
+      "invariant_checks": 23594,
+      "invariants_passed": true,
+      "containment": {
+        "schema": "s300-gripper-buried-collider-proof-v1",
+        "minimum_clearance_m": 1e-06,
+        "selected_tool_bodies": [
+          "Tool_fixed",
+          "Tool_L",
+          "Tool_R"
+        ],
+        "selected_source_mesh_colliders": 333,
+        "removed_colliders": 132,
+        "retained_tool_mesh_colliders": 201,
+        "exterior_union_unchanged": true,
+        "protected_belt_colliders": true,
+        "proof": "Each removed complete convex hull lies strictly inside one retained hull on the same body with identical contact parameters; all removed vertices satisfy every normalized containing halfspace. Convexity and shared rigid transform extend containment to every point and pose.",
+        "caveat": "Contact manifolds and force contributions can differ during deep interpenetration even though the occupied exterior union is unchanged."
+      }
+    },
+    {
+      "mode": "buried_gripper_convex_colliders",
+      "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+      "collision_decomposition_changed": true,
+      "exterior_union_unchanged": true,
+      "physical_model_changed": true,
+      "exact_trajectory_equivalence_claimed": false,
+      "original_nv": 385,
+      "variant_nv": 385,
+      "source_ngeom": 901,
+      "variant_ngeom": 901,
+      "source_nmesh": 810,
+      "variant_nmesh": 810,
+      "retained_body_mass_inertia_joints": true,
+      "source_active_geoms": 901,
+      "variant_active_geoms": 786,
+      "native_disabled_geom_storage_preserved": true,
+      "belt_surface_geometry_unchanged": true,
+      "initial_body_transforms_bit_exact": true,
+      "training_eligible": false,
+      "harvest_success": null,
+      "input": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_buried_1mm_stable_ids",
+      "inputs_sha256": "92bc8868b914a09e416a069d6586f150ff2d6d9d4706383d573ec3323ab4068b",
+      "mjb_sha256": "249fcf739017481d4ff4a0e9cb0265d8a2c5db18b6d8c8bdb836d407f56efb94",
+      "invariant_checks": 30135,
+      "invariants_passed": true,
+      "containment": {
+        "schema": "s300-gripper-buried-collider-proof-v1",
+        "minimum_clearance_m": 0.001,
+        "selected_tool_bodies": [
+          "Tool_fixed",
+          "Tool_L",
+          "Tool_R"
+        ],
+        "selected_source_mesh_colliders": 333,
+        "removed_colliders": 115,
+        "retained_tool_mesh_colliders": 218,
+        "exterior_union_unchanged": true,
+        "protected_belt_colliders": true,
+        "proof": "Each removed complete convex hull lies strictly inside one retained hull on the same body with identical contact parameters; all removed vertices satisfy every normalized containing halfspace. Convexity and shared rigid transform extend containment to every point and pose.",
+        "caveat": "Contact manifolds and force contributions can differ during deep interpenetration even though the occupied exterior union is unchanged."
+      }
+    },
+    {
+      "mode": "conservative_named_convex_proxy",
+      "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "physical_model_changed": true,
+      "collision_approximation_changed": true,
+      "exact_trajectory_equivalence_claimed": false,
+      "maximum_outward_error_m": 0.0001,
+      "preserves_original_convex_exterior": true,
+      "retained_all_body_masses": true,
+      "retained_all_collision_geometry": false,
+      "retained_all_nonfruit_collision_geometry": false,
+      "original_nv": 385,
+      "variant_nv": 385,
+      "source_vertices": 399,
+      "proxy_vertices": 377,
+      "initial_body_position_max_error_m": 0.0,
+      "initial_body_rotation_max_error": 0.0,
+      "limitations": [
+        "Selected collision exteriors are conservatively enlarged by the certified bound; contact timing/manifolds can change.",
+        "This is a changed collision representation requiring full physics/harvest qualification.",
+        "All other geometry, masses, inertias, joints, equality data, control and initial-state files are retained."
+      ],
+      "training_eligible": false,
+      "harvest_success": null,
+      "proxy_role": "gripper_outer_contact",
+      "selected_geom_names": [
+        "s300_g0606",
+        "s300_g0581",
+        "s300_g0620"
+      ],
+      "retained_all_unselected_collision_geometry": true,
+      "retained_all_fruit_collision_geometry": true,
+      "input": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_outer3_proxy01_weighted",
+      "inputs_sha256": "80da70e61b8a5bbc9fa0657baca293ac3697dd34a9eb2aa4a4842fce873cf327",
+      "mjb_sha256": "649e9bfa3a7c2a14e0bd4502d9253e2ce1f2e5cd224e3761d2fa01e7390f4201",
+      "invariant_checks": 7480,
+      "invariants_passed": true,
+      "colliders": [
+        {
+          "geom": "s300_g0581",
+          "geom_id": 219,
+          "body": "Tool_L",
+          "source_mesh": "s300_g0581",
+          "proxy_mesh": "s300_g0581_conservative_gripper_outer_contact_proxy",
+          "obj": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_outer3_proxy01_weighted/proxy_meshes/s300_g0581.obj",
+          "obj_sha256": "fdc7a760bbfedd9e976b8c002ffeadfdfc83451fb9c69a17762654a2cc4f0ff0",
+          "original_mesh_vertex_count": 3566,
+          "source_geometry_scope": "compiled_collision_graph",
+          "source_vertex_count": 82,
+          "source_collision_hull_vertices": 82,
+          "proxy_vertex_count": 81,
+          "support_budget": 4096,
+          "center_m": [
+            -3.256320260556006e-05,
+            -0.002137684657610385,
+            -0.04270791734864072
+          ],
+          "source_radius_m": 0.12804310561094767,
+          "scale_required": 1.0000700745857327,
+          "scale_applied": 1.0000727197469177,
+          "analytic_outward_bound_m": 9.31126223458358e-06,
+          "compile_reserve_m": 1e-07,
+          "maximum_outward_error_m": 0.0001,
+          "source_containment_max_signed_distance_m": -2.7491612735342646e-07,
+          "numerical_containment_guard_m": 1e-08,
+          "support_axis_weights": [
+            4.6680726480081285,
+            2.0108673793249094,
+            1.0
+          ],
+          "proof": "Allsourcevertices satisfy outerhull halfspaces; proxyvertices lie within(s-1)*R of selectedsourcehullvertices; convexity extends the bound to the entireproxy.",
+          "compiled_source_containment_max_signed_distance_m": -2.7469404953548576e-07,
+          "compiled_vertex_to_ideal_max_distance_m": 6.667047503203733e-09,
+          "compiled_outward_bound_m": 9.317929282086785e-06,
+          "source_enclosed": true,
+          "outward_bound_passed": true,
+          "compiled_proxy_vertices": 81
+        },
+        {
+          "geom": "s300_g0606",
+          "geom_id": 244,
+          "body": "Tool_L",
+          "source_mesh": "s300_g0606",
+          "proxy_mesh": "s300_g0606_conservative_gripper_outer_contact_proxy",
+          "obj": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_outer3_proxy01_weighted/proxy_meshes/s300_g0606.obj",
+          "obj_sha256": "286f6ac1c18ec98003e818faa45a033a6ab5e80e6c76774e221aeab8b674db92",
+          "original_mesh_vertex_count": 790,
+          "source_geometry_scope": "compiled_collision_graph",
+          "source_vertex_count": 237,
+          "source_collision_hull_vertices": 237,
+          "proxy_vertex_count": 216,
+          "support_budget": 1024,
+          "center_m": [
+            0.0006588106043636799,
+            9.498409612520838e-09,
+            -7.707212177420288e-11
+          ],
+          "source_radius_m": 0.017117245035507562,
+          "scale_required": 1.00297527066632,
+          "scale_applied": 1.0029802706660824,
+          "analytic_outward_bound_m": 5.101402326346809e-05,
+          "compile_reserve_m": 1e-07,
+          "maximum_outward_error_m": 0.0001,
+          "source_containment_max_signed_distance_m": -1.834017761444262e-08,
+          "numerical_containment_guard_m": 1e-08,
+          "support_axis_weights": [
+            2.915187647655005,
+            1.0000988365580454,
+            1.0
+          ],
+          "proof": "Allsourcevertices satisfy outerhull halfspaces; proxyvertices lie within(s-1)*R of selectedsourcehullvertices; convexity extends the bound to the entireproxy.",
+          "compiled_source_containment_max_signed_distance_m": -1.8285376985997803e-08,
+          "compiled_vertex_to_ideal_max_distance_m": 1.4673656705729097e-09,
+          "compiled_outward_bound_m": 5.101549062913867e-05,
+          "source_enclosed": true,
+          "outward_bound_passed": true,
+          "compiled_proxy_vertices": 216
+        },
+        {
+          "geom": "s300_g0620",
+          "geom_id": 258,
+          "body": "Tool_L",
+          "source_mesh": "s300_g0620",
+          "proxy_mesh": "s300_g0620_conservative_gripper_outer_contact_proxy",
+          "obj": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_gripper_outer3_proxy01_weighted/proxy_meshes/s300_g0620.obj",
+          "obj_sha256": "89a97508a5063d7ab495c718b7fb6ba30c226a979a24ff2db2382bdc0493883d",
+          "original_mesh_vertex_count": 1028,
+          "source_geometry_scope": "compiled_collision_graph",
+          "source_vertex_count": 80,
+          "source_collision_hull_vertices": 80,
+          "proxy_vertex_count": 80,
+          "support_budget": 512,
+          "center_m": [
+            0.0037531210880842993,
+            -8.731149137020111e-11,
+            -0.00028797094710171224
+          ],
+          "source_radius_m": 0.03586658100935617,
+          "scale_required": 1.0000000000000002,
+          "scale_applied": 1.0000014893950315,
+          "analytic_outward_bound_m": 5.341950755325574e-08,
+          "compile_reserve_m": 1e-07,
+          "maximum_outward_error_m": 0.0001,
+          "source_containment_max_signed_distance_m": -9.999999999940612e-09,
+          "numerical_containment_guard_m": 1e-08,
+          "support_axis_weights": [
+            1.8078505270097809,
+            1.269395309747088,
+            1.0
+          ],
+          "proof": "Allsourcevertices satisfy outerhull halfspaces; proxyvertices lie within(s-1)*R of selectedsourcehullvertices; convexity extends the bound to the entireproxy.",
+          "compiled_source_containment_max_signed_distance_m": -1.0258097864201954e-08,
+          "compiled_vertex_to_ideal_max_distance_m": 1.395513297811384e-09,
+          "compiled_outward_bound_m": 5.4815020851067125e-08,
+          "source_enclosed": true,
+          "outward_bound_passed": true,
+          "compiled_proxy_vertices": 80
+        }
+      ]
+    }
+  ],
+  "trials": [
+    {
+      "name": "original_hz400_observe",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "bc77c754e9b5393d51f98308fff1a6b646bf053c542f089863175e242108cba4",
+      "throughput_eligible": true,
+      "exclusion_reasons": [],
+      "contact_validity": {
+        "passed": true,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": true
+      },
+      "input_identity": {
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "2ac335c86cb40b642ae287c7eb380a920c0debdd7e6763874bf3648bb9f636a9"
+      },
+      "scheduled_simulated_s_per_world": 82.795,
+      "physics_loop_wall_s": 53.21064104884863,
+      "measured_per_environment_realtime_factor": 1.5559857646517026,
+      "measured_aggregate_sim_s_per_wall_s": 1.5559857646517026,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.0018786621093767053
+      ],
+      "detached_per_world": [
+        6
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.4185604862868786,
+          "realtime_factor": 4.77828191032159
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 6.080818481743336,
+          "realtime_factor": 5.0651076154422245
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.09950313158333302,
+          "realtime_factor": 5.02496747633771
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.2036621067672968,
+          "realtime_factor": 4.910093565626298
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.10347460582852364,
+          "realtime_factor": 4.832103451822677
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8397743590176105,
+          "realtime_factor": 4.763184249492092
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.1499837189912796,
+          "realtime_factor": 5.217465170083419
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.576973559334874,
+          "realtime_factor": 0.8728475155492394
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.119652858003974,
+          "realtime_factor": 0.8931339681325144
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.025964930653572,
+          "realtime_factor": 0.49892046372980065
+        },
+        "cycle_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 2.087200988084078,
+          "realtime_factor": 0.4791105435983616
+        },
+        "cycle_open_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.8418332766741514,
+          "realtime_factor": 0.5939418336791824
+        },
+        "cycle_reclose": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 9.183676129207015,
+          "realtime_factor": 0.6533331441118757
+        },
+        "belt_finish": {
+          "steps": 800,
+          "simulated_s": 2.0,
+          "wall_s": 5.284800751134753,
+          "realtime_factor": 0.378443785145648
+        },
+        "cycle_open_final": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.5100108124315739,
+          "realtime_factor": 0.6622469135765311
+        },
+        "cycle_open_final_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.5559415630996227,
+          "realtime_factor": 0.8993751019662507
+        },
+        "withdraw": {
+          "steps": 1600,
+          "simulated_s": 4.0,
+          "wall_s": 4.404722955077887,
+          "realtime_factor": 0.9081161382439932
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.0423228293657303,
+          "realtime_factor": 5.756373966836257
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.767775921151042,
+          "realtime_factor": 5.209853408795681
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.18633874505758286,
+          "realtime_factor": 5.3665704343505025
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.188562773168087,
+          "realtime_factor": 5.30327372258462
+        }
+      },
+      "setup_wall_s": 13.984534800052643,
+      "loop_wall_s": 53.21064104884863,
+      "realtime_factor": 1.555950458516081,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": true,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "hold",
+      "clean_throughput_eligible": true,
+      "clean_harvest_throughput_eligible": true,
+      "max_active_penetration_m": 0.0007942071533761919,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "actual_steps": 13806,
+        "requested_steps": 13806,
+        "simulated_s": 82.79312133789062,
+        "setup_wall_s": 13.984534800052643,
+        "loop_wall_s": 53.21064104884863,
+        "realtime_factor": 1.555950458516081,
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "max_contact_force_n": 18.444820404052734,
+        "detached_per_world": [
+          6
+        ],
+        "first_active_violations": [],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.4185604862868786,
+            "realtime_factor": 4.77828191032159
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.080818481743336,
+            "realtime_factor": 5.0651076154422245
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09950313158333302,
+            "realtime_factor": 5.02496747633771
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.2036621067672968,
+            "realtime_factor": 4.910093565626298
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10347460582852364,
+            "realtime_factor": 4.832103451822677
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8397743590176105,
+            "realtime_factor": 4.763184249492092
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1499837189912796,
+            "realtime_factor": 5.217465170083419
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.576973559334874,
+            "realtime_factor": 0.8728475155492394
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.119652858003974,
+            "realtime_factor": 0.8931339681325144
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.025964930653572,
+            "realtime_factor": 0.49892046372980065
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.087200988084078,
+            "realtime_factor": 0.4791105435983616
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8418332766741514,
+            "realtime_factor": 0.5939418336791824
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.183676129207015,
+            "realtime_factor": 0.6533331441118757
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.284800751134753,
+            "realtime_factor": 0.378443785145648
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.5100108124315739,
+            "realtime_factor": 0.6622469135765311
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5559415630996227,
+            "realtime_factor": 0.8993751019662507
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.404722955077887,
+            "realtime_factor": 0.9081161382439932
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0423228293657303,
+            "realtime_factor": 5.756373966836257
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.767775921151042,
+            "realtime_factor": 5.209853408795681
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18633874505758286,
+            "realtime_factor": 5.3665704343505025
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.188562773168087,
+            "realtime_factor": 5.30327372258462
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6591,
+          "solver_time_s": 54.55162811279297,
+          "release_effective_time_s": 54.55412673950195,
+          "scheduled_solver_time_s": 54.5575,
+          "scheduled_release_time_s": 54.56,
+          "phase": "close",
+          "constraint_force_n": 0.34758761525154114,
+          "passive_torque_nm": 0.008085252717137337,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.55412673950195,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6423,
+          "solver_time_s": 54.131858825683594,
+          "release_effective_time_s": 54.13435745239258,
+          "scheduled_solver_time_s": 54.1375,
+          "scheduled_release_time_s": 54.14,
+          "phase": "close",
+          "constraint_force_n": 3.5853443145751953,
+          "passive_torque_nm": 0.006931183859705925,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.13435745239258,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 1.7697012424468994,
+          "passive_torque_nm": 0.008097696118056774,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 1.0729719400405884,
+          "passive_torque_nm": 0.008182233199477196,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6751,
+          "solver_time_s": 54.95140838623047,
+          "release_effective_time_s": 54.95390701293945,
+          "scheduled_solver_time_s": 54.9575,
+          "scheduled_release_time_s": 54.96,
+          "phase": "close",
+          "constraint_force_n": 0.28963083028793335,
+          "passive_torque_nm": 0.008077007718384266,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.95390701293945,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6560,
+          "solver_time_s": 54.47417068481445,
+          "release_effective_time_s": 54.47666931152344,
+          "scheduled_solver_time_s": 54.48,
+          "scheduled_release_time_s": 54.4825,
+          "phase": "close",
+          "constraint_force_n": 1.0811684131622314,
+          "passive_torque_nm": 0.008004625327885151,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.47666931152344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ]
+    },
+    {
+      "name": "gripper_buried_1mm",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gripper_campaign/gripper_buried_1mm",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "208702a618425ac77e3313bd45cd38fc664edf3c5634a3c300dfa25a16fab944",
+      "throughput_eligible": false,
+      "exclusion_reasons": [
+        "executor_not_completed_without_stop",
+        "requested_trace_not_completed",
+        "active_penetration_invalid_or_above_existing_1mm"
+      ],
+      "contact_validity": {
+        "passed": false,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": false
+      },
+      "input_identity": {
+        "input_sha256": "5e5b99f89063721d7b53d204093c38d0188b7e9003a3b16427effecd5b7ba7b7",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "03a3e2eab7409ad91b181bb42682ea3479378c81d55954094ad6218141931555"
+      },
+      "scheduled_simulated_s_per_world": 56.47,
+      "physics_loop_wall_s": 28.78396531008184,
+      "measured_per_environment_realtime_factor": null,
+      "measured_aggregate_sim_s_per_wall_s": null,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.006922454833983238
+      ],
+      "detached_per_world": [
+        5
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.4143158718943596,
+          "realtime_factor": 4.82723481206617
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 6.051967337727547,
+          "realtime_factor": 5.089254168309026
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.09942807257175446,
+          "realtime_factor": 5.028760862674512
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.2041723057627678,
+          "realtime_factor": 4.89782390547091
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.10359404422342777,
+          "realtime_factor": 4.826532294864545
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8383872807025909,
+          "realtime_factor": 4.771064747842898
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.145815335214138,
+          "realtime_factor": 5.236445887572867
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.53240841627121,
+          "realtime_factor": 0.8814298344469741
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.117672424763441,
+          "realtime_factor": 0.894716535761051
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.294484958052635,
+          "realtime_factor": 0.4880236968422271
+        },
+        "cycle_open": {
+          "steps": 270,
+          "simulated_s": 0.6749999999999972,
+          "wall_s": 1.6749584171921015,
+          "realtime_factor": 0.40299507920415506
+        }
+      },
+      "setup_wall_s": 13.40228141285479,
+      "loop_wall_s": 28.78396531008184,
+      "realtime_factor": 1.9616156751477642,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": false,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "cycle_open",
+      "clean_throughput_eligible": false,
+      "clean_harvest_throughput_eligible": false,
+      "max_active_penetration_m": 0.005293439608067274,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "6361253bcc7e76b80daf99196613b6dff20667f39543d4efe2b7ce40140af865",
+      "summary": {
+        "status": "stopped",
+        "stop": "active_contact_penetration_1mm",
+        "actual_steps": 7356,
+        "requested_steps": 13806,
+        "simulated_s": 56.463077545166016,
+        "setup_wall_s": 13.40228141285479,
+        "loop_wall_s": 28.78396531008184,
+        "realtime_factor": 1.9616156751477642,
+        "max_active_penetration_m": 0.005293439608067274,
+        "max_released_penetration_m": 0.009491322562098503,
+        "max_contact_force_n": 12.789251327514648,
+        "detached_per_world": [
+          5
+        ],
+        "first_active_violations": [
+          {
+            "world": 0,
+            "solver_step": 7348,
+            "scheduled_start_s": 56.45,
+            "actual_end_s": 56.445587158203125,
+            "phase": "cycle_open",
+            "geom_ids": [
+              13,
+              104
+            ],
+            "geoms": [
+              "farm_structural_13",
+              "g0373"
+            ],
+            "bodies": [
+              "world",
+              "Truss_00_Fruit_08"
+            ],
+            "step_max_active_penetration_m": 0.004593668505549431
+          }
+        ],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.4143158718943596,
+            "realtime_factor": 4.82723481206617
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.051967337727547,
+            "realtime_factor": 5.089254168309026
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09942807257175446,
+            "realtime_factor": 5.028760862674512
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.2041723057627678,
+            "realtime_factor": 4.89782390547091
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10359404422342777,
+            "realtime_factor": 4.826532294864545
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8383872807025909,
+            "realtime_factor": 4.771064747842898
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.145815335214138,
+            "realtime_factor": 5.236445887572867
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.53240841627121,
+            "realtime_factor": 0.8814298344469741
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.117672424763441,
+            "realtime_factor": 0.894716535761051
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.294484958052635,
+            "realtime_factor": 0.4880236968422271
+          },
+          "cycle_open": {
+            "steps": 270,
+            "simulated_s": 0.6749999999999972,
+            "wall_s": 1.6749584171921015,
+            "realtime_factor": 0.40299507920415506
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6566,
+          "solver_time_s": 54.48916244506836,
+          "release_effective_time_s": 54.491661071777344,
+          "scheduled_solver_time_s": 54.495,
+          "scheduled_release_time_s": 54.4975,
+          "phase": "close",
+          "constraint_force_n": 3.816848039627075,
+          "passive_torque_nm": 0.006242266856133938,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.491661071777344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.207979202270508,
+          "passive_torque_nm": 0.004010462202131748,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.839815139770508,
+          "passive_torque_nm": 0.006439113523811102,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6681,
+          "solver_time_s": 54.77650451660156,
+          "release_effective_time_s": 54.77900314331055,
+          "scheduled_solver_time_s": 54.7825,
+          "scheduled_release_time_s": 54.785,
+          "phase": "close",
+          "constraint_force_n": 3.010347604751587,
+          "passive_torque_nm": 0.004179582931101322,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.77900314331055,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6603,
+          "solver_time_s": 54.58161163330078,
+          "release_effective_time_s": 54.584110260009766,
+          "scheduled_solver_time_s": 54.5875,
+          "scheduled_release_time_s": 54.59,
+          "phase": "close",
+          "constraint_force_n": 0.5919420123100281,
+          "passive_torque_nm": 0.008085540495812893,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.584110260009766,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "response_comparison": {
+        "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "fields": {
+          "qpos": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675590753555298
+          },
+          "qvel": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 44.6062451004982
+          },
+          "eq_active": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6395,
+            "first_different_scheduled_time_s": 54.0675
+          },
+          "poses": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675589561462402
+          },
+          "robot_q": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 0.002501263516023755
+          },
+          "time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "command": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "phase": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null
+          },
+          "scheduled_time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "solver_step": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "belt_surface_velocity_local_y_m_s": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          }
+        },
+        "same_body_paths": true,
+        "same_sample_count": false,
+        "max_rod_position_difference_m": 0.05816084146499634,
+        "attached_fruit_position_differences": [
+          {
+            "fruit": "Truss_00_Fruit_01",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.027230193838477135
+          },
+          {
+            "fruit": "Truss_00_Fruit_02",
+            "samples_attached_in_both": 6592,
+            "max_position_difference_while_attached_m": 0.002976111602038145
+          },
+          {
+            "fruit": "Truss_00_Fruit_03",
+            "samples_attached_in_both": 6424,
+            "max_position_difference_while_attached_m": 0.0032730093225836754
+          },
+          {
+            "fruit": "Truss_00_Fruit_04",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0005293962312862277
+          },
+          {
+            "fruit": "Truss_00_Fruit_05",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0007200659019872546
+          },
+          {
+            "fruit": "Truss_00_Fruit_07",
+            "samples_attached_in_both": 6682,
+            "max_position_difference_while_attached_m": 0.005077593494206667
+          },
+          {
+            "fruit": "Truss_00_Fruit_08",
+            "samples_attached_in_both": 6561,
+            "max_position_difference_while_attached_m": 0.005365198478102684
+          },
+          {
+            "fruit": "Truss_00_Fruit_09",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.031820300966501236
+          },
+          {
+            "fruit": "Truss_00_Fruit_10",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.033688418567180634
+          },
+          {
+            "fruit": "Truss_00_Fruit_11",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.03497502952814102
+          }
+        ],
+        "robot_tracking": [
+          {
+            "joint": "root_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.004000083986662406
+          },
+          {
+            "joint": "farmily_lift_height_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.002812149438747996
+          },
+          {
+            "joint": "base",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.012494725042839772
+          },
+          {
+            "joint": "shoulder",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.007965495105524259
+          },
+          {
+            "joint": "elbow",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.004113723595775554
+          },
+          {
+            "joint": "wrist1",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.01098535463208461
+          },
+          {
+            "joint": "wrist2",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.017267260840163168
+          },
+          {
+            "joint": "wrist3",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.00013693861314933997
+          },
+          {
+            "joint": "jaw_L",
+            "unit": "m",
+            "max_abs_tracking_error": 0.0065359330615814
+          },
+          {
+            "joint": "jaw_R",
+            "unit": "m",
+            "max_abs_tracking_error": 0.006751088832583574
+          }
+        ],
+        "interpretation": "Changed collision representation. Equality or difference of this saved physical response does not imply real-plant calibration. Common-prefix equality is not full-sequence equivalence."
+      }
+    },
+    {
+      "name": "gripper_buried_1um",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gripper_campaign/gripper_buried_1um",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "c94201732441d62d20b2a3f247fdd16d8d4649b04ff3a8ac56428114a73a925e",
+      "throughput_eligible": false,
+      "exclusion_reasons": [
+        "executor_not_completed_without_stop",
+        "requested_trace_not_completed",
+        "active_penetration_invalid_or_above_existing_1mm"
+      ],
+      "contact_validity": {
+        "passed": false,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": false
+      },
+      "input_identity": {
+        "input_sha256": "d40b5f24dafbce128de82d4ce17c0e05425de0fb5491e99f2c922ece20a26f40",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "04e7ebfc85fafea0f18d57d8fdd46bc0fdbd9e70d3db9a65806b243799b7ed61"
+      },
+      "scheduled_simulated_s_per_world": 56.47,
+      "physics_loop_wall_s": 28.492820857092738,
+      "measured_per_environment_realtime_factor": null,
+      "measured_aggregate_sim_s_per_wall_s": null,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.006922454833983238
+      ],
+      "detached_per_world": [
+        5
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.4015142135322094,
+          "realtime_factor": 4.981143711963663
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 5.848250515758991,
+          "realtime_factor": 5.266532259007161
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.0959464032202959,
+          "realtime_factor": 5.211242769069567
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.19792769476771355,
+          "realtime_factor": 5.05235005729538
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.10088032856583595,
+          "realtime_factor": 4.956367679489593
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8078196346759796,
+          "realtime_factor": 4.951600367580097
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.1231263000518084,
+          "realtime_factor": 5.342230877972698
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.4982142355293036,
+          "realtime_factor": 0.8881302203095078
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.1093751229345798,
+          "realtime_factor": 0.9014083508153178
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.32017381861806,
+          "realtime_factor": 0.48700611601216953
+        },
+        "cycle_open": {
+          "steps": 270,
+          "simulated_s": 0.6749999999999972,
+          "wall_s": 1.6561120562255383,
+          "realtime_factor": 0.4075811159411498
+        }
+      },
+      "setup_wall_s": 13.378533968701959,
+      "loop_wall_s": 28.492820857092738,
+      "realtime_factor": 1.9816597952291066,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": false,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "cycle_open",
+      "clean_throughput_eligible": false,
+      "clean_harvest_throughput_eligible": false,
+      "max_active_penetration_m": 0.005293439608067274,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "6361253bcc7e76b80daf99196613b6dff20667f39543d4efe2b7ce40140af865",
+      "summary": {
+        "status": "stopped",
+        "stop": "active_contact_penetration_1mm",
+        "actual_steps": 7356,
+        "requested_steps": 13806,
+        "simulated_s": 56.463077545166016,
+        "setup_wall_s": 13.378533968701959,
+        "loop_wall_s": 28.492820857092738,
+        "realtime_factor": 1.9816597952291066,
+        "max_active_penetration_m": 0.005293439608067274,
+        "max_released_penetration_m": 0.009491322562098503,
+        "max_contact_force_n": 12.789251327514648,
+        "detached_per_world": [
+          5
+        ],
+        "first_active_violations": [
+          {
+            "world": 0,
+            "solver_step": 7348,
+            "scheduled_start_s": 56.45,
+            "actual_end_s": 56.445587158203125,
+            "phase": "cycle_open",
+            "geom_ids": [
+              13,
+              104
+            ],
+            "geoms": [
+              "farm_structural_13",
+              "g0373"
+            ],
+            "bodies": [
+              "world",
+              "Truss_00_Fruit_08"
+            ],
+            "step_max_active_penetration_m": 0.004593668505549431
+          }
+        ],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.4015142135322094,
+            "realtime_factor": 4.981143711963663
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 5.848250515758991,
+            "realtime_factor": 5.266532259007161
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.0959464032202959,
+            "realtime_factor": 5.211242769069567
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.19792769476771355,
+            "realtime_factor": 5.05235005729538
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10088032856583595,
+            "realtime_factor": 4.956367679489593
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8078196346759796,
+            "realtime_factor": 4.951600367580097
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1231263000518084,
+            "realtime_factor": 5.342230877972698
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.4982142355293036,
+            "realtime_factor": 0.8881302203095078
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1093751229345798,
+            "realtime_factor": 0.9014083508153178
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.32017381861806,
+            "realtime_factor": 0.48700611601216953
+          },
+          "cycle_open": {
+            "steps": 270,
+            "simulated_s": 0.6749999999999972,
+            "wall_s": 1.6561120562255383,
+            "realtime_factor": 0.4075811159411498
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6566,
+          "solver_time_s": 54.48916244506836,
+          "release_effective_time_s": 54.491661071777344,
+          "scheduled_solver_time_s": 54.495,
+          "scheduled_release_time_s": 54.4975,
+          "phase": "close",
+          "constraint_force_n": 3.816848039627075,
+          "passive_torque_nm": 0.006242266856133938,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.491661071777344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.207979202270508,
+          "passive_torque_nm": 0.004010462202131748,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.839815139770508,
+          "passive_torque_nm": 0.006439113523811102,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6681,
+          "solver_time_s": 54.77650451660156,
+          "release_effective_time_s": 54.77900314331055,
+          "scheduled_solver_time_s": 54.7825,
+          "scheduled_release_time_s": 54.785,
+          "phase": "close",
+          "constraint_force_n": 3.010347604751587,
+          "passive_torque_nm": 0.004179582931101322,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.77900314331055,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6603,
+          "solver_time_s": 54.58161163330078,
+          "release_effective_time_s": 54.584110260009766,
+          "scheduled_solver_time_s": 54.5875,
+          "scheduled_release_time_s": 54.59,
+          "phase": "close",
+          "constraint_force_n": 0.5919420123100281,
+          "passive_torque_nm": 0.008085540495812893,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.584110260009766,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "response_comparison": {
+        "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "fields": {
+          "qpos": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675590753555298
+          },
+          "qvel": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 44.6062451004982
+          },
+          "eq_active": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6395,
+            "first_different_scheduled_time_s": 54.0675
+          },
+          "poses": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675589561462402
+          },
+          "robot_q": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 0.002501263516023755
+          },
+          "time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "command": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "phase": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null
+          },
+          "scheduled_time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "solver_step": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "belt_surface_velocity_local_y_m_s": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          }
+        },
+        "same_body_paths": true,
+        "same_sample_count": false,
+        "max_rod_position_difference_m": 0.05816084146499634,
+        "attached_fruit_position_differences": [
+          {
+            "fruit": "Truss_00_Fruit_01",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.027230193838477135
+          },
+          {
+            "fruit": "Truss_00_Fruit_02",
+            "samples_attached_in_both": 6592,
+            "max_position_difference_while_attached_m": 0.002976111602038145
+          },
+          {
+            "fruit": "Truss_00_Fruit_03",
+            "samples_attached_in_both": 6424,
+            "max_position_difference_while_attached_m": 0.0032730093225836754
+          },
+          {
+            "fruit": "Truss_00_Fruit_04",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0005293962312862277
+          },
+          {
+            "fruit": "Truss_00_Fruit_05",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0007200659019872546
+          },
+          {
+            "fruit": "Truss_00_Fruit_07",
+            "samples_attached_in_both": 6682,
+            "max_position_difference_while_attached_m": 0.005077593494206667
+          },
+          {
+            "fruit": "Truss_00_Fruit_08",
+            "samples_attached_in_both": 6561,
+            "max_position_difference_while_attached_m": 0.005365198478102684
+          },
+          {
+            "fruit": "Truss_00_Fruit_09",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.031820300966501236
+          },
+          {
+            "fruit": "Truss_00_Fruit_10",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.033688418567180634
+          },
+          {
+            "fruit": "Truss_00_Fruit_11",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.03497502952814102
+          }
+        ],
+        "robot_tracking": [
+          {
+            "joint": "root_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.004000083986662406
+          },
+          {
+            "joint": "farmily_lift_height_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.002812149438747996
+          },
+          {
+            "joint": "base",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.012494725042839772
+          },
+          {
+            "joint": "shoulder",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.007965495105524259
+          },
+          {
+            "joint": "elbow",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.004113723595775554
+          },
+          {
+            "joint": "wrist1",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.01098535463208461
+          },
+          {
+            "joint": "wrist2",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.017267260840163168
+          },
+          {
+            "joint": "wrist3",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.00013693861314933997
+          },
+          {
+            "joint": "jaw_L",
+            "unit": "m",
+            "max_abs_tracking_error": 0.0065359330615814
+          },
+          {
+            "joint": "jaw_R",
+            "unit": "m",
+            "max_abs_tracking_error": 0.006751088832583574
+          }
+        ],
+        "interpretation": "Changed collision representation. Equality or difference of this saved physical response does not imply real-plant calibration. Common-prefix equality is not full-sequence equivalence."
+      }
+    },
+    {
+      "name": "gripper_buried_1mm_observe",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gripper_observation_campaign/gripper_buried_1mm_observe",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "89b337fc16bb796d8f0d0eb893a41e4f3ab9d75ad5f86ce0111a38f2e9bc733a",
+      "throughput_eligible": false,
+      "exclusion_reasons": [
+        "active_penetration_invalid_or_above_existing_1mm"
+      ],
+      "contact_validity": {
+        "passed": false,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": false
+      },
+      "input_identity": {
+        "input_sha256": "5e5b99f89063721d7b53d204093c38d0188b7e9003a3b16427effecd5b7ba7b7",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "03a3e2eab7409ad91b181bb42682ea3479378c81d55954094ad6218141931555"
+      },
+      "scheduled_simulated_s_per_world": 82.795,
+      "physics_loop_wall_s": 54.98145420849323,
+      "measured_per_environment_realtime_factor": null,
+      "measured_aggregate_sim_s_per_wall_s": null,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.0018786621093767053
+      ],
+      "detached_per_world": [
+        5
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.411359841004014,
+          "realtime_factor": 4.861923310546214
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 6.015682067722082,
+          "realtime_factor": 5.119951429159026
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.09887786395847797,
+          "realtime_factor": 5.056743541809987
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.20286381803452969,
+          "realtime_factor": 4.929415258416308
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.10345414280891418,
+          "realtime_factor": 4.833059232084394
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8340377043932676,
+          "realtime_factor": 4.795946249108553
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.1397551372647285,
+          "realtime_factor": 5.264288621150029
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.513841297477484,
+          "realtime_factor": 0.885055485276492
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.1136719342321157,
+          "realtime_factor": 0.8979305029263458
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.242685545235872,
+          "realtime_factor": 0.4900885494306308
+        },
+        "cycle_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 2.177511027082801,
+          "realtime_factor": 0.4592399246490588
+        },
+        "cycle_open_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.8486471585929394,
+          "realtime_factor": 0.5891730089911597
+        },
+        "cycle_reclose": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 9.933357397094369,
+          "realtime_factor": 0.6040253823702221
+        },
+        "belt_finish": {
+          "steps": 800,
+          "simulated_s": 2.0,
+          "wall_s": 5.405579581856728,
+          "realtime_factor": 0.36998807800606515
+        },
+        "cycle_open_final": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.65606739372015,
+          "realtime_factor": 0.6038401600031651
+        },
+        "cycle_open_final_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.6561949029564857,
+          "realtime_factor": 0.7619687348183448
+        },
+        "withdraw": {
+          "steps": 1600,
+          "simulated_s": 4.0,
+          "wall_s": 4.818518932908773,
+          "realtime_factor": 0.8301305973255434
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.067255798727274,
+          "realtime_factor": 5.621894963845717
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.7809287626296282,
+          "realtime_factor": 5.1221061272359405
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.18984517827630043,
+          "realtime_factor": 5.267450082638398
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.19235104322433472,
+          "realtime_factor": 5.198828055399328
+        }
+      },
+      "setup_wall_s": 13.530427187681198,
+      "loop_wall_s": 54.98145420849323,
+      "realtime_factor": 1.505837241480259,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": true,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "hold",
+      "clean_throughput_eligible": false,
+      "clean_harvest_throughput_eligible": false,
+      "max_active_penetration_m": 0.005293439608067274,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "e99a652a0dcad7dacafccf50cdfa80ed92d3e719454714819d2696a11b1ed5d8",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "actual_steps": 13806,
+        "requested_steps": 13806,
+        "simulated_s": 82.79312133789062,
+        "setup_wall_s": 13.530427187681198,
+        "loop_wall_s": 54.98145420849323,
+        "realtime_factor": 1.505837241480259,
+        "max_active_penetration_m": 0.005293439608067274,
+        "max_released_penetration_m": 0.009491322562098503,
+        "max_contact_force_n": 12.789251327514648,
+        "detached_per_world": [
+          5
+        ],
+        "first_active_violations": [
+          {
+            "world": 0,
+            "solver_step": 7348,
+            "scheduled_start_s": 56.45,
+            "actual_end_s": 56.445587158203125,
+            "phase": "cycle_open",
+            "geom_ids": [
+              13,
+              104
+            ],
+            "geoms": [
+              "farm_structural_13",
+              "g0373"
+            ],
+            "bodies": [
+              "world",
+              "Truss_00_Fruit_08"
+            ],
+            "step_max_active_penetration_m": 0.004593668505549431
+          }
+        ],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.411359841004014,
+            "realtime_factor": 4.861923310546214
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.015682067722082,
+            "realtime_factor": 5.119951429159026
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09887786395847797,
+            "realtime_factor": 5.056743541809987
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20286381803452969,
+            "realtime_factor": 4.929415258416308
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10345414280891418,
+            "realtime_factor": 4.833059232084394
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8340377043932676,
+            "realtime_factor": 4.795946249108553
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1397551372647285,
+            "realtime_factor": 5.264288621150029
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.513841297477484,
+            "realtime_factor": 0.885055485276492
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1136719342321157,
+            "realtime_factor": 0.8979305029263458
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.242685545235872,
+            "realtime_factor": 0.4900885494306308
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.177511027082801,
+            "realtime_factor": 0.4592399246490588
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8486471585929394,
+            "realtime_factor": 0.5891730089911597
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.933357397094369,
+            "realtime_factor": 0.6040253823702221
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.405579581856728,
+            "realtime_factor": 0.36998807800606515
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.65606739372015,
+            "realtime_factor": 0.6038401600031651
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.6561949029564857,
+            "realtime_factor": 0.7619687348183448
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.818518932908773,
+            "realtime_factor": 0.8301305973255434
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.067255798727274,
+            "realtime_factor": 5.621894963845717
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7809287626296282,
+            "realtime_factor": 5.1221061272359405
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18984517827630043,
+            "realtime_factor": 5.267450082638398
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.19235104322433472,
+            "realtime_factor": 5.198828055399328
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6566,
+          "solver_time_s": 54.48916244506836,
+          "release_effective_time_s": 54.491661071777344,
+          "scheduled_solver_time_s": 54.495,
+          "scheduled_release_time_s": 54.4975,
+          "phase": "close",
+          "constraint_force_n": 3.816848039627075,
+          "passive_torque_nm": 0.006242266856133938,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.491661071777344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.207979202270508,
+          "passive_torque_nm": 0.004010462202131748,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.839815139770508,
+          "passive_torque_nm": 0.006439113523811102,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6681,
+          "solver_time_s": 54.77650451660156,
+          "release_effective_time_s": 54.77900314331055,
+          "scheduled_solver_time_s": 54.7825,
+          "scheduled_release_time_s": 54.785,
+          "phase": "close",
+          "constraint_force_n": 3.010347604751587,
+          "passive_torque_nm": 0.004179582931101322,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.77900314331055,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6603,
+          "solver_time_s": 54.58161163330078,
+          "release_effective_time_s": 54.584110260009766,
+          "scheduled_solver_time_s": 54.5875,
+          "scheduled_release_time_s": 54.59,
+          "phase": "close",
+          "constraint_force_n": 0.5919420123100281,
+          "passive_torque_nm": 0.008085540495812893,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.584110260009766,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "response_comparison": {
+        "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "fields": {
+          "qpos": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675590753555298
+          },
+          "qvel": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 44.6062451004982
+          },
+          "eq_active": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6395,
+            "first_different_scheduled_time_s": 54.0675
+          },
+          "poses": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675589561462402
+          },
+          "robot_q": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 0.002501263516023755
+          },
+          "time": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "command": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "phase": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null
+          },
+          "scheduled_time": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "solver_step": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "belt_surface_velocity_local_y_m_s": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          }
+        },
+        "same_body_paths": true,
+        "same_sample_count": true,
+        "max_rod_position_difference_m": 0.05816084146499634,
+        "attached_fruit_position_differences": [
+          {
+            "fruit": "Truss_00_Fruit_01",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.027230193838477135
+          },
+          {
+            "fruit": "Truss_00_Fruit_02",
+            "samples_attached_in_both": 6592,
+            "max_position_difference_while_attached_m": 0.002976111602038145
+          },
+          {
+            "fruit": "Truss_00_Fruit_03",
+            "samples_attached_in_both": 6424,
+            "max_position_difference_while_attached_m": 0.0032730093225836754
+          },
+          {
+            "fruit": "Truss_00_Fruit_04",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0005293962312862277
+          },
+          {
+            "fruit": "Truss_00_Fruit_05",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0007200659019872546
+          },
+          {
+            "fruit": "Truss_00_Fruit_07",
+            "samples_attached_in_both": 6682,
+            "max_position_difference_while_attached_m": 0.005077593494206667
+          },
+          {
+            "fruit": "Truss_00_Fruit_08",
+            "samples_attached_in_both": 6561,
+            "max_position_difference_while_attached_m": 0.005365198478102684
+          },
+          {
+            "fruit": "Truss_00_Fruit_09",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.031820300966501236
+          },
+          {
+            "fruit": "Truss_00_Fruit_10",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.033688418567180634
+          },
+          {
+            "fruit": "Truss_00_Fruit_11",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.03497502952814102
+          }
+        ],
+        "robot_tracking": [
+          {
+            "joint": "root_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.004000083986662406
+          },
+          {
+            "joint": "farmily_lift_height_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.002812149438747996
+          },
+          {
+            "joint": "base",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.012494884604342893
+          },
+          {
+            "joint": "shoulder",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.00800752190116813
+          },
+          {
+            "joint": "elbow",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.004127570028872984
+          },
+          {
+            "joint": "wrist1",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.011003495475907288
+          },
+          {
+            "joint": "wrist2",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.017267260840163168
+          },
+          {
+            "joint": "wrist3",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.00013693861314933997
+          },
+          {
+            "joint": "jaw_L",
+            "unit": "m",
+            "max_abs_tracking_error": 0.0065359330615814
+          },
+          {
+            "joint": "jaw_R",
+            "unit": "m",
+            "max_abs_tracking_error": 0.006751088832583574
+          }
+        ],
+        "interpretation": "Changed collision representation. Equality or difference of this saved physical response does not imply real-plant calibration. Common-prefix equality is not full-sequence equivalence."
+      }
+    },
+    {
+      "name": "gripper_buried_1mm_stable_ids",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gripper_stable_id_campaign/gripper_buried_1mm_stable_ids",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "19fc9b84d7234c16d0e67bd31a171e136f1dbf262747cc5a6dfb2bd9144dc8f2",
+      "throughput_eligible": false,
+      "exclusion_reasons": [
+        "executor_not_completed_without_stop",
+        "requested_trace_not_completed",
+        "active_penetration_invalid_or_above_existing_1mm"
+      ],
+      "contact_validity": {
+        "passed": false,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": false
+      },
+      "input_identity": {
+        "input_sha256": "92bc8868b914a09e416a069d6586f150ff2d6d9d4706383d573ec3323ab4068b",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "2098295b8704b0aefb2e48670bca467ffad875f4a9845072a4840537e12e1d3c"
+      },
+      "scheduled_simulated_s_per_world": 56.47,
+      "physics_loop_wall_s": 28.699908509850502,
+      "measured_per_environment_realtime_factor": null,
+      "measured_aggregate_sim_s_per_wall_s": null,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.006922454833983238
+      ],
+      "detached_per_world": [
+        5
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.40593274496495724,
+          "realtime_factor": 4.9269245332072265
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 5.9455782771110535,
+          "realtime_factor": 5.180320326211509
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.09783221781253815,
+          "realtime_factor": 5.110790812880051
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.20094255171716213,
+          "realtime_factor": 4.976546736639215
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.1025716457515955,
+          "realtime_factor": 4.874641489236537
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8151214458048344,
+          "realtime_factor": 4.9072442156769425
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.1307023279368877,
+          "realtime_factor": 5.306436408376176
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.523770108819008,
+          "realtime_factor": 0.8831129575333247
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.1150149069726467,
+          "realtime_factor": 0.8968489961404003
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.427617782726884,
+          "realtime_factor": 0.4827956656616351
+        },
+        "cycle_open": {
+          "steps": 270,
+          "simulated_s": 0.6749999999999972,
+          "wall_s": 1.6826881989836693,
+          "realtime_factor": 0.40114383663455416
+        }
+      },
+      "setup_wall_s": 13.700553797185421,
+      "loop_wall_s": 28.699908509850502,
+      "realtime_factor": 1.967360889871357,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": false,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "cycle_open",
+      "clean_throughput_eligible": false,
+      "clean_harvest_throughput_eligible": false,
+      "max_active_penetration_m": 0.005293439608067274,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "6361253bcc7e76b80daf99196613b6dff20667f39543d4efe2b7ce40140af865",
+      "summary": {
+        "status": "stopped",
+        "stop": "active_contact_penetration_1mm",
+        "actual_steps": 7356,
+        "requested_steps": 13806,
+        "simulated_s": 56.463077545166016,
+        "setup_wall_s": 13.700553797185421,
+        "loop_wall_s": 28.699908509850502,
+        "realtime_factor": 1.967360889871357,
+        "max_active_penetration_m": 0.005293439608067274,
+        "max_released_penetration_m": 0.009491322562098503,
+        "max_contact_force_n": 12.789251327514648,
+        "detached_per_world": [
+          5
+        ],
+        "first_active_violations": [
+          {
+            "world": 0,
+            "solver_step": 7348,
+            "scheduled_start_s": 56.45,
+            "actual_end_s": 56.445587158203125,
+            "phase": "cycle_open",
+            "geom_ids": [
+              13,
+              104
+            ],
+            "geoms": [
+              "farm_structural_13",
+              "g0373"
+            ],
+            "bodies": [
+              "world",
+              "Truss_00_Fruit_08"
+            ],
+            "step_max_active_penetration_m": 0.004593668505549431
+          }
+        ],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.40593274496495724,
+            "realtime_factor": 4.9269245332072265
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 5.9455782771110535,
+            "realtime_factor": 5.180320326211509
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09783221781253815,
+            "realtime_factor": 5.110790812880051
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20094255171716213,
+            "realtime_factor": 4.976546736639215
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.1025716457515955,
+            "realtime_factor": 4.874641489236537
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8151214458048344,
+            "realtime_factor": 4.9072442156769425
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1307023279368877,
+            "realtime_factor": 5.306436408376176
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.523770108819008,
+            "realtime_factor": 0.8831129575333247
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1150149069726467,
+            "realtime_factor": 0.8968489961404003
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.427617782726884,
+            "realtime_factor": 0.4827956656616351
+          },
+          "cycle_open": {
+            "steps": 270,
+            "simulated_s": 0.6749999999999972,
+            "wall_s": 1.6826881989836693,
+            "realtime_factor": 0.40114383663455416
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6566,
+          "solver_time_s": 54.48916244506836,
+          "release_effective_time_s": 54.491661071777344,
+          "scheduled_solver_time_s": 54.495,
+          "scheduled_release_time_s": 54.4975,
+          "phase": "close",
+          "constraint_force_n": 3.816848039627075,
+          "passive_torque_nm": 0.006242266856133938,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.491661071777344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.207979202270508,
+          "passive_torque_nm": 0.004010462202131748,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 3.839815139770508,
+          "passive_torque_nm": 0.006439113523811102,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6681,
+          "solver_time_s": 54.77650451660156,
+          "release_effective_time_s": 54.77900314331055,
+          "scheduled_solver_time_s": 54.7825,
+          "scheduled_release_time_s": 54.785,
+          "phase": "close",
+          "constraint_force_n": 3.010347604751587,
+          "passive_torque_nm": 0.004179582931101322,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.77900314331055,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6603,
+          "solver_time_s": 54.58161163330078,
+          "release_effective_time_s": 54.584110260009766,
+          "scheduled_solver_time_s": 54.5875,
+          "scheduled_release_time_s": 54.59,
+          "phase": "close",
+          "constraint_force_n": 0.5919420123100281,
+          "passive_torque_nm": 0.008085540495812893,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.584110260009766,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "response_comparison": {
+        "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "fields": {
+          "qpos": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675590753555298
+          },
+          "qvel": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 44.6062451004982
+          },
+          "eq_active": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6395,
+            "first_different_scheduled_time_s": 54.0675
+          },
+          "poses": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.8675589561462402
+          },
+          "robot_q": {
+            "compared_samples": 7357,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 0.002501263516023755
+          },
+          "time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "command": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "phase": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null
+          },
+          "scheduled_time": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "solver_step": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "belt_surface_velocity_local_y_m_s": {
+            "compared_samples": 7357,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          }
+        },
+        "same_body_paths": true,
+        "same_sample_count": false,
+        "max_rod_position_difference_m": 0.05816084146499634,
+        "attached_fruit_position_differences": [
+          {
+            "fruit": "Truss_00_Fruit_01",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.027230193838477135
+          },
+          {
+            "fruit": "Truss_00_Fruit_02",
+            "samples_attached_in_both": 6592,
+            "max_position_difference_while_attached_m": 0.002976111602038145
+          },
+          {
+            "fruit": "Truss_00_Fruit_03",
+            "samples_attached_in_both": 6424,
+            "max_position_difference_while_attached_m": 0.0032730093225836754
+          },
+          {
+            "fruit": "Truss_00_Fruit_04",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0005293962312862277
+          },
+          {
+            "fruit": "Truss_00_Fruit_05",
+            "samples_attached_in_both": 6395,
+            "max_position_difference_while_attached_m": 0.0007200659019872546
+          },
+          {
+            "fruit": "Truss_00_Fruit_07",
+            "samples_attached_in_both": 6682,
+            "max_position_difference_while_attached_m": 0.005077593494206667
+          },
+          {
+            "fruit": "Truss_00_Fruit_08",
+            "samples_attached_in_both": 6561,
+            "max_position_difference_while_attached_m": 0.005365198478102684
+          },
+          {
+            "fruit": "Truss_00_Fruit_09",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.031820300966501236
+          },
+          {
+            "fruit": "Truss_00_Fruit_10",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.033688418567180634
+          },
+          {
+            "fruit": "Truss_00_Fruit_11",
+            "samples_attached_in_both": 7357,
+            "max_position_difference_while_attached_m": 0.03497502952814102
+          }
+        ],
+        "robot_tracking": [
+          {
+            "joint": "root_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.004000083986662406
+          },
+          {
+            "joint": "farmily_lift_height_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.002812149438747996
+          },
+          {
+            "joint": "base",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.012494725042839772
+          },
+          {
+            "joint": "shoulder",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.007965495105524259
+          },
+          {
+            "joint": "elbow",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.004113723595775554
+          },
+          {
+            "joint": "wrist1",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.01098535463208461
+          },
+          {
+            "joint": "wrist2",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.017267260840163168
+          },
+          {
+            "joint": "wrist3",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.00013693861314933997
+          },
+          {
+            "joint": "jaw_L",
+            "unit": "m",
+            "max_abs_tracking_error": 0.0065359330615814
+          },
+          {
+            "joint": "jaw_R",
+            "unit": "m",
+            "max_abs_tracking_error": 0.006751088832583574
+          }
+        ],
+        "interpretation": "Changed collision representation. Equality or difference of this saved physical response does not imply real-plant calibration. Common-prefix equality is not full-sequence equivalence."
+      }
+    },
+    {
+      "name": "gripper_outer3_proxy01_observe",
+      "output": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gripper_outer3_campaign/gripper_outer3_proxy01_observe",
+      "worlds": 1,
+      "returncode": 0,
+      "termination": null,
+      "summary_sha256": "98337c4a3780ac1851c999113288c619f89fd624d655ddd364ad0e2b53eba0db",
+      "throughput_eligible": true,
+      "exclusion_reasons": [],
+      "contact_validity": {
+        "passed": true,
+        "scope": "reference_1mm",
+        "reference_1mm_passed": true
+      },
+      "input_identity": {
+        "input_sha256": "80da70e61b8a5bbc9fa0657baca293ac3697dd34a9eb2aa4a4842fce873cf327",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "source_model_array_sha256": "1b932c0246b47f727da6c23577e20170899deb5ffe63dfda6e80fafc073048d0"
+      },
+      "scheduled_simulated_s_per_world": 82.795,
+      "physics_loop_wall_s": 53.85304105654359,
+      "measured_per_environment_realtime_factor": 1.5374247837381827,
+      "measured_aggregate_sim_s_per_wall_s": 1.5374247837381827,
+      "final_gpu_timestamp_minus_schedule_s": [
+        -0.0018786621093767053
+      ],
+      "detached_per_world": [
+        6
+      ],
+      "interpretation": "Loop throughput only; float32 GPU clock drift is diagnostic. Fruit release counts are reported, not treated as verified harvest success.",
+      "backend": "gpu",
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.4197899643331766,
+          "realtime_factor": 4.764287310147917
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 6.084019489586353,
+          "realtime_factor": 5.0624426915
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.09960587695240974,
+          "realtime_factor": 5.0197841261805545
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.20396237261593342,
+          "realtime_factor": 4.902865107786457
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.10381173528730869,
+          "realtime_factor": 4.8164111563707435
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.8418026603758335,
+          "realtime_factor": 4.751707482385656
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.1520267240703106,
+          "realtime_factor": 5.208212513335591
+        },
+        "approach": {
+          "steps": 1598,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 4.583179231733084,
+          "realtime_factor": 0.8716656709254058
+        },
+        "belt_start_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.1217302475124598,
+          "realtime_factor": 0.8914799277434056
+        },
+        "close": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 12.033253790810704,
+          "realtime_factor": 0.49861825440613167
+        },
+        "cycle_open": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 2.203537307679653,
+          "realtime_factor": 0.45381577907251774
+        },
+        "cycle_open_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.834533553570509,
+          "realtime_factor": 0.5991370842559604
+        },
+        "cycle_reclose": {
+          "steps": 2400,
+          "simulated_s": 6.0,
+          "wall_s": 9.716467956081033,
+          "realtime_factor": 0.6175083401829069
+        },
+        "belt_finish": {
+          "steps": 800,
+          "simulated_s": 2.0,
+          "wall_s": 5.372938763350248,
+          "realtime_factor": 0.3722357704209005
+        },
+        "cycle_open_final": {
+          "steps": 400,
+          "simulated_s": 1.0,
+          "wall_s": 1.5056968946009874,
+          "realtime_factor": 0.6641442933074534
+        },
+        "cycle_open_final_hold": {
+          "steps": 200,
+          "simulated_s": 0.5,
+          "wall_s": 0.5646474324166775,
+          "realtime_factor": 0.8855083212899986
+        },
+        "withdraw": {
+          "steps": 1600,
+          "simulated_s": 4.0,
+          "wall_s": 4.351703740656376,
+          "realtime_factor": 0.9191802196067401
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 1.0345666017383337,
+          "realtime_factor": 5.799529957683228
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.7627414334565401,
+          "realtime_factor": 5.244241134080091
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.18480293452739716,
+          "realtime_factor": 5.4111694847126435
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.18681537173688412,
+          "realtime_factor": 5.352878570444553
+        }
+      },
+      "setup_wall_s": 13.938937958329916,
+      "loop_wall_s": 53.85304105654359,
+      "realtime_factor": 1.5373898987609833,
+      "profile_instrumented": false,
+      "full_command_schedule_requested": true,
+      "full_existing_sequence_completed": true,
+      "expected_final_phase": "hold",
+      "recorded_final_phase": "hold",
+      "clean_throughput_eligible": true,
+      "clean_harvest_throughput_eligible": true,
+      "max_active_penetration_m": 0.000708425824996084,
+      "all_world_temporal_state_recorded": false,
+      "all_world_states_sha256": null,
+      "final_world_qpos_spread_abs": 0.0,
+      "physics_equivalence_confirmed": false,
+      "model_fidelity_note": "Validity of one run is distinct from equivalence to another representation.",
+      "states_sha256": "4b93aeb6da8de6d175b23ae5a589262fe147e67fdc3cae5dac4ccb0c84bd45ca",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "actual_steps": 13806,
+        "requested_steps": 13806,
+        "simulated_s": 82.79312133789062,
+        "setup_wall_s": 13.938937958329916,
+        "loop_wall_s": 53.85304105654359,
+        "realtime_factor": 1.5373898987609833,
+        "max_active_penetration_m": 0.000708425824996084,
+        "max_released_penetration_m": 0.008760388940572739,
+        "max_contact_force_n": 39.306007385253906,
+        "detached_per_world": [
+          6
+        ],
+        "first_active_violations": [],
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.4197899643331766,
+            "realtime_factor": 4.764287310147917
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.084019489586353,
+            "realtime_factor": 5.0624426915
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09960587695240974,
+            "realtime_factor": 5.0197841261805545
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20396237261593342,
+            "realtime_factor": 4.902865107786457
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10381173528730869,
+            "realtime_factor": 4.8164111563707435
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8418026603758335,
+            "realtime_factor": 4.751707482385656
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1520267240703106,
+            "realtime_factor": 5.208212513335591
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.583179231733084,
+            "realtime_factor": 0.8716656709254058
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1217302475124598,
+            "realtime_factor": 0.8914799277434056
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.033253790810704,
+            "realtime_factor": 0.49861825440613167
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.203537307679653,
+            "realtime_factor": 0.45381577907251774
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.834533553570509,
+            "realtime_factor": 0.5991370842559604
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.716467956081033,
+            "realtime_factor": 0.6175083401829069
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.372938763350248,
+            "realtime_factor": 0.3722357704209005
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.5056968946009874,
+            "realtime_factor": 0.6641442933074534
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5646474324166775,
+            "realtime_factor": 0.8855083212899986
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.351703740656376,
+            "realtime_factor": 0.9191802196067401
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0345666017383337,
+            "realtime_factor": 5.799529957683228
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7627414334565401,
+            "realtime_factor": 5.244241134080091
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18480293452739716,
+            "realtime_factor": 5.4111694847126435
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18681537173688412,
+            "realtime_factor": 5.352878570444553
+          }
+        }
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6417,
+          "solver_time_s": 54.11686706542969,
+          "release_effective_time_s": 54.11936569213867,
+          "scheduled_solver_time_s": 54.1225,
+          "scheduled_release_time_s": 54.125,
+          "phase": "close",
+          "constraint_force_n": 3.693086862564087,
+          "passive_torque_nm": 0.0016178276855498552,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.11936569213867,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6396,
+          "solver_time_s": 54.064395904541016,
+          "release_effective_time_s": 54.06689453125,
+          "scheduled_solver_time_s": 54.07,
+          "scheduled_release_time_s": 54.0725,
+          "phase": "close",
+          "constraint_force_n": 3.685818672180176,
+          "passive_torque_nm": 0.0036053142976015806,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.06689453125,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6396,
+          "solver_time_s": 54.064395904541016,
+          "release_effective_time_s": 54.06689453125,
+          "scheduled_solver_time_s": 54.07,
+          "scheduled_release_time_s": 54.0725,
+          "phase": "close",
+          "constraint_force_n": 3.314629316329956,
+          "passive_torque_nm": 0.00426780479028821,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.06689453125,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6393,
+          "solver_time_s": 54.05690002441406,
+          "release_effective_time_s": 54.05939865112305,
+          "scheduled_solver_time_s": 54.0625,
+          "scheduled_release_time_s": 54.065,
+          "phase": "close",
+          "constraint_force_n": 0.5478662252426147,
+          "passive_torque_nm": 0.008128633722662926,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.05939865112305,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 9854,
+          "solver_time_s": 62.704647064208984,
+          "release_effective_time_s": 62.70714569091797,
+          "scheduled_solver_time_s": 62.715,
+          "scheduled_release_time_s": 62.7175,
+          "phase": "cycle_reclose",
+          "constraint_force_n": 3.0756478309631348,
+          "passive_torque_nm": 0.0029425157699733973,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 62.70714569091797,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6520,
+          "solver_time_s": 54.37422561645508,
+          "release_effective_time_s": 54.37672424316406,
+          "scheduled_solver_time_s": 54.38,
+          "scheduled_release_time_s": 54.3825,
+          "phase": "close",
+          "constraint_force_n": 1.0645151138305664,
+          "passive_torque_nm": 0.00805076863616705,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.37672424316406,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "response_comparison": {
+        "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "fields": {
+          "qpos": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.785498023033142
+          },
+          "qvel": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 169.68457984924316
+          },
+          "eq_active": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6394,
+            "first_different_scheduled_time_s": 54.065
+          },
+          "poses": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 1.785498023033142
+          },
+          "robot_q": {
+            "compared_samples": 13807,
+            "exact_common_prefix": false,
+            "first_different_sample": 6369,
+            "first_different_scheduled_time_s": 54.0025,
+            "maximum_abs_difference": 0.001967349788174033
+          },
+          "time": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "command": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "phase": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null
+          },
+          "scheduled_time": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "solver_step": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          },
+          "belt_surface_velocity_local_y_m_s": {
+            "compared_samples": 13807,
+            "exact_common_prefix": true,
+            "first_different_sample": null,
+            "maximum_abs_difference": 0.0
+          }
+        },
+        "same_body_paths": true,
+        "same_sample_count": true,
+        "max_rod_position_difference_m": 0.017224757000803947,
+        "attached_fruit_position_differences": [
+          {
+            "fruit": "Truss_00_Fruit_01",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.009440768510103226
+          },
+          {
+            "fruit": "Truss_00_Fruit_02",
+            "samples_attached_in_both": 6418,
+            "max_position_difference_while_attached_m": 0.002009646501392126
+          },
+          {
+            "fruit": "Truss_00_Fruit_03",
+            "samples_attached_in_both": 6397,
+            "max_position_difference_while_attached_m": 0.000538690306711942
+          },
+          {
+            "fruit": "Truss_00_Fruit_04",
+            "samples_attached_in_both": 6397,
+            "max_position_difference_while_attached_m": 0.00045650749234482646
+          },
+          {
+            "fruit": "Truss_00_Fruit_05",
+            "samples_attached_in_both": 6394,
+            "max_position_difference_while_attached_m": 7.121076487237588e-05
+          },
+          {
+            "fruit": "Truss_00_Fruit_07",
+            "samples_attached_in_both": 6752,
+            "max_position_difference_while_attached_m": 0.015475896187126637
+          },
+          {
+            "fruit": "Truss_00_Fruit_08",
+            "samples_attached_in_both": 6521,
+            "max_position_difference_while_attached_m": 0.0028152174782007933
+          },
+          {
+            "fruit": "Truss_00_Fruit_09",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.015003204345703125
+          },
+          {
+            "fruit": "Truss_00_Fruit_10",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.011490664444863796
+          },
+          {
+            "fruit": "Truss_00_Fruit_11",
+            "samples_attached_in_both": 13807,
+            "max_position_difference_while_attached_m": 0.013096639886498451
+          }
+        ],
+        "robot_tracking": [
+          {
+            "joint": "root_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.004000083986662406
+          },
+          {
+            "joint": "farmily_lift_height_joint",
+            "unit": "m",
+            "max_abs_tracking_error": 0.002812149438747996
+          },
+          {
+            "joint": "base",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.012494884604342893
+          },
+          {
+            "joint": "shoulder",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.008007525626458428
+          },
+          {
+            "joint": "elbow",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.004127570028872984
+          },
+          {
+            "joint": "wrist1",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.011003435871262512
+          },
+          {
+            "joint": "wrist2",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.017267260840163168
+          },
+          {
+            "joint": "wrist3",
+            "unit": "rad",
+            "max_abs_tracking_error": 0.0001347928459374259
+          },
+          {
+            "joint": "jaw_L",
+            "unit": "m",
+            "max_abs_tracking_error": 0.005222247651546285
+          },
+          {
+            "joint": "jaw_R",
+            "unit": "m",
+            "max_abs_tracking_error": 0.005477176717250631
+          }
+        ],
+        "interpretation": "Changed collision representation. Equality or difference of this saved physical response does not imply real-plant calibration. Common-prefix equality is not full-sequence equivalence."
+      }
+    }
+  ],
+  "all_five_trials_recorded": true,
+  "code_sha256": {
+    "newton_gripper_variant.py": "73b5018cf6d6fb3b291d9c8339936a738f52a51ee64ebcd2ecf6a4992896b9c0",
+    "newton_fruit_proxy.py": "be8fa3eeed5b72147258fe5e087793a46f480b65546ee890e88a0661336075b1"
+  },
+  "notes": [
+    "115/132 buried source colliders are contained in retained same-body colliders; belts unchanged.",
+    "Compacted and native-ID-preserving models must be distinguished.",
+    "0.1mm outer proxy refers to original compiled collision graph, not all CAD render vertices.",
+    "Original first full-vertex outer preparation rejected its geometric bound before physics; unweighted candidate retained all399vertices and was not executed.",
+    "Strict trials and diagnostic-continue observations are distinct; stopped-prefix RTF is not complete-harvest throughput.",
+    "Global max contact force includes released fruits and cannot be interpreted as target damage force."
+  ]
+}

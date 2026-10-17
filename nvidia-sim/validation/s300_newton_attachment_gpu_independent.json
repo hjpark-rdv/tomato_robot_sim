@@ -1,0 +1,3550 @@
+{
+  "schema": "s300-independent-attachment-gpu-evidence-v1",
+  "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+  "reference_summary": {
+    "status": "completed",
+    "stop": null,
+    "backend": "gpu",
+    "worlds": 1,
+    "physics_hz": 400.0,
+    "free_hz": 60.0,
+    "requested_steps": 13806,
+    "actual_steps": 13806,
+    "scheduled_simulated_s": 82.795,
+    "simulated_s": 82.79312133789062,
+    "realtime_factor": 1.555950458516081,
+    "loop_wall_s": 53.21064104884863,
+    "setup_wall_s": 13.984534800052643,
+    "graph_capture_wall_s": 5.848419118672609,
+    "max_active_penetration_m": 0.0007942071533761919,
+    "max_released_penetration_m": 0.010234830901026726,
+    "max_contact_force_n": 18.444820404052734,
+    "detached_per_world": [
+      6
+    ],
+    "active_contact_criterion_passed": true,
+    "finite_recorded_state": true,
+    "solver_capacity_valid": true,
+    "qacc_finite": true,
+    "max_constraints": 106,
+    "max_total_contacts": 42,
+    "phase_performance": {
+      "settle": {
+        "steps": 120,
+        "simulated_s": 2.0,
+        "wall_s": 0.4185604862868786,
+        "realtime_factor": 4.77828191032159
+      },
+      "rail_move": {
+        "steps": 1848,
+        "simulated_s": 30.799999999999997,
+        "wall_s": 6.080818481743336,
+        "realtime_factor": 5.0651076154422245
+      },
+      "ready_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.09950313158333302,
+        "realtime_factor": 5.02496747633771
+      },
+      "prepare_open": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.2036621067672968,
+        "realtime_factor": 4.910093565626298
+      },
+      "prepare_open_hold": {
+        "steps": 30,
+        "simulated_s": 0.5,
+        "wall_s": 0.10347460582852364,
+        "realtime_factor": 4.832103451822677
+      },
+      "prepare_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.8397743590176105,
+        "realtime_factor": 4.763184249492092
+      },
+      "prepare_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.1499837189912796,
+        "realtime_factor": 5.217465170083419
+      },
+      "approach": {
+        "steps": 1598,
+        "simulated_s": 3.9950000000000045,
+        "wall_s": 4.576973559334874,
+        "realtime_factor": 0.8728475155492394
+      },
+      "belt_start_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.119652858003974,
+        "realtime_factor": 0.8931339681325144
+      },
+      "close": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 12.025964930653572,
+        "realtime_factor": 0.49892046372980065
+      },
+      "cycle_open": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 2.087200988084078,
+        "realtime_factor": 0.4791105435983616
+      },
+      "cycle_open_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.8418332766741514,
+        "realtime_factor": 0.5939418336791824
+      },
+      "cycle_reclose": {
+        "steps": 2400,
+        "simulated_s": 6.0,
+        "wall_s": 9.183676129207015,
+        "realtime_factor": 0.6533331441118757
+      },
+      "belt_finish": {
+        "steps": 800,
+        "simulated_s": 2.0,
+        "wall_s": 5.284800751134753,
+        "realtime_factor": 0.378443785145648
+      },
+      "cycle_open_final": {
+        "steps": 400,
+        "simulated_s": 1.0,
+        "wall_s": 1.5100108124315739,
+        "realtime_factor": 0.6622469135765311
+      },
+      "cycle_open_final_hold": {
+        "steps": 200,
+        "simulated_s": 0.5,
+        "wall_s": 0.5559415630996227,
+        "realtime_factor": 0.8993751019662507
+      },
+      "withdraw": {
+        "steps": 1600,
+        "simulated_s": 4.0,
+        "wall_s": 4.404722955077887,
+        "realtime_factor": 0.9081161382439932
+      },
+      "return_joint_branch": {
+        "steps": 360,
+        "simulated_s": 6.0,
+        "wall_s": 1.0423228293657303,
+        "realtime_factor": 5.756373966836257
+      },
+      "return_lift_branch": {
+        "steps": 240,
+        "simulated_s": 4.0,
+        "wall_s": 0.767775921151042,
+        "realtime_factor": 5.209853408795681
+      },
+      "ready_close": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.18633874505758286,
+        "realtime_factor": 5.3665704343505025
+      },
+      "hold": {
+        "steps": 60,
+        "simulated_s": 1.0,
+        "wall_s": 0.188562773168087,
+        "realtime_factor": 5.30327372258462
+      }
+    },
+    "effective_gpu_options": {
+      "solver": 2,
+      "integrator": 4,
+      "iterations": 64,
+      "ls_iterations": 50,
+      "broadphase": 1,
+      "broadphase_filter": 11,
+      "tolerance": [
+        9.999999974752427e-07
+      ],
+      "graph_conditional": true,
+      "cholesky_block_dim": 32
+    },
+    "gpu_linear_algebra": {
+      "schema": "s300-newton-gpu-cusolver-v1",
+      "enabled": true,
+      "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+      "precision": "float32",
+      "native_hessian_precision": "float32",
+      "matrix_size": 400,
+      "nv": 385,
+      "world_count": 1,
+      "initial_cusolver_deterministic_mode": 1,
+      "cusolver_deterministic_mode": 1,
+      "workspace_bytes": 832,
+      "selected_model_identity_only": true,
+      "unchanged_hessian_recomputed": true,
+      "done_and_noflip_preserve_search": true,
+      "host_solve": false,
+      "handle_workspace_initialized_before_capture": true,
+      "simulation_warmup_steps": 0,
+      "installed_library_modified": false,
+      "physical_parameters_changed": false,
+      "physics_equivalence_verified": false,
+      "graph_capture_verified": false
+    },
+    "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+    "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+    "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+    "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d"
+  },
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests",
+  "training_eligible": false,
+  "harvest_success": null,
+  "invalidated_attachment_preparations": {
+    "schema": "s300-attachment-preparation-mismatch-v1",
+    "invalidated_runs": [
+      "attachment_gpu_campaign/attachment_direct_reference400",
+      "attachment_gpu_campaign/attachment_damping2_same_stiffness"
+    ],
+    "reason": "Incorrectly assumed positive CONNECT solref is 2dt-clamped. Actual source integrator is DISCRETE (enum4), which excludes this clamp for equality rows. Wrong negative K=-40000 instead of-250000 weakened reference stiffness6.25x.",
+    "not_valid_same_stiffness_experiment": true,
+    "raw_runs_preserved": true,
+    "corrected_negative_solref": [
+      [
+        -250000.0,
+        -1000.0
+      ],
+      [
+        -250000.0,
+        -2000.0
+      ]
+    ],
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "native_gpu_coefficient_test_log": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_gpu_coefficients_tests.log",
+    "sha256": "56e4a1a99b009aa866a85a90e74c81b4eae7c01a573d2028529da3f9eb2ac152"
+  },
+  "attachment_response": {
+    "schema": "s300-attachment-response-comparison-v2",
+    "cpu_offline_only": true,
+    "reference": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/response_v2_baseline",
+    "reference_hz": 400,
+    "training_eligible": false,
+    "harvest_success": null,
+    "penetration_note": "Global fixture maximum includes all world/tool pairs and is NOT active-harvest validity; same26.835mm exists in source reference.",
+    "rows": [
+      {
+        "mode": "direct_discrete",
+        "test": "idle",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 4.690610161234867e-15,
+        "position_rms_m": 3.5897471255835873e-16,
+        "max_orientation_difference_deg": 2.7592603762728423e-11,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 5.646678887815898e-07,
+        "global_penetration_m": 0.026834835506365333,
+        "connections_retained": true
+      },
+      {
+        "mode": "direct_discrete",
+        "test": "stem_push",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 4.690610161234867e-15,
+        "position_rms_m": 3.503800324128286e-16,
+        "max_orientation_difference_deg": 2.3217878778567293e-11,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 5.646678887815898e-07,
+        "global_penetration_m": 0.026834835506365333,
+        "connections_retained": true
+      },
+      {
+        "mode": "direct_discrete",
+        "test": "fruit_pull",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 4.690610161234867e-15,
+        "position_rms_m": 3.4883801055240974e-16,
+        "max_orientation_difference_deg": 8.31576941065685e-12,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 5.646678887815898e-07,
+        "global_penetration_m": 0.026834835506365333,
+        "connections_retained": true
+      },
+      {
+        "mode": "direct_discrete",
+        "test": "fruit_twist",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 4.690610161234867e-15,
+        "position_rms_m": 3.3590721939914346e-16,
+        "max_orientation_difference_deg": 1.7958383424827415e-11,
+        "reference_max_connect_site_gap_m": 2.7284699805860987e-06,
+        "variant_max_connect_site_gap_m": 2.7284699810444515e-06,
+        "global_penetration_m": 0.026834835506365333,
+        "connections_retained": true
+      },
+      {
+        "mode": "damping2_discrete",
+        "test": "idle",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 2.1837562657336421e-07,
+        "position_rms_m": 1.4845851663369779e-08,
+        "max_orientation_difference_deg": 0.000400894104005564,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 6.620568296961534e-07,
+        "global_penetration_m": 0.026834835506365232,
+        "connections_retained": true
+      },
+      {
+        "mode": "damping2_discrete",
+        "test": "stem_push",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 2.1837562657336421e-07,
+        "position_rms_m": 1.4996994550127924e-08,
+        "max_orientation_difference_deg": 0.000400894104005564,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 6.620568296961534e-07,
+        "global_penetration_m": 0.026834835506365232,
+        "connections_retained": true
+      },
+      {
+        "mode": "damping2_discrete",
+        "test": "fruit_pull",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 2.1837562657336421e-07,
+        "position_rms_m": 1.4902544127177006e-08,
+        "max_orientation_difference_deg": 0.000400894104005564,
+        "reference_max_connect_site_gap_m": 5.646678889477251e-07,
+        "variant_max_connect_site_gap_m": 6.620568296961534e-07,
+        "global_penetration_m": 0.026834835506365232,
+        "connections_retained": true
+      },
+      {
+        "mode": "damping2_discrete",
+        "test": "fruit_twist",
+        "finite": true,
+        "time_exact": true,
+        "max_position_difference_m": 1.2668350181646027e-06,
+        "position_rms_m": 2.1432065905417817e-08,
+        "max_orientation_difference_deg": 0.001918373626769851,
+        "reference_max_connect_site_gap_m": 2.7284699805860987e-06,
+        "variant_max_connect_site_gap_m": 3.7983653770168424e-06,
+        "global_penetration_m": 0.026834835506365232,
+        "connections_retained": true
+      }
+    ]
+  },
+  "cpu_response_global_penetration": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+    "scope": "Separate CPU idle response fixture; NOT current harvesting trace",
+    "worst": {
+      "depth_m": 0.026834835506365333,
+      "step": 8,
+      "solved_time_s": 0.02,
+      "geom_ids": [
+        108,
+        428
+      ],
+      "geom_names": [
+        "s300_g0003",
+        "s300_g0788"
+      ],
+      "body_names": [
+        "Robot_farmily_lift_platform",
+        "Tool_R"
+      ]
+    },
+    "training_eligible": false
+  },
+  "low_hz_attachment_fidelity_audit": {
+    "schema": "s300-low-hz-attachment-read-only-audit-v1",
+    "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+    "runs": [
+      {
+        "hz": 400,
+        "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+        "summary_sha256": "bc77c754e9b5393d51f98308fff1a6b646bf053c542f089863175e242108cba4",
+        "status": "completed",
+        "max_active_penetration_m": 0.0007942071533761919,
+        "active_1mm_criterion_passed": true,
+        "fruits": [
+          {
+            "name": "Truss_00_Fruit_01",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 2.5126941204071045,
+            "max_torque_while_attached_nm": 0.001130067859776318,
+            "joint_rotation_before_release_max_deg": 3.0660483226802904,
+            "attachment_axis_twist_before_release_max_abs_deg": 1.1442413242179852,
+            "attachment_axis_swing_before_release_max_deg": 2.9180105140527823,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999508664987025,
+              0.002497145859640175,
+              -0.009593166893673058
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_02",
+            "released": true,
+            "break_step": 6591,
+            "first_threshold_crossing_step": 6591,
+            "eq_disable_steps": [
+              6591
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.7832183837890625,
+            "max_torque_while_attached_nm": 0.008085252717137337,
+            "joint_rotation_before_release_max_deg": 20.74737708295946,
+            "attachment_axis_twist_before_release_max_abs_deg": 13.450431239037266,
+            "attachment_axis_swing_before_release_max_deg": 15.833299687091824,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999447795311353,
+              -0.009622951752419125,
+              -0.004223350328807338
+            ],
+            "release_time_s": 54.55412673950195,
+            "release_phase": "close",
+            "force_at_release_n": 0.34758761525154114,
+            "torque_at_release_nm": 0.008085252717137337,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 20.74737708295946,
+            "twist_at_solver_start_deg": 13.450431239037266,
+            "swing_at_solver_start_deg": 15.833299687091824,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008085251994838625,
+            "angular_torque_recompute_abs_error_nm": 7.222987121607849e-10,
+            "spring_only_torque_nm": 0.007848244606286773,
+            "damping_only_torque_nm": 0.00025276272788185355,
+            "joint_error_rotvec_deg": [
+              13.497891021327495,
+              7.758400941322955,
+              13.713779375514122
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              0.9610958275128112,
+              0.8508195046914513,
+              1.0917470729587235
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_03",
+            "released": true,
+            "break_step": 6423,
+            "first_threshold_crossing_step": 6423,
+            "eq_disable_steps": [
+              6423
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 3.5853443145751953,
+            "max_torque_while_attached_nm": 0.007938580587506294,
+            "joint_rotation_before_release_max_deg": 32.815890407516456,
+            "attachment_axis_twist_before_release_max_abs_deg": 31.51115301335157,
+            "attachment_axis_swing_before_release_max_deg": 9.797272481982743,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998175292439643,
+              -0.018300480662875623,
+              0.0054772825381004565
+            ],
+            "release_time_s": 54.13435745239258,
+            "release_phase": "close",
+            "force_at_release_n": 3.5853443145751953,
+            "torque_at_release_nm": 0.006931183859705925,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": true,
+            "release_by_torque": false,
+            "joint_rotation_at_solver_start_deg": 31.604536491503865,
+            "twist_at_solver_start_deg": 30.256138172393282,
+            "swing_at_solver_start_deg": 9.24162737590563,
+            "cpu_float64_recomputed_angular_torque_nm": 0.006931185604486624,
+            "angular_torque_recompute_abs_error_nm": 1.7447806992601511e-09,
+            "spring_only_torque_nm": 0.006459133758486103,
+            "damping_only_torque_nm": 0.0009938359057069701,
+            "joint_error_rotvec_deg": [
+              30.36264383365233,
+              8.217951538098161,
+              -3.069514747627013
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              0.9127966341329508,
+              4.761037737393308,
+              4.516362636366331
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_04",
+            "released": true,
+            "break_step": 6397,
+            "first_threshold_crossing_step": 6397,
+            "eq_disable_steps": [
+              6397
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 2.8519434928894043,
+            "max_torque_while_attached_nm": 0.008097696118056774,
+            "joint_rotation_before_release_max_deg": 18.483657829439448,
+            "attachment_axis_twist_before_release_max_abs_deg": 11.354556536950879,
+            "attachment_axis_swing_before_release_max_deg": 15.576790736464769,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998091857608645,
+              0.0014223476942314373,
+              0.0194825305141253
+            ],
+            "release_time_s": 54.069393157958984,
+            "release_phase": "close",
+            "force_at_release_n": 1.7697012424468994,
+            "torque_at_release_nm": 0.008097696118056774,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 18.483657829439448,
+            "twist_at_solver_start_deg": -9.981176005309763,
+            "swing_at_solver_start_deg": 15.576790736464769,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008097693071370314,
+            "angular_torque_recompute_abs_error_nm": 3.046686460408954e-09,
+            "spring_only_torque_nm": 0.007533748785634226,
+            "damping_only_torque_nm": 0.0006344150150737396,
+            "joint_error_rotvec_deg": [
+              -10.19273458540814,
+              7.699061144986277,
+              13.359573454036656
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              -0.19718521971894123,
+              0.1126442583726332,
+              4.223332183484664
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_05",
+            "released": true,
+            "break_step": 6394,
+            "first_threshold_crossing_step": 6394,
+            "eq_disable_steps": [
+              6394
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 2.198068618774414,
+            "max_torque_while_attached_nm": 0.008182233199477196,
+            "joint_rotation_before_release_max_deg": 28.94498761292704,
+            "attachment_axis_twist_before_release_max_abs_deg": 25.499759902244413,
+            "attachment_axis_swing_before_release_max_deg": 14.793280140903716,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9996624774213027,
+              -0.009877296429422576,
+              -0.024028529941486167
+            ],
+            "release_time_s": 54.06189727783203,
+            "release_phase": "close",
+            "force_at_release_n": 1.0729719400405884,
+            "torque_at_release_nm": 0.008182233199477196,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 28.94498761292704,
+            "twist_at_solver_start_deg": 25.499759902244413,
+            "swing_at_solver_start_deg": 13.810732816478113,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008182229415603978,
+            "angular_torque_recompute_abs_error_nm": 3.783873218227152e-09,
+            "spring_only_torque_nm": 0.007584090306497821,
+            "damping_only_torque_nm": 0.0006627959028057321,
+            "joint_error_rotvec_deg": [
+              25.69348018789258,
+              10.060843655686636,
+              8.74281505427833
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              3.8197969609238553,
+              1.3218736095976007,
+              1.7849854918825314
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_07",
+            "released": true,
+            "break_step": 6751,
+            "first_threshold_crossing_step": 6751,
+            "eq_disable_steps": [
+              6751
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 2.3160715103149414,
+            "max_torque_while_attached_nm": 0.008077007718384266,
+            "joint_rotation_before_release_max_deg": 12.52184363827653,
+            "attachment_axis_twist_before_release_max_abs_deg": 9.593745247988734,
+            "attachment_axis_swing_before_release_max_deg": 11.399774880931721,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998438459096007,
+              0.005427037778807724,
+              -0.016817581801368824
+            ],
+            "release_time_s": 54.95390701293945,
+            "release_phase": "close",
+            "force_at_release_n": 0.28963083028793335,
+            "torque_at_release_nm": 0.008077007718384266,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 11.638967799362048,
+            "twist_at_solver_start_deg": 2.3513732152047018,
+            "swing_at_solver_start_deg": 11.399774880931721,
+            "cpu_float64_recomputed_angular_torque_nm": 0.00807701047663739,
+            "angular_torque_recompute_abs_error_nm": 2.758253124165999e-09,
+            "spring_only_torque_nm": 0.005225942658996057,
+            "damping_only_torque_nm": 0.002860945444081568,
+            "joint_error_rotvec_deg": [
+              2.4292554785236993,
+              8.3294312771474,
+              7.757894689812201
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              1.891583191295711,
+              15.051178619264643,
+              11.561231380991455
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_08",
+            "released": true,
+            "break_step": 6560,
+            "first_threshold_crossing_step": 6560,
+            "eq_disable_steps": [
+              6560
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 2.066972017288208,
+            "max_torque_while_attached_nm": 0.008004625327885151,
+            "joint_rotation_before_release_max_deg": 25.70071212879892,
+            "attachment_axis_twist_before_release_max_abs_deg": 21.66794403215444,
+            "attachment_axis_swing_before_release_max_deg": 13.904632577019688,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999879247529647,
+              -0.0020696326192846137,
+              -0.0044572378307975585
+            ],
+            "release_time_s": 54.47666931152344,
+            "release_phase": "close",
+            "force_at_release_n": 1.0811684131622314,
+            "torque_at_release_nm": 0.008004625327885151,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 25.70071212879892,
+            "twist_at_solver_start_deg": 21.66794403215444,
+            "swing_at_solver_start_deg": 13.904632577019688,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008004627524721938,
+            "angular_torque_recompute_abs_error_nm": 2.1968367871355587e-09,
+            "spring_only_torque_nm": 0.007707063587477224,
+            "damping_only_torque_nm": 0.0004611733292719244,
+            "joint_error_rotvec_deg": [
+              21.531279278108215,
+              -14.03165033149376,
+              -0.20859877806281088
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              2.096881287658791,
+              -1.078829959647729,
+              1.972738109102807
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_09",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.0192123651504517,
+            "max_torque_while_attached_nm": 0.003611999098211527,
+            "joint_rotation_before_release_max_deg": 6.670787418579945,
+            "attachment_axis_twist_before_release_max_abs_deg": 3.848806892300375,
+            "attachment_axis_swing_before_release_max_deg": 6.218289387277645,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9996289321852154,
+              0.016871812239018832,
+              -0.02138550654104707
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_10",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 0.8496615290641785,
+            "max_torque_while_attached_nm": 0.0025460394099354744,
+            "joint_rotation_before_release_max_deg": 4.227963304202737,
+            "attachment_axis_twist_before_release_max_abs_deg": 1.4278458571256074,
+            "attachment_axis_swing_before_release_max_deg": 4.223937714601938,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998181826286371,
+              0.001903749126377918,
+              0.018973071033256447
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_11",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 0.6692036390304565,
+            "max_torque_while_attached_nm": 0.0018446753965690732,
+            "joint_rotation_before_release_max_deg": 3.497811620896214,
+            "attachment_axis_twist_before_release_max_abs_deg": 1.6891512684302477,
+            "attachment_axis_swing_before_release_max_deg": 3.4410031475967573,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9997503125708577,
+              0.02025597441788175,
+              0.009434405908935989
+            ]
+          }
+        ],
+        "all_threshold_and_deactivation_consistent": true,
+        "max_independent_angular_torque_recompute_error_nm": 3.783873218227152e-09
+      },
+      {
+        "hz": 120,
+        "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz120_observe",
+        "summary_sha256": "e84f0c10322e46b0faa0b07c494c255eaf952a7db5df330f38d01305cc92bfd4",
+        "status": "completed",
+        "max_active_penetration_m": 0.00292858574539423,
+        "active_1mm_criterion_passed": false,
+        "fruits": [
+          {
+            "name": "Truss_00_Fruit_01",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 0.18550750613212585,
+            "max_torque_while_attached_nm": 0.003226261353120208,
+            "joint_rotation_before_release_max_deg": 5.931451850815007,
+            "attachment_axis_twist_before_release_max_abs_deg": 1.2871026819630622,
+            "attachment_axis_swing_before_release_max_deg": 5.931418720815605,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999508664987025,
+              0.002497145859640175,
+              -0.009593166893673058
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_02",
+            "released": true,
+            "break_step": 3867,
+            "first_threshold_crossing_step": 3867,
+            "eq_disable_steps": [
+              3867
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.4883153438568115,
+            "max_torque_while_attached_nm": 0.008084285072982311,
+            "joint_rotation_before_release_max_deg": 21.143245270537005,
+            "attachment_axis_twist_before_release_max_abs_deg": 14.958611148420681,
+            "attachment_axis_swing_before_release_max_deg": 15.837041713199921,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999447795311353,
+              -0.009622951752419125,
+              -0.004223350328807338
+            ],
+            "release_time_s": 54.63492202758789,
+            "release_phase": "close",
+            "force_at_release_n": 1.0031145811080933,
+            "torque_at_release_nm": 0.008084285072982311,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 21.143245270537005,
+            "twist_at_solver_start_deg": 14.052940678635316,
+            "swing_at_solver_start_deg": 15.837041713199921,
+            "cpu_float64_recomputed_angular_torque_nm": 0.0080842845181214,
+            "angular_torque_recompute_abs_error_nm": 5.548609106897917e-10,
+            "spring_only_torque_nm": 0.007882096672083592,
+            "damping_only_torque_nm": 0.00022331781173769632,
+            "joint_error_rotvec_deg": [
+              14.0952990965072,
+              7.586810165477507,
+              13.813024734759473
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              0.9639527135238979,
+              0.7071689398529599,
+              0.8872367484442526
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_03",
+            "released": true,
+            "break_step": 3776,
+            "first_threshold_crossing_step": 3776,
+            "eq_disable_steps": [
+              3776
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.7045294046401978,
+            "max_torque_while_attached_nm": 0.008072762750089169,
+            "joint_rotation_before_release_max_deg": 22.262757591112482,
+            "attachment_axis_twist_before_release_max_abs_deg": 18.686710997955693,
+            "attachment_axis_swing_before_release_max_deg": 12.657598832009215,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998175292439643,
+              -0.018300480662875623,
+              0.0054772825381004565
+            ],
+            "release_time_s": 53.876426696777344,
+            "release_phase": "close",
+            "force_at_release_n": 0.21846914291381836,
+            "torque_at_release_nm": 0.008072762750089169,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 22.262757591112482,
+            "twist_at_solver_start_deg": 18.686710997955693,
+            "swing_at_solver_start_deg": 12.15525401673888,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008072761787212562,
+            "angular_torque_recompute_abs_error_nm": 9.628766065722383e-10,
+            "spring_only_torque_nm": 0.006481748611251818,
+            "damping_only_torque_nm": 0.0016618651359618353,
+            "joint_error_rotvec_deg": [
+              18.838734655577372,
+              11.857599361993044,
+              -0.36031917949041214
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              8.067119451040375,
+              7.540076117645604,
+              0.9029402731809382
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_04",
+            "released": true,
+            "break_step": 3771,
+            "first_threshold_crossing_step": 3771,
+            "eq_disable_steps": [
+              3771
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.8639799356460571,
+            "max_torque_while_attached_nm": 0.008938823826611042,
+            "joint_rotation_before_release_max_deg": 26.576114339342297,
+            "attachment_axis_twist_before_release_max_abs_deg": 21.336153864448544,
+            "attachment_axis_swing_before_release_max_deg": 15.937510023847919,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998091857608645,
+              0.0014223476942314373,
+              0.0194825305141253
+            ],
+            "release_time_s": 53.83475112915039,
+            "release_phase": "close",
+            "force_at_release_n": 1.4169650077819824,
+            "torque_at_release_nm": 0.008938823826611042,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 26.576114339342297,
+            "twist_at_solver_start_deg": -21.336153864448544,
+            "swing_at_solver_start_deg": 15.937510023847919,
+            "cpu_float64_recomputed_angular_torque_nm": 0.008938821586461459,
+            "angular_torque_recompute_abs_error_nm": 2.240149583193629e-09,
+            "spring_only_torque_nm": 0.008398266460449864,
+            "damping_only_torque_nm": 0.0005534239311676618,
+            "joint_error_rotvec_deg": [
+              -21.506215455946673,
+              2.150277833185574,
+              15.464435970954286
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              -1.3617807667395712,
+              1.0556509605399966,
+              3.262439358880093
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_05",
+            "released": true,
+            "break_step": 3740,
+            "first_threshold_crossing_step": 3740,
+            "eq_disable_steps": [
+              3740
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.4880225658416748,
+            "max_torque_while_attached_nm": 0.009063891135156155,
+            "joint_rotation_before_release_max_deg": 16.015367266999412,
+            "attachment_axis_twist_before_release_max_abs_deg": 6.544865552249836,
+            "attachment_axis_swing_before_release_max_deg": 15.99712740909289,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9996624774213027,
+              -0.009877296429422576,
+              -0.024028529941486167
+            ],
+            "release_time_s": 53.57636260986328,
+            "release_phase": "close",
+            "force_at_release_n": 1.4880225658416748,
+            "torque_at_release_nm": 0.009063891135156155,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 16.015367266999412,
+            "twist_at_solver_start_deg": -0.7666330974781908,
+            "swing_at_solver_start_deg": 15.99712740909289,
+            "cpu_float64_recomputed_angular_torque_nm": 0.00906388733858916,
+            "angular_torque_recompute_abs_error_nm": 3.796566994812567e-09,
+            "spring_only_torque_nm": 0.007663104007978421,
+            "damping_only_torque_nm": 0.001431477403994438,
+            "joint_error_rotvec_deg": [
+              -0.4239711294756268,
+              13.581984098025265,
+              8.475968140209089
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              -2.098615992701556,
+              7.788679359219437,
+              5.099471739373444
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_07",
+            "released": true,
+            "break_step": 3985,
+            "first_threshold_crossing_step": 3985,
+            "eq_disable_steps": [
+              3985
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.4765491485595703,
+            "max_torque_while_attached_nm": 0.011359582655131817,
+            "joint_rotation_before_release_max_deg": 16.20503909969955,
+            "attachment_axis_twist_before_release_max_abs_deg": 6.363902770756436,
+            "attachment_axis_swing_before_release_max_deg": 16.172977080661894,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998438459096007,
+              0.005427037778807724,
+              -0.016817581801368824
+            ],
+            "release_time_s": 55.618465423583984,
+            "release_phase": "close",
+            "force_at_release_n": 0.21563422679901123,
+            "torque_at_release_nm": 0.011359582655131817,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 16.20503909969955,
+            "twist_at_solver_start_deg": -1.0222782185865436,
+            "swing_at_solver_start_deg": 16.172977080661894,
+            "cpu_float64_recomputed_angular_torque_nm": 0.011359578320939418,
+            "angular_torque_recompute_abs_error_nm": 4.334192399077508e-09,
+            "spring_only_torque_nm": 0.0077318608095441445,
+            "damping_only_torque_nm": 0.00367445820309888,
+            "joint_error_rotvec_deg": [
+              -0.8917860686697334,
+              11.727371445095867,
+              11.147950616054663
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              4.525228024707493,
+              18.380947304332732,
+              15.547863408667
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_08",
+            "released": true,
+            "break_step": 3825,
+            "first_threshold_crossing_step": 3825,
+            "eq_disable_steps": [
+              3825
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.385969877243042,
+            "max_torque_while_attached_nm": 0.009073241613805294,
+            "joint_rotation_before_release_max_deg": 17.955150329674183,
+            "attachment_axis_twist_before_release_max_abs_deg": 13.519692854736006,
+            "attachment_axis_swing_before_release_max_deg": 16.002611294562858,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9999879247529647,
+              -0.0020696326192846137,
+              -0.0044572378307975585
+            ],
+            "release_time_s": 54.284847259521484,
+            "release_phase": "close",
+            "force_at_release_n": 1.385969877243042,
+            "torque_at_release_nm": 0.009073241613805294,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 17.819654225724744,
+            "twist_at_solver_start_deg": 7.865067209912627,
+            "swing_at_solver_start_deg": 16.002611294562858,
+            "cpu_float64_recomputed_angular_torque_nm": 0.009073239955524419,
+            "angular_torque_recompute_abs_error_nm": 1.6582808754633804e-09,
+            "spring_only_torque_nm": 0.007927670447196802,
+            "damping_only_torque_nm": 0.0011521436531401758,
+            "joint_error_rotvec_deg": [
+              7.787236513460179,
+              -15.964772578833193,
+              1.4230218549113978
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              1.9750322182203315,
+              -7.422646570975635,
+              -0.02590393156361759
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_09",
+            "released": true,
+            "break_step": 4960,
+            "first_threshold_crossing_step": 4960,
+            "eq_disable_steps": [
+              4960
+            ],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 1.132388710975647,
+            "max_torque_while_attached_nm": 0.0084388367831707,
+            "joint_rotation_before_release_max_deg": 13.310010994064278,
+            "attachment_axis_twist_before_release_max_abs_deg": 6.214422338716193,
+            "attachment_axis_swing_before_release_max_deg": 12.992734630145407,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9996289321852154,
+              0.016871812239018832,
+              -0.02138550654104707
+            ],
+            "release_time_s": 63.745201110839844,
+            "release_phase": "belt_finish",
+            "force_at_release_n": 0.09587595611810684,
+            "torque_at_release_nm": 0.0084388367831707,
+            "event_force_torque_exact_metrics": true,
+            "release_by_force": false,
+            "release_by_torque": true,
+            "joint_rotation_at_solver_start_deg": 13.310010994064278,
+            "twist_at_solver_start_deg": -2.8950280121990364,
+            "swing_at_solver_start_deg": 12.992734630145407,
+            "cpu_float64_recomputed_angular_torque_nm": 0.00843883186922043,
+            "angular_torque_recompute_abs_error_nm": 4.913950269261336e-09,
+            "spring_only_torque_nm": 0.006148599331188378,
+            "damping_only_torque_nm": 0.002314471570413553,
+            "joint_error_rotvec_deg": [
+              -3.0062392634219304,
+              12.333230146007505,
+              4.001296690966676
+            ],
+            "joint_relative_angular_speed_rad_s": [
+              1.3814094930939875,
+              15.138418541105905,
+              2.64556617621501
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_10",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 0.21530981361865997,
+            "max_torque_while_attached_nm": 0.0042240675538778305,
+            "joint_rotation_before_release_max_deg": 5.766546377256229,
+            "attachment_axis_twist_before_release_max_abs_deg": 2.609409377172606,
+            "attachment_axis_swing_before_release_max_deg": 5.720749228693707,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9998181826286371,
+              0.001903749126377918,
+              0.018973071033256447
+            ]
+          },
+          {
+            "name": "Truss_00_Fruit_11",
+            "released": false,
+            "break_step": -1,
+            "first_threshold_crossing_step": null,
+            "eq_disable_steps": [],
+            "threshold_and_deactivation_consistent": true,
+            "max_force_while_attached_n": 0.5804076194763184,
+            "max_torque_while_attached_nm": 0.004816676955670118,
+            "joint_rotation_before_release_max_deg": 7.147322540930306,
+            "attachment_axis_twist_before_release_max_abs_deg": 2.9585241003442184,
+            "attachment_axis_swing_before_release_max_deg": 7.088529636886043,
+            "attachment_axis_in_initial_joint_frame": [
+              0.9997503125708577,
+              0.02025597441788175,
+              0.009434405908935989
+            ]
+          }
+        ],
+        "all_threshold_and_deactivation_consistent": true,
+        "max_independent_angular_torque_recompute_error_nm": 4.913950269261336e-09
+      }
+    ],
+    "notes": [
+      "CPU float64 re-evaluation uses saved GPU pre-step q/v, not a new dynamics rollout.",
+      "Equality force norms are checked for threshold/event/eq consistency, not independently reconstructed without saved efc rows.",
+      "Twist axis is the initial attachment-to-fruit COM vector in joint frame; this is a kinematic decomposition, not a calibrated anatomical damage measure.",
+      "Spring and damping torque norms do not sum to total norm because they are vectors.",
+      "No visual video judgment or target-force/damage inference from whole-scene force maximum."
+    ],
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "cases": [
+    {
+      "name": "attachment_direct_discrete_correct",
+      "group": "attachment",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_corrected_campaign/attachment_direct_discrete_correct",
+      "summary_sha256": "1739433e266a99613dca0193bbc904f741513b498132dff504f38037d9c92feb",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.49723085147213,
+        "loop_wall_s": 55.29749888367951,
+        "setup_wall_s": 13.88229395262897,
+        "graph_capture_wall_s": 5.837479151785374,
+        "max_active_penetration_m": 0.0005995116080157459,
+        "max_released_penetration_m": 0.009706036187708378,
+        "max_contact_force_n": 14.016592979431152,
+        "detached_per_world": [
+          5
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 103,
+        "max_total_contacts": 41,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.42297775112092495,
+            "realtime_factor": 4.728381090257915
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.119325349107385,
+            "realtime_factor": 5.033234587615568
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10402125120162964,
+            "realtime_factor": 4.806710111867668
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20393465645611286,
+            "realtime_factor": 4.9035314417743505
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10031190142035484,
+            "realtime_factor": 4.984453418989247
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8432322107255459,
+            "realtime_factor": 4.743651806847207
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.152427528053522,
+            "realtime_factor": 5.206401143622579
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.609256971627474,
+            "realtime_factor": 0.8667340581337598
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1358847133815289,
+            "realtime_factor": 0.8803710343305879
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.227737510576844,
+            "realtime_factor": 0.49068766767442246
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.0054454524070024,
+            "realtime_factor": 0.4986423334525338
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.7423596233129501,
+            "realtime_factor": 0.6735280102770612
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.985307460650802,
+            "realtime_factor": 0.6008828494910405
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.529986687004566,
+            "realtime_factor": 0.36166452347886974
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.693082908168435,
+            "realtime_factor": 0.5906385299712185
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.6837306022644043,
+            "realtime_factor": 0.7312821721655891
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.921240713447332,
+            "realtime_factor": 0.8128031593882343
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0967488922178745,
+            "realtime_factor": 5.470714438440545
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8017060160636902,
+            "realtime_factor": 4.989360089424883
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.19408161379396915,
+            "realtime_factor": 5.15247158374089
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.19642182812094688,
+            "realtime_factor": 5.091083865609118
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "9fb39eafc46e0f2073050708f5695f02a1e9c8d9379115f6178a0bdd2c848afc",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "cd9912fe7b03d75f331a5069f8b7193cf45705481631cbeb7487d98c47ffa084"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 3.434907913208008,
+          "passive_torque_nm": 0.006443353835493326,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6384,
+          "solver_time_s": 54.0344123840332,
+          "release_effective_time_s": 54.03691101074219,
+          "scheduled_solver_time_s": 54.04,
+          "scheduled_release_time_s": 54.0425,
+          "phase": "close",
+          "constraint_force_n": 3.048020362854004,
+          "passive_torque_nm": 0.0064781843684613705,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.03691101074219,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6384,
+          "solver_time_s": 54.0344123840332,
+          "release_effective_time_s": 54.03691101074219,
+          "scheduled_solver_time_s": 54.04,
+          "scheduled_release_time_s": 54.0425,
+          "phase": "close",
+          "constraint_force_n": 3.5857126712799072,
+          "passive_torque_nm": 0.005515069235116243,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.03691101074219,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6640,
+          "solver_time_s": 54.6740608215332,
+          "release_effective_time_s": 54.67655944824219,
+          "scheduled_solver_time_s": 54.68,
+          "scheduled_release_time_s": 54.6825,
+          "phase": "close",
+          "constraint_force_n": 0.4110105335712433,
+          "passive_torque_nm": 0.01011987030506134,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.67655944824219,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6508,
+          "solver_time_s": 54.344242095947266,
+          "release_effective_time_s": 54.34674072265625,
+          "scheduled_solver_time_s": 54.35,
+          "scheduled_release_time_s": 54.3525,
+          "phase": "close",
+          "constraint_force_n": 1.18250572681427,
+          "passive_torque_nm": 0.008078079670667648,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.34674072265625,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_attachment_direct_discrete",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_110448_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_corrected_campaign/attachment_direct_discrete_correct",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "b0c508f6f0a27f81c72a575ecb151922932b0288d94aa60920014e26c970bdbe",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "attachment_damping2_discrete_correct",
+      "group": "attachment",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_corrected_campaign/attachment_damping2_discrete_correct",
+      "summary_sha256": "1d68b8457f1727fc0346babc28c25421f5c79bd5b30a020a64111e0e6dc01cee",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.5471152947910252,
+        "loop_wall_s": 53.51451285928488,
+        "setup_wall_s": 13.909448623657227,
+        "graph_capture_wall_s": 5.874719860032201,
+        "max_active_penetration_m": 0.0007733696256764233,
+        "max_released_penetration_m": 0.009842080064117908,
+        "max_contact_force_n": 13.753576278686523,
+        "detached_per_world": [
+          6
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 112,
+        "max_total_contacts": 42,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.41662163101136684,
+            "realtime_factor": 4.800518866831073
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.132725415751338,
+            "realtime_factor": 5.022236919476787
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.105740150436759,
+            "realtime_factor": 4.728572807346626
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20521648228168488,
+            "realtime_factor": 4.872902940746139
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09462942369282246,
+            "realtime_factor": 5.283768837302182
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.816771786659956,
+            "realtime_factor": 4.897328807545243
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1516001634299755,
+            "realtime_factor": 5.210141671158974
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.584498289972544,
+            "realtime_factor": 0.8714148740633363
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1280186884105206,
+            "realtime_factor": 0.8865101352257644
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.396357294172049,
+            "realtime_factor": 0.4840131546402591
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.0129983704537153,
+            "realtime_factor": 0.49677139071633086
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.697691548615694,
+            "realtime_factor": 0.7166490707706888
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.426354182884097,
+            "realtime_factor": 0.6365133203772992
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.3656236082315445,
+            "realtime_factor": 0.3727432533530208
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.522519052028656,
+            "realtime_factor": 0.6568062308761037
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5436611250042915,
+            "realtime_factor": 0.9196905517128029
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.301604509353638,
+            "realtime_factor": 0.929885579044328
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.014516718685627,
+            "realtime_factor": 5.91414600616281
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.748646343126893,
+            "realtime_factor": 5.342976742921208
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18143387883901596,
+            "realtime_factor": 5.511649788886935
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18363438360393047,
+            "realtime_factor": 5.445603270882198
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "ddc6c97982f6f04f4b79c98f8b8a9cd8f6b1b1d03544cbe9eb39e890a288eb73",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "6e6b9d20e99b6500b996a703d03b55dafdebb419e4841d5b14ac8574a4cdd5b7"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6565,
+          "solver_time_s": 54.486663818359375,
+          "release_effective_time_s": 54.48916244506836,
+          "scheduled_solver_time_s": 54.4925,
+          "scheduled_release_time_s": 54.495,
+          "phase": "close",
+          "constraint_force_n": 0.9160563945770264,
+          "passive_torque_nm": 0.0080327233299613,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.48916244506836,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6401,
+          "solver_time_s": 54.07688903808594,
+          "release_effective_time_s": 54.07938766479492,
+          "scheduled_solver_time_s": 54.0825,
+          "scheduled_release_time_s": 54.085,
+          "phase": "close",
+          "constraint_force_n": 3.9340198040008545,
+          "passive_torque_nm": 0.005798586178570986,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.07938766479492,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6403,
+          "solver_time_s": 54.081886291503906,
+          "release_effective_time_s": 54.08438491821289,
+          "scheduled_solver_time_s": 54.0875,
+          "scheduled_release_time_s": 54.09,
+          "phase": "close",
+          "constraint_force_n": 2.3724684715270996,
+          "passive_torque_nm": 0.009149729274213314,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.08438491821289,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6400,
+          "solver_time_s": 54.07439041137695,
+          "release_effective_time_s": 54.07688903808594,
+          "scheduled_solver_time_s": 54.08,
+          "scheduled_release_time_s": 54.0825,
+          "phase": "close",
+          "constraint_force_n": 1.4875587224960327,
+          "passive_torque_nm": 0.008120769634842873,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.07688903808594,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 9828,
+          "solver_time_s": 62.63968276977539,
+          "release_effective_time_s": 62.642181396484375,
+          "scheduled_solver_time_s": 62.65,
+          "scheduled_release_time_s": 62.6525,
+          "phase": "cycle_reclose",
+          "constraint_force_n": 3.0877795219421387,
+          "passive_torque_nm": 0.0030131200328469276,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 62.642181396484375,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6541,
+          "solver_time_s": 54.42669677734375,
+          "release_effective_time_s": 54.429195404052734,
+          "scheduled_solver_time_s": 54.4325,
+          "scheduled_release_time_s": 54.435,
+          "phase": "close",
+          "constraint_force_n": 1.3322242498397827,
+          "passive_torque_nm": 0.008097217418253422,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.429195404052734,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_attachment_damping2_discrete",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_111100_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_corrected_campaign/attachment_damping2_discrete_correct",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "b0c508f6f0a27f81c72a575ecb151922932b0288d94aa60920014e26c970bdbe",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "gpu_aabb_only_original385",
+      "group": "gpu",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_gpu_campaign/gpu_aabb_only_original385",
+      "summary_sha256": "5471cded74d4445ea919eb29183e12874e716dd17d3f4511d8d9cd9bc95cdd75",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.5595029818524884,
+        "loop_wall_s": 53.08942804299295,
+        "setup_wall_s": 14.048738932237029,
+        "graph_capture_wall_s": 5.887162549421191,
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "max_contact_force_n": 18.444820404052734,
+        "detached_per_world": [
+          6
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 106,
+        "max_total_contacts": 42,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.41753285378217697,
+            "realtime_factor": 4.790042225140399
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.078342072665691,
+            "realtime_factor": 5.067171217379755
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09946703165769577,
+            "realtime_factor": 5.0267912057604365
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.2035797107964754,
+            "realtime_factor": 4.912080855639535
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.1033024974167347,
+            "realtime_factor": 4.840154037931337
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8397841956466436,
+            "realtime_factor": 4.763128456972155
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.149812476709485,
+            "realtime_factor": 5.218242210391302
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.580540899187326,
+            "realtime_factor": 0.8721677391219872
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1222938392311335,
+            "realtime_factor": 0.8910322457842992
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.024170408025384,
+            "realtime_factor": 0.49899492409017876
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.086552705615759,
+            "realtime_factor": 0.47925940107268544
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8417474925518036,
+            "realtime_factor": 0.5940023634453875
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.174641195684671,
+            "realtime_factor": 0.65397652856682
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.258378250524402,
+            "realtime_factor": 0.3803454039846879
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.5020109117031097,
+            "realtime_factor": 0.6657741246807013
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.552550058811903,
+            "realtime_factor": 0.9048953882569545
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.378144247457385,
+            "realtime_factor": 0.9136291026324697
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0362468976527452,
+            "realtime_factor": 5.790125899137455
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7632311470806599,
+            "realtime_factor": 5.240876260487927
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18521270528435707,
+            "realtime_factor": 5.399197633146711
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.1875101961195469,
+            "realtime_factor": 5.333043326147722
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 15,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6591,
+          "solver_time_s": 54.55162811279297,
+          "release_effective_time_s": 54.55412673950195,
+          "scheduled_solver_time_s": 54.5575,
+          "scheduled_release_time_s": 54.56,
+          "phase": "close",
+          "constraint_force_n": 0.34758761525154114,
+          "passive_torque_nm": 0.008085252717137337,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.55412673950195,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6423,
+          "solver_time_s": 54.131858825683594,
+          "release_effective_time_s": 54.13435745239258,
+          "scheduled_solver_time_s": 54.1375,
+          "scheduled_release_time_s": 54.14,
+          "phase": "close",
+          "constraint_force_n": 3.5853443145751953,
+          "passive_torque_nm": 0.006931183859705925,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.13435745239258,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 1.7697012424468994,
+          "passive_torque_nm": 0.008097696118056774,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 1.0729719400405884,
+          "passive_torque_nm": 0.008182233199477196,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6751,
+          "solver_time_s": 54.95140838623047,
+          "release_effective_time_s": 54.95390701293945,
+          "scheduled_solver_time_s": 54.9575,
+          "scheduled_release_time_s": 54.96,
+          "phase": "close",
+          "constraint_force_n": 0.28963083028793335,
+          "passive_torque_nm": 0.008077007718384266,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.95390701293945,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6560,
+          "solver_time_s": 54.47417068481445,
+          "release_effective_time_s": 54.47666931152344,
+          "scheduled_solver_time_s": 54.48,
+          "scheduled_release_time_s": 54.4825,
+          "phase": "close",
+          "constraint_force_n": 1.0811684131622314,
+          "passive_torque_nm": 0.008004625327885151,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.47666931152344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "comparison_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_aabb_only_original385_complete_comparison.json",
+      "recorded_evidence_matches": true,
+      "all_compared_arrays_exact": true,
+      "full_coverage": true,
+      "strict_comparator_passed": false,
+      "intentional_or_unexpected_setting_differences": [
+        "effective_gpu_options"
+      ],
+      "comparator_note": "Unmodified comparator also requires implementation options to match; intended AABB/cache/batch/capacity changes can fail strict metadata equality even if all physical arrays/events exactly match.",
+      "runtime_metric_array_equality": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": false,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      },
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_104706_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_gpu_campaign/gpu_aabb_only_original385",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1",
+        "--aabb-filter"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "0692c617f85b8a9b2960c90cad0ac441988a4e675ad3b193cda451b64f972ca4",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "gpu_hessian_cache_only_original385",
+      "group": "gpu",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_gpu_campaign/gpu_hessian_cache_only_original385",
+      "summary_sha256": "5d47653b997f1ad3cd0bef896a237c373ef6f817e21efc86526fa9b1ed8a10ab",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.5439557562809914,
+        "loop_wall_s": 53.62402452342212,
+        "setup_wall_s": 13.899490434676409,
+        "graph_capture_wall_s": 5.887546040117741,
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "max_contact_force_n": 18.444820404052734,
+        "detached_per_world": [
+          6
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 106,
+        "max_total_contacts": 42,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.40912482142448425,
+            "realtime_factor": 4.888483649162209
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 5.9765289686620235,
+            "realtime_factor": 5.153492965816787
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09806204400956631,
+            "realtime_factor": 5.098812747072896
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.203051982447505,
+            "realtime_factor": 4.924847262983654
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10447120666503906,
+            "realtime_factor": 4.786007704525953
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8425765838474035,
+            "realtime_factor": 4.747342943872302
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1580411549657583,
+            "realtime_factor": 5.181163013310535
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.477628294378519,
+            "realtime_factor": 0.8922134079364215
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1092383954674006,
+            "realtime_factor": 0.9015194606373406
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 12.312625063583255,
+            "realtime_factor": 0.487304694897764
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.158007340505719,
+            "realtime_factor": 0.4633904534197064
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8597678858786821,
+            "realtime_factor": 0.581552309887686
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.318762462586164,
+            "realtime_factor": 0.6438623179944074
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.533437445759773,
+            "realtime_factor": 0.3614389824778056
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.5284129884094,
+            "realtime_factor": 0.6542734245151157
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5530865117907524,
+            "realtime_factor": 0.9040177067076326
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.348593607544899,
+            "realtime_factor": 0.9198376213081668
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0105974934995174,
+            "realtime_factor": 5.937081814069297
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7432770282030106,
+            "realtime_factor": 5.381573556323449
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18018250726163387,
+            "realtime_factor": 5.549928320999278
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18246209248900414,
+            "realtime_factor": 5.480590441328321
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": false,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false,
+          "factor_cache": "GPU bitwise compare of complete authoritative upper H",
+          "cached_rhs": false,
+          "skip_inactive_factor_and_solve": true,
+          "runtime": {
+            "solves": 51176,
+            "factorizations": 42864,
+            "reused": 8312,
+            "inactive_calls": 0
+          }
+        },
+        "gpu_linear_algebra_statistics": {
+          "solves": 51176,
+          "factorizations": 42864,
+          "reused": 8312,
+          "inactive_calls": 0
+        },
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6591,
+          "solver_time_s": 54.55162811279297,
+          "release_effective_time_s": 54.55412673950195,
+          "scheduled_solver_time_s": 54.5575,
+          "scheduled_release_time_s": 54.56,
+          "phase": "close",
+          "constraint_force_n": 0.34758761525154114,
+          "passive_torque_nm": 0.008085252717137337,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.55412673950195,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6423,
+          "solver_time_s": 54.131858825683594,
+          "release_effective_time_s": 54.13435745239258,
+          "scheduled_solver_time_s": 54.1375,
+          "scheduled_release_time_s": 54.14,
+          "phase": "close",
+          "constraint_force_n": 3.5853443145751953,
+          "passive_torque_nm": 0.006931183859705925,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.13435745239258,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 1.7697012424468994,
+          "passive_torque_nm": 0.008097696118056774,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 1.0729719400405884,
+          "passive_torque_nm": 0.008182233199477196,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6751,
+          "solver_time_s": 54.95140838623047,
+          "release_effective_time_s": 54.95390701293945,
+          "scheduled_solver_time_s": 54.9575,
+          "scheduled_release_time_s": 54.96,
+          "phase": "close",
+          "constraint_force_n": 0.28963083028793335,
+          "passive_torque_nm": 0.008077007718384266,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.95390701293945,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6560,
+          "solver_time_s": 54.47417068481445,
+          "release_effective_time_s": 54.47666931152344,
+          "scheduled_solver_time_s": 54.48,
+          "scheduled_release_time_s": 54.4825,
+          "phase": "close",
+          "constraint_force_n": 1.0811684131622314,
+          "passive_torque_nm": 0.008004625327885151,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.47666931152344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "comparison_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_hessian_cache_only_original385_complete_comparison.json",
+      "recorded_evidence_matches": true,
+      "all_compared_arrays_exact": true,
+      "full_coverage": true,
+      "strict_comparator_passed": false,
+      "intentional_or_unexpected_setting_differences": [
+        "gpu_linear_algebra"
+      ],
+      "comparator_note": "Unmodified comparator also requires implementation options to match; intended AABB/cache/batch/capacity changes can fail strict metadata equality even if all physical arrays/events exactly match.",
+      "runtime_metric_array_equality": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      },
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_105524_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/attachment_gpu_campaign/gpu_hessian_cache_only_original385",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1",
+        "--cache-hessian"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "0692c617f85b8a9b2960c90cad0ac441988a4e675ad3b193cda451b64f972ca4",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "gpu_graph_batch20_original385",
+      "group": "gpu",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_graph_batch20_campaign/gpu_graph_batch20_original385",
+      "summary_sha256": "14672f80c88455a777f341b41dcd3dc258d7be4d977d3cb954d2a818a89ba9d9",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.5630166096091307,
+        "loop_wall_s": 52.97008414939046,
+        "setup_wall_s": 18.235919198021293,
+        "graph_capture_wall_s": 10.179602917283773,
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "max_contact_force_n": 18.444820404052734,
+        "detached_per_world": [
+          6
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 106,
+        "max_total_contacts": 42,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 1.9999999999999998,
+            "wall_s": 0.4374584723263979,
+            "realtime_factor": 4.5718625344344765
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.056866452097893,
+            "realtime_factor": 5.08513771000051
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09914624877274036,
+            "realtime_factor": 5.0430551451934695
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.2030444573611021,
+            "realtime_factor": 4.925029784100737
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10300694592297077,
+            "realtime_factor": 4.854041594184368
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8369969744235277,
+            "realtime_factor": 4.778989795936783
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1456400752067566,
+            "realtime_factor": 5.237246959012991
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.5788296069949865,
+            "realtime_factor": 0.8724937031718593
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1149068735539913,
+            "realtime_factor": 0.8969358999575432
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 11.996539231389761,
+            "realtime_factor": 0.5001442402906158
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.0796910915523767,
+            "realtime_factor": 0.48084064218092804
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8389582354575396,
+            "realtime_factor": 0.595977223737862
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.134972661733627,
+            "realtime_factor": 0.6568164155689247
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.240927604958415,
+            "realtime_factor": 0.38161183491788936
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.4960838723927736,
+            "realtime_factor": 0.6684117237362114
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5504298806190491,
+            "realtime_factor": 0.9083809175433347
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.359642067924142,
+            "realtime_factor": 0.9175065149108934
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0324119292199612,
+            "realtime_factor": 5.811633738611777
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7605851665139198,
+            "realtime_factor": 5.259108612824615
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18462380580604076,
+            "realtime_factor": 5.416419597863586
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18673492036759853,
+            "realtime_factor": 5.355184761540273
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6591,
+          "solver_time_s": 54.55162811279297,
+          "release_effective_time_s": 54.55412673950195,
+          "scheduled_solver_time_s": 54.5575,
+          "scheduled_release_time_s": 54.56,
+          "phase": "close",
+          "constraint_force_n": 0.34758761525154114,
+          "passive_torque_nm": 0.008085252717137337,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.55412673950195,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6423,
+          "solver_time_s": 54.131858825683594,
+          "release_effective_time_s": 54.13435745239258,
+          "scheduled_solver_time_s": 54.1375,
+          "scheduled_release_time_s": 54.14,
+          "phase": "close",
+          "constraint_force_n": 3.5853443145751953,
+          "passive_torque_nm": 0.006931183859705925,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.13435745239258,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 1.7697012424468994,
+          "passive_torque_nm": 0.008097696118056774,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 1.0729719400405884,
+          "passive_torque_nm": 0.008182233199477196,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6751,
+          "solver_time_s": 54.95140838623047,
+          "release_effective_time_s": 54.95390701293945,
+          "scheduled_solver_time_s": 54.9575,
+          "scheduled_release_time_s": 54.96,
+          "phase": "close",
+          "constraint_force_n": 0.28963083028793335,
+          "passive_torque_nm": 0.008077007718384266,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.95390701293945,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6560,
+          "solver_time_s": 54.47417068481445,
+          "release_effective_time_s": 54.47666931152344,
+          "scheduled_solver_time_s": 54.48,
+          "scheduled_release_time_s": 54.4825,
+          "phase": "close",
+          "constraint_force_n": 1.0811684131622314,
+          "passive_torque_nm": 0.008004625327885151,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.47666931152344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "comparison_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_graph_batch20_original385_complete_comparison.json",
+      "recorded_evidence_matches": true,
+      "all_compared_arrays_exact": true,
+      "full_coverage": true,
+      "strict_comparator_passed": false,
+      "intentional_or_unexpected_setting_differences": [
+        "graph_steps",
+        "gpu_fixed_solver_reductions"
+      ],
+      "comparator_note": "Unmodified comparator also requires implementation options to match; intended AABB/cache/batch/capacity changes can fail strict metadata equality even if all physical arrays/events exactly match.",
+      "runtime_metric_array_equality": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      },
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_104124_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_graph_batch20_campaign/gpu_graph_batch20_original385",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1",
+        "--batch",
+        "20"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "0692c617f85b8a9b2960c90cad0ac441988a4e675ad3b193cda451b64f972ca4",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "gpu_contact_capacity64_original385",
+      "group": "gpu",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_capacity_campaign/gpu_contact_capacity64_original385",
+      "summary_sha256": "3e08e91d2da89a653edc00476ef38480514fbdda9cbf070d7125a1d9fed50f98",
+      "summary": {
+        "status": "stopped",
+        "stop": "solver_capacity_overflow",
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 6076,
+        "scheduled_simulated_s": 53.27,
+        "simulated_s": 53.264835357666016,
+        "realtime_factor": 2.6476962930849854,
+        "loop_wall_s": 20.117426419630647,
+        "setup_wall_s": 13.887809874489903,
+        "graph_capture_wall_s": 5.835403813049197,
+        "max_active_penetration_m": 0.0002903330896515399,
+        "max_released_penetration_m": 0.0,
+        "max_contact_force_n": 2.2068090438842773,
+        "detached_per_world": [
+          0
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": false,
+        "qacc_finite": true,
+        "max_constraints": 61,
+        "max_total_contacts": 15,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.42129057087004185,
+            "realtime_factor": 4.747317263402396
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.078077087178826,
+            "realtime_factor": 5.06739213047658
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.1012022104114294,
+            "realtime_factor": 4.940603549737604
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20356200449168682,
+            "realtime_factor": 4.9125081200545875
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10354646667838097,
+            "realtime_factor": 4.828749990601011
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.8395894654095173,
+            "realtime_factor": 4.7642331934798205
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.1502494774758816,
+            "realtime_factor": 5.216259704952405
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.582505151629448,
+            "realtime_factor": 0.8717938917274237
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1220665574073792,
+            "realtime_factor": 0.8912127301169877
+          },
+          "close": {
+            "steps": 1390,
+            "simulated_s": 3.4750000000000014,
+            "wall_s": 5.295745451003313,
+            "realtime_factor": 0.6561871283563375
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "ba33f922af1ff0bf6189d7e606a2b0a281efbc169b6b03577505b7373f2bc380"
+      },
+      "break_events": [],
+      "comparison_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_contact_capacity64_original385_complete_comparison.json",
+      "recorded_evidence_matches": false,
+      "all_compared_arrays_exact": false,
+      "full_coverage": false,
+      "strict_comparator_passed": false,
+      "intentional_or_unexpected_setting_differences": [
+        "gpu_canonical_contacts",
+        "gpu_dense_hessian",
+        "gpu_fixed_solver_reductions",
+        "gpu_deterministic_bounds"
+      ],
+      "comparator_note": "Unmodified comparator also requires implementation options to match; intended AABB/cache/batch/capacity changes can fail strict metadata equality even if all physical arrays/events exactly match.",
+      "runtime_metric_array_equality": {
+        "active_penetration_m": false,
+        "released_penetration_m": false,
+        "max_contact_force_n": false,
+        "attachment_force_n": false,
+        "attachment_torque_nm": false,
+        "break_step": false,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": false,
+        "nacon": false,
+        "ncollision": false,
+        "nefc": false,
+        "overflow": false,
+        "qacc_abs_max": false,
+        "time": false
+      },
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_104626_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_capacity_campaign/gpu_contact_capacity64_original385",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1",
+        "--nconmax",
+        "64"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "0692c617f85b8a9b2960c90cad0ac441988a4e675ad3b193cda451b64f972ca4",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    },
+    {
+      "name": "gpu_constraint_capacity128_original385",
+      "group": "gpu",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_capacity_campaign/gpu_constraint_capacity128_original385",
+      "summary_sha256": "1e1677866f8a4dd25971ab4f47eb324b9e06d5738ec6c7f2c3ecb084910a5a56",
+      "summary": {
+        "status": "completed",
+        "stop": null,
+        "backend": "gpu",
+        "worlds": 1,
+        "physics_hz": 400.0,
+        "free_hz": 60.0,
+        "requested_steps": 13806,
+        "actual_steps": 13806,
+        "scheduled_simulated_s": 82.795,
+        "simulated_s": 82.79312133789062,
+        "realtime_factor": 1.5607601404328038,
+        "loop_wall_s": 53.04666565544903,
+        "setup_wall_s": 13.904156979173422,
+        "graph_capture_wall_s": 5.839828638359904,
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "max_contact_force_n": 18.444820404052734,
+        "detached_per_world": [
+          6
+        ],
+        "active_contact_criterion_passed": true,
+        "finite_recorded_state": true,
+        "solver_capacity_valid": true,
+        "qacc_finite": true,
+        "max_constraints": 106,
+        "max_total_contacts": 42,
+        "phase_performance": {
+          "settle": {
+            "steps": 120,
+            "simulated_s": 2.0,
+            "wall_s": 0.4207635745406151,
+            "realtime_factor": 4.75326316491055
+          },
+          "rail_move": {
+            "steps": 1848,
+            "simulated_s": 30.799999999999997,
+            "wall_s": 6.057699389755726,
+            "realtime_factor": 5.0844385002145165
+          },
+          "ready_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.09928940236568451,
+            "realtime_factor": 5.035784163132453
+          },
+          "prepare_open": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.20311716198921204,
+            "realtime_factor": 4.923266897816896
+          },
+          "prepare_open_hold": {
+            "steps": 30,
+            "simulated_s": 0.5,
+            "wall_s": 0.10319960676133633,
+            "realtime_factor": 4.844979701873483
+          },
+          "prepare_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.837164269760251,
+            "realtime_factor": 4.778034783000867
+          },
+          "prepare_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.14630844630301,
+            "realtime_factor": 5.234193309270956
+          },
+          "approach": {
+            "steps": 1598,
+            "simulated_s": 3.9950000000000045,
+            "wall_s": 4.565350035205483,
+            "realtime_factor": 0.8750698126524251
+          },
+          "belt_start_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.1159814912825823,
+            "realtime_factor": 0.8960722089133518
+          },
+          "close": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 11.970762388780713,
+            "realtime_factor": 0.5012212092375457
+          },
+          "cycle_open": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 2.088454255834222,
+            "realtime_factor": 0.4788230324923039
+          },
+          "cycle_open_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.8434143178164959,
+            "realtime_factor": 0.5928284467525324
+          },
+          "cycle_reclose": {
+            "steps": 2400,
+            "simulated_s": 6.0,
+            "wall_s": 9.186229631304741,
+            "realtime_factor": 0.6531515366819549
+          },
+          "belt_finish": {
+            "steps": 800,
+            "simulated_s": 2.0,
+            "wall_s": 5.249390009790659,
+            "realtime_factor": 0.38099664842387243
+          },
+          "cycle_open_final": {
+            "steps": 400,
+            "simulated_s": 1.0,
+            "wall_s": 1.5045213233679533,
+            "realtime_factor": 0.6646632284090499
+          },
+          "cycle_open_final_hold": {
+            "steps": 200,
+            "simulated_s": 0.5,
+            "wall_s": 0.5543965622782707,
+            "realtime_factor": 0.9018814942597584
+          },
+          "withdraw": {
+            "steps": 1600,
+            "simulated_s": 4.0,
+            "wall_s": 4.392629086971283,
+            "realtime_factor": 0.9106163804870671
+          },
+          "return_joint_branch": {
+            "steps": 360,
+            "simulated_s": 6.0,
+            "wall_s": 1.0389856733381748,
+            "realtime_factor": 5.774863074600921
+          },
+          "return_lift_branch": {
+            "steps": 240,
+            "simulated_s": 4.0,
+            "wall_s": 0.7654652874916792,
+            "realtime_factor": 5.22557987326562
+          },
+          "ready_close": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18581605330109596,
+            "realtime_factor": 5.3816663427868745
+          },
+          "hold": {
+            "steps": 60,
+            "simulated_s": 1.0,
+            "wall_s": 0.18803506530821323,
+            "realtime_factor": 5.318157006305572
+          }
+        },
+        "effective_gpu_options": {
+          "solver": 2,
+          "integrator": 4,
+          "iterations": 64,
+          "ls_iterations": 50,
+          "broadphase": 1,
+          "broadphase_filter": 11,
+          "tolerance": [
+            9.999999974752427e-07
+          ],
+          "graph_conditional": true,
+          "cholesky_block_dim": 32
+        },
+        "gpu_linear_algebra": {
+          "schema": "s300-newton-gpu-cusolver-v1",
+          "enabled": true,
+          "library": "/usr/local/lib/python3.11/dist-packages/nvidia/cusolver/lib/libcusolver.so.11",
+          "precision": "float32",
+          "native_hessian_precision": "float32",
+          "matrix_size": 400,
+          "nv": 385,
+          "world_count": 1,
+          "initial_cusolver_deterministic_mode": 1,
+          "cusolver_deterministic_mode": 1,
+          "workspace_bytes": 832,
+          "selected_model_identity_only": true,
+          "unchanged_hessian_recomputed": true,
+          "done_and_noflip_preserve_search": true,
+          "host_solve": false,
+          "handle_workspace_initialized_before_capture": true,
+          "simulation_warmup_steps": 0,
+          "installed_library_modified": false,
+          "physical_parameters_changed": false,
+          "physics_equivalence_verified": false,
+          "graph_capture_verified": false
+        },
+        "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55",
+        "commands_sha256": "772eb02c24cabd97c389b2c83175358064adc36fe7bfccaa9f36a29731e74be0",
+        "executed_commands_sha256": "d187adac43e87b05c8d1e6588bd094f9260451eaab2456f80d7984176350da0a",
+        "states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d"
+      },
+      "break_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 6591,
+          "solver_time_s": 54.55162811279297,
+          "release_effective_time_s": 54.55412673950195,
+          "scheduled_solver_time_s": 54.5575,
+          "scheduled_release_time_s": 54.56,
+          "phase": "close",
+          "constraint_force_n": 0.34758761525154114,
+          "passive_torque_nm": 0.008085252717137337,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.55412673950195,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 6423,
+          "solver_time_s": 54.131858825683594,
+          "release_effective_time_s": 54.13435745239258,
+          "scheduled_solver_time_s": 54.1375,
+          "scheduled_release_time_s": 54.14,
+          "phase": "close",
+          "constraint_force_n": 3.5853443145751953,
+          "passive_torque_nm": 0.006931183859705925,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.13435745239258,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 6397,
+          "solver_time_s": 54.06689453125,
+          "release_effective_time_s": 54.069393157958984,
+          "scheduled_solver_time_s": 54.0725,
+          "scheduled_release_time_s": 54.075,
+          "phase": "close",
+          "constraint_force_n": 1.7697012424468994,
+          "passive_torque_nm": 0.008097696118056774,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.069393157958984,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 6394,
+          "solver_time_s": 54.05939865112305,
+          "release_effective_time_s": 54.06189727783203,
+          "scheduled_solver_time_s": 54.065,
+          "scheduled_release_time_s": 54.0675,
+          "phase": "close",
+          "constraint_force_n": 1.0729719400405884,
+          "passive_torque_nm": 0.008182233199477196,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.06189727783203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6751,
+          "solver_time_s": 54.95140838623047,
+          "release_effective_time_s": 54.95390701293945,
+          "scheduled_solver_time_s": 54.9575,
+          "scheduled_release_time_s": 54.96,
+          "phase": "close",
+          "constraint_force_n": 0.28963083028793335,
+          "passive_torque_nm": 0.008077007718384266,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.95390701293945,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 6560,
+          "solver_time_s": 54.47417068481445,
+          "release_effective_time_s": 54.47666931152344,
+          "scheduled_solver_time_s": 54.48,
+          "scheduled_release_time_s": 54.4825,
+          "phase": "close",
+          "constraint_force_n": 1.0811684131622314,
+          "passive_torque_nm": 0.008004625327885151,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.47666931152344,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "comparison_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_constraint_capacity128_original385_complete_comparison.json",
+      "recorded_evidence_matches": true,
+      "all_compared_arrays_exact": true,
+      "full_coverage": true,
+      "strict_comparator_passed": false,
+      "intentional_or_unexpected_setting_differences": [
+        "gpu_deterministic_bounds"
+      ],
+      "comparator_note": "Unmodified comparator also requires implementation options to match; intended AABB/cache/batch/capacity changes can fail strict metadata equality even if all physical arrays/events exactly match.",
+      "runtime_metric_array_equality": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      },
+      "argv": [
+        "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+        "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_105409_s300_newton_gpu",
+        "--backend",
+        "gpu",
+        "--native-observables-only",
+        "--native-control-callback",
+        "--linear-algebra",
+        "cusolver32",
+        "--hz",
+        "400",
+        "--free-hz",
+        "60",
+        "--inertia-linear-algebra",
+        "cusolver32",
+        "--tree-sums",
+        "flat",
+        "--canonical-contacts",
+        "--deterministic",
+        "RUN_TO_RUN",
+        "--deterministic-scope",
+        "solver",
+        "--dense-hessian",
+        "--fixed-solver-reductions",
+        "--indexed-qfrc",
+        "--native-integer-atomics",
+        "--canonical-constraints",
+        "--nconmax",
+        "128",
+        "--njmax",
+        "256",
+        "--viewer-fps",
+        "15",
+        "--output",
+        "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gpu_capacity_campaign/gpu_constraint_capacity128_original385",
+        "--worlds",
+        "1",
+        "--repeats",
+        "1",
+        "--njmax",
+        "128"
+      ],
+      "invocation_code_sha256": {
+        "run_newton_harvest.py": "0692c617f85b8a9b2960c90cad0ac441988a4e675ad3b193cda451b64f972ca4",
+        "newton_kernels.py": "e475239bd4499918ec3a043e043b95829868500b06632a3141e8a6b006d5256b",
+        "newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+        "newton_mjcf.py": "4d1dbc98f6573ae7b2bc3797dcac7f43a89e9235b9c09116b8ba1cede10a41c7",
+        "newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+        "newton_gpu_dense_hessian.py": "6ad34e6dc6e39c470d6ad9fc8edeac8319573873469229f1d9502894f84b735c",
+        "newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d"
+      }
+    }
+  ],
+  "limitations": [
+    "Independent one-change screens; no final combination/GUI qualification claimed here.",
+    "Corrected CONNECT direct coefficients account for DISCRETE integration; first two wrong6.25x-weaker variants are invalidated preparation mismatches and excluded from valid screens. Angular/release parameters unchanged.",
+    "Whole contact-force maximum includes released fruit; no target-damage inference."
+  ]
+}

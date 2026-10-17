@@ -1,0 +1,2087 @@
+{
+  "schema": "s300-combination-readonly-geometry-summary-v1",
+  "records": [
+    {
+      "name": "coarse2_hz200",
+      "schema": "s300-combination-readonly-geometry-v1",
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_screen/coarse2_hz200",
+      "actual_input": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse2",
+      "source_mjb_sha256": "c943c8c5cbed2043312133df870931f760cea5f94455bbac7962eb4919ff66e8",
+      "source_metadata_sha256": "136c46e596b439a52b7d9647816de298819b0a4d4bec37f45056c5cf78cc9486",
+      "states_sha256": "b9f59328cba27a640ff5e038f7f651b35d981cd076da49726002f799378f0434",
+      "summary_sha256": "68d842482ca9de0d6adf5472179386f34741e4dc7d346e4ba3e14b5d69e584ff",
+      "counts": {
+        "nq": 200,
+        "nv": 190,
+        "bodies": 132,
+        "geoms": 901
+      },
+      "input_hash_verified": true,
+      "finite_saved_qpos": true,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.31820632703602314,
+          "realtime_factor": 6.2852301480906325
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 4.444328581914306,
+          "realtime_factor": 6.9301806633598435
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.07166151702404022,
+          "realtime_factor": 6.977245539363414
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.14146661013364792,
+          "realtime_factor": 7.068805840864277
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06909302808344364,
+          "realtime_factor": 7.236620160809135
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.5825159475207329,
+          "realtime_factor": 6.866764793349511
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7794425059109926,
+          "realtime_factor": 7.697809594034588
+        },
+        "approach": {
+          "steps": 799,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 1.6497509460896254,
+          "realtime_factor": 2.4215776384121983
+        },
+        "belt_start_open": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.405174795538187,
+          "realtime_factor": 2.468070598201244
+        },
+        "close": {
+          "steps": 1200,
+          "simulated_s": 6.0,
+          "wall_s": 4.358616465702653,
+          "realtime_factor": 1.3765836125323634
+        },
+        "cycle_open": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.7129145693033934,
+          "realtime_factor": 1.402692612913108
+        },
+        "cycle_open_hold": {
+          "steps": 100,
+          "simulated_s": 0.5,
+          "wall_s": 0.25528418086469173,
+          "realtime_factor": 1.958601580036857
+        },
+        "cycle_reclose": {
+          "steps": 1200,
+          "simulated_s": 6.0,
+          "wall_s": 3.48833311162889,
+          "realtime_factor": 1.7200192206409661
+        },
+        "belt_finish": {
+          "steps": 400,
+          "simulated_s": 2.0,
+          "wall_s": 2.02981330268085,
+          "realtime_factor": 0.9853122931840704
+        },
+        "cycle_open_final": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.5796043686568737,
+          "realtime_factor": 1.7253148079565301
+        },
+        "cycle_open_final_hold": {
+          "steps": 100,
+          "simulated_s": 0.5,
+          "wall_s": 0.20768141373991966,
+          "realtime_factor": 2.4075336882391998
+        },
+        "withdraw": {
+          "steps": 800,
+          "simulated_s": 4.0,
+          "wall_s": 1.6472668200731277,
+          "realtime_factor": 2.428264778515011
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7972996030002832,
+          "realtime_factor": 7.525401966113695
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.60280866548419,
+          "realtime_factor": 6.635604676961813
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.14505711756646633,
+          "realtime_factor": 6.893836143833425
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.14736584201455116,
+          "realtime_factor": 6.785833041969511
+        }
+      },
+      "status": "completed",
+      "stop": null,
+      "completed_steps": 8607,
+      "requested_steps": 8607,
+      "overall_rtf": 3.5028611114398087,
+      "global_monitor_context": {
+        "maximum_active_category_penetration_m": 0.0016732183285057545,
+        "maximum_released_category_penetration_m": 0.0192249808460474,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 4520,
+            "scheduled_start_s": 53.96,
+            "actual_end_s": 53.96644592285156,
+            "phase": "close",
+            "geom_ids": [
+              102,
+              454
+            ],
+            "geoms": [
+              "g0355",
+              "s300_g0816"
+            ],
+            "bodies": [
+              "Truss_00_Fruit_05",
+              "Tool_R_belt"
+            ],
+            "step_max_active_penetration_m": 0.0010196883231401443,
+            "fruit_attachment_context": [
+              {
+                "fruit": "Truss_00_Fruit_05",
+                "attached_before_step": true,
+                "attached_after_step": true,
+                "scheduled_release_time_s": 54.13
+              }
+            ],
+            "related_pedicel_attachment_context": [],
+            "classification": "attached_fruit_contact"
+          }
+        ],
+        "interpretation": "Active is monitor category; attachment state is separately checked. First event is not proof of the pair causing a global maximum."
+      },
+      "belt_first_nonzero_time_s": 48.8,
+      "pre_belt_breaks": [],
+      "all_release_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 4628,
+          "solver_time_s": 54.50156021118164,
+          "release_effective_time_s": 54.506561279296875,
+          "scheduled_solver_time_s": 54.5,
+          "scheduled_release_time_s": 54.505,
+          "phase": "close",
+          "constraint_force_n": 0.8088789582252502,
+          "passive_torque_nm": 0.008081769570708275,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.506561279296875,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 4539,
+          "solver_time_s": 54.05646514892578,
+          "release_effective_time_s": 54.061466217041016,
+          "scheduled_solver_time_s": 54.055,
+          "scheduled_release_time_s": 54.06,
+          "phase": "close",
+          "constraint_force_n": 3.0811610221862793,
+          "passive_torque_nm": 0.0046807327307760715,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.061466217041016,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 4522,
+          "solver_time_s": 53.9714469909668,
+          "release_effective_time_s": 53.97644805908203,
+          "scheduled_solver_time_s": 53.97,
+          "scheduled_release_time_s": 53.975,
+          "phase": "close",
+          "constraint_force_n": 3.0966553688049316,
+          "passive_torque_nm": 0.00464104488492012,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 53.97644805908203,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 4553,
+          "solver_time_s": 54.12648010253906,
+          "release_effective_time_s": 54.1314811706543,
+          "scheduled_solver_time_s": 54.125,
+          "scheduled_release_time_s": 54.13,
+          "phase": "close",
+          "constraint_force_n": 1.7184956073760986,
+          "passive_torque_nm": 0.008417734876275063,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 54.1314811706543,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6401,
+          "solver_time_s": 63.36845397949219,
+          "release_effective_time_s": 63.37345504760742,
+          "scheduled_solver_time_s": 63.365,
+          "scheduled_release_time_s": 63.37,
+          "phase": "belt_finish",
+          "constraint_force_n": 3.050161600112915,
+          "passive_torque_nm": 0.005065624602138996,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 63.37345504760742,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 4612,
+          "solver_time_s": 54.42154312133789,
+          "release_effective_time_s": 54.426544189453125,
+          "scheduled_solver_time_s": 54.42,
+          "scheduled_release_time_s": 54.425,
+          "phase": "close",
+          "constraint_force_n": 0.7636407017707825,
+          "passive_torque_nm": 0.008050539530813694,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.426544189453125,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "main_stem_motion": {
+        "body_count": 16,
+        "maximum_position_displacement_m": 0.09425284476054745,
+        "peak_body": "Stem_MainStem_15",
+        "peak_time_s": 55.93,
+        "peak_phase": "cycle_open",
+        "maximum_pre_belt_displacement_m": 8.623572733268821e-05,
+        "maximum_orientation_change_deg": 5.224242241677537,
+        "orientation_peak_body": "Stem_MainStem_8",
+        "orientation_peak_time_s": 55.93,
+        "orientation_peak_phase": "cycle_open"
+      },
+      "all_rod_motion": {
+        "body_count": 106,
+        "maximum_position_displacement_m": 0.11087341665869935,
+        "peak_body": "Truss_00_Rachis_13",
+        "peak_time_s": 65.115,
+        "peak_phase": "belt_finish",
+        "maximum_pre_belt_displacement_m": 0.00020237701232170342,
+        "maximum_orientation_change_deg": 74.50578720975369,
+        "orientation_peak_body": "Truss_00_Pedicel_proximal_04_2",
+        "orientation_peak_time_s": 55.145,
+        "orientation_peak_phase": "close"
+      },
+      "main_stem_translation_relative_to_root": {
+        "maximum_change_m": 0.09425284476054745,
+        "maximum_pre_belt_change_m": 8.623572733268821e-05
+      },
+      "fruit_motion": [
+        {
+          "fruit": "Truss_00_Fruit_01",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.05792509260812372,
+          "maximum_pre_belt_displacement_m": 0.0003776804093360342,
+          "maximum_speed_between_attached_samples_m_s": 0.5659801908290875,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_02",
+          "attached_samples": 4629,
+          "maximum_displacement_while_attached_m": 0.04705662993233493,
+          "maximum_pre_belt_displacement_m": 0.0005192990495909092,
+          "maximum_speed_between_attached_samples_m_s": 0.18452996883645878,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_02",
+            "solver_step": 4628,
+            "solver_time_s": 54.50156021118164,
+            "release_effective_time_s": 54.506561279296875,
+            "scheduled_solver_time_s": 54.5,
+            "scheduled_release_time_s": 54.505,
+            "phase": "close",
+            "constraint_force_n": 0.8088789582252502,
+            "passive_torque_nm": 0.008081769570708275,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+            "t": 54.506561279296875,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_03",
+          "attached_samples": 4540,
+          "maximum_displacement_while_attached_m": 0.055404422189025464,
+          "maximum_pre_belt_displacement_m": 0.00040841957254954026,
+          "maximum_speed_between_attached_samples_m_s": 0.15710559627300733,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_03",
+            "solver_step": 4539,
+            "solver_time_s": 54.05646514892578,
+            "release_effective_time_s": 54.061466217041016,
+            "scheduled_solver_time_s": 54.055,
+            "scheduled_release_time_s": 54.06,
+            "phase": "close",
+            "constraint_force_n": 3.0811610221862793,
+            "passive_torque_nm": 0.0046807327307760715,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+            "t": 54.061466217041016,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_04",
+          "attached_samples": 4523,
+          "maximum_displacement_while_attached_m": 0.0602033306327524,
+          "maximum_pre_belt_displacement_m": 0.00044466650969062063,
+          "maximum_speed_between_attached_samples_m_s": 0.1538545608810383,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_04",
+            "solver_step": 4522,
+            "solver_time_s": 53.9714469909668,
+            "release_effective_time_s": 53.97644805908203,
+            "scheduled_solver_time_s": 53.97,
+            "scheduled_release_time_s": 53.975,
+            "phase": "close",
+            "constraint_force_n": 3.0966553688049316,
+            "passive_torque_nm": 0.00464104488492012,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+            "t": 53.97644805908203,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_05",
+          "attached_samples": 4554,
+          "maximum_displacement_while_attached_m": 0.06188064732137149,
+          "maximum_pre_belt_displacement_m": 0.00037866613628972066,
+          "maximum_speed_between_attached_samples_m_s": 0.20054516999176622,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_05",
+            "solver_step": 4553,
+            "solver_time_s": 54.12648010253906,
+            "release_effective_time_s": 54.1314811706543,
+            "scheduled_solver_time_s": 54.125,
+            "scheduled_release_time_s": 54.13,
+            "phase": "close",
+            "constraint_force_n": 1.7184956073760986,
+            "passive_torque_nm": 0.008417734876275063,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+            "t": 54.1314811706543,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_07",
+          "attached_samples": 6402,
+          "maximum_displacement_while_attached_m": 0.09269998905655064,
+          "maximum_pre_belt_displacement_m": 0.0003238175312721295,
+          "maximum_speed_between_attached_samples_m_s": 0.7880213417394218,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_07",
+            "solver_step": 6401,
+            "solver_time_s": 63.36845397949219,
+            "release_effective_time_s": 63.37345504760742,
+            "scheduled_solver_time_s": 63.365,
+            "scheduled_release_time_s": 63.37,
+            "phase": "belt_finish",
+            "constraint_force_n": 3.050161600112915,
+            "passive_torque_nm": 0.005065624602138996,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+            "t": 63.37345504760742,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_08",
+          "attached_samples": 4613,
+          "maximum_displacement_while_attached_m": 0.08366610960699125,
+          "maximum_pre_belt_displacement_m": 0.0003922133185703713,
+          "maximum_speed_between_attached_samples_m_s": 0.2274270771538994,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_08",
+            "solver_step": 4612,
+            "solver_time_s": 54.42154312133789,
+            "release_effective_time_s": 54.426544189453125,
+            "scheduled_solver_time_s": 54.42,
+            "scheduled_release_time_s": 54.425,
+            "phase": "close",
+            "constraint_force_n": 0.7636407017707825,
+            "passive_torque_nm": 0.008050539530813694,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+            "t": 54.426544189453125,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_09",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.1009618070183948,
+          "maximum_pre_belt_displacement_m": 0.00033050685771514126,
+          "maximum_speed_between_attached_samples_m_s": 0.8405002551435079,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_10",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.11065145956346605,
+          "maximum_pre_belt_displacement_m": 0.00033784016241057496,
+          "maximum_speed_between_attached_samples_m_s": 0.8926927562604461,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_11",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.1115104640365259,
+          "maximum_pre_belt_displacement_m": 0.00037363331321553733,
+          "maximum_speed_between_attached_samples_m_s": 0.9367323622502168,
+          "release": null
+        }
+      ],
+      "robot_tracking": [
+        {
+          "joint": "root_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.004000083986662406
+        },
+        {
+          "joint": "farmily_lift_height_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.002812149438747996
+        },
+        {
+          "joint": "base",
+          "unit": "rad",
+          "maximum_absolute_error": 0.012494884604342893
+        },
+        {
+          "joint": "shoulder",
+          "unit": "rad",
+          "maximum_absolute_error": 0.008007518175877831
+        },
+        {
+          "joint": "elbow",
+          "unit": "rad",
+          "maximum_absolute_error": 0.004127093191714781
+        },
+        {
+          "joint": "wrist1",
+          "unit": "rad",
+          "maximum_absolute_error": 0.011003495475907288
+        },
+        {
+          "joint": "wrist2",
+          "unit": "rad",
+          "maximum_absolute_error": 0.017267260840163168
+        },
+        {
+          "joint": "wrist3",
+          "unit": "rad",
+          "maximum_absolute_error": 0.00011095098802726966
+        },
+        {
+          "joint": "jaw_L",
+          "unit": "m",
+          "maximum_absolute_error": 0.005745651103197295
+        },
+        {
+          "joint": "jaw_R",
+          "unit": "m",
+          "maximum_absolute_error": 0.00626150684598337
+        }
+      ],
+      "six_pair_geometry": [
+        {
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.00114430665426835,
+          "maximum_cpu_reconstructed_penetration_m": 0.00114430665426835,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 55.855,
+          "peak_phase": "cycle_open",
+          "window_start_s": 55.705,
+          "window_end_s": 56.0,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0007616613337533598,
+          "maximum_cpu_reconstructed_penetration_m": 0.0007616613337533598,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 63.44,
+          "peak_phase": "belt_finish",
+          "window_start_s": 63.29,
+          "window_end_s": 63.585,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0009445329573260603,
+          "maximum_cpu_reconstructed_penetration_m": 0.0009445329573260603,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 55.855,
+          "peak_phase": "cycle_open",
+          "window_start_s": 55.705,
+          "window_end_s": 56.0,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0005616516000814041,
+          "maximum_cpu_reconstructed_penetration_m": 0.0005616516000814041,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 63.44,
+          "peak_phase": "belt_finish",
+          "window_start_s": 63.29,
+          "window_end_s": 63.585,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "actual_bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0006434860428227561,
+          "maximum_cpu_reconstructed_penetration_m": 0.0006434860428227561,
+          "capsule_diameter_m": 0.001135144639348662,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 54.92,
+          "peak_phase": "close",
+          "window_start_s": 54.77,
+          "window_end_s": 55.07,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0004345778655429942,
+          "maximum_cpu_reconstructed_penetration_m": 0.0004345778655429942,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 63.36,
+          "peak_phase": "belt_finish",
+          "window_start_s": 63.21,
+          "window_end_s": 63.51,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "wall_seconds": 1.920946292579174,
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "96dbf70fcd1bc245b30c7f0cd293219dc52fdf96f713e8b1cfa2a0cdeda9c2b5",
+      "interpretation": "Actual saved GPU states, read-only nativeCPU geometry. Exactly six preselected pair distances throughout manipulation; detailed halfspaces only own worst \u00b10.15s. No new physical rollout, GPU force reconstruction, global no-crossing proof, or real-plant validation.",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "name": "coarse4_hz200",
+      "schema": "s300-combination-readonly-geometry-v1",
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_screen/coarse4_hz200",
+      "actual_input": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4",
+      "source_mjb_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_metadata_sha256": "9e96f7a77e16b8f29af06fd6a8597b726a01f84fb672cd8cedef9d2032acb90c",
+      "states_sha256": "566c488da9f588364d654bbbc217fc2e8c18db1d26c7a7067979bfe6667a4241",
+      "summary_sha256": "f62021e331926d57bf5ace7cbfe0c12455368a0c00b4d264c170c6285903c906",
+      "counts": {
+        "nq": 143,
+        "nv": 133,
+        "bodies": 132,
+        "geoms": 901
+      },
+      "input_hash_verified": true,
+      "finite_saved_qpos": true,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.2934853658080101,
+          "realtime_factor": 6.814649836095555
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 4.04694570414722,
+          "realtime_factor": 7.610677842412574
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06510014459490776,
+          "realtime_factor": 7.680474492204289
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.12810741737484932,
+          "realtime_factor": 7.80594926111066
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06192009896039963,
+          "realtime_factor": 8.07492249519449
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.5304789245128632,
+          "realtime_factor": 7.540356110609268
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7000514790415764,
+          "realtime_factor": 8.570798262171312
+        },
+        "approach": {
+          "steps": 799,
+          "simulated_s": 3.9950000000000045,
+          "wall_s": 1.476303219795227,
+          "realtime_factor": 2.7060836462540108
+        },
+        "belt_start_open": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.3602484855800867,
+          "realtime_factor": 2.775861773269524
+        },
+        "close": {
+          "steps": 1200,
+          "simulated_s": 6.0,
+          "wall_s": 4.05640634521842,
+          "realtime_factor": 1.47914175488672
+        },
+        "cycle_open": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.6341591104865074,
+          "realtime_factor": 1.5768913250064809
+        },
+        "cycle_open_hold": {
+          "steps": 100,
+          "simulated_s": 0.5,
+          "wall_s": 0.2150962371379137,
+          "realtime_factor": 2.324540896916825
+        },
+        "cycle_reclose": {
+          "steps": 1200,
+          "simulated_s": 6.0,
+          "wall_s": 2.948240775614977,
+          "realtime_factor": 2.0351119384909984
+        },
+        "belt_finish": {
+          "steps": 400,
+          "simulated_s": 2.0,
+          "wall_s": 1.7089617382735014,
+          "realtime_factor": 1.1703012157665527
+        },
+        "cycle_open_final": {
+          "steps": 200,
+          "simulated_s": 1.0,
+          "wall_s": 0.4927076119929552,
+          "realtime_factor": 2.029601280067697
+        },
+        "cycle_open_final_hold": {
+          "steps": 100,
+          "simulated_s": 0.5,
+          "wall_s": 0.176320256665349,
+          "realtime_factor": 2.8357490481027727
+        },
+        "withdraw": {
+          "steps": 800,
+          "simulated_s": 4.0,
+          "wall_s": 1.3982400968670845,
+          "realtime_factor": 2.860739016827263
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.6896591801196337,
+          "realtime_factor": 8.699949443084616
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.5331385508179665,
+          "realtime_factor": 7.502740129864948
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.12743470817804337,
+          "realtime_factor": 7.84715572623171
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.1296906378120184,
+          "realtime_factor": 7.710656812787533
+        }
+      },
+      "status": "completed",
+      "stop": null,
+      "completed_steps": 8607,
+      "requested_steps": 8607,
+      "overall_rtf": 3.944046829026617,
+      "global_monitor_context": {
+        "maximum_active_category_penetration_m": 0.0014447104185819626,
+        "maximum_released_category_penetration_m": 0.020422883331775665,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 4368,
+            "scheduled_start_s": 53.2,
+            "actual_end_s": 53.20628356933594,
+            "phase": "close",
+            "geom_ids": [
+              102,
+              454
+            ],
+            "geoms": [
+              "g0355",
+              "s300_g0816"
+            ],
+            "bodies": [
+              "Truss_00_Fruit_05",
+              "Tool_R_belt"
+            ],
+            "step_max_active_penetration_m": 0.0010305444011464715,
+            "fruit_attachment_context": [
+              {
+                "fruit": "Truss_00_Fruit_05",
+                "attached_before_step": true,
+                "attached_after_step": true,
+                "scheduled_release_time_s": 53.305
+              }
+            ],
+            "related_pedicel_attachment_context": [],
+            "classification": "attached_fruit_contact"
+          }
+        ],
+        "interpretation": "Active is monitor category; attachment state is separately checked. First event is not proof of the pair causing a global maximum."
+      },
+      "belt_first_nonzero_time_s": 48.8,
+      "pre_belt_breaks": [],
+      "all_release_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 4609,
+          "solver_time_s": 54.40653991699219,
+          "release_effective_time_s": 54.41154098510742,
+          "scheduled_solver_time_s": 54.405,
+          "scheduled_release_time_s": 54.41,
+          "phase": "close",
+          "constraint_force_n": 0.9081771969795227,
+          "passive_torque_nm": 0.008169915527105331,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.41154098510742,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 4395,
+          "solver_time_s": 53.33631134033203,
+          "release_effective_time_s": 53.341312408447266,
+          "scheduled_solver_time_s": 53.335,
+          "scheduled_release_time_s": 53.34,
+          "phase": "close",
+          "constraint_force_n": 0.36989375948905945,
+          "passive_torque_nm": 0.009030450135469437,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 53.341312408447266,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 4533,
+          "solver_time_s": 54.026458740234375,
+          "release_effective_time_s": 54.03145980834961,
+          "scheduled_solver_time_s": 54.025,
+          "scheduled_release_time_s": 54.03,
+          "phase": "close",
+          "constraint_force_n": 2.014300584793091,
+          "passive_torque_nm": 0.009579386562108994,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.03145980834961,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 4388,
+          "solver_time_s": 53.30130386352539,
+          "release_effective_time_s": 53.306304931640625,
+          "scheduled_solver_time_s": 53.3,
+          "scheduled_release_time_s": 53.305,
+          "phase": "close",
+          "constraint_force_n": 1.2517499923706055,
+          "passive_torque_nm": 0.008037056773900986,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 53.306304931640625,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 6241,
+          "solver_time_s": 62.56828308105469,
+          "release_effective_time_s": 62.57328414916992,
+          "scheduled_solver_time_s": 62.565,
+          "scheduled_release_time_s": 62.57,
+          "phase": "cycle_reclose",
+          "constraint_force_n": 3.3646068572998047,
+          "passive_torque_nm": 0.0016258378745988011,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 62.57328414916992,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 4579,
+          "solver_time_s": 54.256507873535156,
+          "release_effective_time_s": 54.26150894165039,
+          "scheduled_solver_time_s": 54.255,
+          "scheduled_release_time_s": 54.26,
+          "phase": "close",
+          "constraint_force_n": 0.7293931245803833,
+          "passive_torque_nm": 0.008290518075227737,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.26150894165039,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "main_stem_motion": {
+        "body_count": 16,
+        "maximum_position_displacement_m": 0.09016672363837264,
+        "peak_body": "Stem_MainStem_15",
+        "peak_time_s": 55.165,
+        "peak_phase": "close",
+        "maximum_pre_belt_displacement_m": 9.226215652758003e-05,
+        "maximum_orientation_change_deg": 5.077142307758339,
+        "orientation_peak_body": "Stem_MainStem_6",
+        "orientation_peak_time_s": 55.165,
+        "orientation_peak_phase": "close"
+      },
+      "all_rod_motion": {
+        "body_count": 106,
+        "maximum_position_displacement_m": 0.11155217984336799,
+        "peak_body": "Truss_00_Rachis_13",
+        "peak_time_s": 64.74,
+        "peak_phase": "belt_finish",
+        "maximum_pre_belt_displacement_m": 0.0002103766687835036,
+        "maximum_orientation_change_deg": 61.11927165898967,
+        "orientation_peak_body": "Truss_00_Pedicel_proximal_04_0",
+        "orientation_peak_time_s": 54.935,
+        "orientation_peak_phase": "close"
+      },
+      "main_stem_translation_relative_to_root": {
+        "maximum_change_m": 0.09016672363837264,
+        "maximum_pre_belt_change_m": 9.226215652758003e-05
+      },
+      "fruit_motion": [
+        {
+          "fruit": "Truss_00_Fruit_01",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.056055852522582716,
+          "maximum_pre_belt_displacement_m": 0.0003708876738188227,
+          "maximum_speed_between_attached_samples_m_s": 0.509595441100554,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_02",
+          "attached_samples": 4610,
+          "maximum_displacement_while_attached_m": 0.04912663289222202,
+          "maximum_pre_belt_displacement_m": 0.0005278620623155842,
+          "maximum_speed_between_attached_samples_m_s": 0.17522644839179138,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_02",
+            "solver_step": 4609,
+            "solver_time_s": 54.40653991699219,
+            "release_effective_time_s": 54.41154098510742,
+            "scheduled_solver_time_s": 54.405,
+            "scheduled_release_time_s": 54.41,
+            "phase": "close",
+            "constraint_force_n": 0.9081771969795227,
+            "passive_torque_nm": 0.008169915527105331,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+            "t": 54.41154098510742,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_03",
+          "attached_samples": 4396,
+          "maximum_displacement_while_attached_m": 0.026608791169223593,
+          "maximum_pre_belt_displacement_m": 0.0003954208657125077,
+          "maximum_speed_between_attached_samples_m_s": 0.18260025026134702,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_03",
+            "solver_step": 4395,
+            "solver_time_s": 53.33631134033203,
+            "release_effective_time_s": 53.341312408447266,
+            "scheduled_solver_time_s": 53.335,
+            "scheduled_release_time_s": 53.34,
+            "phase": "close",
+            "constraint_force_n": 0.36989375948905945,
+            "passive_torque_nm": 0.009030450135469437,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+            "t": 53.341312408447266,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_04",
+          "attached_samples": 4534,
+          "maximum_displacement_while_attached_m": 0.061663319859571866,
+          "maximum_pre_belt_displacement_m": 0.0004411547537643202,
+          "maximum_speed_between_attached_samples_m_s": 0.21317555773337216,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_04",
+            "solver_step": 4533,
+            "solver_time_s": 54.026458740234375,
+            "release_effective_time_s": 54.03145980834961,
+            "scheduled_solver_time_s": 54.025,
+            "scheduled_release_time_s": 54.03,
+            "phase": "close",
+            "constraint_force_n": 2.014300584793091,
+            "passive_torque_nm": 0.009579386562108994,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+            "t": 54.03145980834961,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_05",
+          "attached_samples": 4389,
+          "maximum_displacement_while_attached_m": 0.03231643502057455,
+          "maximum_pre_belt_displacement_m": 0.0003891997274477585,
+          "maximum_speed_between_attached_samples_m_s": 0.21226079551415478,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_05",
+            "solver_step": 4388,
+            "solver_time_s": 53.30130386352539,
+            "release_effective_time_s": 53.306304931640625,
+            "scheduled_solver_time_s": 53.3,
+            "scheduled_release_time_s": 53.305,
+            "phase": "close",
+            "constraint_force_n": 1.2517499923706055,
+            "passive_torque_nm": 0.008037056773900986,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+            "t": 53.306304931640625,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_07",
+          "attached_samples": 6242,
+          "maximum_displacement_while_attached_m": 0.09011886549201277,
+          "maximum_pre_belt_displacement_m": 0.00030022679114050256,
+          "maximum_speed_between_attached_samples_m_s": 0.7115795720209874,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_07",
+            "solver_step": 6241,
+            "solver_time_s": 62.56828308105469,
+            "release_effective_time_s": 62.57328414916992,
+            "scheduled_solver_time_s": 62.565,
+            "scheduled_release_time_s": 62.57,
+            "phase": "cycle_reclose",
+            "constraint_force_n": 3.3646068572998047,
+            "passive_torque_nm": 0.0016258378745988011,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+            "t": 62.57328414916992,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_08",
+          "attached_samples": 4580,
+          "maximum_displacement_while_attached_m": 0.08532246124899867,
+          "maximum_pre_belt_displacement_m": 0.0004156964586028282,
+          "maximum_speed_between_attached_samples_m_s": 0.18171776745231888,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_08",
+            "solver_step": 4579,
+            "solver_time_s": 54.256507873535156,
+            "release_effective_time_s": 54.26150894165039,
+            "scheduled_solver_time_s": 54.255,
+            "scheduled_release_time_s": 54.26,
+            "phase": "close",
+            "constraint_force_n": 0.7293931245803833,
+            "passive_torque_nm": 0.008290518075227737,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+            "t": 54.26150894165039,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_09",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.10231408802549075,
+          "maximum_pre_belt_displacement_m": 0.0002988277543181677,
+          "maximum_speed_between_attached_samples_m_s": 0.7601197920185429,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_10",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.11207495314284767,
+          "maximum_pre_belt_displacement_m": 0.00032895704092313576,
+          "maximum_speed_between_attached_samples_m_s": 0.8133524672800425,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_11",
+          "attached_samples": 8608,
+          "maximum_displacement_while_attached_m": 0.1117218353567461,
+          "maximum_pre_belt_displacement_m": 0.00039157608329857093,
+          "maximum_speed_between_attached_samples_m_s": 0.8493486203706526,
+          "release": null
+        }
+      ],
+      "robot_tracking": [
+        {
+          "joint": "root_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.004000083986662406
+        },
+        {
+          "joint": "farmily_lift_height_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.002812156889328593
+        },
+        {
+          "joint": "base",
+          "unit": "rad",
+          "maximum_absolute_error": 0.012494884604342893
+        },
+        {
+          "joint": "shoulder",
+          "unit": "rad",
+          "maximum_absolute_error": 0.008007518175877831
+        },
+        {
+          "joint": "elbow",
+          "unit": "rad",
+          "maximum_absolute_error": 0.004127331610293883
+        },
+        {
+          "joint": "wrist1",
+          "unit": "rad",
+          "maximum_absolute_error": 0.011003435871262512
+        },
+        {
+          "joint": "wrist2",
+          "unit": "rad",
+          "maximum_absolute_error": 0.017267260840163168
+        },
+        {
+          "joint": "wrist3",
+          "unit": "rad",
+          "maximum_absolute_error": 0.00013646177599113685
+        },
+        {
+          "joint": "jaw_L",
+          "unit": "m",
+          "maximum_absolute_error": 0.00534842635411804
+        },
+        {
+          "joint": "jaw_R",
+          "unit": "m",
+          "maximum_absolute_error": 0.007788057509964821
+        }
+      ],
+      "six_pair_geometry": [
+        {
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0009691614724334879,
+          "maximum_cpu_reconstructed_penetration_m": 0.0009691614724334879,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 54.865,
+          "peak_phase": "close",
+          "window_start_s": 54.715,
+          "window_end_s": 55.015,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0005905248543661779,
+          "maximum_cpu_reconstructed_penetration_m": 0.0005905248543661779,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 62.565,
+          "peak_phase": "cycle_reclose",
+          "window_start_s": 62.415,
+          "window_end_s": 62.71,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0007696073065230986,
+          "maximum_cpu_reconstructed_penetration_m": 0.0007696073065230986,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 54.865,
+          "peak_phase": "close",
+          "window_start_s": 54.715,
+          "window_end_s": 55.015,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.00039051509218275933,
+          "maximum_cpu_reconstructed_penetration_m": 0.00039051509218275933,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 62.565,
+          "peak_phase": "cycle_reclose",
+          "window_start_s": 62.415,
+          "window_end_s": 62.71,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "actual_bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.0006357976264238138,
+          "maximum_cpu_reconstructed_penetration_m": 0.0006357976264238138,
+          "capsule_diameter_m": 0.001135144639348662,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 65.415,
+          "peak_phase": "cycle_open_final",
+          "window_start_s": 65.27,
+          "window_end_s": 65.565,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 5199,
+          "scan_start_s": 44.805,
+          "scan_end_s": 70.795,
+          "minimum_signed_distance_m": -0.00023444660303724094,
+          "maximum_cpu_reconstructed_penetration_m": 0.00023444660303724094,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 62.565,
+          "peak_phase": "cycle_reclose",
+          "window_start_s": 62.415,
+          "window_end_s": 62.71,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "wall_seconds": 1.8639621306210756,
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "96dbf70fcd1bc245b30c7f0cd293219dc52fdf96f713e8b1cfa2a0cdeda9c2b5",
+      "interpretation": "Actual saved GPU states, read-only nativeCPU geometry. Exactly six preselected pair distances throughout manipulation; detailed halfspaces only own worst \u00b10.15s. No new physical rollout, GPU force reconstruction, global no-crossing proof, or real-plant validation.",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "name": "coarse4_hz240",
+      "schema": "s300-combination-readonly-geometry-v1",
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_screen/coarse4_hz240",
+      "actual_input": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4",
+      "source_mjb_sha256": "e7e7a3d494e18350dc7bcb2795ffc7881c81ff03bc11fc074de7f4389adb2304",
+      "source_metadata_sha256": "9e96f7a77e16b8f29af06fd6a8597b726a01f84fb672cd8cedef9d2032acb90c",
+      "states_sha256": "7a9679fc24cee51299612c0bb79084fb90cff9ca552a356e286dd6f3bc8164d4",
+      "summary_sha256": "f05b2e03d70d722ca382717bb4ebd3c33d389947346cdbf4417938fb15e95fa8",
+      "counts": {
+        "nq": 143,
+        "nv": 133,
+        "bodies": 132,
+        "geoms": 901
+      },
+      "input_hash_verified": true,
+      "finite_saved_qpos": true,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.296795018017292,
+          "realtime_factor": 6.738657587181854
+        },
+        "rail_move": {
+          "steps": 1848,
+          "simulated_s": 30.799999999999997,
+          "wall_s": 4.049443347379565,
+          "realtime_factor": 7.605983676727069
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06516700610518456,
+          "realtime_factor": 7.672594306280721
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.12815745174884796,
+          "realtime_factor": 7.80290171467918
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.061950065195560455,
+          "realtime_factor": 8.071016526320486
+        },
+        "prepare_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.5304937940090895,
+          "realtime_factor": 7.540144757907317
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7000333871692419,
+          "realtime_factor": 8.571019768446307
+        },
+        "approach": {
+          "steps": 959,
+          "simulated_s": 3.995833333333337,
+          "wall_s": 1.7704210877418518,
+          "realtime_factor": 2.2569960112878955
+        },
+        "belt_start_open": {
+          "steps": 240,
+          "simulated_s": 1.0,
+          "wall_s": 0.4325072467327118,
+          "realtime_factor": 2.312099988044818
+        },
+        "close": {
+          "steps": 1440,
+          "simulated_s": 6.0,
+          "wall_s": 4.815479813143611,
+          "realtime_factor": 1.2459817573366834
+        },
+        "cycle_open": {
+          "steps": 240,
+          "simulated_s": 1.0,
+          "wall_s": 0.750432625412941,
+          "realtime_factor": 1.332564664882113
+        },
+        "cycle_open_hold": {
+          "steps": 120,
+          "simulated_s": 0.5,
+          "wall_s": 0.28446692787110806,
+          "realtime_factor": 1.7576735676863988
+        },
+        "cycle_reclose": {
+          "steps": 1440,
+          "simulated_s": 6.0,
+          "wall_s": 3.470609128475189,
+          "realtime_factor": 1.728803151807561
+        },
+        "belt_finish": {
+          "steps": 480,
+          "simulated_s": 2.0,
+          "wall_s": 2.07027586735785,
+          "realtime_factor": 0.9660548294718142
+        },
+        "cycle_open_final": {
+          "steps": 240,
+          "simulated_s": 1.0,
+          "wall_s": 0.6120991129428148,
+          "realtime_factor": 1.6337223479907652
+        },
+        "cycle_open_final_hold": {
+          "steps": 120,
+          "simulated_s": 0.5,
+          "wall_s": 0.22549109533429146,
+          "realtime_factor": 2.2173824614171482
+        },
+        "withdraw": {
+          "steps": 960,
+          "simulated_s": 4.0,
+          "wall_s": 1.7904457822442055,
+          "realtime_factor": 2.2340804952978046
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7242156658321619,
+          "realtime_factor": 8.284824925881276
+        },
+        "return_lift_branch": {
+          "steps": 240,
+          "simulated_s": 4.0,
+          "wall_s": 0.5551089681684971,
+          "realtime_factor": 7.205792428822452
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.13349832594394684,
+          "realtime_factor": 7.490730635977257
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.1359439678490162,
+          "realtime_factor": 7.3559718450371605
+        }
+      },
+      "status": "completed",
+      "stop": null,
+      "completed_steps": 9647,
+      "requested_steps": 9647,
+      "overall_rtf": 3.4752423456004258,
+      "global_monitor_context": {
+        "maximum_active_category_penetration_m": 0.0012321085669100285,
+        "maximum_released_category_penetration_m": 0.016971733421087265,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 5113,
+            "scheduled_start_s": 54.90416666666667,
+            "actual_end_s": 54.90535354614258,
+            "phase": "close",
+            "geom_ids": [
+              85,
+              331
+            ],
+            "geoms": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "step_max_active_penetration_m": 0.0010933037847280502,
+            "fruit_attachment_context": [],
+            "related_pedicel_attachment_context": [
+              {
+                "pedicel": "Truss_00_Pedicel_distal_04_0",
+                "related_fruit": "Truss_00_Fruit_04",
+                "source_fruit_attachment_exists": true,
+                "related_fruit_attached_before_step": false,
+                "related_fruit_attached_after_step": false,
+                "related_fruit_scheduled_release_time_s": 54.016666666666666,
+                "interpretation": "Pedicel itself stays on the plant when its fruit detaches; this is not a loose detached branch."
+              }
+            ],
+            "classification": "pedicel_after_related_fruit_release"
+          }
+        ],
+        "interpretation": "Active is monitor category; attachment state is separately checked. First event is not proof of the pair causing a global maximum."
+      },
+      "belt_first_nonzero_time_s": 48.8,
+      "pre_belt_breaks": [],
+      "all_release_events": [
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_02",
+          "solver_step": 5008,
+          "solver_time_s": 54.46379470825195,
+          "release_effective_time_s": 54.467960357666016,
+          "scheduled_solver_time_s": 54.46666666666667,
+          "scheduled_release_time_s": 54.47083333333333,
+          "phase": "close",
+          "constraint_force_n": 0.3072667717933655,
+          "passive_torque_nm": 0.008096064440906048,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+          "t": 54.467960357666016,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_03",
+          "solver_step": 4904,
+          "solver_time_s": 54.03056716918945,
+          "release_effective_time_s": 54.034732818603516,
+          "scheduled_solver_time_s": 54.03333333333333,
+          "scheduled_release_time_s": 54.0375,
+          "phase": "close",
+          "constraint_force_n": 3.221733570098877,
+          "passive_torque_nm": 0.00683903694152832,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+          "t": 54.034732818603516,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_04",
+          "solver_step": 4899,
+          "solver_time_s": 54.00973892211914,
+          "release_effective_time_s": 54.0139045715332,
+          "scheduled_solver_time_s": 54.0125,
+          "scheduled_release_time_s": 54.016666666666666,
+          "phase": "close",
+          "constraint_force_n": 1.173126220703125,
+          "passive_torque_nm": 0.00809267908334732,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+          "t": 54.0139045715332,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_05",
+          "solver_step": 4737,
+          "solver_time_s": 53.334903717041016,
+          "release_effective_time_s": 53.33906936645508,
+          "scheduled_solver_time_s": 53.3375,
+          "scheduled_release_time_s": 53.34166666666667,
+          "phase": "close",
+          "constraint_force_n": 1.1712759733200073,
+          "passive_torque_nm": 0.008041276596486568,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+          "t": 53.33906936645508,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_07",
+          "solver_step": 4897,
+          "solver_time_s": 54.001407623291016,
+          "release_effective_time_s": 54.00557327270508,
+          "scheduled_solver_time_s": 54.00416666666667,
+          "scheduled_release_time_s": 54.00833333333333,
+          "phase": "close",
+          "constraint_force_n": 1.1808981895446777,
+          "passive_torque_nm": 0.008567208424210548,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+          "t": 54.00557327270508,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        },
+        {
+          "world": 0,
+          "name": "Truss_00_Fruit_08",
+          "solver_step": 5051,
+          "solver_time_s": 54.64291763305664,
+          "release_effective_time_s": 54.6470832824707,
+          "scheduled_solver_time_s": 54.645833333333336,
+          "scheduled_release_time_s": 54.65,
+          "phase": "close",
+          "constraint_force_n": 0.34748849272727966,
+          "passive_torque_nm": 0.008192634209990501,
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+          "t": 54.6470832824707,
+          "display_world": 0,
+          "timestamp_scope": "Actual end of the physics step disabling the attachment"
+        }
+      ],
+      "main_stem_motion": {
+        "body_count": 16,
+        "maximum_position_displacement_m": 0.08936488600709921,
+        "peak_body": "Stem_MainStem_15",
+        "peak_time_s": 55.94583333333333,
+        "peak_phase": "cycle_open",
+        "maximum_pre_belt_displacement_m": 9.226215652758003e-05,
+        "maximum_orientation_change_deg": 5.040258536822897,
+        "orientation_peak_body": "Stem_MainStem_5",
+        "orientation_peak_time_s": 55.94583333333333,
+        "orientation_peak_phase": "cycle_open"
+      },
+      "all_rod_motion": {
+        "body_count": 106,
+        "maximum_position_displacement_m": 0.11274170556132924,
+        "peak_body": "Truss_00_Rachis_13",
+        "peak_time_s": 54.454166666666666,
+        "peak_phase": "close",
+        "maximum_pre_belt_displacement_m": 0.0002103766687835036,
+        "maximum_orientation_change_deg": 63.05103933265986,
+        "orientation_peak_body": "Truss_00_Pedicel_proximal_04_0",
+        "orientation_peak_time_s": 54.9,
+        "orientation_peak_phase": "close"
+      },
+      "main_stem_translation_relative_to_root": {
+        "maximum_change_m": 0.08936488600709921,
+        "maximum_pre_belt_change_m": 9.226215652758003e-05
+      },
+      "fruit_motion": [
+        {
+          "fruit": "Truss_00_Fruit_01",
+          "attached_samples": 9648,
+          "maximum_displacement_while_attached_m": 0.0567838331190346,
+          "maximum_pre_belt_displacement_m": 0.0003708876738188227,
+          "maximum_speed_between_attached_samples_m_s": 0.4837335640166435,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_02",
+          "attached_samples": 5009,
+          "maximum_displacement_while_attached_m": 0.05203032200608624,
+          "maximum_pre_belt_displacement_m": 0.0005278620623155842,
+          "maximum_speed_between_attached_samples_m_s": 0.16305615939779164,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_02",
+            "solver_step": 5008,
+            "solver_time_s": 54.46379470825195,
+            "release_effective_time_s": 54.467960357666016,
+            "scheduled_solver_time_s": 54.46666666666667,
+            "scheduled_release_time_s": 54.47083333333333,
+            "phase": "close",
+            "constraint_force_n": 0.3072667717933655,
+            "passive_torque_nm": 0.008096064440906048,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_02",
+            "t": 54.467960357666016,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_03",
+          "attached_samples": 4905,
+          "maximum_displacement_while_attached_m": 0.05933886335726302,
+          "maximum_pre_belt_displacement_m": 0.0003954208657125077,
+          "maximum_speed_between_attached_samples_m_s": 0.17620391910405284,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_03",
+            "solver_step": 4904,
+            "solver_time_s": 54.03056716918945,
+            "release_effective_time_s": 54.034732818603516,
+            "scheduled_solver_time_s": 54.03333333333333,
+            "scheduled_release_time_s": 54.0375,
+            "phase": "close",
+            "constraint_force_n": 3.221733570098877,
+            "passive_torque_nm": 0.00683903694152832,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_03",
+            "t": 54.034732818603516,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_04",
+          "attached_samples": 4900,
+          "maximum_displacement_while_attached_m": 0.06595654738104267,
+          "maximum_pre_belt_displacement_m": 0.0004411547537643202,
+          "maximum_speed_between_attached_samples_m_s": 0.18341970153574172,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_04",
+            "solver_step": 4899,
+            "solver_time_s": 54.00973892211914,
+            "release_effective_time_s": 54.0139045715332,
+            "scheduled_solver_time_s": 54.0125,
+            "scheduled_release_time_s": 54.016666666666666,
+            "phase": "close",
+            "constraint_force_n": 1.173126220703125,
+            "passive_torque_nm": 0.00809267908334732,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_04",
+            "t": 54.0139045715332,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_05",
+          "attached_samples": 4738,
+          "maximum_displacement_while_attached_m": 0.03300956205630589,
+          "maximum_pre_belt_displacement_m": 0.0003891997274477585,
+          "maximum_speed_between_attached_samples_m_s": 0.1863556524013714,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_05",
+            "solver_step": 4737,
+            "solver_time_s": 53.334903717041016,
+            "release_effective_time_s": 53.33906936645508,
+            "scheduled_solver_time_s": 53.3375,
+            "scheduled_release_time_s": 53.34166666666667,
+            "phase": "close",
+            "constraint_force_n": 1.1712759733200073,
+            "passive_torque_nm": 0.008041276596486568,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_05",
+            "t": 53.33906936645508,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_07",
+          "attached_samples": 4898,
+          "maximum_displacement_while_attached_m": 0.07637773416691053,
+          "maximum_pre_belt_displacement_m": 0.00030022679114050256,
+          "maximum_speed_between_attached_samples_m_s": 0.24052994245058187,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_07",
+            "solver_step": 4897,
+            "solver_time_s": 54.001407623291016,
+            "release_effective_time_s": 54.00557327270508,
+            "scheduled_solver_time_s": 54.00416666666667,
+            "scheduled_release_time_s": 54.00833333333333,
+            "phase": "close",
+            "constraint_force_n": 1.1808981895446777,
+            "passive_torque_nm": 0.008567208424210548,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_07",
+            "t": 54.00557327270508,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_08",
+          "attached_samples": 5052,
+          "maximum_displacement_while_attached_m": 0.10266281420607438,
+          "maximum_pre_belt_displacement_m": 0.0004156964586028282,
+          "maximum_speed_between_attached_samples_m_s": 0.18399512755539227,
+          "release": {
+            "world": 0,
+            "name": "Truss_00_Fruit_08",
+            "solver_step": 5051,
+            "solver_time_s": 54.64291763305664,
+            "release_effective_time_s": 54.6470832824707,
+            "scheduled_solver_time_s": 54.645833333333336,
+            "scheduled_release_time_s": 54.65,
+            "phase": "close",
+            "constraint_force_n": 0.34748849272727966,
+            "passive_torque_nm": 0.008192634209990501,
+            "joint": "/World/ElasticTarget/HarvestJoints/Truss_00_Fruit_08",
+            "t": 54.6470832824707,
+            "display_world": 0,
+            "timestamp_scope": "Actual end of the physics step disabling the attachment"
+          }
+        },
+        {
+          "fruit": "Truss_00_Fruit_09",
+          "attached_samples": 9648,
+          "maximum_displacement_while_attached_m": 0.10200230497754444,
+          "maximum_pre_belt_displacement_m": 0.0002988277543181677,
+          "maximum_speed_between_attached_samples_m_s": 0.7156665037342965,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_10",
+          "attached_samples": 9648,
+          "maximum_displacement_while_attached_m": 0.11335780785593859,
+          "maximum_pre_belt_displacement_m": 0.00032895704092313576,
+          "maximum_speed_between_attached_samples_m_s": 0.7582380581015432,
+          "release": null
+        },
+        {
+          "fruit": "Truss_00_Fruit_11",
+          "attached_samples": 9648,
+          "maximum_displacement_while_attached_m": 0.11160380955296893,
+          "maximum_pre_belt_displacement_m": 0.00039157608329857093,
+          "maximum_speed_between_attached_samples_m_s": 0.8140640707704043,
+          "release": null
+        }
+      ],
+      "robot_tracking": [
+        {
+          "joint": "root_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.004000083986662406
+        },
+        {
+          "joint": "farmily_lift_height_joint",
+          "unit": "m",
+          "maximum_absolute_error": 0.002812156889328593
+        },
+        {
+          "joint": "base",
+          "unit": "rad",
+          "maximum_absolute_error": 0.0124947288294881
+        },
+        {
+          "joint": "shoulder",
+          "unit": "rad",
+          "maximum_absolute_error": 0.008007961757784857
+        },
+        {
+          "joint": "elbow",
+          "unit": "rad",
+          "maximum_absolute_error": 0.004127316265293501
+        },
+        {
+          "joint": "wrist1",
+          "unit": "rad",
+          "maximum_absolute_error": 0.011003374515426878
+        },
+        {
+          "joint": "wrist2",
+          "unit": "rad",
+          "maximum_absolute_error": 0.017267260840163168
+        },
+        {
+          "joint": "wrist3",
+          "unit": "rad",
+          "maximum_absolute_error": 0.00014552168199699622
+        },
+        {
+          "joint": "jaw_L",
+          "unit": "m",
+          "maximum_absolute_error": 0.004736491077567961
+        },
+        {
+          "joint": "jaw_R",
+          "unit": "m",
+          "maximum_absolute_error": 0.005425260408304211
+        }
+      ],
+      "six_pair_geometry": [
+        {
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0007095460112174139,
+          "maximum_cpu_reconstructed_penetration_m": 0.0007095460112174139,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 55.80416666666667,
+          "peak_phase": "cycle_open",
+          "window_start_s": 55.65416666666667,
+          "window_end_s": 55.954166666666666,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0006330109569917156,
+          "maximum_cpu_reconstructed_penetration_m": 0.0006330109569917156,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 64.32916666666667,
+          "peak_phase": "belt_finish",
+          "window_start_s": 64.18333333333334,
+          "window_end_s": 64.475,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0005095358933607124,
+          "maximum_cpu_reconstructed_penetration_m": 0.0005095358933607124,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 55.80416666666667,
+          "peak_phase": "cycle_open",
+          "window_start_s": 55.65416666666667,
+          "window_end_s": 55.954166666666666,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0004330010782989894,
+          "maximum_cpu_reconstructed_penetration_m": 0.0004330010782989894,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 64.32916666666667,
+          "peak_phase": "belt_finish",
+          "window_start_s": 64.18333333333334,
+          "window_end_s": 64.475,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "actual_bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0006191867993141855,
+          "maximum_cpu_reconstructed_penetration_m": 0.0006191867993141855,
+          "capsule_diameter_m": 0.001135144639348662,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 54.9125,
+          "peak_phase": "close",
+          "window_start_s": 54.7625,
+          "window_end_s": 55.0625,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "actual_bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "scan_samples": 6239,
+          "scan_start_s": 44.80416666666667,
+          "scan_end_s": 70.79583333333333,
+          "minimum_signed_distance_m": -0.0001404187193295793,
+          "maximum_cpu_reconstructed_penetration_m": 0.0001404187193295793,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "samples_deeper_than_capsule_diameter": 0,
+          "peak_time_s": 64.32916666666667,
+          "peak_phase": "belt_finish",
+          "window_start_s": 64.18333333333334,
+          "window_end_s": 64.475,
+          "full_radius_burial_samples": 0,
+          "axis_between_outside_ends_crossing_samples": 0,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "wall_seconds": 1.9544885270297527,
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "96dbf70fcd1bc245b30c7f0cd293219dc52fdf96f713e8b1cfa2a0cdeda9c2b5",
+      "interpretation": "Actual saved GPU states, read-only nativeCPU geometry. Exactly six preselected pair distances throughout manipulation; detailed halfspaces only own worst \u00b10.15s. No new physical rollout, GPU force reconstruction, global no-crossing proof, or real-plant validation.",
+      "training_eligible": false,
+      "harvest_success": null
+    }
+  ],
+  "pending": [],
+  "training_eligible": false,
+  "harvest_success": null
+}

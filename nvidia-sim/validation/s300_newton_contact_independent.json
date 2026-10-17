@@ -1,0 +1,1751 @@
+{
+  "schema": "s300-newton-contact-independent-compact-v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact",
+  "execution_implementation_commit": "8aef380",
+  "primary_actual_gpu_executions": 14,
+  "extra_reference_gpu_executions": 2,
+  "posthoc_policy_conditions": 10,
+  "baseline": {
+    "dof": 385,
+    "contact_hz": 400,
+    "free_hz": 60,
+    "source_model_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0"
+  },
+  "tests": {
+    "cpu_contact_material_replay": 20,
+    "cpu_geometry_controls_in_combined_log": 6,
+    "cpu_combined_passed": 26,
+    "actual_cuda_controls_passed": 3,
+    "cuda_controls": [
+      "raw contact K/B",
+      "150 coefficient/time-step/depth/mixing rows",
+      "read-only contact wrench/frame witness"
+    ],
+    "cpu_log": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/tests_v3.log",
+    "replay_log": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/policy_replay_unit_tests.log"
+  },
+  "primary_cases": [
+    {
+      "name": "material_positive_control",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/material_positive_control",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5550734213519644,
+      "close_rtf": 0.4973671372694341,
+      "belt_finish_rtf": 0.3795173602153321,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": null,
+      "allowed_pair_steps": null,
+      "residual_pair_steps": null,
+      "class_maximum_m": null,
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "material_positive_damping05",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/material_positive_damping05",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.503902021665588,
+      "close_rtf": 0.4863993900463378,
+      "belt_finish_rtf": 0.3552765314358813,
+      "max_active_mm": 0.5983334849588573,
+      "max_released_mm": 10.120393708348274,
+      "max_contact_force_n": 12.395808219909668,
+      "detach": [
+        5
+      ],
+      "policy_passed": null,
+      "allowed_pair_steps": null,
+      "residual_pair_steps": null,
+      "class_maximum_m": null,
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "dcea6a922217f614799c76612d0d65320d5d070df9d1871076d3a2728359c591"
+    },
+    {
+      "name": "material_positive_damping2",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/material_positive_damping2",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.4754736276782021,
+      "close_rtf": 0.4869390220326958,
+      "belt_finish_rtf": 0.3666944062553147,
+      "max_active_mm": 0.639281643088907,
+      "max_released_mm": 7.813397794961929,
+      "max_contact_force_n": 11.973528861999512,
+      "detach": [
+        5
+      ],
+      "policy_passed": null,
+      "allowed_pair_steps": null,
+      "residual_pair_steps": null,
+      "class_maximum_m": null,
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "44315c8df5d1f9bfb9e561cef2372735d3c3c39b2a5075608b39046facb51c34"
+    },
+    {
+      "name": "material_positive_stiffness025",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/material_positive_stiffness025",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.4980403227709835,
+      "close_rtf": 0.49343945720182086,
+      "belt_finish_rtf": 0.34972297736144164,
+      "max_active_mm": 0.7129830191843212,
+      "max_released_mm": 9.17568989098072,
+      "max_contact_force_n": 12.329092025756836,
+      "detach": [
+        6
+      ],
+      "policy_passed": null,
+      "allowed_pair_steps": null,
+      "residual_pair_steps": null,
+      "class_maximum_m": null,
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "83bcf43dc2e19c9b027a0d973c24c3bd3bfef05880b6dbfb46271f67d96d6054"
+    },
+    {
+      "name": "material_positive_stiffness05",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/material_positive_stiffness05",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.4712759625305376,
+      "close_rtf": 0.4800031658142987,
+      "belt_finish_rtf": 0.3608682195663223,
+      "max_active_mm": 0.8586456533521414,
+      "max_released_mm": 8.55785422027111,
+      "max_contact_force_n": 13.974177360534668,
+      "detach": [
+        5
+      ],
+      "policy_passed": null,
+      "allowed_pair_steps": null,
+      "residual_pair_steps": null,
+      "class_maximum_m": null,
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "14894629eb2ce2e77b686fe57175cc2f5fc6d63ded5fe406aa44170dd79b9689"
+    },
+    {
+      "name": "original120_other_Fruit08_part147_2mm",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/original120_other_Fruit08_part147_2mm",
+      "status": "completed",
+      "simulated_s": 82.8,
+      "rtf": 3.456148567840345,
+      "close_rtf": 1.5628847511625041,
+      "belt_finish_rtf": 1.1606579147958034,
+      "max_active_mm": 2.92858574539423,
+      "max_released_mm": 26.583489030599594,
+      "max_contact_force_n": 9.232826232910156,
+      "detach": [
+        7
+      ],
+      "policy_passed": false,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.0017889264272525907,
+        "belt_fruit": 0.0023121812846511602,
+        "belt_pedicel": 0.00292858574539423,
+        "explicit_other_pair": 0.0016895231092348695
+      },
+      "raw_reference_1mm_passed": false,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": true,
+      "contact_witness": true,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "original120_reference",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/original120_reference",
+      "status": "completed",
+      "simulated_s": 82.8,
+      "rtf": 3.4672474041329986,
+      "close_rtf": 1.5685761637885824,
+      "belt_finish_rtf": 1.1675156843756243,
+      "max_active_mm": 2.92858574539423,
+      "max_released_mm": 26.583489030599594,
+      "max_contact_force_n": 9.232826232910156,
+      "detach": [
+        7
+      ],
+      "policy_passed": false,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.0017889264272525907,
+        "belt_fruit": 0.0023121812846511602,
+        "belt_pedicel": 0.00292858574539423,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": false,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_fruit2",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_fruit2",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5475598318814539,
+      "close_rtf": 0.49553562780943256,
+      "belt_finish_rtf": 0.37628067995075454,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_fruit3",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_fruit3",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5488660545626645,
+      "close_rtf": 0.4961038321893728,
+      "belt_finish_rtf": 0.3771042786627124,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_fruit3_residual05",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_fruit3_residual05",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.548250588494665,
+      "close_rtf": 0.4956663653176868,
+      "belt_finish_rtf": 0.37572762868742765,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_fruit5",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_fruit5",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5491444819033395,
+      "close_rtf": 0.495526623019129,
+      "belt_finish_rtf": 0.37637623495828043,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_pedicel125",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_pedicel125",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5491261702239907,
+      "close_rtf": 0.4955425497097796,
+      "belt_finish_rtf": 0.3764804053309052,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_pedicel15",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_pedicel15",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5493822683722618,
+      "close_rtf": 0.4953000017221118,
+      "belt_finish_rtf": 0.3764802599952958,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    },
+    {
+      "name": "policy_pedicel5_risk_control",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/policy_pedicel5_risk_control",
+      "status": "completed",
+      "simulated_s": 82.795,
+      "rtf": 1.5488292621154953,
+      "close_rtf": 0.4955042332850678,
+      "belt_finish_rtf": 0.3764001729889826,
+      "max_active_mm": 0.7942071533761919,
+      "max_released_mm": 10.234830901026726,
+      "max_contact_force_n": 18.444820404052734,
+      "detach": [
+        6
+      ],
+      "policy_passed": true,
+      "allowed_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "residual_pair_steps": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "class_maximum_m": {
+        "other": 0.000539163127541542,
+        "belt_fruit": 0.0003649645368568599,
+        "belt_pedicel": 0.0007942071533761919,
+        "explicit_other_pair": 0.0
+      },
+      "raw_reference_1mm_passed": true,
+      "finite": true,
+      "capacity": true,
+      "profile_instrumented": false,
+      "contact_witness": false,
+      "input_sha256": "1c547f8e4aa20eed9cc715d7653d0eda645f772ef9d344d59ce3e0ffabaa6e55"
+    }
+  ],
+  "pure_policy_control_comparisons": [
+    {
+      "candidate": "policy_reference",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_fruit2",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_fruit3",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_fruit3_residual05",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_fruit5",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_pedicel125",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_pedicel15",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_pedicel5_risk_control",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "policy_reference_v2",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "campaign_positive/material_positive_control",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/reference_v2_campaign/policy_reference_v2",
+      "exact_physical_arrays_passed": true
+    },
+    {
+      "candidate": "campaign_positive/original120_other_Fruit08_part147_2mm",
+      "reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/campaign_positive/original120_reference",
+      "exact_physical_arrays_passed": true
+    }
+  ],
+  "material_input_invariance_proofs": [
+    {
+      "name": "damping05",
+      "proof": {
+        "schema": "s300-belt-contact-variant-v1",
+        "mode": "positive_damping",
+        "factor": 0.5,
+        "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+        "reference_hz": 400.0,
+        "source_integrator": 4,
+        "source_is_discrete": true,
+        "reference_min_time_constant_s": null,
+        "belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "source_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "direct_control_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "variant_solref": [
+          [
+            0.004,
+            0.5
+          ],
+          [
+            0.004,
+            0.5
+          ],
+          [
+            0.004,
+            0.5
+          ],
+          [
+            0.004,
+            0.5
+          ]
+        ],
+        "sole_mutated_model_array": "geom_solref, exact moving belt geometry rows only",
+        "separate_control_required": true,
+        "direct_parameter_note": "Negative solref givesrawK/Bdirectly,but bypassesDISCRETEpositiveCONTACTrowREFSAFEcap; itisNOTaneffective-equivalentcontrol. Positive_stiffnessholdstauandchangeszeta=zeta0/sqrt(alpha) (rawKalpha,rawBfixed). Positive_dampingusestau=tau0/beta,zeta=zeta0*beta (rawKfixed,rawBbeta). ActualDISCRETErowcapcanstillcoupleeffectiveK/B; reportthatseparately.",
+        "mixing_note": "A nonpositive solref participant selects elementwise minimum instead of the positive-format weighted average. Compare each K/D variant against reference_direct, and compare reference_direct separately against original.",
+        "source_state_unchanged": true,
+        "source_commands_unchanged": true,
+        "intended_material_coefficients_changed": true,
+        "physical_contact_representation_changed": false,
+        "raw_coefficient_change_scope": "RawKBtargets only; sourcecontactrowREFSAFEcanchangeeffectiveKBtogether.",
+        "effective_source_contact_equivalence_claimed": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "exact_unchanged_model_array_count": 480,
+        "full_invariance_proof_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/inputs_positive/damping05/contact_variant.json",
+        "full_invariance_proof_sha256": "e8b4c6f4f39dc3c374ada86223d4cf4a4a1edfea2a52a34073048647d49a77d2",
+        "standard_2dt_timeconstant_clamp_applies": false,
+        "positive_discrete_contact_refsafe_rowcap_still_applies": true
+      }
+    },
+    {
+      "name": "damping2",
+      "proof": {
+        "schema": "s300-belt-contact-variant-v1",
+        "mode": "positive_damping",
+        "factor": 2.0,
+        "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+        "reference_hz": 400.0,
+        "source_integrator": 4,
+        "source_is_discrete": true,
+        "reference_min_time_constant_s": null,
+        "belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "source_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "direct_control_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "variant_solref": [
+          [
+            0.001,
+            2.0
+          ],
+          [
+            0.001,
+            2.0
+          ],
+          [
+            0.001,
+            2.0
+          ],
+          [
+            0.001,
+            2.0
+          ]
+        ],
+        "sole_mutated_model_array": "geom_solref, exact moving belt geometry rows only",
+        "separate_control_required": true,
+        "direct_parameter_note": "Negative solref givesrawK/Bdirectly,but bypassesDISCRETEpositiveCONTACTrowREFSAFEcap; itisNOTaneffective-equivalentcontrol. Positive_stiffnessholdstauandchangeszeta=zeta0/sqrt(alpha) (rawKalpha,rawBfixed). Positive_dampingusestau=tau0/beta,zeta=zeta0*beta (rawKfixed,rawBbeta). ActualDISCRETErowcapcanstillcoupleeffectiveK/B; reportthatseparately.",
+        "mixing_note": "A nonpositive solref participant selects elementwise minimum instead of the positive-format weighted average. Compare each K/D variant against reference_direct, and compare reference_direct separately against original.",
+        "source_state_unchanged": true,
+        "source_commands_unchanged": true,
+        "intended_material_coefficients_changed": true,
+        "physical_contact_representation_changed": false,
+        "raw_coefficient_change_scope": "RawKBtargets only; sourcecontactrowREFSAFEcanchangeeffectiveKBtogether.",
+        "effective_source_contact_equivalence_claimed": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "exact_unchanged_model_array_count": 480,
+        "full_invariance_proof_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/inputs_positive/damping2/contact_variant.json",
+        "full_invariance_proof_sha256": "f34799fe78a8624662629bfdbb5c5eb485d449f5e1fc526d661afaed6b995623",
+        "standard_2dt_timeconstant_clamp_applies": false,
+        "positive_discrete_contact_refsafe_rowcap_still_applies": true
+      }
+    },
+    {
+      "name": "stiffness025",
+      "proof": {
+        "schema": "s300-belt-contact-variant-v1",
+        "mode": "positive_stiffness",
+        "factor": 0.25,
+        "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+        "reference_hz": 400.0,
+        "source_integrator": 4,
+        "source_is_discrete": true,
+        "reference_min_time_constant_s": null,
+        "belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "source_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "direct_control_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "variant_solref": [
+          [
+            0.002,
+            2.0
+          ],
+          [
+            0.002,
+            2.0
+          ],
+          [
+            0.002,
+            2.0
+          ],
+          [
+            0.002,
+            2.0
+          ]
+        ],
+        "sole_mutated_model_array": "geom_solref, exact moving belt geometry rows only",
+        "separate_control_required": true,
+        "direct_parameter_note": "Negative solref givesrawK/Bdirectly,but bypassesDISCRETEpositiveCONTACTrowREFSAFEcap; itisNOTaneffective-equivalentcontrol. Positive_stiffnessholdstauandchangeszeta=zeta0/sqrt(alpha) (rawKalpha,rawBfixed). Positive_dampingusestau=tau0/beta,zeta=zeta0*beta (rawKfixed,rawBbeta). ActualDISCRETErowcapcanstillcoupleeffectiveK/B; reportthatseparately.",
+        "mixing_note": "A nonpositive solref participant selects elementwise minimum instead of the positive-format weighted average. Compare each K/D variant against reference_direct, and compare reference_direct separately against original.",
+        "source_state_unchanged": true,
+        "source_commands_unchanged": true,
+        "intended_material_coefficients_changed": true,
+        "physical_contact_representation_changed": false,
+        "raw_coefficient_change_scope": "RawKBtargets only; sourcecontactrowREFSAFEcanchangeeffectiveKBtogether.",
+        "effective_source_contact_equivalence_claimed": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "exact_unchanged_model_array_count": 480,
+        "full_invariance_proof_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/inputs_positive/stiffness025/contact_variant.json",
+        "full_invariance_proof_sha256": "425214a50c5d3b3527ccc6304d2a878e910c6f80a972460b70d0def0a15c3931",
+        "standard_2dt_timeconstant_clamp_applies": false,
+        "positive_discrete_contact_refsafe_rowcap_still_applies": true
+      }
+    },
+    {
+      "name": "stiffness05",
+      "proof": {
+        "schema": "s300-belt-contact-variant-v1",
+        "mode": "positive_stiffness",
+        "factor": 0.5,
+        "source_inputs": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton/inputs_render_separated",
+        "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+        "reference_hz": 400.0,
+        "source_integrator": 4,
+        "source_is_discrete": true,
+        "reference_min_time_constant_s": null,
+        "belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "source_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "direct_control_solref": [
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ],
+          [
+            0.002,
+            1.0
+          ]
+        ],
+        "variant_solref": [
+          [
+            0.002,
+            1.414213562373095
+          ],
+          [
+            0.002,
+            1.414213562373095
+          ],
+          [
+            0.002,
+            1.414213562373095
+          ],
+          [
+            0.002,
+            1.414213562373095
+          ]
+        ],
+        "sole_mutated_model_array": "geom_solref, exact moving belt geometry rows only",
+        "separate_control_required": true,
+        "direct_parameter_note": "Negative solref givesrawK/Bdirectly,but bypassesDISCRETEpositiveCONTACTrowREFSAFEcap; itisNOTaneffective-equivalentcontrol. Positive_stiffnessholdstauandchangeszeta=zeta0/sqrt(alpha) (rawKalpha,rawBfixed). Positive_dampingusestau=tau0/beta,zeta=zeta0*beta (rawKfixed,rawBbeta). ActualDISCRETErowcapcanstillcoupleeffectiveK/B; reportthatseparately.",
+        "mixing_note": "A nonpositive solref participant selects elementwise minimum instead of the positive-format weighted average. Compare each K/D variant against reference_direct, and compare reference_direct separately against original.",
+        "source_state_unchanged": true,
+        "source_commands_unchanged": true,
+        "intended_material_coefficients_changed": true,
+        "physical_contact_representation_changed": false,
+        "raw_coefficient_change_scope": "RawKBtargets only; sourcecontactrowREFSAFEcanchangeeffectiveKBtogether.",
+        "effective_source_contact_equivalence_claimed": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "exact_unchanged_model_array_count": 480,
+        "full_invariance_proof_path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/inputs_positive/stiffness05/contact_variant.json",
+        "full_invariance_proof_sha256": "b21124963da583616e40c0b9c6959314a97b3876e1050080083e09346142e682",
+        "standard_2dt_timeconstant_clamp_applies": false,
+        "positive_discrete_contact_refsafe_rowcap_still_applies": true
+      }
+    }
+  ],
+  "material_gpu_row_coefficients_sample": [
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "source_positive",
+      "solref": [
+        0.002,
+        1.0
+      ],
+      "raw_normalized_k": 250500.71875,
+      "raw_normalized_b": 1001.0009765625,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 160884.84558785422,
+      "row_recovered_normalized_b": 802.2090739580681,
+      "D": [
+        724.2767333984375,
+        724.2767333984375
+      ],
+      "aref": [
+        19.972423553466797,
+        -280.16546630859375
+      ]
+    },
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "negative_raw_reference",
+      "solref": [
+        -250000.0,
+        -1000.0
+      ],
+      "raw_normalized_k": 250500.734375,
+      "raw_normalized_b": 1001.0009765625,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 250500.72545935612,
+      "row_recovered_normalized_b": 1001.0009096015125,
+      "D": [
+        914.8602294921875,
+        914.8602294921875
+      ],
+      "aref": [
+        24.619226455688477,
+        -296.3218994140625
+      ]
+    },
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "mixed_pair_stiffness05",
+      "solref": [
+        0.002,
+        1.2071067811865475
+      ],
+      "raw_normalized_k": 171916.5,
+      "raw_normalized_b": 1001.0009765625,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 160884.85229155625,
+      "row_recovered_normalized_b": 968.3519811104702,
+      "D": [
+        799.3814086914062,
+        799.3814086914062
+      ],
+      "aref": [
+        18.095945358276367,
+        -291.4243469238281
+      ]
+    },
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "mixed_pair_stiffness025",
+      "solref": [
+        0.002,
+        1.5
+      ],
+      "raw_normalized_k": 111333.65625,
+      "raw_normalized_b": 1001.0009765625,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 111333.66452310771,
+      "row_recovered_normalized_b": 1001.0008838292342,
+      "D": [
+        758.4495239257812,
+        758.4495239257812
+      ],
+      "aref": [
+        13.198360443115234,
+        -291.4388732910156
+      ]
+    },
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "mixed_pair_damping05",
+      "solref": [
+        0.003,
+        0.75
+      ],
+      "raw_normalized_k": 197926.5,
+      "raw_normalized_b": 667.333984375,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 160884.84552319383,
+      "row_recovered_normalized_b": 601.656761487041,
+      "D": [
+        633.6173095703125,
+        633.6173095703125
+      ],
+      "aref": [
+        22.830123901367188,
+        -263.0192565917969
+      ]
+    },
+    {
+      "hz": 400.0,
+      "depth_m": 0.0005,
+      "name": "mixed_pair_damping2",
+      "solref": [
+        0.0015,
+        1.5
+      ],
+      "raw_normalized_k": 197926.5,
+      "raw_normalized_b": 1334.66796875,
+      "impedance": 0.9945000410079956,
+      "row_recovered_normalized_k": 160884.852747934,
+      "row_recovered_normalized_b": 1203.3135885125018,
+      "D": [
+        905.5955810546875,
+        905.5955810546875
+      ],
+      "aref": [
+        15.97353458404541,
+        -304.1587829589844
+      ]
+    }
+  ],
+  "coefficient_scope": "Normalized solver reference row coefficients K(s^-2)/B(s^-1), not measured belt N/m or Ns/m. Positive-format DISCRETE REFSAFE and actual geom solmix can couple effective K/B.",
+  "posthoc": {
+    "strict_matches_gpu": true,
+    "saved_policy_checks": {
+      "first_event": true,
+      "class_maxima": true,
+      "allowed_pair_steps": true,
+      "residual_pair_steps": true
+    },
+    "source_witness_sha256": "24e4259102acbca7978f3c2c72cf36fa45db52ed2064e2bddf5e3bfa640d14de",
+    "source_states_sha256": "f22053b50861913e492e950d2316363ed25b8a93e871c582576ac28c69e40681",
+    "replay_code_sha256": "674ef5cba85009b0d1b024db129194c073ceb3db3603c6be42b71c99591617ed",
+    "physics_rerun": false,
+    "throughput_eligible": false,
+    "rows": [
+      {
+        "name": "reference_1mm",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "fruit2",
+        "first_policy_event": 16050299470278,
+        "first_event_detail": {
+          "step": 3737,
+          "actual_step_end_time_s": 53.55135726928711,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          17,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "fruit3",
+        "first_policy_event": 16204918423771,
+        "first_event_detail": {
+          "step": 3773,
+          "actual_step_end_time_s": 53.85142135620117,
+          "phase": "close",
+          "geoms": [
+            "g0373",
+            "s300_g0581"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_08",
+            "Tool_L"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          19,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "fruit5",
+        "first_policy_event": 16204918423771,
+        "first_event_detail": {
+          "step": 3773,
+          "actual_step_end_time_s": 53.85142135620117,
+          "phase": "close",
+          "geoms": [
+            "g0373",
+            "s300_g0581"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_08",
+            "Tool_L"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          19,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "pedicel125",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          68
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "pedicel15",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          113
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "pedicel5_risk_control",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          194
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "fruit3_residual05",
+        "first_policy_event": 16204918423771,
+        "first_event_detail": {
+          "step": 3773,
+          "actual_step_end_time_s": 53.85142135620117,
+          "phase": "close",
+          "geoms": [
+            "g0373",
+            "s300_g0581"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_08",
+            "Tool_L"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          19,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "pedicel15_residual05",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          113
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0
+        }
+      },
+      {
+        "name": "other_Fruit08_part147_2mm",
+        "first_policy_event": 15779716530630,
+        "first_event_detail": {
+          "step": 3674,
+          "actual_step_end_time_s": 53.0262451171875,
+          "phase": "close",
+          "geoms": [
+            "g0355",
+            "s300_g0816"
+          ],
+          "bodies": [
+            "Truss_00_Fruit_05",
+            "Tool_R_belt"
+          ]
+        },
+        "policy_passed": false,
+        "allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "residual_allowed_pair_steps": [
+          0,
+          0,
+          0
+        ],
+        "maximum_penetration_m_by_class": {
+          "other": 0.0017889264272525907,
+          "belt_fruit": 0.0023121812846511602,
+          "belt_pedicel": 0.00292858574539423,
+          "explicit_other_pair": 0.0016895231092348695
+        }
+      }
+    ],
+    "selected_actual_contact_force_pairs": [
+      {
+        "pair": [
+          "g0158",
+          "s300_g0814"
+        ],
+        "bodies": [
+          "Truss_00_Pedicel_distal_04_0",
+          "Tool_L_belt"
+        ],
+        "category": 2,
+        "active_contact_samples": 766,
+        "over_reference_samples": 155,
+        "max_depth_m": 0.00292858574539423,
+        "max_force_n": 6.629502296447754,
+        "max_depth_step": 5067,
+        "max_depth_time_s": 64.63676452636719,
+        "max_depth_phase": "belt_finish",
+        "fruit_attached_at_max_depth": [
+          -1,
+          -1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 3.9875786304473877,
+        "related_exact_attachments": [
+          {
+            "name": "Truss_00_Fruit_04",
+            "anchor": "Truss_00_Pedicel_distal_04_0",
+            "cached_attached_at_peak": false,
+            "eq_active_after_release_at_peak": false,
+            "break_step": 3771,
+            "attachment_constraint_force_at_peak_n": 0.0,
+            "attachment_torque_at_peak_nm": 0.0
+          }
+        ]
+      },
+      {
+        "pair": [
+          "s300_g0816",
+          "g0355"
+        ],
+        "bodies": [
+          "Tool_R_belt",
+          "Truss_00_Fruit_05"
+        ],
+        "category": 1,
+        "active_contact_samples": 318,
+        "over_reference_samples": 35,
+        "max_depth_m": 0.0023121812846511602,
+        "max_force_n": 1.302946925163269,
+        "max_depth_step": 3738,
+        "max_depth_time_s": 53.5596923828125,
+        "max_depth_phase": "close",
+        "fruit_attached_at_max_depth": [
+          -1,
+          1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 1.0984759330749512,
+        "related_exact_attachments": [
+          {
+            "name": "Truss_00_Fruit_05",
+            "anchor": "Truss_00_Pedicel_distal_05_0",
+            "cached_attached_at_peak": true,
+            "eq_active_after_release_at_peak": true,
+            "break_step": 3740,
+            "attachment_constraint_force_at_peak_n": 0.9404640793800354,
+            "attachment_torque_at_peak_nm": 0.00312904198653996
+          }
+        ]
+      },
+      {
+        "pair": [
+          "g0166",
+          "s300_g0620"
+        ],
+        "bodies": [
+          "Truss_00_Pedicel_distal_06_0",
+          "Tool_L"
+        ],
+        "category": 0,
+        "active_contact_samples": 39,
+        "over_reference_samples": 3,
+        "max_depth_m": 0.0017889264272525907,
+        "max_force_n": 3.6135621070861816,
+        "max_depth_step": 3976,
+        "max_depth_time_s": 55.54344940185547,
+        "max_depth_phase": "close",
+        "fruit_attached_at_max_depth": [
+          -1,
+          -1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 0.26194173097610474,
+        "related_exact_attachments": []
+      },
+      {
+        "pair": [
+          "g0154",
+          "s300_g0707"
+        ],
+        "bodies": [
+          "Truss_00_Pedicel_distal_03_0",
+          "Tool_R"
+        ],
+        "category": 0,
+        "active_contact_samples": 291,
+        "over_reference_samples": 28,
+        "max_depth_m": 0.0017511305632069707,
+        "max_force_n": 5.970417022705078,
+        "max_depth_step": 5019,
+        "max_depth_time_s": 64.23686218261719,
+        "max_depth_phase": "belt_finish",
+        "fruit_attached_at_max_depth": [
+          -1,
+          -1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 1.862238883972168,
+        "related_exact_attachments": [
+          {
+            "name": "Truss_00_Fruit_03",
+            "anchor": "Truss_00_Pedicel_distal_03_0",
+            "cached_attached_at_peak": false,
+            "eq_active_after_release_at_peak": false,
+            "break_step": 3776,
+            "attachment_constraint_force_at_peak_n": 0.0,
+            "attachment_torque_at_peak_nm": 0.0
+          }
+        ]
+      },
+      {
+        "pair": [
+          "g0126",
+          "s300_g0473"
+        ],
+        "bodies": [
+          "Truss_00_Rachis_13",
+          "Tool_fixed"
+        ],
+        "category": 0,
+        "active_contact_samples": 113,
+        "over_reference_samples": 22,
+        "max_depth_m": 0.0015354284550994635,
+        "max_force_n": 4.147693634033203,
+        "max_depth_step": 3951,
+        "max_depth_time_s": 55.3350715637207,
+        "max_depth_phase": "close",
+        "fruit_attached_at_max_depth": [
+          -1,
+          -1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 2.0717198848724365,
+        "related_exact_attachments": []
+      },
+      {
+        "pair": [
+          "g0154",
+          "s300_g0710"
+        ],
+        "bodies": [
+          "Truss_00_Pedicel_distal_03_0",
+          "Tool_R"
+        ],
+        "category": 0,
+        "active_contact_samples": 46,
+        "over_reference_samples": 3,
+        "max_depth_m": 0.0011591155780479312,
+        "max_force_n": 0.0,
+        "max_depth_step": 5019,
+        "max_depth_time_s": 64.23686218261719,
+        "max_depth_phase": "belt_finish",
+        "fruit_attached_at_max_depth": [
+          -1,
+          -1
+        ],
+        "allowed_pair_steps": 0,
+        "residual_pair_steps": 0,
+        "force_at_max_depth_n": 0.0,
+        "related_exact_attachments": [
+          {
+            "name": "Truss_00_Fruit_03",
+            "anchor": "Truss_00_Pedicel_distal_03_0",
+            "cached_attached_at_peak": false,
+            "eq_active_after_release_at_peak": false,
+            "break_step": 3776,
+            "attachment_constraint_force_at_peak_n": 0.0,
+            "attachment_torque_at_peak_nm": 0.0
+          }
+        ]
+      }
+    ]
+  },
+  "time_scope_addendum": {
+    "schema": "s300-contact-witness-time-scope-addendum-v1",
+    "original_witness_schema_preserved": true,
+    "physics_rerun": false,
+    "contact_geometry_and_wrench": "d.contact.dist/frame/pos/solref and efc.force are from the pre-integration solve.",
+    "local_centres": "geom_xpos/xmat have been refreshed by native mw.kinematics after integration; stored local relative centres refer to post-integration kinematics, unlike contact geometry.",
+    "attachment_cache": "c.attached was populated before integration from then-current eq_active. release_attachments may change eq_active after integration but leaves c.attached unchanged until the next control callback.",
+    "timestamp": "d.time is actual post-integration step-end timestamp.",
+    "guard_replay": "Replay uses pre-integration distances, cached attached flags, phase, and step-end clock, matching the actual GPU audit. It does not use post-integration local centres to recompute penetration.",
+    "evidence_code": [
+      "nvidia-sim/harvest_s300/newton_mjcf.py:engine.step native mw.kinematics refresh",
+      "nvidia-sim/harvest_s300/newton_kernels.py:post_step and release_attachments",
+      "nvidia-sim/harvest_s300/newton_contact_policy.py:record_contact_witness"
+    ]
+  },
+  "limitations": [
+    "All14 diagnostic-continuation executions completed; completion is distinct from physics validity or verified harvest success.",
+    "At400Hz source already remains below1mm, so changed stop policies exercised no allowances and did not demonstrate mechanics improvement.",
+    "At120Hz policies are replayed on one fixed recorded trajectory; a changed stop guard never changes the underlying forces or states.",
+    "Relaxed belt fruit3/5mm still leaves rigid Tool_L/Fruit08 contact. Actual nonbelt CAD intrusions are not belt compression.",
+    "Residual0.5s logic was tested but no residual allowance occurred in these actual trajectories.",
+    "Material variants altered mechanics through mixed solref and numerical row limiting; all were slower than source and did not achieve realtime contact phases.",
+    "Neither400Hz nor1mm is asserted to be a real-world ground truth.",
+    "No extra physics GPU trials were run for posthoc counterfactual policies."
+  ]
+}

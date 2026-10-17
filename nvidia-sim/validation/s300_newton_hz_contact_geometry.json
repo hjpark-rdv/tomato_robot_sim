@@ -1,0 +1,2586 @@
+{
+  "schema": "s300-hz-contact-geometry-summary-v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "scope": "Six exact capsule/tool pairs previously implicated at120Hz only. Scan signed distances during manipulation, inspect convex halfspaces within+/-0.15s of each own worst contact. Absence here is not a global collision-validity proof.",
+  "method": "Normalized convex hull halfspace segment clipping; erosion(radius+10nm) proves full radius ball burial. A segment may cross a local thin or corner region without fitting a full ball. Entry/exit closest-normal comparison is descriptive, not proof of biological compression or complete trajectory topology.",
+  "code_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+  "records": [
+    {
+      "hz": 120,
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz120_observe",
+      "source_states_sha256": "f22053b50861913e492e950d2316363ed25b8a93e871c582576ac28c69e40681",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "pairs": [
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.0017878029635650305,
+            "samples_deeper_than_capsule_diameter": 2,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {
+            "endpoint": 1,
+            "before_time_s": 55.525,
+            "after_time_s": 55.65833333333333,
+            "before_plane_id": 142,
+            "after_plane_id": 106,
+            "entry_exit_closest_normal_dot": 0.9714509384928469
+          },
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0017878029635650305,
+          "capsule_radius_m": 0.0008250002959781163,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "centerline_length_m": 0.0045000026699354425,
+          "contact_depth_over_diameter": 1.0835165588913034,
+          "at_reported_peak": {
+            "solver_sample": 3976,
+            "scheduled_time_s": 55.53333333333333,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.010393531115632364,
+                -0.003310569098080475,
+                -0.009747721572217854
+              ],
+              [
+                0.009320313265774587,
+                -0.0025112652194917494,
+                -0.005451288076183484
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              140,
+              140
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9872776596620426,
+                -0.15900561079398287,
+                0.00019613330304295816
+              ],
+              [
+                0.9872776596620426,
+                -0.15900561079398287,
+                0.00019613330304295816
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00022293763327052747,
+              -0.0009628775015767081
+            ],
+            "axis_inside_interval": [
+              0.1880037003400602,
+              1.0
+            ],
+            "fully_buried_radius_ball_interval": [
+              0.8837363417390086,
+              1.0
+            ],
+            "axis_length_inside_m": 0.003653985516447429,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0005231867725909231,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.38333333333333,
+          "window_end_s": 55.68333333333333,
+          "samples_with_some_full_cross_section_inside": 2,
+          "window_sample_count": 37,
+          "first_full_cross_section_time_s": 55.53333333333333,
+          "last_full_cross_section_time_s": 55.541666666666664,
+          "maximum_buried_centerline_length_m": 0.0005231867725909231
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.0017510383176487774,
+            "samples_deeper_than_capsule_diameter": 4,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {
+            "endpoint": 1,
+            "before_time_s": 64.14166666666667,
+            "after_time_s": 64.25,
+            "before_plane_id": 1,
+            "after_plane_id": 1,
+            "entry_exit_closest_normal_dot": 1.0
+          },
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0017510383176487774,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 1.0612350968934057,
+          "at_reported_peak": {
+            "solver_sample": 5020,
+            "scheduled_time_s": 64.23333333333333,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.0069182904980069565,
+                0.01768100609973416,
+                -0.008221089908049957
+              ],
+              [
+                -0.0020368251747823964,
+                0.01640885066405344,
+                -0.008456494262262526
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              54,
+              1
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9999999634500483,
+                -0.0002562658701422246,
+                8.618413846900974e-05
+              ],
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0029379143068497147,
+              -0.0009260533434037772
+            ],
+            "axis_inside_interval": [
+              0.6018886195482651,
+              1.0
+            ],
+            "fully_buried_radius_ball_interval": [
+              0.919149801813712,
+              1.0
+            ],
+            "axis_length_inside_m": 0.0020104624068092445,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.00040829348774749577,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 64.09166666666667,
+          "window_end_s": 64.375,
+          "samples_with_some_full_cross_section_inside": 2,
+          "window_sample_count": 35,
+          "first_full_cross_section_time_s": 64.225,
+          "last_full_cross_section_time_s": 64.23333333333333,
+          "maximum_buried_centerline_length_m": 0.00041955746612548666
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.001587642173711944,
+            "samples_deeper_than_capsule_diameter": 3,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {
+            "endpoint": 0,
+            "before_time_s": 55.525,
+            "after_time_s": 55.65833333333333,
+            "before_plane_id": 142,
+            "after_plane_id": 106,
+            "entry_exit_closest_normal_dot": 0.9714509384928469
+          },
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.001587642173711944,
+          "capsule_radius_m": 0.0006249895469670012,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "centerline_length_m": 0.007006532678778039,
+          "contact_depth_over_diameter": 1.2701349817901593,
+          "at_reported_peak": {
+            "solver_sample": 3976,
+            "scheduled_time_s": 55.53333333333333,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.009320312614744045,
+                -0.0025112683758211963,
+                -0.0054512921219994
+              ],
+              [
+                0.013818530213978,
+                0.0021363174850968255,
+                -0.0027573202821089813
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              140,
+              102
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9872776596620426,
+                -0.15900561079398287,
+                0.00019613330304295816
+              ],
+              [
+                0.9968143224321007,
+                0.07975692684148056,
+                0.00019802786345440168
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              -0.000962877643244044,
+              0.0034531986609553315
+            ],
+            "axis_inside_interval": [
+              0.0,
+              0.24340786263428385
+            ],
+            "fully_buried_radius_ball_interval": [
+              0.0,
+              0.09125610624576465
+            ],
+            "axis_length_inside_m": 0.0017054451438186257,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0006393888905489907,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.38333333333333,
+          "window_end_s": 55.68333333333333,
+          "samples_with_some_full_cross_section_inside": 3,
+          "window_sample_count": 37,
+          "first_full_cross_section_time_s": 55.53333333333333,
+          "last_full_cross_section_time_s": 55.65,
+          "maximum_buried_centerline_length_m": 0.0006393888905489907
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.001551039129482253,
+            "samples_deeper_than_capsule_diameter": 14,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {
+            "endpoint": 0,
+            "before_time_s": 64.14166666666667,
+            "after_time_s": 64.25,
+            "before_plane_id": 1,
+            "after_plane_id": 1,
+            "entry_exit_closest_normal_dot": 1.0
+          },
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.001551039129482253,
+          "capsule_radius_m": 0.0006249909408755316,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "centerline_length_m": 0.007839091679146844,
+          "contact_depth_over_diameter": 1.240849289198854,
+          "at_reported_peak": {
+            "solver_sample": 5020,
+            "scheduled_time_s": 64.23333333333333,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.002036828187074785,
+                0.016408851600332446,
+                -0.008456491925942198
+              ],
+              [
+                0.0021572119565743324,
+                0.022014261161388736,
+                -0.011983639396682315
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              1,
+              0
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ],
+              [
+                -0.0002627194092021824,
+                0.9966097531575369,
+                -0.08227351268655883
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              -0.0009260526017247604,
+              0.0049494421023052355
+            ],
+            "axis_inside_interval": [
+              0.0,
+              0.15761270513019146
+            ],
+            "fully_buried_radius_ball_interval": [
+              0.0,
+              0.0512385220472464
+            ],
+            "axis_length_inside_m": 0.001235540445313909,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0004016634718323514,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 64.09166666666667,
+          "window_end_s": 64.375,
+          "samples_with_some_full_cross_section_inside": 4,
+          "window_sample_count": 35,
+          "first_full_cross_section_time_s": 64.15,
+          "last_full_cross_section_time_s": 64.23333333333333,
+          "maximum_buried_centerline_length_m": 0.0004016634718323514
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.0015352724957334923,
+            "samples_deeper_than_capsule_diameter": 7,
+            "baseline120_peak_time_s": 55.325
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "offline_cpu_penetration_m": 0.0015352724957334923,
+          "capsule_radius_m": 0.000567572319674331,
+          "capsule_diameter_m": 0.001135144639348662,
+          "centerline_length_m": 0.017898694424311093,
+          "contact_depth_over_diameter": 1.3524906364482512,
+          "at_reported_peak": {
+            "solver_sample": 3951,
+            "scheduled_time_s": 55.325,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.0029992874301464673,
+                -0.050889719344835056,
+                -0.0003664892556905244
+              ],
+              [
+                0.01587601541351394,
+                -0.039062496013295867,
+                -0.004196623300750307
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              5,
+              5
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ],
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              -0.0009677093802169939,
+              0.011891222400101405
+            ],
+            "axis_inside_interval": [
+              0.0,
+              0.0752558141492086
+            ],
+            "fully_buried_radius_ball_interval": [
+              0.0,
+              0.031116664072756674
+            ],
+            "axis_length_inside_m": 0.0013469808211094318,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0005569476617422112,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.18333333333333,
+          "window_end_s": 55.475,
+          "samples_with_some_full_cross_section_inside": 4,
+          "window_sample_count": 36,
+          "first_full_cross_section_time_s": 55.25,
+          "last_full_cross_section_time_s": 55.333333333333336,
+          "maximum_buried_centerline_length_m": 0.0005569476617422112
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 3120,
+            "start_s": 44.80833333333333,
+            "end_s": 70.8,
+            "minimum_signed_distance_m": -0.001158936634157501,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.225
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.001158936634157501,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.702385675314586,
+          "at_reported_peak": {
+            "solver_sample": 5019,
+            "scheduled_time_s": 64.225,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.00500460880093151,
+                0.028463397149597117,
+                -0.003986938112046971
+              ],
+              [
+                -0.003787345188250962,
+                0.03334890995451928,
+                -0.004377491942580823
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              0,
+              2
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9998314468114893,
+                -0.0011883291273988366,
+                -0.01832118557104961
+              ],
+              [
+                -0.0009636864655129556,
+                0.9999242864336622,
+                -0.012267546964558704
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0003896961431467784,
+              0.0019378912150826988
+            ],
+            "axis_inside_interval": [
+              0.3205506109753499,
+              0.6036027897266103
+            ],
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.001429413456855073,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": true
+          },
+          "window_start_s": 64.075,
+          "window_end_s": 64.36666666666666,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 36,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "global_monitor_context": {
+        "status": "completed",
+        "max_active_penetration_m": 0.00292858574539423,
+        "max_released_penetration_m": 0.026583489030599594,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 3674,
+            "scheduled_start_s": 53.016666666666666,
+            "actual_end_s": 53.0262451171875,
+            "phase": "close",
+            "geom_ids": [
+              102,
+              454
+            ],
+            "geoms": [
+              "g0355",
+              "s300_g0816"
+            ],
+            "bodies": [
+              "Truss_00_Fruit_05",
+              "Tool_R_belt"
+            ],
+            "step_max_active_penetration_m": 0.001095746411010623,
+            "fruit_attachment_context": [
+              {
+                "fruit": "Truss_00_Fruit_05",
+                "attached_before_step": true,
+                "attached_after_step": true,
+                "scheduled_release_time_s": 53.575
+              }
+            ]
+          }
+        ],
+        "interpretation": "Existing monitor active is a contact-policy category, not necessarily an attached fruit. Global maximum must not be attributed to these six capsule pairs or the first event without a matching witness."
+      },
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "82ce6651941ed13e4fa5e90bfd25b505b6c7515c7df11c3613619ed3806d60cc",
+      "raw_review": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/original120_capsule_geometry_review_v2.json",
+      "raw_review_sha256": "a484c0aae158b2667be60206cb4a4b48a5ada4914083bbeaf483969f066fe126"
+    },
+    {
+      "hz": 200,
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz200_observe",
+      "source_states_sha256": "58ab8a780231ccd01888a16f06d2f45477afa5c72e5997a74b63a4cb33387539",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "pairs": [
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": 0.002005846384618127,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0008250002959781163,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "centerline_length_m": 0.0045000026699354425,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 4707,
+            "scheduled_time_s": 54.895,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.014561248451772113,
+                -0.0031743599204309024,
+                -0.005679102026144971
+              ],
+              [
+                0.013172405807468068,
+                -0.0024037026734998784,
+                -0.0014687305999473367
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              140,
+              138
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9872776596620426,
+                -0.15900561079398287,
+                0.00019613330304295816
+              ],
+              [
+                0.9968143234629419,
+                -0.07975691395786819,
+                0.00019802786365918934
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.004316771819329981,
+              0.0028307135585503383
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 54.75,
+          "window_end_s": 55.045,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 60,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.0008401866192956359,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {
+            "endpoint": 1,
+            "before_time_s": 64.495,
+            "after_time_s": 64.51,
+            "before_plane_id": 1,
+            "after_plane_id": 1,
+            "entry_exit_closest_normal_dot": 1.0
+          },
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0008401866192956359,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.5092038931129724,
+          "at_reported_peak": {
+            "solver_sample": 6629,
+            "scheduled_time_s": 64.505,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.007127127317008875,
+                0.019089466420957074,
+                -0.0035344771144536647
+              ],
+              [
+                -0.002284303151224158,
+                0.017700455522863718,
+                -0.0038811775451267506
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              54,
+              1
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9999999634500483,
+                -0.0002562658701422246,
+                8.618413846900974e-05
+              ],
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.003146794089594832,
+              -1.5189686052061169e-05
+            ],
+            "axis_inside_interval": [
+              0.9888068342456274,
+              1.0
+            ],
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 5.652548524690793e-05,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 64.355,
+          "window_end_s": 64.65,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 60,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": 0.0022058569867470404,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0006249895469670012,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "centerline_length_m": 0.007006532678778039,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 4707,
+            "scheduled_time_s": 54.895,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.013172405384913466,
+                -0.002403705746598476,
+                -0.0014687347390762314
+              ],
+              [
+                0.017582904330287804,
+                0.0020546431289156317,
+                0.0016557051364588936
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              138,
+              102
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9968143234629419,
+                -0.07975691395786819,
+                0.00019802786365918934
+              ],
+              [
+                0.9968143224321007,
+                0.07975692684148056,
+                0.00019802786345440168
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.002830713381623053,
+              0.00719994050142987
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 54.75,
+          "window_end_s": 55.045,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 60,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.00064017829494877,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {
+            "endpoint": 0,
+            "before_time_s": 64.495,
+            "after_time_s": 64.51,
+            "before_plane_id": 1,
+            "after_plane_id": 1,
+            "entry_exit_closest_normal_dot": 1.0
+          },
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.00064017829494877,
+          "capsule_radius_m": 0.0006249909408755316,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "centerline_length_m": 0.007839091679146844,
+          "contact_depth_over_diameter": 0.5121500593688308,
+          "at_reported_peak": {
+            "solver_sample": 6629,
+            "scheduled_time_s": 64.505,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.002284306071933076,
+                0.017700456580835036,
+                -0.0038811751453120182
+              ],
+              [
+                0.0019301132052778381,
+                0.023126746899589844,
+                -0.007655483278802479
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              1,
+              0
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ],
+              [
+                -0.0002627194092021824,
+                0.9966097531575369,
+                -0.08227351268655883
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              -1.5188828341269889e-05,
+              0.005702123295221101
+            ],
+            "axis_inside_interval": [
+              0.0,
+              0.0026566379758216022
+            ],
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 2.0825628650768636e-05,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 64.355,
+          "window_end_s": 64.65,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 60,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.0007449994360839821,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.325
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {
+            "endpoint": 0,
+            "before_time_s": 54.82,
+            "after_time_s": 54.92,
+            "before_plane_id": 5,
+            "after_plane_id": 5,
+            "entry_exit_closest_normal_dot": 1.0
+          },
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "offline_cpu_penetration_m": 0.0007449994360839821,
+          "capsule_radius_m": 0.000567572319674331,
+          "capsule_diameter_m": 0.001135144639348662,
+          "centerline_length_m": 0.017898694424311093,
+          "contact_depth_over_diameter": 0.6563035319547098,
+          "at_reported_peak": {
+            "solver_sample": 4705,
+            "scheduled_time_s": 54.885,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.003809357154939224,
+                -0.04010588633279834,
+                0.011816312037885975
+              ],
+              [
+                0.017275808914097662,
+                -0.029458107417683246,
+                0.006752445601263114
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              5,
+              5
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ],
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              -0.0001774271321018611,
+              0.01327336923386004
+            ],
+            "axis_inside_interval": [
+              0.0,
+              0.013190827314199164
+            ],
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.00023609858730070705,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": false,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 54.735,
+          "window_end_s": 55.035,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 61,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 5199,
+            "start_s": 44.805,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.00030325010082777964,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.225
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.00030325010082777964,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.18378789709583854,
+          "at_reported_peak": {
+            "solver_sample": 6727,
+            "scheduled_time_s": 64.995,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006084764382723041,
+                0.028310456268937554,
+                0.0006134778083190136
+              ],
+              [
+                -0.004781389522395716,
+                0.03315976238459552,
+                7.687503673858929e-05
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              0,
+              2
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9998314468114893,
+                -0.0011883291273988366,
+                -0.01832118557104961
+              ],
+              [
+                -0.0009636864655129556,
+                0.9999242864336622,
+                -0.012267546964558704
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0013855663315931327,
+              0.001695071757150772
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 64.85,
+          "window_end_s": 65.145,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 60,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "global_monitor_context": {
+        "status": "completed",
+        "max_active_penetration_m": 0.001394815742969513,
+        "max_released_penetration_m": 0.01886885054409504,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 4399,
+            "scheduled_start_s": 53.355,
+            "actual_end_s": 53.3613166809082,
+            "phase": "close",
+            "geom_ids": [
+              102,
+              454
+            ],
+            "geoms": [
+              "g0355",
+              "s300_g0816"
+            ],
+            "bodies": [
+              "Truss_00_Fruit_05",
+              "Tool_R_belt"
+            ],
+            "step_max_active_penetration_m": 0.0010595705825835466,
+            "fruit_attachment_context": [
+              {
+                "fruit": "Truss_00_Fruit_05",
+                "attached_before_step": true,
+                "attached_after_step": true,
+                "scheduled_release_time_s": 54.1
+              }
+            ]
+          }
+        ],
+        "interpretation": "Existing monitor active is a contact-policy category, not necessarily an attached fruit. Global maximum must not be attributed to these six capsule pairs or the first event without a matching witness."
+      },
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "82ce6651941ed13e4fa5e90bfd25b505b6c7515c7df11c3613619ed3806d60cc",
+      "raw_review": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/original200_capsule_geometry_review_v2.json",
+      "raw_review_sha256": "2c7cf4d836ff08799ec06179dd0836c49fda47f4dbb32b4b8a6e85c64cff3d50"
+    },
+    {
+      "hz": 240,
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz240_observe",
+      "source_states_sha256": "c6ed7260e2e78ab561ae51588903ab306d56482e2a1c5a9b3cbfac91146137b5",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "pairs": [
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": 0.004613260605790612,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0008250002959781163,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "centerline_length_m": 0.0045000026699354425,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 7234,
+            "scheduled_time_s": 63.74166666666667,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.017210872817881803,
+                0.004081898044284395,
+                -0.0062233807592127315
+              ],
+              [
+                0.015387694699411154,
+                0.004940715596470419,
+                -0.0021998899875302386
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              122,
+              150
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9872776596620426,
+                0.15900561079398287,
+                0.00019613330304295816
+              ],
+              [
+                0.9714509375647473,
+                0.23724046589854658,
+                0.000192989154838138
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.007076883739045494,
+              0.005438260901768835
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.59166666666667,
+          "window_end_s": 63.891666666666666,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 73,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": -0.0007064445375562862,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0007064445375562862,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.42814810487416066,
+          "at_reported_peak": {
+            "solver_sample": 7325,
+            "scheduled_time_s": 64.12083333333334,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006676383020312035,
+                0.01902474354839744,
+                -0.006765788827946035
+              ],
+              [
+                -0.0018445168414356005,
+                0.017576653042787105,
+                -0.007007866256366246
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              54,
+              1
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9999999634500483,
+                -0.0002562658701422246,
+                8.618413846900974e-05
+              ],
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0026957879078197767,
+              0.0001185556545664733
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.975,
+          "window_end_s": 64.27083333333333,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 72,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": 0.004813270818348496,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0006249895469670012,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "centerline_length_m": 0.007006532678778039,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 7234,
+            "scheduled_time_s": 63.74166666666667,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.015387694965224626,
+                0.004940712249998598,
+                -0.002199893922679237
+              ],
+              [
+                0.019010960310425595,
+                0.010047873602815864,
+                0.000943408692937401
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              150,
+              124
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9714509375647473,
+                0.23724046589854658,
+                0.000192989154838138
+              ],
+              [
+                0.9213693631943412,
+                0.388688130849457,
+                0.00018303991258928395
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.005438260365315603,
+              0.010363398765876658
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.59166666666667,
+          "window_end_s": 63.891666666666666,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 73,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": -0.0005064344325689925,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0005064344325689925,
+          "capsule_radius_m": 0.0006249909408755316,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "centerline_length_m": 0.007839091679146844,
+          "contact_depth_over_diameter": 0.4051534185915905,
+          "at_reported_peak": {
+            "solver_sample": 7325,
+            "scheduled_time_s": 64.12083333333334,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.0018445198124744768,
+                0.01757665409192274,
+                -0.007007863915159156
+              ],
+              [
+                0.002541139909892209,
+                0.023019884393921056,
+                -0.010555904364912808
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              1,
+              0
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ],
+              [
+                -0.0002627194092021824,
+                0.9966097531575369,
+                -0.08227351268655883
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00011855650830662132,
+              0.005834090382274351
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.975,
+          "window_end_s": 64.27083333333333,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 72,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": -0.00025914924659959813,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.325
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "offline_cpu_penetration_m": 0.00025914924659959813,
+          "capsule_radius_m": 0.000567572319674331,
+          "capsule_diameter_m": 0.001135144639348662,
+          "centerline_length_m": 0.017898694424311093,
+          "contact_depth_over_diameter": 0.22829623434445864,
+          "at_reported_peak": {
+            "solver_sample": 5315,
+            "scheduled_time_s": 55.74583333333333,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.00429239764526004,
+                -0.04138345841023591,
+                0.008328937093897218
+              ],
+              [
+                0.018709025175604396,
+                -0.031230465880767014,
+                0.005256339586456101
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              5,
+              5
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ],
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0003084230713853494,
+              0.014709720195840504
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.59583333333333,
+          "window_end_s": 55.891666666666666,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 72,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 6239,
+            "start_s": 44.80416666666667,
+            "end_s": 70.79583333333333,
+            "minimum_signed_distance_m": -0.0001588504436520774,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.225
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0001588504436520774,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.0962729737331117,
+          "at_reported_peak": {
+            "solver_sample": 5184,
+            "scheduled_time_s": 55.2,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006110808267075025,
+                0.02815510588921457,
+                0.005203073589645855
+              ],
+              [
+                -0.005156045059494267,
+                0.03308441225365378,
+                0.004661904163948486
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              0,
+              2
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9998314468114893,
+                -0.0011883291273988366,
+                -0.01832118557104961
+              ],
+              [
+                -0.0009636864655129556,
+                0.9999242864336622,
+                -0.012267546964558704
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00132770359754075,
+              0.0015638413215545918
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.05416666666667,
+          "window_end_s": 55.35,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 72,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "global_monitor_context": {
+        "status": "completed",
+        "max_active_penetration_m": 0.01008062157779932,
+        "max_released_penetration_m": 0.016289303079247475,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 5493,
+            "scheduled_start_s": 56.4875,
+            "actual_end_s": 56.48830032348633,
+            "phase": "cycle_open",
+            "geom_ids": [
+              2,
+              104
+            ],
+            "geoms": [
+              "farm_structural_2",
+              "g0373"
+            ],
+            "bodies": [
+              "world",
+              "Truss_00_Fruit_08"
+            ],
+            "step_max_active_penetration_m": 0.009653090499341488,
+            "fruit_attachment_context": [
+              {
+                "fruit": "Truss_00_Fruit_08",
+                "attached_before_step": false,
+                "attached_after_step": false,
+                "scheduled_release_time_s": 54.19166666666667
+              }
+            ]
+          }
+        ],
+        "interpretation": "Existing monitor active is a contact-policy category, not necessarily an attached fruit. Global maximum must not be attributed to these six capsule pairs or the first event without a matching witness."
+      },
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "82ce6651941ed13e4fa5e90bfd25b505b6c7515c7df11c3613619ed3806d60cc",
+      "raw_review": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/original240_capsule_geometry_review_v2.json",
+      "raw_review_sha256": "d579d739043386d16981757419df4ca0f11f1a3af324cd8b64a43e5c2baa4b73"
+    },
+    {
+      "hz": 300,
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz300_observe",
+      "source_states_sha256": "8829957e066011d6a6eac8c2f45fcbb758e846456a8dabc9462c1f08d2625035",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "pairs": [
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": -0.000640006618026453,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.000640006618026453,
+          "capsule_radius_m": 0.0008250002959781163,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "centerline_length_m": 0.0045000026699354425,
+          "contact_depth_over_diameter": 0.3878826596466031,
+          "at_reported_peak": {
+            "solver_sample": 5959,
+            "scheduled_time_s": 55.70333333333333,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.010844872282627743,
+                -0.005673396115078137,
+                -0.02104755652249061
+              ],
+              [
+                0.009975415819714159,
+                -0.004971453676311597,
+                -0.016688503150348682
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              152,
+              142
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9494348992486916,
+                -0.313963909570583,
+                0.00018861543253966475
+              ],
+              [
+                0.9714509193231641,
+                -0.23724054059407085,
+                0.00019298915121425167
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0012264023666973822,
+              0.0001849936779516892
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.553333333333335,
+          "window_end_s": 55.85333333333333,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 91,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": -0.0004953822751024053,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0004953822751024053,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.3002316119635167,
+          "at_reported_peak": {
+            "solver_sample": 8808,
+            "scheduled_time_s": 65.2,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.007157629369369307,
+                0.019427302499471822,
+                -0.0033649915692537634
+              ],
+              [
+                -0.0023101052948653893,
+                0.018059058478290133,
+                -0.0037281953825130023
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              54,
+              1
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9999999634500483,
+                -0.0002562658701422246,
+                8.618413846900974e-05
+              ],
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.003177224171949486,
+              0.0003296179170204708
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 65.05333333333333,
+          "window_end_s": 65.35,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 90,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": -0.00043999589618474435,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.00043999589618474435,
+          "capsule_radius_m": 0.0006249895469670012,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "centerline_length_m": 0.007006532678778039,
+          "contact_depth_over_diameter": 0.35200260413953427,
+          "at_reported_peak": {
+            "solver_sample": 5959,
+            "scheduled_time_s": 55.70333333333333,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.009975415034592797,
+                -0.004971456780003393,
+                -0.016688507213053975
+              ],
+              [
+                0.014497558236563103,
+                -0.00026240982032641467,
+                -0.014145556609676264
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              142,
+              106
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9714509193231641,
+                -0.23724054059407085,
+                0.00019298915121425167
+              ],
+              [
+                0.9999999802669572,
+                -0.0,
+                0.00019866072857334803
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00018499365078228185,
+              0.004027548514580434
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.553333333333335,
+          "window_end_s": 55.85333333333333,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 91,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": -0.000295372184430001,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.000295372184430001,
+          "capsule_radius_m": 0.0006249909408755316,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "centerline_length_m": 0.007839091679146844,
+          "contact_depth_over_diameter": 0.23630117263477668,
+          "at_reported_peak": {
+            "solver_sample": 8808,
+            "scheduled_time_s": 65.2,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.0023101082141106415,
+                0.01805905951869243,
+                -0.0037281929732699945
+              ],
+              [
+                0.0018698311103825323,
+                0.02351114435145862,
+                -0.0075036712971309665
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              1,
+              0
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ],
+              [
+                -0.0002627194092021824,
+                0.9966097531575369,
+                -0.08227351268655883
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0003296187564457258,
+              0.0060727432771187605
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 65.05333333333333,
+          "window_end_s": 65.35,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 90,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": -0.0004297715456178805,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.325
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "offline_cpu_penetration_m": 0.0004297715456178805,
+          "capsule_radius_m": 0.000567572319674331,
+          "capsule_diameter_m": 0.001135144639348662,
+          "centerline_length_m": 0.017898694424311093,
+          "contact_depth_over_diameter": 0.3786050964082255,
+          "at_reported_peak": {
+            "solver_sample": 5693,
+            "scheduled_time_s": 54.81666666666667,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.004120534756957907,
+                -0.04257929838079327,
+                0.01115981779998332
+              ],
+              [
+                0.01766042631030124,
+                -0.032050530880509444,
+                0.006043212114224788
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              5,
+              5
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ],
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00013780077209108073,
+              0.013662236567626015
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 54.67,
+          "window_end_s": 54.96666666666667,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 90,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 7799,
+            "start_s": 44.803333333333335,
+            "end_s": 70.79666666666667,
+            "minimum_signed_distance_m": 7.282880063532197e-06,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.225
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 8188,
+            "scheduled_time_s": 63.13333333333333,
+            "phase": "cycle_reclose",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006322400292575073,
+                0.028264512932265007,
+                0.0007307124194656713
+              ],
+              [
+                -0.005151547210362345,
+                0.03314302495199004,
+                0.00015475938524259726
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              0,
+              2
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9998314468114893,
+                -0.0011883291273988366,
+                -0.01832118557104961
+              ],
+              [
+                -0.0009636864655129556,
+                0.9999242864336622,
+                -0.012267546964558704
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.001621068905893865,
+              0.0016777368578469315
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 62.983333333333334,
+          "window_end_s": 63.28333333333333,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 91,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "global_monitor_context": {
+        "status": "completed",
+        "max_active_penetration_m": 0.0010061764623969793,
+        "max_released_penetration_m": 0.013615253381431103,
+        "first_recorded_violations": [
+          {
+            "world": 0,
+            "solver_step": 5916,
+            "scheduled_start_s": 55.56,
+            "actual_end_s": 55.565120697021484,
+            "phase": "close",
+            "geom_ids": [
+              85,
+              331
+            ],
+            "geoms": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "step_max_active_penetration_m": 0.0010006355587393045,
+            "fruit_attachment_context": []
+          }
+        ],
+        "interpretation": "Existing monitor active is a contact-policy category, not necessarily an attached fruit. Global maximum must not be attributed to these six capsule pairs or the first event without a matching witness."
+      },
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "82ce6651941ed13e4fa5e90bfd25b505b6c7515c7df11c3613619ed3806d60cc",
+      "raw_review": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/original300_capsule_geometry_review_v2.json",
+      "raw_review_sha256": "e130c0fd427e53fb13e8e2ca5fd1781bb60e52ef2bcf21b8b42516299cdd6716"
+    },
+    {
+      "hz": 400,
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz400_observe",
+      "source_states_sha256": "94bfaa615510eec428a818c3419ec8243d3c2a76e0c24d6b1fb5aa91bd58778d",
+      "source_mjb_sha256": "2029e0e4cb5c9775b2138abadc6cd290045d89fefcd79b5065e5cedf2a5377c0",
+      "pairs": [
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.0005389836640052094,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0166",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_06_0",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.0005389836640052094,
+          "capsule_radius_m": 0.0008250002959781163,
+          "capsule_diameter_m": 0.0016500005919562325,
+          "centerline_length_m": 0.0045000026699354425,
+          "contact_depth_over_diameter": 0.3266566488719819,
+          "at_reported_peak": {
+            "solver_sample": 6913,
+            "scheduled_time_s": 55.3625,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.008680850668381385,
+                -0.010343850944755564,
+                -0.015042353403805064
+              ],
+              [
+                0.008055767479005022,
+                -0.009559632021639432,
+                -0.010655521321719813
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              95,
+              95
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.8478444246971534,
+                -0.5302450406558694,
+                0.00016843339445089095
+              ],
+              [
+                0.8478444246971534,
+                -0.5302450406558694,
+                0.00016843339445089095
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.001231079234809921,
+              0.0002860166319729133
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.2125,
+          "window_end_s": 55.51,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 120,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.0003400285607206977,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0003400285607206977,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.2060778675977176,
+          "at_reported_peak": {
+            "solver_sample": 10332,
+            "scheduled_time_s": 63.91,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006859429185365141,
+                0.019449504643374818,
+                -0.006660572062813256
+              ],
+              [
+                -0.002042439944777037,
+                0.01795285533611532,
+                -0.006903787752063835
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              54,
+              1
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9999999634500483,
+                -0.0002562658701422246,
+                8.618413846900974e-05
+              ],
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.002878734282427203,
+              0.000484971631402098
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.76,
+          "window_end_s": 64.0575,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 120,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.00033897170495628283,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.53333333333333
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0165",
+            "s300_g0620"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_06_2",
+            "Tool_L"
+          ],
+          "offline_cpu_penetration_m": 0.00033897170495628283,
+          "capsule_radius_m": 0.0006249895469670012,
+          "capsule_diameter_m": 0.0012499790939340023,
+          "centerline_length_m": 0.007006532678778039,
+          "contact_depth_over_diameter": 0.271181899442376,
+          "at_reported_peak": {
+            "solver_sample": 6913,
+            "scheduled_time_s": 55.3625,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.008055766804923498,
+                -0.009559635382739212,
+                -0.010655525195152032
+              ],
+              [
+                0.012104075304832942,
+                -0.0042041848617805555,
+                -0.008650070586861805
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              95,
+              142
+            ],
+            "closest_hull_plane_normals": [
+              [
+                0.8478444246971534,
+                -0.5302450406558694,
+                0.00016843339445089095
+              ],
+              [
+                0.9714509193231641,
+                -0.23724054059407085,
+                0.00019298915121425167
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00028601784201072455,
+              0.00207240595363351
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.2125,
+          "window_end_s": 55.51,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 120,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.00014001834989082503,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.23333333333333
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0153",
+            "s300_g0707"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_proximal_03_2",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.00014001834989082503,
+          "capsule_radius_m": 0.0006249909408755316,
+          "capsule_diameter_m": 0.0012499818817510633,
+          "centerline_length_m": 0.007839091679146844,
+          "contact_depth_over_diameter": 0.11201630354407809,
+          "at_reported_peak": {
+            "solver_sample": 10332,
+            "scheduled_time_s": 63.91,
+            "phase": "belt_finish",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.0020424429045486038,
+                0.017952856414914814,
+                -0.006903785410058198
+              ],
+              [
+                0.0023984943191545853,
+                0.02335198704560612,
+                -0.01045044910456492
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              1,
+              0
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.00026275880653956173,
+                0.99660975330238,
+                -0.08227351080620625
+              ],
+              [
+                -0.0002627194092021824,
+                0.9966097531575369,
+                -0.08227351268655883
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.00048497251463687496,
+              0.006156428425058393
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 63.76,
+          "window_end_s": 64.0575,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 120,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": -0.0002814218401446899,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 55.325
+          },
+          "related_fruit": null,
+          "related_fruit_attached_at_peak": null,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0126",
+            "s300_g0473"
+          ],
+          "bodies": [
+            "Truss_00_Rachis_13",
+            "Tool_fixed"
+          ],
+          "offline_cpu_penetration_m": 0.0002814218401446899,
+          "capsule_radius_m": 0.000567572319674331,
+          "capsule_diameter_m": 0.001135144639348662,
+          "centerline_length_m": 0.017898694424311093,
+          "contact_depth_over_diameter": 0.24791716437666284,
+          "at_reported_peak": {
+            "solver_sample": 6904,
+            "scheduled_time_s": 55.34,
+            "phase": "close",
+            "centerline_endpoints_tool_local_m": [
+              [
+                0.0027946880760282293,
+                -0.05591353502334447,
+                0.00036929228932427446
+              ],
+              [
+                0.015410069569077754,
+                -0.04406252369780425,
+                -0.004188003229029286
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              18,
+              5
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.0015790603066528463,
+                -0.9999632881859407,
+                -0.008421926674401052
+              ],
+              [
+                0.9999987302731893,
+                -0.001577159701233413,
+                -0.00022807736841495792
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0014863535875760114,
+              0.011433161023414937
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 55.1925,
+          "window_end_s": 55.49,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 120,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        },
+        {
+          "signed_distance_scan": {
+            "active_samples": 10398,
+            "start_s": 44.8025,
+            "end_s": 70.795,
+            "minimum_signed_distance_m": 0.00018214917919413798,
+            "samples_deeper_than_capsule_diameter": 0,
+            "baseline120_peak_time_s": 64.225
+          },
+          "related_fruit": "Truss_00_Fruit_03",
+          "related_fruit_attached_at_peak": false,
+          "tip_entry_exit_face_review": {},
+          "geoms": [
+            "g0154",
+            "s300_g0710"
+          ],
+          "bodies": [
+            "Truss_00_Pedicel_distal_03_0",
+            "Tool_R"
+          ],
+          "offline_cpu_penetration_m": 0.0,
+          "capsule_radius_m": 0.0008250001921226782,
+          "capsule_diameter_m": 0.0016500003842453564,
+          "centerline_length_m": 0.005049999838055329,
+          "contact_depth_over_diameter": 0.0,
+          "at_reported_peak": {
+            "solver_sample": 9859,
+            "scheduled_time_s": 62.7275,
+            "phase": "cycle_reclose",
+            "centerline_endpoints_tool_local_m": [
+              [
+                -0.006326951307047572,
+                0.028217384711520587,
+                -0.003241870804725027
+              ],
+              [
+                -0.005294944480176975,
+                0.03313390415622527,
+                -0.0037569405315510773
+              ]
+            ],
+            "closest_hull_plane_ids": [
+              0,
+              2
+            ],
+            "closest_hull_plane_normals": [
+              [
+                -0.9998314468114893,
+                -0.0011883291273988366,
+                -0.01832118557104961
+              ],
+              [
+                -0.0009636864655129556,
+                0.9999242864336622,
+                -0.012267546964558704
+              ]
+            ],
+            "centerline_endpoint_max_halfspace_signed_m": [
+              0.0016984575915626327,
+              0.0017167419050987745
+            ],
+            "axis_inside_interval": null,
+            "fully_buried_radius_ball_interval": null,
+            "axis_length_inside_m": 0.0,
+            "axis_length_with_full_capsule_cross_section_inside_m": 0.0,
+            "both_centerline_endpoints_outside": true,
+            "axis_crosses_solid_between_two_outside_ends": false
+          },
+          "window_start_s": 62.5775,
+          "window_end_s": 62.8775,
+          "samples_with_some_full_cross_section_inside": 0,
+          "window_sample_count": 121,
+          "first_full_cross_section_time_s": null,
+          "last_full_cross_section_time_s": null,
+          "maximum_buried_centerline_length_m": 0.0
+        }
+      ],
+      "global_monitor_context": {
+        "status": "completed",
+        "max_active_penetration_m": 0.0007942071533761919,
+        "max_released_penetration_m": 0.010234830901026726,
+        "first_recorded_violations": [],
+        "interpretation": "Existing monitor active is a contact-policy category, not necessarily an attached fruit. Global maximum must not be attributed to these six capsule pairs or the first event without a matching witness."
+      },
+      "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+      "review_script_sha256": "82ce6651941ed13e4fa5e90bfd25b505b6c7515c7df11c3613619ed3806d60cc",
+      "raw_review": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/original400_capsule_geometry_review_v2.json",
+      "raw_review_sha256": "9e196a340b5f0b349e41cfe4edb9221989442c05f9cd68bdb26ac4cc859408ea"
+    }
+  ],
+  "pending_hz": []
+}

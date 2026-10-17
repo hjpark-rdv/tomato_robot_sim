@@ -16,6 +16,7 @@ from mujoco_warp._src.types import vec5
 
 
 DEFAULT_PHASES = ('close', 'cycle_reclose')
+OPTIONAL_HELD_PHASES = ('belt_finish',)
 OPEN_PHASES = ('cycle_open', 'cycle_open_final')
 
 
@@ -40,8 +41,8 @@ def validate_config(config):
     if not np.isfinite(result['residual_open_seconds']) or result['residual_open_seconds'] < 0:
         raise ValueError('Nonnegative finite opening residual duration required')
     phases = result['relaxed_phases']
-    if not phases or set(phases) - set(DEFAULT_PHASES):
-        raise ValueError('Only close/cycle_reclose relaxation is implemented')
+    if not phases or set(phases) - set(DEFAULT_PHASES + OPTIONAL_HELD_PHASES):
+        raise ValueError('Only close/cycle_reclose and explicit held belt_finish relaxation are implemented')
     entries=result['explicit_other_pairs']
     if not isinstance(entries,list):
         raise ValueError('explicit_other_pairs must be a list of exact geom pairs')
@@ -307,7 +308,7 @@ class ContactPolicyGPU:
             exact_other_pairs=explicit_rows,
             diagnostic_instrumented=self.config['record_contacts'],
             raw_reference_1mm_preserved=True,
-            residual_rule='Only exact pairs already above 1 mm during closing; opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.',
+            residual_rule='Only exact pairs already above 1 mm during explicitly selected relaxed phases (default: closing only); opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.',
             audit_order='pre-integration contact geometry/constraint solution, before controller tick increment; original released-fruit exception map',
             counters_scope='sum of pair-steps, not distinct physics steps', training_eligible=False)
 

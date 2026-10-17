@@ -8,7 +8,7 @@ import numpy as np
 import warp as wp
 from mujoco_warp._src.types import vec5
 
-from newton_contact_policy import (validate_config, identify_geometries,
+from newton_contact_policy import (validate_config, identify_geometries, DEFAULT_PHASES,
     evaluate_pair_policy, classify_contacts, clear_pair_depth,ContactPolicyGPU,record_contact_witness)
 
 
@@ -33,6 +33,22 @@ def fixture():
 
 
 class ContactPolicyTests(unittest.TestCase):
+    def test_held_belt_finish_is_explicit_opt_in_and_does_not_expand_other_phases(self):
+        model,metadata=fixture()
+        timeline=dict(phase=np.array(['close','cycle_reclose','belt_finish','approach','cycle_open','cycle_open_final']),
+            time_edges=np.arange(7,dtype=float)*.1)
+        solver=SimpleNamespace(mj_model=model)
+        controller=SimpleNamespace(device='cpu',steps=6)
+        default=ContactPolicyGPU(solver,controller,timeline,{},metadata)
+        explicit=ContactPolicyGPU(solver,controller,timeline,dict(
+            relaxed_phases=['close','cycle_reclose','belt_finish']),metadata)
+        self.assertEqual(DEFAULT_PHASES,('close','cycle_reclose'))
+        self.assertEqual(default.config['relaxed_phases'],['close','cycle_reclose'])
+        np.testing.assert_array_equal(default.phase.numpy(),[1,1,0,0,2,2])
+        np.testing.assert_array_equal(explicit.phase.numpy(),[1,1,1,0,2,2])
+        for phase in ('approach','belt_start_open','cycle_open','cycle_open_final'):
+            with self.assertRaises(ValueError):validate_config({'relaxed_phases':['close',phase]})
+
     def test_release_updates_equality_but_audit_attachment_cache_waits_until_next_control(self):
         from newton_kernels import release_attachments
         attached=arr([[True]],bool)
