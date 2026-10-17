@@ -19,7 +19,7 @@ import psutil
 import numpy as np
 
 from benchmark_motion import _stop_child, sample_gpu, sample_tree
-from benchmark_newton import case_assessment, resource_summary, sha256, write_json
+from benchmark_newton import case_assessment, contact_validity, resource_summary, sha256, write_json
 
 
 ROOT = Path(__file__).resolve().parent
@@ -236,8 +236,18 @@ def compare_batch_evidence(reference, candidate):
         identity[field] = bool(a and a == b)
     a, b = (summary.get('engine', {}).get('source_model_array_sha256') for summary in summaries)
     identity['source_model_array_sha256'] = bool(a and a == b)
+    policies = [summary.get('contact_policy') for summary in summaries]
+    uses_policy = any(policy is not None for policy in policies)
+    if uses_policy:
+        a, b = (summary.get('contact_policy_input_sha256') for summary in summaries)
+        identity['contact_policy_input_sha256'] = bool(a and a == b)
+        for field in ('config', 'exact_belt_geometries', 'exact_other_pairs', 'role_geom_counts'):
+            a, b = (policy.get(field) if isinstance(policy, dict) else None for policy in policies)
+            identity['contact_policy_' + field] = bool(a is not None and a == b)
     checks = {}
+    contact_evaluation = {}
     for label, path, summary in zip(('reference', 'candidate'), (reference, candidate), summaries):
+        contact_evaluation[label] = contact_validity(summary)
         checks[label] = dict(completed=summary.get('status') == 'completed' and summary.get('stop') is None,
             full_steps=summary.get('actual_steps') == summary.get('requested_steps'),
             full_existing_sequence=summarize_run(path, worlds=summary['worlds'])['full_existing_sequence_completed'],
@@ -245,7 +255,11 @@ def compare_batch_evidence(reference, candidate):
             finite=summary.get('finite_recorded_state') is True,
             qacc_finite=summary.get('qacc_finite') is True,
             capacity=summary.get('solver_capacity_valid') is True,
-            active_physics=summary.get('active_contact_criterion_passed') is True)
+            active_physics=contact_evaluation[label]['passed'])
+        if uses_policy:
+            snapshot = path/'contact_policy_input.json'
+            checks[label]['policy_input_snapshot_hash'] = bool(snapshot.is_file() and
+                sha256(snapshot) == summary.get('contact_policy_input_sha256'))
     worlds, shapes = [], {}
     with np.load(reference/'all_world_states.npz', allow_pickle=False) as left, \
          np.load(candidate/'all_world_states.npz', allow_pickle=False) as right:
@@ -280,6 +294,43 @@ def compare_batch_evidence(reference, candidate):
                     finite=bool(compatible and np.isfinite(b[world['world']]).all()),
                     exact_reference=bool(compatible and np.array_equal(a[0], b[world['world']])))
             world['physics_metrics'] = metrics
+    policy_metrics_exact = True
+    policy_metric_errors = []
+    if uses_policy:
+        archives = []
+        for label, path, summary in zip(('reference', 'candidate'), (reference, candidate), summaries):
+            try:
+                with np.load(path/'contact_policy_metrics.npz', allow_pickle=False) as archive:
+                    arrays = dict(archive)
+            except (OSError, ValueError) as error:
+                policy_metric_errors.append(f'{label}: {error}')
+                arrays = {}
+            archives.append(arrays)
+            expected_shapes = dict(class_max_penetration_m=(summary['worlds'], summary['actual_steps'], 4),
+                first_policy_event=(summary['worlds'],), allowed_pair_steps=(summary['worlds'], 3),
+                residual_allowed_pair_steps=(summary['worlds'], 3))
+            checks[label]['policy_metrics_full_coverage'] = all(
+                field in arrays and arrays[field].shape == shape
+                for field, shape in expected_shapes.items())
+            events = arrays.get('first_policy_event')
+            checks[label]['policy_metric_events_passed'] = bool(events is not None and
+                events.shape == (summary['worlds'],) and
+                np.all(events == np.iinfo(np.uint64).max))
+        for world in worlds:
+            metrics = {}
+            for field in ('class_max_penetration_m', 'first_policy_event',
+                          'allowed_pair_steps', 'residual_allowed_pair_steps'):
+                a, b = (archive.get(field) for archive in archives)
+                compatible = bool(a is not None and b is not None and a.ndim >= 1 and
+                    b.ndim >= 1 and a.shape[0] == 1 and b.shape[0] == count and
+                    a.shape[1:] == b.shape[1:])
+                metrics[field] = dict(compatible=compatible,
+                    finite=bool(compatible and np.isfinite(b[world['world']]).all()),
+                    exact_reference=bool(compatible and np.array_equal(a[0], b[world['world']])))
+            world['contact_policy_metrics'] = metrics
+        policy_metrics_exact = bool(not policy_metric_errors and all(
+            metric['finite'] and metric['exact_reference']
+            for world in worlds for metric in world['contact_policy_metrics'].values()))
     event_paths = [path/('newton_break_events_all_worlds.json'
         if (path/'newton_break_events_all_worlds.json').is_file() else 'break_events.json')
         for path in (reference, candidate)]
@@ -296,13 +347,18 @@ def compare_batch_evidence(reference, candidate):
     metric_checks = all(metric['finite'] and metric['exact_reference']
         for world in worlds for metric in world['physics_metrics'].values())
     passed = bool(validity and all(identity.values()) and all_finite and all_exact
-                  and metric_checks and all(world['break_events_exact_reference'] for world in worlds))
+                  and metric_checks and policy_metrics_exact
+                  and all(world['break_events_exact_reference'] for world in worlds))
     return dict(schema='s300-native-batch-comparison-v1', reference=str(reference), candidate=str(candidate),
-        training_eligible=False, harvest_success=None, passed=passed, identity=identity,
+        training_eligible=False, harvest_success=None, physical_fidelity_validated=False,
+        passed=passed, identity=identity,
         physical_checks=checks, shapes=shapes, worlds=worlds, every_world_finite=all_finite,
         physical_event_sources=[str(path) for path in event_paths],
         all_worlds_exactly_match_n1=all_exact, worlds_exactly_match_world0=same_within_batch,
         physics_metrics_exact_n1=metric_checks,
+        contact_evaluation=contact_evaluation, explicit_contact_policy_used=uses_policy,
+        contact_policy_metrics_exact_n1=policy_metrics_exact,
+        contact_policy_metric_errors=policy_metric_errors,
         interpretation='Exact replicated-state/command batch control. It does not qualify different scene inputs or arbitrary independent controls. A mismatch alone does not prove cross-world collision.')
 
 

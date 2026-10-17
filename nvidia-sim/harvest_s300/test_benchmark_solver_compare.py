@@ -101,6 +101,7 @@ class SolverComparisonTests(unittest.TestCase):
                 summary = dict(status='completed', stop=None, worlds=worlds, actual_steps=2,
                     requested_steps=2, finite_recorded_state=True, qacc_finite=True,
                     solver_capacity_valid=True, active_contact_criterion_passed=True,
+                    max_active_penetration_m=0.,
                     engine=dict(source_model_array_sha256='source'), input_sha256='input',
                     commands_sha256='commands', executed_commands_sha256='executed',
                     all_world_states_sha256=hashlib.sha256((path/'all_world_states.npz').read_bytes()).hexdigest())
@@ -127,6 +128,77 @@ class SolverComparisonTests(unittest.TestCase):
             self.assertTrue(result['every_world_finite'])
             self.assertFalse(result['worlds_exactly_match_world0'])
             self.assertFalse(result['worlds'][1]['fields']['qvel']['exact_reference'])
+
+    def test_explicit_belt_policy_requires_same_input_and_every_world_audit(self):
+        """A valid belt-only band can pass while a hidden world/policy edit cannot."""
+        from compare_newton_runs import METRIC_KEYS
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name, worlds in [('reference', 1), ('candidate', 2)]:
+                path = root/name
+                path.mkdir()
+                np.savez(path/'executed_commands.npz', time_edges=np.arange(3), phase=['close', 'hold'])
+                np.savez(path/'states.npz', phase=['initial', 'close', 'hold'])
+                np.savez(path/'all_world_states.npz', qpos=np.zeros((worlds, 3, 2)),
+                    qvel=np.zeros((worlds, 3, 2)), eq_active=np.ones((worlds, 3, 1), bool),
+                    time=np.tile([1., 2.], (worlds, 1)))
+                np.savez(path/'physics_metrics.npz',
+                    **{field:np.zeros((worlds, 2)) for field in METRIC_KEYS})
+                config = dict(default_m=.001, fruit_close_m=.002, pedicel_close_m=.001)
+                policy_input = json.dumps(config).encode()
+                (path/'contact_policy_input.json').write_bytes(policy_input)
+                depth = np.zeros((worlds, 2, 4))
+                depth[:, 0, 1] = .0015  # Belt-fruit only; all other classes stay below 1mm.
+                events = np.full(worlds, np.iinfo(np.uint64).max, np.uint64)
+                np.savez(path/'contact_policy_metrics.npz', class_max_penetration_m=depth,
+                    first_policy_event=events, allowed_pair_steps=np.tile([0, 1, 0], (worlds, 1)),
+                    residual_allowed_pair_steps=np.zeros((worlds, 3), int))
+                summary = dict(status='completed', stop=None, worlds=worlds, actual_steps=2,
+                    requested_steps=2, finite_recorded_state=True, qacc_finite=True,
+                    solver_capacity_valid=True, active_contact_criterion_passed=False,
+                    max_active_penetration_m=.0015,
+                    contact_policy_input_sha256=hashlib.sha256(policy_input).hexdigest(),
+                    contact_policy=dict(raw_reference_1mm_preserved=True, physics_changed=False,
+                        stopping_policy_changed=True, policy_passed=True, config=config,
+                        exact_belt_geometries=[dict(name='belt', geom_id=1)], exact_other_pairs=[],
+                        role_geom_counts=dict(fruit=1, pedicel=0)),
+                    engine=dict(source_model_array_sha256='source'), input_sha256='input',
+                    commands_sha256='commands', executed_commands_sha256='executed',
+                    all_world_states_sha256=hashlib.sha256((path/'all_world_states.npz').read_bytes()).hexdigest())
+                (path/'summary.json').write_text(json.dumps(summary))
+                (path/'newton_break_events_all_worlds.json').write_text('[]')
+            reference, candidate = root/'reference', root/'candidate'
+            result = compare_batch_evidence(reference, candidate)
+            self.assertTrue(result['passed'])
+            self.assertFalse(result['contact_evaluation']['candidate']['reference_1mm_passed'])
+            self.assertEqual(result['contact_evaluation']['candidate']['scope'], 'explicit_pair_phase_policy')
+            self.assertTrue(result['contact_policy_metrics_exact_n1'])
+            original = json.loads((candidate/'summary.json').read_text())
+            changed = json.loads(json.dumps(original))
+            changed['contact_policy']['config']['fruit_close_m'] = .003
+            (candidate/'summary.json').write_text(json.dumps(changed))
+            result = compare_batch_evidence(reference, candidate)
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['identity']['contact_policy_config'])
+            (candidate/'summary.json').write_text(json.dumps(original))
+            (candidate/'contact_policy_input.json').write_text('{}')
+            result = compare_batch_evidence(reference, candidate)
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['physical_checks']['candidate']['policy_input_snapshot_hash'])
+            (candidate/'contact_policy_input.json').write_bytes(policy_input)
+            with np.load(candidate/'contact_policy_metrics.npz') as archive:
+                arrays = dict(archive)
+            arrays['allowed_pair_steps'][1, 1] += 1
+            np.savez(candidate/'contact_policy_metrics.npz', **arrays)
+            result = compare_batch_evidence(reference, candidate)
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['worlds'][1]['contact_policy_metrics']['allowed_pair_steps']['exact_reference'])
+            arrays['allowed_pair_steps'][1, 1] -= 1
+            arrays['first_policy_event'][1] = 0
+            np.savez(candidate/'contact_policy_metrics.npz', **arrays)
+            result = compare_batch_evidence(reference, candidate)
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['physical_checks']['candidate']['policy_metric_events_passed'])
 
 
 if __name__ == '__main__':
