@@ -52,8 +52,8 @@ def validate_cases(manifest, output):
             raise ValueError('Positive integer worlds/repeats required')
         if case.get('comparison_class') not in ('identical_model', 'changed_representation', 'connection_path'):
             raise ValueError('Explicit comparison_class required')
-        if case.get('preset', 'canonical') not in ('canonical', 'batched'):
-            raise ValueError('preset must be canonical or batched')
+        if case.get('preset', 'canonical') not in ('canonical', 'batched', 'native'):
+            raise ValueError('preset must be canonical, batched or native')
     return cases
 
 
@@ -62,6 +62,11 @@ def execution_command(case, args, output):
     worlds, repeats = case.get('worlds', 1), case.get('repeats', 1)
     if case.get('preset', 'canonical') == 'canonical':
         command = [str(args.wrapper), 'gpu', str(Path(case['inputs']).resolve())]
+    elif case['preset'] == 'native':
+        command = [str(args.python), '-u', str(ROOT / 'run_newton_harvest.py'),
+                   str(Path(case['inputs']).resolve()), '--backend', 'gpu',
+                   '--native-observables-only', '--native-control-callback',
+                   '--hz', '400', '--free-hz', '60', '--nconmax', '128', '--njmax', '256']
     else:
         command = [str(args.python), '-u', str(ROOT / 'run_newton_harvest.py'),
                    str(Path(case['inputs']).resolve()), '--backend', 'gpu',

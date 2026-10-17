@@ -23,6 +23,7 @@ class LauncherTests(unittest.TestCase):
             python.chmod(0o755)
             env = dict(os.environ, S300_NEWTON_PYTHON=str(python),
                        S300_NEWTON_INPUTS=str(original), S300_NEWTON_FAST_INPUTS=str(fast),
+                       S300_NEWTON_OUTPUT=str(root / 'output'),
                        S300_TEST_CAPTURE=str(capture))
             commands = []
             for mode in ('gpu', 'gpu-fast'):

@@ -78,6 +78,19 @@ class ConservativeProxyTests(unittest.TestCase):
             conservative_proxy(points(), max_outward_m=0.000001, budgets=(128,))
         with self.assertRaisesRegex(ValueError, "Positive"):
             conservative_proxy(points(), max_outward_m=float("inf"))
+        with self.assertRaisesRegex(ValueError, "support-axis"):
+            conservative_proxy(points(), support_axis_weights=[1,0,1])
+
+    def test_weighted_selection_and_full_hull_fallback_keep_physical_certificate(self):
+        source = points(200) * [0.1,1,1]
+        proxy, _, certificate = conservative_proxy(source, budgets=(32,64,128,256,512),
+            support_axis_weights=[3,1,1], full_hull_fallback=True)
+        hull=ConvexHull(proxy)
+        self.assertLess(float(np.max(source@hull.equations[:,:3].T+hull.equations[:,3])),0)
+        self.assertLessEqual(certificate['analytic_outward_bound_m']+certificate['compile_reserve_m'],.0001)
+        proxy,_,certificate=conservative_proxy(points(60),max_outward_m=.00001,
+            budgets=(10,),full_hull_fallback=True)
+        self.assertEqual(certificate['support_budget'],'all_source_hull_vertices')
 
     def test_prepared_input_preserves_physics_and_compiled_body_frame(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -116,6 +129,21 @@ class ConservativeProxyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Shared target mesh"):
                 prepare(source, root / "proxy")
             self.assertFalse((root / "proxy").exists())
+
+    def test_explicit_named_mesh_selection_reuses_certificate_without_fruit_claims(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = fixture(root)
+            result = prepare(source, root / "proxy", geom_names=("fruit_geom",), role="explicit_test",
+                             budgets=(128,256,512,1024,2048))
+            self.assertEqual(result["selected_geom_names"], ["fruit_geom"])
+            self.assertNotIn("fruits", result)
+            self.assertEqual(result["colliders"][0]["geom"], "fruit_geom")
+            self.assertTrue(result["colliders"][0]["source_enclosed"])
+            self.assertFalse(result["retained_all_fruit_collision_geometry"])
+            self.assertTrue((root / "proxy/mesh_proxy_proof.json").is_file())
+            with self.assertRaisesRegex(ValueError,"active collider"):
+                prepare(source, root / "missing", geom_names=("not_present",), role="explicit_test")
 
 
 if __name__ == "__main__":

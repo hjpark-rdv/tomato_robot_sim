@@ -281,6 +281,9 @@ def compare_runs(baseline, candidate, tolerances=None):
         if key in ref['summary'] or key in new['summary']:
             a,b=ref['summary'].get(key),new['summary'].get(key)
             settings[key]=dict(matches=a is not None and a==b)
+    if 'contact_policy_input_sha256' in ref['summary'] or 'contact_policy_input_sha256' in new['summary']:
+        a,b = ref['summary'].get('contact_policy_input_sha256'),new['summary'].get('contact_policy_input_sha256')
+        settings['contact_policy_input_sha256'] = dict(matches=a is not None and a==b)
     breaks_match = ref["breaks"] is not None and ref["breaks"] == new["breaks"]
     trace_matches = bool(paths_match and all(row["passed"] for row in arrays.values()) and
                          all(row["passed"] for row in metrics.values()) and breaks_match)
@@ -290,12 +293,13 @@ def compare_runs(baseline, candidate, tolerances=None):
     gui_pair = bool(ref["summary"].get("gui_requested") != new["summary"].get("gui_requested")
                     and any(run["summary"].get("gui_requested") for run in (ref, new)))
     validity={}
+    from benchmark_newton import contact_validity
     for label,run in (('reference',ref),('actual',new)):
         flags={key:run['summary'].get(key) is True for key in
-            ('active_contact_criterion_passed','finite_recorded_state','solver_capacity_valid','qacc_finite')}
-        pen=run['summary'].get('max_active_penetration_m')
-        flags['active_penetration_within_existing_1mm']=bool(isinstance(pen,(int,float)) and np.isfinite(pen) and 0<=pen<=.001)
-        validity[label]=dict(passed=all(flags.values()),checks=flags)
+            ('finite_recorded_state','solver_capacity_valid','qacc_finite')}
+        contact=contact_validity(run['summary'])
+        flags['selected_contact_policy_passed']=contact['passed']
+        validity[label]=dict(passed=all(flags.values()),checks=flags,contact_evidence=contact)
     passed = bool(full_trace and all(row["passed"] for row in gui.values())
         and all(row['passed'] for row in validity.values()))
     return json_safe(dict(schema="s300-newton-full-trace-comparison-v1", baseline=str(baseline),

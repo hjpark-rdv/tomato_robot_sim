@@ -107,6 +107,27 @@ def resource_blocker(sample, args):
     return None
 
 
+def contact_validity(summary):
+    """Use a documented experiment policy while retaining the 1mm diagnostic.
+
+    This checks recorded execution-policy evidence, not real-world fidelity.
+    An unqualified diagnostic-continue run receives no policy pass merely by
+    reaching the end of the command schedule.
+    """
+    penetration = summary.get('max_active_penetration_m')
+    finite = isinstance(penetration,(int,float)) and math.isfinite(penetration) and penetration >= 0
+    reference = bool(finite and penetration <= .001 and summary.get('active_contact_criterion_passed') is True)
+    policy = summary.get('contact_policy')
+    if policy is None:
+        return dict(passed=reference,scope='reference_1mm',reference_1mm_passed=reference)
+    documented = bool(isinstance(policy,dict) and policy.get('raw_reference_1mm_preserved') is True
+        and policy.get('physics_changed') is False and policy.get('stopping_policy_changed') is True
+        and isinstance(policy.get('config'),dict) and policy.get('exact_belt_geometries'))
+    return dict(passed=bool(finite and documented and policy.get('policy_passed') is True),
+        scope='explicit_pair_phase_policy',reference_1mm_passed=reference,
+        policy_documented=documented,physical_fidelity_validated=False)
+
+
 def case_assessment(row, reference=None):
     """Keep incomplete/invalid cases, but exclude them from rate comparisons."""
     reasons = []
@@ -119,7 +140,7 @@ def case_assessment(row, reference=None):
         return dict(throughput_eligible=False, exclusion_reasons=reasons + ['summary_missing_or_invalid'])
     if summary.get('status') != 'completed' or summary.get('stop') is not None:
         reasons.append('executor_not_completed_without_stop')
-    for name in ('active_contact_criterion_passed', 'finite_recorded_state',
+    for name in ('finite_recorded_state',
                  'solver_capacity_valid', 'qacc_finite'):
         if summary.get(name) is not True:
             reasons.append(name + '_false_or_unknown')
@@ -153,11 +174,12 @@ def case_assessment(row, reference=None):
         drift = None
     else:
         drift = [value - simulated for value in times] if positive_number(simulated) else None
-    penetration = summary.get('max_active_penetration_m')
-    if not isinstance(penetration, (int, float)) or not math.isfinite(penetration) or penetration > .001:
-        reasons.append('active_penetration_invalid_or_above_existing_1mm')
+    contact = contact_validity(summary)
+    if not contact['passed']:
+        reasons.append('active_penetration_invalid_or_above_existing_1mm' if contact['scope']=='reference_1mm'
+                       else 'explicit_contact_policy_failed_or_undocumented')
     eligible = not reasons
-    return dict(throughput_eligible=eligible, exclusion_reasons=reasons,
+    return dict(throughput_eligible=eligible, exclusion_reasons=reasons,contact_validity=contact,
                 input_identity=identities,
                 scheduled_simulated_s_per_world=simulated,
                 physics_loop_wall_s=loop,

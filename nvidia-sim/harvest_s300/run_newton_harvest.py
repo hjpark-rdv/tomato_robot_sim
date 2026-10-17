@@ -35,7 +35,15 @@ PROCESS_CODE_SHA256={f.name:sha256(f) for f in
 
 
 def write(path, value):
-    Path(path).write_text(json.dumps(value, indent=2, allow_nan=False) + '\n')
+    def safe(item):
+        if isinstance(item, (float,np.floating)) and not np.isfinite(item):
+            return str(item)
+        if isinstance(item, dict):
+            return {key:safe(v) for key,v in item.items()}
+        if isinstance(item, (list,tuple)):
+            return [safe(v) for v in item]
+        return item
+    Path(path).write_text(json.dumps(safe(value), indent=2, allow_nan=False) + '\n')
 
 
 def run(args, *, session_cache=None):
@@ -73,11 +81,19 @@ def run(args, *, session_cache=None):
             sampling_meta = dict(metadata, prepared_source_plan=str(p/'sampled_plan.json'))
             hz = args.hz or hz
             timeline, _, _ = command_timeline(sampling_meta, initial_command, hz, command_source='plan', free_hz=args.free_hz)
+        adaptive = None
+        if args.adaptive_hz:
+            from newton_adaptive_frequency import AdaptiveSchedule
+            sampling_meta = dict(metadata, prepared_source_plan=str(p/'sampled_plan.json'))
+            initial_command = initial['qpos'][initial['robot_qpos_addresses']]
+            adaptive = AdaptiveSchedule(sampling_meta,initial_command,hz,args.free_hz or 60,
+                                        seconds=args.seconds)
+            timeline = adaptive.timeline
         np.savez_compressed(out/'executed_commands.npz', **timeline)
         edges = timeline['time_edges']
         timesteps = np.diff(edges)
         steps = len(timeline['time'])
-        if args.seconds is not None:
+        if args.seconds is not None and adaptive is None:
             steps = min(steps, int(np.searchsorted(edges, args.seconds+1e-9, side='right')-1))
         if steps <= 0:
             raise ValueError('At least one physics step required')
@@ -101,11 +117,18 @@ def run(args, *, session_cache=None):
             source.flg_surfacevel = True
             source.dof_damping[:] = initial['runtime_dof_damping']
             source.geom_surfacevel[:] = 0
-            return create_newton_mjcf(p/'input_scene.xml', source_model=source,
+            sleep_configuration = None
+            if args.released_fruit_sleep:
+                from newton_released_sleep import configure_fruit_sleep
+                sleep_configuration = configure_fruit_sleep(source, metadata)
+            result = create_newton_mjcf(p/'input_scene.xml', source_model=source,
                 device=args.device, world_count=args.worlds, nconmax=args.nconmax,
                 njmax=args.njmax, native_observables_only=args.native_observables_only,
                 native_control_callback=args.native_control_callback,
                 deterministic=getattr(wp.DeterministicMode, args.deterministic))
+            if sleep_configuration is not None:
+                result.evidence['fruit_sleep_configuration'] = sleep_configuration
+            return result
         session_evidence={}
         if session_cache is not None:
             signature=dict(inputs_sha256=sha256(p/'inputs.json'),hz=hz,
@@ -116,7 +139,7 @@ def run(args, *, session_cache=None):
                     'linear_algebra','broadphase','aabb_filter','fused_sparse_factor',
                     'inertia_linear_algebra','tree_sums','canonical_contacts','dense_hessian',
                     'fixed_solver_reductions', 'indexed_qfrc', 'cache_hessian', 'native_integer_atomics',
-                    'canonical_constraints', 'experimental_multiworld_order')})
+                    'canonical_constraints', 'experimental_multiworld_order', 'released_fruit_sleep')})
             engine,session_evidence=session_cache.acquire(signature,engine_factory,initial)
         else:
             engine=engine_factory()
@@ -167,6 +190,24 @@ def run(args, *, session_cache=None):
         ctrl = HarvestGPUController(solver, p, controller_initial, metadata,
             timeline['command'][:steps], timeline['belt_surface_velocity_local_y_m_s'][:steps],
             steps, worlds=args.worlds)
+        sleep_audit = None
+        if args.released_fruit_sleep:
+            from newton_released_sleep import FruitSleepAudit
+            sleep_audit = FruitSleepAudit(ctrl)
+            ctrl.extra_audits.append(sleep_audit.audit)
+        if args.contact_policy is not None:
+            import hashlib
+            from newton_contact_policy import ContactPolicyGPU
+            policy_input = args.contact_policy.read_bytes()
+            policy_input_sha256 = hashlib.sha256(policy_input).hexdigest()
+            (out/'contact_policy_input.json').write_bytes(policy_input)
+            ctrl.contact_policy = ContactPolicyGPU(solver, ctrl, timeline,
+                json.loads(policy_input), metadata, worlds=args.worlds)
+        contact_activity = None
+        if adaptive is not None:
+            from newton_adaptive_frequency import ContactActivityGPU
+            contact_activity = ContactActivityGPU(ctrl)
+            ctrl.extra_audits.append(contact_activity.audit)
         if args.native_control_callback and not np.array_equal(
                 np.sort(initial['actuator_ids']), np.arange(source.nu)):
             raise ValueError('Native callback must own every source actuator')
@@ -239,7 +280,8 @@ def run(args, *, session_cache=None):
         graph_capture_started = time.perf_counter()
         if not args.no_graph:
             print('Capturing fixed Newton physics graph...', flush=True)
-            for dt in np.unique(durations):
+            graph_durations = adaptive.graph_timesteps if adaptive is not None else np.unique(durations)
+            for dt in graph_durations:
                 with wp.ScopedCapture(device=args.device) as capture:
                     for _ in range(args.batch):
                         step(float(dt))
@@ -323,9 +365,18 @@ def run(args, *, session_cache=None):
         last_progress = loop
         while actual < steps:
             batch_started = time.perf_counter()
+            adaptive_batch = None
+            if adaptive is not None:
+                active_contact = bool(contact_activity.flag.numpy()[0])
+                adaptive_batch = adaptive.prepare(actual,args.batch if graphs else 1,active_contact)
+                if not adaptive_batch:
+                    break
+                adaptive.upload(ctrl,actual,adaptive_batch)
+                timesteps[actual:actual+adaptive_batch] = timeline['dt'][actual:actual+adaptive_batch]
+                durations[actual:actual+adaptive_batch] = np.round(timeline['dt'][actual:actual+adaptive_batch],12)
             phase = str(timeline['phase'][actual])
             dt = float(durations[actual])
-            batch = min(args.batch if graphs else 1, steps-actual)
+            batch = adaptive_batch if adaptive is not None else min(args.batch if graphs else 1, steps-actual)
             if batch > 1:
                 different = np.flatnonzero(durations[actual:actual+batch] != dt)
                 if len(different):
@@ -360,9 +411,10 @@ def run(args, *, session_cache=None):
                     step(dt)
                 execution_batches['uncaptured_steps'] += batch
             actual += batch
+            stopping_event = ctrl.contact_policy.first_event if ctrl.contact_policy is not None else ctrl.first_event
             wp.launch(pack_runtime_status, args.worlds, inputs=[nonfinite,
                 ctrl.first_qacc_nonfinite, ctrl.first_capacity_overflow,
-                ctrl.first_event, packed_status], device=args.device)
+                stopping_event, packed_status], device=args.device)
             # One synchronized device readback rather than four individually
             # synchronized .numpy() transfers after every graph launch.
             status = packed_status.numpy()
@@ -394,7 +446,7 @@ def run(args, *, session_cache=None):
             elif capacity != np.iinfo(np.int32).max:
                 stop = 'solver_capacity_overflow'
             elif (first != np.iinfo(np.uint64).max).any() and not args.diagnostic_continue:
-                stop = 'active_contact_penetration_1mm'
+                stop = 'contact_policy_violation' if ctrl.contact_policy is not None else 'active_contact_penetration_1mm'
             if interruption_requested[0] and not stop:
                 stop='operator_interrupt'
             if viewer is not None and not viewer.is_alive() and not display_errors:
@@ -433,6 +485,27 @@ def run(args, *, session_cache=None):
         if args.profile_gpu:
             write(out/'gpu_profile.json', gpu_profile)
         simulated_s = float(d.time.numpy()[0])
+        if adaptive is not None:
+            timeline = adaptive.finish(actual)
+            edges = timeline['time_edges']
+            np.savez_compressed(out/'executed_commands.npz',**timeline)
+            report['executed_commands_sha256'] = sha256(out/'executed_commands.npz')
+            report['adaptive_frequency'] = adaptive.evidence()
+            report['requested_steps'] = actual if adaptive.complete else steps
+            np.save(out/'adaptive_contact_activity.npy',contact_activity.log.numpy()[:actual])
+            write(out/'adaptive_frequency.json',adaptive.evidence())
+            report['timestep_counts'] = {str(float(dt)):int(n) for dt,n in zip(*np.unique(timeline['dt'],return_counts=True))}
+        device_commands = ctrl.commands.numpy()[:actual]
+        device_belts = ctrl.belts.numpy()[:actual]
+        device_inputs_match = bool(np.array_equal(device_commands,timeline['command'][:actual].astype(np.float32))
+            and np.array_equal(device_belts,timeline['belt_surface_velocity_local_y_m_s'][:actual].astype(np.float32)))
+        np.savez_compressed(out/'applied_command_buffers.npz',command=device_commands,
+                            belt_surface_velocity_local_y_m_s=device_belts)
+        report['device_command_buffers_match_schedule'] = device_inputs_match
+        report['applied_command_buffers_sha256'] = sha256(out/'applied_command_buffers.npz')
+        report['controller_tick_matches_recorded_steps'] = int(ctrl.tick.numpy()[0]) == actual
+        if not device_inputs_match or not report['controller_tick_matches_recorded_steps']:
+            stop = stop or 'device_command_schedule_mismatch'
         if publisher is not None:
             pose, gap = live_frame()
             publisher.publish(pose, gap, simulated_s, force=True)
@@ -514,10 +587,17 @@ def run(args, *, session_cache=None):
         if fixed_reductions is not None:
             report['gpu_fixed_solver_reductions_statistics']=fixed_reductions.statistics()
         report.update(write_display_evidence(out, metadata, provenance, breaks))
+        if sleep_audit is not None:
+            report['fruit_sleep'] = sleep_audit.save(out, actual)
+        if ctrl.contact_policy is not None:
+            ctrl.contact_policy.save(out, actual)
+            report['contact_policy'] = ctrl.contact_policy.report(actual)
+            report['contact_policy_input_sha256'] = policy_input_sha256
         report.update(status='stopped' if stop else 'completed', stop=stop,
             simulated_s=simulated_s, scheduled_simulated_s=float(edges[actual]), actual_steps=actual, loop_wall_s=loop_s,
             realtime_factor=simulated_s/loop_s, aggregate_sim_s_per_wall_s=args.worlds*simulated_s/loop_s,
-            phase_performance=phase_performance, profile_instrumented=args.profile_gpu or args.profile_gpu_events,
+            phase_performance=phase_performance, profile_instrumented=bool(args.profile_gpu or args.profile_gpu_events
+                or (ctrl.contact_policy is not None and ctrl.contact_policy.config.get('record_contacts'))),
             deterministic_mode=args.deterministic,
             resource_scope='CPU/RSS: owned process tree; GPU: whole device including live Isaac display',
             display_errors=display_errors, display_health_passed=not display_errors,
@@ -626,11 +706,20 @@ def arguments(argv=None):
     p.add_argument('--all-world-trace',action='store_true',help='Record every world q/v/equality at each physics step for batch qualification')
     p.add_argument('--nconmax',type=int,default=512); p.add_argument('--njmax',type=int,default=2048)
     p.add_argument('--no-graph',action='store_true');p.add_argument('--diagnostic-continue',action='store_true')
+    p.add_argument('--contact-policy',type=Path,help='Opt-in exact belt pair/phase stop policy; original 1mm audit is retained')
+    p.add_argument('--released-fruit-sleep',action='store_true',help='Opt-in native sleeping and wake-up for fruit trees only; no collider removal')
+    p.add_argument('--adaptive-hz',action='store_true',help='Opt-in actual tool/plant contact-driven --hz/--free-hz scheduling')
     p.add_argument('--gui',action='store_true');p.add_argument('--viewer-fps',type=float,default=15.)
     p.add_argument('--viewer-timeout',type=float,default=300.);p.add_argument('--viewer-seconds',type=float,default=600.)
     p.add_argument('--camera',default='entry')
     p.add_argument('--camera-test-motion',action='store_true',help='Move display camera automatically and require recorded movement ACK')
     args=p.parse_args(argv)
+    if args.contact_policy is not None and args.backend!='gpu':
+        p.error('--contact-policy requires the GPU executor')
+    if args.released_fruit_sleep and args.backend!='gpu':
+        p.error('--released-fruit-sleep requires the GPU executor')
+    if args.adaptive_hz and (args.backend!='gpu' or args.worlds!=1 or args.profile_gpu or args.profile_gpu_events):
+        p.error('--adaptive-hz requires one unprofiled GPU world')
     if args.canonical_constraints and (args.deterministic_scope!='solver' or not args.fixed_solver_reductions):
         p.error('--canonical-constraints requires --deterministic-scope solver and --fixed-solver-reductions')
     if args.experimental_multiworld_order and not args.canonical_constraints:

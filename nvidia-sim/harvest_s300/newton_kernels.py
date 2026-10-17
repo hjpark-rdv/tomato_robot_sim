@@ -249,6 +249,8 @@ class HarvestGPUController:
         self.solver = solver
         self.device = solver.model.device
         self.worlds, self.steps = worlds, steps
+        self.contact_policy = None
+        self.extra_audits = []
         def arr(value, dtype=float):
             return wp.array(np.asarray(value), dtype=dtype, device=self.device)
         self.tick = wp.zeros(1, int, device=self.device)
@@ -351,5 +353,9 @@ class HarvestGPUController:
             d.contact.dim, d.contact.efc_address, d.contact.adhesion, d.efc.force,
             self.geom_body, self.body_fruit, self.allowed_release, self.attached,
             self.active_max, self.released_max, self.force_max, self.first_event], device=self.device)
+        if self.contact_policy is not None:
+            self.contact_policy.audit()
+        for audit in self.extra_audits:
+            audit()
         wp.launch(finish_step, 1, inputs=[self.tick, d.solver_niter,
             self.solver_niter_log], device=self.device)

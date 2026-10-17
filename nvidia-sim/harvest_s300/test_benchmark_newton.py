@@ -82,6 +82,20 @@ class BenchmarkNewtonTests(unittest.TestCase):
         self.assertEqual(result['measured_aggregate_sim_s_per_wall_s'], 16.)
         self.assertAlmostEqual(result['final_gpu_timestamp_minus_schedule_s'][0], -.002)
 
+    def test_explicit_policy_preserves_failed_1mm_diagnostic(self):
+        row=completed_case()
+        row['summary'].update(max_active_penetration_m=.002,active_contact_criterion_passed=False,
+            contact_policy=dict(policy_passed=True,raw_reference_1mm_preserved=True,
+                physics_changed=False,stopping_policy_changed=True,config={'belt_fruit_m':.003},
+                exact_belt_geometries=[{'geom':'belt'}]))
+        result=case_assessment(row)
+        self.assertTrue(result['throughput_eligible'])
+        self.assertFalse(result['contact_validity']['reference_1mm_passed'])
+        row['summary']['contact_policy']['policy_passed']=False
+        self.assertFalse(case_assessment(row)['throughput_eligible'])
+        row['summary']['contact_policy']={'policy_passed':True}
+        self.assertFalse(case_assessment(row)['throughput_eligible'])
+
     def test_incomplete_invalid_and_capacity_cases_have_no_rate(self):
         alterations = [dict(status='stopped', stop='contact'), dict(actual_steps=499),
                        dict(finite_recorded_state=False), dict(solver_capacity_valid=False),

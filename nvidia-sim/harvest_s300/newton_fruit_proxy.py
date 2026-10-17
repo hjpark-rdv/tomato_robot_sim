@@ -48,7 +48,8 @@ def sphere_directions(count: int) -> np.ndarray:
 
 def conservative_proxy(points, max_outward_m=0.0001, *, budgets=DEFAULT_BUDGETS,
                        source_hull_vertex_ids=None, containment_guard_m=1e-8,
-                       compile_reserve_m=1e-7):
+                       compile_reserve_m=1e-7, full_hull_fallback=False,
+                       support_axis_weights=None):
     """Return vertices/faces and a checkable finite-vertex convexity certificate."""
     points = np.asarray(points, dtype=np.float64)
     if points.ndim != 2 or points.shape[1] != 3 or len(points) < 4 or not np.isfinite(points).all():
@@ -59,6 +60,9 @@ def conservative_proxy(points, max_outward_m=0.0001, *, budgets=DEFAULT_BUDGETS,
     budgets = tuple(int(x) for x in budgets)
     if not budgets or any(x < 10 for x in budgets) or tuple(sorted(set(budgets))) != budgets:
         raise ValueError("Strictly increasing support budgets of at least10 required")
+    weights = np.ones(3) if support_axis_weights is None else np.asarray(support_axis_weights, dtype=float)
+    if weights.shape != (3,) or not np.isfinite(weights).all() or np.min(weights) <= 0:
+        raise ValueError("Three finite positive support-axis weights required")
     try:
         if source_hull_vertex_ids is None:
             source_ids = ConvexHull(points).vertices
@@ -71,22 +75,27 @@ def conservative_proxy(points, max_outward_m=0.0001, *, budgets=DEFAULT_BUDGETS,
         center = candidates.mean(axis=0)
         radius = float(np.linalg.norm(points - center, axis=1).max())
         attempts = []
-        for budget in budgets:
-            directions = sphere_directions(budget)
-            local = np.unique(np.argmax(candidates @ directions.T, axis=0))
+        for budget in (*budgets, *((None,) if full_hull_fallback else ())):
+            if budget is None:
+                local = np.arange(len(candidates))
+                label = "all_source_hull_vertices"
+            else:
+                directions = sphere_directions(budget) * weights
+                local = np.unique(np.argmax(candidates @ directions.T, axis=0))
+                label = budget
             ids = source_ids[local]
             selected = points[ids]
             inner = ConvexHull(selected)
             normals = inner.equations[:, :3]
             offsets = -(normals @ center + inner.equations[:, 3])
             if np.min(offsets) <= 0:
-                attempts.append(dict(support_budget=budget, rejected="center outside selected hull"))
+                attempts.append(dict(support_budget=label, rejected="center outside selected hull"))
                 continue
             support = np.max((points - center) @ normals.T, axis=0)
             scale_required = float(max(1.0, np.max(support / offsets)))
             scale = scale_required + containment_guard_m / float(offsets.min())
             bound = (scale - 1.0) * radius
-            entry = dict(support_budget=budget, selected_vertices=int(len(selected)),
+            entry = dict(support_budget=label, selected_vertices=int(len(selected)),
                          scale_required=scale_required, scale_applied=scale,
                          analytic_outward_bound_m=float(bound))
             attempts.append(entry)
@@ -106,12 +115,13 @@ def conservative_proxy(points, max_outward_m=0.0001, *, budgets=DEFAULT_BUDGETS,
                     face[1], face[2] = face[2], face[1]
             certificate = dict(source_vertex_count=len(points),
                 source_collision_hull_vertices=len(source_ids), proxy_vertex_count=len(proxy),
-                support_budget=budget, source_vertex_indices=ids.tolist(), center_m=center.tolist(),
+                support_budget=label, source_vertex_indices=ids.tolist(), center_m=center.tolist(),
                 source_radius_m=radius, scale_required=scale_required, scale_applied=scale,
                 analytic_outward_bound_m=float(bound), compile_reserve_m=compile_reserve_m,
                 maximum_outward_error_m=max_outward_m,
                 source_containment_max_signed_distance_m=containment,
                 numerical_containment_guard_m=containment_guard_m, attempts=attempts,
+                support_axis_weights=weights.tolist(),
                 proof="Allsourcevertices satisfy outerhull halfspaces; proxyvertices lie within(s-1)*R of selectedsourcehullvertices; convexity extends the bound to the entireproxy.")
             return proxy, faces, certificate
     except QhullError as exc:
@@ -218,7 +228,7 @@ def _physical_invariants(old, new, changed_geoms):
     if failed:
         raise ValueError("Unexpected physical field change: " + repr(failed))
     return dict(passed=True, checks=checks,
-                intentional_changes="Only target-fruit mesh vertices, faces and derived geom frames/bounds are changed; body-frame enclosure is separately certified.")
+                intentional_changes="Only explicitly selected mesh vertices, faces and derived geom frames/bounds are changed; body-frame enclosure is separately certified.")
 
 
 def _write_obj(path, vertices, faces):
@@ -229,7 +239,9 @@ def _write_obj(path, vertices, faces):
             stream.write("f " + " ".join(str(int(x) + 1) for x in face) + "\n")
 
 
-def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
+def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS,
+            geom_names=None, role="fruit", compiled_hull_only=False, full_hull_fallback=False,
+            support_precondition_power=None):
     """Create the existing immutable prepared-input format, without physics steps."""
     source, output = Path(source).resolve(strict=True), Path(output).resolve()
     if source == output or output.exists():
@@ -245,8 +257,19 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
     initial = dict(np.load(source / "initial_state.npz", allow_pickle=False))
     metadata = json.loads((source / "source_export.json").read_text())
     targets = set(metadata.get("fruits", []))
-    if not targets:
+    explicit = geom_names is not None
+    if not explicit and not targets:
         raise ValueError("Existing fruit identity list required")
+    if explicit:
+        geom_names = tuple(geom_names)
+        if not geom_names or len(set(geom_names)) != len(geom_names):
+            raise ValueError("Unique explicit geometry names required")
+        if not isinstance(role, str) or not role or not role.replace("_", "").isalnum():
+            raise ValueError("An explicit alphanumeric proxy role is required")
+    if compiled_hull_only and not explicit:
+        raise ValueError("Compiled-hull scope requires explicit named selection")
+    if support_precondition_power is not None and (not np.isfinite(support_precondition_power) or not 0 < support_precondition_power <= 1):
+        raise ValueError("Support preconditioning power must be in(0,1]")
     tree = ET.parse(source / "input_scene.xml")
     root = tree.getroot()
     compiler = root.find("compiler")
@@ -257,9 +280,11 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
         raise ValueError("Mesh asset element required")
     assets = {e.get("name"): e for e in asset.findall("mesh")}
     geoms = {e.get("name"): e for e in root.iter("geom") if e.get("name")}
-    selected = [g for g in range(old.ngeom) if old.body(int(old.geom_bodyid[g])).name in targets
+    selected = [g for g in range(old.ngeom) if (old.geom(g).name in geom_names if explicit else old.body(int(old.geom_bodyid[g])).name in targets)
                 and (old.geom_contype[g] | old.geom_conaffinity[g]) != 0]
-    if {old.body(int(old.geom_bodyid[g])).name for g in selected} != targets:
+    if explicit and {old.geom(g).name for g in selected} != set(geom_names):
+        raise ValueError("Every explicit geometry requires an active collider")
+    if not explicit and {old.body(int(old.geom_bodyid[g])).name for g in selected} != targets:
         raise ValueError("Every target fruit requires an active collider")
     if any(old.geom_type[g] != mj.mjtGeom.mjGEOM_MESH for g in selected):
         raise ValueError("This opt-in experiment only replaces fruit mesh colliders")
@@ -271,19 +296,28 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
     output.mkdir(parents=True, exist_ok=False)
     meshes = output / "proxy_meshes"
     meshes.mkdir()
-    rows, ideals, changed = [], {}, set(selected)
+    rows, ideals, sources, changed = [], {}, {}, set(selected)
     for geom in selected:
         name, mesh = old.geom(geom).name, int(old.geom_dataid[geom])
         old_asset_name = old.mesh(mesh).name
         if name not in geoms or old_asset_name not in assets:
             raise ValueError("Missing named XML source geometry: " + name)
-        points = mesh_vertices(old, mesh)
+        all_points = mesh_vertices(old, mesh)
+        source_ids = collision_hull_vertex_ids(old, mesh)
+        points = all_points[source_ids] if compiled_hull_only else all_points
+        if compiled_hull_only: source_ids = np.arange(len(points))
+        weights = None
+        if support_precondition_power is not None:
+            extent = np.ptp(points, axis=0)
+            if np.min(extent) <= 0: raise ValueError("Nondegenerate support extents required")
+            weights = (np.max(extent) / extent) ** support_precondition_power
         proxy, faces, certificate = conservative_proxy(points, max_outward_m, budgets=budgets,
-            source_hull_vertex_ids=collision_hull_vertex_ids(old, mesh))
+            source_hull_vertex_ids=source_ids, full_hull_fallback=full_hull_fallback,
+            support_axis_weights=weights)
         obj = meshes / (name + ".obj")
         _write_obj(obj, proxy, faces)
         old_element = assets[old_asset_name]
-        new_name = old_asset_name + "_conservative_fruit_proxy"
+        new_name = old_asset_name + "_conservative_" + role + "_proxy"
         new_element = ET.Element("mesh", name=new_name, file=str(obj), scale="1 1 1", maxhullvert="-1")
         index = list(asset).index(old_element)
         asset.remove(old_element)
@@ -297,9 +331,11 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
         matrix = np.zeros(9)
         mj.mju_quat2Mat(matrix, old.geom_quat[geom])
         ideals[geom] = proxy @ matrix.reshape(3, 3).T + old.geom_pos[geom]
+        sources[geom] = points @ matrix.reshape(3, 3).T + old.geom_pos[geom]
         rows.append(dict(geom=name, geom_id=int(geom), body=old.body(int(old.geom_bodyid[geom])).name,
                          source_mesh=old_asset_name, proxy_mesh=new_name, obj=str(obj),
-                         obj_sha256=sha256(obj), **certificate))
+                         obj_sha256=sha256(obj), original_mesh_vertex_count=len(all_points),
+                         source_geometry_scope="compiled_collision_graph" if compiled_hull_only else "all_mesh_vertices", **certificate))
     tree.write(output / "input_scene.xml", encoding="unicode")
     new = mj.MjModel.from_xml_path(str(output / "input_scene.xml"))
     # Preserve existing runtime-derived physical constants after recompilation.
@@ -318,7 +354,7 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
     invariants = _physical_invariants(old, new, changed)
     for row in rows:
         geom = old.geom(row["geom"]).id
-        row.update(verify_compiled_proxy(geom_body_vertices(old, geom), ideals[geom],
+        row.update(verify_compiled_proxy(sources[geom], ideals[geom],
             geom_body_vertices(new, new.geom(row["geom"]).id), row["analytic_outward_bound_m"], max_outward_m))
     od, nd = mj.MjData(old), mj.MjData(new)
     for data in (od, nd):
@@ -333,12 +369,12 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
     if initial_position_error > 1e-12 or initial_rotation_error > 1e-12:
         raise ValueError("Body initial transform changed")
     upstream = metadata.get("physics_model_variant")
-    variant = dict(mode="conservative_fruit_convex_proxy", source_inputs=str(source),
+    variant = dict(mode="conservative_named_convex_proxy" if explicit else "conservative_fruit_convex_proxy", source_inputs=str(source),
         source_mjb_sha256=source_hashes["input_model.mjb"], upstream_physics_model_variant=upstream,
         physical_model_changed=True, collision_approximation_changed=True,
         exact_trajectory_equivalence_claimed=False, maximum_outward_error_m=max_outward_m,
         preserves_original_convex_exterior=True, retained_all_body_masses=True,
-        retained_all_collision_geometry=False, retained_all_nonfruit_collision_geometry=True,
+        retained_all_collision_geometry=False, retained_all_nonfruit_collision_geometry=not explicit,
         original_nv=old.nv, variant_nv=new.nv, source_vertices=sum(r["source_vertex_count"] for r in rows),
         proxy_vertices=sum(r["compiled_proxy_vertices"] for r in rows), fruits=rows,
         invariant_proof=invariants, initial_body_position_max_error_m=initial_position_error,
@@ -347,15 +383,24 @@ def prepare(source, output, *, max_outward_m=0.0001, budgets=DEFAULT_BUDGETS):
                      "This is a changed collision representation requiring full physics/harvest qualification.",
                      "All other geometry, masses, inertias, joints, equality data, control and initial-state files are retained."],
         training_eligible=False, harvest_success=None)
+    if explicit:
+        variant.pop("fruits")
+        variant["colliders"] = rows
+        variant["proxy_role"] = role
+        variant["selected_geom_names"] = list(geom_names)
+        variant["retained_all_unselected_collision_geometry"] = True
+        variant["retained_all_fruit_collision_geometry"] = all(old.body(int(old.geom_bodyid[g])).name not in targets for g in selected)
+        variant["limitations"][0] = "Selected collision exteriors are conservatively enlarged by the certified bound; contact timing/manifolds can change."
     metadata["physics_model_variant"] = variant
     mj.mj_saveModel(new, str(output / "input_model.mjb"))
     for name in ("initial_state.npz", "commands.npz", "sampled_plan.json"):
         if (source / name).is_file():
             shutil.copy2(source / name, output / name)
     _json(output / "source_export.json", metadata)
-    _json(output / "fruit_proxy_proof.json", variant)
+    proof_filename = "mesh_proxy_proof.json" if explicit else "fruit_proxy_proof.json"
+    _json(output / proof_filename, variant)
     report = copy.deepcopy(provenance)
-    filenames = ["input_scene.xml", "input_model.mjb", "initial_state.npz", "commands.npz", "source_export.json", "fruit_proxy_proof.json"]
+    filenames = ["input_scene.xml", "input_model.mjb", "initial_state.npz", "commands.npz", "source_export.json", proof_filename]
     filenames.extend(str(p.relative_to(output)) for p in meshes.glob("*.obj"))
     report["input_files"] = {name: dict(path=str(output / name), sha256=sha256(output / name)) for name in filenames}
     report["source_asset_dependencies"] = [*report.get("source_asset_dependencies", []),
