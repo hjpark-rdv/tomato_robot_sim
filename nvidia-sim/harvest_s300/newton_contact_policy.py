@@ -17,6 +17,7 @@ from mujoco_warp._src.types import vec5
 
 DEFAULT_PHASES = ('close', 'cycle_reclose')
 OPTIONAL_HELD_PHASES = ('belt_finish',)
+OPTIONAL_OPEN_STROKE_PHASES = ('cycle_open', 'cycle_open_final')
 OPEN_PHASES = ('cycle_open', 'cycle_open_final')
 
 
@@ -41,8 +42,8 @@ def validate_config(config):
     if not np.isfinite(result['residual_open_seconds']) or result['residual_open_seconds'] < 0:
         raise ValueError('Nonnegative finite opening residual duration required')
     phases = result['relaxed_phases']
-    if not phases or set(phases) - set(DEFAULT_PHASES + OPTIONAL_HELD_PHASES):
-        raise ValueError('Only close/cycle_reclose and explicit held belt_finish relaxation are implemented')
+    if not phases or set(phases) - set(DEFAULT_PHASES + OPTIONAL_HELD_PHASES + OPTIONAL_OPEN_STROKE_PHASES):
+        raise ValueError('Only closing and explicit belt_finish/opening-stroke relaxation are implemented')
     entries=result['explicit_other_pairs']
     if not isinstance(entries,list):
         raise ValueError('explicit_other_pairs must be a list of exact geom pairs')
@@ -309,6 +310,7 @@ class ContactPolicyGPU:
             diagnostic_instrumented=self.config['record_contacts'],
             raw_reference_1mm_preserved=True,
             residual_rule='Only exact pairs already above 1 mm during explicitly selected relaxed phases (default: closing only); opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.',
+            explicit_open_stroke_rule='Only when named in relaxed_phases, cycle_open/cycle_open_final use the exact belt-pair limit without requiring a prior latch. Fully-open holds, approach and transport remain outside this band.',
             audit_order='pre-integration contact geometry/constraint solution, before controller tick increment; original released-fruit exception map',
             counters_scope='sum of pair-steps, not distinct physics steps', training_eligible=False)
 

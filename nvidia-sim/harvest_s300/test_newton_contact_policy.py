@@ -46,7 +46,35 @@ class ContactPolicyTests(unittest.TestCase):
         self.assertEqual(default.config['relaxed_phases'],['close','cycle_reclose'])
         np.testing.assert_array_equal(default.phase.numpy(),[1,1,0,0,2,2])
         np.testing.assert_array_equal(explicit.phase.numpy(),[1,1,1,0,2,2])
-        for phase in ('approach','belt_start_open','cycle_open','cycle_open_final'):
+        for phase in ('approach','belt_start_open','cycle_open_hold','cycle_open_final_hold','rail_move'):
+            with self.assertRaises(ValueError):validate_config({'relaxed_phases':['close',phase]})
+
+    def test_explicit_open_stroke_band_is_scoped_and_default_still_rejects_recontact(self):
+        model,metadata=fixture()
+        timeline=dict(phase=np.array(['approach','cycle_open','cycle_open_final','cycle_open_final_hold']),
+            time_edges=np.arange(5,dtype=float)*.1)
+        solver=SimpleNamespace(mj_model=model)
+        controller=SimpleNamespace(device='cpu',steps=4)
+        default=ContactPolicyGPU(solver,controller,timeline,{},metadata)
+        explicit=ContactPolicyGPU(solver,controller,timeline,dict(belt_pedicel_m=.002,
+            relaxed_phases=['close','cycle_reclose','belt_finish','cycle_open','cycle_open_final']),metadata)
+        np.testing.assert_array_equal(default.phase.numpy(),[0,2,2,0])
+        np.testing.assert_array_equal(explicit.phase.numpy(),[0,1,1,0])
+        # New pedicel recontact without any previously latched compression is
+        # still blocked by the default policy. Only explicit stroke bands
+        # allow it, and a fully-open hold remains strict.
+        event,_,_=self.policy_sequence(default.phase.numpy(),[0.,.0017,.0017,0.],
+            role=2,limit=.002)
+        self.assertEqual(event,1)
+        event,count,residual=self.policy_sequence(explicit.phase.numpy(),[0.,.0017,.0017,0.],
+            role=2,limit=.002)
+        self.assertIsNone(event)
+        self.assertEqual(count[0,2],2)
+        self.assertEqual(residual[0,2],0)
+        event,_,_=self.policy_sequence(explicit.phase.numpy(),[0.,.0017,.0017,.0017],
+            role=2,limit=.002)
+        self.assertEqual(event,3)
+        for phase in ('prepare_open','prepare_open_hold','cycle_open_hold','cycle_open_final_hold','rail_move','approach'):
             with self.assertRaises(ValueError):validate_config({'relaxed_phases':['close',phase]})
 
     def test_release_updates_equality_but_audit_attachment_cache_waits_until_next_control(self):
@@ -187,7 +215,7 @@ class ContactPolicyTests(unittest.TestCase):
         self.assertEqual(int(first.numpy()[0])>>32,1)
         self.assertAlmostEqual(float(maximum.numpy()[0,0,3]),.0015,places=8)
 
-    def policy_sequence(self,phases,pens,times=None,residual=.3):
+    def policy_sequence(self,phases,pens,times=None,residual=.3,role=1,limit=.005):
         # One belt and one fruit: a persistent pair, plus unused belt index.
         times=np.arange(len(phases))*.1 if times is None else np.asarray(times)
         depth=wp.zeros((1,2),float,device='cpu')
@@ -198,8 +226,8 @@ class ContactPolicyTests(unittest.TestCase):
         for t,pen in enumerate(pens):
             depth.assign(np.array([[0.,pen]],np.float32))
             wp.launch(evaluate_pair_policy,(1,2),inputs=[arr([t],int),phase,arr([times[t]]),
-                arr([.001,.005,.001]),depth,latch,start,residual,.001,
-                arr([0],int),arr([0,1],int),2,count,extra,first],device='cpu')
+                arr([.001,limit,limit]),depth,latch,start,residual,.001,
+                arr([0],int),arr([0,role],int),2,count,extra,first],device='cpu')
         event=int(first.numpy()[0])
         return None if event==np.iinfo(np.uint64).max else event>>32,count.numpy(),extra.numpy()
 
