@@ -40,7 +40,7 @@ try:
     from scipy.spatial.transform import Rotation as R
     from motion_assets import REPO,sha
     from build_scene import camera
-    from motion_visuals import DeformationVisuals
+    from motion_visuals import DeformationVisuals, prepare_display_meshes
     from motion_pose_display import MeasuredPoseDisplay, restore_recorded_display_fixture
     sys.path.insert(0,str(REPO/'nvidia-sim/rl'))
     from elastic_geometry import skin_points
@@ -69,6 +69,10 @@ try:
     # Match the live viewer: all replay edits, including the transient fixture,
     # belong to the strongest session layer rather than the immutable source.
     stage.SetEditTarget(stage.GetSessionLayer())
+    # Reuse the live display's preparation before changing measured skins.
+    # Dormant collision schemas on explicitly disabled visual meshes can
+    # otherwise trigger PhysX mesh cooking even with the timeline stopped.
+    display_mesh_preparation=prepare_display_meshes(stage)
     restore_recorded_display_fixture(stage,a.trial)
     if a.camera_eye is not None:
         a.camera='/World/FixedComparisonReplayCamera'
@@ -173,11 +177,14 @@ try:
     def srt_time(t):
         ms=round(t*1000);return f'{ms//3600000:02}:{ms//60000%60:02}:{ms//1000%60:02},{ms%1000:03}'
     for frame,tick in enumerate(selection):
+        if frame==0:print('[RENDER] applying first measured state',flush=True)
         poses=data['poses'][tick]
         pose_display.update(poses)
         gap=.044+float(data['robot_q'][tick,lids[1]]-data['robot_q'][tick,lids[0]])
         visuals.update(poses,gap)
+        if frame==0:print('[RENDER] first state applied; waiting for render update',flush=True)
         for _ in range(2):app.update()
+        if frame==0:print('[RENDER] first render update complete',flush=True)
         png=output/f'{frame:05d}.png'
         capture=vu.capture_viewport_to_file(vp,str(png))
         # Capture async completion is pumped by Kit. Never advance state first.
@@ -233,6 +240,7 @@ try:
         source_trial_stop_time_s=float(stamps[-1]),source_scene_sha256=summary['model_sha256'],
         physics_steps=0,timeline_time_s=timeline.get_current_time(),timeline_auto_update=False,
         source_native_scene_sha256=selected_asset['native_scene_sha256'],
+        display_mesh_preparation=display_mesh_preparation,
         materialized_dependency_sha_verified=bool(selected_asset['verified_materialized_dependency']),
         replay_only_hidden_paths=cutaway_hidden,source_geometry_modified=False,
         stop_reason=summary.get('stop_reason')),indent=2))
