@@ -190,7 +190,12 @@ try:
         # Capture async completion is pumped by Kit. Never advance state first.
         import asyncio
         task=asyncio.ensure_future(capture.wait_for_result())
-        while not task.done():app.update()
+        capture_deadline=time.monotonic()+60.
+        while not task.done():
+            if time.monotonic()>capture_deadline:
+                task.cancel()
+                raise RuntimeError('Viewport capture timed out; verify Isaac Vulkan GPU initialization and DISPLAY (this server uses DISPLAY=:0). No physics was advanced.')
+            app.update()
         task.result()
         # Kit's capture future may finish before the asynchronous PNG write.
         # Wait for the PNG end chunk before advancing or starting ffmpeg.
