@@ -1,0 +1,15 @@
+{
+  "default_m": 0.001,
+  "belt_fruit_m": 0.002,
+  "belt_pedicel_m": 0.002,
+  "relaxed_phases": [
+    "close",
+    "cycle_reclose",
+    "belt_finish",
+    "cycle_open",
+    "cycle_open_final"
+  ],
+  "residual_open_seconds": 0,
+  "explicit_other_pairs": [],
+  "label": "Experimental exact belt fruit/pedicel 2mm during closing, sustained closed pressure and opening strokes; fully-open hold/approach/transport and all other pairs remain 1mm; no forces or release changes"
+}

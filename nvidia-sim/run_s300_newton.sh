@@ -12,12 +12,15 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh run [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu-fast [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
+    '       run_s300_newton.sh gpu-realtime [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh check' \
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
     'gpu runs actual CUDA physics: cuSOLVER32, fixed tree/contact/force order, dense Hessian, 400/60 Hz, capacities128/256.' \
     'gpu-fast uses the separately calibrated 133-DOF plant and conservative fruit proxies (outward bound 0.1mm). This changes the physical representation.' \
     'gpu-fast inputs can be overridden with S300_NEWTON_FAST_INPUTS; gpu keeps the original model default.' \
+    'gpu-realtime opts into the reviewed 133-DOF fruit-proxy model at 220/60 Hz and the exact belt-only 2mm grip/open-stroke guard; other pairs remain 1mm.' \
+    'gpu-realtime is a changed physical approximation, not an identical-model acceleration or real-plant calibration.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
     'GPU single-world full GUI/headless equivalence passed; contact-phase realtime remains below target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
@@ -41,13 +44,16 @@ case "$mode" in
     exec env -u PYTHONPATH "$python" -u "$scripts/newton_inputs.py" \
       "$model_dir" "$output_dir" --hz 300 "$@"
     ;;
-  run|gpu|gpu-fast)
+  run|gpu|gpu-fast|gpu-realtime)
     input_dir="${S300_NEWTON_INPUTS:-$data_dir/20261016_s300_newton/inputs_render_separated}"
     if [[ "$mode" == 'gpu-fast' ]]; then
       input_dir="${S300_NEWTON_FAST_INPUTS:-$data_dir/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01}"
       printf '%s\n' 'Experimental GPU-fast: changed plant coordinates and conservatively enlarged fruit collision proxies; not an identical-model acceleration.' >&2
     fi
-    if [[ "$mode" == 'gpu' || "$mode" == 'gpu-fast' ]]; then
+    if [[ "$mode" == 'gpu-realtime' ]]; then
+      input_dir="${S300_NEWTON_REALTIME_INPUTS:-$data_dir/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01}"
+    fi
+    if [[ "$mode" == 'gpu' || "$mode" == 'gpu-fast' || "$mode" == 'gpu-realtime' ]]; then
       output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_gpu}"
       runner_options=(--backend gpu --native-observables-only --native-control-callback
         --linear-algebra cusolver32 --hz 400 --free-hz 60
@@ -55,7 +61,12 @@ case "$mode" in
         --deterministic RUN_TO_RUN --deterministic-scope solver --dense-hessian
         --fixed-solver-reductions --indexed-qfrc --native-integer-atomics --canonical-constraints
         --nconmax 128 --njmax 256 --viewer-fps 15)
-      printf '%s\n' 'Newton GPU: actual CUDA physics, verified single-world GUI equivalence; contact-phase realtime target is not met.' >&2
+      if [[ "$mode" == 'gpu-realtime' ]]; then
+        runner_options+=(--hz 220 --contact-policy "$scripts/profiles/belt_strokes_2mm.json" --camera /World/HarvestCloseCamera)
+        printf '%s\n' 'Experimental Newton GPU realtime profile: 133 DOF, conservative fruit proxies, 220/60Hz, belt-only 2mm grip/open strokes. Other pairs 1mm; original material and release coefficients retained.' >&2
+      else
+        printf '%s\n' 'Newton GPU original 400/60Hz preset: actual CUDA physics; contact-phase realtime target is not met by this preset.' >&2
+      fi
     else
       output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_harvest}"
       runner_options=(--backend cpu --hz 400 --free-hz 60 --viewer-fps 15 --native-observables-only)

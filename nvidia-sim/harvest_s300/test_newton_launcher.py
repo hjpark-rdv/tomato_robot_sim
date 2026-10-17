@@ -41,6 +41,24 @@ class LauncherTests(unittest.TestCase):
             self.assertIn('--canonical-constraints', new)
             self.assertEqual(new[-1], '--gui')
 
+            # The new approximation is a named opt-in; legacy GPU presets above
+            # retain their original model and schedule without this policy.
+            env['S300_NEWTON_REALTIME_INPUTS'] = str(fast)
+            subprocess.run([str(wrapper), 'gpu-realtime', '--gui'], env=env,
+                           check=True, capture_output=True, text=True)
+            realtime = json.loads(capture.read_text())
+            self.assertEqual(realtime[2], str(fast))
+            self.assertEqual(realtime[max(i for i,v in enumerate(realtime) if v=='--hz')+1], '220')
+            self.assertEqual(realtime[realtime.index('--free-hz')+1], '60')
+            policy = json.loads(Path(realtime[realtime.index('--contact-policy')+1]).read_text())
+            self.assertEqual(policy['default_m'], .001)
+            self.assertEqual(policy['belt_pedicel_m'], .002)
+            self.assertIn('cycle_open_final', policy['relaxed_phases'])
+            self.assertNotIn('cycle_open_final_hold', policy['relaxed_phases'])
+            self.assertNotIn('--diagnostic-continue', realtime)
+            self.assertNotIn('--contact-policy', old)
+            self.assertNotIn('--contact-policy', new)
+
 
 if __name__ == '__main__':
     unittest.main()
