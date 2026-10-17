@@ -71,6 +71,7 @@ class NewtonKernelTests(unittest.TestCase):
         wp.launch(kernels.attachment_torques, torque.shape, inputs=[
             array(quaternions, wp.quat), array(velocities, wp.spatial_vector), array(active, bool),
             array(reference.eqs, int), bodies, parents,
+            array(kernels.attachment_damping_addresses(model, {'attachments': specs}), int),
             array(np.asarray([s['local_rot0'] for s in specs])[:, [3, 0, 1, 2]], wp.quat),
             array(np.asarray([s['local_rot1'] for s in specs])[:, [3, 0, 1, 2]], wp.quat),
             array([s['stiffness'] for s in specs], wp.vec3), array([s['damping'] for s in specs]),

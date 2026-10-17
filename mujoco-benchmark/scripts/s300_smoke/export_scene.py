@@ -25,7 +25,7 @@ def sha(p):
 
 def export(assembly, trial, output, truss='Truss_00', *, robot=False,
            background=False, excluded_background_roots=(), plant_only=False,
-           ground_collision='source-box'):
+           ground_collision='source-box', source_plan=None):
     start = time.perf_counter()
     output.mkdir(parents=True, exist_ok=False)
     (output / 'meshes').mkdir()
@@ -229,13 +229,18 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
         ET.SubElement(world, 'camera', name=name, pos=nums(eye), xyaxes=nums([x,np.cross(z,x)]), fovy='48')
     ET.indent(root)
     ET.ElementTree(root).write(output/'scene.xml', encoding='unicode')
-    states = np.load(trial/'states.npz')
-    ids = [states['body_paths'].tolist().index(p) for p in tools]
-    np.savez_compressed(output/'tool_trace.npz', time=states['time'], poses=states['poses'][:,ids],
-                        phase=states['phase'], belt_speed=states['belt_surface_velocity_local_y_m_s'])
+    recorded = (trial/'states.npz').is_file()
+    if not recorded and not (source_plan is not None and (robot or plant_only)):
+        raise ValueError('Recorded tool replay requires states.npz; an explicit source plan is required for a planning-only dynamic export')
+    if recorded:
+        with np.load(trial/'states.npz') as states:
+            ids = [states['body_paths'].tolist().index(p) for p in tools]
+            np.savez_compressed(output/'tool_trace.npz', time=states['time'], poses=states['poses'][:,ids],
+                                phase=states['phase'], belt_speed=states['belt_surface_velocity_local_y_m_s'])
     report = dict(schema='s300-mujoco-small-smoke-v1', source_assembly=str(assembly), source_trial=str(trial),
-                  source_usdc_sha256=sha(source), source_states_sha256=sha(trial/'states.npz'),
-                  model_sha256=sha(output/'scene.xml'), trace_sha256=sha(output/'tool_trace.npz'),
+                  source_usdc_sha256=sha(source), source_states_sha256=sha(trial/'states.npz') if recorded else None,
+                  source_states_kind='recorded_physics' if recorded else 'planning_only_no_recorded_states',
+                  model_sha256=sha(output/'scene.xml'), trace_sha256=sha(output/'tool_trace.npz') if recorded else None,
                   tools=[names[p] for p in tools], rods=[b['name'] for b in rods],
                   fruits=[f['name'] for f in fruits], attachments=attachments, geometry=inventory,
                   export_wall_s=time.perf_counter()-start, training_eligible=False, harvest_success=None,
@@ -266,8 +271,11 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
         report['differences'].append('One selected truss, 16-segment stem and 27 leaf bodies per exported target plant; no merging. Leaves retain dynamics/visuals but do not collide.')
         report['differences'].append('Native discrete integrator and fixed initial plant gravity preload; bias feedforward through finite robot actuators. Engine contact equivalence remains unverified.')
         report['differences'].append('Rail/lift/arm/jaws use finite source PD actuators; no physical pose playback.')
-        plan=json.loads((trial/'plan.json').read_text())
+        plan=json.loads((Path(source_plan) if source_plan is not None else trial/'plan.json').read_text())
         (output/'source_plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+        report['source_plan_sha256']=sha(output/'source_plan.json')
+    elif source_plan is not None:
+        (output/'source_plan.json').write_text(json.dumps(json.loads(Path(source_plan).read_text()),indent=2)+'\n')
         report['source_plan_sha256']=sha(output/'source_plan.json')
     if background:report['farm']=farm_report
     (output/'export.json').write_text(json.dumps(report, indent=2)+'\n')
@@ -279,8 +287,10 @@ if __name__ == '__main__':
     p.add_argument('assembly', type=Path); p.add_argument('trial', type=Path); p.add_argument('output', type=Path)
     p.add_argument('--robot',action='store_true');p.add_argument('--background',action='store_true')
     p.add_argument('--plant-only',action='store_true')
+    p.add_argument('--truss',default='Truss_00',help='Exact existing truss name to export')
+    p.add_argument('--source-plan',type=Path,help='Explicit existing plan; allows dynamic robot/plant export without a recorded physics trace')
     p.add_argument('--exclude-background-root',action='append',default=[])
     p.add_argument('--ground-collision',choices=['source-box','top-plane'],default='source-box')
-    a = p.parse_args(); export(a.assembly, a.trial, a.output,robot=a.robot,background=a.background,
+    a = p.parse_args(); export(a.assembly, a.trial, a.output,truss=a.truss,robot=a.robot,background=a.background,
                               excluded_background_roots=a.exclude_background_root,plant_only=a.plant_only,
-                              ground_collision=a.ground_collision)
+                              ground_collision=a.ground_collision,source_plan=a.source_plan)

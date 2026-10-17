@@ -55,10 +55,19 @@ def _source_files(model_dir, meta):
         "model_xml": _verified(model_dir / "scene.xml", meta["model_sha256"]),
         "export_metadata": _verified(model_dir / "export.json"),
         "source_usdc": _verified(assembly / "composed.usdc", meta["source_usdc_sha256"]),
-        "source_states": _verified(trial / "states.npz", meta["source_states_sha256"]),
         "source_manifest": _verified(meta.get("source_manifest", assembly / "motion_manifest.json"),
                                      meta.get("source_manifest_sha256")),
     }
+    if meta.get("source_states_kind") == "planning_only_no_recorded_states":
+        if meta.get("source_states_sha256") is not None or meta.get("trace_sha256") is not None:
+            raise ValueError("Planning-only input cannot declare recorded-state hashes")
+    else:
+        files["source_states"] = _verified(trial / "states.npz", meta["source_states_sha256"])
+    for index, window in enumerate(meta.get("windows", [])):
+        files[f"window_{index:02d}_manifest"] = _verified(window["source_manifest"],
+            window.get("source_manifest_sha256"))
+        files[f"window_{index:02d}_plan"] = _verified(window["source_plan"],
+            window.get("source_plan_sha256"))
     for name, path, expected in [
         ("source_plan", model_dir / "source_plan.json", meta.get("source_plan_sha256")),
         ("tool_trace", model_dir / "tool_trace.npz", meta.get("trace_sha256")),
@@ -231,7 +240,7 @@ def discard_noncolliding_visual_geoms(source, spec):
     return model, proof
 
 
-def initialize_native_model(model_dir, hz, *, discard_visual_geoms=False):
+def initialize_native_model(model_dir, hz, *, discard_visual_geoms=False, allow_multiple_windows=False):
     """Return a native starting state and the existing Session gravity preload.
 
     Uses ``mj_forward``/Jacobians only. A valid existing MJB may be read, but
@@ -251,8 +260,8 @@ def initialize_native_model(model_dir, hz, *, discard_visual_geoms=False):
     provenance = _source_files(directory, meta)
     if not meta.get("robot", {}).get("dynamic_tool"):
         raise ValueError("A finite-actuator dynamic S300 model is required")
-    if len(meta.get("windows", [])) > 1:
-        raise ValueError("Prepare one existing plant window per comparison input")
+    if len(meta.get("windows", [])) > 1 and not allow_multiple_windows:
+        raise ValueError("Prepare one existing plant window per comparison input; opt in to allow_multiple_windows for persistent route diagnostics")
     cache, certificate = directory / "compiled_scene.mjb", directory / "compiled_scene.json"
     cached = json.loads(certificate.read_text()) if certificate.is_file() else {}
     valid_cache = (cache.is_file() and cached.get("model_xml_sha256") == meta["model_sha256"]
@@ -303,16 +312,69 @@ def initialize_native_model(model_dir, hz, *, discard_visual_geoms=False):
                 visual_removal_proof=variant_proof)
 
 
+def _window_body_sources(meta):
+    """Exact source ownership and display namespace of each persistent window."""
+    windows = meta.get("windows", [])
+    if not windows:
+        manifest = json.loads(Path(meta["source_manifest"]).read_text())
+        yield dict(prefix="", display_root=manifest["plant"]["root"]), manifest
+        return
+    for window in windows:
+        manifest = json.loads(Path(window["source_manifest"]).read_text())
+        source_root = manifest["plant"]["root"]
+        display_root = window.get("display_root", source_root)
+        if (not isinstance(display_root, str) or not display_root.startswith("/World/")
+                or display_root.endswith("/")):
+            raise ValueError("Each window requires an absolute /World display_root")
+        yield dict(window, display_root=display_root), manifest
+
+
+def _display_path(path, source_root, display_root):
+    if path == source_root:
+        return display_root
+    if not isinstance(path, str) or not path.startswith(source_root + "/"):
+        raise ValueError("Window body/joint path is outside its exact source plant: " + str(path))
+    return display_root + path[len(source_root):]
+
+
+def window_fruit_specs(meta):
+    """Return native fruit identities with exact per-window display joint paths."""
+    rows, names, joints = [], set(), set()
+    for window, manifest in _window_body_sources(meta):
+        source_root = manifest["plant"]["root"]
+        prefix = window.get("prefix", "")
+        specs = window.get("fruit_specs", meta.get("fruit_specs", []))
+        source_fruits = {item["name"]: item for item in manifest["plant"]["fruits"]}
+        for item in specs:
+            if item["name"] not in source_fruits:
+                raise ValueError("Window fruit is absent from its exact source manifest: " + item["name"])
+            source = source_fruits[item["name"]]
+            row = dict(item, name=prefix + item["name"])
+            for key in ("path", "joint", "anchor"):
+                if key in source:
+                    if key in item and item[key] != source[key]:
+                        raise ValueError("Window fruit source identity mismatch: " + key)
+                    row[key] = _display_path(source[key], source_root, window["display_root"])
+            if row["name"] in names or row.get("joint") in joints:
+                raise ValueError("Duplicate persistent-window fruit identity")
+            names.add(row["name"]); joints.add(row.get("joint")); rows.append(row)
+    return rows
+
+
 def body_path_mapping(model, meta):
-    """Map exact source ownership from the saved export, never name guessing."""
+    """Map every exact source owner through its declared persistent namespace."""
     result = dict(meta["robot"]["body_names"])
-    source_manifest = json.loads(Path(meta["source_manifest"]).read_text())
     native = set(meta["rods"] + meta["fruits"])
-    for item in source_manifest["plant"]["bodies"] + source_manifest["plant"]["fruits"]:
-        if item["name"] in native:
-            old = result.setdefault(item["path"], item["name"])
-            if old != item["name"]:
-                raise ValueError("Ambiguous source body mapping: " + item["path"])
+    for window, source_manifest in _window_body_sources(meta):
+        source_root = source_manifest["plant"]["root"]
+        prefix = window.get("prefix", "")
+        for item in source_manifest["plant"]["bodies"] + source_manifest["plant"]["fruits"]:
+            name = prefix + item["name"]
+            if name in native:
+                path = _display_path(item["path"], source_root, window["display_root"])
+                old = result.setdefault(path, name)
+                if old != name:
+                    raise ValueError("Ambiguous source body mapping: " + path)
     for path, name in result.items():
         if model.body(name).id <= 0:
             raise ValueError("Mapped body is not an integrated native body: " + path)
@@ -406,7 +468,7 @@ def _plan(meta, initial_command, source_plan):
 
 
 def command_timeline(meta, initial_command, hz, *, command_source="plan", seconds=None,
-                     start_s=0., freeze_phase=None, free_hz=None):
+                     start_s=0., freeze_phase=None, free_hz=None, belt_hold_hz=None):
     """Sample commands on solver-start timestamps; never sample measured poses.
 
     Recorded Isaac rows save an applied command at the *end* of its step.
@@ -421,6 +483,11 @@ def command_timeline(meta, initial_command, hz, *, command_source="plan", second
         raise ValueError("Positive finite hz and nonnegative finite start_s required")
     if command_source not in ("plan", "recorded"):
         raise ValueError("command_source must be plan or recorded")
+    if belt_hold_hz is not None:
+        from newton_belt_hold import validate_belt_hold_hz
+        validate_belt_hold_hz(belt_hold_hz, hz)
+        if command_source != "plan" or freeze_phase is not None:
+            raise ValueError("belt_hold_hz requires the continuous plan without freeze_phase")
     if free_hz is not None:
         if not np.isfinite(free_hz) or not 0 < free_hz <= hz:
             raise ValueError("free_hz must be positive, finite, and no higher than contact hz")
@@ -542,6 +609,15 @@ def command_timeline(meta, initial_command, hz, *, command_source="plan", second
                        source_command_time_convention=("Existing sample_plan at solver-start time" if plan is not None else
                            "Recorded command row belongs to the interval ending at its timestamp; right-edge lookup"),
                        feedback_guards_required=True, motion_executed=False)
+    if belt_hold_hz is not None:
+        from newton_belt_hold import resample_belt_hold
+        timeline, hold_evidence = resample_belt_hold(
+            timeline, plan, belt_hold_hz, hz, source_start_s=source_start)
+        frequencies, counts = np.unique(np.rint(1. / timeline['dt']).astype(int), return_counts=True)
+        description.update(steps=len(timeline['time']), belt_hold_frequency=hold_evidence,
+            master_hz=int(timeline['master_hz']) if 'master_hz' in timeline else None,
+            steps_by_hz={str(rate): int(count) for rate, count in zip(frequencies, counts)},
+            frequency_policy="Existing phase-frequency rows; only stationary belt_finish intervals equally resampled")
     return timeline, description, plan
 
 
@@ -629,7 +705,8 @@ def write_display_evidence(output, metadata, provenance, breaks):
 
 
 def prepare_inputs(model_dir, output, hz, *, command_source="plan", seconds=None,
-                   start_s=0., freeze_phase=None, free_hz=None, discard_visual_geoms=False):
+                   start_s=0., freeze_phase=None, free_hz=None, discard_visual_geoms=False,
+                   allow_multiple_windows=False):
     """Save one immutable native adapter input for an independent Newton runner."""
     import mujoco as mj
 
@@ -637,16 +714,24 @@ def prepare_inputs(model_dir, output, hz, *, command_source="plan", seconds=None
     if output.exists():
         raise FileExistsError("Use a new output folder: " + str(output))
     source = Path(model_dir).resolve(strict=True)
-    prepared = initialize_native_model(source, hz, discard_visual_geoms=discard_visual_geoms)
+    prepared = initialize_native_model(source, hz, discard_visual_geoms=discard_visual_geoms,
+                                       allow_multiple_windows=allow_multiple_windows)
     model, data, meta = prepared["model"], prepared["data"], prepared["metadata"]
+    if len(meta.get("windows", [])) > 1:
+        meta = dict(meta, fruit_specs=window_fruit_specs(meta))
+        if {item["name"] for item in meta["fruit_specs"]} != {item["name"] for item in meta["attachments"]}:
+            raise ValueError("Persistent fruit specs and physical attachment ownership differ")
     sampling_meta = dict(meta, prepared_source_plan=str(source / "source_plan.json"))
     timeline, description, plan = command_timeline(
         sampling_meta, data.qpos[prepared["robot_qpos_addresses"]], hz,
         command_source=command_source, seconds=seconds, start_s=start_s,
         freeze_phase=freeze_phase, free_hz=free_hz)
     mapping = body_path_mapping(model, meta)
-    with np.load(Path(meta["source_trial"]) / "states.npz", allow_pickle=False) as archive:
-        source_body_paths = list(map(str, archive["body_paths"]))
+    if meta.get("source_states_kind") == "planning_only_no_recorded_states":
+        source_body_paths = []
+    else:
+        with np.load(Path(meta["source_trial"]) / "states.npz", allow_pickle=False) as archive:
+            source_body_paths = list(map(str, archive["body_paths"]))
     excluded = [path for path in source_body_paths if path not in mapping]
     excluded_proof = excluded_body_evidence(meta, excluded)
     output.mkdir(parents=True, exist_ok=False)
@@ -690,6 +775,7 @@ def prepare_inputs(model_dir, output, hz, *, command_source="plan", seconds=None
                   physics_model_variant=meta.get("physics_model_variant"),
                   noncolliding_visual_geoms_discarded=bool(discard_visual_geoms),
                   dynamic_tool=True, mocap_bodies=int(model.nmocap),
+                  multiple_windows_opt_in=bool(allow_multiple_windows),
                   preload="Existing Session fixed initial Jacobian preload including attached-fruit mass",
                   robot_feedforward="Recompute current qfrc_bias at every real physics step and divide by finite actuator kp",
                   runtime_adapter="Existing passive fruit angular springs, angular damping and threshold release require executor support",
@@ -721,11 +807,14 @@ def main(argv=None):
                         help="Existing Session free-motion frequency; contact/open/reclose phases retain --hz")
     parser.add_argument("--discard-visual-geoms", action="store_true",
                         help="Opt-in remove only noncolliding visual geoms from physics; exact active-physics proof required")
+    parser.add_argument("--allow-multiple-windows", action="store_true",
+                        help="Opt-in persistent route model; preserve every declared window identity")
     args = parser.parse_args(argv)
     report = prepare_inputs(args.model, args.output, args.hz, command_source=args.command_source,
                             seconds=args.seconds, start_s=args.start_s,
                             freeze_phase=args.freeze_phase, free_hz=args.free_hz,
-                            discard_visual_geoms=args.discard_visual_geoms)
+                            discard_visual_geoms=args.discard_visual_geoms,
+                            allow_multiple_windows=args.allow_multiple_windows)
     print(json.dumps(dict(output=str(args.output.resolve()), **report["timeline"],
                           model_counts=report["model_counts"], physical_steps=0), indent=2), flush=True)
 

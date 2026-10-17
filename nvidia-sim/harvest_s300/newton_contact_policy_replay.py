@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from newton_contact_policy import OPEN_PHASES, validate_config
+from newton_contact_policy import OPEN_PHASES, active_harvest_fruit_names, validate_config
 
 
 NO_EVENT = int(np.iinfo(np.uint64).max)
@@ -49,11 +49,15 @@ def replay_stop_policy(witness, phases, schema, metadata, config):
     names = {row['name']: g for g, row in geoms.items()}
     belts = {g for g, row in geoms.items() if row['body'] in metadata['robot']['belt_body_names']}
     fruit = {s['name'] for s in metadata['attachments']}
-    trusses = {name.split('_Fruit_', 1)[0] for name in fruit}
-    roles = {g: 1 if row['body'] in fruit else 2 if any(
+    active_fruit = active_harvest_fruit_names(metadata)
+    trusses = {name.split('_Fruit_', 1)[0] for name in active_fruit}
+    roles = {g: 1 if row['body'] in active_fruit else 2 if any(
         row['body'].startswith(truss+'_Pedicel_') for truss in trusses) else 0
         for g, row in geoms.items()}
     tools = set(metadata['tools']) | {'Robot_world', 'Robot_S300Carrier'}
+    structural = {row['name']: row['classification']
+                  for row in metadata.get('farm', {}).get('structural_inventory', [])}
+    released_gutter_diagnostic = metadata.get('released_gutter_diagnostic') is True
     release_exceptions = set()
     for g, row in geoms.items():
         if row['body'] not in fruit:
@@ -62,7 +66,8 @@ def replay_stop_policy(witness, phases, schema, metadata, config):
         for other, record in geoms.items():
             if (record['body'] in tools or record['body'].startswith(truss+'_') or
                     (record['body'] == 'world' and
-                     ('ground' in record['name'].lower() or record['name'] == 'CatchFloor'))):
+                     ('ground' in record['name'].lower() or record['name'] == 'CatchFloor' or
+                      released_gutter_diagnostic and structural.get(record['name']) == 'gutter'))):
                 release_exceptions.add((g, other))
     explicit = {}
     for row in config['explicit_other_pairs']:

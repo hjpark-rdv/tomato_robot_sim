@@ -1,5 +1,52 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-18: 한쪽 베드 Newton GPU 속도 개선 및 추가 대안 검증
+
+- 현재 작업 브랜치 `codex/s300-newton-active-window-20261018`. 기존 선택기·계획기·GPU 실행기를 재사용해 Plant22→27→29 실제 연속 이동/수확3구간을 완료했다. 반대편Plant41 제외. 새 간단 실행: `./nvidia-sim/run_s300_newton.sh row-realtime` (화면 없는 새 캠페인).
+- 현재 타깃 식물만 탄성 계산하고 다른 식물은 실제 마지막 자세의 **고정 충돌체로 유지**, 이미 분리된 과실은 계속 free body다. 주변6그루1150충돌체·전체 농장 외형 유지. 자유도133→169→199. 세 식물 동시 탄성379DOF와 동일 물리 모델의 솔버 가속이라고 해석하지 않는다.
+- 물리191.8169초를79.4614초에 실행: **전체2.414RTF**, 벨트구간1.19~1.31RTF(이전0.50~0.58). 가장 느린마지막 유지0.814~0.859RTF는 미해결이다. 최종one-command 재실행도 전상태exact·2.411RTF·17개 분리다. setup합395.44→165.20초였지만 계획/모델축소까지 전체3구간584.90초(약9분45초)+최초검증 대기여서 운영전체 실시간은 미달이다. 후속 동일 준비 A/B55.70→49.40초는 별도 단회 결과다.
+- 연결 해제17개(색상상 익음16+미숙1), 남음13개. 이전379DOF는18개였으며 P27Fruit02가 추가로 남았다. 전체수확/포집/실물성공 아님. 두 경계 actual clock과상태·분리이력 연속성 독립검증PASS. `training_eligible=false`, `harvest_success=null`.
+- GUI 표시 약6.76→14.83FPS. 첫Plant22 전체8,221기록의 새 headless/GUI 적분이 byte exact다. GUI새 측정 RTF1.897/headless2.313;3정차점전체GUI·cold-start동등성은 미검증이다.
+- 개별 Hz/solver/cache/CCD/형상저장 대안을 비교했다.220/60Hz 유지. 마지막hold만160/180Hz로 낮추는 대안도 다른 hardware↔가지1mm 초과로 중단해 미채택. 기본1mm/기존 정확belt↔목표fruit·pedicel의 지정5phase만2mm(닫힌유지belt_finish포함),물성·분리조건 유지.
+- 최종 중복제거 회귀395PASS/25SKIP,별도표시15PASS. 큰 자산/배열/영상은NAS,작은검증·코드·결과보고서는Git. 사용자gripper-design 별도변경은보존/커밋제외.
+- [상세 결과·실행·영상 목록](nvidia-sim/S300_NEWTON_ACTIVE_WINDOW_SPEED_KO.md), [검증 요약](nvidia-sim/validation/s300_newton_active_window_speed.json).
+- 결과: `/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/index.html`. 모든 후보의 완료/중단·최초접촉·실제 qpos영상 포함. 다음 큰 병목은 구간별 준비/재로딩과 마지막접촉단계이며 GPU병렬 확대는이번에새로검증하지않았다.
+
+## 2026-10-18: 한쪽 베드3곳 연속 이동·수확 완주, native 충돌체 수정
+
+- 같은 거터 X=-0.775m의 **Plant22/Truss02 → Plant27/Truss00 → Plant29/Truss00** 세 방문을 모두 완료했다. 반대 베드 Plant41 제외. 실제 레일 정차1.580→2.653→3.222m와 리프트 이동 뒤, 각 방문에서 두 번 닫기·열기 및 후퇴를 수행했다.
+- `native_piece_route/sequence_native`: 각6개씩 **총18개 연결 해제=색상상 익음17+미숙1(Plant22 Fruit09), 미방문 조기 분리0**. 각 송이4개씩 남았다(익음4+미숙8). 송이 전체 완료·선택적 수확·포집·실물 성공은 아니다.
+- 공통 모델은3개 탄성 식물379DOF/과실30개/2244geom, 주변 고정6그루1150collider와 전체 농장 배경이다. 기존 단일133DOF와 작업량이 다르다. `run_newton_row_harvest.py`가 기존 선택기·IK·GPU 실행기를 연결하며, 두 인계 경계 qpos/qvel/eq/poses/time 차이0이다. solver instance/접촉 캐시는 구간마다 새로 생성하므로 한 번 로딩하는 persistent solver는 아니다.
+- 최초 GPU tolerance1e-6의 미방문 과실 힘 스파이크는 force 읽기 오류가 아니라 수렴 문제였다. 명시 `--solver-tolerance 1e-8`을 업로드 clamp 후 실제 GPU에 반영하는 opt-in을 적용했다. **기존 기본 호출은 보존**한다.
+- 이전 `sequence_precise`는17개 분리 후 Plant29의 Tool_L `L/part_161`↔남은 꼭지1.071557mm에서 중단했고, depth35→25mm 대조도 같은 쌍으로 막혔다. 원본 빈 공간을 메우던 단일 hull만 원본 PhysX 기본 native16조각으로 수정하고 새 MJB/정상 초기 상태에서 전부 재실행했다. 비선택 형상·물성·명령·초기 상태 등71,813개 불변성 검사PASS. 이전 결과·대조는 보존하고 합산하지 않는다.
+- native 근사에도 원본에 없는0.209~0.279mm 거짓 overlap과 표본 최대0.635mm 덮임 부족이 남았다. strict 음성 기하 대조FAIL과 기존1mm 감시 통과를 구분한다. 원본 CAD 전체 coverage 인증은 아니다. 감시 기준·물성·분리 한계는 올리지 않았다.
+- 전체191.816895sim초/173.742993loop초=평균1.104RTF, setup155.801618초 별도다. 최저 접촉 단계0.269RTF이므로 **접촉 실시간은 미해결**이다. 기타 쌍1mm/정확한 현재 목표 belt 쌍2mm 범위를 유지했다. `--released-gutter-diagnostic`는 명시 opt-in이며 최종 세 방문에서 해당 접촉0건이었다. 주변 식물의 실제 pair 접촉0을 뜻하지 않는다.
+- [상세·실행 명령](nvidia-sim/S300_NEWTON_SAME_BED_CONTINUOUS_KO.md). 준비 입력은 `/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route`, 결과 루트 `index.html`·`native_video_list.json`·`all_videos.json`에 실제 영상 목록을 보존한다. 고유 회귀78개PASS. 새 GUI/headless 전체 비교·FCL 환경 사전 인증·runtime phase guard는 미완료. `training_eligible=false`, `harvest_success=null`. 이 변경은 위 active-window 속도 개선 작업과 함께 보존한다.
+
+## 2026-10-18: 주변 고정 충돌을 포함한 두 위치의 GPU 수확 시험
+
+- 기존 Plant29/Truss00와 다른 Plant41/Truss00의 명령을 재사용해 새 physics9회 실행, 모두 완료. 각각 연결 해제6개/4개이며 독립 reset 시험이다. 연속 이동 수확이나 전체 송이 수확 성공으로 합산하지 않는다.
+- Plant41의 주변0/2/4그루 조건을 각2회 비교: 평균2.802/2.765/2.752RTF, 물리시간19.036/19.292/19.386초(53.343sim초). 주변4그루 시간 증가1.84%, 최저단계0.970RTF. 초기화·저장·렌더 별도.
+- Plant29 주변09/28, Plant41 주변64/63 및40/39. 기존 변환 capsule/convex를 고정해서286/572개 추가, 잎 충돌 제외. 실제 주변 접촉0건, Plant41 모든 A/B·반복·접촉계측의 전체 저장 상태 정확 일치. 강하게 밀리는 주변 탄성/전 농장 충돌 검증은 아니다.
+- 기존 기본 충돌 범위는 자동 변경하지 않았다. 실제 입력 메타데이터를 읽어 영상의 잘못된 ‘주변 충돌 OFF’ 자막을 바로잡고 새 mesh도 입력 hash에 포함했다. 관련19개 테스트PASS.
+- [상세 결과·GUI 명령·영상](nvidia-sim/S300_NEWTON_NEIGHBOR_COLLISION_CHECK_KO.md#2026-10-18-후속-두-위치와-주변4그루), 원자료 `/root/docker_share/mujoko_debugging_data/20261018_002607_newton_neighbor_multitarget/index.html`.
+- `training_eligible=false`, `harvest_success=null`. 사용자 gripper 변경 및 기존 결과 보존. 이번 후속 변경은 아직 미커밋이다.
+
+## 2026-10-17: 주변 식물 충돌 이력 확인 및 고정1·2그루 비용 비교
+
+- 이전 기본형은 주변 고정 충돌 포함이었고,10/11 사용자 선택으로 D_target_only를 사용했다. Newton도 이를 이어받았다. 전체 배경 표시는 전체 식물 충돌 계산을 뜻하지 않는다.
+- 현재133DOF/220·60Hz/동일 명령에서 주변0/1/2그루 고정 충돌을 각2회 새 실행: 평균3.873/3.812/3.789RTF, 시간 증가1.59/2.22%. 가장 느린 단계도1.113RTF 이상이다.
+- 기존 변환 Plant09/28의 capsule+convex143/286개 추가. 전체21,187개 원본 triangle collider 복원이 아니며, 주변 탄성도 추가하지 않았다. 기존 기본값은 유지했다.
+- 모두9,127step 완주·연결 해제6개, 저장 상태 정확 일치. 실제 추가 주변 접촉0건이어서 강하게 밀 때의 비용은 미측정. 관련 테스트3개 통과.
+- [기준 이력·결과·한계](nvidia-sim/S300_NEWTON_NEIGHBOR_COLLISION_CHECK_KO.md). 결과 `/root/docker_share/mujoko_debugging_data/20261017_234049_newton_neighbor_collision_check`.
+
+## 2026-10-17: Newton GUI 로딩 후 START, 1배속 실행
+
+- `./nvidia-sim/run_s300_newton.sh gpu-realtime --gui`는 초기 장면 렌더 완료 후 **Harvest control → START (1x)**를 누를 때까지 물리0초에서 대기한다. 완료 후에도 창을 유지한다.
+- headless 처리량 측정은 기존 그대로. GUI 자동 시작/최대 처리량 측정에는 `--no-interactive-viewer`를 추가한다. 의도적인1배속 대기 시간을 계산 성능 저하로 해석하지 말 것.
+- 실제 버튼 클릭·전체9,127step/82.807초 완주·기존 headless 전체 상태 정확 일치 확인. 관련 테스트20개 통과. 물리/접촉/분리 조건은 유지했다.
+- [명령·검증 기록](nvidia-sim/S300_NEWTON_INTERACTIVE_VIEWER_KO.md), 결과 `/root/docker_share/mujoko_debugging_data/20261017_230835_newton_interactive_validation`.
+
 ## 2026-10-17: Newton GPU 개별11대안·조합, 접촉 실시간과 GUI 일치 확보
 
 - 브랜치 `codex/s300-newton-independent-tests-20261017`, 출발 `4112bda`.

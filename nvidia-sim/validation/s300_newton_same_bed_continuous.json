@@ -1,0 +1,378 @@
+{
+  "schema": "s300-one-bed-continuous-final-v2",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous",
+  "branch": "codex/s300-newton-independent-tests-20261017",
+  "base_head": "c80f93ad1f6755934238397f6e950fed64553265",
+  "changes_uncommitted": true,
+  "code_snapshot_sha256": {
+    "mujoco-benchmark/scripts/s300_smoke/export_scene.py": "b4743d73a6b9ce7b317649b4a33387f86b7ee192b47a47f2766bf97b6fb70a37",
+    "nvidia-sim/run_s300_newton.sh": "80229865d2d47da7614057bfa43fb1c32a8c82d553bd3184465d4e1509bdcac9",
+    "nvidia-sim/harvest_s300/newton_inputs.py": "90103f8404d39994e2f65065380f109c2773e3c193ddbd96019f52e9763f3ebd",
+    "nvidia-sim/harvest_s300/newton_plant_variant.py": "11b4a1463dc7abb87fd849aee3d01b38f0fb7a6255f6cf0b63175525ca7cb89c",
+    "nvidia-sim/harvest_s300/newton_continuation.py": "b57b88bffe25024701f64589b7c766274797fefe281b0be94af42f57ba396faa",
+    "nvidia-sim/harvest_s300/newton_kernels.py": "9372bd2d8e3888dcdf61e28f5f34a266eb37d2885ea6dcf6c1bb4f1fe09a74ae",
+    "nvidia-sim/harvest_s300/newton_contact_policy.py": "11ef1f5a00ba5c6e9f4054c57d18e555e60dd2ba94526b58782ebe5ddbb0d971",
+    "nvidia-sim/harvest_s300/newton_contact_policy_replay.py": "dadea95e6bfa2fdec46c70ff9b7afd44790dc330c16eb0d527e6b3f1b5f5ff36",
+    "nvidia-sim/harvest_s300/newton_gpu_options.py": "95915f0e0172de5c2f9ea5791a23618cad08f294bb76b697f889361f4a7f3774",
+    "nvidia-sim/harvest_s300/row_harvest_targets.py": "851a05f11856c465966a420258d5a706c80e285aa425e54a75f8d7c2a637f700",
+    "nvidia-sim/harvest_s300/run_newton_harvest.py": "a2ae07db7d3137fc0b916d026a05a0c580552913c34677d784ff420e0dd1bacb",
+    "nvidia-sim/harvest_s300/run_newton_row_harvest.py": "b76caaf39c30423ad743eb13f38fffece1f88dc6949eaca6dd8db0544f1b9c16",
+    "nvidia-sim/harvest_s300/render_motion.py": "029e376afd315935c80f487f7a3570cac5b1d420bf073a92cca2fb13e6417016",
+    "nvidia-sim/harvest_s300/test_newton_continuation.py": "3d57e1e63d9a85989f3826bc9b704705ee140c0bf0fe3150e8930d92bc25b543",
+    "nvidia-sim/harvest_s300/test_newton_row_harvest.py": "ac772b2f5d8db927ecdc8ef2c6775fca1b3df0d0fdacc31ba71415c535b2661a",
+    "nvidia-sim/harvest_s300/test_newton_gpu_options.py": "ef8e3ead693642bfda2833520489292634fc1908158303c2db92c7ea934f8cde",
+    "nvidia-sim/harvest_s300/test_newton_released_gutter.py": "3e22ebc746f9f68e1cb711dcb84177daf6d2f7cf684a66202e3cf5c96525d9f9",
+    "nvidia-sim/harvest_s300/newton_native_tool_pieces.py": "d35b4301b18420fc05ae51974da6e0666b8242ddc28aebaa91140519d1f7bde1",
+    "nvidia-sim/harvest_s300/test_newton_native_tool_pieces.py": "0a2af134c769c48817686687c69cb3870c2df611b9c8110d95557367a1daa94b"
+  },
+  "artifact_sha256": {
+    "report_native_metrics.json": "6e8f05eba263dbe743a34251c2882d15e8dbb45de1ac98c2086ff21f609381a6",
+    "report_precise_metrics.json": "daaa0caf16c04b567ea5c98639611c3e5846cefad52ca5b42c26eeebdeea2b70",
+    "part161_triangle_vs_hull_diagnostic.json": "6064bd2e647e04f06a1908ea6bbc8652aec5c712d8c4df4a2dd7c39b6aa0a3d2",
+    "part161_native_piece_control_results.json": "40e8ef831e2b6f90bee78c8207ca7dbcd597abcf47a990ca4b07435822aa0631",
+    "part161_native_source_sample_coverage.json": "3781a7cee5ea4004018c21e139ca603e55fe9a7d1c31470a7815f7e84de80675",
+    "native_part161_default/native_pieces.json": "c24e0a06e332046f15788f2b4a423407edaea9241632ed13f295a06dd1fc056c",
+    "native_part161_default/extraction_script_provenance.json": "8146be75a95844ccbdd13caf301feace4f242a1d827840cb1fa3d7a8495faa88",
+    "native_piece_route/inputs_route/native_tool_pieces_proof.json": "83c429103fdc5594b3346e3b5ee4ae2ab6743716051eff04c75a0bbc2310f1aa",
+    "native_independent_review.json": "b126cbc2e28921281c807088a6da59f37321f10727ac43b85a00857e7be55804"
+  },
+  "main_campaign": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native",
+  "fresh_start": {
+    "first_time_s": 0.0,
+    "all_30_attachments_initially_active": true,
+    "initial_active_attachment_count": 30,
+    "first_segment_continuation": null,
+    "first_source_mjb_sha256": "55159876ddeb6250ffea7bccb102a2e31dbf8d41556a17140454279e5ded0cc9",
+    "all_segments_use_same_mjb": true,
+    "scope": "First segment fresh initial state, then only within-campaign continuation; old different-hash parent state is not reused"
+  },
+  "main_result": [
+    {
+      "plant_id": 22,
+      "status": "completed",
+      "stop": null,
+      "policy_passed": true,
+      "new_current_target_events": {
+        "count": 6,
+        "color_eligible_count": 5,
+        "color_ineligible_count": 1,
+        "color_eligible_names": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05"
+        ],
+        "color_ineligible_names": [
+          "Truss_02_Fruit_09"
+        ]
+      },
+      "new_other_truss_events": {
+        "count": 0,
+        "color_eligible_count": 0,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [],
+        "color_ineligible_names": []
+      },
+      "realtime_factor": 1.070701443884106,
+      "minimum_phase_realtime_factor": 0.2694279207562547
+    },
+    {
+      "plant_id": 27,
+      "status": "completed",
+      "stop": null,
+      "policy_passed": true,
+      "new_current_target_events": {
+        "count": 6,
+        "color_eligible_count": 6,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [
+          "P27_Truss_00_Fruit_02",
+          "P27_Truss_00_Fruit_03",
+          "P27_Truss_00_Fruit_04",
+          "P27_Truss_00_Fruit_05",
+          "P27_Truss_00_Fruit_07",
+          "P27_Truss_00_Fruit_08"
+        ],
+        "color_ineligible_names": []
+      },
+      "new_other_truss_events": {
+        "count": 0,
+        "color_eligible_count": 0,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [],
+        "color_ineligible_names": []
+      },
+      "realtime_factor": 1.1479822529854289,
+      "minimum_phase_realtime_factor": 0.3103638735552568
+    },
+    {
+      "plant_id": 29,
+      "status": "completed",
+      "stop": null,
+      "policy_passed": true,
+      "new_current_target_events": {
+        "count": 6,
+        "color_eligible_count": 6,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [
+          "P29_Truss_00_Fruit_02",
+          "P29_Truss_00_Fruit_03",
+          "P29_Truss_00_Fruit_04",
+          "P29_Truss_00_Fruit_05",
+          "P29_Truss_00_Fruit_07",
+          "P29_Truss_00_Fruit_08"
+        ],
+        "color_ineligible_names": []
+      },
+      "new_other_truss_events": {
+        "count": 0,
+        "color_eligible_count": 0,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [],
+        "color_ineligible_names": []
+      },
+      "realtime_factor": 1.086902645819441,
+      "minimum_phase_realtime_factor": 0.32242353940795526
+    }
+  ],
+  "final_release_totals": {
+    "physical_joint_releases": 18,
+    "color_eligible": 17,
+    "color_ineligible": 1,
+    "current_target_during_its_visit": 18,
+    "premature_future_target_count": 0,
+    "by_plant": {
+      "22": {
+        "count": 6,
+        "color_eligible_count": 5,
+        "color_ineligible_count": 1,
+        "color_eligible_names": [
+          "Truss_02_Fruit_01",
+          "Truss_02_Fruit_02",
+          "Truss_02_Fruit_03",
+          "Truss_02_Fruit_04",
+          "Truss_02_Fruit_05"
+        ],
+        "color_ineligible_names": [
+          "Truss_02_Fruit_09"
+        ]
+      },
+      "27": {
+        "count": 6,
+        "color_eligible_count": 6,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [
+          "P27_Truss_00_Fruit_02",
+          "P27_Truss_00_Fruit_03",
+          "P27_Truss_00_Fruit_04",
+          "P27_Truss_00_Fruit_05",
+          "P27_Truss_00_Fruit_07",
+          "P27_Truss_00_Fruit_08"
+        ],
+        "color_ineligible_names": []
+      },
+      "29": {
+        "count": 6,
+        "color_eligible_count": 6,
+        "color_ineligible_count": 0,
+        "color_eligible_names": [
+          "P29_Truss_00_Fruit_02",
+          "P29_Truss_00_Fruit_03",
+          "P29_Truss_00_Fruit_04",
+          "P29_Truss_00_Fruit_05",
+          "P29_Truss_00_Fruit_07",
+          "P29_Truss_00_Fruit_08"
+        ],
+        "color_ineligible_names": []
+      }
+    },
+    "remaining_attached_names": [
+      "Truss_02_Fruit_07",
+      "Truss_02_Fruit_08",
+      "Truss_02_Fruit_10",
+      "Truss_02_Fruit_11",
+      "P27_Truss_00_Fruit_01",
+      "P27_Truss_00_Fruit_09",
+      "P27_Truss_00_Fruit_10",
+      "P27_Truss_00_Fruit_11",
+      "P29_Truss_00_Fruit_01",
+      "P29_Truss_00_Fruit_09",
+      "P29_Truss_00_Fruit_10",
+      "P29_Truss_00_Fruit_11"
+    ],
+    "verified_harvest_count": null
+  },
+  "performance": {
+    "segment_simulated_s": 191.81689453125,
+    "loop_wall_s": 173.7429927624762,
+    "overall_realtime_factor": 1.1040266515581587,
+    "setup_wall_s": 155.801617924124,
+    "setup_plus_loop_wall_s": 329.5446106866002,
+    "scope": "Serialized segmented solver loops; excludes planning, export and rendering. Startup/JIT/solver setup separate."
+  },
+  "source_model_sha256": "55159876ddeb6250ffea7bccb102a2e31dbf8d41556a17140454279e5ded0cc9",
+  "model": {
+    "nv": 379,
+    "nq": 409,
+    "nbody": 357,
+    "ngeom": 2244,
+    "neq": 30,
+    "active_plants": 3,
+    "fixed_neighbor_plants": 6,
+    "fixed_neighbor_colliders": 1150,
+    "previous_one_truss_nv": 133,
+    "workload_changed": true,
+    "interpretation": "Three elastic target plants remain present throughout every segment; 246 additional DOFs versus prior one-truss model. This is not an equal-workload speed comparison.",
+    "part161_native_pieces": 16,
+    "prior_same_bed_ngeom": 2229,
+    "physical_collision_model_changed": true,
+    "unchanged_material_and_state_invariants_reported": true
+  },
+  "state_handoffs": [
+    {
+      "parent": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_00_plant22",
+      "child": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_01_plant27",
+      "same_physical_model_sha": true,
+      "qpos_max_abs_difference": 0.0,
+      "qvel_max_abs_difference": 0.0,
+      "eq_active_identical": true,
+      "poses_max_abs_difference": 0.0,
+      "physics_clock_difference_s": 0.0,
+      "recorded_position_command_boundary_max_abs_difference": 3.068418759077929e-07,
+      "new_command_vs_measured_joint_q_max_abs_difference": 0.0,
+      "restored_ctrl_damping_and_qacc_warmstart_reported": true,
+      "restore_and_graph_capture_preserved_state": true,
+      "limitation": "Initial state arrays verify qpos/qvel/equality/poses/time exactly. ctrl/damping/warmstart restoration comes from runtime certificate; solver contact cache is rebuilt at each segment. Actuator ctrl includes gravity compensation and is not raw joint-position command."
+    },
+    {
+      "parent": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_01_plant27",
+      "child": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_02_plant29",
+      "same_physical_model_sha": true,
+      "qpos_max_abs_difference": 0.0,
+      "qvel_max_abs_difference": 0.0,
+      "eq_active_identical": true,
+      "poses_max_abs_difference": 0.0,
+      "physics_clock_difference_s": 0.0,
+      "recorded_position_command_boundary_max_abs_difference": 1.4265088932319259e-07,
+      "new_command_vs_measured_joint_q_max_abs_difference": 0.0,
+      "restored_ctrl_damping_and_qacc_warmstart_reported": true,
+      "restore_and_graph_capture_preserved_state": true,
+      "limitation": "Initial state arrays verify qpos/qvel/equality/poses/time exactly. ctrl/damping/warmstart restoration comes from runtime certificate; solver contact cache is rebuilt at each segment. Actuator ctrl includes gravity compensation and is not raw joint-position command."
+    }
+  ],
+  "collider_change": {
+    "selected_geom": "s300_g0620",
+    "source": "/World/ActuatedTool/L/part_161",
+    "old_representation": "single convex hull",
+    "new_representation": "16 native PhysX convex pieces",
+    "original_cooking_defaults": true,
+    "other_geometries_and_physical_parameters_preserved": true,
+    "new_mjb_requires_fresh_start": true,
+    "geometry_controls": "part161_native_piece_control_results.json",
+    "approximation_caveat": "Native pieces remain an approximation; source-surface samples outside union reach 0.635mm. No whole-surface equivalence proof."
+  },
+  "testing": {
+    "native_unique": 67,
+    "usd_bed_selection": 11,
+    "unique_total": 78,
+    "logs": [
+      "tests_native_final.log",
+      "tests_bed_final.log",
+      "tests_row_policy_final.log",
+      "tests_native_pieces_final.log"
+    ],
+    "note": "63 initial native + 11 USD; row retest adds one unique native test; native tool pieces add three. Import-path setup failures corrected before successful runs."
+  },
+  "limitations": [
+    "A completed motion is not verified selective harvesting or fruit collection.",
+    "Color-ineligible incidental releases remain recorded; no biological maturity calibration.",
+    "Contact phases below real time remain explicitly identified in phase tables.",
+    "Exact released-fruit versus gutter exemption is explicit opt-in; collisions and raw force/penetration remain active.",
+    "Fixed-neighbor pair-resolved contact witness is absent unless separately identified; zero actual contacts is not claimed.",
+    "Measured opening and arrival are checked offline; the executor has no corresponding runtime feedback gates yet.",
+    "Each continuation restarts solver/contact caches while preserving measured arrays; it is not one persistent solver instance.",
+    "No camera perception, training eligibility or real-world harvest validation.",
+    "Only part161 convex representation changed; this is a different collision model, not exact trajectory-equivalent to the previous campaign.",
+    "No fresh GUI/headless comparison for this 379DOF native-piece model.",
+    "IK planning plus runtime contact monitoring; no FCL environment certification.",
+    "Physics loop average exceeds real time, but belt contact phases remain about 0.50–0.58x.",
+    "Each target retains four attached fruits. This is not whole-truss harvest or collection success."
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_00_plant22/physics/native_plant22_actual.mp4",
+      "role": "final_fresh_sequence",
+      "sha256": "69cdbea1b0a81aea7b3dfa498ccb9077adfd3ce26d2df76ee54a85614fde9bc5",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_01_plant27/physics/native_plant27_actual.mp4",
+      "role": "final_fresh_sequence",
+      "sha256": "01183a94205f706b9fa721a1d08ddb5ba6a17ad4257c2dc49f8e6e08e276b2cd",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_01_plant27/physics/native_plant27_actual_contact.mp4",
+      "role": "final_contact_cutaway",
+      "sha256": "2a3668d92d7c4a51a509b9dbfa65a2000268c8c86c7b8b2d7921d9c8521f7faf",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_01_plant27/physics/native_plant27_actual_top.mp4",
+      "role": "final_overhead_full_background",
+      "sha256": "a60f29cfa1c26d8b096e07226cbef4b4d314fed770b326fd0e9c8f0827621069",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_02_plant29/physics/native_plant29_actual.mp4",
+      "role": "final_fresh_sequence",
+      "sha256": "26142f86c779199d98949ea935517ffc6bbb50a35e0bd374df3e04ee3a1b8ae7",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_02_plant29/physics/native_plant29_actual_contact.mp4",
+      "role": "final_contact_cutaway",
+      "sha256": "b9eb457f9a41308914671985de240b846e7866278d0d5d7d704aeff269a883c4",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/native_piece_route/sequence_native/step_02_plant29/physics/native_plant29_actual_top.mp4",
+      "role": "final_overhead_full_background",
+      "sha256": "7fccbc390f90d04c4d8cd1b63446369ffbbaaaaac8cb0a9458b3e37e18fe6852",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/sequence_precise/step_00_plant22/physics/precise_plant22_actual.mp4",
+      "role": "prior_diagnostic",
+      "sha256": "759ebe95dd435104499b480af7d639c95a702bea130bd63b9659fae88bbe4060",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/sequence_precise/step_01_plant27/physics/precise_plant27_actual.mp4",
+      "role": "prior_diagnostic",
+      "sha256": "a3eac55c30691bb113565c39a00ec8cb8bbefd3114b062486450938902a7c49e",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/sequence_precise/step_02_plant29/physics/precise_plant29_actual.mp4",
+      "role": "prior_diagnostic",
+      "sha256": "b77cc593f13d74b7b022722ba19b12a24b28cfd3ee906186e6d37ce9ef0674f8",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/sequence_precise_shallow10/step_02_plant29/physics/precise_shallow10_plant29_actual_stop.mp4",
+      "role": "prior_diagnostic",
+      "sha256": "387ef199f365874c075aa3b2f9efd5a8409cbc7339b7bcef93966d9697f006ec",
+      "playback_speed": 1
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_010218_newton_same_bed_continuous/sequence_verified/step_00_plant22/physics/stopped_released_fruit_gutter.mp4",
+      "role": "prior_diagnostic",
+      "sha256": "ad690422bf10b6acfedaee1941609ed3c5cdff1e43e5711496b204abc89c11e4",
+      "playback_speed": 1
+    }
+  ]
+}

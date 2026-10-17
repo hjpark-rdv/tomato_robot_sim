@@ -11,10 +11,49 @@ import numpy as np
 from motion_live import MotionLiveReader
 from newton_live import (NewtonLivePublisher, NewtonPoseMapping, NewtonViewerProcess,
                          display_publication_metrics, required_skin_body_paths,
-                         write_display_ack, process_is_descendant)
+                         write_display_ack, process_is_descendant, WallClockPacer,
+                         write_interactive_start)
 
 
 class NewtonLiveTests(unittest.TestCase):
+    def test_pacing_preserves_sim_clock_and_does_not_catch_up_after_stall(self):
+        now=[0.]
+        waits=[]
+        def sleep(dt):
+            waits.append(dt);now[0]+=dt
+        pacer=WallClockPacer(clock=lambda:now[0],sleep=sleep)
+        now[0]=.02
+        self.assertAlmostEqual(pacer.wait(.1),.08)
+        now[0]+=.3
+        self.assertEqual(pacer.wait(.2),0.)
+        self.assertAlmostEqual(pacer.wait(.3),.1)
+        self.assertAlmostEqual(now[0],.5)
+        self.assertAlmostEqual(pacer.last_sim,.3)
+        with self.assertRaises(ValueError):pacer.wait(.2)
+        with self.assertRaises(ValueError):WallClockPacer(0)
+
+    def test_interactive_start_is_bound_to_viewer_and_is_one_shot(self):
+        with tempfile.TemporaryDirectory() as root:
+            assembly,poses,mapping=self.fixture(root)
+            publisher=NewtonLivePublisher(Path(root)/'trial',assembly,['stem','tool'],mapping)
+            publisher.publish(poses,.04,0.)
+            with NewtonViewerProcess(publisher.output,isaac_python=sys.executable,
+                    viewer_script=self.fake_viewer(root)) as viewer:
+                ready=viewer.wait_ready(5.)
+                write_interactive_start(publisher.output,viewer.display_source_sha256,
+                    render_updates=20,pid=ready['pid'])
+                write_interactive_start(publisher.output,'wrong',render_updates=1,pid=-1)
+                viewer.wait_user_start()
+                self.assertEqual(viewer.report['interactive_start']['pid'],ready['pid'])
+                self.assertEqual(MotionLiveReader(publisher.output).read()['time'],0.)
+                request=publisher.output/'interactive_start.json'
+                request.unlink()
+                write_interactive_start(publisher.output,viewer.display_source_sha256,
+                    render_updates=20,pid=-1)
+                with self.assertRaisesRegex(RuntimeError,'does not match'):
+                    viewer.wait_user_start()
+            publisher.close()
+
     def fixture(self, root):
         root = Path(root)
         assembly = root / 'assembly'

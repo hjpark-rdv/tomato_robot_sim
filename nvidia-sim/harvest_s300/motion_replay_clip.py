@@ -2,6 +2,19 @@
 import numpy as np
 
 
+def plant_contact_caption(manifest, portable_metadata=None):
+    """Prefer executed portable collision coverage over the older display USD."""
+    if portable_metadata is not None and 'neighbor_obstacles' in portable_metadata:
+        roots=portable_metadata['neighbor_obstacles']['roots']
+        if roots:
+            return f'FIXED NEIGHBOR PLANTS: {len(roots)}; OTHER BACKGROUND PLANTS NONCOLLIDING'
+    if manifest.get('plant_interaction_variant',{}).get('mode')=='target_truss_and_own_stem_only':
+        return 'NON-TARGET PLANT CONTACTS OFF'
+    if manifest.get('elastic_neighbors'):
+        return f'DYNAMIC PLANTS: {1+len(manifest["elastic_neighbors"])}'
+    return ''
+
+
 def select_replay_ticks(stamps, *, fps, speed, start_time=None, end_time=None):
     stamps=np.asarray(stamps,dtype=float)
     if (stamps.ndim!=1 or not len(stamps) or not np.isfinite(stamps).all() or

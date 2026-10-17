@@ -1,0 +1,111 @@
+{
+  "prepared_root": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route",
+  "selection": {
+    "schema": "s300-single-bed-target-selection-v1",
+    "stations": [
+      {
+        "plant_id": 22,
+        "truss_index": 2,
+        "station_y_m": 1.58,
+        "bed_selection": {
+          "gutter_center_x": -0.775,
+          "rail_x_m": 0.0,
+          "root_position_world_m": [
+            -0.6829321912460355,
+            2.1348887491231294,
+            0.3199999980244
+          ],
+          "fruit_centroid_world_m": [
+            -0.42850714050811495,
+            1.5336617463497793,
+            1.0610346842674778
+          ],
+          "stem_rail_near": true,
+          "fruit_centroid_rail_near": true,
+          "same_bed": true
+        }
+      },
+      {
+        "plant_id": 27,
+        "truss_index": 0,
+        "station_y_m": 2.652643322544383,
+        "bed_selection": {
+          "gutter_center_x": -0.775,
+          "rail_x_m": 0.0,
+          "root_position_world_m": [
+            -0.6766327206062671,
+            3.3773602874530537,
+            0.3199999980244
+          ],
+          "fruit_centroid_world_m": [
+            -0.5801898678741317,
+            2.7666433225443834,
+            0.7155151259590171
+          ],
+          "stem_rail_near": true,
+          "fruit_centroid_rail_near": true,
+          "same_bed": true
+        }
+      },
+      {
+        "plant_id": 29,
+        "truss_index": 0,
+        "station_y_m": 3.222384591770679,
+        "bed_selection": {
+          "gutter_center_x": -0.775,
+          "rail_x_m": 0.0,
+          "root_position_world_m": [
+            -0.6734686170799814,
+            3.91354437035554,
+            0.3199999980244
+          ],
+          "fruit_centroid_world_m": [
+            -0.5301472930959628,
+            3.336384591770679,
+            0.7857844258550235
+          ],
+          "stem_rail_near": true,
+          "fruit_centroid_rail_near": true,
+          "same_bed": true
+        }
+      }
+    ],
+    "excluded": [
+      {
+        "plant_id": 41,
+        "truss_index": 0,
+        "station_y_m": 3.2937667,
+        "bed_selection": {
+          "gutter_center_x": 0.775,
+          "rail_x_m": 0.0,
+          "root_position_world_m": [
+            0.678539815206422,
+            2.642495481798039,
+            0.3199999980244
+          ],
+          "fruit_centroid_world_m": [
+            0.5783016765104592,
+            3.227768003804118,
+            1.1101425221663344
+          ],
+          "stem_rail_near": true,
+          "fruit_centroid_rail_near": true,
+          "same_bed": false
+        },
+        "selection_exclusion_reason": "opposite_bed",
+        "reachability": "not inferred from placement policy exclusion"
+      }
+    ],
+    "bed_gutter_center_x": -0.775,
+    "rail_x_m": 0.0,
+    "preserves_input_order": true,
+    "collision_scope_changed": false,
+    "selection": "One authored gutter; near-side source stem and fruit centroid",
+    "training_eligible": false,
+    "harvest_success": null,
+    "source_inventory": "/root/docker_share/mujoko_debugging_data_bak/20261011_013045_row_harvest_recovery/rail_near_inventory.json",
+    "source_inventory_sha256": "bae7c2104541f13baf15a578439a670847410c28d5372a81e72ca06358f9f9cd"
+  },
+  "physical_model_sha256": "55159876ddeb6250ffea7bccb102a2e31dbf8d41556a17140454279e5ded0cc9",
+  "physical_steps": 0
+}

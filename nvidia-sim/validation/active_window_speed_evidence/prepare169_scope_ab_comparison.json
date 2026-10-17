@@ -1,0 +1,131 @@
+{
+  "schema": "s300-active-window-prepare-same-bank-cpu-scope-ab-v1",
+  "before": {
+    "label": "before_scope",
+    "output": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/prepare169_before_scope",
+    "wall_s": 55.69877512566745,
+    "rchar": 4406818132,
+    "read_bytes": 0,
+    "prepare_internal_wall_s": 55.38501068390906,
+    "counts": {
+      "nq": 185,
+      "nv": 169,
+      "nbody": 357,
+      "ngeom": 2244,
+      "neq": 30
+    },
+    "verification_scope": {},
+    "physical_steps": 0,
+    "gpu_execution": false
+  },
+  "after": {
+    "label": "after_scope",
+    "output": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/prepare169_after_scope",
+    "wall_s": 49.399355260655284,
+    "rchar": 3560780853,
+    "read_bytes": 0,
+    "prepare_internal_wall_s": 48.94364051707089,
+    "counts": {
+      "nq": 185,
+      "nv": 169,
+      "nbody": 357,
+      "ngeom": 2244,
+      "neq": 30
+    },
+    "verification_scope": {
+      "schema": "s300-call-scoped-file-model-verification-v1",
+      "unique_file_sha_reads": 480,
+      "stable_sha_reuses": 955,
+      "unique_read_only_model_loads": 1,
+      "stable_read_only_model_reuses": 0,
+      "verified_local_model_loads": 0,
+      "original_bytes_hashed": 819042400,
+      "repeated_hash_bytes_avoided": 1609188727,
+      "original_file_sha_checks_preserved": true,
+      "file_identity_change_rejected": true,
+      "global_or_cross_call_cache": false,
+      "models_used_only_by_read_only_verification": true
+    },
+    "physical_steps": 0,
+    "gpu_execution": false
+  },
+  "wall_speed_ratio": 1.1275202850679595,
+  "wall_reduction_fraction": 0.1130979963347386,
+  "rchar_reduction_bytes": 846037279,
+  "rchar_reduction_fraction": 0.19198370653341046,
+  "source_files": {
+    "input_scene.xml": {
+      "before_sha256": "833a38bd751aeaab0804a52d58580a4cb272ad7b70c0398ad70f39aa995832b7",
+      "after_sha256": "833a38bd751aeaab0804a52d58580a4cb272ad7b70c0398ad70f39aa995832b7",
+      "exact_bytes": true
+    },
+    "input_model.mjb": {
+      "before_sha256": "0435f2d55adaa06c52ebd6647d3f0594f9f4bee4826cd0c60dce11d195bbe49d",
+      "after_sha256": "0435f2d55adaa06c52ebd6647d3f0594f9f4bee4826cd0c60dce11d195bbe49d",
+      "exact_bytes": true
+    },
+    "source_export.json": {
+      "before_sha256": "6b5402518f63f353f1985434eacdbf5dd6da22f20bb673133387ecfc4276f62a",
+      "after_sha256": "6b5402518f63f353f1985434eacdbf5dd6da22f20bb673133387ecfc4276f62a",
+      "exact_bytes": true
+    },
+    "active_window_proof.json": {
+      "before_sha256": "986a8d44caecc1eb94cbdb8618b53fad130e66771b1423807ebd173a02519035",
+      "after_sha256": "986a8d44caecc1eb94cbdb8618b53fad130e66771b1423807ebd173a02519035",
+      "exact_bytes": true
+    },
+    "commands.npz": {
+      "before_sha256": "3115ea804cea835c011f7d8532679d8d4c93cb50ea6e9f597a77f47f84189d00",
+      "after_sha256": "3115ea804cea835c011f7d8532679d8d4c93cb50ea6e9f597a77f47f84189d00",
+      "exact_bytes": true
+    }
+  },
+  "array_checks": {
+    "initial_state.npz": {
+      "qpos": true,
+      "qvel": true,
+      "eq_active": true,
+      "ctrl": true,
+      "robot_qpos_addresses": true,
+      "robot_dof_addresses": true,
+      "actuator_ids": true,
+      "plant_dofs": true,
+      "plant_preload": true,
+      "runtime_dof_damping": true,
+      "runtime_dof_length": true,
+      "body_positions": true,
+      "body_quaternions_wxyz": true,
+      "body_names": true,
+      "actuator_kp": true,
+      "qacc_warmstart": true,
+      "time": true
+    },
+    "canonical_full_state.npz": {
+      "qpos": true,
+      "qvel": true,
+      "eq_active": true,
+      "ctrl": true,
+      "robot_qpos_addresses": true,
+      "robot_dof_addresses": true,
+      "actuator_ids": true,
+      "plant_dofs": true,
+      "plant_preload": true,
+      "runtime_dof_damping": true,
+      "runtime_dof_length": true,
+      "body_positions": true,
+      "body_quaternions_wxyz": true,
+      "body_names": true,
+      "actuator_kp": true,
+      "qacc_warmstart": true,
+      "time": true
+    }
+  },
+  "all_generated_physics_bytes_identical": true,
+  "all_initial_and_canonical_arrays_identical": true,
+  "physical_steps": 0,
+  "gpu_execution": false,
+  "scope": "One serialized warm-filesystem before/after CPU preparation trial, same latest actual169DOF plant27 canonical bank and source. Includes CPU forward/contact assembly, never integration. No cold-start or repeated-distribution claim.",
+  "baseline_code_capture_limitation": "The before process imported the old prepare implementation before the working file was edited. Its final inputs.json code_sha256 observes the later on-disk code, so that one runtime source SHA is not an authoritative snapshot of baseline imported code; physical output byte/array identity and measured process I/O/wall are independently compared.",
+  "actual_prior_physics_setup_retimed": false,
+  "interpretation": "Call-scope hashing reduces preparation overhead only; later NAS model loading and compile/serialization still dominate. Actual completed3station setup measurements are not replaced with these values."
+}

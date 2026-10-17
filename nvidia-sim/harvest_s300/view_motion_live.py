@@ -7,6 +7,7 @@ available while the producer is paused or has completed its run.
 """
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import signal
@@ -16,13 +17,20 @@ from pathlib import Path
 
 from motion_live import MotionLiveReader
 from newton_live import (CameraMotionEvidence, camera_test_position,
-                        display_publication_metrics, write_display_ack)
+                        display_publication_metrics, write_display_ack, write_interactive_start)
 
 p = argparse.ArgumentParser()
 p.add_argument('trial', type=Path)
 p.add_argument('--fps', type=float, default=10., help='wall-clock display cap only')
+kit_limit = p.add_mutually_exclusive_group()
+kit_limit.add_argument('--kit-rate-limit', dest='kit_rate_limit', action='store_true',
+                       help='Also enable Kit app.update rate limiting for a display-only comparison')
+kit_limit.add_argument('--no-kit-rate-limit', dest='kit_rate_limit', action='store_false',
+                       help='Use the complete-frame outer display cap only (default)')
+p.set_defaults(kit_rate_limit=False)
 p.add_argument('--seconds', type=float, default=0., help='0 leaves the window open; otherwise bounded wall time')
 p.add_argument('--camera', default='/World/HarvestCloseCamera')
+p.add_argument('--interactive', action='store_true', help='Enable explicit START after the first rendered scene')
 p.add_argument('--camera-test-motion', action='store_true',
                help='Move only the display camera and record actual post-render transforms; physics stays stopped')
 p.add_argument('--ready-file', type=Path, help='Publish display readiness after showing the first measured frame; an external launcher may then release the producer start gate')
@@ -70,6 +78,13 @@ try:
     from pxr import Usd
     from motion_pose_display import MeasuredPoseDisplay, restore_recorded_display_fixture
     from motion_visuals import DeformationVisuals, prepare_display_meshes
+    report['display_adapter_code_sha256'] = {
+        name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+        for name in ('view_motion_live.py','motion_pose_display.py','motion_visuals.py')}
+    report['display_cache_dependencies'] = dict(
+        pose='exact measured body and nearest measured parent pose bytes',
+        rod_skin='exact actually used bone pose bytes; gap is not a skin input',
+        linkage='existing measured jaw gap transformation')
 
     # Prevent timeline playback from turning this display process into a simulator.
     timeline = omni.timeline.get_timeline_interface()
@@ -86,7 +101,14 @@ try:
     settings = carb.settings.get_settings()
     settings.set('/app/runLoops/main/rateLimitFrequency', a.fps)
     settings.set('/app/runLoops/main/rateLimitUseBusyLoop', False)
-    settings.set('/app/runLoops/main/rateLimitEnabled', True)
+    # Cap the complete frame (USD updates + render + ACK) below. A second
+    # app.update-only cap can add another full period after the USD work.
+    settings.set('/app/runLoops/main/rateLimitEnabled', a.kit_rate_limit)
+    report['display_rate_limits'] = dict(outer_complete_frame_cap_fps=a.fps,
+        kit_app_update_limit_enabled=bool(a.kit_rate_limit),
+        kit_app_update_cap_fps=a.fps if a.kit_rate_limit else None,
+        kit_busy_loop_enabled=False, outer_sleep_enabled=True,
+        physics_timestep_affected=False)
     if not omni.usd.get_context().open_stage(str(scene)):
         raise RuntimeError('Live source USD did not open')
     stage = omni.usd.get_context().get_stage()
@@ -149,23 +171,48 @@ try:
             intensity=1800., radius_m=.5, world_position=eye.tolist(),
             source='existing render_motion.py --review-light parameters',
             physical_source_modified=False)
-    window = ui.Window('Measured physics live display', width=450, height=140)
+    start_requested = False
+    def start_harvest():
+        global start_requested
+        if start_requested or not start_button.enabled:
+            return
+        write_interactive_start(a.trial,reader.metadata['model_sha256'],render_updates=render_updates)
+        start_requested = True
+        start_button.enabled = False
+        start_button.text = 'Running at 1x'
+
+    window = ui.Window('Harvest control' if a.interactive else 'Measured physics live display',
+                       width=440, height=165 if a.interactive else 140)
     with window.frame:
         with ui.VStack():
-            ui.Label('Separate viewer · measured poses · physics remains in producer')
-            ui.Label(f"Physics: {runtime.get('solver','?')} / {runtime.get('hz','?')} Hz / {runtime.get('plant_dynamics','?')} plant")
+            if a.interactive:
+                ui.Label('Wait for the scene, then press START. Movement is 1x.')
+                start_button = ui.Button('Loading scene...',enabled=False,clicked_fn=start_harvest,height=36)
+            else:
+                ui.Label('Separate viewer · measured poses · physics remains in producer')
+                ui.Label(f"Physics: {runtime.get('solver','?')} / {runtime.get('hz','?')} Hz / {runtime.get('plant_dynamics','?')} plant")
             if report['fixture_only']:
                 ui.Label('COMPONENT FIXTURE — NOT A VALIDATED FARM HARVEST')
             status_label = ui.Label('Waiting for the first completed measured frame')
-            ui.Label('Space / Play does not start physics in this viewer')
+            ui.Label('Use START above, not the Isaac timeline Play button.' if a.interactive
+                     else 'Space / Play does not start physics in this viewer')
     last = None
     observed_sequences = []
     updates = 0
     render_updates = 0
     update_wall = []
+    display_profile = []
+    display_profile_total = 0
+    display_profile_limit = 4096
+    display_cache_totals = dict(bodies_updated=0,bodies_skipped=0,meshes_updated=0,
+                                meshes_skipped=0,vertices_updated=0,vertices_skipped=0)
     first_running = None
     last_notice = -float('inf')
     ready_written = False
+    initial_capture = initial_capture_task = None
+    initial_frame_path = a.trial/'interactive_initial.png'
+    stable_loaded_updates = 0
+    startup_ready = not a.interactive
     last_ack_sequence = None
     received_stop_signal = None
     def request_viewer_stop(signum, frame):
@@ -177,12 +224,19 @@ try:
     while (app.is_running() and received_stop_signal is None
            and (not a.seconds or time.monotonic() - started < a.seconds)):
         frame_start = time.monotonic()
+        read_start = time.perf_counter()
         snapshot = reader.read()
+        read_wall = time.perf_counter()-read_start
+        pose_metrics = skin_metrics = None
         if snapshot is not None and (last is None or snapshot['sequence'] != last['sequence']):
             update_start = time.perf_counter()
-            pose_display.update(snapshot['poses'])
-            visuals.update(snapshot['poses'], snapshot['gap'])
+            pose_metrics = pose_display.update(snapshot['poses'])
+            skin_metrics = visuals.update(snapshot['poses'], snapshot['gap'])
             update_wall.append(time.perf_counter() - update_start)
+            for name in ('bodies_updated','bodies_skipped'):
+                display_cache_totals[name] += pose_metrics[name]
+            for name in ('meshes_updated','meshes_skipped','vertices_updated','vertices_skipped'):
+                display_cache_totals[name] += skin_metrics[name]
             last = snapshot
             observed_sequences.append(dict(sequence=last['sequence'], time_s=last['time'],
                                            status=last['status']))
@@ -205,31 +259,79 @@ try:
             # USD row-vector convention: local * parent_world = world.
             camera_transform.Set(moved_world * camera_parent_inverse)
         timeline.stop()
+        app_update_start = time.perf_counter()
         app.update()
+        app_update_wall = time.perf_counter()-app_update_start
         render_updates += 1
         if timeline.get_current_time() != 0.:
             raise RuntimeError('Live display timeline unexpectedly advanced')
+        if a.interactive and not startup_ready and last is not None:
+            context = omni.usd.get_context()
+            loading = context.get_stage_loading_status()
+            loaded = loading[1] >= loading[2] and not context.get_stage_streaming_status()
+            stable_loaded_updates = stable_loaded_updates+1 if loaded else 0
+            if initial_capture_task is None and stable_loaded_updates >= 20:
+                initial_capture = vu.capture_viewport_to_file(viewport,str(initial_frame_path))
+                initial_capture_task = asyncio.ensure_future(initial_capture.wait_for_result())
+                initial_capture_deadline = time.monotonic()+60.
+            if initial_capture_task is not None:
+                if time.monotonic() > initial_capture_deadline:
+                    raise TimeoutError('Initial interactive viewport frame did not finish')
+                if initial_capture_task.done():
+                    initial_capture_task.result()
+                    startup_ready = (initial_frame_path.is_file() and
+                        initial_frame_path.read_bytes()[-12:] == b'\x00\x00\x00\x00IEND\xaeB`\x82')
+            if startup_ready:
+                start_button.text = 'START (1x)'
+                start_button.enabled = True
+                status_label.text = 'Ready at t=0. Waiting for START.'
+                report['interactive_initial_frame'] = str(initial_frame_path)
+                report['interactive_ready_render_updates'] = render_updates
+                print('[LIVE] Scene rendered. Waiting for START at t=0.',flush=True)
+        if a.interactive and (a.trial/'interactive_start.json').exists():
+            start_requested = True
+            start_button.enabled = False
+            # Keep the controls out of the harvest view after START.
+            window.visible = bool(last and last['status'] in ('completed','stopped'))
+            start_button.text = ('Completed — close window when finished' if last and
+                last['status'] in ('completed','stopped') else 'Running at 1x')
         if camera_motion is not None and last is not None:
             actual_camera_world = UsdGeom.XformCache().GetLocalToWorldTransform(camera_prim)
             camera_motion.record(np.asarray(actual_camera_world)[3, :3],
                 render_update=render_updates, elapsed_wall_s=time.monotonic() - started,
                 measured_time_s=last['time'], timeline_time_s=timeline.get_current_time())
+        ack_wall = 0.
         if last is not None and (last['sequence'] != last_ack_sequence or camera_motion is not None):
+            ack_start = time.perf_counter()
             write_display_ack(a.trial, last, displayed_count=updates,
                               render_updates=render_updates,
                               timeline_time_s=timeline.get_current_time(),
                               camera_motion=None if camera_motion is None else camera_motion.summary())
             last_ack_sequence = last['sequence']
-        if a.ready_file and not ready_written and last is not None:
+            ack_wall = time.perf_counter()-ack_start
+        if a.ready_file and not ready_written and last is not None and startup_ready:
             a.ready_file.parent.mkdir(parents=True,exist_ok=True)
             # This is a readiness signal, not a command or physics step.
             with a.ready_file.open('x') as stream:
                 json.dump(dict(pid=os.getpid(),model_sha256=reader.metadata['model_sha256'],
-                               measured_time_s=last['time'],physics_steps=0),stream)
+                               measured_time_s=last['time'],physics_steps=0,
+                               initial_viewport_frame_verified=bool(a.interactive and startup_ready),
+                               interactive=bool(a.interactive)),stream)
             ready_written = True
         remaining = 1 / a.fps - (time.monotonic() - frame_start)
+        sleep_start = time.monotonic()
         if remaining > 0:
             time.sleep(remaining)
+        frame_profile = dict(render_update=render_updates,
+            measured_time_s=None if last is None else last['time'],
+            read_wall_s=read_wall, pose_update=pose_metrics, skin_update=skin_metrics,
+            app_update_wall_s=app_update_wall, ack_wall_s=ack_wall,
+            outer_sleep_requested_s=max(remaining,0.),
+            outer_sleep_wall_s=time.monotonic()-sleep_start if remaining>0 else 0.,
+            frame_wall_s=time.monotonic()-frame_start)
+        display_profile_total += 1
+        if len(display_profile) < display_profile_limit:
+            display_profile.append(frame_profile)
     if a.capture:
         if last is None:
             raise RuntimeError('No measured frame was available for PNG capture')
@@ -267,6 +369,12 @@ try:
                   last_status=None if last is None else last['status'],
                   display_update_mean_s=float(np.mean(update_wall)) if update_wall else None,
                   display_update_max_s=max(update_wall) if update_wall else None,
+                  display_update_timing_scope='Measured pose mapping and visual skin CPU/USD updates only; app.update/render is separate',
+                  display_timing_profile=display_profile,
+                  display_timing_profile_total_frames=display_profile_total,
+                  display_timing_profile_limit=display_profile_limit,
+                  display_timing_profile_truncated=display_profile_total>display_profile_limit,
+                  display_cache_totals=display_cache_totals,
                   timeline_time_s=timeline.get_current_time(), timeline_auto_update=False,
                   blocked_play_events=blocked_play_events,
                   last_acknowledged_sequence=last_ack_sequence,

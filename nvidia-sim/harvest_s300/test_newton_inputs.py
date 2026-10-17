@@ -8,7 +8,8 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
-from newton_inputs import (DOF_NAMES, _snapshot_xml, _verified, command_timeline,
+from newton_inputs import (DOF_NAMES, _snapshot_xml, _source_files, _verified, body_path_mapping,
+                           window_fruit_specs, command_timeline,
                            compare_physical_model, discard_noncolliding_visual_geoms,
                            excluded_body_evidence, sha256, write_display_evidence)
 
@@ -153,6 +154,70 @@ class NewtonInputTests(unittest.TestCase):
         self.assertEqual(json.loads((output / "native_metadata.json").read_text())["robot_dofs"], DOF_NAMES)
         with self.assertRaises(FileExistsError):
             write_display_evidence(output, metadata, provenance, events)
+
+    def test_persistent_windows_keep_exact_native_and_display_ownership(self):
+        import mujoco as mj
+        root = "/World/ElasticTarget"
+        windows = []
+        for index, truss in enumerate(("Truss_00", "Truss_02")):
+            prefix = "" if index == 0 else "P01_"
+            display_root = root if index == 0 else "/World/ElasticNeighbors/Plant_27"
+            fruit = dict(name=truss + "_Fruit_01", path=root + "/" + truss + "_Fruit_01",
+                joint=root + "/HarvestJoints/" + truss + "_Fruit_01",
+                anchor=root + "/" + truss + "_Pedicel_01_2")
+            manifest = dict(plant=dict(root=root,
+                bodies=[dict(name="Stem_MainStem_0", path=root + "/Stem_MainStem_0"),
+                        dict(name=truss + "_Pedicel_01_2", path=fruit["anchor"])], fruits=[fruit]))
+            path = self.directory / f"window_{index}.json"
+            path.write_text(json.dumps(manifest))
+            windows.append(dict(id=str(22 + index), prefix=prefix, source_manifest=str(path),
+                display_root=display_root, fruit_specs=[fruit]))
+        names = ["Robot"] + [window["prefix"] + name for window in windows
+            for name in ("Stem_MainStem_0", window["fruit_specs"][0]["anchor"].rsplit("/", 1)[1],
+                         window["fruit_specs"][0]["name"])]
+        model = mj.MjModel.from_xml_string("<mujoco><worldbody>" + "".join(
+            f'<body name="{name}"><geom type="sphere" size=".001"/></body>'
+            for name in names) + "</worldbody></mujoco>")
+        metadata = dict(robot=dict(body_names={"/World/Robot": "Robot"}), windows=windows,
+            rods=[name for name in names[1:] if "Fruit" not in name],
+            fruits=[name for name in names[1:] if "Fruit" in name])
+        mapping = body_path_mapping(model, metadata)
+        self.assertEqual(len(mapping), len(names))
+        self.assertEqual(mapping[root + "/Truss_00_Fruit_01"], "Truss_00_Fruit_01")
+        self.assertEqual(mapping["/World/ElasticNeighbors/Plant_27/Truss_02_Fruit_01"],
+                         "P01_Truss_02_Fruit_01")
+        specs = window_fruit_specs(metadata)
+        self.assertEqual(specs[1]["name"], "P01_Truss_02_Fruit_01")
+        self.assertEqual(specs[1]["joint"],
+            "/World/ElasticNeighbors/Plant_27/HarvestJoints/Truss_02_Fruit_01")
+        windows[1]["fruit_specs"][0] = dict(windows[1]["fruit_specs"][0],
+            joint=root + "/WRONG")
+        with self.assertRaisesRegex(ValueError, "identity mismatch"):
+            window_fruit_specs(metadata)
+
+    def test_planning_only_source_requires_explicit_absence_and_keeps_hash_checks(self):
+        assembly = self.directory / "assembly"
+        assembly.mkdir()
+        (assembly / "composed.usdc").write_bytes(b"USD source")
+        (assembly / "motion_manifest.json").write_text("{}")
+        (self.directory / "scene.xml").write_text("<mujoco/>")
+        (self.directory / "export.json").write_text("{}")
+        metadata = dict(source_assembly=str(assembly), source_trial=str(self.directory / "no_trial"),
+            model_sha256=sha256(self.directory / "scene.xml"),
+            source_usdc_sha256=sha256(assembly / "composed.usdc"),
+            source_states_kind="planning_only_no_recorded_states", source_states_sha256=None,
+            trace_sha256=None)
+        proof = _source_files(self.directory, metadata)
+        self.assertNotIn("source_states", proof)
+        changed = dict(metadata, source_states_sha256="0" * 64)
+        with self.assertRaisesRegex(ValueError, "Planning-only"):
+            _source_files(self.directory, changed)
+        changed = dict(metadata)
+        changed.pop("source_states_kind")
+        with self.assertRaises(FileNotFoundError):
+            _source_files(self.directory, changed)
+        with self.assertRaisesRegex(ValueError, "SHA mismatch"):
+            _source_files(self.directory, dict(metadata, model_sha256="0" * 64))
 
     def test_xml_snapshot_resolves_original_mesh_without_changing_physics(self):
         (self.directory / "meshes").mkdir()

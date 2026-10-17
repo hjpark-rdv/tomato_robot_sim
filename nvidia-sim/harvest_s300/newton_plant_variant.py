@@ -23,37 +23,76 @@ from newton_inputs import ADAPTER, DOF_NAMES, sha256
 from run_smoke import Attachments
 
 
+def _is_leaf(name):
+    return bool(re.match(r"^(?:.*_)?Leaf_", name))
+
+
+def _plant_scope(name):
+    """Identify source-window/truss chains without mixing matching suffixes."""
+    stem = re.fullmatch(r"(.*?)Stem_MainStem_(\d+)", name)
+    if stem:
+        return stem.group(1), "stem", int(stem.group(2))
+    truss = re.fullmatch(r"(.*?)(Truss_\d+)_(.+)", name)
+    if not truss:
+        return None
+    prefix, truss_key, suffix = truss.groups()
+    if "Pedicel_" in suffix:
+        match = re.search(r"_(\d+)_\d+$", name)
+        if not match:
+            raise ValueError("Unknown pedicel segment identity: " + name)
+        return prefix, truss_key + ":pedicel_" + match.group(1), None
+    if "Peduncle_" in suffix:
+        return prefix, truss_key + ":peduncle", int(suffix.rsplit("_", 1)[1])
+    if "Rachis_" in suffix:
+        return prefix, truss_key + ":rachis", None
+    return None
+
+
 def selected_bodies(model, mode):
-    """Select whole three-axis segments, never individual bending directions."""
+    """Select whole segments independently in every named plant/truss chain."""
     if mode not in ('leaves_fixed', 'coarse2', 'coarse4'):
         raise ValueError('Unknown coordinate variant: '+mode)
     removed = set()
     chains = {}
     for b in range(1, model.nbody):
         name = model.body(b).name
-        if name.startswith('Leaf_'):
+        if _is_leaf(name):
             if np.any(((model.geom_contype | model.geom_conaffinity) != 0)
                       & (model.geom_bodyid == b)):
                 raise ValueError('Leaf locking requires noncolliding leaves: ' + name)
             removed.add(name)
-        elif mode.startswith('coarse') and name.startswith(('Stem_MainStem_', 'Truss_00_')):
-            if not model.body_jntnum[b]:
-                continue
-            if name.startswith('Stem_'):
-                key = 'stem'
-            elif 'Pedicel_' in name:
-                key = 'pedicel_' + re.search(r'_(\d+)_\d+$', name).group(1)
-            elif 'Peduncle_' in name:
-                key = 'peduncle'
-            elif 'Rachis_' in name:
-                key = 'rachis'
-            else:
-                continue
-            chains.setdefault(key, []).append(name)
+        elif mode.startswith('coarse') and model.body_jntnum[b]:
+            scope = _plant_scope(name)
+            if scope is not None:
+                chains.setdefault(scope[:2], []).append(name)
     stride = int(mode.removeprefix('coarse')) if mode.startswith('coarse') else 1
     for chain in chains.values():
-        removed.update(name for index,name in enumerate(chain) if index % stride)
+        removed.update(name for index, name in enumerate(chain) if index % stride)
     return removed
+
+
+def sentinel_bodies(model, metadata):
+    """Use each window's final stem/peduncle and every physical fruit anchor."""
+    stems, peduncles = {}, {}
+    for b in range(1, model.nbody):
+        name = model.body(b).name
+        scope = _plant_scope(name)
+        if scope is None:
+            continue
+        prefix, chain, index = scope
+        destination = stems if chain == "stem" else peduncles if chain.endswith(":peduncle") else None
+        if destination is not None:
+            key = prefix if destination is stems else (prefix, chain)
+            if key not in destination or index > destination[key][0]:
+                destination[key] = (index, name)
+    names = [item[1] for item in stems.values()] + [item[1] for item in peduncles.values()]
+    names.extend(spec["anchor"] for spec in metadata["attachments"])
+    if not stems or not peduncles:
+        raise ValueError("Coordinate compliance fit requires declared stem and peduncle endpoints")
+    for name in names:
+        if model.body(name).id <= 0:
+            raise ValueError("Compliance sentinel does not exist: " + name)
+    return names
 
 
 def joint_mapping(old, new):
@@ -77,7 +116,7 @@ def compliance(model, data, names):
         jac.extend(jp)
     jac = np.asarray(jac)
     ids = np.flatnonzero((model.jnt_stiffness > 0) &
-        np.array([not model.body(int(b)).name.startswith('Leaf_') for b in model.jnt_bodyid]))
+        np.array([not _is_leaf(model.body(int(b)).name) for b in model.jnt_bodyid]))
     columns = jac[:, model.jnt_dofadr[ids]]
     c = (columns / model.jnt_stiffness[ids]) @ columns.T
     return c, columns, ids
@@ -147,8 +186,7 @@ def prepare(source, output, mode='leaves_fixed'):
     nd.qpos[:] = initial['qpos'][qmap]; nd.qvel[:] = initial['qvel'][vmap]
     nd.ctrl[:] = initial['ctrl']; nd.eq_active[:] = initial['eq_active']
     mj.mj_forward(old, od); mj.mj_forward(new, nd)
-    sentinels = ['Stem_MainStem_15', 'Truss_00_Truss_01_Peduncle_4',
-                 *[s['anchor'] for s in meta['attachments']]]
+    sentinels = sentinel_bodies(old, meta)
     fit = fit_compliance(old, od, new, nd, sentinels) if mode.startswith('coarse') else None
     if fit:
         for joint in root.iter('joint'):

@@ -1,10 +1,19 @@
 import unittest
 import numpy as np
 
-from motion_replay_clip import select_replay_ticks
+from motion_replay_clip import select_replay_ticks, plant_contact_caption
 
 
 class ReplayClipTests(unittest.TestCase):
+    def test_executed_neighbors_override_target_only_display_scene(self):
+        manifest={'plant_interaction_variant':{'mode':'target_truss_and_own_stem_only'}}
+        self.assertEqual(plant_contact_caption(manifest),'NON-TARGET PLANT CONTACTS OFF')
+        caption=plant_contact_caption(manifest,{'neighbor_obstacles':{'roots':['a','b']}})
+        self.assertIn('FIXED NEIGHBOR PLANTS: 2',caption)
+        self.assertNotIn('CONTACTS OFF',caption)
+        self.assertEqual(plant_contact_caption(manifest,{'neighbor_obstacles':{'roots':[]}}),
+                         'NON-TARGET PLANT CONTACTS OFF')
+
     def test_default_preserves_original_selection(self):
         stamps=np.arange(0,3.01,.1)
         original=np.minimum(np.searchsorted(stamps,np.arange(stamps[0],stamps[-1]+1e-8,2/8)),len(stamps)-1)

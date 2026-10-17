@@ -1,0 +1,104 @@
+{
+  "schema": "s300-compact-support-asset-alternative-rejected-diagnostic-v1",
+  "status": "rejected_for_default_adoption",
+  "gpu_trial_allowed": false,
+  "qualified_default_source": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/inputs_route",
+  "source_mjb_sha256": "55159876ddeb6250ffea7bccb102a2e31dbf8d41556a17140454279e5ded0cc9",
+  "source_mjb_size_bytes": 756666727,
+  "physical_steps": 0,
+  "gpu_execution": false,
+  "proposal": "Store every current compiled collision-graph support vertex without decimation/inflation, remove discarded XML visual-only dependencies, retain external USD display.",
+  "source_counts": {
+    "meshes": 1269,
+    "vertices": 3617660,
+    "triangles": 3524122,
+    "bvh_nodes": 7051182
+  },
+  "compiled_diagnostic_counts": {
+    "meshes": 1269,
+    "vertices": 439982,
+    "triangles": 874410,
+    "bvh_nodes": 1751758,
+    "nbuffer_bytes": 219999244
+  },
+  "compiled_buffer_is_not_qualified_exported_mjb_size": true,
+  "blockers": [
+    {
+      "kind": "centered_positive_control_miss",
+      "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/COMPACT_CENTERED_POSITIVE_COUNTEREXAMPLE.json",
+      "source_contacts": 1,
+      "source_penetration_m": -0.16999999361834348,
+      "compact_contacts": 0,
+      "source_distance_m": -0.16999999369265922,
+      "compact_distance_m": 2.7755575615628914e-17,
+      "body_frame_support_vertex_error": "nanometer scale; independently recorded in counterexample",
+      "interpretation": "Source mesh center/PCA is based on nonconvex CAD triangles; compact hull recomputes its internal origin. CPU GJK/EPA changes its degenerate symmetric initialization although body-frame convex support is preserved to roundoff. This is an actual collision miss, not only display error."
+    },
+    {
+      "kind": "full_asset_strict_support_vertex_certificate_incomplete",
+      "max_observed_failing_vertex_nearest_distance_m": 0.035470726224268265,
+      "declared_tolerance_m": 1e-06,
+      "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/compact_support_prepare_fixed.log",
+      "interpretation": "Bidirectional source/new GRAPH-vertex nearest-coordinate certificate failed. Whether this represents a shape discrepancy or recompilation dropping coplanar intermediate graph vertices was not established. No tolerance increase or automatic pass."
+    }
+  ],
+  "first_attempt": {
+    "output": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/compact_hull_route/inputs_route",
+    "status": "failed_protected_invariant_body_margin",
+    "difference": "75 empty leaf bodies: cached maximum margin .5mm ->0 after removal of already-discarded XML visuals",
+    "correction": "Preserve source cache only when identical named source+new bodies both have0geoms; all other body-margin differences remain errors."
+  },
+  "second_attempt": {
+    "output": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/compact_hull_route_fixed/inputs_route",
+    "status": "failed_strict_support_vertex_certificate",
+    "inputs_manifest_written": false,
+    "model_mjb_exported": false,
+    "failed_folder_preserved": true
+  },
+  "safety_contract": {
+    "source_mjb_xml_assets_modified": false,
+    "default_runner_or_policy_replaced": false,
+    "full_usd_display_changed": false,
+    "contact_margin_gap_friction_changed": false,
+    "body_mass_inertia_joint_eq_changed": false,
+    "engine_global_equivalence_claimed": false,
+    "old_mjb_resume_sha_bypassed": false
+  },
+  "source_clock_fix": {
+    "file": "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_active_window.py",
+    "behavior": "canonical_state uses supplied.time, then initial.time, then0. Existing actual campaigns supplied an explicit bank, so their measured states are unaffected.",
+    "regressions": "positive initial12.5, omitted initial0, explicit bank14 precedence"
+  },
+  "pinned_api_findings": {
+    "version": "MuJoCo3.15.0",
+    "header": "mjsMesh exposes refpos/refquat/scale/inertia but no skip-centering switch",
+    "semantics": "refpos/refquat transform input before automatic centroid/principal-axis alignment; shell changes inertia computation, not a frame-pinning mode",
+    "official_docs": "https://mujoco.readthedocs.io/en/stable/XMLreference.html#asset-mesh",
+    "unsafe_reframing_not_attempted": "A consistent postcompile rewrite would also require mesh vertices/normals/polygons/BVH/extrema, geom/body broadphase bounds and reproducible downstream active-window XML compilation; partial MJB mutation was not used."
+  },
+  "tests": {
+    "log": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/test_compact_and_continuation.log",
+    "unique_tests": 32,
+    "status": "PASS",
+    "note": "Includes an explicit regression retaining the centered positive-control counterexample. Unit-test PASS is not a collision-equivalence qualification."
+  },
+  "source_files": {
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_convex_support_compaction.py": "5c579376d1c299a940e8f601204815c1e311b54257b5dd833c727c499f9d23f9",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_newton_convex_support_compaction.py": "2a465b1bfd5ff070ae6a0cb72aea873fe0953e04d4363c986c28a261aa2f11c9",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_active_window.py": "dde939d747476e0b38d824261b47f22f86193e504a3dd3641c44cbb3628a1e88",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/test_newton_active_window.py": "ab53eefe6a2797acbdbf620fa63670c257eeb0e407a228392a8816d4d1674136"
+  },
+  "next_step": "Keep qualified721MiB collider model. No new compression/storage pipeline or GPU compaction experiment in this round.",
+  "training_eligible": false,
+  "harvest_success": null,
+  "partial_output_finalization_checks": {
+    "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/compact_hull_route/inputs_route": {
+      "inputs_manifest_exists": false,
+      "mjb_exists": false
+    },
+    "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/compact_hull_route_fixed/inputs_route": {
+      "inputs_manifest_exists": false,
+      "mjb_exists": false
+    }
+  }
+}

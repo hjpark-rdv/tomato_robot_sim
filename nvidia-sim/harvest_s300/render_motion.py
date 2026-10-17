@@ -52,8 +52,29 @@ try:
               if key in recorded}
     meta=json.loads((a.assembly/'motion_manifest.json').read_text())
     summary=json.loads((a.trial/'summary.json').read_text())
-    fruit_joints={f['joint'] for f in meta['plant']['fruits']}
+    from motion_replay_clip import plant_contact_caption
+    portable_metadata=None
+    if summary.get('physics_engine')=='Newton SolverMuJoCo':
+        # The display USD predates opt-in collision additions to the GPU MJB.
+        # Read the hash-verified physics input before labelling its coverage.
+        input_dir=Path(summary['input'])
+        if sha(input_dir/'inputs.json')!=summary['input_sha256']:
+            raise ValueError('Replay physical input manifest SHA mismatch')
+        proof=json.loads((input_dir/'inputs.json').read_text())
+        metadata_file=input_dir/'source_export.json'
+        if sha(metadata_file)!=proof['input_files']['source_export.json']['sha256']:
+            raise ValueError('Replay physical input metadata SHA mismatch')
+        portable_metadata=json.loads(metadata_file.read_text())
+    contact_caption=plant_contact_caption(meta,portable_metadata)
+    display_fruits=meta['plant']['fruits']+[f for row in meta.get('elastic_neighbors',[]) for f in row['plant']['fruits']]
+    fruit_joints={f['joint'] for f in display_fruits}
     breaks=json.loads((a.trial/'break_events.json').read_text())
+    if (a.trial/'cumulative_break_events.json').is_file():
+        if portable_metadata is None:
+            raise ValueError('Cumulative Newton breaks require verified portable metadata')
+        by_name={f['name']:f['joint'] for f in portable_metadata['fruit_specs']}
+        breaks=[dict(row,joint=by_name[row['name']],t=float(row['release_effective_time_s']))
+                for row in json.loads((a.trial/'cumulative_break_events.json').read_text())]
     if summary['model_sha256']!=sha(a.assembly/'scene.usda'):raise ValueError('Replay scene hash mismatch')
     from native_stage_selection import select_native_scene
     runtime=json.loads((a.trial/'runtime_settings.json').read_text()) if (a.trial/'runtime_settings.json').exists() else {}
@@ -85,12 +106,17 @@ try:
         if background:
             UsdGeom.Imageable(background).MakeInvisible();cutaway_hidden.append(str(background.GetPath()))
         from pxr import Usd
-        for prim in Usd.PrimRange(stage.GetPrimAtPath('/World/ElasticTarget')):
-            source_name=str(prim.GetCustomDataByKey('sourceName') or '')
-            selected_pulse_leaf=(a.camera=='leaf_pulse' and summary.get('pulse_body') and
-                                 str(prim.GetPath()).startswith(summary['pulse_body']+'/'))
-            if prim.IsA(UsdGeom.Mesh) and not selected_pulse_leaf and any(x in source_name for x in ('CompoundLeaf','Apical_Young_Leaf')):
-                UsdGeom.Imageable(prim).MakeInvisible();cutaway_hidden.append(str(prim.GetPath()))
+        target_roots=['/World/ElasticTarget']+[row['root'] for row in meta.get('elastic_neighbors',[])]
+        for root in target_roots:
+            root_prim=stage.GetPrimAtPath(root)
+            if not root_prim:
+                continue
+            for prim in Usd.PrimRange(root_prim):
+                source_name=str(prim.GetCustomDataByKey('sourceName') or '')
+                selected_pulse_leaf=(a.camera=='leaf_pulse' and summary.get('pulse_body') and
+                                     str(prim.GetPath()).startswith(summary['pulse_body']+'/'))
+                if prim.IsA(UsdGeom.Mesh) and not selected_pulse_leaf and any(x in source_name for x in ('CompoundLeaf','Apical_Young_Leaf')):
+                    UsdGeom.Imageable(prim).MakeInvisible();cutaway_hidden.append(str(prim.GetPath()))
     pose_display=MeasuredPoseDisplay(stage,paths)
     native=json.loads((a.trial/'native_metadata.json').read_text());names=native['robot_dofs']
     lids=[names.index('jaw_L'),names.index('jaw_R')]
@@ -218,11 +244,9 @@ try:
         if (summary.get('belt_control') or {}).get('fixture_only'):
             label+='\\NLOADED BELT CONTROL FIXTURE - NOT FRUIT HARVEST'
         if summary.get('fixture_only'):label+='\\NCOMPONENT FIXTURE - NOT FARM HARVEST'
-        if meta.get('plant_interaction_variant',{}).get('mode')=='target_truss_and_own_stem_only':
-            label+='\\NNON-TARGET PLANT CONTACTS OFF'
-        elif meta.get('elastic_neighbors'):
-            label+=f'\\NDYNAMIC PLANTS: {1+len(meta["elastic_neighbors"])}'
-        if summary.get('stop_reason'):label+='\\NStopped: '+summary['stop_reason']
+        if contact_caption:label+='\\N'+contact_caption
+        if summary.get('stop_reason') or summary.get('stop'):
+            label+='\\NStopped: '+str(summary.get('stop_reason') or summary['stop'])
         subtitles.append(f'{frame+1}\n{srt_time(frame/a.fps)} --> {srt_time((frame+1)/a.fps)}\n'+label.replace('\\N','\n')+'\n')
         if frame%30==0:print('[RENDER]',frame,'/',len(selection),flush=True)
     caption=a.trial/(a.name+'.srt');caption.write_text('\n'.join(subtitles))

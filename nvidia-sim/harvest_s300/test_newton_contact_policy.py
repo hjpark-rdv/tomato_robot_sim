@@ -9,26 +9,38 @@ import warp as wp
 from mujoco_warp._src.types import vec5
 
 from newton_contact_policy import (validate_config, identify_geometries, DEFAULT_PHASES,
-    evaluate_pair_policy, classify_contacts, clear_pair_depth,ContactPolicyGPU,record_contact_witness)
+    evaluate_pair_policy, classify_contacts, clear_pair_depth,ContactPolicyGPU,record_contact_witness,
+    active_harvest_fruit_names)
 
 
 def arr(value,dtype=float):
     return wp.array(np.asarray(value),dtype=dtype,device='cpu')
 
 
-def fixture():
-    model=mj.MjModel.from_xml_string('''<mujoco><worldbody>
+def fixture(multiple_trusses=False):
+    xml='''<mujoco><worldbody>
     <body name="Tool_L_belt"><geom name="beltL" type="box" size=".002 .05 .02"/></body>
     <body name="Tool_R_belt"><geom name="beltR" type="box" size=".002 .05 .02"/></body>
     <body name="Tool_L"><geom name="plate" type="box" size=".02 .05 .002"/></body>
     <body name="Truss_00_Fruit_01"><freejoint/><geom name="fruit" type="sphere" size=".012" mass=".01"/></body>
     <body name="Truss_00_Pedicel_01_0"><geom name="pedicel" type="capsule" size=".001 .01"/></body>
     <body name="Truss_01_Pedicel_01_0"><geom name="neighbor_pedicel" type="capsule" size=".001 .01"/></body>
-    </worldbody></mujoco>''')
+    </worldbody></mujoco>'''
+    if multiple_trusses:
+        xml=xml.replace('</worldbody>', '''
+        <body name="P27_Truss_00_Fruit_01"><freejoint/><geom name="future_fruit" type="sphere" size=".012" mass=".01"/></body>
+        <body name="P27_Truss_00_Pedicel_01_0"><geom name="future_pedicel" type="capsule" size=".001 .01"/></body>
+        <body name="P29_Truss_00_Fruit_01"><freejoint/><geom name="completed_fruit" type="sphere" size=".012" mass=".01"/></body>
+        <body name="P29_Truss_00_Pedicel_01_0"><geom name="completed_pedicel" type="capsule" size=".001 .01"/></body>
+        </worldbody>''')
+    model=mj.MjModel.from_xml_string(xml)
     metadata={'robot':{'belt_body_names':['Tool_L_belt','Tool_R_belt'],'geometry':[
         dict(name='beltL',owner='Tool_L_belt',collision=True,source='/World/Tool/L_belt/PrototypeTread'),
         dict(name='beltR',owner='Tool_R_belt',collision=True,source='/World/Tool/R_belt/PrototypeTread')]},
         'attachments':[dict(name='Truss_00_Fruit_01')]}
+    if multiple_trusses:
+        metadata['attachments'].extend([dict(name='P27_Truss_00_Fruit_01'),
+                                        dict(name='P29_Truss_00_Fruit_01')])
     return model,metadata
 
 
@@ -164,6 +176,36 @@ class ContactPolicyTests(unittest.TestCase):
         self.assertEqual(roles[model.geom('neighbor_pedicel').id],0)
         metadata['robot']['geometry'][0]['source']='/World/Tool/L/plate'
         with self.assertRaises(ValueError):identify_geometries(model,metadata)
+
+    def test_active_target_subset_keeps_future_and_completed_plants_at_default_policy(self):
+        model, metadata = fixture(multiple_trusses=True)
+        _, previous, _ = identify_geometries(model, metadata)
+        self.assertEqual(previous[model.geom('future_fruit').id], 1)
+        self.assertEqual(previous[model.geom('future_pedicel').id], 2)
+        metadata['active_harvest_attachment_names'] = ['Truss_00_Fruit_01']
+        _, roles, _ = identify_geometries(model, metadata)
+        self.assertEqual(roles[model.geom('fruit').id], 1)
+        self.assertEqual(roles[model.geom('pedicel').id], 2)
+        for name in ('future_fruit', 'future_pedicel', 'completed_fruit', 'completed_pedicel'):
+            self.assertEqual(roles[model.geom(name).id], 0)
+        self.assertEqual(len(metadata['attachments']), 3)
+        metadata['active_harvest_attachment_names'] = ['P27_Truss_00_Fruit_01']
+        _, roles, _ = identify_geometries(model, metadata)
+        self.assertEqual(roles[model.geom('future_fruit').id], 1)
+        self.assertEqual(roles[model.geom('future_pedicel').id], 2)
+        self.assertEqual(roles[model.geom('fruit').id], 0)
+        self.assertEqual(roles[model.geom('pedicel').id], 0)
+
+    def test_active_target_scope_rejects_empty_duplicate_or_unknown_native_identities(self):
+        _, metadata = fixture(multiple_trusses=True)
+        for names in ([], None, 'Truss_00_Fruit_01', [''], ['missing'],
+                      ['Truss_00_Fruit_01', 'Truss_00_Fruit_01']):
+            metadata['active_harvest_attachment_names'] = names
+            with self.assertRaises(ValueError):
+                active_harvest_fruit_names(metadata)
+        metadata.pop('active_harvest_attachment_names')
+        self.assertEqual(active_harvest_fruit_names(metadata),
+                         {entry['name'] for entry in metadata['attachments']})
 
     def test_config_cannot_silently_relax_all_contacts_or_approach(self):
         for config in ({'default_m':.005},{'relaxed_phases':['approach']},

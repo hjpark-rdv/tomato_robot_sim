@@ -8,6 +8,32 @@ import unittest
 
 
 class LauncherTests(unittest.TestCase):
+    def test_row_profile_reuses_existing_orchestrator_and_preserves_overrides(self):
+        wrapper = Path(__file__).resolve().parents[1] / 'run_s300_newton.sh'
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            capture, python = root / 'argv.json', root / 'python'
+            python.write_text('#!/usr/bin/env python3\nimport json,os,sys\n'
+                'open(os.environ["S300_TEST_CAPTURE"],"w").write(json.dumps(sys.argv[1:]))\n')
+            python.chmod(0o755)
+            env = dict(os.environ, S300_NEWTON_PYTHON=str(python),
+                S300_TEST_CAPTURE=str(capture), S300_NEWTON_ROUTE=str(root / 'default_route'),
+                S300_NEWTON_MODEL_CACHE=str(root / 'cache'))
+            for route in (None, root / 'route with spaces'):
+                args = [str(wrapper), 'row-realtime'] + ([] if route is None else [str(route)])
+                subprocess.run(args + ['--campaign', 'my_trial', '--validate-only'],
+                    env=env, check=True, capture_output=True, text=True)
+                argv = json.loads(capture.read_text())
+                self.assertTrue(argv[1].endswith('/run_newton_row_harvest.py'))
+                self.assertEqual(argv[argv.index('--prepared-root') + 1],
+                    str(root / 'default_route') if route is None else str(route))
+                self.assertIn('--active-window', argv)
+                self.assertIn('--released-gutter-diagnostic', argv)
+                self.assertNotIn('--diagnostic-continue', argv)
+                self.assertEqual(argv[argv.index('--solver-tolerance') + 1], '1e-8')
+                self.assertEqual(argv[argv.index('--dense-hessian-overflow-capacity') + 1], '256')
+                self.assertEqual(argv[-3:], ['--campaign', 'my_trial', '--validate-only'])
+
     def test_gpu_and_fast_keep_distinct_inputs_with_same_physics_options(self):
         wrapper = Path(__file__).resolve().parents[1] / 'run_s300_newton.sh'
         with tempfile.TemporaryDirectory() as directory:
@@ -56,6 +82,13 @@ class LauncherTests(unittest.TestCase):
             self.assertIn('cycle_open_final', policy['relaxed_phases'])
             self.assertNotIn('cycle_open_final_hold', policy['relaxed_phases'])
             self.assertNotIn('--diagnostic-continue', realtime)
+            self.assertIn('--interactive-viewer', realtime)
+            self.assertNotIn('--interactive-viewer', old)
+            subprocess.run([str(wrapper), 'gpu-realtime', '--gui', '--no-interactive-viewer'],
+                           env=env, check=True, capture_output=True, text=True)
+            automatic = json.loads(capture.read_text())
+            self.assertGreater(automatic.index('--no-interactive-viewer'),
+                               automatic.index('--interactive-viewer'))
             self.assertNotIn('--contact-policy', old)
             self.assertNotIn('--contact-policy', new)
 

@@ -2,7 +2,7 @@ import copy
 import unittest
 import numpy as np
 from row_harvest_targets import (scoped_trusses,eligible_truss_fruits,
-                                group_truss_fruits,select_scoped_group)
+                                group_truss_fruits,select_scoped_group,select_one_bed)
 from motion_assets import select_build_target
 
 
@@ -82,6 +82,66 @@ class RowTargetTests(unittest.TestCase):
         self.assertIs(select_build_target(self.fruits,'Truss_01_Fruit_01'),self.fruits[10])
         with self.assertRaisesRegex(ValueError,'exactly one'):select_build_target(self.fruits,'Truss_19_Fruit_01')
         with self.assertRaisesRegex(ValueError,'exactly one'):select_build_target(self.fruits+[self.fruits[21]])
+
+
+class SingleBedSelectionTests(unittest.TestCase):
+    def setUp(self):
+        self.stations=[dict(plant_id=p,truss_index=t,station_y_m=y,
+                           clearance=dict(passed=True)) for p,t,y in
+                       [(22,2,1.58),(27,0,2.652643),(41,0,3.293767),(29,0,3.222385)]]
+        self.inventory=dict(trusses=[dict(plant_id=p,truss_index=t,
+            gutter_center_x=gutter,root_position_world_m=[root,y,.32],
+            fruit_centroid_world_m=[center,y+.1,.8],rail_near=True) for p,t,gutter,root,center,y in
+            [(22,2,-.775,-.683,-.429,1.58),(27,0,-.775,-.677,-.580,2.652643),
+             (41,0,.775,.679,.578,3.293767),(29,0,-.775,-.673,-.530,3.222385)]])
+
+    def test_one_bed_preserves_order_evidence_and_input_without_changing_collision_scope(self):
+        stations=copy.deepcopy(self.stations);inventory=copy.deepcopy(self.inventory)
+        result=select_one_bed(self.stations,self.inventory,-.775)
+        self.assertEqual([r['plant_id'] for r in result['stations']],[22,27,29])
+        self.assertEqual(result['excluded'][0]['plant_id'],41)
+        self.assertEqual(result['excluded'][0]['selection_exclusion_reason'],'opposite_bed')
+        self.assertFalse(result['collision_scope_changed'])
+        self.assertTrue(result['preserves_input_order'])
+        self.assertEqual(self.stations,stations);self.assertEqual(self.inventory,inventory)
+        result['stations'][0]['clearance']['passed']=False
+        self.assertTrue(self.stations[0]['clearance']['passed'])
+        self.assertTrue(all(r['bed_selection']['same_bed'] for r in result['stations']))
+        self.assertTrue(all(r['bed_selection']['gutter_center_x']==-.775 for r in result['stations']))
+
+    def test_near_side_of_opposite_bed_is_still_excluded_and_right_bed_can_be_selected(self):
+        result=select_one_bed(self.stations,self.inventory,.775)
+        self.assertEqual([r['plant_id'] for r in result['stations']],[41])
+        self.assertEqual(len(result['excluded']),3)
+        self.assertTrue(all(r['selection_exclusion_reason']=='opposite_bed' for r in result['excluded']))
+
+    def test_same_bed_back_stem_and_back_fruit_centroid_are_distinct_exclusions(self):
+        self.inventory['trusses'][0].update(root_position_world_m=[-.85,1.58,.32],rail_near=False)
+        self.inventory['trusses'][1]['fruit_centroid_world_m'][0]=-.81
+        result=select_one_bed(self.stations,self.inventory,-.775)
+        self.assertEqual([r['plant_id'] for r in result['stations']],[29])
+        self.assertEqual([r['selection_exclusion_reason'] for r in result['excluded']],
+                         ['source_stem_opposite_gutter_side','fruit_centroid_behind_gutter','opposite_bed'])
+
+    def test_duplicate_missing_or_nonfinite_source_and_proposals_are_rejected(self):
+        bad=copy.deepcopy(self.inventory);bad['trusses'].append(bad['trusses'][0])
+        with self.assertRaisesRegex(ValueError,'Duplicate source truss'):
+            select_one_bed(self.stations,bad,-.775)
+        with self.assertRaisesRegex(ValueError,'Duplicate station truss'):
+            select_one_bed(self.stations+[self.stations[0]],self.inventory,-.775)
+        with self.assertRaisesRegex(ValueError,'missing exact'):
+            select_one_bed([dict(plant_id=999,truss_index=0)],self.inventory,-.775)
+        for field in ['root_position_world_m','fruit_centroid_world_m']:
+            bad=copy.deepcopy(self.inventory);bad['trusses'][0][field][0]=float('nan')
+            with self.assertRaisesRegex(ValueError,'Nonfinite'):
+                select_one_bed(self.stations,bad,-.775)
+        with self.assertRaisesRegex(ValueError,'Finite'):
+            select_one_bed(self.stations,self.inventory,float('inf'))
+        with self.assertRaisesRegex(ValueError,'cannot coincide'):
+            select_one_bed(self.stations,self.inventory,0.)
+        bad=copy.deepcopy(self.inventory);bad['trusses'][0]['rail_near']=False
+        with self.assertRaisesRegex(ValueError,'disagree'):
+            select_one_bed(self.stations,bad,-.775)
 
 
 if __name__=='__main__':unittest.main()

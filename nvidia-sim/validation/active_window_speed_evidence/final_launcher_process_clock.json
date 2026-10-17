@@ -1,0 +1,13 @@
+{
+  "pid": 293197,
+  "commandline": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python -u /root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_row_harvest.py --prepared-root /root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route --campaign active_window_20261018_044538 --active-window --hz 220 --free-hz 60 --nconmax 256 --njmax 512 --dense-hessian-capacity 128 --dense-hessian-overflow-capacity 256 --solver-tolerance 1e-8 --released-gutter-diagnostic --local-model-cache /tmp/s300_newton_model_cache --campaign final_launcher_validation ",
+  "start_ticks": 1047380282,
+  "clock_ticks_per_s": 100,
+  "process_start_boot_seconds": 10473802.82,
+  "observed_boot_seconds": 10474058.72742953,
+  "observed_elapsed_s": 255.90742952935398,
+  "clock": "Linux CLOCK_BOOTTIME and /proc starttime",
+  "scope": "Runner process, excludes shell startup before exec; final observation to be added. Exit detected after process ended: elapsed is an upper bound including observation lag, not exact end time.",
+  "first_observed_exit_boot_seconds": 10474419.654623767,
+  "observed_exit_elapsed_upper_s": 616.834623767063
+}

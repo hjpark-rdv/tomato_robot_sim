@@ -13,6 +13,7 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh gpu [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu-fast [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu-realtime [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
+    '       run_s300_newton.sh row-realtime [PREPARED_ROUTE] [row runner options]' \
     '       run_s300_newton.sh check' \
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
@@ -21,6 +22,8 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     'gpu-fast inputs can be overridden with S300_NEWTON_FAST_INPUTS; gpu keeps the original model default.' \
     'gpu-realtime opts into the reviewed 133-DOF fruit-proxy model at 220/60 Hz and the exact belt-only 2mm grip/open-stroke guard; other monitored pairs remain 1mm, with the existing released-fruit exceptions preserved.' \
     'gpu-realtime is a changed physical approximation, not an identical-model acceleration or real-plant calibration.' \
+    'gpu-realtime --gui waits for START after rendering, runs at1x and keeps the final scene open. Add --no-interactive-viewer for an automatic maximum-throughput GUI benchmark.' \
+    'row-realtime reuses the one-bed route runner: current plant elastic, other plants fixed with colliders, released fruit dynamic; 220/60 Hz and unchanged contact policy. Segment preparation/loading is separate from loop RTF.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
     'GPU single-world full GUI/headless equivalence passed; the original 400/60 Hz presets remain below the contact-phase realtime target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
@@ -36,6 +39,17 @@ if [[ ! -x "$python" ]]; then
 fi
 export PYTHONNOUSERSITE=1
 case "$mode" in
+  row-realtime)
+    route_dir="${S300_NEWTON_ROUTE:-$data_dir/20261018_010218_newton_same_bed_continuous/native_piece_route}"
+    if (($#)) && [[ "$1" != -* ]]; then route_dir="$1"; shift; fi
+    printf '%s\n' 'Newton GPU one-bed active-window profile: current target plant elastic, neighboring plant collisions retained, detached fruit remains dynamic. Changed dynamics, not equivalent to all plants elastic.' >&2
+    exec env -u PYTHONPATH "$python" -u "$scripts/run_newton_row_harvest.py" \
+      --prepared-root "$route_dir" --campaign "active_window_$(date +%Y%m%d_%H%M%S)" \
+      --active-window --hz 220 --free-hz 60 --nconmax 256 --njmax 512 \
+      --dense-hessian-capacity 128 --dense-hessian-overflow-capacity 256 \
+      --solver-tolerance 1e-8 --released-gutter-diagnostic \
+      --local-model-cache "${S300_NEWTON_MODEL_CACHE:-/tmp/s300_newton_model_cache}" "$@"
+    ;;
   prepare)
     model_dir="${S300_NEWTON_MODEL:-$data_dir/20261012_s300_mujoco_rebuilt/window_00}"
     output_dir="${S300_NEWTON_OUTPUT:-$data_dir/$(date +%Y%m%d_%H%M%S)_s300_newton_inputs}"
@@ -63,7 +77,10 @@ case "$mode" in
         --nconmax 128 --njmax 256 --viewer-fps 15)
       if [[ "$mode" == 'gpu-realtime' ]]; then
         runner_options+=(--hz 220 --contact-policy "$scripts/profiles/belt_strokes_2mm.json" --camera /World/HarvestCloseCamera)
-        printf '%s\n' 'Experimental Newton GPU realtime profile: 133 DOF, conservative fruit proxies, 220/60Hz, belt-only 2mm grip/open strokes. Other monitored pairs 1mm, preserving released-fruit exceptions; original material and release coefficients retained.' >&2
+        for option in "$@"; do
+          if [[ "$option" == '--gui' ]]; then runner_options+=(--interactive-viewer); break; fi
+        done
+        printf '%s\n' 'Experimental Newton GPU realtime profile: supplied prepared model (default 133 DOF), conservative fruit proxies, 220/60Hz, belt-only 2mm grip/open strokes. Other monitored pairs 1mm, preserving released-fruit exceptions; original material and release coefficients retained.' >&2
       elif [[ "$mode" == 'gpu-fast' ]]; then
         printf '%s\n' 'Newton GPU-fast changed-model 400/60Hz preset: actual CUDA physics; contact-phase realtime target is not met by this preset.' >&2
       else

@@ -65,6 +65,13 @@ def _map_unique(labels, names, description):
     return np.asarray([index[name] for name in names], dtype=np.int32)
 
 
+def _digest_array_bytes(digest, value):
+    """Hash the same C-order bytes as tobytes(), without copying contiguous arrays."""
+    # hashlib accepts the NumPy buffer directly, including empty arrays. Only
+    # strided/Fortran arrays need a C-order copy to retain the old digest format.
+    digest.update(np.ascontiguousarray(value))
+
+
 def model_array_digest(model):
     """Digest all exposed numeric arrays and numeric option fields, including visuals."""
     result = hashlib.sha256()
@@ -75,7 +82,7 @@ def model_array_digest(model):
             value = getattr(obj, name)
             if isinstance(value, np.ndarray):
                 result.update(f"{label}.{name}:{value.dtype}:{value.shape}".encode())
-                result.update(value.tobytes())
+                _digest_array_bytes(result, value)
             elif isinstance(value, (int, float, bool, np.integer, np.floating)):
                 result.update(f"{label}.{name}:{value!r}".encode())
     return result.hexdigest()

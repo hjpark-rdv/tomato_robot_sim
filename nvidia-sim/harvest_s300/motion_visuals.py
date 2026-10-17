@@ -12,6 +12,7 @@ from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics, Vt
 from scipy.spatial.transform import Rotation as R
 from motion_assets import REPO  # installs the existing rl helper directory
 from motion_kinematics import transmission_transforms
+from motion_pose_display import exact_changed_pose_rows
 
 
 def prepare_display_meshes(stage):
@@ -60,9 +61,12 @@ def prepare_display_meshes(stage):
 
 class DeformationVisuals:
     def __init__(self,stage,assembly,body_paths):
+        self.stage=stage
+        self.pose_count=len(body_paths)
         index={p:i for i,p in enumerate(body_paths)}
         meta=json.loads((assembly/'motion_manifest.json').read_text())
         self.bound=[]
+        self.dependencies=[]
         sources=[(meta['plant'], 'skin.npz')]+[(row['plant'],row['skin_file'])
                     for row in meta.get('elastic_neighbors',[])]
         for plant,skin_file in sources:
@@ -71,19 +75,38 @@ class DeformationVisuals:
                     mesh=UsdGeom.Mesh(stage.GetPrimAtPath(path))
                     ids=skins[f'{i}_ids']
                     offsets=skins[f'{i}_vertices'][:,None]-skins[f'{i}_rest'][ids]
+                    body_ids=np.array([index[x] for x in skins[f'{i}_body_paths']])
                     self.bound.append((mesh.GetPointsAttr(),mesh.GetExtentAttr(),offsets,
-                        ids,skins[f'{i}_weights'],
-                        np.array([index[x] for x in skins[f'{i}_body_paths']])))
-        self.transmission={name:UsdGeom.Xformable(stage.GetPrimAtPath(
-            '/World/ActuatedTool/fixed/Transmission/'+name)).MakeMatrixXform()
-            for name in ('crank','linkL','linkR')}
+                        ids,skins[f'{i}_weights'],body_ids))
+                    self.dependencies.append(np.unique(body_ids[ids]))
+        with Usd.EditContext(stage,stage.GetSessionLayer()):
+            self.transmission={name:UsdGeom.Xformable(stage.GetPrimAtPath(
+                '/World/ActuatedTool/fixed/Transmission/'+name)).MakeMatrixXform()
+                for name in ('crank','linkL','linkR')}
+        self.last_gap=None
+        self._last_poses=None
+
+    def invalidate(self):
+        """Invalidate visual caches only; no physics state is touched."""
+        self._last_poses=None
         self.last_gap=None
 
     def update(self,poses,gap):
         started=time.perf_counter()
-        rotations=R.from_quat(poses[:,3:7]).as_matrix()
+        poses=np.asarray(poses)
+        if poses.shape!=(self.pose_count,7) or not np.isfinite(poses).all() or not np.isfinite(gap):
+            raise ValueError('Finite measured poses and gripper gap required')
+        changed=exact_changed_pose_rows(poses,self._last_poses)
+        # Rod skinning depends only on these measured bones. The jaw gap drives
+        # the separate transmission below, never a rod vertex or its extent.
+        dirty=[bool(np.any(changed[ids])) for ids in self.dependencies]
+        rotations=R.from_quat(poses[:,3:7]).as_matrix() if any(dirty) else None
         writes=[];vertices=0
-        for points,extent,offsets,ids,weights,body_ids in self.bound:
+        skipped_vertices=0
+        for selected,(points,extent,offsets,ids,weights,body_ids) in zip(dirty,self.bound):
+            if not selected:
+                skipped_vertices+=len(offsets)
+                continue
             local_rotations=rotations[body_ids]
             transformed=np.einsum('nkij,nkj->nki',local_rotations[ids],offsets)
             vnow=((transformed+poses[body_ids,:3][ids])*weights[:,:,None]).sum(axis=1)
@@ -98,14 +121,17 @@ class DeformationVisuals:
         calculated=time.perf_counter()
         # One notice per display frame instead of one notice per changed mesh.
         # No USD reads occur inside ChangeBlock, only writes to cached attributes.
-        with Sdf.ChangeBlock():
-            for points,value,extent,bounds in writes:
-                points.Set(value)
-                extent.Set(bounds)
-            for op,tf in transforms:
-                op.Set(tf)
+        with Usd.EditContext(self.stage,self.stage.GetSessionLayer()):
+            with Sdf.ChangeBlock():
+                for points,value,extent,bounds in writes:
+                    points.Set(value)
+                    extent.Set(bounds)
+                for op,tf in transforms:
+                    op.Set(tf)
         self.last_gap=gap
+        self._last_poses=poses.copy()
         finished=time.perf_counter()
         return dict(calculation_s=calculated-started,usd_write_s=finished-calculated,
                     meshes_updated=len(writes),vertices_updated=vertices,
+                    meshes_skipped=len(self.bound)-len(writes),vertices_skipped=skipped_vertices,
                     transmission_updates=len(transforms))

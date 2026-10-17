@@ -1,0 +1,87 @@
+{
+  "schema": "s300-belt-hold-frequency-failure-comparison-v1",
+  "physics_integration_steps": 0,
+  "current_qualified_contact_hz": 220,
+  "current_qualified_free_hz": 60,
+  "belt_hold160_or180_adopted": false,
+  "unchanged_policy_scope": {
+    "belt_finish_included": true,
+    "relaxed_phases": [
+      "close",
+      "cycle_reclose",
+      "belt_finish",
+      "cycle_open",
+      "cycle_open_final"
+    ],
+    "exact_belt_against_active_fruit_or_pedicel_m": 0.002,
+    "other_pairs_m": 0.001,
+    "relaxation_does_not_include_fixed_plates_or_nonbelt_gripper_parts": true
+  },
+  "trials": [
+    {
+      "requested_belt_hold_hz": 160,
+      "audit": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/belt_hold160_failure_audit.json",
+      "adopted": false,
+      "first_policy_tick": 6342,
+      "phase": "belt_finish",
+      "pair": [
+        {
+          "id": 1353,
+          "name": "s300_g0550",
+          "body": "Tool_fixed",
+          "source_collider": "/World/ActuatedTool/fixed/part_86",
+          "source_owner": "Tool_fixed",
+          "type": 7
+        },
+        {
+          "id": 2100,
+          "name": "P27_g0126",
+          "body": "P27_Truss_00_Rachis_13",
+          "source_collider": "/World/ElasticTarget/Truss_00_Rachis_13/Collider",
+          "source_owner": "P27_Truss_00_Rachis_13",
+          "type": 3
+        }
+      ],
+      "first_policy_event_local_end_s": 54.04298782348633,
+      "final_stop_local_s": 54.06173324584961,
+      "first_event_other_penetration_m": 0.0010015553561970592,
+      "whole_run_other_max_m": 0.0010015553561970592,
+      "steps_in_hold_executed": 230,
+      "newly_detached_count": 5,
+      "qualified220_reference_completes": true
+    },
+    {
+      "requested_belt_hold_hz": 180,
+      "audit": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/belt_hold180_failure_audit.json",
+      "adopted": false,
+      "first_policy_tick": 6123,
+      "phase": "belt_finish",
+      "pair": [
+        {
+          "id": 1512,
+          "name": "s300_g0707",
+          "body": "Tool_R",
+          "source_collider": "/World/ActuatedTool/R/part_249",
+          "source_owner": "Tool_R",
+          "type": 7
+        },
+        {
+          "id": 2136,
+          "name": "P27_g0154",
+          "body": "P27_Truss_00_Pedicel_distal_03_0",
+          "source_collider": "/World/ElasticTarget/Truss_00_Pedicel_distal_03_0/Collider",
+          "source_owner": "P27_Truss_00_Pedicel_distal_03_0",
+          "type": 3
+        }
+      ],
+      "first_policy_event_local_end_s": 52.66901779174805,
+      "final_stop_local_s": 52.68012619018555,
+      "first_event_other_penetration_m": 0.001044779783114791,
+      "whole_run_other_max_m": 0.0010552448220551014,
+      "steps_in_hold_executed": 10,
+      "newly_detached_count": 5,
+      "qualified220_reference_completes": true
+    }
+  ],
+  "conclusion": "Both low-frequency hold variants diverge only after entering belt_finish and stop on non-belt hardware contact. Existing qualified220 baseline remains current. No collision geometry/material/stop threshold was changed."
+}

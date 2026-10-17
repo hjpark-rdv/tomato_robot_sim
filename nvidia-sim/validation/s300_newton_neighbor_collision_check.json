@@ -1,0 +1,1200 @@
+{
+  "schema": "s300-newton-neighbor-collision-speed-v1",
+  "raw_output": "/root/docker_share/mujoko_debugging_data/20261017_234049_newton_neighbor_collision_check",
+  "branch": "codex/s300-newton-independent-tests-20261017",
+  "baseline_commit": "c80f93ad1f6755934238397f6e950fed64553265",
+  "training_eligible": false,
+  "harvest_success": null,
+  "physical_model": "133DOF + existing fruit proxy, contact220/free60Hz",
+  "contact_policy": "existing belt strokes2mm, others1mm, existing released-fruit exceptions",
+  "rows": [
+    {
+      "name": "baseline_complete_inputs",
+      "measurements": [
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.36267452687025,
+          "realtime_factor": 3.876247891647219,
+          "setup_wall_s": 9.106069777160883,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.135467176603439,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.29721791855990887,
+              "realtime_factor": 6.729069396927591
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 3.980511385947466,
+              "realtime_factor": 7.737699258626487
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06435540318489075,
+              "realtime_factor": 7.769355411596414
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12675871886312962,
+              "realtime_factor": 7.88900368328723
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06145566143095493,
+              "realtime_factor": 8.135946930808759
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5254846047610044,
+              "realtime_factor": 7.612021291887779
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.6870017424225807,
+              "realtime_factor": 8.73360230331024
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.5929363518953323,
+              "realtime_factor": 2.508232385242898
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.3924380112439394,
+              "realtime_factor": 2.548173141613441
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.030235191807151,
+              "realtime_factor": 1.4887468632592655
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.6223751921206713,
+              "realtime_factor": 1.606747847054469
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.22263053432106972,
+              "realtime_factor": 2.2458734221915764
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.019140973687172,
+              "realtime_factor": 1.9873202517842048
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.7613895330578089,
+              "realtime_factor": 1.135467176603439
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5378829129040241,
+              "realtime_factor": 1.859140671714241
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.1970750279724598,
+              "realtime_factor": 2.537104802897059
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.5633899811655283,
+              "realtime_factor": 2.558542684927497
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.6893275734037161,
+              "realtime_factor": 8.704134625536009
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5311013106256723,
+              "realtime_factor": 7.531519730741648
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12712090089917183,
+              "realtime_factor": 7.866527006390299
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12935509532690048,
+              "realtime_factor": 7.730657980444018
+            }
+          }
+        },
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.40264651365578,
+          "realtime_factor": 3.8690085378876966,
+          "setup_wall_s": 3.535679606720805,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.1350033854330122,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.28171877190470695,
+              "realtime_factor": 7.09927842748268
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 3.991627298295498,
+              "realtime_factor": 7.716151258197927
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06460843794047832,
+              "realtime_factor": 7.73892723517993
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12716721557080746,
+              "realtime_factor": 7.863661994259787
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06162728928029537,
+              "realtime_factor": 8.113288866655852
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5274566262960434,
+              "realtime_factor": 7.583561947243291
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.6893419232219458,
+              "realtime_factor": 8.703953434249776
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.5893455352634192,
+              "realtime_factor": 2.5138992477128896
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.3979177586734295,
+              "realtime_factor": 2.513082108558765
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.0366565845906734,
+              "realtime_factor": 1.486378609194573
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.6233529187738895,
+              "realtime_factor": 1.6042276692422655
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.22291856445372105,
+              "realtime_factor": 2.2429715588079806
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.023143969476223,
+              "realtime_factor": 1.9846888076056577
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.7621092814952135,
+              "realtime_factor": 1.1350033854330122
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5384552851319313,
+              "realtime_factor": 1.8571644249995278
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.19721538946032524,
+              "realtime_factor": 2.5352991030174516
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.5640621092170477,
+              "realtime_factor": 2.557443196422907
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.6906484011560678,
+              "realtime_factor": 8.687488438338052
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5329529661685228,
+              "realtime_factor": 7.5053527307608165
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12737049721181393,
+              "realtime_factor": 7.851111692977262
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.1295143086463213,
+              "realtime_factor": 7.721154600228829
+            }
+          }
+        }
+      ],
+      "mean_loop_wall_s": 21.382660520263016,
+      "mean_rtf": 3.8726282147674578,
+      "min_phase_rtf": 1.1350033854330122,
+      "loop_time_increase_percent": 0.0
+    },
+    {
+      "name": "neighbor_1",
+      "measurements": [
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.74668057076633,
+          "realtime_factor": 3.8078005434099467,
+          "setup_wall_s": 20.28669317625463,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.138004367309824,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.30074129812419415,
+              "realtime_factor": 6.650233980083706
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 4.060577820986509,
+              "realtime_factor": 7.585127377885643
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06587307900190353,
+              "realtime_factor": 7.590354171626796
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.1298411376774311,
+              "realtime_factor": 7.701719330928347
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06312555633485317,
+              "realtime_factor": 7.9207222720972315
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5372327547520399,
+              "realtime_factor": 7.445562402177437
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7041129525750875,
+              "realtime_factor": 8.521360071642983
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.6358537655323744,
+              "realtime_factor": 2.442427697169046
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.4065055791288614,
+              "realtime_factor": 2.45999083737791
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.085960989817977,
+              "realtime_factor": 1.4684428008372372
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.63181571662426,
+              "realtime_factor": 1.582739988398704
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.227192685008049,
+              "realtime_factor": 2.200775082095121
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.0676501281559467,
+              "realtime_factor": 1.9558944955716882
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.7574624996632338,
+              "realtime_factor": 1.138004367309824
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5441689062863588,
+              "realtime_factor": 1.837664718523569
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.2016514651477337,
+              "realtime_factor": 2.479525748219536
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.6002162862569094,
+              "realtime_factor": 2.499662098400749
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7037476785480976,
+              "realtime_factor": 8.525783008447863
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5413461104035378,
+              "realtime_factor": 7.388988159568126
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.1298380196094513,
+              "realtime_factor": 7.701904288188997
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.131522785872221,
+              "realtime_factor": 7.60324527319194
+            }
+          }
+        },
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.700015975162387,
+          "realtime_factor": 3.8159889923356105,
+          "setup_wall_s": 8.761019302532077,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.1383395929606719,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.2872165534645319,
+              "realtime_factor": 6.9633869492378615
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 4.057356372475624,
+              "realtime_factor": 7.591149796192826
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06590617075562477,
+              "realtime_factor": 7.58654302423309
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12982455641031265,
+              "realtime_factor": 7.702702998957173
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06321540102362633,
+              "realtime_factor": 7.909464970618922
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5375665314495564,
+              "realtime_factor": 7.440939429792883
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7040128707885742,
+              "realtime_factor": 8.52257145992135
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.626303143799305,
+              "realtime_factor": 2.4567710888884635
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.40676786191761494,
+              "realtime_factor": 2.458404642111416
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.085043575614691,
+              "realtime_factor": 1.4687725819661934
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.6320116780698299,
+              "realtime_factor": 1.5822492442766407
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.22723158821463585,
+              "realtime_factor": 2.2003982981790173
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.067948183044791,
+              "realtime_factor": 1.955704478048025
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.756944950670004,
+              "realtime_factor": 1.1383395929606719
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5438445284962654,
+              "realtime_factor": 1.8387607994604787
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.20175961032509804,
+              "realtime_factor": 2.478196697517125
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.6012790109962225,
+              "realtime_factor": 2.498003141570833
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7041547037661076,
+              "realtime_factor": 8.520854817711994
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5423087403178215,
+              "realtime_factor": 7.375872270942543
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.12983005493879318,
+              "realtime_factor": 7.702376776097322
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.13196883723139763,
+              "realtime_factor": 7.57754649490905
+            }
+          }
+        }
+      ],
+      "mean_loop_wall_s": 21.72334827296436,
+      "mean_rtf": 3.8118947678727784,
+      "min_phase_rtf": 1.138004367309824,
+      "loop_time_increase_percent": 1.593289817132404
+    },
+    {
+      "name": "neighbor_2",
+      "measurements": [
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.884685840457678,
+          "realtime_factor": 3.783788476489951,
+          "setup_wall_s": 21.072313209995627,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.1133413991604717,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.3007722795009613,
+              "realtime_factor": 6.649548965477743
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 4.076402653008699,
+              "realtime_factor": 7.555681472552085
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06611895374953747,
+              "realtime_factor": 7.562128128857419
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.13038737885653973,
+              "realtime_factor": 7.669453966861792
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06320409290492535,
+              "realtime_factor": 7.910880087340613
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5389990732073784,
+              "realtime_factor": 7.4211630387368235
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7054919376969337,
+              "realtime_factor": 8.50470385187802
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.6295090448111296,
+              "realtime_factor": 2.451937630034848
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.40426962822675705,
+              "realtime_factor": 2.4735966547531354
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.08665781840682,
+              "realtime_factor": 1.4681924121406118
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.6326825357973576,
+              "realtime_factor": 1.5805715242949125
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.22834335453808308,
+              "realtime_factor": 2.189684919937576
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.0873201061040163,
+              "realtime_factor": 1.9434330726306135
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.796394171193242,
+              "realtime_factor": 1.1133413991604717
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5493153277784586,
+              "realtime_factor": 1.8204480185255354
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.20286724716424942,
+              "realtime_factor": 2.4646659674697515
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.6099436823278666,
+              "realtime_factor": 2.484558959364515
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7075364105403423,
+              "realtime_factor": 8.48012895254087
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5443277545273304,
+              "realtime_factor": 7.3485137708501
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.13040099665522575,
+              "realtime_factor": 7.668653044454515
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.1326562725007534,
+              "realtime_factor": 7.538279051179586
+            }
+          }
+        },
+        {
+          "status": "completed",
+          "actual_steps": 9127,
+          "simulated_s": 82.80702209472656,
+          "loop_wall_s": 21.828312331810594,
+          "realtime_factor": 3.7935604382044303,
+          "setup_wall_s": 8.953819559887052,
+          "stop": null,
+          "detached_per_world": [
+            6
+          ],
+          "solver_capacity_valid": true,
+          "finite_recorded_state": true,
+          "qacc_finite": true,
+          "slowest_phase_rtf": 1.1127884962675525,
+          "phase_performance": {
+            "settle": {
+              "steps": 120,
+              "simulated_s": 2.0,
+              "wall_s": 0.2871289476752281,
+              "realtime_factor": 6.965511545224629
+            },
+            "rail_move": {
+              "steps": 1848,
+              "simulated_s": 30.799999999999997,
+              "wall_s": 4.085995923727751,
+              "realtime_factor": 7.537941930177069
+            },
+            "ready_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.06636183522641659,
+              "realtime_factor": 7.53445106353788
+            },
+            "prepare_open": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.1307581327855587,
+              "realtime_factor": 7.647707861047422
+            },
+            "prepare_open_hold": {
+              "steps": 30,
+              "simulated_s": 0.5,
+              "wall_s": 0.0633554682135582,
+              "realtime_factor": 7.891978610506094
+            },
+            "prepare_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5411608014255762,
+              "realtime_factor": 7.39151836101733
+            },
+            "prepare_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7072661239653826,
+              "realtime_factor": 8.48336969168012
+            },
+            "approach": {
+              "steps": 879,
+              "simulated_s": 3.9954545454545496,
+              "wall_s": 1.6222535502165556,
+              "realtime_factor": 2.462903869078415
+            },
+            "belt_start_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.4053224492818117,
+              "realtime_factor": 2.467171511896007
+            },
+            "close": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 4.086095407605171,
+              "realtime_factor": 1.4683944943704956
+            },
+            "cycle_open": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.6303807273507118,
+              "realtime_factor": 1.5863429140714367
+            },
+            "cycle_open_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.2288172673434019,
+              "realtime_factor": 2.1851497739006533
+            },
+            "cycle_reclose": {
+              "steps": 1320,
+              "simulated_s": 6.0,
+              "wall_s": 3.0914491452276707,
+              "realtime_factor": 1.9408373607770049
+            },
+            "belt_finish": {
+              "steps": 440,
+              "simulated_s": 2.0,
+              "wall_s": 1.797286732122302,
+              "realtime_factor": 1.1127884962675525
+            },
+            "cycle_open_final": {
+              "steps": 220,
+              "simulated_s": 1.0,
+              "wall_s": 0.5499406512826681,
+              "realtime_factor": 1.8183780334616553
+            },
+            "cycle_open_final_hold": {
+              "steps": 110,
+              "simulated_s": 0.5,
+              "wall_s": 0.2032181229442358,
+              "realtime_factor": 2.460410482864281
+            },
+            "withdraw": {
+              "steps": 880,
+              "simulated_s": 4.0,
+              "wall_s": 1.6128630489110947,
+              "realtime_factor": 2.4800617775331593
+            },
+            "return_joint_branch": {
+              "steps": 360,
+              "simulated_s": 6.0,
+              "wall_s": 0.7087883837521076,
+              "realtime_factor": 8.465150018737393
+            },
+            "return_lift_branch": {
+              "steps": 240,
+              "simulated_s": 4.0,
+              "wall_s": 0.5452570077031851,
+              "realtime_factor": 7.3359900808050345
+            },
+            "ready_close": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.13061248138546944,
+              "realtime_factor": 7.656236137561424
+            },
+            "hold": {
+              "steps": 60,
+              "simulated_s": 1.0,
+              "wall_s": 0.13283929973840714,
+              "realtime_factor": 7.527892739341769
+            }
+          }
+        }
+      ],
+      "mean_loop_wall_s": 21.856499086134136,
+      "mean_rtf": 3.7886744573471907,
+      "min_phase_rtf": 1.1127884962675525,
+      "loop_time_increase_percent": 2.215994428860202
+    }
+  ],
+  "contact_evidence": {
+    "added_geom_count": 286,
+    "physics_steps": 9127,
+    "neighbor_contact_slots": 0,
+    "neighbor_constraint_active": 0,
+    "minimum_signed_distance_m": null,
+    "maximum_force_n": 0.0
+  },
+  "isolated_collider_controls": {
+    "scope": "Isolated static-collider contact queries with a dynamic probe; zero integrated physics steps; not harvest success",
+    "passed": true,
+    "controls": [
+      {
+        "source_path": "/World/ElasticNeighbors/Plant_09/Stem_MainStem_0/Collider",
+        "probe_position_world": [
+          -0.8663714169754009,
+          2.962098012583537,
+          0.3429490001535379
+        ],
+        "positive_signed_distance_m": -0.009411627458198889,
+        "positive_detected": true,
+        "negative_detected": false
+      },
+      {
+        "source_path": "/World/ElasticNeighbors/Plant_09/Truss_00_Rachis_0/Collider",
+        "probe_position_world": [
+          -0.7945913490960197,
+          3.496671461291389,
+          1.0885736221587232
+        ],
+        "positive_signed_distance_m": -0.004429347021068164,
+        "positive_detected": true,
+        "negative_detected": false
+      },
+      {
+        "source_path": "/World/ElasticNeighbors/Plant_09/Truss_00_Fruit_01/Collider",
+        "probe_position_world": [
+          -0.758555174164359,
+          3.5333783626855824,
+          1.0684233902029974
+        ],
+        "positive_signed_distance_m": -0.0029992867492250447,
+        "positive_detected": true,
+        "negative_detected": false
+      }
+    ]
+  },
+  "comparisons": {
+    "baseline_complete_inputs_repeat": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    },
+    "neighbor_1_repeat": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    },
+    "neighbor_1_vs_baseline": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    },
+    "neighbor_2_repeat": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    },
+    "neighbor_2_vs_baseline": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    },
+    "instrumented_vs_clean": {
+      "time": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qpos": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "eq_active": {
+        "exact": true,
+        "same_shape": true
+      },
+      "poses": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "robot_q": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      },
+      "phase": {
+        "exact": true,
+        "same_shape": true
+      },
+      "command": {
+        "exact": true,
+        "same_shape": true,
+        "maximum_abs_difference": 0.0
+      }
+    }
+  },
+  "limitations": [
+    "Two repetitions per condition on one existing path; not statistical generalization",
+    "Previously converted Plant09/28 capsules/convex colliders held fixed, no neighbor elasticity",
+    "Not restoration of all21187 historical excluded plant colliders or original PhysX triangle cooking",
+    "Headless GPU only; GUI performance not remeasured",
+    "Heavy neighbor pushing and new obstacle-avoiding plans are untested",
+    "No new MP4 produced; comparisons use complete actual recorded states"
+  ]
+}

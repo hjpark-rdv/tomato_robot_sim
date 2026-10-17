@@ -1,0 +1,48 @@
+{
+  "schema": "s300-current-convex-support-centered-cpu-counterexample-v1",
+  "source_support_error_bound_m": 5.551115123125783e-17,
+  "variants": [
+    {
+      "model": "source",
+      "geom_origin": [
+        0.12,
+        -0.04000000000000001,
+        0.578279043447232
+      ],
+      "sphere_center": [
+        0.12,
+        -0.040000000000000036,
+        1.1500000012032747
+      ],
+      "signed_distance_m": -0.16999999369265922,
+      "contacts": [
+        {
+          "geoms": [
+            1,
+            0
+          ],
+          "dist": -0.16999999361834348
+        }
+      ]
+    },
+    {
+      "model": "compact",
+      "geom_origin": [
+        0.12,
+        -0.04000000000000001,
+        0.6500000012032747
+      ],
+      "sphere_center": [
+        0.12,
+        -0.040000000000000036,
+        1.1500000012032747
+      ],
+      "signed_distance_m": 2.7755575615628914e-17,
+      "contacts": []
+    }
+  ],
+  "blind_adoption_blocker": true,
+  "all_pose_cpu_distance_equivalence": false,
+  "physics_integration_steps": 0,
+  "gpu_execution": false
+}

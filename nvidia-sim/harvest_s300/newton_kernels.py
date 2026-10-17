@@ -17,6 +17,22 @@ CAPACITY_OVERFLOW_MASK = wp.constant(int(OverflowType.ALL & ~(
     OverflowType.ITERATIONS | OverflowType.LS_ITERATIONS)))
 
 
+def released_gutter_geom_ids(metadata, geom_names, geom_bodyids):
+    """Exact opt-in world gutter inventory; never a name substring exemption."""
+    if metadata.get('released_gutter_diagnostic') is not True:
+        return np.empty(0, np.int32)
+    inventory = metadata.get('farm', {}).get('structural_inventory', [])
+    names = [row['name'] for row in inventory]
+    if len(names) != len(set(names)):
+        raise ValueError('Ambiguous structural inventory for released gutter diagnostic')
+    gutters = {row['name'] for row in inventory if row.get('classification') == 'gutter'}
+    ids = [i for i, (name, body) in enumerate(zip(geom_names, geom_bodyids))
+           if name in gutters and int(body) == 0]
+    if not ids:
+        raise ValueError('Released gutter diagnostic requires exact world gutter colliders')
+    return np.asarray(ids, np.int32)
+
+
 @wp.kernel
 def audit_runtime_health(tick: wp.array[int], simulation_time: wp.array[float],
         qacc: wp.array2d[float], nacon: wp.array[int], ncollision: wp.array[int],
@@ -62,6 +78,7 @@ def set_input(preload: wp.array[float], qfrc: wp.array2d[float],
 @wp.kernel
 def attachment_torques(xquat: wp.array2d[wp.quat], cvel: wp.array2d[wp.spatial_vector],
         eq: wp.array2d[bool], eqids: wp.array[int], bodies: wp.array[int], parents: wp.array[int],
+        damping_adr: wp.array[int],
         rot0: wp.array[wp.quat], rot1: wp.array[wp.quat], stiffness: wp.array[wp.vec3],
         damping: wp.array[float], dead: wp.array[float],
         torque: wp.array2d[wp.vec3], implicit: wp.array2d[wp.vec3],
@@ -71,7 +88,7 @@ def attachment_torques(xquat: wp.array2d[wp.quat], cvel: wp.array2d[wp.spatial_v
     attached[w, i] = active
     tau = wp.vec3(0.0)
     impl = wp.vec3(0.0)
-    if active:
+    if active and damping_adr[i] >= 0:
         q0 = mm.mul_quat(xquat[w, parents[i]], rot0[i])
         q1 = mm.mul_quat(xquat[w, bodies[i]], rot1[i])
         angle = mm.quat_to_vel(mm.mul_quat(mm.quat_inv(q0), q1))
@@ -132,7 +149,7 @@ def release_attachments(tick: wp.array[int], dt: float,
     norm = wp.sqrt(norm2)
     force_log[w, tick[0], i] = norm
     torque_log[w, tick[0], i] = torque[w, i]
-    if attached[w, i] and (norm > force_limit[i] or torque[w, i] > torque_limit[i]):
+    if damping_adr[i] >= 0 and attached[w, i] and (norm > force_limit[i] or torque[w, i] > torque_limit[i]):
         eq[w, eqids[i]] = False
         break_step[w, i] = tick[0]
         for j in range(3):
@@ -177,6 +194,34 @@ def audit_contacts(tick: wp.array[int], nacon: wp.array[int], njmax: int, cone: 
             wrench = contact_force_fn(cone, frame, friction, dimensions, addresses, adhesion,
                                       forces, njmax, nacon, w, c, False)
             wp.atomic_max(force_max, w, tick[0], wp.length(wp.spatial_top(wrench)))
+
+
+@wp.kernel
+def audit_released_gutter(tick: wp.array[int], nacon: wp.array[int], njmax: int, cone: int,
+        world: wp.array[int], geoms: wp.array[wp.vec2i], distance: wp.array[float],
+        frame: wp.array[wp.mat33], friction: wp.array[vec5], dimensions: wp.array[int],
+        addresses: wp.array2d[int], adhesion: wp.array[float], forces: wp.array2d[float],
+        geom_body: wp.array[int], body_fruit: wp.array[int], attached: wp.array2d[bool],
+        gutter_geom: wp.array[bool], penetration: wp.array2d[float],
+        force_max: wp.array2d[float], pair_steps: wp.array2d[int]):
+    c = wp.tid()
+    if c < nacon[0] and addresses[c, 0] >= 0:
+        w = world[c]
+        g = geoms[c]
+        if g[0] >= 0 and g[1] >= 0:
+            f0 = body_fruit[geom_body[g[0]]]
+            f1 = body_fruit[geom_body[g[1]]]
+            released_gutter = bool(False)
+            if f0 >= 0 and not attached[w, f0] and gutter_geom[g[1]]:
+                released_gutter = True
+            if f1 >= 0 and not attached[w, f1] and gutter_geom[g[0]]:
+                released_gutter = True
+            if released_gutter:
+                wrench = contact_force_fn(cone, frame, friction, dimensions, addresses, adhesion,
+                                          forces, njmax, nacon, w, c, False)
+                wp.atomic_max(penetration, w, tick[0], wp.max(0.0, -distance[c]))
+                wp.atomic_max(force_max, w, tick[0], wp.length(wp.spatial_top(wrench)))
+                wp.atomic_add(pair_steps, w, tick[0], 1)
 
 
 @wp.kernel
@@ -241,6 +286,33 @@ def save_all_world_trace(tick: wp.array[int], q: wp.array2d[float], v: wp.array2
         eq_log[w, t, i] = eq[w, i]
 
 
+def attachment_damping_addresses(model, metadata):
+    """Frozen window fruit remain attached obstacles, never fake releases.
+
+    Only an explicit active-window manifest may omit a fruit free joint.
+    A -1 sentinel suppresses its elastic torque/release/damping controller;
+    its CONNECT and eq_active remain intact for contact classification.
+    """
+    import mujoco as mj
+    frozen = set(metadata.get('active_window', {}).get('frozen_attachment_names', []))
+    names = {s['name'] for s in metadata['attachments']}
+    if not frozen <= names:
+        raise ValueError('Unknown frozen attachment names')
+    addresses = []
+    for spec in metadata['attachments']:
+        body = model.body(spec['name']).id
+        if spec['name'] in frozen:
+            if model.body_jntnum[body] != 0:
+                raise ValueError('Frozen attachment still has a dynamic joint: ' + spec['name'])
+            addresses.append(-1)
+        else:
+            joint = int(model.body_jntadr[body])
+            if model.body_jntnum[body] != 1 or joint < 0 or model.jnt_type[joint] != mj.mjtJoint.mjJNT_FREE:
+                raise ValueError('Dynamic fruit attachment requires its original free joint: ' + spec['name'])
+            addresses.append(int(model.jnt_dofadr[joint]) + 3)
+    return np.asarray(addresses, dtype=np.int32)
+
+
 class HarvestGPUController:
     def __init__(self, solver, inputs, initial, metadata, command, belt, steps, worlds=1):
         import mujoco as mj
@@ -274,7 +346,7 @@ class HarvestGPUController:
         self.dead = arr(np.deg2rad([s['deadband_deg'] for s in specs]))
         self.force_limit = arr([s['force_n'] for s in specs])
         self.torque_limit = arr([s['torque_nm'] for s in specs])
-        self.damping_adr = arr([m.jnt_dofadr[m.body_jntadr[b]] + 3 for b in self.bodies_np], int)
+        self.damping_adr = arr(attachment_damping_addresses(m, metadata), int)
         n = len(specs)
         self.torque = wp.zeros((worlds, n), wp.vec3, device=self.device)
         self.implicit = wp.zeros_like(self.torque)
@@ -293,6 +365,14 @@ class HarvestGPUController:
         fruit_map = np.full(m.nbody, -1, np.int32)
         fruit_map[self.bodies_np] = np.arange(n)
         self.body_fruit = arr(fruit_map, int)
+        self.gutter_geom_ids = released_gutter_geom_ids(metadata,
+            [m.geom(i).name for i in range(m.ngeom)], m.geom_bodyid)
+        gutter_mask = np.zeros(m.ngeom, bool)
+        gutter_mask[self.gutter_geom_ids] = True
+        self.gutter_geom = arr(gutter_mask, bool)
+        self.gutter_max = wp.zeros((worlds, steps), float, device=self.device)
+        self.gutter_force = wp.zeros_like(self.gutter_max)
+        self.gutter_pair_steps = wp.zeros((worlds, steps), int, device=self.device)
         allowed = np.zeros((n, m.ngeom), bool)
         tools = set(metadata['tools']) | {'Robot_world', 'Robot_S300Carrier'}
         for i, spec in enumerate(specs):
@@ -300,7 +380,7 @@ class HarvestGPUController:
             for g in range(m.ngeom):
                 name = m.body(int(m.geom_bodyid[g])).name
                 gn = m.geom(g).name or ''
-                allowed[i, g] = name in tools or name.startswith(truss + '_') or (m.geom_bodyid[g] == 0 and ('ground' in gn.lower() or gn == 'CatchFloor'))
+                allowed[i, g] = name in tools or name.startswith(truss + '_') or (m.geom_bodyid[g] == 0 and ('ground' in gn.lower() or gn == 'CatchFloor')) or gutter_mask[g]
         self.allowed_release = arr(allowed, bool)
         self.active_max = wp.zeros((worlds, steps), float, device=self.device)
         self.released_max = wp.zeros_like(self.active_max)
@@ -324,7 +404,7 @@ class HarvestGPUController:
         wp.launch(set_input, (self.worlds, self.solver.mj_model.nv), inputs=[self.preload, data.qfrc_applied,
             self.commands, self.tick, self.actuators, self.dofs, self.kp, data.qfrc_bias, data.ctrl], device=self.device)
         wp.launch(attachment_torques, self.torque.shape, inputs=[data.xquat, data.cvel, data.eq_active,
-            self.eqids, self.bodies, self.parents, self.rot0, self.rot1, self.stiffness, self.damping, self.dead,
+            self.eqids, self.bodies, self.parents, self.damping_adr, self.rot0, self.rot1, self.stiffness, self.damping, self.dead,
             self.torque, self.implicit, self.magnitude, self.attached], device=self.device)
         wp.launch(apply_torques, (self.worlds, self.solver.mj_model.nbody), inputs=[self.bodies,
             self.parents, self.torque, self.implicit, data.xfrc_applied], device=self.device)
@@ -353,6 +433,12 @@ class HarvestGPUController:
             d.contact.dim, d.contact.efc_address, d.contact.adhesion, d.efc.force,
             self.geom_body, self.body_fruit, self.allowed_release, self.attached,
             self.active_max, self.released_max, self.force_max, self.first_event], device=self.device)
+        if len(self.gutter_geom_ids):
+            wp.launch(audit_released_gutter, d.naconmax, inputs=[self.tick, d.nacon, d.njmax, int(self.solver.mj_model.opt.cone),
+                d.contact.worldid, d.contact.geom, d.contact.dist, d.contact.frame, d.contact.friction,
+                d.contact.dim, d.contact.efc_address, d.contact.adhesion, d.efc.force,
+                self.geom_body, self.body_fruit, self.attached, self.gutter_geom,
+                self.gutter_max, self.gutter_force, self.gutter_pair_steps], device=self.device)
         if self.contact_policy is not None:
             self.contact_policy.audit()
         for audit in self.extra_audits:

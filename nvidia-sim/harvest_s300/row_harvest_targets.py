@@ -4,6 +4,7 @@ The selection is a placement policy, not a reachability/success certificate.
 It retains every eligible fruit's existing path and native break joint identity.
 All target selection uses SIM-GT; visual perception is not implied.
 """
+import copy
 import re
 import numpy as np
 
@@ -45,6 +46,75 @@ def _placement_rows(farm_metadata,plant_id):
     indices=[r['truss_index'] for r in candidates]
     if len(set(indices))!=len(indices):raise ValueError('Duplicate source truss metadata')
     return {int(r['truss_index']):r for r in candidates}
+
+
+def select_one_bed(stations,inventory,bed_gutter_center_x,rail_x=0.):
+    """Restrict proposed harvest targets to one exact authored gutter.
+
+    This pure placement filter preserves the caller's order and every excluded
+    proposal. It does not edit a model, collision scope, command, or physics
+    state. Existing reachability/clearance evidence remains unchanged.
+    """
+    if (isinstance(bed_gutter_center_x,bool) or isinstance(rail_x,bool) or
+            not np.isfinite([bed_gutter_center_x,rail_x]).all()):
+        raise ValueError('Finite selected gutter and rail X are required')
+    gutter_selected=float(bed_gutter_center_x);rail=float(rail_x)
+    if gutter_selected==rail:
+        raise ValueError('Selected gutter and rail X cannot coincide')
+    if not isinstance(stations,(list,tuple)) or not isinstance(inventory,dict):
+        raise ValueError('Station proposals and exact truss inventory are required')
+
+    def identity(row):
+        values=(row.get('plant_id'),row.get('truss_index'))
+        if any(isinstance(v,bool) or not isinstance(v,(int,np.integer)) or v<0 for v in values):
+            raise ValueError('Exact nonnegative plant/truss identity required')
+        return tuple(int(v) for v in values)
+
+    placements={}
+    for row in inventory.get('trusses',[]):
+        key=identity(row)
+        if key in placements:raise ValueError('Duplicate source truss metadata')
+        placements[key]=row
+    selected=[];excluded=[];seen=set()
+    for station in stations:
+        key=identity(station)
+        if key in seen:raise ValueError('Duplicate station truss identity')
+        seen.add(key)
+        if key not in placements:raise ValueError('Station is missing exact source truss metadata')
+        placement=placements[key]
+        root=np.asarray(placement.get('root_position_world_m'),float)
+        center=np.asarray(placement.get('fruit_centroid_world_m'),float)
+        gutter=float(placement.get('gutter_center_x',float('nan')))
+        if (root.shape!=(3,) or center.shape!=(3,) or
+                not np.isfinite(root).all() or not np.isfinite(center).all() or
+                not np.isfinite(gutter) or gutter==rail):
+            raise ValueError('Nonfinite or ambiguous source plant/gutter placement')
+        side=float(np.sign(rail-gutter))
+        stem_near=bool((root[0]-gutter)*side>0)
+        center_near=bool((center[0]-gutter)*side>0)
+        if 'rail_near' in placement and bool(placement['rail_near'])!=stem_near:
+            raise ValueError('Source inventory and root/gutter side calculation disagree')
+        # Numerical identity of the same authored gutter coordinate, never a
+        # biological geometry accuracy or contact/penetration tolerance.
+        same_bed=bool(np.isclose(gutter,gutter_selected,rtol=0.,atol=1e-9))
+        reason=('opposite_bed' if not same_bed else
+                'source_stem_opposite_gutter_side' if not stem_near else
+                'fruit_centroid_behind_gutter' if not center_near else None)
+        record=copy.deepcopy(station)
+        record['bed_selection']=dict(gutter_center_x=gutter,rail_x_m=rail,
+            root_position_world_m=root.tolist(),fruit_centroid_world_m=center.tolist(),
+            stem_rail_near=stem_near,fruit_centroid_rail_near=center_near,
+            same_bed=same_bed)
+        if reason is None:selected.append(record)
+        else:
+            record['selection_exclusion_reason']=reason
+            record['reachability']='not inferred from placement policy exclusion'
+            excluded.append(record)
+    return dict(schema='s300-single-bed-target-selection-v1',stations=selected,excluded=excluded,
+                bed_gutter_center_x=gutter_selected,rail_x_m=rail,
+                preserves_input_order=True,collision_scope_changed=False,
+                selection='One authored gutter; near-side source stem and fruit centroid',
+                training_eligible=False,harvest_success=None)
 
 
 def scoped_trusses(manifest,farm_metadata,*,rail_x_m=0.):

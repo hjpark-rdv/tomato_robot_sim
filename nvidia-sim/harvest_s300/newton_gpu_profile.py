@@ -39,6 +39,11 @@ class GraphEventProfile:
         # complete solve outside its conditional loop, including CUDA libraries.
         targets += [(collision_driver, 'collision'), (constraint, 'make_constraint'),
                     (solver, 'solve'), (smooth, 'factor_solve_i')]
+        # Wrap the aliases actually called by collision_driver. These sit
+        # outside its child kernels/conditionals and leave the pipeline intact.
+        # They overlap collision and fwd_position: do not add nested intervals.
+        targets += [(collision_driver, name) for name in (
+            'sap_broadphase', 'nxn_broadphase', 'convex_narrowphase', 'primitive_narrowphase')]
         self.inner_targets = [(solver, n) for n in ('_update_constraint', '_update_gradient',
                                                    '_cholesky_factorize_solve', '_linesearch')]
         self.inner_names = [n for _, n in self.inner_targets]

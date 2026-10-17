@@ -1,0 +1,94 @@
+[
+  {
+    "plant_id": 22,
+    "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_baseline/step_00_plant22/physics/active_window_plant22_actual.mp4",
+    "role": "complete_actual_motion_full_farm",
+    "speed": 1,
+    "physics_rerun": false,
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 720,
+          "r_frame_rate": "6/1",
+          "nb_frames": "343"
+        }
+      ],
+      "format": {
+        "duration": "57.167000"
+      }
+    },
+    "viewed_nonblack_actual_frame": true,
+    "presentation_note": "Full farm; some approach views are occluded by arm/leaves."
+  },
+  {
+    "plant_id": 27,
+    "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_01_plant27/physics/active_window_plant27_actual.mp4",
+    "role": "complete_actual_motion_full_farm",
+    "speed": 1,
+    "physics_rerun": false,
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 720,
+          "r_frame_rate": "6/1",
+          "nb_frames": "434"
+        }
+      ],
+      "format": {
+        "duration": "72.334000"
+      }
+    },
+    "viewed_nonblack_actual_frame": true,
+    "presentation_note": "Full farm; some approach views are occluded by arm/leaves."
+  },
+  {
+    "plant_id": 29,
+    "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_02_plant29/physics/active_window_plant29_actual.mp4",
+    "role": "complete_actual_motion_full_farm",
+    "speed": 1,
+    "physics_rerun": false,
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 720,
+          "r_frame_rate": "6/1",
+          "nb_frames": "378"
+        }
+      ],
+      "format": {
+        "duration": "63.000000"
+      }
+    },
+    "viewed_nonblack_actual_frame": true,
+    "presentation_note": "Full farm; some approach views are occluded by arm/leaves."
+  },
+  {
+    "plant_id": 27,
+    "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_01_plant27/physics/active_window_plant27_actual_contact.mp4",
+    "role": "complete_actual_motion_contact_cutaway_display_only",
+    "speed": 1,
+    "physics_rerun": false,
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 720,
+          "r_frame_rate": "6/1",
+          "nb_frames": "434"
+        }
+      ],
+      "format": {
+        "duration": "72.334000"
+      }
+    },
+    "viewed_nonblack_actual_frame": true,
+    "presentation_note": "Foliage hidden for display only; actual physics states unchanged."
+  }
+]

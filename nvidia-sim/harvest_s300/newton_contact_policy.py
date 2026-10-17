@@ -69,6 +69,28 @@ def validate_config(config):
     return result
 
 
+def active_harvest_fruit_names(metadata):
+    """Exact attachment subset eligible for the active target's belt band.
+
+    Other persistent-window fruit retain the ordinary 1 mm policy. Every
+    attachment still participates in dynamics and the existing released-fruit
+    exceptions; this scope only assigns belt-policy roles.
+    """
+    all_names = {entry['name'] for entry in metadata['attachments']}
+    if 'active_harvest_attachment_names' not in metadata:
+        return all_names
+    requested = metadata['active_harvest_attachment_names']
+    if (not isinstance(requested, list) or not requested
+            or any(not isinstance(name, str) or not name for name in requested)):
+        raise ValueError('active_harvest_attachment_names must be a nonempty list of exact native attachment names')
+    if len(set(requested)) != len(requested):
+        raise ValueError('Duplicate active_harvest_attachment_names')
+    unknown = set(requested) - all_names
+    if unknown:
+        raise ValueError('Unknown active_harvest_attachment_names: ' + repr(sorted(unknown)))
+    return set(requested)
+
+
 def identify_geometries(model, metadata):
     """Identify exact moving belt owners, fruit bodies and thin pedicel bodies.
 
@@ -80,7 +102,7 @@ def identify_geometries(model, metadata):
     if not belts or any(not name.endswith('_belt') for name in belts):
         raise ValueError('Expected exact named moving belt bodies')
     sources = {entry['name']: entry for entry in metadata['robot']['geometry']}
-    fruit_bodies = {entry['name'] for entry in metadata['attachments']}
+    fruit_bodies = active_harvest_fruit_names(metadata)
     target_trusses={name.split('_Fruit_',1)[0] for name in fruit_bodies if '_Fruit_' in name}
     ids, rows = [], []
     roles = np.zeros(model.ngeom, np.int32)
@@ -307,6 +329,8 @@ class ContactPolicyGPU:
             exact_belt_geometries=rows, role_geom_counts={'fruit':int(np.sum(roles==1)),
             'pedicel':int(np.sum(roles==2))}, physics_changed=False, stopping_policy_changed=True,
             exact_other_pairs=explicit_rows,
+            active_harvest_attachment_names=sorted(active_harvest_fruit_names(metadata)),
+            target_scope_explicit='active_harvest_attachment_names' in metadata,
             diagnostic_instrumented=self.config['record_contacts'],
             raw_reference_1mm_preserved=True,
             residual_rule='Only exact pairs already above 1 mm during explicitly selected relaxed phases (default: closing only); opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.',

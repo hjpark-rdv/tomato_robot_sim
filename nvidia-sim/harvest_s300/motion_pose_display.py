@@ -8,6 +8,17 @@ from pxr import Gf, Sdf, Usd, UsdGeom
 from scipy.spatial.transform import Rotation
 
 
+def exact_changed_pose_rows(poses, previous):
+    """Which input rows changed in dtype/bytes, without a geometric tolerance."""
+    if previous is None or poses.shape != previous.shape or poses.dtype != previous.dtype:
+        return np.ones(len(poses), dtype=bool)
+    if not len(poses):
+        return np.zeros(0, dtype=bool)
+    current_bytes = np.ascontiguousarray(poses).view(np.uint8).reshape(len(poses), -1)
+    previous_bytes = np.ascontiguousarray(previous).view(np.uint8).reshape(len(poses), -1)
+    return np.any(current_bytes != previous_bytes, axis=1)
+
+
 def restore_recorded_display_fixture(stage, trial):
     """Restore the one known synthetic fixture's visual from recorded metadata.
 
@@ -63,6 +74,7 @@ class MeasuredPoseDisplay:
             rest_world[path] = np.asarray(cache.GetLocalToWorldTransform(prim)).T
         self.parent_references = []
         self.ops = []
+        self._last_poses = None
         # The recorded synthetic sphere is already defined in the stronger
         # session layer. Clearing its xformOpOrder from the root layer cannot
         # take effect and MakeMatrixXform then returns an invalid operation.
@@ -84,16 +96,29 @@ class MeasuredPoseDisplay:
                     raise ValueError('Measured display matrix operation unavailable: '+path)
                 self.ops.append(op)
 
+    def invalidate(self):
+        """Force the next display update, e.g. after a display-stage reset."""
+        self._last_poses = None
+
     def update(self, poses):
         started = time.perf_counter()
         poses = np.asarray(poses)
         if poses.shape != (len(self.paths), 7) or not np.isfinite(poses).all():
             raise ValueError('Invalid measured display poses')
+        changed = exact_changed_pose_rows(poses, self._last_poses)
+        dirty = np.array([changed[i] or (ancestor is not None and changed[ancestor])
+                          for i, (ancestor, _) in enumerate(self.parent_references)])
+        if not np.any(dirty):
+            return dict(bodies_updated=0, bodies_skipped=len(self.ops),
+                        input_bodies_changed=0, calculation_s=time.perf_counter()-started,
+                        usd_write_s=0.)
         worlds = np.repeat(np.eye(4)[None], len(self.paths), axis=0)
         worlds[:, :3, :3] = Rotation.from_quat(poses[:, 3:7]).as_matrix()
         worlds[:, :3, 3] = poses[:, :3]
         writes = []
         for i, op in enumerate(self.ops):
+            if not dirty[i]:
+                continue
             ancestor, relative = self.parent_references[i]
             parent = relative if ancestor is None else worlds[ancestor] @ relative
             writes.append((op, Gf.Matrix4d((np.linalg.inv(parent) @ worlds[i]).T.tolist())))
@@ -103,5 +128,9 @@ class MeasuredPoseDisplay:
                 for op, transform in writes:
                     op.Set(transform)
         finished = time.perf_counter()
-        return dict(bodies_updated=len(writes), calculation_s=calculated-started,
+        # Copy only after all writes succeed. A caller mutating its input array
+        # or a failed USD write must not silently mark stale display data valid.
+        self._last_poses = poses.copy()
+        return dict(bodies_updated=len(writes), bodies_skipped=len(self.ops)-len(writes),
+                    input_bodies_changed=int(np.count_nonzero(changed)), calculation_s=calculated-started,
                     usd_write_s=finished-calculated)

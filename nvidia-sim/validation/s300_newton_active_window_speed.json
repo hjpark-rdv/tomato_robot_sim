@@ -1,0 +1,564 @@
+{
+  "schema": "s300-active-window-speed-validation-v1",
+  "proposal_only": false,
+  "generated_utc": "2026-10-17T19:40:36.941235+00:00",
+  "review_method": "Read-only review of completed run summaries and independently audited saved-state comparison artifacts; this review adds zero physics/GPU execution.",
+  "overall_status": "BOUNDED_SEQUENCE_QUALIFIED_WITH_UNMET_REALTIME_AND_HARVEST_GOALS",
+  "qualification": {
+    "same_bed_three_station_completion": "PASS",
+    "measured_state_and_release_history_continuity": "PASS",
+    "finite_qacc_and_solver_capacity": "PASS",
+    "existing_contact_stop_policy": "PASS_WITH_EXISTING_EXACT_PAIR_EXCEPTIONS",
+    "whole_headless_loop_rtf_at_least_one": "PASS",
+    "all_named_contact_phase_average_rtf_at_least_one": "NOT_MET",
+    "startup_included_real_time": "NOT_MET",
+    "gui_headless_same_first_station_recorded_physics": "PASS_BOUNDED_CONFIGURATION",
+    "gui_headless_complete_three_station_physics": "NOT_TESTED",
+    "every_color_eligible_fruit_released": "NOT_MET",
+    "collection_or_real_harvest_success": "NOT_VALIDATED",
+    "parallel_gpu_worlds": "NOT_TESTED_THIS_ROUND",
+    "universal_gui_or_solver_equivalence": "NOT_CLAIMED",
+    "compact_collision_asset_adoption": "REJECTED"
+  },
+  "architecture": {
+    "physics_backend": "gpu",
+    "physics_engine": "Newton SolverMuJoCo",
+    "newton_version": "1.7.0",
+    "warp_version": "1.17.0",
+    "mujoco_version": "3.15.0",
+    "worlds": 1,
+    "physics_uses_gpu": true,
+    "display": "Separate Isaac full-USD measured-state viewer; viewer physics steps0.",
+    "cpu_physics_speed_not_used_as_gpu_performance": true
+  },
+  "primary": {
+    "sequence_order": [
+      22,
+      27,
+      29
+    ],
+    "opposite_bed_excluded": [
+      41
+    ],
+    "source_common_mjb_sha256": "55159876ddeb6250ffea7bccb102a2e31dbf8d41556a17140454279e5ded0cc9",
+    "fixed_counts": {
+      "body": 357,
+      "geom": 2244,
+      "equalities": 30,
+      "fixed_neighbor_plants": 6,
+      "fixed_neighbor_colliders": 1150
+    },
+    "segments": [
+      {
+        "plant_id": "22",
+        "run": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_baseline/step_00_plant22/physics",
+        "source_mjb_sha256": "bcd085f69097799e421717ca0c1642fc4402b9ab5e21b54ddba025e002ee2236",
+        "status": "completed",
+        "stop": null,
+        "dof": 133,
+        "physics_hz": 220.0,
+        "free_hz": 60.0,
+        "actual_steps": 8220,
+        "simulated_segment_s": 57.00361251831055,
+        "loop_wall_s": 24.808588618412614,
+        "setup_wall_s": 37.47179643437266,
+        "loop_rtf": 2.297737021444388,
+        "belt_group_rtf": 1.309573783454796,
+        "minimum_named_phase": "belt_finish",
+        "minimum_named_phase_average_rtf": 0.8592210751113193,
+        "new_releases": 6,
+        "color_eligible_releases": 5,
+        "color_ineligible_releases": 1,
+        "frozen_attachments": 20,
+        "inherited_free_fruits": 0,
+        "policy_passed": true,
+        "raw_all_active_one_mm_reference_passed": false,
+        "finite_qacc_capacity_valid": true
+      },
+      {
+        "plant_id": "27",
+        "run": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_01_plant27/physics",
+        "source_mjb_sha256": "0435f2d55adaa06c52ebd6647d3f0594f9f4bee4826cd0c60dce11d195bbe49d",
+        "status": "completed",
+        "stop": null,
+        "dof": 169,
+        "physics_hz": 220.0,
+        "free_hz": 60.0,
+        "actual_steps": 8486,
+        "simulated_segment_s": 72.1293830871582,
+        "loop_wall_s": 27.93755954504013,
+        "setup_wall_s": 257.49679744429886,
+        "loop_rtf": 2.5818068672345302,
+        "belt_group_rtf": 1.2122787543645368,
+        "minimum_named_phase": "belt_finish",
+        "minimum_named_phase_average_rtf": 0.8363815390339187,
+        "new_releases": 5,
+        "color_eligible_releases": 5,
+        "color_ineligible_releases": 0,
+        "frozen_attachments": 14,
+        "inherited_free_fruits": 6,
+        "policy_passed": true,
+        "raw_all_active_one_mm_reference_passed": false,
+        "finite_qacc_capacity_valid": true
+      },
+      {
+        "plant_id": "29",
+        "run": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_02_plant29/physics",
+        "source_mjb_sha256": "1654a33c5c3b735794c3ca303ee68c464cfb7f592d37ad641045f7f0689609f7",
+        "status": "completed",
+        "stop": null,
+        "dof": 199,
+        "physics_hz": 220.0,
+        "free_hz": 60.0,
+        "actual_steps": 7921,
+        "simulated_segment_s": 62.68389892578125,
+        "loop_wall_s": 26.715278891846538,
+        "setup_wall_s": 100.4742469470948,
+        "loop_rtf": 2.346368876759594,
+        "belt_group_rtf": 1.190944043043748,
+        "minimum_named_phase": "belt_finish",
+        "minimum_named_phase_average_rtf": 0.8140356662388325,
+        "new_releases": 6,
+        "color_eligible_releases": 6,
+        "color_ineligible_releases": 0,
+        "frozen_attachments": 9,
+        "inherited_free_fruits": 11,
+        "policy_passed": true,
+        "raw_all_active_one_mm_reference_passed": false,
+        "finite_qacc_capacity_valid": true
+      }
+    ],
+    "performance": {
+      "segment_simulated_s": 191.81689453125,
+      "loop_wall_s": 79.46142705529928,
+      "overall_loop_rtf": 2.4139623668948156,
+      "setup_wall_s": 395.4428408257663,
+      "setup_plus_loop_s": 474.9042678810656,
+      "setup_plus_loop_rtf": 0.4039064449496343,
+      "loop_wall_speed_ratio_old_to_new": 2.1865073306771086,
+      "setup_plus_loop_wall_ratio_new_to_old": 1.441092503050228,
+      "scope": "Actual completed3station loop and runtime setup only; excludes planning, preparation/export, interprocess waiting and rendering. setup+loop is a known subtotal, not total campaign elapsed."
+    },
+    "release_totals": {
+      "releases": 17,
+      "eligible": 16,
+      "ineligible": 1,
+      "ineligible_names": [
+        "Truss_02_Fruit_09"
+      ],
+      "future_or_past_plant_releases": 0,
+      "remaining_attached": 13,
+      "remaining_eligible": 5,
+      "remaining_ineligible": 8
+    },
+    "all_independent_saved_state_checks_pass": true,
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "changed_model_caveats": {
+    "full379_simultaneously_elastic_equivalence": false,
+    "only_current_plant_articulated": true,
+    "non_target_attached_plants": "fixed colliders at measured transition pose",
+    "already_released_fruits": "dynamic free joints retained; no reattachment/reset",
+    "source_collision_geometry_and_parameters_preserved_within_active_window": true,
+    "neighbor_collisions_disabled": false,
+    "full_usd_background_preserved": true,
+    "solver_instance_and_contact_cache_recreated_between_windows": true,
+    "persistent_single_solver_claim": false,
+    "return_visit_latent_velocity_semantics": "not validated; only one-way22->27->29 tested",
+    "old_full379_release_count": 18,
+    "new_release_count": 17,
+    "old_only_release_names": [
+      "P27_Truss_00_Fruit_02"
+    ],
+    "old_full379_loop_rtf": 1.1040266515581587,
+    "old_full379_loop_wall_s": 173.7429927624762,
+    "old_full379_setup_plus_loop_s": 329.5446106866002,
+    "old_vs_new_executed_commands_identical_by_plant": {
+      "22": true,
+      "27": false,
+      "29": false
+    },
+    "interpretation": "2.1865x loop speed ratio includes changed plant dynamics and later measured-state replanning, not an equal-model/equal-command solver-only gain. Zero future releases partly follows frozen-attachment handling, not proof all non-target contacts are harmless."
+  },
+  "state_continuation": {
+    "two_transition_clocks_difference_s": [
+      0.0,
+      0.0
+    ],
+    "canonical_banks_match_actual_parent_terminal_named_mapping": true,
+    "qpos_qvel_eq_ctrl_damping_warmstart_preload_preserved": true,
+    "eq_reactivation_count": 0,
+    "maximum_canonical_to_child_cpu_position_error_m": 2.220446049250313e-16,
+    "actual_gpu_pose_boundary_position_errors_m": [
+      4.76837158203125e-07,
+      9.5367431640625e-07
+    ],
+    "pose_roundoff_not_a_changed_contact_tolerance": true,
+    "frozen_attachment_force_and_torque_zero": true,
+    "frozen_eq_remain_attached": true
+  },
+  "contact_contract": {
+    "default_active_stop_penetration_m": 0.001,
+    "exact_current_target_belt_fruit_pedicel_selected_phase_stop_m": 0.002,
+    "exact_current_target_scope_per_segment": 10,
+    "relaxed_phases": [
+      "close",
+      "cycle_reclose",
+      "belt_finish",
+      "cycle_open",
+      "cycle_open_final"
+    ],
+    "global_two_mm_rule": false,
+    "legacy_raw_one_mm_metric_preserved": true,
+    "friction_stiffness_margin_gap_actuator_changed_for_speed": false,
+    "release_force_n": 3.0,
+    "release_torque_nm": 0.008,
+    "released_gutter_diagnostic_enabled": true,
+    "released_gutter_physical_collision_retained": true,
+    "leaves": "existing noncollision policy retained",
+    "qualification_scope": "Pass means current model and explicitly existing stop policy, not CAD truth, damage safety or actual collection."
+  },
+  "gui_comparison": {
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/gui220_v3_actual_comparison.json",
+    "runs": [
+      "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/active220_fresh_gui_comparison_v3/repeat_000",
+      "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/active220_fresh_gui_comparison_v3/repeat_001"
+    ],
+    "scope": "First Plant22,133DOF,220/60Hz only; two fresh integrations in one shared GPU session reset to identical initial buffers, not two independent cold-start processes.",
+    "metadata_all_equal": true,
+    "all_recorded_array_bytes_equal": true,
+    "all_release_json_equal": true,
+    "first_divergence": null,
+    "headless_loop_rtf": 2.312673290363234,
+    "gui_loop_rtf": 1.8970287651604585,
+    "headless_setup_wall_s": 23.77181416004896,
+    "gui_setup_wall_s": 40.06763773597777,
+    "headless_minimum_phase_average_rtf": 0.8647109125347678,
+    "gui_minimum_phase_average_rtf": 0.7069151259775008,
+    "viewer_physics_steps": 0,
+    "viewer_timeline_time_s": 0.0,
+    "full_farm_visuals_verified": true,
+    "camera_motion_verified": {
+      "enabled": true,
+      "camera_path": "/World/HarvestCloseCamera",
+      "source": "Actual USD camera world transform after completed render update",
+      "edit_layer": "isolated display USD session layer",
+      "sample_count": 444,
+      "movement_count": 444,
+      "initial_world_position_m": [
+        -0.06398089165913795,
+        1.1104701919985418,
+        1.346097416251549
+      ],
+      "last_world_position_m": [
+        0.03203741386149249,
+        1.16574219713109,
+        1.2716911285863552
+      ],
+      "maximum_displacement_m": 0.16948993964201406,
+      "physics_steps": 0,
+      "timeline_time_s": 0.0
+    },
+    "initial_measured_time_was_displayed": true,
+    "final_ack_time_matches_physics_end": true,
+    "final_ack_pose_matches_producer": true,
+    "published_measured_frames": 331,
+    "displayed_unique_measured_publications": 326,
+    "skipped_display_publications": 5,
+    "skipped_physics_steps_from_display_sampling": 0,
+    "steady_render_updates_per_s_excluding_first_ten": 14.834146236544072,
+    "not_universal_equivalence": true,
+    "individual_contact_records_and_jacobians_every_step_saved": false
+  },
+  "startup_optimization": {
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/prepare169_scope_ab_comparison.json",
+    "scope": "Separate sequential warm-filesystem CPU preparation trial, one before/after each; not campaign runtime setup or cold-start mean.",
+    "before_wall_s": 55.69877512566745,
+    "after_wall_s": 49.399355260655284,
+    "wall_reduction_fraction": 0.1130979963347386,
+    "before_rchar": 4406818132,
+    "after_rchar": 3560780853,
+    "all_generated_physical_files_byte_identical": true,
+    "all_initial_and_canonical_arrays_exact": true,
+    "old_completed_campaign_times_replaced": false,
+    "baseline_runtime_code_sha_capture_limitation": "The before process imported the old prepare implementation before the working file was edited. Its final inputs.json code_sha256 observes the later on-disk code, so that one runtime source SHA is not an authoritative snapshot of baseline imported code; physical output byte/array identity and measured process I/O/wall are independently compared."
+  },
+  "rejected_compaction": {
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/COMPACT_ASSET_DIAGNOSTIC.json",
+    "status": "rejected_for_default_adoption",
+    "default_model_replaced": false,
+    "centered_positive_control_source_contacts": 1,
+    "centered_positive_control_compact_contacts": 0,
+    "positive_control_miss_is_default_adoption_blocker": true,
+    "strict_graph_vertex_nearest_certificate": "inconclusive, not a demonstrated support/shape displacement",
+    "failed_graph_vertex_nearest_difference_m": 0.035470726224268265,
+    "gpu_trial_run": false,
+    "fully_qualified_compact_inputs_exported": false
+  },
+  "microbenchmark_boundary": {
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/factor169_compare.json",
+    "nv": 169,
+    "synthetic_hessian": true,
+    "simulation_steps": 0,
+    "cuda_completion_synchronized": true,
+    "ranking": [
+      {
+        "implementation": "cusolver32",
+        "median_gpu_ms_per_factor": 0.10697333017985027
+      },
+      {
+        "implementation": "warp64",
+        "median_gpu_ms_per_factor": 0.21638612747192382
+      },
+      {
+        "implementation": "warp32",
+        "median_gpu_ms_per_factor": 0.23125333786010743
+      },
+      {
+        "implementation": "cusolver32-batched",
+        "median_gpu_ms_per_factor": 0.28596906661987304
+      },
+      {
+        "implementation": "cusolver64",
+        "median_gpu_ms_per_factor": 0.7019493103027343
+      }
+    ],
+    "harvest_equivalence_or_realtime_claim": false
+  },
+  "tests": {
+    "focused_continuation_and_compaction_suite": {
+      "count": 32,
+      "status": "PASS",
+      "evidence": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/test_compact_and_continuation.log",
+      "note": "Includes an expected retained positive-control counterexample. PASS does not qualify compaction."
+    },
+    "complete_root_suite_count": 420,
+    "counts": {
+      "passed": 395,
+      "skipped": 25
+    },
+    "display_separate_passed": 15,
+    "latest_changed_files_rerun_passed": 66,
+    "skip_breakdown": {
+      "cuda_optin": 21,
+      "farm_snapshot": 1,
+      "combined_pxr_mujoco": 3
+    }
+  },
+  "evidence_sha256": {
+    "INDEPENDENT_THREE_STATION_AUDIT.json": "baa0e56404574c8c23eb486277a54df12534bf60f12c3dd1e566b4070132ae9b",
+    "gui220_v3_actual_comparison.json": "d851ff82bf22706492ca03bbfb2153ab81a5d2e8b6713057c7c3057ead0fecb2",
+    "prepare169_scope_ab_comparison.json": "2a3c348f87e9825faadbf784ecb8418df37a56074ef1d6b02908096bf52744c5",
+    "COMPACT_ASSET_DIAGNOSTIC.json": "71a9b334408d63bb4f1bdc9b77e5abd5db8378ef0b28162277fed44d3c09dbfd",
+    "COMPACT_CENTERED_POSITIVE_COUNTEREXAMPLE.json": "20329027f5d86ec9ae9fb6b935ab2eecd3d9c448de2f421e48c00880c6b1ad4b",
+    "factor169_compare.json": "44d4682cc1b14f2c305da2f1e8169463fd015c64865373e038443c9667c8a51e",
+    "experiment_metrics.json": "3ca34843487c7646a20fa0a2e2d71e71c134d0ea1fbcb32ba263162f3ca7cc5c",
+    "row_launcher_validation.json": "f9a778569b0af2bff5a8f55c19756a958897dae2905825e6a81072a8b1838ab3",
+    "test_compact_and_continuation.log": "c3e4b798e82b7ed22d0850a96b182eab23f338afe1f4859779bc50a50abfd350",
+    "final_tests_merged_inventory.json": "0b89b077ea23bf144215d99a4935d0c43a70f00471368b805f3e19f58a314ad9",
+    "belt_hold_frequency_failure_comparison.json": "b5d21eda9c742f51b53863f8d4fc0a3188ea676555632fbd23660b851dfec3ca",
+    "video_verification.json": "d7cff4751ad9916bae49a859348405675eccb744fc9dbd2698d414e4e1fd7823",
+    "active169_ccd32_exact_comparison.json": "2a19bd2675ce7edf8218dc32be068c9c0ee86b516152d9ea5e6b0f98ead13604",
+    "gui220_display_optimization_ab.json": "1994cc83f726d5a741c3ba8e7bb0535819e24a0d9994da2afef8bff28af6ef59",
+    "final_launcher_comparison.json": "04cdb7abe4ee9ef84e59816d032b526f9ac01b6200cea5b4b151d0d15c084529",
+    "final_launcher_process_clock.json": "86bc942b55130c46f3c24486227270baf6fd4e226d05fa919b6359f6aea302bf"
+  },
+  "analysis_physics_steps": 0,
+  "analysis_gpu_execution": false,
+  "source_branch": "codex/s300-newton-active-window-20261018",
+  "source_parent_head": "c80f93ad1f6755934238397f6e950fed64553265",
+  "hold_frequency_trials": [
+    {
+      "hz": 160,
+      "status": "stopped",
+      "stop": "contact_policy_violation",
+      "new_releases": 5,
+      "simulated_segment_s": 54.06173324584961,
+      "loop_wall_s": 21.582097863778472,
+      "adopted": false,
+      "completed_performance": false,
+      "max_penetration": {
+        "other": 0.0010015553561970592,
+        "belt_fruit": 0.001022012555040419,
+        "belt_pedicel": 0.0014880858361721039,
+        "explicit_other_pair": 0.0
+      },
+      "audit": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/belt_hold160_failure_audit.json"
+    },
+    {
+      "hz": 180,
+      "status": "stopped",
+      "stop": "contact_policy_violation",
+      "new_releases": 5,
+      "simulated_segment_s": 52.68012619018555,
+      "loop_wall_s": 20.272016938775778,
+      "adopted": false,
+      "completed_performance": false,
+      "max_penetration": {
+        "other": 0.0010552448220551014,
+        "belt_fruit": 0.001022012555040419,
+        "belt_pedicel": 0.001546245301142335,
+        "explicit_other_pair": 0.0
+      },
+      "audit": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/belt_hold180_failure_audit.json"
+    }
+  ],
+  "videos": [
+    {
+      "plant_id": 22,
+      "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_baseline/step_00_plant22/physics/active_window_plant22_actual.mp4",
+      "role": "complete_actual_motion_full_farm",
+      "speed": 1,
+      "physics_rerun": false
+    },
+    {
+      "plant_id": 27,
+      "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_01_plant27/physics/active_window_plant27_actual.mp4",
+      "role": "complete_actual_motion_full_farm",
+      "speed": 1,
+      "physics_rerun": false
+    },
+    {
+      "plant_id": 29,
+      "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_02_plant29/physics/active_window_plant29_actual.mp4",
+      "role": "complete_actual_motion_full_farm",
+      "speed": 1,
+      "physics_rerun": false
+    },
+    {
+      "plant_id": 27,
+      "path": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/active_window_followup/step_01_plant27/physics/active_window_plant27_actual_contact.mp4",
+      "role": "complete_actual_motion_contact_cutaway_display_only",
+      "speed": 1,
+      "physics_rerun": false
+    }
+  ],
+  "dashboard": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/index.html",
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/newton_active_window.py": "dde939d747476e0b38d824261b47f22f86193e504a3dd3641c44cbb3628a1e88",
+    "nvidia-sim/harvest_s300/newton_adaptive_frequency.py": "08e64d06b1ff5754aea97b23dc558dbcb63d1746ea6694780c2f3ed2f46aa0ae",
+    "nvidia-sim/harvest_s300/newton_asset_cache.py": "6430fb1c04998723c0208675dea9e90cb7e9b6688d7e9b04ee2d04e1f2ec2dc7",
+    "nvidia-sim/harvest_s300/newton_attachment_variant.py": "3be207825d7de1766e43f37f23fbb3953de14b1d5170656a0837702acdbbd86e",
+    "nvidia-sim/harvest_s300/newton_belt_hold.py": "5046d34d8df0e54485f9a1e94117995cbdb49f4d17deac3d3f9e6256eabff826",
+    "nvidia-sim/harvest_s300/newton_contact_geometry_review.py": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+    "nvidia-sim/harvest_s300/newton_contact_policy.py": "11ef1f5a00ba5c6e9f4054c57d18e555e60dd2ba94526b58782ebe5ddbb0d971",
+    "nvidia-sim/harvest_s300/newton_contact_policy_replay.py": "dadea95e6bfa2fdec46c70ff9b7afd44790dc330c16eb0d527e6b3f1b5f5ff36",
+    "nvidia-sim/harvest_s300/newton_contact_variant.py": "ccf3827e9a0613e46b130e425d8e695da0706e02b9d27f23cfe9a43c9d088ac1",
+    "nvidia-sim/harvest_s300/newton_continuation.py": "2f7563e6c7cc1bf2e7b4f3bc147137a79ffa165dece74b2b6864acd0773af2f1",
+    "nvidia-sim/harvest_s300/newton_convex_support_compaction.py": "5c579376d1c299a940e8f601204815c1e311b54257b5dd833c727c499f9d23f9",
+    "nvidia-sim/harvest_s300/newton_cpu.py": "67f2816e9a5af79585247115ec9798599f6f4878750a615dca1b9a66367c4f91",
+    "nvidia-sim/harvest_s300/newton_frozen_constraints.py": "0bc709cc3aeb41254b9158af47468997e5f9bbc46cd94ba035a3467a3cea9a63",
+    "nvidia-sim/harvest_s300/newton_fruit_ellipsoid.py": "95fb9bb19b334f891b221bc3c62f1e5c830a9bee82b31876afa4351be04a9b7a",
+    "nvidia-sim/harvest_s300/newton_fruit_proxy.py": "be8fa3eeed5b72147258fe5e087793a46f480b65546ee890e88a0661336075b1",
+    "nvidia-sim/harvest_s300/newton_gpu_compat.py": "911cb375b38d98c208b5b7bf18f74dce5fb111ae703c491b15d70a601782bb9e",
+    "nvidia-sim/harvest_s300/newton_gpu_constraint_order.py": "68a87844aaadbf944cf6b0c9d025b48c448c17a643f9c2ec9e1c350bc3b099e9",
+    "nvidia-sim/harvest_s300/newton_gpu_cusolver.py": "ccc189eb4ae2b3208e08b914584de715c615d83907a57b083ab0987db5b8cb0d",
+    "nvidia-sim/harvest_s300/newton_gpu_cusolver_batch.py": "dd68d212c044aa422459cb793a479d11f893a35de27ad52d8b87625bdfec41e0",
+    "nvidia-sim/harvest_s300/newton_gpu_dense_hessian.py": "29e44e4959191778c2e3c89d317a08851766a090991c923a99b5f8cd6589958a",
+    "nvidia-sim/harvest_s300/newton_gpu_deterministic.py": "4d33bece763d96c4a5a515371fd495e9ed2c00c174e1132c5fd4de58e92c6457",
+    "nvidia-sim/harvest_s300/newton_gpu_equilibrate.py": "256ca4b461dbb302077a4c44f16fb0275c6cab956a5f07d34568560be64a871f",
+    "nvidia-sim/harvest_s300/newton_gpu_factor_cache.py": "706dc8e6b875755d2efe4076fd65a7ca034a0488c2497eb4054e70f838bf5df5",
+    "nvidia-sim/harvest_s300/newton_gpu_fixed_reductions.py": "8750d002da45d9e5a97279f3d18a82b277ff68553f262049d79872556d9d261f",
+    "nvidia-sim/harvest_s300/newton_gpu_inertia_cusolver.py": "9c39e53db5999f6b19bfd002f9188655560e048cf13502092cc069dfdf715c34",
+    "nvidia-sim/harvest_s300/newton_gpu_options.py": "95915f0e0172de5c2f9ea5791a23618cad08f294bb76b697f889361f4a7f3774",
+    "nvidia-sim/harvest_s300/newton_gpu_profile.py": "c158cc59d565968c8d7dde2bd7b6ce7b7d73ee1c967d672cefa6b53dc28126a1",
+    "nvidia-sim/harvest_s300/newton_gpu_session.py": "a4985ee6a6efb8dbf90f4b7007804a18d1082d55468bcb49a2b5e61cf3e1137a",
+    "nvidia-sim/harvest_s300/newton_gpu_sparse_factor.py": "d34861e0fe9be393e6935eb3b835cebc0b6444d4e647db184e618812e488c5b7",
+    "nvidia-sim/harvest_s300/newton_gpu_tree_sums.py": "4cf7752f0e0bd391452d95ad36b9307631ab003dbb343759adc1a1c30b3fb6f7",
+    "nvidia-sim/harvest_s300/newton_gpu_tuning.py": "3d0811f0137208dbd6f7ae78c36bdd99f3bbe636e9985487f84a31afae7e470c",
+    "nvidia-sim/harvest_s300/newton_gpu_woodbury.py": "b848b9733eaa4bc4b6f1eb135b7da39daf9b7662d956d768c94d11d3ac6290c4",
+    "nvidia-sim/harvest_s300/newton_gripper_variant.py": "73b5018cf6d6fb3b291d9c8339936a738f52a51ee64ebcd2ecf6a4992896b9c0",
+    "nvidia-sim/harvest_s300/newton_independent_evidence.py": "351a1f3d9c3d0b1147bf397efba9fc56c4259506ad7c0838d9ac5b1a5f55fda7",
+    "nvidia-sim/harvest_s300/newton_inputs.py": "54282d849208ba1941b2aa577dae846947e68c1671ff075c583d3621f49c395f",
+    "nvidia-sim/harvest_s300/newton_kernels.py": "e31c9fa25faa4bb971bb36e1cefb84839788fcb699f9e2a977e2efe37e8ff2e5",
+    "nvidia-sim/harvest_s300/newton_live.py": "ebbf288fb54edaa401e0c91e28ce10a3c1c4953f93db84388cc5cd652521bc27",
+    "nvidia-sim/harvest_s300/newton_mjcf.py": "dbb9e0ae6e27f4ca019337cad16f3559ec358629c2ccfed20f29b7db24d3d33d",
+    "nvidia-sim/harvest_s300/newton_native_tool_pieces.py": "5d6d0c1cc5c9beee06b300564ab69f9187b451346516a596eb45966cc5759e4c",
+    "nvidia-sim/harvest_s300/newton_neighbor_obstacles.py": "4f19136b21a4ecd88d01da79840f28f7b15a61f65f94bd673d04cff8f6777a56",
+    "nvidia-sim/harvest_s300/newton_plant_response.py": "63c14b947da5dfba3758478dd47b7b9a1b65eca591604e0b9d5899fe4a473971",
+    "nvidia-sim/harvest_s300/newton_plant_variant.py": "11b4a1463dc7abb87fd849aee3d01b38f0fb7a6255f6cf0b63175525ca7cb89c",
+    "nvidia-sim/harvest_s300/newton_prepared_assets.py": "c7570803aefced70986b56d3e63023fa054a5f2cd4a62a622e773aa838d20ea1",
+    "nvidia-sim/harvest_s300/newton_probe.py": "d7b039f1908e8cbb72e1ae2d73323e98c5524621a469540421b53863ce8438fa",
+    "nvidia-sim/harvest_s300/newton_released_sleep.py": "7239c9aa979af22f89f08e4e537afb1f38e6ca82cb431b3b1f06e5197ba4941b",
+    "nvidia-sim/harvest_s300/newton_window_continuation.py": "f1bb58f01d04fe42d9957960f5b8c565aacf7133096c6439ee562a7280e0d2b2",
+    "nvidia-sim/harvest_s300/run_newton_harvest.py": "5c12be464e7f5ada13f1861c5fdf34dcd7689a4b3a8754dd297fb818972684de",
+    "nvidia-sim/harvest_s300/run_newton_row_harvest.py": "9fccb311e0598124d1ab8d940babe627e89dc6ec8cb22ed0b2df6d5df139b8fe",
+    "nvidia-sim/run_s300_newton.sh": "3d37b392f6cc6b9ad9435aece2eea85380121899b3f3cbf4ca82b500e603ff3e",
+    "nvidia-sim/harvest_s300/view_motion_live.py": "cb01de1094b9764d14f771aa81dbbe10a073a237ee179e6e1effaeac6a8509c4",
+    "nvidia-sim/harvest_s300/motion_pose_display.py": "16352db6f401b7a73f695030276cb3c5868cb443332b06afd1d7ad48eb5e926d",
+    "nvidia-sim/harvest_s300/motion_visuals.py": "56791eb06852bdf8b2b5058c948effd74e2ff5671363920f22f1949e0f621730"
+  },
+  "final_one_command_repeat": {
+    "schema": "s300-final-one-command-launcher-independent-exact-comparison-v1",
+    "generated_utc": "2026-10-17T19:55:40.231770+00:00",
+    "status": "complete",
+    "campaign": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route/final_launcher_validation",
+    "source_reference": "Original qualified220Hz3station sequence, not180Hz or belt-hold variants.",
+    "pending_indices": [],
+    "orchestration_errors": [],
+    "all_three_completed_and_qualified": true,
+    "all_three_raw_archives_exact": true,
+    "all_three_commands_exact": true,
+    "all_three_physical_model_hashes_same": true,
+    "old_video_state_reuse_qualified": true,
+    "measured_time_subtotals": {
+      "completed_segments": 3,
+      "simulated_s": 191.81689453125,
+      "loop_wall_s": 79.56379112787545,
+      "loop_rtf": 2.410856644864504,
+      "runtime_setup_wall_s": 165.19840746931732,
+      "setup_plus_loop_s": 244.76219859719276,
+      "setup_plus_loop_rtf": 0.7836867605807247,
+      "plan_and_command_preparation_s": 103.44202702865005,
+      "model_reduction_and_transition_validation_s": 218.51778304576874,
+      "physics_process_with_lock_setup_save_s": 262.93251306936145,
+      "sum_segment_orchestration_s": 584.902342684567,
+      "orchestration_rtf": 0.32794687340600254,
+      "initial_validate_prepared_and_python_start_wall_s": null,
+      "total_shell_launch_elapsed_s": null,
+      "scope": "Actual measured segment timers; the initial source validation before invocation.json and shell/Python startup are not timed here. Sum segment orchestration includes measured planning, verification, reduction, transitions and full GPU subprocess incl lock wait/setup/save; not a complete shell-launch stopwatch."
+    },
+    "analysis_physics_steps": 0,
+    "analysis_gpu_execution": false,
+    "limitations": [
+      "Single serialized cold/new-process campaign under current cache and load conditions; no repeated-run distribution or cold-filesystem mean.",
+      "Baseline lacks per-stage orchestration timing, so no inferred full-campaign speed ratio is reported.",
+      "A loop RTF gain must not hide planning/startup/model-switch waits.",
+      "Exact saved metrics do not include every contact Jacobian/individual contact point; all available raw state/force/policy arrays are compared.",
+      "Body/pose equality is limited to this model and command configuration.",
+      "Three different active-window MJBs remain measured-state continuation, not one persistent solver or379DOF dynamics equivalence."
+    ],
+    "process_elapsed_observation": {
+      "clock_source": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/final_launcher_process_clock.json",
+      "clock_source_sha256": "86bc942b55130c46f3c24486227270baf6fd4e226d05fa919b6359f6aea302bf",
+      "clock": "Linux CLOCK_BOOTTIME and /proc starttime",
+      "runner_process_exit_observed_elapsed_upper_bound_s": 616.834623767063,
+      "is_exact_runner_elapsed": false,
+      "runner_process_excludes_shell_startup_before_exec": true,
+      "sum_exact_segment_orchestration_s": 584.902342684567,
+      "observed_upper_bound_minus_exact_segment_sum_s": 31.932281082496047,
+      "residual_interpretation": "Upper-bound residual includes initial validation/process startup outside segment timers and exit-observation lag. It is not an exact startup duration.",
+      "exact_total_shell_launch_elapsed_s": null
+    },
+    "audit_script": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/audit_scripts/final_launcher_compare.py",
+      "sha256": "c75df37a7b13e15e26ee26772c286ca30972c117411d123866ac7b93024acf3b",
+      "execution": "CPU read-only archive, JSON, SHA and timing comparison; no physics or GPU execution."
+    },
+    "evidence": "active_window_speed_evidence/final_launcher_comparison.json"
+  },
+  "final_runner_process_clock": {
+    "pid": 293197,
+    "commandline": "/root/farmily_tomato/nvidia-sim/.newton-venv/bin/python -u /root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_row_harvest.py --prepared-root /root/docker_share/mujoko_debugging_data/20261018_031544_newton_active_window_speed/route --campaign active_window_20261018_044538 --active-window --hz 220 --free-hz 60 --nconmax 256 --njmax 512 --dense-hessian-capacity 128 --dense-hessian-overflow-capacity 256 --solver-tolerance 1e-8 --released-gutter-diagnostic --local-model-cache /tmp/s300_newton_model_cache --campaign final_launcher_validation ",
+    "start_ticks": 1047380282,
+    "clock_ticks_per_s": 100,
+    "process_start_boot_seconds": 10473802.82,
+    "observed_boot_seconds": 10474058.72742953,
+    "observed_elapsed_s": 255.90742952935398,
+    "clock": "Linux CLOCK_BOOTTIME and /proc starttime",
+    "scope": "Runner process, excludes shell startup before exec; final observation to be added. Exit detected after process ended: elapsed is an upper bound including observation lag, not exact end time.",
+    "first_observed_exit_boot_seconds": 10474419.654623767,
+    "observed_exit_elapsed_upper_s": 616.834623767063
+  }
+}

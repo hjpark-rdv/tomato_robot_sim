@@ -31,6 +31,41 @@ def _write_json(path, value):
     temporary.replace(path)
 
 
+class WallClockPacer:
+    """Delay completed fixed-step batches without editing physics or catching up."""
+    def __init__(self, rate=1., *, clock=time.perf_counter, sleep=time.sleep):
+        if not math.isfinite(rate) or rate <= 0:
+            raise ValueError('Presentation rate must be finite and positive')
+        self.rate, self.clock, self.sleep = rate, clock, sleep
+        self.last_wall, self.last_sim = clock(), 0.
+        self.wait_s = 0.
+
+    def wait(self, simulated_s):
+        stamp = float(simulated_s)
+        if not math.isfinite(stamp) or stamp < self.last_sim:
+            raise ValueError('Presentation clock must advance monotonically')
+        deadline = self.last_wall + (stamp-self.last_sim)/self.rate
+        before = self.clock()
+        while self.clock() < deadline:
+            self.sleep(max(0.,deadline-self.clock()))
+        waited = max(0., self.clock()-before)
+        self.wait_s += waited
+        # A slow render/contact interval must not cause a fast catch-up burst.
+        self.last_wall, self.last_sim = self.clock(), stamp
+        return waited
+
+
+def write_interactive_start(trial, display_sha, *, render_updates, pid=None,
+                            source='viewer START button'):
+    """A presentation command; it does not step or modify the physical model."""
+    path = Path(trial)/'interactive_start.json'
+    if path.exists():
+        return
+    _write_json(path, dict(pid=os.getpid() if pid is None else int(pid),
+        model_sha256=display_sha, render_updates=int(render_updates),
+        physics_steps=0, source=source))
+
+
 def process_is_descendant(pid, ancestor_pid):
     """Verify a shell launcher readiness PID using Linux process ancestry."""
     current = int(pid)
@@ -384,7 +419,8 @@ class NewtonViewerProcess:
     """
     def __init__(self, trial, *, isaac_python='/root/isaac-sim-6.1.0/python.sh',
                  display=':0', fps=15., seconds=0., camera='entry', capture=None,
-                 viewer_script=None, extra_env=None, review_light=True, camera_test_motion=False):
+                 viewer_script=None, extra_env=None, review_light=True, camera_test_motion=False,
+                 interactive=False):
         if not math.isfinite(fps) or not 0 < fps <= 60 or not math.isfinite(seconds) or seconds < 0:
             raise ValueError('Viewer FPS/seconds are invalid')
         if not isinstance(camera_test_motion, bool):
@@ -418,6 +454,8 @@ class NewtonViewerProcess:
             command.append('--review-light')
         if camera_test_motion:
             command.append('--camera-test-motion')
+        if interactive:
+            command.append('--interactive')
         environment = os.environ.copy()
         environment.update(extra_env or {})
         environment.update(DISPLAY=str(display), OMNI_KIT_ALLOW_ROOT='1')
@@ -427,7 +465,8 @@ class NewtonViewerProcess:
         self.report = dict(schema='s300-newton-viewer-process-v1', command=command,
             display=str(display), viewer_owns_physics=False, producer_owns_physics=True,
             readiness_timeout_is_bounded=True, log=str(self.log), ready=False,
-            display_review_fill_light=bool(review_light), camera_test_motion_requested=camera_test_motion)
+            display_review_fill_light=bool(review_light), camera_test_motion_requested=camera_test_motion,
+            interactive=bool(interactive))
         with self.log.open('x') as stream:
             self.process = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT,
                 env=environment, start_new_session=True)
@@ -454,6 +493,9 @@ class NewtonViewerProcess:
                     self.report['readiness_error'] = 'viewer_reported_physics_stepping'
                     self.close()
                     raise RuntimeError('Measured-state viewer unexpectedly reported physics stepping')
+                if self.report['interactive'] and not readiness.get('initial_viewport_frame_verified'):
+                    self.close()
+                    raise RuntimeError('Interactive viewer has not completed its initial viewport frame')
                 if readiness.get('model_sha256') != self.display_source_sha256:
                     self.report['readiness_error'] = 'viewer_scene_hash_mismatch'
                     self.close()
@@ -483,6 +525,25 @@ class NewtonViewerProcess:
         viewer_pid = self.report.get('viewer_python_pid')
         return (process_is_running(viewer_pid) if viewer_pid is not None
                 else self.process.poll() is None)
+
+    def wait_user_start(self):
+        """Wait indefinitely for the human after bounded graphical readiness."""
+        started = time.monotonic()
+        path = self.trial/'interactive_start.json'
+        while self.is_alive():
+            if path.is_file():
+                request = json.loads(path.read_text())
+                if (request.get('pid') != self.report.get('viewer_python_pid')
+                        or request.get('model_sha256') != self.display_source_sha256
+                        or request.get('physics_steps') != 0
+                        or request.get('render_updates', 0) < 1):
+                    raise RuntimeError('Interactive start does not match the ready viewer')
+                self.report.update(interactive_start=request,
+                    operator_wait_s=time.monotonic()-started)
+                _write_json(self.report_path, self.report)
+                return self.report['operator_wait_s']
+            time.sleep(.05)
+        raise RuntimeError('Viewer closed before START; no harvesting steps executed')
 
     def wait_displayed(self, sim_time_s, timeout=10., *, minimum_sequence=None):
         """Wait for a completed viewer render of the requested measured time.
