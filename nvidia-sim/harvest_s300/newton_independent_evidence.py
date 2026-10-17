@@ -156,7 +156,11 @@ def build(root,output):
         writer=csv.DictWriter(stream,fields,extrasaction='ignore');writer.writeheader();writer.writerows(runs)
     rows=[]
     for row in runs:
-        values=[Path(row['path']).relative_to(root),row.get('status'),row.get('RTF'),row.get('active_penetration_m'),row.get('detached'),row.get('completed_schedule'),row.get('qualified_policy_throughput')]
+        # A stopped prefix can have an attractive RTF without finishing the task.
+        # Preserve its raw metric in JSON/CSV, but never display it as full-run speed.
+        full_rtf=(row.get('RTF') if row.get('completed_schedule') and
+            row.get('experiment_preparation_valid',True) else '—')
+        values=[Path(row['path']).relative_to(root),row.get('status'),full_rtf,row.get('active_penetration_m'),row.get('detached'),row.get('completed_schedule'),row.get('qualified_policy_throughput')]
         rows.append('<tr>'+''.join('<td>'+html.escape(str(v))+'</td>' for v in values)+'</tr>')
     (output/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>Newton independent evidence</title><style>body{font:15px sans-serif;margin:24px}td,th{padding:8px;border:1px solid #ddd}table{border-collapse:collapse}td:first-child{max-width:600px;overflow-wrap:anywhere}</style><h1>Newton GPU 개별 시험</h1><p>전체 관측 완주 / 명시한 접촉 정책 통과 / 실제 물리 타당성은 각각 확인합니다. 실물 보정과 수확 성공은 미검증입니다.</p><table><tr><th>실행</th><th>상태</th><th>전체 RTF</th><th>활성 겹침 m</th><th>분리</th><th>전체 기록 확인</th><th>정책 통과</th></tr>'+''.join(rows)+'</table>')
     return result

@@ -17,12 +17,12 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
     'gpu runs actual CUDA physics: cuSOLVER32, fixed tree/contact/force order, dense Hessian, 400/60 Hz, capacities128/256.' \
-    'gpu-fast uses the separately calibrated 133-DOF plant and conservative fruit proxies (outward bound 0.1mm). This changes the physical representation.' \
+    'gpu-fast uses the separately benchmarked 133-DOF plant and conservative fruit proxies (outward bound 0.1mm). This changes the physical representation.' \
     'gpu-fast inputs can be overridden with S300_NEWTON_FAST_INPUTS; gpu keeps the original model default.' \
-    'gpu-realtime opts into the reviewed 133-DOF fruit-proxy model at 220/60 Hz and the exact belt-only 2mm grip/open-stroke guard; other pairs remain 1mm.' \
+    'gpu-realtime opts into the reviewed 133-DOF fruit-proxy model at 220/60 Hz and the exact belt-only 2mm grip/open-stroke guard; other monitored pairs remain 1mm, with the existing released-fruit exceptions preserved.' \
     'gpu-realtime is a changed physical approximation, not an identical-model acceleration or real-plant calibration.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
-    'GPU single-world full GUI/headless equivalence passed; contact-phase realtime remains below target.' \
+    'GPU single-world full GUI/headless equivalence passed; the original 400/60 Hz presets remain below the contact-phase realtime target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
     'Defaults can be overridden with S300_NEWTON_MODEL, S300_NEWTON_INPUTS, S300_NEWTON_OUTPUT.'
   exit 0
@@ -63,7 +63,9 @@ case "$mode" in
         --nconmax 128 --njmax 256 --viewer-fps 15)
       if [[ "$mode" == 'gpu-realtime' ]]; then
         runner_options+=(--hz 220 --contact-policy "$scripts/profiles/belt_strokes_2mm.json" --camera /World/HarvestCloseCamera)
-        printf '%s\n' 'Experimental Newton GPU realtime profile: 133 DOF, conservative fruit proxies, 220/60Hz, belt-only 2mm grip/open strokes. Other pairs 1mm; original material and release coefficients retained.' >&2
+        printf '%s\n' 'Experimental Newton GPU realtime profile: 133 DOF, conservative fruit proxies, 220/60Hz, belt-only 2mm grip/open strokes. Other monitored pairs 1mm, preserving released-fruit exceptions; original material and release coefficients retained.' >&2
+      elif [[ "$mode" == 'gpu-fast' ]]; then
+        printf '%s\n' 'Newton GPU-fast changed-model 400/60Hz preset: actual CUDA physics; contact-phase realtime target is not met by this preset.' >&2
       else
         printf '%s\n' 'Newton GPU original 400/60Hz preset: actual CUDA physics; contact-phase realtime target is not met by this preset.' >&2
       fi

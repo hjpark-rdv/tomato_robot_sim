@@ -1,0 +1,1244 @@
+{
+  "schema": "s300-cusolver-batched-n1-threshold-sensitive-geometry-v1",
+  "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/batch_scaling_cusolver133_n1/cusolver133_hz220_n1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "source_mjb_sha256": "b76e2f842bb8c680e00ec99eba455d6d0cebe05a16d7c820fbc4aa3f16580eba",
+  "source_states_sha256": "f374994cc3c82708f21d75c9ef84aeb4d786d0ec175ef5f466700414864bd959",
+  "actual_gpu_policy_metrics_sha256": "75775d6d3f6251f893bc8367421bfed1ade21636a5641771dd9ba4ad36d853a7",
+  "geometry_helper_sha256": "a27342997a3207aed691501c2555cea6c4b4e5d74aaf66d49b03ea129d6dfd99",
+  "geoms": [
+    "g0166",
+    "s300_g0620"
+  ],
+  "bodies": [
+    "Truss_00_Pedicel_distal_06_0",
+    "Tool_L"
+  ],
+  "capsule_radius_m": 0.0008250002959781163,
+  "capsule_diameter_m": 0.0016500005919562325,
+  "centerline_length_m": 0.0045000026699354425,
+  "tool_collision_type": "actual compiled convex mesh hull",
+  "tool_compiled_hull_vertex_count": 80,
+  "actual_gpu_first_policy_tick": 5072,
+  "actual_gpu_first_violation_depth_m": 0.0010218883398920298,
+  "reference_limit_m": 0.001,
+  "excess_over_reference_m": 2.188833989202974e-05,
+  "first_violation_scheduled_start_s": 55.63636363636363,
+  "first_violation_scheduled_end_s": 55.64090909090909,
+  "actual_stopped_final_step": 5077,
+  "actual_stopped_final_scheduled_s": 55.65909090909091,
+  "requested_steps": 9127,
+  "normal_fruit_attachment_exists": false,
+  "window_start_s": 55.486363636363635,
+  "window_end_s": 55.65909090909091,
+  "future_window_truncated_by_stop": true,
+  "full_radius_burial_samples": 0,
+  "axis_between_outside_ends_crossing_samples": 0,
+  "maximum_reconstructed_penetration_m": 0.0010205864348764328,
+  "offending_pre_state": {
+    "state_sample": 5072,
+    "solver_step": 5072,
+    "scheduled_time_s": 55.63636363636363,
+    "actual_backend_time_s": 55.63982009887695,
+    "timing": "pre-solve offending tick",
+    "native_cpu_signed_distance_m": -0.0010205864348764328,
+    "native_cpu_penetration_m": 0.0010205864348764328,
+    "capsule_endpoints_tool_local_m": [
+      [
+        0.010538717789348454,
+        -0.0048528805433679266,
+        -0.0174437742211465
+      ],
+      [
+        0.009831247821894188,
+        -0.003952777570814495,
+        -0.013091840752746805
+      ]
+    ],
+    "endpoint_max_normalized_halfspace_signed_m": [
+      0.0007039377809270973,
+      -0.00019603560920257966
+    ],
+    "centerline_inside_interval": [
+      0.7821762161497539,
+      1.0
+    ],
+    "fully_buried_radius_ball_interval": null,
+    "fully_buried_centerline_length_m": 0.0,
+    "axis_crosses_rigid_solid_between_two_outside_ends": false
+  },
+  "offending_post_state": {
+    "state_sample": 5073,
+    "solver_step": 5073,
+    "scheduled_time_s": 55.64090909090909,
+    "actual_backend_time_s": 55.64436721801758,
+    "timing": "post-solve offending tick",
+    "native_cpu_signed_distance_m": -0.0005401555271959448,
+    "native_cpu_penetration_m": 0.0005401555271959448,
+    "capsule_endpoints_tool_local_m": [
+      [
+        0.01109539704973939,
+        -0.004641161300817767,
+        -0.01745725908662629
+      ],
+      [
+        0.010378640572260095,
+        -0.003738304080884858,
+        -0.013107416213391291
+      ]
+    ],
+    "endpoint_max_normalized_halfspace_signed_m": [
+      0.0011944933702125009,
+      0.000284844768782282
+    ],
+    "centerline_inside_interval": null,
+    "fully_buried_radius_ball_interval": null,
+    "fully_buried_centerline_length_m": 0.0,
+    "axis_crosses_rigid_solid_between_two_outside_ends": false
+  },
+  "samples": [
+    {
+      "state_sample": 5039,
+      "solver_step": 5039,
+      "scheduled_time_s": 55.486363636363635,
+      "actual_backend_time_s": 55.48976516723633,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 5.227617442053333e-06,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01159071482260381,
+          -0.004550946889530292,
+          -0.017234318388981755
+        ],
+        [
+          0.010949918426448343,
+          -0.003679066680296311,
+          -0.012866340720901554
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016543107854515363,
+        0.0008302279134203561
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5040,
+      "solver_step": 5040,
+      "scheduled_time_s": 55.49090909090909,
+      "actual_backend_time_s": 55.49431228637695,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -8.948699007951149e-05,
+      "native_cpu_penetration_m": 8.948699007951149e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011478679056509905,
+          -0.004611387830885145,
+          -0.017244538400517512
+        ],
+        [
+          0.010841989942315534,
+          -0.003740392714970426,
+          -0.01287578359973667
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0015598106067322252,
+        0.0007355061515515147
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5041,
+      "solver_step": 5041,
+      "scheduled_time_s": 55.49545454545454,
+      "actual_backend_time_s": 55.49885940551758,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -2.6055083152992176e-05,
+      "native_cpu_penetration_m": 2.6055083152992176e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01154507613185808,
+          -0.004667081153865482,
+          -0.017250770965133885
+        ],
+        [
+          0.010894651429996838,
+          -0.0037921661398019036,
+          -0.012884823707687747
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016375236178535583,
+        0.0007989452128251088
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5042,
+      "solver_step": 5042,
+      "scheduled_time_s": 55.5,
+      "actual_backend_time_s": 55.5034065246582,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 0.00010726531729455635,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011687552048728695,
+          -0.004650523161934308,
+          -0.0171875911505937
+        ],
+        [
+          0.011036390046951873,
+          -0.003772978783192268,
+          -0.012822281546429774
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001772015944340807,
+        0.0009320973736736456
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5043,
+      "solver_step": 5043,
+      "scheduled_time_s": 55.50454545454546,
+      "actual_backend_time_s": 55.50795364379883,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 6.359633189147672e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011627744629430262,
+          -0.004701613852490016,
+          -0.01713878658597622
+        ],
+        [
+          0.010979965956690083,
+          -0.0038206228604057923,
+          -0.012773667837026128
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017260461736792604,
+        0.0008885966278696159
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5044,
+      "solver_step": 5044,
+      "scheduled_time_s": 55.50909090909091,
+      "actual_backend_time_s": 55.51250076293945,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -1.3896609531833647e-05,
+      "native_cpu_penetration_m": 1.3896609531833647e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011525729767338644,
+          -0.0047781903780684185,
+          -0.01710726665325983
+        ],
+        [
+          0.01088166561939436,
+          -0.003896473517184345,
+          -0.01274174483107279
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016451168814458298,
+        0.0008111036864462892
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5045,
+      "solver_step": 5045,
+      "scheduled_time_s": 55.513636363636365,
+      "actual_backend_time_s": 55.51704788208008,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 1.4965911190494723e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011528056494210653,
+          -0.004891377080657671,
+          -0.01709647799666357
+        ],
+        [
+          0.01088355706128783,
+          -0.004010378923023184,
+          -0.01273087531700605
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016742317390086702,
+        0.000839966207168634
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5046,
+      "solver_step": 5046,
+      "scheduled_time_s": 55.518181818181816,
+      "actual_backend_time_s": 55.5215950012207,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -4.737005864734981e-05,
+      "native_cpu_penetration_m": 4.737005864734981e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011444510597082428,
+          -0.004956295856526173,
+          -0.017105518791167826
+        ],
+        [
+          0.010803281416882467,
+          -0.004076343575691385,
+          -0.012739223662418496
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001608470621144267,
+        0.0007776302373307953
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5047,
+      "solver_step": 5047,
+      "scheduled_time_s": 55.52272727272727,
+      "actual_backend_time_s": 55.52614212036133,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -5.5328945044428885e-06,
+      "native_cpu_penetration_m": 5.5328945044428885e-06,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011459065027286957,
+          -0.005072117784592636,
+          -0.017108534691226772
+        ],
+        [
+          0.010817941345764701,
+          -0.004192665694506957,
+          -0.012742123295622592
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016500866105378237,
+        0.0008194674014737561
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5048,
+      "solver_step": 5048,
+      "scheduled_time_s": 55.527272727272724,
+      "actual_backend_time_s": 55.53068923950195,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 9.735641318356142e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011574677038936637,
+          -0.005099765557864406,
+          -0.01714550677799091
+        ],
+        [
+          0.010917961596619266,
+          -0.004216827928284396,
+          -0.012782117040697198
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017689500430052817,
+        0.0009223567091617615
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5049,
+      "solver_step": 5049,
+      "scheduled_time_s": 55.53181818181818,
+      "actual_backend_time_s": 55.53523635864258,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 6.440699959330779e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011572456954100118,
+          -0.004959098311373109,
+          -0.0171050742503427
+        ],
+        [
+          0.010919791455011138,
+          -0.004070416499717837,
+          -0.012742243012103213
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017334291689875877,
+        0.0008894072955714302
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5050,
+      "solver_step": 5050,
+      "scheduled_time_s": 55.53636363636364,
+      "actual_backend_time_s": 55.5397834777832,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -2.0318824517739746e-05,
+      "native_cpu_penetration_m": 2.0318824517739746e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01147713117526907,
+          -0.004972745636290588,
+          -0.017058198882288086
+        ],
+        [
+          0.010829502703788555,
+          -0.0040829612289618785,
+          -0.012694841791603457
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016440715986855495,
+        0.0008046814714604833
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5051,
+      "solver_step": 5051,
+      "scheduled_time_s": 55.54090909090909,
+      "actual_backend_time_s": 55.54433059692383,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 9.42102784979909e-06,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011483113895753908,
+          -0.005076796584997019,
+          -0.017037493163816426
+        ],
+        [
+          0.010834446406278349,
+          -0.004188058277883332,
+          -0.012674077215388851
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016745726173000696,
+        0.0008344213238279611
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5052,
+      "solver_step": 5052,
+      "scheduled_time_s": 55.54545454545455,
+      "actual_backend_time_s": 55.54887771606445,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -6.489947057229488e-05,
+      "native_cpu_penetration_m": 6.489947057229488e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01138610672018987,
+          -0.0051453510835715345,
+          -0.017037299803911308
+        ],
+        [
+          0.010740892337273418,
+          -0.004257871398061318,
+          -0.012673115775102321
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0015965988510357777,
+        0.0007601008254058267
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5053,
+      "solver_step": 5053,
+      "scheduled_time_s": 55.55,
+      "actual_backend_time_s": 55.55342483520508,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -2.082589753679481e-05,
+      "native_cpu_penetration_m": 2.082589753679481e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01140276923117847,
+          -0.005264720277872944,
+          -0.01703898250005169
+        ],
+        [
+          0.010756913846604661,
+          -0.004378043837925481,
+          -0.012674730016236686
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016411045500981328,
+        0.0008041743984414634
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5054,
+      "solver_step": 5054,
+      "scheduled_time_s": 55.554545454545455,
+      "actual_backend_time_s": 55.5579719543457,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 4.1803402390617225e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011438495131745155,
+          -0.005391125292852124,
+          -0.01705391911776865
+        ],
+        [
+          0.010790520923319984,
+          -0.0045044329370473495,
+          -0.01268998395317235
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017057960205295718,
+        0.0008668036983688551
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5055,
+      "solver_step": 5055,
+      "scheduled_time_s": 55.55909090909091,
+      "actual_backend_time_s": 55.56251907348633,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -0.0007855952721505545,
+      "native_cpu_penetration_m": 0.0007855952721505545,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.010777040450189374,
+          -0.004653662436392502,
+          -0.01737655544906218
+        ],
+        [
+          0.010118353956133301,
+          -0.0037694869636400227,
+          -0.013013713500818262
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0008882069099953437,
+        3.940502382747575e-05
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5056,
+      "solver_step": 5056,
+      "scheduled_time_s": 55.56363636363636,
+      "actual_backend_time_s": 55.56706619262695,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -0.000502496140550686,
+      "native_cpu_penetration_m": 0.000502496140550686,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011103599684184368,
+          -0.004510422004483357,
+          -0.017271125519503345
+        ],
+        [
+          0.010445116536224373,
+          -0.0036203538178815127,
+          -0.01290945123128812
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0011714810874048128,
+        0.0003225041546905307
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5057,
+      "solver_step": 5057,
+      "scheduled_time_s": 55.56818181818182,
+      "actual_backend_time_s": 55.57161331176758,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -0.0002536353132637884,
+      "native_cpu_penetration_m": 0.0002536353132637884,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011346422864395453,
+          -0.004594111617994929,
+          -0.017205528317235177
+        ],
+        [
+          0.010681626823324755,
+          -0.003705144565464471,
+          -0.01284458715359645
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0014272391177538278,
+        0.0005713649827143209
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5058,
+      "solver_step": 5058,
+      "scheduled_time_s": 55.57272727272727,
+      "actual_backend_time_s": 55.5761604309082,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -8.541260272503946e-05,
+      "native_cpu_penetration_m": 8.541260272503946e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011493855874328543,
+          -0.004721874442150408,
+          -0.01716757404157147
+        ],
+        [
+          0.01082323832573785,
+          -0.003834325175941317,
+          -0.012807235472950993
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016007808970258247,
+        0.0007395876932531995
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5059,
+      "solver_step": 5059,
+      "scheduled_time_s": 55.57727272727273,
+      "actual_backend_time_s": 55.58070755004883,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 2.0500900250450694e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011574776872452053,
+          -0.004851471218518146,
+          -0.017146766125555376
+        ],
+        [
+          0.010900474100039897,
+          -0.003964483414853929,
+          -0.012786881673337238
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017101413000322387,
+        0.0008455011962284712
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5060,
+      "solver_step": 5060,
+      "scheduled_time_s": 55.58181818181818,
+      "actual_backend_time_s": 55.58525466918945,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -5.65739817523401e-05,
+      "native_cpu_penetration_m": 5.65739817523401e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011469016471738544,
+          -0.004946794174602782,
+          -0.017138154797509325
+        ],
+        [
+          0.010797995353136742,
+          -0.004059224617508591,
+          -0.01277788244716977
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016300163930565489,
+        0.0007684263142256585
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5061,
+      "solver_step": 5061,
+      "scheduled_time_s": 55.586363636363636,
+      "actual_backend_time_s": 55.58980178833008,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -1.642714371001509e-05,
+      "native_cpu_penetration_m": 1.642714371001509e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011481151363687074,
+          -0.005070458007106246,
+          -0.017140644562132032
+        ],
+        [
+          0.010809287220930294,
+          -0.004182213187297716,
+          -0.01278063954571427
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001671142438973332,
+        0.0008085731522681355
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5062,
+      "solver_step": 5062,
+      "scheduled_time_s": 55.59090909090909,
+      "actual_backend_time_s": 55.5943489074707,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 4.408682253957089e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011513264105827347,
+          -0.005205242537655512,
+          -0.017144077572429545
+        ],
+        [
+          0.010839531506254685,
+          -0.0043134470205630155,
+          -0.012785085811781982
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017343140842049683,
+        0.0008690871185177643
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5063,
+      "solver_step": 5063,
+      "scheduled_time_s": 55.595454545454544,
+      "actual_backend_time_s": 55.59889602661133,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 7.345440202185865e-07,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011446066901276803,
+          -0.005289290226166796,
+          -0.017159638025891655
+        ],
+        [
+          0.010774610803159192,
+          -0.004396560851936171,
+          -0.012800486158599977
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016889718141277887,
+        0.000825734839998496
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5064,
+      "solver_step": 5064,
+      "scheduled_time_s": 55.6,
+      "actual_backend_time_s": 55.60344314575195,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -1.9759648022850602e-05,
+      "native_cpu_penetration_m": 1.9759648022850602e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011390800671517836,
+          -0.005474798839013104,
+          -0.017157862073995903
+        ],
+        [
+          0.010709684662603088,
+          -0.004576035037661188,
+          -0.012801449715046766
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001683107110777654,
+        0.0008052406479553027
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5065,
+      "solver_step": 5065,
+      "scheduled_time_s": 55.60454545454545,
+      "actual_backend_time_s": 55.60799026489258,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 0.0003364818936533071,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011844751649750825,
+          -0.005119905350918635,
+          -0.017240258817964184
+        ],
+        [
+          0.011162077587844111,
+          -0.00422525099489405,
+          -0.012883244503336385
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.002036073961242439,
+        0.001161482189631375
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5066,
+      "solver_step": 5066,
+      "scheduled_time_s": 55.60909090909091,
+      "actual_backend_time_s": 55.6125373840332,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 0.0002687606843086711,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011783743755780078,
+          -0.005072549161645302,
+          -0.017222657098347836
+        ],
+        [
+          0.011103478281964297,
+          -0.004179734312960392,
+          -0.012864888797883849
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001965576375555833,
+        0.001093760980286759
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5067,
+      "solver_step": 5067,
+      "scheduled_time_s": 55.61363636363637,
+      "actual_backend_time_s": 55.61708450317383,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 8.422243017474761e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011574194236885472,
+          -0.00515067815193709,
+          -0.017150718782484125
+        ],
+        [
+          0.010895542082322743,
+          -0.004253279112666394,
+          -0.01279364060475439
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017805585499893542,
+        0.0009092227261528561
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5068,
+      "solver_step": 5068,
+      "scheduled_time_s": 55.61818181818182,
+      "actual_backend_time_s": 55.62163162231445,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -0.00010169296019280668,
+      "native_cpu_penetration_m": 0.00010169296019280668,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011361052547949287,
+          -0.0052416583360865646,
+          -0.017113127540359988
+        ],
+        [
+          0.010682535125062256,
+          -0.00434181057846379,
+          -0.01275653344067994
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0015950933030990828,
+        0.0007233073357853868
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5069,
+      "solver_step": 5069,
+      "scheduled_time_s": 55.622727272727275,
+      "actual_backend_time_s": 55.62617874145508,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -7.887498752531786e-05,
+      "native_cpu_penetration_m": 7.887498752531786e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011361727526537411,
+          -0.005364578928657939,
+          -0.017103111472948625
+        ],
+        [
+          0.010675963798101288,
+          -0.00446489229877134,
+          -0.012747618836496166
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0016249126924931644,
+        0.0007461253084528868
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5070,
+      "solver_step": 5070,
+      "scheduled_time_s": 55.627272727272725,
+      "actual_backend_time_s": 55.6307258605957,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -1.147254184289087e-05,
+      "native_cpu_penetration_m": 1.147254184289087e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011407371655332257,
+          -0.005491769060467912,
+          -0.017106250526612122
+        ],
+        [
+          0.010714407251567915,
+          -0.004591588026633996,
+          -0.012751999905567432
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017041779529345137,
+        0.0008135277541352921
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5071,
+      "solver_step": 5071,
+      "scheduled_time_s": 55.63181818181818,
+      "actual_backend_time_s": 55.63527297973633,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 5.0636527043126977e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011447269421473822,
+          -0.005616444981720385,
+          -0.017119315778680654
+        ],
+        [
+          0.01074817774305604,
+          -0.004715114343905538,
+          -0.012766282590669139
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017811995598689505,
+        0.0008756368230212475
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5072,
+      "solver_step": 5072,
+      "scheduled_time_s": 55.63636363636363,
+      "actual_backend_time_s": 55.63982009887695,
+      "timing": "pre-solve offending tick",
+      "native_cpu_signed_distance_m": -0.0010205864348764328,
+      "native_cpu_penetration_m": 0.0010205864348764328,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.010538717789348454,
+          -0.0048528805433679266,
+          -0.0174437742211465
+        ],
+        [
+          0.009831247821894188,
+          -0.003952777570814495,
+          -0.013091840752746805
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0007039377809270973,
+        -0.00019603560920257966
+      ],
+      "centerline_inside_interval": [
+        0.7821762161497539,
+        1.0
+      ],
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5073,
+      "solver_step": 5073,
+      "scheduled_time_s": 55.64090909090909,
+      "actual_backend_time_s": 55.64436721801758,
+      "timing": "post-solve offending tick",
+      "native_cpu_signed_distance_m": -0.0005401555271959448,
+      "native_cpu_penetration_m": 0.0005401555271959448,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.01109539704973939,
+          -0.004641161300817767,
+          -0.01745725908662629
+        ],
+        [
+          0.010378640572260095,
+          -0.003738304080884858,
+          -0.013107416213391291
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0011944933702125009,
+        0.000284844768782282
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5074,
+      "solver_step": 5074,
+      "scheduled_time_s": 55.64545454545455,
+      "actual_backend_time_s": 55.6489143371582,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -0.00023543507517905437,
+      "native_cpu_penetration_m": 0.00023543507517905437,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011405608036950616,
+          -0.004733044347035893,
+          -0.017397615610121455
+        ],
+        [
+          0.010669936433787986,
+          -0.0038298985873511646,
+          -0.013050991741129697
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0015176580130231154,
+        0.0005895652207991084
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5075,
+      "solver_step": 5075,
+      "scheduled_time_s": 55.65,
+      "actual_backend_time_s": 55.65346145629883,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": -5.7939623168710226e-05,
+      "native_cpu_penetration_m": 5.7939623168710226e-05,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011570611992588407,
+          -0.004861467421085141,
+          -0.017351520303292726
+        ],
+        [
+          0.010821131148922539,
+          -0.003958918452618988,
+          -0.013007132215894947
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0017084273128257412,
+        0.0007670606728094349
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5076,
+      "solver_step": 5076,
+      "scheduled_time_s": 55.654545454545456,
+      "actual_backend_time_s": 55.65800857543945,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 4.405311964094511e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011651468477079248,
+          -0.004990972663642917,
+          -0.01732936231306494
+        ],
+        [
+          0.01089466285323145,
+          -0.0040877172581377085,
+          -0.012986391100914855
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.0018177035890235092,
+        0.0008690534156190321
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    },
+    {
+      "state_sample": 5077,
+      "solver_step": 5077,
+      "scheduled_time_s": 55.65909090909091,
+      "actual_backend_time_s": 55.66255569458008,
+      "timing": "observed window state",
+      "native_cpu_signed_distance_m": 1.0192153639567878e-05,
+      "native_cpu_penetration_m": 0.0,
+      "capsule_endpoints_tool_local_m": [
+        [
+          0.011592199562761356,
+          -0.005095684549072955,
+          -0.01734455883249385
+        ],
+        [
+          0.010834721139295326,
+          -0.004190450551345765,
+          -0.013002116906944637
+        ]
+      ],
+      "endpoint_max_normalized_halfspace_signed_m": [
+        0.001784965719264767,
+        0.0008351924496177096
+      ],
+      "centerline_inside_interval": null,
+      "fully_buried_radius_ball_interval": null,
+      "fully_buried_centerline_length_m": 0.0,
+      "axis_crosses_rigid_solid_between_two_outside_ends": false
+    }
+  ],
+  "classification": "Unresolved threshold-sensitive nonbelt contact failure under the existing1mm policy. No full-radius burial or outside-end centerline traversal observed in the bounded recorded window. This is not hard-CAD clearance/pass proof and does not qualify the unexecuted suffix.",
+  "interpretation": [
+    "Actual GPU packed event names the pair at tick5072; the executor stops after batch completion at step5077. Do not confuse the two timestamps.",
+    "Distal06 is a plant-connected orphan pedicel: Fruit06 is absent from attachments; it is not a loose released fruit.",
+    "Positive signed depth is retained and nonbelt1mm rule is not relaxed. Exceedance~22micrometres alone does not demonstrate a full-capsule tunnel through hard CAD.",
+    "NativeCPU geometry is reconstructed from stored GPU q before and after integration; it is not an actual GPU force witness or calibrated branch compression.",
+    "Window ends at the actual stopped state; later escape, completion and validity are unknown."
+  ]
+}

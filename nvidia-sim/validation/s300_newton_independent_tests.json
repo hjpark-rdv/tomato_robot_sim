@@ -1,0 +1,1091 @@
+{
+  "schema": "s300-newton-independent-final-v1",
+  "date_kst": "2026-10-17",
+  "branch": "codex/s300-newton-independent-tests-20261017",
+  "aggregation_parent_commit": "8c3a5821a4237f1631b8efe14f6583885b15a96c",
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests",
+  "training_eligible": false,
+  "harvest_success": null,
+  "engine_versions": {
+    "newton_version": "1.7.0",
+    "warp_version": "1.17.0",
+    "mujoco_version": "3.15.0"
+  },
+  "display_runtime": "Isaac Sim6.1.0 in a separate actual-state live viewer; it advances zero physics steps",
+  "individual_alternatives": 11,
+  "aggregation": {
+    "runs": 78,
+    "read_errors": 0,
+    "classifications": {
+      "full_schedule_observation": 65,
+      "stopped_or_incomplete": 10,
+      "invalid_experiment_preparation": 2,
+      "nonfinite_physics_preserved_even_if_summary_stale": 1
+    }
+  },
+  "canonical_runs": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "backend": "gpu",
+      "nv": 190,
+      "worlds": 1,
+      "contact_hz": 200.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.5153742871597893,
+      "loop_s": 23.552944842725992,
+      "setup_s": 8.777132565155625,
+      "detached": [
+        5
+      ],
+      "gui_requested": false,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": true,
+      "minimum_phase_RTF": 1.0139418256195434
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "backend": "gpu",
+      "nv": 190,
+      "worlds": 1,
+      "contact_hz": 200.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.5178138476936005,
+      "loop_s": 23.536611165851355,
+      "setup_s": 3.149337075650692,
+      "detached": [
+        5
+      ],
+      "gui_requested": false,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": true,
+      "minimum_phase_RTF": 1.0149670587817778
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "backend": "gpu",
+      "nv": 190,
+      "worlds": 1,
+      "contact_hz": 200.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.0580002904546597,
+      "loop_s": 27.075673257932067,
+      "setup_s": 28.87582845427096,
+      "detached": [
+        5
+      ],
+      "gui_requested": true,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": false,
+      "minimum_phase_RTF": 0.8885873100591267
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "backend": "gpu",
+      "nv": 133,
+      "worlds": 1,
+      "contact_hz": 220.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.861631376326059,
+      "loop_s": 21.443533580750227,
+      "setup_s": 8.902668172493577,
+      "detached": [
+        6
+      ],
+      "gui_requested": false,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": true,
+      "minimum_phase_RTF": 1.1307787913392535
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "backend": "gpu",
+      "nv": 133,
+      "worlds": 1,
+      "contact_hz": 220.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.856713930061018,
+      "loop_s": 21.470874842256308,
+      "setup_s": 3.2628260497003794,
+      "detached": [
+        6
+      ],
+      "gui_requested": false,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": true,
+      "minimum_phase_RTF": 1.1317409730250807
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "backend": "gpu",
+      "nv": 133,
+      "worlds": 1,
+      "contact_hz": 220.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.3687912524930854,
+      "loop_s": 24.58063319697976,
+      "setup_s": 29.006494291126728,
+      "detached": [
+        6
+      ],
+      "gui_requested": true,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": false,
+      "minimum_phase_RTF": 0.9818229721781867
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "backend": "gpu",
+      "nv": 133,
+      "worlds": 1,
+      "contact_hz": 220.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.8692085461024353,
+      "loop_s": 21.401540162041783,
+      "setup_s": 8.878189647570252,
+      "detached": [
+        6
+      ],
+      "gui_requested": false,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": true,
+      "minimum_phase_RTF": 1.139245947084574
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "backend": "gpu",
+      "nv": 133,
+      "worlds": 1,
+      "contact_hz": 220.0,
+      "free_hz": 60.0,
+      "completed_schedule": true,
+      "RTF": 3.382009449322227,
+      "loop_s": 24.48456260561943,
+      "setup_s": 28.92123824171722,
+      "detached": [
+        6
+      ],
+      "gui_requested": true,
+      "clean_policy_throughput": true,
+      "all_recorded_phases_realtime": false,
+      "minimum_phase_RTF": 0.9828440115819495
+    }
+  ],
+  "fresh_full_trace_comparisons": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/headless190_comparison.json",
+      "sha256": "e9ebce9d02dcc6f50430a14cefcb0cd7ed075da0256eee9f4da06ba267736ec7",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "candidate": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "passed": true,
+      "full_requested_physics_trace_matches": true,
+      "recorded_evidence_matches": true,
+      "gui_headless_pair": false,
+      "gui_physics_equivalence_verified": false,
+      "all_compared_arrays_exact": true,
+      "break_events_exact": true,
+      "same_sample_count": true,
+      "partial_common_prefix_only": false,
+      "gui_evidence": {
+        "reference": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        },
+        "actual": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        }
+      },
+      "numeric_tolerances": {
+        "qpos_abs": 0.0,
+        "qvel_abs": 0.0,
+        "position_m": 0.0,
+        "rotation_rad": 0.0,
+        "penetration_m": 0.0,
+        "force_n": 0.0,
+        "torque_nm": 0.0,
+        "timestamp_s": 1e-09
+      },
+      "complete_coverage_passed": {
+        "reference": true,
+        "actual": true
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gui190_comparison.json",
+      "sha256": "199c5c59d3dfa3bab676b035fb235373aa27e0e31dc722e7e515ec5f308242cc",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "candidate": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "passed": true,
+      "full_requested_physics_trace_matches": true,
+      "recorded_evidence_matches": true,
+      "gui_headless_pair": true,
+      "gui_physics_equivalence_verified": true,
+      "all_compared_arrays_exact": true,
+      "break_events_exact": true,
+      "same_sample_count": true,
+      "partial_common_prefix_only": false,
+      "gui_evidence": {
+        "reference": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        },
+        "actual": {
+          "requested": true,
+          "passed": true,
+          "viewer_ready": true,
+          "live_viewer_reports": [
+            "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002/live_viewer_944766.json"
+          ],
+          "valid_live_viewer_reports": 1,
+          "last_displayed_physics_time_s": 82.79741668701172,
+          "final_physics_time_s": 82.79741668701172,
+          "final_measured_frame_seen": true,
+          "viewer_physics_steps": 0,
+          "scope": "A concurrent isolated GUI consuming measured Newton state; no second physics run"
+        }
+      },
+      "numeric_tolerances": {
+        "qpos_abs": 0.0,
+        "qvel_abs": 0.0,
+        "position_m": 0.0,
+        "rotation_rad": 0.0,
+        "penetration_m": 0.0,
+        "force_n": 0.0,
+        "torque_nm": 0.0,
+        "timestamp_s": 1e-09
+      },
+      "complete_coverage_passed": {
+        "reference": true,
+        "actual": true
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/headless133_comparison.json",
+      "sha256": "bf7e2c21946ca7f0a427fdfef072219e19f2a6b8242aef892e0ad200871558fe",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "candidate": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "passed": true,
+      "full_requested_physics_trace_matches": true,
+      "recorded_evidence_matches": true,
+      "gui_headless_pair": false,
+      "gui_physics_equivalence_verified": false,
+      "all_compared_arrays_exact": true,
+      "break_events_exact": true,
+      "same_sample_count": true,
+      "partial_common_prefix_only": false,
+      "gui_evidence": {
+        "reference": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        },
+        "actual": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        }
+      },
+      "numeric_tolerances": {
+        "qpos_abs": 0.0,
+        "qvel_abs": 0.0,
+        "position_m": 0.0,
+        "rotation_rad": 0.0,
+        "penetration_m": 0.0,
+        "force_n": 0.0,
+        "torque_nm": 0.0,
+        "timestamp_s": 1e-09
+      },
+      "complete_coverage_passed": {
+        "reference": true,
+        "actual": true
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gui133_comparison.json",
+      "sha256": "fae1364ac465d62d5174c443bf4539d2f23732bedd4550ad23cc25d2d1fceb6f",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "candidate": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "passed": true,
+      "full_requested_physics_trace_matches": true,
+      "recorded_evidence_matches": true,
+      "gui_headless_pair": true,
+      "gui_physics_equivalence_verified": true,
+      "all_compared_arrays_exact": true,
+      "break_events_exact": true,
+      "same_sample_count": true,
+      "partial_common_prefix_only": false,
+      "gui_evidence": {
+        "reference": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        },
+        "actual": {
+          "requested": true,
+          "passed": true,
+          "viewer_ready": true,
+          "live_viewer_reports": [
+            "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002/live_viewer_946303.json"
+          ],
+          "valid_live_viewer_reports": 1,
+          "last_displayed_physics_time_s": 82.80702209472656,
+          "final_physics_time_s": 82.80702209472656,
+          "final_measured_frame_seen": true,
+          "viewer_physics_steps": 0,
+          "scope": "A concurrent isolated GUI consuming measured Newton state; no second physics run"
+        }
+      },
+      "numeric_tolerances": {
+        "qpos_abs": 0.0,
+        "qvel_abs": 0.0,
+        "position_m": 0.0,
+        "rotation_rad": 0.0,
+        "penetration_m": 0.0,
+        "force_n": 0.0,
+        "torque_nm": 0.0,
+        "timestamp_s": 1e-09
+      },
+      "complete_coverage_passed": {
+        "reference": true,
+        "actual": true
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/gui_profile_comparison.json",
+      "sha256": "7099925b790785dc61eeb5ce4e1a40ec64489155b23e0d52eff054db95bcd7b3",
+      "baseline": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "candidate": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "passed": true,
+      "full_requested_physics_trace_matches": true,
+      "recorded_evidence_matches": true,
+      "gui_headless_pair": true,
+      "gui_physics_equivalence_verified": true,
+      "all_compared_arrays_exact": true,
+      "break_events_exact": true,
+      "same_sample_count": true,
+      "partial_common_prefix_only": false,
+      "gui_evidence": {
+        "reference": {
+          "requested": false,
+          "passed": true,
+          "scope": "No GUI requested in this trial"
+        },
+        "actual": {
+          "requested": true,
+          "passed": true,
+          "viewer_ready": true,
+          "live_viewer_reports": [
+            "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001/live_viewer_950222.json"
+          ],
+          "valid_live_viewer_reports": 1,
+          "last_displayed_physics_time_s": 82.80702209472656,
+          "final_physics_time_s": 82.80702209472656,
+          "final_measured_frame_seen": true,
+          "viewer_physics_steps": 0,
+          "scope": "A concurrent isolated GUI consuming measured Newton state; no second physics run"
+        }
+      },
+      "numeric_tolerances": {
+        "qpos_abs": 0.0,
+        "qvel_abs": 0.0,
+        "position_m": 0.0,
+        "rotation_rad": 0.0,
+        "penetration_m": 0.0,
+        "force_n": 0.0,
+        "torque_nm": 0.0,
+        "timestamp_s": 1e-09
+      },
+      "complete_coverage_passed": {
+        "reference": true,
+        "actual": true
+      }
+    }
+  ],
+  "source_state_and_model_hash_checks": [
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_000/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/inputs_coarse2_fruit_proxy01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_002/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_000/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_002/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_000/states.npz",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "artifact": "physical_source_mjb",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/input_model.mjb",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "artifact": "source_input_manifest",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/inputs.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "artifact": "source_metadata",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_newton_solver_compare/inputs_coarse4_fruit_proxy_01/source_export.json",
+      "sha256_matches": true
+    },
+    {
+      "run": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001",
+      "artifact": "state_file",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_profile_session/repeat_001/states.npz",
+      "sha256_matches": true
+    }
+  ],
+  "batch_cases": [
+    {
+      "source": "batch_scaling_cusolver133_evidence.json",
+      "worlds": 1,
+      "status": "stopped",
+      "stop": "contact_policy_violation",
+      "completed": false,
+      "throughput_eligible": false,
+      "per_environment_RTF": null,
+      "aggregate_sim_s_per_wall_s": null,
+      "exact_all_world_N1_qualified": null,
+      "resources": null
+    },
+    {
+      "source": "batch_scaling_native133_capacity96_evidence.json",
+      "worlds": 1,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 1.9159163972839799,
+      "aggregate_sim_s_per_wall_s": 1.9159163972839799,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 8,
+        "cpu_percent_max": 100.1,
+        "cpu_percent_mean": 99.25,
+        "rss_bytes_max": 1433559040,
+        "rss_bytes_mean": 1424671744.0,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 84.0,
+        "gpu_memory_mib_max": 1371.0,
+        "gpu_memory_mib_mean": 1360.0
+      }
+    },
+    {
+      "source": "batch_scaling_native133_capacity96_evidence.json",
+      "worlds": 40,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 0.34323883691988905,
+      "aggregate_sim_s_per_wall_s": 13.729553476795562,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 45,
+        "cpu_percent_max": 99.9,
+        "cpu_percent_mean": 99.09555555555556,
+        "rss_bytes_max": 1491148800,
+        "rss_bytes_mean": 1481825211.7333333,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 85.86666666666666,
+        "gpu_memory_mib_max": 20447.0,
+        "gpu_memory_mib_mean": 20435.222222222223
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 1,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 1.911250424808512,
+      "aggregate_sim_s_per_wall_s": 1.911250424808512,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 8,
+        "cpu_percent_max": 99.9,
+        "cpu_percent_mean": 99.225,
+        "rss_bytes_max": 1438711808,
+        "rss_bytes_mean": 1429824512.0,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 95.625,
+        "gpu_memory_mib_max": 1383.0,
+        "gpu_memory_mib_mean": 1372.0
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 2,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 1.7037768323138123,
+      "aggregate_sim_s_per_wall_s": 3.4075536646276245,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 9,
+        "cpu_percent_max": 100.0,
+        "cpu_percent_mean": 99.08888888888889,
+        "rss_bytes_max": 1440014336,
+        "rss_bytes_mean": 1431934293.3333333,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 95.77777777777777,
+        "gpu_memory_mib_max": 1895.0,
+        "gpu_memory_mib_mean": 1885.4444444444443
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 4,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 1.4237962646622317,
+      "aggregate_sim_s_per_wall_s": 5.695185058648927,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 11,
+        "cpu_percent_max": 100.1,
+        "cpu_percent_mean": 99.14545454545454,
+        "rss_bytes_max": 1435000832,
+        "rss_bytes_mean": 1428414464.0,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 76.54545454545455,
+        "gpu_memory_mib_max": 2855.0,
+        "gpu_memory_mib_mean": 2846.818181818182
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 8,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 1.0581191309694447,
+      "aggregate_sim_s_per_wall_s": 8.464953047755557,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 15,
+        "cpu_percent_max": 100.2,
+        "cpu_percent_mean": 99.14,
+        "rss_bytes_max": 1443033088,
+        "rss_bytes_mean": 1435229388.8,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 93.4,
+        "gpu_memory_mib_max": 4817.0,
+        "gpu_memory_mib_mean": 4806.733333333334
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 16,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 0.700928153770748,
+      "aggregate_sim_s_per_wall_s": 11.214850460331968,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 22,
+        "cpu_percent_max": 100.1,
+        "cpu_percent_mean": 99.10454545454546,
+        "rss_bytes_max": 1450483712,
+        "rss_bytes_mean": 1443160064.0,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 90.22727272727273,
+        "gpu_memory_mib_max": 8743.0,
+        "gpu_memory_mib_mean": 8733.181818181818
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 32,
+      "status": "completed",
+      "stop": null,
+      "completed": true,
+      "throughput_eligible": true,
+      "per_environment_RTF": 0.4102746694454462,
+      "aggregate_sim_s_per_wall_s": 13.128789422254279,
+      "exact_all_world_N1_qualified": true,
+      "resources": {
+        "sample_count": 38,
+        "cpu_percent_max": 100.0,
+        "cpu_percent_mean": 99.03947368421052,
+        "rss_bytes_max": 1488977920,
+        "rss_bytes_mean": 1479381962.1052632,
+        "gpu_percent_max": 100.0,
+        "gpu_percent_mean": 83.5,
+        "gpu_memory_mib_max": 16575.0,
+        "gpu_memory_mib_mean": 16562.947368421053
+      }
+    },
+    {
+      "source": "batch_scaling_native133_evidence.json",
+      "worlds": 40,
+      "status": "error",
+      "stop": null,
+      "completed": false,
+      "throughput_eligible": false,
+      "per_environment_RTF": null,
+      "aggregate_sim_s_per_wall_s": null,
+      "exact_all_world_N1_qualified": null,
+      "resources": null
+    }
+  ],
+  "recommended_new_density_pilot": {
+    "worlds": 32,
+    "nconmax": 128,
+    "reason": "N40/96 has zero broadphase headroom and is a fixed-trace capacity probe only"
+  },
+  "videos": [
+    {
+      "title": "권장133DOF/220Hz: 전체 농장, 실제 상태,1배속",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001/actual_133_220_full_farm_1x.mp4",
+      "sha256": "5cfec9b5aa7253eeec583ebb8d8dbcfecbb5a2c5d28bed6b3faa67b132c668fe",
+      "actual_clip_start_s": 0.0,
+      "physics_rerun": false
+    },
+    {
+      "title": "권장133DOF/220Hz: 접촉 상세40–72초",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001/actual_133_220_contact_1x.mp4",
+      "sha256": "6b835d86b1fb32f87470701c3a233cd7c262d039f1fe2d1a97c83888333f9782",
+      "actual_clip_start_s": 40.01622772216797,
+      "physics_rerun": false
+    },
+    {
+      "title": "관절 보존190DOF/200Hz: 접촉 상세40–72초",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001/actual_190_200_contact_1x.mp4",
+      "sha256": "4575fda4d0da1b1d76d3ce89c18f6a791d77e80a2a5401cd5912de65558aa9c7",
+      "actual_clip_start_s": 40.01622772216797,
+      "physics_rerun": false
+    },
+    {
+      "title": "원본385DOF/400Hz: 기존 동일 시점 대조",
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_contact_1x.mp4",
+      "sha256": "facadb52fb0ec5efb971e892d121d42c035003160c60a36fcaec28791d07353f",
+      "actual_clip_start_s": 40.01622772216797,
+      "physics_rerun": false
+    },
+    {
+      "title": "원본385DOF/120Hz: 빠르지만 국소 침투가 커진 대조",
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz120_observe/actual_original120_contact_1x.mp4",
+      "sha256": "62c80e08605895356b05b879bcdd9ee48ffc58edc7b17ec099cf35104ce56d88",
+      "actual_clip_start_s": 48.00017166137695,
+      "physics_rerun": false
+    }
+  ],
+  "video_decode_checks": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001/actual_133_220_full_farm_1x.mp4",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "10/1",
+            "nb_frames": "829"
+          }
+        ],
+        "format": {
+          "duration": "82.900000"
+        }
+      },
+      "full_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_133/repeat_001/actual_133_220_contact_1x.mp4",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "10/1",
+            "nb_frames": "321"
+          }
+        ],
+        "format": {
+          "duration": "32.100000"
+        }
+      },
+      "full_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_session_190/repeat_001/actual_190_200_contact_1x.mp4",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "10/1",
+            "nb_frames": "321"
+          }
+        ],
+        "format": {
+          "duration": "32.100000"
+        }
+      },
+      "full_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261016_s300_newton_gpu_contact_recovery/final_session/repeat_001/actual_gpu_contact_1x.mp4",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "15/1",
+            "nb_frames": "481"
+          }
+        ],
+        "format": {
+          "duration": "32.067000"
+        }
+      },
+      "full_decode_passed": true
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/hz_original_campaign/original_hz120_observe/actual_original120_contact_1x.mp4",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 720,
+            "avg_frame_rate": "10/1",
+            "nb_frames": "201"
+          }
+        ],
+        "format": {
+          "duration": "20.100000"
+        }
+      },
+      "full_decode_passed": true
+    }
+  ],
+  "repository_evidence": [
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/S300_NEWTON_INDEPENDENT_RESULTS_KO.md",
+      "sha256": "f55bb169718d2e5d857915b1b4e69be522fa4c0c968211f8d00c146cfef48c15",
+      "bytes": 20916
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/S300_NEWTON_INDEPENDENT_TEST_MATRIX_KO.md",
+      "sha256": "0754f28897e5d5500c7374b82e9ac5bcef4ee380d07501a9df1917a1128a93be",
+      "bytes": 17994
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_gpu_batch_independent_results_ko.md",
+      "sha256": "f60a600f851c90058a2e060e069849e8264820c4f2ce8b4a43f4f3744424e85e",
+      "bytes": 10917
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_canonical_realtime.json",
+      "sha256": "aff80cfe411adec419e6582a03de891e0384ebc223799c70928f912f0ec8d698",
+      "bytes": 356656
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_final_contact_review.json",
+      "sha256": "4a42a94eaeeb7adede3d86c31450afdc8a0d7e4aa15eabd840a134325f67604f",
+      "bytes": 111413
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_cusolver_batch_geometry.json",
+      "sha256": "69305f020b01d7b9503babf7d1fc5139531867bc37571310d18795d6db5618be",
+      "bytes": 40804
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_gpu_batch_independent.json",
+      "sha256": "6c103ae0e110ae1a292f88d5412922ddfb6b0abc114e673f3ce7911fe60151ef",
+      "bytes": 202458
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_attachment_gpu_independent.json",
+      "sha256": "ecaf4dc43dae228811c4f023d1f3bb5b127e4361a594e75ea946a6dd413c0923",
+      "bytes": 138704
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_contact_independent.json",
+      "sha256": "5f742b718503998af3f4ea65df6a97d938673cc8d78ccfb335b65a8bf88d9cad",
+      "bytes": 55722
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/validation/s300_newton_combination_proxy_review.json",
+      "sha256": "6160563246f25d42410da57c6ed5f559a7cea421eab425a8b50378e7f86def4d",
+      "bytes": 394650
+    }
+  ],
+  "final_worktree_code": [
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/run_s300_newton.sh",
+      "sha256": "4256c87ab6e2b1791604c782887dea8fae141afcab168d14c17205bbb44adefb",
+      "bytes": 5822
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/profiles/belt_strokes_2mm.json",
+      "sha256": "73456fc883a92e6b578afc2ef199ff2ca38bba6d053433b53de44438d35781a4",
+      "bytes": 473
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py",
+      "sha256": "1f4f15103119cce96f92d13578ac257cd15836c03ccd3fcb9fdba2a0513cdc35",
+      "bytes": 51326
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/benchmark_newton.py",
+      "sha256": "f4c51d9c269776512c783a1edd9f0eaa675faadfaa3d3fa4368044de8707d064",
+      "bytes": 29776
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/benchmark_solver_compare.py",
+      "sha256": "271130020c96530cb639302930f23ca3f4f7011a25fc6b2c5fb6d67b40341fd3",
+      "bytes": 24587
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_independent_evidence.py",
+      "sha256": "351a1f3d9c3d0b1147bf397efba9fc56c4259506ad7c0838d9ac5b1a5f55fda7",
+      "bytes": 11430
+    },
+    {
+      "path": "/root/farmily_tomato/nvidia-sim/harvest_s300/render_motion.py",
+      "sha256": "448bfa8a1d8289f4f042f9a24dc80da7f34da84f385eeff3ef31faf0d0ae8d3a",
+      "bytes": 17444
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/analysis_final/evidence.json",
+      "sha256": "51275ba8de88c683def9fde0af22d8e7aef328606bd993118a55e63736b71c96",
+      "bytes": 778716
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/analysis_final/runs.csv",
+      "sha256": "9a7a8f36a5142a33635a9ab7924ecf1e262b610354931af0220c07e7b9cc6c10",
+      "bytes": 17147
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/analysis_final/index.html",
+      "sha256": "59f7f50e3711c67d6ca64ec71617c5784d2c1cacf00c1656c0468aeb3516c178",
+      "bytes": 14280
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/index.html",
+      "sha256": "e0fbfdd9c16965c931e905ecc5ffd40f57531cacf6c636795c4361928c024fd3",
+      "bytes": 9740
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_video_inventory.json",
+      "sha256": "8947a1ee1d6d635302de4e2655c791de56eca53e13e9c8f5458c9c3fbe188161",
+      "bytes": 2092
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_video_decode_checks.json",
+      "sha256": "8f7648831f1b5c512cdfd01b128e0f69c0776be19d9b10d1d8b1fe2c916b8cc6",
+      "bytes": 2317
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_run_wall_window_estimates.json",
+      "sha256": "226934800a457628615b70ccc7fc111a345839232d97adbb08eb400dd7c5ea11",
+      "bytes": 1464
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/build_final_index.py",
+      "sha256": "363984b608707ccc13c50dc0ab0bf803f307a5b159036b349e9004a5b6648204",
+      "bytes": 8136
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/finalize_provenance.py",
+      "sha256": "ebac499658fd3bb135a63a680a994147ef114caa3c6bd0bbfdabadca59442f80",
+      "bytes": 6133
+    }
+  ],
+  "limitations": [
+    "The selected133DOF/proxy representation changes55 formerly eligible internal collision pairs; it is not unchanged-model acceleration.",
+    "Contact220/60Hz changes effective DISCRETE/REFSAFE coefficients despite retaining source material inputs.",
+    "Exact belt-only2mm stroke guard is a declared compression approximation, not a deformable belt model. Existing released-fruit exceptions remain.",
+    "Native batch arithmetic is separate from canonical single-world arithmetic; allworlds matched their ownN1, not canonicalN1.",
+    "Batch duplicates a fixed scene/command; independent scenes/controls andNworldGUI are untested.",
+    "CPU is faster for the same selected single-world model. NoGPU-over-CPU claim.",
+    "5/6 released fruits are not a complete10fruit harvest or accurate dropped-fruit collection.",
+    "RTF measures synchronized physics loop, not loading/JIT/NPZ compression. Filemtime operational windows are separate approximate data.",
+    "The tested maximumN is not a proven physical memory maximum. No statistical/globaloptimum claim."
+  ]
+}

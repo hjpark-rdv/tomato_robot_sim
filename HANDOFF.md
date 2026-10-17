@@ -1,5 +1,33 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-17: Newton GPU 개별11대안·조합, 접촉 실시간과 GUI 일치 확보
+
+- 브랜치 `codex/s300-newton-independent-tests-20261017`, 출발 `4112bda`.
+  11개 대안을 개별 시험하고 제한된 조합을 실제 서버에서 실행했다. 기존 사용자 gripper 변경·대형 자산·학습 데이터는 보존했다.
+- 새 opt-in 명령: `./nvidia-sim/run_s300_newton.sh gpu-realtime --gui`.
+  실제 Newton→MuJoCo Warp CUDA 물리 + 별도 Isaac 전체 농장 표시다. 기존 `gpu`/`gpu-fast` 기본값은 유지했다.
+- 권장 조건은 **133DOF+보수적fruit proxy,접촉220/이동60Hz,정확한벨트↔열매/꼭지만2mm,나머지1mm**다.
+  기존 분리 열매의 바닥·기체·자기 송이 접촉 예외는 유지하므로 그 예외까지1mm였다는 뜻은 아니다.
+  물리 loop 전체 약3.86–3.87RTF/최저phase1.13–1.14, GUI 전체3.37–3.38/최저0.98.
+  190DOF/200Hz 대조도 완주하며 headless최저1.01,GUI최저0.89다.
+  두 모델 및 새 명령의 새 headless/GUI 전체 상태·접촉·힘·분리 시계열 정확 일치. 저장 영상 재생만으로 비교한 것이 아니다.
+- 133DOF는 기존 내부55pair가 추가로 억제되는 표현 변경이고 proxy외향상한0.1mm다. 원본385DOF 그대로의 가속이라고 주장하지 않는다.
+  2mm는 닫기/닫힌압력유지/열기stroke의 벨트 눌림 근사 판정이며 실제 탄성 벨트를 계산한 것이 아니다. 재질 수치는 유지하나 Hz에 따라 유효 접촉행 계수는 달라진다.
+- 동일133DOF 입력의 CPU16thread 전체5.55RTF로 **단일 환경 CPU가 더 빠르다**. GPU 우위로 포장하지 않았다.
+  권장 명령 cold 준비/loop약8.88/21.40초, GUI약28.92/24.48초.3.9RTF를 로딩·저장까지 포함한 운영 처리량이라고 해석하지 않는다.
+- GPU 배치는 canonical 단일 환경과 다른 native 수치 경로이며, 별도 N1 기준으로 모든 환경의 전체 기록을 비교한다.
+  N1/2/4/8/16/32의 합산RTF1.91/3.41/5.70/8.46/11.21/13.13, N32는16,575MiB다. 모든 world가 기준N1과 정확히 일치했다.
+  N40/128은4096 capacity 초기화 제한이며, N1/96을 먼저 대조한 N40/96은13.73합산RTF/20,447MiB로 완주했다.
+  단96은 broadphase 여유0이어서 고정 입력의 용량 탐색이다. 새 장면 파일럿은32/128부터 시작하고 기본128은 유지한다.
+  N32 환경당 전체0.410/마지막벨트0.081RTF이므로 합산처리량을 각 환경의 실시간이라고 해석하지 않는다.
+  [배치 보고서](nvidia-sim/harvest_s300/newton_gpu_batch_independent_results_ko.md)에서 환경당/합산 처리량·메모리·용량 제한을 확인한다.
+- 5–6개 연결 해제는 송이10개 전체 수확 성공이 아니다. 분리 열매의 기존 바닥/기체/자기 송이 접촉 예외를 유지해 바닥13.9/20.2mm 겹침이 남는다.
+  정확한 낙하·수거 검증이나 실물 물성 보정은 미완료. `training_eligible=false`, `harvest_success=null`. 새 RL/수확 알고리즘은 추가하지 않았다.
+- [종합 결과·명령·전체 영상 목록](nvidia-sim/S300_NEWTON_INDEPENDENT_RESULTS_KO.md),
+  [개별11항목 표](nvidia-sim/S300_NEWTON_INDEPENDENT_TEST_MATRIX_KO.md),
+  [단일 검증 JSON](nvidia-sim/validation/s300_newton_canonical_realtime.json).
+  원자료/대시보드 `/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/index.html`.
+
 ## 2026-10-17: Newton GPU 솔버·식물 표현 비교
 
 - 브랜치 `codex/s300-newton-solver-compare-20261017`, 시작 `7930cb0`, 구현 `507653e`.
