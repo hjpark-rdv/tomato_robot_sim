@@ -1,0 +1,3130 @@
+{
+  "schema": "s300-newton-final-contact-compact-v1",
+  "training_eligible": false,
+  "harvest_success": null,
+  "policy_file": "nvidia-sim/harvest_s300/profiles/belt_strokes_2mm.json",
+  "policy_sha256": "73456fc883a92e6b578afc2ef199ff2ca38bba6d053433b53de44438d35781a4",
+  "policy_scope": "Exact4 moving belt geoms vs target fruit/pedicels,2mm only during close/reclose/belt_finish/opening strokes; all other pairs remain1mm. Native forces/colliders/material/release coefficients unchanged by stop policy.",
+  "raw_root": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests",
+  "performance": [
+    {
+      "profile_dof": 190,
+      "backend": "GPU",
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_strict/coarse2_proxy01_hz200",
+      "overall_rtf": 3.5049433030177797,
+      "minimum_phase": "belt_finish",
+      "minimum_phase_rtf": 1.0096599062004465,
+      "detached_per_world": [
+        5
+      ],
+      "raw_active_max_mm": 1.6748688649386168,
+      "selected_policy_passed": true,
+      "policy_result_scope": "actual GPU stopping policy",
+      "native_cpu_workers": null
+    },
+    {
+      "profile_dof": 190,
+      "backend": "CPU",
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference190",
+      "overall_rtf": 4.013287079173001,
+      "minimum_phase": "belt_finish",
+      "minimum_phase_rtf": 1.0077887926513578,
+      "detached_per_world": [
+        5
+      ],
+      "raw_active_max_mm": 1.4973839640758704,
+      "selected_policy_passed": false,
+      "policy_result_scope": "posthoc recorded-event classification, original CPU run diagnostic-continued under legacy1mm",
+      "native_cpu_workers": 16
+    },
+    {
+      "profile_dof": 133,
+      "backend": "GPU",
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_strict/coarse4_proxy01_hz220",
+      "overall_rtf": 3.8898247740694605,
+      "minimum_phase": "belt_finish",
+      "minimum_phase_rtf": 1.1403492011931882,
+      "detached_per_world": [
+        6
+      ],
+      "raw_active_max_mm": 1.3043780345469713,
+      "selected_policy_passed": true,
+      "policy_result_scope": "actual GPU stopping policy",
+      "native_cpu_workers": null
+    },
+    {
+      "profile_dof": 133,
+      "backend": "CPU",
+      "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference133",
+      "overall_rtf": 5.548780051262083,
+      "minimum_phase": "belt_finish",
+      "minimum_phase_rtf": 1.3303213315753755,
+      "detached_per_world": [
+        5
+      ],
+      "raw_active_max_mm": 1.2342892918744846,
+      "selected_policy_passed": true,
+      "policy_result_scope": "posthoc recorded-event classification, original CPU run diagnostic-continued under legacy1mm",
+      "native_cpu_workers": 16
+    }
+  ],
+  "rows": [
+    {
+      "profile_dof": 190,
+      "gpu_contact_hz": 200.0,
+      "gpu_free_hz": 60.0,
+      "force_review": {
+        "schema": "s300-final-contact-witness-review-v1",
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_witness/final_witness190",
+        "physics_rerun": false,
+        "throughput_eligible": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "physical_input_mjb_sha256": "cc658203b2c53eed025f8723f61173e682bb3c2fbfb037160af9d7493cf107e4",
+        "physical_model_arrays_sha256": "1008c133a78c143a4e6f81a013bce468fa5e642cc4ca551eba28559ad50c0036",
+        "display_source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "source_states_sha256": "f44873d6e9169b7c9e4821a118fe6308e7e5483f923e43bc5eda68b347aad7d5",
+        "source_witness_sha256": "05b4b78fd2403f14a4634e7f4e6dd57e32ecab10c9aa4c21c189aab3c8151f99",
+        "analysis_code_sha256": "6c0d9ccb252e805709a29625752ade2677e9e452314c625c7da8c156a86c175b",
+        "instrumentation_physical_comparison": {
+          "clean_reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_strict/coarse2_proxy01_hz200",
+          "recorded_evidence_matches": true,
+          "all_compared_arrays_exact": true,
+          "break_events_exact": true,
+          "full_coverage": true,
+          "intentional_metadata_differences": [
+            "contact_policy_input_sha256"
+          ]
+        },
+        "policy": {
+          "schema": "s300-contact-stop-policy-v1",
+          "config": {
+            "default_m": 0.001,
+            "belt_fruit_m": 0.002,
+            "belt_pedicel_m": 0.002,
+            "relaxed_phases": [
+              "close",
+              "cycle_reclose",
+              "belt_finish",
+              "cycle_open",
+              "cycle_open_final"
+            ],
+            "residual_open_seconds": 0,
+            "explicit_other_pairs": [],
+            "record_contacts": true,
+            "label": "Experimental exact belt fruit/pedicel 2mm during closing, sustained closed pressure and opening strokes; fully-open hold/approach/transport and all other pairs remain 1mm; no forces or release changes; instrumented per-solve contact evidence, excluded speedranking"
+          },
+          "exact_belt_geometries": [
+            {
+              "geom_id": 330,
+              "geom": "s300_g0813",
+              "body": "Tool_L_belt",
+              "source": "/World/ActuatedTool/L_belt/part_163"
+            },
+            {
+              "geom_id": 331,
+              "geom": "s300_g0814",
+              "body": "Tool_L_belt",
+              "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+            },
+            {
+              "geom_id": 453,
+              "geom": "s300_g0815",
+              "body": "Tool_R_belt",
+              "source": "/World/ActuatedTool/R_belt/part_285"
+            },
+            {
+              "geom_id": 454,
+              "geom": "s300_g0816",
+              "body": "Tool_R_belt",
+              "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+            }
+          ],
+          "role_geom_counts": {
+            "fruit": 10,
+            "pedicel": 44
+          },
+          "physics_changed": false,
+          "stopping_policy_changed": true,
+          "exact_other_pairs": [],
+          "diagnostic_instrumented": true,
+          "raw_reference_1mm_preserved": true,
+          "residual_rule": "Only exact pairs already above 1 mm during explicitly selected relaxed phases (default: closing only); opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.",
+          "explicit_open_stroke_rule": "Only when named in relaxed_phases, cycle_open/cycle_open_final use the exact belt-pair limit without requiring a prior latch. Fully-open holds, approach and transport remain outside this band.",
+          "audit_order": "pre-integration contact geometry/constraint solution, before controller tick increment; original released-fruit exception map",
+          "counters_scope": "sum of pair-steps, not distinct physics steps",
+          "training_eligible": false,
+          "first_policy_event": [
+            18446744073709551615
+          ],
+          "policy_passed": true,
+          "maximum_penetration_m_by_class": {
+            "other": 0.0009974691784009337,
+            "belt_fruit": 0.0009397026151418686,
+            "belt_pedicel": 0.0016748688649386168,
+            "explicit_other_pair": 0.0
+          },
+          "allowed_pair_steps": [
+            [
+              0,
+              0,
+              105
+            ]
+          ],
+          "residual_allowed_pair_steps": [
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "replay": {
+          "strict_first_event_matches_gpu": true,
+          "saved_policy_checks": {
+            "first_event": true,
+            "class_maxima": true,
+            "allowed_pair_steps": true,
+            "residual_pair_steps": true
+          }
+        },
+        "time_scope": {
+          "contact_geometry_wrench": "Contact distance/frame/point/solref/force are from solve before integration.",
+          "local_centres": "Stored local centres use refreshed post-integration geom poses.",
+          "attached": "Cached c.attached is pre-current-release; eq_active may already be changed before audit.",
+          "timestamp": "Actual post-integration step-end d.time.",
+          "geometry_review": "Use states.qpos[step] for pre-solve geometry; qpos[step+1] is the separately recorded integrated state."
+        },
+        "finite_recorded_state": true,
+        "capacity_valid": true,
+        "qacc_finite": true,
+        "active_contact_fields_finite": true,
+        "max_actual_contact_force_n": 11.944229125976562,
+        "max_force_matches_summary": true,
+        "force_match_tolerance_n": 2e-05,
+        "force_bucket_contact_samples": {
+          "other_monitored": 13435,
+          "belt_attached_fruit": 2771,
+          "released_fruit_exception": 59137,
+          "belt_pedicel": 5551
+        },
+        "force_and_depth_peaks": {
+          "other_monitored": {
+            "max_force": {
+              "step": 4722,
+              "actual_step_end_time_s": 54.976661682128906,
+              "phase": "close",
+              "geoms": [
+                "g0166",
+                "s300_g0620"
+              ],
+              "geom_ids": [
+                77,
+                258
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_06_0",
+                "Tool_L"
+              ],
+              "depth_m": 0.0007793306722305715,
+              "force_n": 6.878764629364014,
+              "normal_world": [
+                -0.5758339166641235,
+                -0.8175667524337769,
+                0.00014280594768933952
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": []
+            },
+            "max_depth": {
+              "step": 4701,
+              "actual_step_end_time_s": 54.871639251708984,
+              "phase": "close",
+              "geoms": [
+                "s300_g0586",
+                "g0328"
+              ],
+              "geom_ids": [
+                224,
+                99
+              ],
+              "bodies": [
+                "Tool_L",
+                "Truss_00_Fruit_02"
+              ],
+              "depth_m": 0.0009974691784009337,
+              "force_n": 3.1711831092834473,
+              "normal_world": [
+                0.21832649409770966,
+                0.3943232595920563,
+                0.8926604390144348
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_02",
+                  "anchor": "Truss_00_Pedicel_distal_02_0",
+                  "break_step": -1,
+                  "cached_attached": true,
+                  "eq_active_after_release": true,
+                  "connect_force_n": 0.47272464632987976,
+                  "passive_torque_nm": 0.0031032580882310867
+                }
+              ]
+            }
+          },
+          "belt_attached_fruit": {
+            "max_force": {
+              "step": 4584,
+              "actual_step_end_time_s": 54.28651428222656,
+              "phase": "close",
+              "geoms": [
+                "s300_g0814",
+                "g0346"
+              ],
+              "geom_ids": [
+                331,
+                101
+              ],
+              "bodies": [
+                "Tool_L_belt",
+                "Truss_00_Fruit_04"
+              ],
+              "depth_m": 0.00011644441838143393,
+              "force_n": 7.104095935821533,
+              "normal_world": [
+                0.35968559980392456,
+                0.9327735900878906,
+                0.02365805394947529
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_04",
+                  "anchor": "Truss_00_Pedicel_distal_04_0",
+                  "break_step": 4587,
+                  "cached_attached": true,
+                  "eq_active_after_release": true,
+                  "connect_force_n": 2.2951626777648926,
+                  "passive_torque_nm": 0.004809749778360128
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 4454,
+              "actual_step_end_time_s": 53.636375427246094,
+              "phase": "close",
+              "geoms": [
+                "s300_g0816",
+                "g0355"
+              ],
+              "geom_ids": [
+                454,
+                102
+              ],
+              "bodies": [
+                "Tool_R_belt",
+                "Truss_00_Fruit_05"
+              ],
+              "depth_m": 0.0009397026151418686,
+              "force_n": 1.3978878259658813,
+              "normal_world": [
+                -0.4313145875930786,
+                -0.9021638631820679,
+                0.008248385973274708
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_05",
+                  "anchor": "Truss_00_Pedicel_distal_05_0",
+                  "break_step": 4559,
+                  "cached_attached": true,
+                  "eq_active_after_release": true,
+                  "connect_force_n": 1.2049888372421265,
+                  "passive_torque_nm": 0.0007690305938012898
+                }
+              ]
+            }
+          },
+          "released_fruit_exception": {
+            "max_force": {
+              "step": 4711,
+              "actual_step_end_time_s": 54.92164993286133,
+              "phase": "close",
+              "geoms": [
+                "g0159",
+                "g0337"
+              ],
+              "geom_ids": [
+                78,
+                100
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_proximal_05_0",
+                "Truss_00_Fruit_03"
+              ],
+              "depth_m": 0.00011174986138939857,
+              "force_n": 10.183940887451172,
+              "normal_world": [
+                -0.5203597545623779,
+                0.8464146256446838,
+                0.11317194253206253
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                0
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_03",
+                  "anchor": "Truss_00_Pedicel_distal_03_0",
+                  "break_step": 4583,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 4722,
+              "actual_step_end_time_s": 54.976661682128906,
+              "phase": "close",
+              "geoms": [
+                "farm_ground",
+                "g0373"
+              ],
+              "geom_ids": [
+                18,
+                104
+              ],
+              "bodies": [
+                "world",
+                "Truss_00_Fruit_08"
+              ],
+              "depth_m": 0.020173029974102974,
+              "force_n": 1.182526707649231,
+              "normal_world": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                0
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_08",
+                  "anchor": "Truss_00_Pedicel_distal_08_0",
+                  "break_step": 4591,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            }
+          },
+          "belt_pedicel": {
+            "max_force": {
+              "step": 4745,
+              "actual_step_end_time_s": 55.0916862487793,
+              "phase": "close",
+              "geoms": [
+                "g0162",
+                "s300_g0816"
+              ],
+              "geom_ids": [
+                81,
+                454
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_05_0",
+                "Tool_R_belt"
+              ],
+              "depth_m": 0.0011939958203583956,
+              "force_n": 11.944229125976562,
+              "normal_world": [
+                0.4384743273258209,
+                0.8987436890602112,
+                -0.00018039408314507455
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_05",
+                  "anchor": "Truss_00_Pedicel_distal_05_0",
+                  "break_step": 4559,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 4702,
+              "actual_step_end_time_s": 54.87664031982422,
+              "phase": "close",
+              "geoms": [
+                "g0158",
+                "s300_g0814"
+              ],
+              "geom_ids": [
+                85,
+                331
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_04_0",
+                "Tool_L_belt"
+              ],
+              "depth_m": 0.0016748688649386168,
+              "force_n": 5.788363456726074,
+              "normal_world": [
+                -0.4385850131511688,
+                -0.8986898064613342,
+                0.00019870366668328643
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_04",
+                  "anchor": "Truss_00_Pedicel_distal_04_0",
+                  "break_step": 4587,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            }
+          }
+        },
+        "by_phase": [
+          {
+            "category": "other_monitored",
+            "phase": "settle",
+            "contact_samples": 119,
+            "max_force_n": 0.06481793522834778,
+            "max_depth_m": 0.0003075658460147679
+          },
+          {
+            "category": "other_monitored",
+            "phase": "rail_move",
+            "contact_samples": 1848,
+            "max_force_n": 0.03451215848326683,
+            "max_depth_m": 1.964776311069727e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "ready_hold",
+            "contact_samples": 30,
+            "max_force_n": 0.029906967654824257,
+            "max_depth_m": 1.7702346667647362e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_open",
+            "contact_samples": 60,
+            "max_force_n": 0.03082599863409996,
+            "max_depth_m": 1.809094101190567e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_open_hold",
+            "contact_samples": 30,
+            "max_force_n": 0.030068017542362213,
+            "max_depth_m": 1.7910613678395748e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_lift_branch",
+            "contact_samples": 240,
+            "max_force_n": 0.031718749552965164,
+            "max_depth_m": 1.8121208995580673e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_joint_branch",
+            "contact_samples": 360,
+            "max_force_n": 0.03172982111573219,
+            "max_depth_m": 1.8162070773541927e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "approach",
+            "contact_samples": 799,
+            "max_force_n": 0.04156443476676941,
+            "max_depth_m": 1.721177250146866e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "belt_start_open",
+            "contact_samples": 200,
+            "max_force_n": 0.030228983610868454,
+            "max_depth_m": 2.018059603869915e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "close",
+            "contact_samples": 3183,
+            "max_force_n": 6.878764629364014,
+            "max_depth_m": 0.0009974691784009337
+          },
+          {
+            "category": "belt_attached_fruit",
+            "phase": "close",
+            "contact_samples": 2771,
+            "max_force_n": 7.104095935821533,
+            "max_depth_m": 0.0009397026151418686
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "close",
+            "contact_samples": 2855,
+            "max_force_n": 10.183940887451172,
+            "max_depth_m": 0.020173029974102974
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "close",
+            "contact_samples": 1012,
+            "max_force_n": 11.944229125976562,
+            "max_depth_m": 0.0016748688649386168
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open",
+            "contact_samples": 2292,
+            "max_force_n": 0.3783484995365143,
+            "max_depth_m": 0.0006378836114890873
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open",
+            "contact_samples": 348,
+            "max_force_n": 3.75724720954895,
+            "max_depth_m": 0.0008627659408375621
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_open",
+            "contact_samples": 229,
+            "max_force_n": 9.10267162322998,
+            "max_depth_m": 0.0014854215551167727
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_hold",
+            "contact_samples": 1371,
+            "max_force_n": 0.13821253180503845,
+            "max_depth_m": 0.00027590140234678984
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open_hold",
+            "contact_samples": 100,
+            "max_force_n": 0.029199905693531036,
+            "max_depth_m": 2.5368062779307365e-06
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_reclose",
+            "contact_samples": 17882,
+            "max_force_n": 0.1301865428686142,
+            "max_depth_m": 0.00025775787071324885
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_reclose",
+            "contact_samples": 1901,
+            "max_force_n": 5.929113388061523,
+            "max_depth_m": 0.0007990566082298756
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_reclose",
+            "contact_samples": 2115,
+            "max_force_n": 6.45608377456665,
+            "max_depth_m": 0.0012369912583380938
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "belt_finish",
+            "contact_samples": 6000,
+            "max_force_n": 0.038966529071331024,
+            "max_depth_m": 1.5348381339208572e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "belt_finish",
+            "contact_samples": 2260,
+            "max_force_n": 5.6186017990112305,
+            "max_depth_m": 0.0008548828773200512
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "belt_finish",
+            "contact_samples": 1911,
+            "max_force_n": 6.697912216186523,
+            "max_depth_m": 0.001407315256074071
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_final",
+            "contact_samples": 3000,
+            "max_force_n": 0.038965970277786255,
+            "max_depth_m": 1.5422310752910562e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open_final",
+            "contact_samples": 337,
+            "max_force_n": 3.5848841667175293,
+            "max_depth_m": 0.0006878792773932219
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_open_final",
+            "contact_samples": 284,
+            "max_force_n": 6.1026201248168945,
+            "max_depth_m": 0.0011489791795611382
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_final_hold",
+            "contact_samples": 1500,
+            "max_force_n": 0.03896655514836311,
+            "max_depth_m": 1.537372668281023e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open_final_hold",
+            "contact_samples": 100,
+            "max_force_n": 0.029621172696352005,
+            "max_depth_m": 2.689776010811329e-06
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "withdraw",
+            "contact_samples": 12000,
+            "max_force_n": 0.03897268325090408,
+            "max_depth_m": 1.5377330555566004e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "withdraw",
+            "contact_samples": 800,
+            "max_force_n": 0.029293490573763847,
+            "max_depth_m": 2.7258647605776787e-06
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "return_joint_branch",
+            "contact_samples": 6117,
+            "max_force_n": 0.04005546122789383,
+            "max_depth_m": 1.6163845430128276e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "return_joint_branch",
+            "contact_samples": 360,
+            "max_force_n": 0.03186594322323799,
+            "max_depth_m": 1.8888735212385654e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "return_lift_branch",
+            "contact_samples": 4080,
+            "max_force_n": 0.03980785235762596,
+            "max_depth_m": 1.577320472279098e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "return_lift_branch",
+            "contact_samples": 240,
+            "max_force_n": 0.030918607488274574,
+            "max_depth_m": 1.868489198386669e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "ready_close",
+            "contact_samples": 1020,
+            "max_force_n": 0.03980691730976105,
+            "max_depth_m": 1.5765914213261567e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "ready_close",
+            "contact_samples": 60,
+            "max_force_n": 0.030527006834745407,
+            "max_depth_m": 1.8347986042499542e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "hold",
+            "contact_samples": 1020,
+            "max_force_n": 0.039806995540857315,
+            "max_depth_m": 1.5767160221002996e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "hold",
+            "contact_samples": 60,
+            "max_force_n": 0.030037347227334976,
+            "max_depth_m": 1.8062186427414417e-05
+          }
+        ],
+        "breaks": [
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_03",
+            "solver_step": 4583,
+            "solver_time_s": 54.276512145996094,
+            "release_effective_time_s": 54.28151321411133,
+            "scheduled_solver_time_s": 54.275,
+            "scheduled_release_time_s": 54.28,
+            "phase": "close",
+            "constraint_force_n": 3.0479958057403564,
+            "passive_torque_nm": 0.0034357793629169464
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_04",
+            "solver_step": 4587,
+            "solver_time_s": 54.29651641845703,
+            "release_effective_time_s": 54.301517486572266,
+            "scheduled_solver_time_s": 54.295,
+            "scheduled_release_time_s": 54.3,
+            "phase": "close",
+            "constraint_force_n": 3.5152454376220703,
+            "passive_torque_nm": 0.004731970839202404
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_05",
+            "solver_step": 4559,
+            "solver_time_s": 54.15648651123047,
+            "release_effective_time_s": 54.1614875793457,
+            "scheduled_solver_time_s": 54.155,
+            "scheduled_release_time_s": 54.16,
+            "phase": "close",
+            "constraint_force_n": 1.493405818939209,
+            "passive_torque_nm": 0.008622382767498493
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_07",
+            "solver_step": 4593,
+            "solver_time_s": 54.32652282714844,
+            "release_effective_time_s": 54.33152389526367,
+            "scheduled_solver_time_s": 54.325,
+            "scheduled_release_time_s": 54.33,
+            "phase": "close",
+            "constraint_force_n": 1.8735872507095337,
+            "passive_torque_nm": 0.00880406517535448
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_08",
+            "solver_step": 4591,
+            "solver_time_s": 54.31652069091797,
+            "release_effective_time_s": 54.3215217590332,
+            "scheduled_solver_time_s": 54.315,
+            "scheduled_release_time_s": 54.32,
+            "phase": "close",
+            "constraint_force_n": 0.9513185620307922,
+            "passive_torque_nm": 0.008799107745289803
+          }
+        ],
+        "detached_per_world": [
+          5
+        ],
+        "limitations": [
+          "This instrumented run is excluded from clean speed ranking.",
+          "Force magnitude is not a validated fruit-damage limit.",
+          "2mm audit tolerance does not implement deformable belt geometry.",
+          "Same-truss released-fruit exceptions are separated from monitored contacts.",
+          "Deepest contact and strongest contact need not be the same pair or timestamp."
+        ]
+      },
+      "geometry": {
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_witness/final_witness190/contact_geometry_context.json",
+        "sha256": "50f7968aa86f81e421364e1fa6f6ce7e318a54bb6b1a83f1720e94d6c59ee6cf",
+        "state_witness_physical_mjb_hashes_match": true,
+        "cases": [
+          {
+            "label": "belt_pedicel_depth",
+            "actual_witness_step": 4702,
+            "cap_geom": "g0158",
+            "tool_geom": "s300_g0814",
+            "capsule_radius_m": 0.0008250008781371592,
+            "capsule_diameter_m": 0.0016500017562743185,
+            "is_compliant_belt_proxy": true,
+            "nominal_thickness_m": 0.00499999895692,
+            "full_radius_burial_samples": 2,
+            "axis_between_outside_ends_cross_samples": 0,
+            "any_centerline_beyond_midplane": false,
+            "any_centerline_beyond_opposite_face": false,
+            "peak_pre_geometry": {
+              "sample": 4702,
+              "scheduled_time_s": 54.87,
+              "timing_relative_to_witness_peak": "pre-integration same geometry",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  0.0040419502566162524,
+                  -0.040274000297682265,
+                  0.019271955634386866
+                ],
+                [
+                  0.0016501457470157201,
+                  -0.04081722886832012,
+                  0.022368189634603845
+                ]
+              ],
+              "axis_inside_interval": [
+                0.6446809394191592,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": [
+                0.9896133428934502,
+                1.0
+              ],
+              "full_radius_axis_length_m": 4.1027283838156116e-05,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0015419507781562524,
+                0.00084985373144428
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.001674854609581439
+            },
+            "peak_post_geometry": {
+              "sample": 4703,
+              "scheduled_time_s": 54.875,
+              "timing_relative_to_witness_peak": "post-integration next state",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  0.0044941855306221004,
+                  -0.04044268885270317,
+                  0.019295053297239132
+                ],
+                [
+                  0.002067066061695627,
+                  -0.041024322274750905,
+                  0.022356635359199493
+                ]
+              ],
+              "axis_inside_interval": [
+                0.8216266556685562,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0019941860521621004,
+                0.00043293341676437294
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.001257934294901532
+            },
+            "interpretation": "Full-radius burial inside undeformed compliant-belt box is separately reported, not automatically rigid-CAD failure. Declared2mm compression is40% of5mm nominal thickness; force/deformation calibration remains unverified."
+          },
+          {
+            "label": "belt_pedicel_force",
+            "actual_witness_step": 4745,
+            "cap_geom": "g0162",
+            "tool_geom": "s300_g0816",
+            "capsule_radius_m": 0.0008250003930006573,
+            "capsule_diameter_m": 0.0016500007860013146,
+            "is_compliant_belt_proxy": true,
+            "nominal_thickness_m": 0.00499999895692,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0,
+            "any_centerline_beyond_midplane": false,
+            "any_centerline_beyond_opposite_face": false,
+            "peak_pre_geometry": {
+              "sample": 4745,
+              "scheduled_time_s": 55.085,
+              "timing_relative_to_witness_peak": "pre-integration same geometry",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.0038480105104728404,
+                  -0.0449764184852615,
+                  0.004309439236024567
+                ],
+                [
+                  -0.0021312893435611675,
+                  -0.04476538981879302,
+                  0.009950217339729193
+                ]
+              ],
+              "axis_inside_interval": [
+                0.7852242157868127,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0013480110320128404,
+                0.0003687101348988325
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.00119371052789949
+            },
+            "peak_post_geometry": {
+              "sample": 4746,
+              "scheduled_time_s": 55.09,
+              "timing_relative_to_witness_peak": "post-integration next state",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.004281791074652207,
+                  -0.045177065501119155,
+                  0.0043658719376690365
+                ],
+                [
+                  -0.002419853869878193,
+                  -0.044968259501887736,
+                  0.009960479357174874
+                ]
+              ],
+              "axis_inside_interval": [
+                0.9569557940104997,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0017817915961922072,
+                8.014560858180713e-05
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.0009051460015824644
+            },
+            "interpretation": "Full-radius burial inside undeformed compliant-belt box is separately reported, not automatically rigid-CAD failure. Declared2mm compression is40% of5mm nominal thickness; force/deformation calibration remains unverified."
+          },
+          {
+            "label": "nonbelt_force",
+            "actual_witness_step": 4722,
+            "cap_geom": "g0166",
+            "tool_geom": "s300_g0620",
+            "capsule_radius_m": 0.0008250002959781163,
+            "capsule_diameter_m": 0.0016500005919562325,
+            "is_compliant_belt_proxy": false,
+            "nominal_thickness_m": null,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0
+          }
+        ]
+      },
+      "cpu_posthoc": {
+        "evidence_file": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference190/posthoc_selected_contact_policy.json",
+        "sha256": "1d3c078dfda156f2f6c86981b0331672d82e65947f79ea1c57ecb45544593709",
+        "schema": "s300-cpu-posthoc-contact-policy-v1",
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference190",
+        "physical_input_mjb_sha256": "cc658203b2c53eed025f8723f61173e682bb3c2fbfb037160af9d7493cf107e4",
+        "physical_model_arrays_sha256": "1008c133a78c143a4e6f81a013bce468fa5e642cc4ca551eba28559ad50c0036",
+        "display_source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "actual_execution_policy": "Original nativeCPU1mm diagnostic_continue; GPU contact-policy helper was not executed by CPU runner.",
+        "new_policy_actually_executed": false,
+        "physics_rerun": false,
+        "throughput_eligible": null,
+        "training_eligible": false,
+        "harvest_success": null,
+        "policy_file": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combined_belt_strokes_2mm_policy.json",
+        "policy_sha256": "73456fc883a92e6b578afc2ef199ff2ca38bba6d053433b53de44438d35781a4",
+        "source_contact_events_sha256": "5fbb1ee9274bdb13e16bc9dbcdb4a340d1bf13c8417867bc4e0c164e7be8254a",
+        "exact_belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "config": {
+          "default_m": 0.001,
+          "belt_fruit_m": 0.002,
+          "belt_pedicel_m": 0.002,
+          "relaxed_phases": [
+            "close",
+            "cycle_reclose",
+            "belt_finish",
+            "cycle_open",
+            "cycle_open_final"
+          ],
+          "residual_open_seconds": 0,
+          "explicit_other_pairs": [],
+          "record_contacts": false,
+          "label": "Experimental exact belt fruit/pedicel 2mm during closing, sustained closed pressure and opening strokes; fully-open hold/approach/transport and all other pairs remain 1mm; no forces or release changes"
+        },
+        "all_over_1mm_events_in_log": true,
+        "log_capture_rule": "newton_cpu.py appends every active contact when penetration>1mm OR force magnitude>1N.",
+        "over_reference_nonexception_event_count": 32,
+        "posthoc_allowed_event_count": 27,
+        "posthoc_disallowed_event_count": 5,
+        "selected_policy_posthoc_passed": false,
+        "first_disallowed_event": {
+          "event_index": 3273,
+          "solver_time_s": 55.46,
+          "phase": "close",
+          "geoms": [
+            103,
+            381
+          ],
+          "bodies": [
+            "Truss_00_Fruit_07",
+            "Tool_R"
+          ],
+          "penetration_m": 0.001035744893893516,
+          "force_n": 0.2992336446016436,
+          "released_fruit": false,
+          "released_contact_exception": false,
+          "geom_names": [
+            "g0364",
+            "s300_g0741"
+          ],
+          "category": "other",
+          "selected_limit_m": 0.001,
+          "posthoc_allowed": false
+        },
+        "events": [
+          {
+            "event_index": 3273,
+            "solver_time_s": 55.46,
+            "phase": "close",
+            "geoms": [
+              103,
+              381
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R"
+            ],
+            "penetration_m": 0.001035744893893516,
+            "force_n": 0.2992336446016436,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0741"
+            ],
+            "category": "other",
+            "selected_limit_m": 0.001,
+            "posthoc_allowed": false
+          },
+          {
+            "event_index": 3274,
+            "solver_time_s": 55.46,
+            "phase": "close",
+            "geoms": [
+              103,
+              453
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010400629843335422,
+            "force_n": 0.9002773836447877,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0815"
+            ],
+            "category": "belt_fruit",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 3326,
+            "solver_time_s": 55.495,
+            "phase": "close",
+            "geoms": [
+              103,
+              381
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R"
+            ],
+            "penetration_m": 0.001104122241575493,
+            "force_n": 0.07578850659240453,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0741"
+            ],
+            "category": "other",
+            "selected_limit_m": 0.001,
+            "posthoc_allowed": false
+          },
+          {
+            "event_index": 3327,
+            "solver_time_s": 55.495,
+            "phase": "close",
+            "geoms": [
+              103,
+              453
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010968365951921754,
+            "force_n": 1.1225084498756035,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0815"
+            ],
+            "category": "belt_fruit",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 3471,
+            "solver_time_s": 55.585,
+            "phase": "close",
+            "geoms": [
+              103,
+              381
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R"
+            ],
+            "penetration_m": 0.001077594265758939,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0741"
+            ],
+            "category": "other",
+            "selected_limit_m": 0.001,
+            "posthoc_allowed": false
+          },
+          {
+            "event_index": 3472,
+            "solver_time_s": 55.585,
+            "phase": "close",
+            "geoms": [
+              103,
+              381
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R"
+            ],
+            "penetration_m": 0.001077594265758939,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0741"
+            ],
+            "category": "other",
+            "selected_limit_m": 0.001,
+            "posthoc_allowed": false
+          },
+          {
+            "event_index": 3473,
+            "solver_time_s": 55.585,
+            "phase": "close",
+            "geoms": [
+              103,
+              381
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R"
+            ],
+            "penetration_m": 0.001077594265758939,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0741"
+            ],
+            "category": "other",
+            "selected_limit_m": 0.001,
+            "posthoc_allowed": false
+          },
+          {
+            "event_index": 3474,
+            "solver_time_s": 55.585,
+            "phase": "close",
+            "geoms": [
+              103,
+              453
+            ],
+            "bodies": [
+              "Truss_00_Fruit_07",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010424706215619375,
+            "force_n": 1.4874240598194859,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0364",
+              "s300_g0815"
+            ],
+            "category": "belt_fruit",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5121,
+            "solver_time_s": 62.485,
+            "phase": "cycle_reclose",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010805952786472413,
+            "force_n": 4.021069966700454,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5127,
+            "solver_time_s": 62.49,
+            "phase": "cycle_reclose",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010915198500124042,
+            "force_n": 3.9032048982817114,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5347,
+            "solver_time_s": 62.71,
+            "phase": "cycle_reclose",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.001129968121941377,
+            "force_n": 1.7568008697901203,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5385,
+            "solver_time_s": 62.75,
+            "phase": "cycle_reclose",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010342402998862773,
+            "force_n": 2.1549566815776284,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5825,
+            "solver_time_s": 63.18,
+            "phase": "cycle_reclose",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.001001373552665033,
+            "force_n": 1.8907591168951638,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6350,
+            "solver_time_s": 63.74,
+            "phase": "belt_finish",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011989098881908687,
+            "force_n": 2.3521500480239994,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6356,
+            "solver_time_s": 63.745,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010728084643824897,
+            "force_n": 2.49319591100448,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6362,
+            "solver_time_s": 63.75,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010965568859446703,
+            "force_n": 2.8971011727852773,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6416,
+            "solver_time_s": 63.815,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010232063312974838,
+            "force_n": 2.05097555791481,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6670,
+            "solver_time_s": 64.09,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010145359350784877,
+            "force_n": 2.080482336837874,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6704,
+            "solver_time_s": 64.125,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0011115721413791917,
+            "force_n": 2.0232112085225453,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6706,
+            "solver_time_s": 64.13,
+            "phase": "belt_finish",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.001064354548983033,
+            "force_n": 1.5522682347749255,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6711,
+            "solver_time_s": 64.135,
+            "phase": "belt_finish",
+            "geoms": [
+              80,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_proximal_05_2",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0012973760751019965,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0161",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6712,
+            "solver_time_s": 64.135,
+            "phase": "belt_finish",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0014973839640758705,
+            "force_n": 4.5114504863952645,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6718,
+            "solver_time_s": 64.14,
+            "phase": "belt_finish",
+            "geoms": [
+              80,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_proximal_05_2",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0012882036983371229,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0161",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6719,
+            "solver_time_s": 64.14,
+            "phase": "belt_finish",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0014882116074324218,
+            "force_n": 4.942626699169852,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 6723,
+            "solver_time_s": 64.145,
+            "phase": "belt_finish",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011086223297356364,
+            "force_n": 4.44551421839915,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7853,
+            "solver_time_s": 65.42,
+            "phase": "cycle_open_final",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010644966946556202,
+            "force_n": 1.8379855648676353,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7854,
+            "solver_time_s": 65.425,
+            "phase": "cycle_open_final",
+            "geoms": [
+              85,
+              331
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_04_0",
+              "Tool_L_belt"
+            ],
+            "penetration_m": 0.0010232760442028354,
+            "force_n": 1.5444947185710538,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0158",
+              "s300_g0814"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7858,
+            "solver_time_s": 65.43,
+            "phase": "cycle_open_final",
+            "geoms": [
+              80,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_proximal_05_2",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011354771548084605,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0161",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7859,
+            "solver_time_s": 65.43,
+            "phase": "cycle_open_final",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.001335484979275344,
+            "force_n": 4.1655134749230545,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7863,
+            "solver_time_s": 65.435,
+            "phase": "cycle_open_final",
+            "geoms": [
+              80,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_proximal_05_2",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011188659057269194,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0161",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7864,
+            "solver_time_s": 65.435,
+            "phase": "cycle_open_final",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.001318873744750179,
+            "force_n": 4.412975010061915,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 7887,
+            "solver_time_s": 65.485,
+            "phase": "cycle_open_final",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011433940776109865,
+            "force_n": 2.1745548147024825,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          }
+        ],
+        "limitations": [
+          "Posthoc event classification is not a CPU run using the new stopping policy.",
+          "All>1mm contacts are logged, so below1mm contacts cannot create an unseen larger-threshold violation.",
+          "This explicit stroke-band policy does not need residual latch reconstruction for its named stroke/hold phases.",
+          "CPU/GPU physical states and release outcomes are not assumed equal."
+        ]
+      }
+    },
+    {
+      "profile_dof": 133,
+      "gpu_contact_hz": 220.0,
+      "gpu_free_hz": 60.0,
+      "force_review": {
+        "schema": "s300-final-contact-witness-review-v1",
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_witness/final_witness133",
+        "physics_rerun": false,
+        "throughput_eligible": false,
+        "training_eligible": false,
+        "harvest_success": null,
+        "physical_input_mjb_sha256": "b76e2f842bb8c680e00ec99eba455d6d0cebe05a16d7c820fbc4aa3f16580eba",
+        "physical_model_arrays_sha256": "d89d8fd342af7be759d14daa39caf55791e24926bf044e438faf24171653659f",
+        "display_source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "source_states_sha256": "2a6851eaea3d739cf6a271eb6a0468e8be32ede68506f7cffe27e4ca56924290",
+        "source_witness_sha256": "626eaf459cd1a084c5607b3a977a5921622db567fb124b04ff77195623e6e8f9",
+        "analysis_code_sha256": "6c0d9ccb252e805709a29625752ade2677e9e452314c625c7da8c156a86c175b",
+        "instrumentation_physical_comparison": {
+          "clean_reference": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combination_strict/coarse4_proxy01_hz220",
+          "recorded_evidence_matches": true,
+          "all_compared_arrays_exact": true,
+          "break_events_exact": true,
+          "full_coverage": true,
+          "intentional_metadata_differences": [
+            "contact_policy_input_sha256"
+          ]
+        },
+        "policy": {
+          "schema": "s300-contact-stop-policy-v1",
+          "config": {
+            "default_m": 0.001,
+            "belt_fruit_m": 0.002,
+            "belt_pedicel_m": 0.002,
+            "relaxed_phases": [
+              "close",
+              "cycle_reclose",
+              "belt_finish",
+              "cycle_open",
+              "cycle_open_final"
+            ],
+            "residual_open_seconds": 0,
+            "explicit_other_pairs": [],
+            "record_contacts": true,
+            "label": "Experimental exact belt fruit/pedicel 2mm during closing, sustained closed pressure and opening strokes; fully-open hold/approach/transport and all other pairs remain 1mm; no forces or release changes; instrumented per-solve contact evidence, excluded speedranking"
+          },
+          "exact_belt_geometries": [
+            {
+              "geom_id": 330,
+              "geom": "s300_g0813",
+              "body": "Tool_L_belt",
+              "source": "/World/ActuatedTool/L_belt/part_163"
+            },
+            {
+              "geom_id": 331,
+              "geom": "s300_g0814",
+              "body": "Tool_L_belt",
+              "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+            },
+            {
+              "geom_id": 453,
+              "geom": "s300_g0815",
+              "body": "Tool_R_belt",
+              "source": "/World/ActuatedTool/R_belt/part_285"
+            },
+            {
+              "geom_id": 454,
+              "geom": "s300_g0816",
+              "body": "Tool_R_belt",
+              "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+            }
+          ],
+          "role_geom_counts": {
+            "fruit": 10,
+            "pedicel": 44
+          },
+          "physics_changed": false,
+          "stopping_policy_changed": true,
+          "exact_other_pairs": [],
+          "diagnostic_instrumented": true,
+          "raw_reference_1mm_preserved": true,
+          "residual_rule": "Only exact pairs already above 1 mm during explicitly selected relaxed phases (default: closing only); opening only, cleared on <=1mm/separation/other phase/deadline. Deadline uses actual post-integration backend d.time for each world, not nominal schedule.",
+          "explicit_open_stroke_rule": "Only when named in relaxed_phases, cycle_open/cycle_open_final use the exact belt-pair limit without requiring a prior latch. Fully-open holds, approach and transport remain outside this band.",
+          "audit_order": "pre-integration contact geometry/constraint solution, before controller tick increment; original released-fruit exception map",
+          "counters_scope": "sum of pair-steps, not distinct physics steps",
+          "training_eligible": false,
+          "first_policy_event": [
+            18446744073709551615
+          ],
+          "policy_passed": true,
+          "maximum_penetration_m_by_class": {
+            "other": 0.000799009867478162,
+            "belt_fruit": 0.0008476001094095409,
+            "belt_pedicel": 0.0013043780345469713,
+            "explicit_other_pair": 0.0
+          },
+          "allowed_pair_steps": [
+            [
+              0,
+              0,
+              62
+            ]
+          ],
+          "residual_allowed_pair_steps": [
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "replay": {
+          "strict_first_event_matches_gpu": true,
+          "saved_policy_checks": {
+            "first_event": true,
+            "class_maxima": true,
+            "allowed_pair_steps": true,
+            "residual_pair_steps": true
+          }
+        },
+        "time_scope": {
+          "contact_geometry_wrench": "Contact distance/frame/point/solref/force are from solve before integration.",
+          "local_centres": "Stored local centres use refreshed post-integration geom poses.",
+          "attached": "Cached c.attached is pre-current-release; eq_active may already be changed before audit.",
+          "timestamp": "Actual post-integration step-end d.time.",
+          "geometry_review": "Use states.qpos[step] for pre-solve geometry; qpos[step+1] is the separately recorded integrated state."
+        },
+        "finite_recorded_state": true,
+        "capacity_valid": true,
+        "qacc_finite": true,
+        "active_contact_fields_finite": true,
+        "max_actual_contact_force_n": 10.427337646484375,
+        "max_force_matches_summary": true,
+        "force_match_tolerance_n": 2e-05,
+        "force_bucket_contact_samples": {
+          "other_monitored": 6778,
+          "belt_attached_fruit": 1453,
+          "released_fruit_exception": 77989,
+          "belt_pedicel": 6916
+        },
+        "force_and_depth_peaks": {
+          "other_monitored": {
+            "max_force": {
+              "step": 7167,
+              "actual_step_end_time_s": 65.17057800292969,
+              "phase": "belt_finish",
+              "geoms": [
+                "g0154",
+                "s300_g0707"
+              ],
+              "geom_ids": [
+                89,
+                347
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_03_0",
+                "Tool_R"
+              ],
+              "depth_m": 0.0005141113651916385,
+              "force_n": 5.837886810302734,
+              "normal_world": [
+                0.4379875659942627,
+                0.898980975151062,
+                0.00021058955462649465
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_03",
+                  "anchor": "Truss_00_Pedicel_distal_03_0",
+                  "break_step": 4565,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 7190,
+              "actual_step_end_time_s": 65.27516174316406,
+              "phase": "belt_finish",
+              "geoms": [
+                "g0154",
+                "s300_g0707"
+              ],
+              "geom_ids": [
+                89,
+                347
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_03_0",
+                "Tool_R"
+              ],
+              "depth_m": 0.000799009867478162,
+              "force_n": 3.894792079925537,
+              "normal_world": [
+                0.43805304169654846,
+                0.8989490866661072,
+                0.0002328272967133671
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_03",
+                  "anchor": "Truss_00_Pedicel_distal_03_0",
+                  "break_step": 4565,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            }
+          },
+          "belt_attached_fruit": {
+            "max_force": {
+              "step": 4643,
+              "actual_step_end_time_s": 53.69365310668945,
+              "phase": "close",
+              "geoms": [
+                "s300_g0814",
+                "g0346"
+              ],
+              "geom_ids": [
+                331,
+                101
+              ],
+              "bodies": [
+                "Tool_L_belt",
+                "Truss_00_Fruit_04"
+              ],
+              "depth_m": 1.552922731207218e-05,
+              "force_n": 4.870716094970703,
+              "normal_world": [
+                0.4933207631111145,
+                0.8678274750709534,
+                0.059245865792036057
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_04",
+                  "anchor": "Truss_00_Pedicel_distal_04_0",
+                  "break_step": 4643,
+                  "cached_attached": true,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 1.2176108360290527,
+                  "passive_torque_nm": 0.008352304808795452
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 4526,
+              "actual_step_end_time_s": 53.16164016723633,
+              "phase": "close",
+              "geoms": [
+                "s300_g0816",
+                "g0355"
+              ],
+              "geom_ids": [
+                454,
+                102
+              ],
+              "bodies": [
+                "Tool_R_belt",
+                "Truss_00_Fruit_05"
+              ],
+              "depth_m": 0.0008476001094095409,
+              "force_n": 1.6362853050231934,
+              "normal_world": [
+                -0.42111897468566895,
+                -0.9067970514297485,
+                0.019438205286860466
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_05",
+                  "anchor": "Truss_00_Pedicel_distal_05_0",
+                  "break_step": 4559,
+                  "cached_attached": true,
+                  "eq_active_after_release": true,
+                  "connect_force_n": 1.3477109670639038,
+                  "passive_torque_nm": 0.001508663292042911
+                }
+              ]
+            }
+          },
+          "released_fruit_exception": {
+            "max_force": {
+              "step": 4910,
+              "actual_step_end_time_s": 54.90773391723633,
+              "phase": "close",
+              "geoms": [
+                "s300_g0549",
+                "g0337"
+              ],
+              "geom_ids": [
+                202,
+                100
+              ],
+              "bodies": [
+                "Tool_fixed",
+                "Truss_00_Fruit_03"
+              ],
+              "depth_m": 0.0016808671643957496,
+              "force_n": 10.427337646484375,
+              "normal_world": [
+                0.30222088098526,
+                0.6567744612693787,
+                0.6908761858940125
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                0
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_03",
+                  "anchor": "Truss_00_Pedicel_distal_03_0",
+                  "break_step": 4565,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 4802,
+              "actual_step_end_time_s": 54.41664505004883,
+              "phase": "close",
+              "geoms": [
+                "farm_ground",
+                "g0373"
+              ],
+              "geom_ids": [
+                18,
+                104
+              ],
+              "bodies": [
+                "world",
+                "Truss_00_Fruit_08"
+              ],
+              "depth_m": 0.013909629546105862,
+              "force_n": 1.5225474834442139,
+              "normal_world": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                0
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_08",
+                  "anchor": "Truss_00_Pedicel_distal_08_0",
+                  "break_step": 4694,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            }
+          },
+          "belt_pedicel": {
+            "max_force": {
+              "step": 6890,
+              "actual_step_end_time_s": 63.91102981567383,
+              "phase": "belt_finish",
+              "geoms": [
+                "g0162",
+                "s300_g0816"
+              ],
+              "geom_ids": [
+                81,
+                454
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_05_0",
+                "Tool_R_belt"
+              ],
+              "depth_m": 0.0009186299866996706,
+              "force_n": 8.394974708557129,
+              "normal_world": [
+                0.4379947781562805,
+                0.8989775776863098,
+                0.00018871104111894965
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_05",
+                  "anchor": "Truss_00_Pedicel_distal_05_0",
+                  "break_step": 4559,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            },
+            "max_depth": {
+              "step": 7012,
+              "actual_step_end_time_s": 64.46577453613281,
+              "phase": "belt_finish",
+              "geoms": [
+                "g0162",
+                "s300_g0816"
+              ],
+              "geom_ids": [
+                81,
+                454
+              ],
+              "bodies": [
+                "Truss_00_Pedicel_distal_05_0",
+                "Tool_R_belt"
+              ],
+              "depth_m": 0.0013043780345469713,
+              "force_n": 2.3612823486328125,
+              "normal_world": [
+                0.4379896819591522,
+                0.8989800214767456,
+                0.0001889537670649588
+              ],
+              "fruit_attached_before_release": [
+                -1,
+                -1
+              ],
+              "actual_mixed_solref": [
+                0.0020000000949949026,
+                1.0
+              ],
+              "related_exact_attachments": [
+                {
+                  "name": "Truss_00_Fruit_05",
+                  "anchor": "Truss_00_Pedicel_distal_05_0",
+                  "break_step": 4559,
+                  "cached_attached": false,
+                  "eq_active_after_release": false,
+                  "connect_force_n": 0.0,
+                  "passive_torque_nm": 0.0
+                }
+              ]
+            }
+          }
+        },
+        "by_phase": [
+          {
+            "category": "other_monitored",
+            "phase": "settle",
+            "contact_samples": 119,
+            "max_force_n": 0.06968716531991959,
+            "max_depth_m": 0.0003075614804401994
+          },
+          {
+            "category": "other_monitored",
+            "phase": "rail_move",
+            "contact_samples": 1848,
+            "max_force_n": 0.036940548568964005,
+            "max_depth_m": 1.9625527784228325e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "ready_hold",
+            "contact_samples": 30,
+            "max_force_n": 0.03457247465848923,
+            "max_depth_m": 1.8376274965703487e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_open",
+            "contact_samples": 60,
+            "max_force_n": 0.034586239606142044,
+            "max_depth_m": 1.8448918126523495e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_open_hold",
+            "contact_samples": 30,
+            "max_force_n": 0.03421507403254509,
+            "max_depth_m": 1.831422559916973e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_lift_branch",
+            "contact_samples": 240,
+            "max_force_n": 0.03534726798534393,
+            "max_depth_m": 1.876323949545622e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "prepare_joint_branch",
+            "contact_samples": 360,
+            "max_force_n": 0.03524605557322502,
+            "max_depth_m": 1.8725870177149773e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "approach",
+            "contact_samples": 879,
+            "max_force_n": 0.043384574353694916,
+            "max_depth_m": 1.8085818737745285e-05
+          },
+          {
+            "category": "other_monitored",
+            "phase": "belt_start_open",
+            "contact_samples": 220,
+            "max_force_n": 0.03420014679431915,
+            "max_depth_m": 1.812702976167202e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "close",
+            "contact_samples": 1254,
+            "max_force_n": 5.05635929107666,
+            "max_depth_m": 0.0007195146754384041
+          },
+          {
+            "category": "belt_attached_fruit",
+            "phase": "close",
+            "contact_samples": 1453,
+            "max_force_n": 4.870716094970703,
+            "max_depth_m": 0.0008476001094095409
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "close",
+            "contact_samples": 6666,
+            "max_force_n": 10.427337646484375,
+            "max_depth_m": 0.013909629546105862
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "close",
+            "contact_samples": 1731,
+            "max_force_n": 7.609442710876465,
+            "max_depth_m": 0.0011283098720014095
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open",
+            "contact_samples": 2937,
+            "max_force_n": 4.77225399017334,
+            "max_depth_m": 0.006658118683844805
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open",
+            "contact_samples": 33,
+            "max_force_n": 1.1856826543807983,
+            "max_depth_m": 0.0002070024493150413
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_open",
+            "contact_samples": 356,
+            "max_force_n": 4.467984676361084,
+            "max_depth_m": 0.0010237495880573988
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_hold",
+            "contact_samples": 1637,
+            "max_force_n": 0.13029882311820984,
+            "max_depth_m": 0.00021602788183372468
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_reclose",
+            "contact_samples": 23384,
+            "max_force_n": 0.13030847907066345,
+            "max_depth_m": 0.00020930667233187705
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_reclose",
+            "contact_samples": 2452,
+            "max_force_n": 7.857452869415283,
+            "max_depth_m": 0.0010149755980819464
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_reclose",
+            "contact_samples": 431,
+            "max_force_n": 4.368136405944824,
+            "max_depth_m": 0.0005597375566139817
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "belt_finish",
+            "contact_samples": 7918,
+            "max_force_n": 0.03853026032447815,
+            "max_depth_m": 1.363524688713369e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "belt_finish",
+            "contact_samples": 1180,
+            "max_force_n": 5.837886810302734,
+            "max_depth_m": 0.000799009867478162
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "belt_finish",
+            "contact_samples": 2055,
+            "max_force_n": 8.394974708557129,
+            "max_depth_m": 0.0013043780345469713
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_final",
+            "contact_samples": 3958,
+            "max_force_n": 0.03853026032447815,
+            "max_depth_m": 1.3542384067477542e-06
+          },
+          {
+            "category": "other_monitored",
+            "phase": "cycle_open_final",
+            "contact_samples": 94,
+            "max_force_n": 4.693906307220459,
+            "max_depth_m": 0.0007301891455426812
+          },
+          {
+            "category": "belt_pedicel",
+            "phase": "cycle_open_final",
+            "contact_samples": 322,
+            "max_force_n": 5.886941432952881,
+            "max_depth_m": 0.001274325419217348
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "cycle_open_final_hold",
+            "contact_samples": 1980,
+            "max_force_n": 0.03853026032447815,
+            "max_depth_m": 1.349693206975644e-06
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "withdraw",
+            "contact_samples": 15840,
+            "max_force_n": 0.03853026032447815,
+            "max_depth_m": 1.3601413684227737e-06
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "return_joint_branch",
+            "contact_samples": 6829,
+            "max_force_n": 0.04098208621144295,
+            "max_depth_m": 1.9372557289898396e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "return_lift_branch",
+            "contact_samples": 4560,
+            "max_force_n": 0.04088179022073746,
+            "max_depth_m": 1.2332081496424507e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "ready_close",
+            "contact_samples": 1140,
+            "max_force_n": 0.040880121290683746,
+            "max_depth_m": 1.2313039405853488e-05
+          },
+          {
+            "category": "released_fruit_exception",
+            "phase": "hold",
+            "contact_samples": 1140,
+            "max_force_n": 0.040880486369132996,
+            "max_depth_m": 1.2303968105698004e-05
+          }
+        ],
+        "breaks": [
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_02",
+            "solver_step": 4743,
+            "solver_time_s": 54.14381790161133,
+            "release_effective_time_s": 54.14836502075195,
+            "scheduled_solver_time_s": 54.14090909090909,
+            "scheduled_release_time_s": 54.14545454545455,
+            "phase": "close",
+            "constraint_force_n": 1.280812382698059,
+            "passive_torque_nm": 0.008124918676912785
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_03",
+            "solver_step": 4565,
+            "solver_time_s": 53.33443069458008,
+            "release_effective_time_s": 53.3389778137207,
+            "scheduled_solver_time_s": 53.33181818181818,
+            "scheduled_release_time_s": 53.336363636363636,
+            "phase": "close",
+            "constraint_force_n": 1.1060874462127686,
+            "passive_torque_nm": 0.008598419837653637
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_04",
+            "solver_step": 4643,
+            "solver_time_s": 53.68910598754883,
+            "release_effective_time_s": 53.69365310668945,
+            "scheduled_solver_time_s": 53.68636363636364,
+            "scheduled_release_time_s": 53.69090909090909,
+            "phase": "close",
+            "constraint_force_n": 1.2176108360290527,
+            "passive_torque_nm": 0.008352304808795452
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_05",
+            "solver_step": 4559,
+            "solver_time_s": 53.30714797973633,
+            "release_effective_time_s": 53.31169509887695,
+            "scheduled_solver_time_s": 53.304545454545455,
+            "scheduled_release_time_s": 53.30909090909091,
+            "phase": "close",
+            "constraint_force_n": 1.0736000537872314,
+            "passive_torque_nm": 0.008165888488292694
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_07",
+            "solver_step": 4858,
+            "solver_time_s": 54.6667366027832,
+            "release_effective_time_s": 54.67128372192383,
+            "scheduled_solver_time_s": 54.663636363636364,
+            "scheduled_release_time_s": 54.66818181818182,
+            "phase": "close",
+            "constraint_force_n": 0.49270227551460266,
+            "passive_torque_nm": 0.011044209823012352
+          },
+          {
+            "world": 0,
+            "name": "Truss_00_Fruit_08",
+            "solver_step": 4694,
+            "solver_time_s": 53.9210090637207,
+            "release_effective_time_s": 53.92555618286133,
+            "scheduled_solver_time_s": 53.91818181818182,
+            "scheduled_release_time_s": 53.92272727272727,
+            "phase": "close",
+            "constraint_force_n": 0.35185471177101135,
+            "passive_torque_nm": 0.008522259071469307
+          }
+        ],
+        "detached_per_world": [
+          6
+        ],
+        "limitations": [
+          "This instrumented run is excluded from clean speed ranking.",
+          "Force magnitude is not a validated fruit-damage limit.",
+          "2mm audit tolerance does not implement deformable belt geometry.",
+          "Same-truss released-fruit exceptions are separated from monitored contacts.",
+          "Deepest contact and strongest contact need not be the same pair or timestamp."
+        ]
+      },
+      "geometry": {
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/final_witness/final_witness133/contact_geometry_context.json",
+        "sha256": "dcb24eba5f2af364c6183f0fba608c3d99081f3245911113bb278120c97e8ebf",
+        "state_witness_physical_mjb_hashes_match": true,
+        "cases": [
+          {
+            "label": "belt_pedicel_max_depth",
+            "actual_witness_step": 7012,
+            "cap_geom": "g0162",
+            "tool_geom": "s300_g0816",
+            "capsule_radius_m": 0.0008250003930006573,
+            "capsule_diameter_m": 0.0016500007860013146,
+            "is_compliant_belt_proxy": true,
+            "nominal_thickness_m": 0.00499999895692,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0,
+            "any_centerline_beyond_midplane": false,
+            "any_centerline_beyond_opposite_face": false,
+            "peak_pre_geometry": {
+              "sample": 7012,
+              "scheduled_time_s": 64.45454545454545,
+              "timing_relative_to_witness_peak": "pre-integration same geometry",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.004169590373228503,
+                  -0.051682134021295,
+                  0.001474324000437655
+                ],
+                [
+                  -0.0020207761697091002,
+                  -0.051641302129484416,
+                  0.0069689552486280745
+                ]
+              ],
+              "axis_inside_interval": [
+                0.7769824361892195,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0016695908947685027,
+                0.0004792233087508998
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.0013042237017515572
+            },
+            "peak_post_geometry": {
+              "sample": 7013,
+              "scheduled_time_s": 64.4590909090909,
+              "timing_relative_to_witness_peak": "post-integration next state",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.0044004612876238245,
+                  -0.05120264279346944,
+                  0.00141024875030443
+                ],
+                [
+                  -0.0022922067535466454,
+                  -0.05118318581945179,
+                  0.006920686711477093
+                ]
+              ],
+              "axis_inside_interval": [
+                0.9014385020619394,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0019004618091638245,
+                0.00020779272491335465
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.001032793117914012
+            },
+            "interpretation": "Overlap in declared2mm band of5mm compliant-belt box is not automatically hard-CAD failure; not a simulated deformation field or calibration of real belt compliance."
+          },
+          {
+            "label": "belt_pedicel_max_force",
+            "actual_witness_step": 6890,
+            "cap_geom": "g0162",
+            "tool_geom": "s300_g0816",
+            "capsule_radius_m": 0.0008250003930006573,
+            "capsule_diameter_m": 0.0016500007860013146,
+            "is_compliant_belt_proxy": true,
+            "nominal_thickness_m": 0.00499999895692,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0,
+            "any_centerline_beyond_midplane": false,
+            "any_centerline_beyond_opposite_face": false,
+            "peak_pre_geometry": {
+              "sample": 6890,
+              "scheduled_time_s": 63.9,
+              "timing_relative_to_witness_peak": "pre-integration same geometry",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.004376144768689729,
+                  -0.0493517166779648,
+                  0.0014104054137460793
+                ],
+                [
+                  -0.002406662732654358,
+                  -0.04932933120811436,
+                  0.0069719413237892495
+                ]
+              ],
+              "axis_inside_interval": [
+                0.9526084807589655,
+                1.0
+              ],
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0018761452902297292,
+                9.333674580564192e-05
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.0009183371388062992
+            },
+            "peak_post_geometry": {
+              "sample": 6891,
+              "scheduled_time_s": 63.904545454545456,
+              "timing_relative_to_witness_peak": "post-integration next state",
+              "centerline_endpoints_tool_local_m": [
+                [
+                  -0.004624372083908952,
+                  -0.049556524530340484,
+                  0.0014303983041681124
+                ],
+                [
+                  -0.0026226541193350244,
+                  -0.04951816216468065,
+                  0.006980325853013167
+                ]
+              ],
+              "axis_inside_interval": null,
+              "fully_buried_radius_ball_interval": null,
+              "full_radius_axis_length_m": 0.0,
+              "axis_between_two_outside_ends_crosses_solid": false,
+              "centerline_depth_from_entry_face_min_max_m": [
+                -0.0021243726054489516,
+                -0.0001226546408750243
+              ],
+              "centerline_crosses_belt_midplane": false,
+              "some_centerline_beyond_midplane": false,
+              "some_centerline_beyond_opposite_face": false,
+              "outer_capsule_envelope_depth_max_m": 0.000702345752125633
+            },
+            "interpretation": "Overlap in declared2mm band of5mm compliant-belt box is not automatically hard-CAD failure; not a simulated deformation field or calibration of real belt compliance."
+          },
+          {
+            "label": "other_monitored_max_depth",
+            "actual_witness_step": 7190,
+            "cap_geom": "g0154",
+            "tool_geom": "s300_g0707",
+            "capsule_radius_m": 0.0008250001921226782,
+            "capsule_diameter_m": 0.0016500003842453564,
+            "is_compliant_belt_proxy": false,
+            "nominal_thickness_m": null,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0
+          },
+          {
+            "label": "other_monitored_max_force",
+            "actual_witness_step": 7167,
+            "cap_geom": "g0154",
+            "tool_geom": "s300_g0707",
+            "capsule_radius_m": 0.0008250001921226782,
+            "capsule_diameter_m": 0.0016500003842453564,
+            "is_compliant_belt_proxy": false,
+            "nominal_thickness_m": null,
+            "full_radius_burial_samples": 0,
+            "axis_between_outside_ends_cross_samples": 0
+          }
+        ]
+      },
+      "cpu_posthoc": {
+        "evidence_file": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference133/posthoc_selected_contact_policy.json",
+        "sha256": "fb61c88d715dd4a5ae1ce95baf52f70e2c575f8f44888e66b188829c90be7169",
+        "schema": "s300-cpu-posthoc-contact-policy-v1",
+        "source": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/cpu_reference133",
+        "physical_input_mjb_sha256": "b76e2f842bb8c680e00ec99eba455d6d0cebe05a16d7c820fbc4aa3f16580eba",
+        "physical_model_arrays_sha256": "d89d8fd342af7be759d14daa39caf55791e24926bf044e438faf24171653659f",
+        "display_source_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+        "actual_execution_policy": "Original nativeCPU1mm diagnostic_continue; GPU contact-policy helper was not executed by CPU runner.",
+        "new_policy_actually_executed": false,
+        "physics_rerun": false,
+        "throughput_eligible": null,
+        "training_eligible": false,
+        "harvest_success": null,
+        "policy_file": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/combined_belt_strokes_2mm_policy.json",
+        "policy_sha256": "73456fc883a92e6b578afc2ef199ff2ca38bba6d053433b53de44438d35781a4",
+        "source_contact_events_sha256": "ce7d84616c3e79a4fff92c580158a40e52956ff7420746e4e8bbc3a2160a35b4",
+        "exact_belt_geometries": [
+          {
+            "geom_id": 330,
+            "geom": "s300_g0813",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/part_163"
+          },
+          {
+            "geom_id": 331,
+            "geom": "s300_g0814",
+            "body": "Tool_L_belt",
+            "source": "/World/ActuatedTool/L_belt/PrototypeTread"
+          },
+          {
+            "geom_id": 453,
+            "geom": "s300_g0815",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/part_285"
+          },
+          {
+            "geom_id": 454,
+            "geom": "s300_g0816",
+            "body": "Tool_R_belt",
+            "source": "/World/ActuatedTool/R_belt/PrototypeTread"
+          }
+        ],
+        "config": {
+          "default_m": 0.001,
+          "belt_fruit_m": 0.002,
+          "belt_pedicel_m": 0.002,
+          "relaxed_phases": [
+            "close",
+            "cycle_reclose",
+            "belt_finish",
+            "cycle_open",
+            "cycle_open_final"
+          ],
+          "residual_open_seconds": 0,
+          "explicit_other_pairs": [],
+          "record_contacts": false,
+          "label": "Experimental exact belt fruit/pedicel 2mm during closing, sustained closed pressure and opening strokes; fully-open hold/approach/transport and all other pairs remain 1mm; no forces or release changes"
+        },
+        "all_over_1mm_events_in_log": true,
+        "log_capture_rule": "newton_cpu.py appends every active contact when penetration>1mm OR force magnitude>1N.",
+        "over_reference_nonexception_event_count": 4,
+        "posthoc_allowed_event_count": 4,
+        "posthoc_disallowed_event_count": 0,
+        "selected_policy_posthoc_passed": true,
+        "first_disallowed_event": null,
+        "events": [
+          {
+            "event_index": 2389,
+            "solver_time_s": 55.53636363636364,
+            "phase": "close",
+            "geoms": [
+              80,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_proximal_05_2",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0010342816412241816,
+            "force_n": 0.0,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0161",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 2390,
+            "solver_time_s": 55.53636363636364,
+            "phase": "close",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0012342892918744846,
+            "force_n": 2.3943468213686225,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 4560,
+            "solver_time_s": 63.14090909090909,
+            "phase": "cycle_reclose",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.001180068258082138,
+            "force_n": 2.199614645010127,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          },
+          {
+            "event_index": 5155,
+            "solver_time_s": 63.722727272727276,
+            "phase": "belt_finish",
+            "geoms": [
+              81,
+              454
+            ],
+            "bodies": [
+              "Truss_00_Pedicel_distal_05_0",
+              "Tool_R_belt"
+            ],
+            "penetration_m": 0.0011304105811569109,
+            "force_n": 2.17809428307578,
+            "released_fruit": false,
+            "released_contact_exception": false,
+            "geom_names": [
+              "g0162",
+              "s300_g0816"
+            ],
+            "category": "belt_pedicel",
+            "selected_limit_m": 0.002,
+            "posthoc_allowed": true
+          }
+        ],
+        "limitations": [
+          "Posthoc event classification is not a CPU run using the new stopping policy.",
+          "All>1mm contacts are logged, so below1mm contacts cannot create an unseen larger-threshold violation.",
+          "This explicit stroke-band policy does not need residual latch reconstruction for its named stroke/hold phases.",
+          "CPU/GPU physical states and release outcomes are not assumed equal."
+        ]
+      }
+    }
+  ],
+  "analysis_code": {
+    "replay_helper_sha256": "26e02e1994dc05332ba2c4cdb710d5476033f4bb35ba6761cfe29bcb969587e4",
+    "force_reviewer": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/review_final_contact_witnesses.py",
+    "force_reviewer_sha256": "6c0d9ccb252e805709a29625752ade2677e9e452314c625c7da8c156a86c175b",
+    "cpu_classifier": "/root/docker_share/mujoko_debugging_data/20261017_103107_newton_independent_tests/contact/classify_cpu_contact_events.py",
+    "cpu_classifier_sha256": "19e5d2996e0f967d6e5f1eb1a15d3404d3dfa1672e64996765326c6a1a5a7032"
+  },
+  "limitations": [
+    "2mm is an explicit compliant-belt approximation, not a calibrated material model or real-robot safety bound.",
+    "The1mm raw diagnostic and all force data are preserved; selected-policy pass is not universal physical truth.",
+    "Geometry windows are bounded selected peak cases, not a proof that every scene pair is collision free.",
+    "Released floor penetrations20.173mm(190) and13.910mm(133) are outside the operational stop policy; do not treat them as validated landing physics.",
+    "CPU133 is faster than GPU133 in this N=1 measurement and passes the selected policy only in posthoc classification; no GPU single-world speed victory is claimed.",
+    "CPU/GPU share physical MJB and model-array hashes but their evolving states and detachment counts differ.",
+    "Instrumented witnesses are excluded from clean throughput ranking.",
+    "Contact solve geometry/forces precede integration, local centers use refreshed post-integration poses, cached attachment state precedes current release, and timestamp is step-end."
+  ]
+}

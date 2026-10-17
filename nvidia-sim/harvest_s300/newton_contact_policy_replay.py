@@ -19,6 +19,14 @@ from newton_contact_policy import OPEN_PHASES, validate_config
 NO_EVENT = int(np.iinfo(np.uint64).max)
 
 
+def model_hash_evidence(summary):
+    """Keep physical input and display compatibility hashes in separate fields."""
+    return dict(physical_input_mjb_sha256=hashlib.sha256(
+        (Path(summary['input'])/'input_model.mjb').read_bytes()).hexdigest(),
+        physical_model_arrays_sha256=summary.get('engine',{}).get('source_model_array_sha256'),
+        display_source_model_sha256=summary.get('display_source_model_sha256'))
+
+
 def replay_stop_policy(witness, phases, schema, metadata, config):
     """CPU reproduction of the opt-in GPU pair/phase policy, using float32.
 
@@ -209,7 +217,8 @@ def replay_folder(folder, policy_paths, output):
     result = dict(source=str(folder), strict_first_event_matches_actual_gpu=True,
         saved_policy_reproduction_checks=saved_checks,
         source_witness_sha256=sha(folder/'contact_witness.npz'),
-        source_states_sha256=sha(folder/'states.npz'),source_model_sha256=summary.get('model_sha256'),
+        source_states_sha256=sha(folder/'states.npz'),
+        **model_hash_evidence(summary),
         replay_code_sha256=sha(__file__),
         attachment_state_scope='Cached control-callback c.attached: pre-current-release. Equality state may already change in release_attachments before audit.',
         strict_gpu_first_event=raw_event, rows=rows, physics_rerun=False)

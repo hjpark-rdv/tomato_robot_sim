@@ -1,4 +1,7 @@
 import unittest
+import hashlib
+import tempfile
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -6,11 +9,23 @@ import warp as wp
 
 from newton_contact_policy import (ContactPolicyGPU, clear_pair_depth,
     classify_contacts, evaluate_pair_policy)
-from newton_contact_policy_replay import replay_stop_policy, NO_EVENT
+from newton_contact_policy_replay import replay_stop_policy, NO_EVENT, model_hash_evidence
 from test_newton_contact_policy import fixture, arr
 
 
 class PolicyReplayTests(unittest.TestCase):
+    def test_physical_mjb_array_and_display_hashes_are_distinct(self):
+        with tempfile.TemporaryDirectory() as directory:
+            content=b'physical input MJB bytes'
+            (Path(directory)/'input_model.mjb').write_bytes(content)
+            evidence=model_hash_evidence(dict(input=directory,model_sha256='display USD compatibility',
+                display_source_model_sha256='display USD compatibility',
+                engine=dict(source_model_array_sha256='physical compiled arrays')))
+        self.assertEqual(evidence,dict(physical_input_mjb_sha256=hashlib.sha256(content).hexdigest(),
+            physical_model_arrays_sha256='physical compiled arrays',
+            display_source_model_sha256='display USD compatibility'))
+        self.assertNotIn('source_model_sha256',evidence)
+
     def test_replay_matches_warp_pair_classes_events_and_hysteresis(self):
         model, metadata = fixture()
         metadata['tools'] = ['Tool_L', 'Tool_L_belt', 'Tool_R_belt']
