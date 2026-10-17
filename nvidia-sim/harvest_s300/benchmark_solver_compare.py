@@ -261,39 +261,45 @@ def compare_batch_evidence(reference, candidate):
             checks[label]['policy_input_snapshot_hash'] = bool(snapshot.is_file() and
                 sha256(snapshot) == summary.get('contact_policy_input_sha256'))
     worlds, shapes = [], {}
-    with np.load(reference/'all_world_states.npz', allow_pickle=False) as left, \
-         np.load(candidate/'all_world_states.npz', allow_pickle=False) as right:
-        for field in ('qpos', 'qvel', 'eq_active', 'time'):
+    # NpzFile reopens/decompresses a member on every __getitem__. Cache each
+    # array once; otherwise checking N worlds repeatedly decodes N-world data.
+    with np.load(reference/'all_world_states.npz', allow_pickle=False) as archive:
+        left = {field: archive[field] for field in ('qpos', 'qvel', 'eq_active', 'time')}
+    with np.load(candidate/'all_world_states.npz', allow_pickle=False) as archive:
+        right = {field: archive[field] for field in ('qpos', 'qvel', 'eq_active', 'time')}
+    for field in ('qpos', 'qvel', 'eq_active', 'time'):
+        a, b = left[field], right[field]
+        shapes[field] = dict(reference=list(a.shape), candidate=list(b.shape),
+            compatible=a.shape[0] == 1 and b.shape[0] == count and a.shape[1:] == b.shape[1:])
+    for index in range(count):
+        fields = {}
+        for field in shapes:
             a, b = left[field], right[field]
-            shapes[field] = dict(reference=list(a.shape), candidate=list(b.shape),
-                compatible=a.shape[0] == 1 and b.shape[0] == count and a.shape[1:] == b.shape[1:])
-        for index in range(count):
-            fields = {}
-            for field in shapes:
-                a, b = left[field], right[field]
-                if not shapes[field]['compatible']:
-                    fields[field] = dict(compatible=False, finite=False, exact_reference=False, exact_world0=False)
-                    continue
-                fields[field] = dict(compatible=True, finite=bool(np.isfinite(b[index]).all()),
-                    exact_reference=bool(np.array_equal(a[0], b[index])),
-                    exact_world0=bool(np.array_equal(b[0], b[index])),
-                    maximum_absolute_difference_from_reference=float(np.max(np.abs(
-                        b[index].astype(np.float64)-a[0].astype(np.float64)), initial=0)))
-            worlds.append(dict(world=index, fields=fields))
-    with np.load(reference/'physics_metrics.npz', allow_pickle=False) as left, \
-         np.load(candidate/'physics_metrics.npz', allow_pickle=False) as right:
-        for world in worlds:
-            metrics = {}
-            for field in METRIC_KEYS:
-                if field not in left or field not in right:
-                    metrics[field] = dict(compatible=False, finite=False, exact_reference=False)
-                    continue
-                a, b = left[field], right[field]
-                compatible = a.shape[0] == 1 and b.shape[0] == count and a.shape[1:] == b.shape[1:]
-                metrics[field] = dict(compatible=compatible,
-                    finite=bool(compatible and np.isfinite(b[world['world']]).all()),
-                    exact_reference=bool(compatible and np.array_equal(a[0], b[world['world']])))
-            world['physics_metrics'] = metrics
+            if not shapes[field]['compatible']:
+                fields[field] = dict(compatible=False, finite=False, exact_reference=False, exact_world0=False)
+                continue
+            fields[field] = dict(compatible=True, finite=bool(np.isfinite(b[index]).all()),
+                exact_reference=bool(np.array_equal(a[0], b[index])),
+                exact_world0=bool(np.array_equal(b[0], b[index])),
+                maximum_absolute_difference_from_reference=float(np.max(np.abs(
+                    b[index].astype(np.float64)-a[0].astype(np.float64)), initial=0)))
+        worlds.append(dict(world=index, fields=fields))
+    with np.load(reference/'physics_metrics.npz', allow_pickle=False) as archive:
+        left = {field: archive[field] for field in METRIC_KEYS if field in archive.files}
+    with np.load(candidate/'physics_metrics.npz', allow_pickle=False) as archive:
+        right = {field: archive[field] for field in METRIC_KEYS if field in archive.files}
+    for world in worlds:
+        metrics = {}
+        for field in METRIC_KEYS:
+            if field not in left or field not in right:
+                metrics[field] = dict(compatible=False, finite=False, exact_reference=False)
+                continue
+            a, b = left[field], right[field]
+            compatible = a.shape[0] == 1 and b.shape[0] == count and a.shape[1:] == b.shape[1:]
+            metrics[field] = dict(compatible=compatible,
+                finite=bool(compatible and np.isfinite(b[world['world']]).all()),
+                exact_reference=bool(compatible and np.array_equal(a[0], b[world['world']])))
+        world['physics_metrics'] = metrics
     policy_metrics_exact = True
     policy_metric_errors = []
     if uses_policy:

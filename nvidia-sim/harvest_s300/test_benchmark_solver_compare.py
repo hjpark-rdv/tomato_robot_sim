@@ -2,10 +2,12 @@
 import json
 import csv
 import hashlib
+from collections import Counter
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 import numpy as np
 
 from benchmark_solver_compare import (compare_batch_evidence, execution_command,
@@ -111,7 +113,21 @@ class SolverComparisonTests(unittest.TestCase):
                 display_events = [dict(event, display_world=0, joint='/display/joint')
                                   if event['world'] == 0 else event for event in raw_events]
                 (path/'break_events.json').write_text(json.dumps(display_events))
-            result = compare_batch_evidence(root/'reference', root/'candidate')
+            # Reading an NPZ member decompresses it again. Full-world checks
+            # must decode each state/metric once, independent of world count.
+            with np.load(root/'reference/all_world_states.npz') as archive:
+                archive_type = type(archive)
+            original_getitem = archive_type.__getitem__
+            reads = Counter()
+            def counted_getitem(archive, key):
+                filename = str(archive.zip.filename)
+                if filename.endswith(('all_world_states.npz', 'physics_metrics.npz')):
+                    reads[filename, key] += 1
+                return original_getitem(archive, key)
+            with patch.object(archive_type, '__getitem__', counted_getitem):
+                result = compare_batch_evidence(root/'reference', root/'candidate')
+            self.assertTrue(reads)
+            self.assertTrue(all(count == 1 for count in reads.values()), reads)
             self.assertTrue(result['passed'])
             path = root/'candidate'
             with np.load(path/'all_world_states.npz') as archive:
