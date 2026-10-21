@@ -1,0 +1,52 @@
+{
+  "schema": "farmily-harvest-replay-independent-validation-v1",
+  "passed": true,
+  "replay": "/root/farmily_tomato/gripper-design/harvest-replay/assets/isaac_truss_57s/replay.json",
+  "source_trial": "/root/docker_share/mujoko_debugging_data_bak/20261011_174730_released_same_truss_60hz/trials/released_same_truss60",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_140011_move_harvest_repeat/assembly_installation_corrected",
+  "source_scene_sha256": "63889e19d975da99f5b3082dd652c84d969027bc38b543759e9389428040052a",
+  "source_states_sha256": "def51c9fb284091face16545045717f806dd4cf19aae05177084c3a0b782e79c",
+  "web_glb_sha256": "fccda54c99b0f3f4ad0e9f417fa671bba7ea701a3a008073d018f63019cf74c2",
+  "frames": 3421,
+  "bodies": 277,
+  "duration_s": 57.0,
+  "exact_original_timestamps": true,
+  "all_frames_preserved": true,
+  "all_body_paths_mapped": true,
+  "maximum_position_quantization_m": 0.0,
+  "maximum_quaternion_component_quantization": 0.0,
+  "phases_exact": true,
+  "release_events_exact": 5,
+  "runtime_physical_model_hash_verified": true,
+  "scene_source_meshes": 31538,
+  "scene_mesh_instances": 31538,
+  "scene_triangles_with_instances": 53997552,
+  "scene_groups": {
+    "greenhouse": 1097,
+    "background_plants": 28971,
+    "target": 661,
+    "active_neighbors": 0,
+    "robot": 809
+  },
+  "skins": {
+    "meshes": 145,
+    "source_vertices": 89136,
+    "sampled_vertex_frames": 13920,
+    "maximum_sampled_position_error_m": 1.382429926088946e-07,
+    "influence_ids_exact": true,
+    "influence_weights_float32_exact": true,
+    "source_vertex_mapping_exact": true,
+    "inverse_bind_float32_exact": true
+  },
+  "transmission": {
+    "nodes": 3,
+    "frames": 3421,
+    "sampled_frames": [
+      0,
+      1710,
+      3420
+    ],
+    "measured_gap_reference_exact": true
+  },
+  "physics_rerun": false
+}

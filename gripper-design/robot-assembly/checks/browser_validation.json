@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "checks": [
+    "Robot deep-link loads four components and original visual triangles",
+    "Gzip model requested; unselected gripper iframe stays unloaded",
+    "Camera presets, mouse orbit and component visibility work",
+    "V6/V5.1 selection and download links preserved",
+    "Tab switching retains loaded assembly; browser back/forward preserves selection",
+    "Keyboard tabs and 390px mobile layouts work",
+    "No browser or HTTP errors",
+    "Compressed transfer decodes byte-for-byte to the downloadable GLB"
+  ],
+  "load_s": 1.80302382260561,
+  "snapshot": {
+    "ready": true,
+    "source": "8afc21eb6f44a698d056b860a88a040f27afcde536aa9b765f6d71327626f4cd",
+    "model": "264b7e5e5a4205884db8cc3f01caab6c3d59294f6291f89979583634c307b5f6",
+    "components": {
+      "lift": true,
+      "arm": true,
+      "gripper": true,
+      "chassis": true
+    },
+    "triangles": 2938941,
+    "sourceMeshes": 809,
+    "camera": [
+      -2.801470455906146,
+      2.238370348743651,
+      3.0349745272175706
+    ],
+    "target": [
+      0,
+      0.7816057116724551,
+      -0.3267900198698044
+    ],
+    "renderer": "WebGL",
+    "bounds": [
+      [
+        -0.4129999876022339,
+        0.0049999775364995,
+        -1.0955920219421387
+      ],
+      [
+        0.4129999876022339,
+        1.5582114458084106,
+        0.4420119822025299
+      ]
+    ]
+  },
+  "browser_errors": [],
+  "http_errors": [],
+  "geometry_bounds_error_m": 3.33786012163273e-08,
+  "source_triangle_count_preserved": true
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "farmily-harvest-replay-catalog-v1",
+  "runs": [
+    {
+      "id": "isaac_truss_57s",
+      "label": "Isaac · 송이 수확 · 57초 · 열매 5개 분리",
+      "replay_url": "./assets/isaac_truss_57s/replay.json",
+      "engine": "Isaac Sim / PhysX",
+      "duration_s": 57.0,
+      "frames": 3421,
+      "source_trial": "/root/docker_share/mujoko_debugging_data_bak/20261011_174730_released_same_truss_60hz/trials/released_same_truss60",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_140011_move_harvest_repeat/assembly_installation_corrected"
+    },
+    {
+      "id": "isaac_move_83s",
+      "label": "Isaac · 레일 이동 후 수확 · 82.8초 · 열매 4개 분리",
+      "replay_url": "./assets/isaac_move_83s/replay.json",
+      "engine": "Isaac Sim / PhysX",
+      "duration_s": 82.8,
+      "frames": 4969,
+      "source_trial": "/root/docker_share/mujoko_debugging_data_bak/20261011_180823_continuous_harvest60/trials/plant29_continued60",
+      "source_assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_180823_continuous_harvest60/assembly_plant29"
+    }
+  ],
+  "updated_at": "2026-10-21T14:32:55.323100+00:00"
+}

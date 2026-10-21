@@ -1,0 +1,206 @@
+{
+  "passed": true,
+  "runs": [
+    {
+      "id": "isaac_truss_57s",
+      "samples": [
+        {
+          "frame": 0,
+          "time_s": 0.0,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 8.546360930867985e-08
+        },
+        {
+          "frame": 1140,
+          "time_s": 19.0,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 8.74609637835735e-08
+        },
+        {
+          "frame": 1710,
+          "time_s": 28.5,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 9.429645526906466e-08
+        },
+        {
+          "frame": 3420,
+          "time_s": 57.0,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 9.752067465289875e-08
+        }
+      ],
+      "snapshot": {
+        "ready": true,
+        "playing": false,
+        "run": "isaac_truss_57s",
+        "time_s": 11.78329999999999,
+        "speed": 1,
+        "frame": 706,
+        "frameIndex": 706,
+        "interpolation": 0.9979999999994006,
+        "start_s": 0,
+        "end_s": 57,
+        "frames": 3421,
+        "bodies": 277,
+        "phase": "prepare_joint_branch",
+        "releases": [],
+        "camera": [
+          0.0471106335520744,
+          1.444797599315643,
+          2.1229101657867435
+        ],
+        "target": [
+          -0.1464932218194008,
+          1.0447975993156433,
+          -0.07695745229721067
+        ],
+        "view": "robot",
+        "renderer": {
+          "drawCalls": 2940,
+          "triangles": 53170954,
+          "meshes": 2961,
+          "skinnedMeshes": 145,
+          "instancedMeshes": 1235,
+          "instances": 29107,
+          "retainedStaticInstances": 29843,
+          "visibleStaticInstances": 29107,
+          "culledStaticInstances": 736
+        },
+        "scene_sha256": "63889e19d975da99f5b3082dd652c84d969027bc38b543759e9389428040052a",
+        "source": {
+          "assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_140011_move_harvest_repeat/assembly_installation_corrected",
+          "trial": "/root/docker_share/mujoko_debugging_data_bak/20261011_174730_released_same_truss_60hz/trials/released_same_truss60",
+          "scene_sha256": "63889e19d975da99f5b3082dd652c84d969027bc38b543759e9389428040052a",
+          "wrapper_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+          "recorded_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+          "recorded_runtime_native_scene_sha256": "63889e19d975da99f5b3082dd652c84d969027bc38b543759e9389428040052a",
+          "runtime_native_hash_verified": true,
+          "summary_sha256": "1fb16a163251c8e0f51e11e167ee926e949123d3fe9e5b0d0a0d515cc4bd8b82",
+          "runtime_sha256": "e19181a20ba631d9115e8878012cb8d874dca8b8e07240b4fc08e48b753cf15f",
+          "manifest_sha256": "f502bfce49b1c5f651b0084e25c5215607af852d94c45ebe39c75109732a4a04",
+          "states_sha256": "def51c9fb284091face16545045717f806dd4cf19aae05177084c3a0b782e79c",
+          "all_frames_exported": true,
+          "physics_rerun": false,
+          "new_simulation": false
+        },
+        "availableRuns": [
+          {
+            "id": "isaac_truss_57s",
+            "label": "Isaac · 송이 수확 · 57초 · 열매 5개 분리"
+          },
+          {
+            "id": "isaac_move_83s",
+            "label": "Isaac · 레일 이동 후 수확 · 82.8초 · 열매 4개 분리"
+          }
+        ]
+      }
+    },
+    {
+      "id": "isaac_move_83s",
+      "samples": [
+        {
+          "frame": 0,
+          "time_s": 0.0,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 9.073711442395476e-08
+        },
+        {
+          "frame": 1656,
+          "time_s": 27.6,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 8.680868555193232e-08
+        },
+        {
+          "frame": 2484,
+          "time_s": 41.4,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 8.89974409865024e-08
+        },
+        {
+          "frame": 4968,
+          "time_s": 82.8,
+          "max_position_error_m": 0.0,
+          "max_quaternion_component_norm_error": 8.994570693399686e-08
+        }
+      ],
+      "snapshot": {
+        "ready": true,
+        "playing": false,
+        "run": "isaac_move_83s",
+        "time_s": 11.783299999999983,
+        "speed": 1,
+        "frame": 706,
+        "frameIndex": 706,
+        "interpolation": 0.9979999999989743,
+        "start_s": 0,
+        "end_s": 82.8,
+        "frames": 4969,
+        "bodies": 136,
+        "phase": "rail_move",
+        "releases": [],
+        "camera": [
+          0.009770521521568265,
+          1.4396552085876462,
+          1.9000013113021856
+        ],
+        "target": [
+          -0.24126172363758092,
+          1.0396552085876465,
+          -1.110419499874115
+        ],
+        "view": "robot",
+        "renderer": {
+          "drawCalls": 3297,
+          "triangles": 51983454,
+          "meshes": 3330,
+          "skinnedMeshes": 49,
+          "instancedMeshes": 1235,
+          "instances": 27846,
+          "retainedStaticInstances": 29474,
+          "visibleStaticInstances": 27846,
+          "culledStaticInstances": 1628
+        },
+        "scene_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+        "source": {
+          "assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_180823_continuous_harvest60/assembly_plant29",
+          "trial": "/root/docker_share/mujoko_debugging_data_bak/20261011_180823_continuous_harvest60/trials/plant29_continued60",
+          "scene_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+          "wrapper_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+          "recorded_model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+          "recorded_runtime_native_scene_sha256": "c327a28b1679d8c764b8521b33cf596767ead4622165fb1c9f6d82caedd9b2cd",
+          "runtime_native_hash_verified": true,
+          "summary_sha256": "811da059c77bb935412538ee83301689218b744960427aa2a38ac66df3d0d505",
+          "runtime_sha256": "b0620b0aef93bfe904af8126338b12b7b89de6019b8a3039309f219805c28cb9",
+          "manifest_sha256": "9c110cd982f0359e7cb6105759449fcd9e5d9b9514f2c9a5eb9b111605f7ab49",
+          "states_sha256": "b26ad56512cffe654214fda9e6d7b5a1740f649b81c5b5285c8570d1ac84f48f",
+          "all_frames_exported": true,
+          "physics_rerun": false,
+          "new_simulation": false
+        },
+        "availableRuns": [
+          {
+            "id": "isaac_truss_57s",
+            "label": "Isaac · 송이 수확 · 57초 · 열매 5개 분리"
+          },
+          {
+            "id": "isaac_move_83s",
+            "label": "Isaac · 레일 이동 후 수확 · 82.8초 · 열매 4개 분리"
+          }
+        ]
+      }
+    }
+  ],
+  "browser_errors": [],
+  "http_errors": [],
+  "console_warnings": [],
+  "checks": [
+    "All recorded body transforms at 4 timestamps per run",
+    "Full farm, target and robot views",
+    "Recorded release counts",
+    "Playback/pause/time controls",
+    "Dataset selection",
+    "Other tabs preserved",
+    "Deep link selected run",
+    "390px mobile"
+  ]
+}

@@ -8,30 +8,53 @@
   <style>
     :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:#173d33;background:#f7f8f5;font-synthesis:none}
     *{box-sizing:border-box}body{margin:0;height:100vh;height:100dvh;display:flex;flex-direction:column}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 22px;border-bottom:1px solid #dce3da;flex:none}
+    header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:10px 22px;border-bottom:1px solid #dce3da;flex:none}
     .identity{display:flex;align-items:center;gap:20px;white-space:nowrap}.home{color:#42634f;text-decoration:none;font-size:12px;padding:8px 0}
     h1{font-size:14px;font-weight:650;margin:0}h1 span{font-size:11px;color:#768772;font-weight:400;margin-left:7px}
+    #pageHeading{font:inherit;color:inherit;margin:0;display:inline}
     nav{display:flex;gap:7px;flex-wrap:wrap}nav a{font-size:11px;text-decoration:none;color:#315040;border:1px solid #d4dfd1;border-radius:6px;background:white;padding:8px 11px;white-space:nowrap}
     nav a:hover,.home:hover{color:#11654a}nav a:hover{background:#eaf1e4}a:focus-visible{outline:3px solid #588a39;outline-offset:3px}
-    main{flex:1;min-height:0}iframe{display:block;width:100%;height:100%;border:0;background:#e9eef0}
-    @media(max-width:740px){header{flex-wrap:wrap;gap:8px;padding:8px 12px}.identity{width:100%;justify-content:space-between;gap:12px}nav{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}nav a{text-align:center;padding:7px 4px;font-size:10px}h1{font-size:12px}h1 span{display:none}}
+    main{flex:1;min-height:0}.viewer-panel{height:100%}iframe{display:block;width:100%;height:100%;border:0;background:#e9eef0}
+    [hidden]{display:none!important}.view-tabs{display:flex;gap:4px;padding:7px 14px 0;border-bottom:1px solid #dce3da;background:#fff;flex:none}.view-tabs button{font:inherit;font-size:12px;padding:10px 14px;border:0;border-bottom:3px solid transparent;background:transparent;color:#62746b;cursor:pointer}.view-tabs button[aria-selected="true"]{border-bottom-color:#286346;color:#174c33;font-weight:700}.view-tabs button:focus-visible{outline:3px solid #588a39;outline-offset:-3px}
+    .version-picker{display:flex;align-items:center;gap:8px;font-size:11px;color:#42634f}.version-picker select{font:inherit;font-size:12px;color:#173d33;background:#fff;border:1px solid #b9cbbd;border-radius:6px;padding:7px;max-width:100%}
+    @media(max-width:740px){header{flex-wrap:wrap;gap:8px;padding:8px 12px}.identity{width:100%;justify-content:space-between;gap:12px}.version-picker{width:100%}.version-picker select{flex:1}nav{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}nav a{text-align:center;padding:7px 4px;font-size:10px}h1{font-size:12px}h1 span{display:none}}
   </style>
 </head>
 <body>
   <header>
     <div class="identity">
       <a class="home" id="projectHomeLink" href="/">← 프로젝트 목록</a>
-      <h1>Inaho Gripper 디자인 <span>V5.1</span></h1>
+      <h1><span id="pageHeading">Inaho Gripper 디자인</span> <span id="revision">V6.0</span></h1>
     </div>
+    <label class="version-picker" for="designVersion">디자인 버전
+      <select id="designVersion">
+        <option value="v6" selected>V6 · 개방형 경사 U자 받침</option>
+        <option value="v5">V5.1 · 기존 경사 받침</option>
+      </select>
+    </label>
     <nav aria-label="설계 파일 다운로드">
-      <a href="./inaho_gripper/inaho_gripper_v5_assembly.step" download>STEP 설계</a>
-      <a href="./inaho_gripper/inaho_gripper_v5_assembly.glb" download>3D 모델</a>
-      <a href="./inaho_gripper/inaho_gripper_v5_printable.zip" download>출력용 ZIP</a>
-      <a href="./inaho_gripper/inaho_gripper_v5_assembly_guide_KO.pdf" target="_blank" rel="noopener">조립 설명서 ↗</a>
+      <a id="downloadStep" href="./inaho_gripper_v6/models/inaho_gripper_v6_assembly.step" download>STEP 설계</a>
+      <a id="downloadGlb" href="./inaho_gripper_v6/models/inaho_gripper_v6_assembly.glb" download>3D 모델</a>
+      <a id="downloadPrint" href="./inaho_gripper_v6/inaho_gripper_v6_printable.zip" download>출력용 ZIP</a>
+      <a id="downloadGuide" href="./inaho_gripper_v6/docs/inaho_gripper_v6_assembly_guide_KO.pdf" target="_blank" rel="noopener">조립 설명서 ↗</a>
     </nav>
   </header>
+  <div class="view-tabs" role="tablist" aria-label="설계 보기">
+    <button id="gripperTab" type="button" role="tab" aria-selected="true" aria-controls="gripperPanel" data-tab="gripper">그리퍼 설계</button>
+    <button id="robotTab" type="button" role="tab" aria-selected="false" aria-controls="robotPanel" data-tab="robot" tabindex="-1">로봇 · 리프트 · 그리퍼</button>
+    <button id="replayTab" type="button" role="tab" aria-selected="false" aria-controls="replayPanel" data-tab="replay" tabindex="-1">농장 수확 재생</button>
+  </div>
   <main>
-    <iframe id="gripperViewer" title="듀얼 벨트 그리퍼 V5.1 3D 설계 뷰어" src="./inaho_gripper/inaho_gripper_v5_viewer.html" allow="fullscreen"></iframe>
+    <section id="gripperPanel" class="viewer-panel" role="tabpanel" aria-labelledby="gripperTab">
+      <iframe id="gripperViewer" title="듀얼 벨트 그리퍼 V6.0 3D 설계 뷰어" allow="fullscreen"></iframe>
+    </section>
+    <section id="robotPanel" class="viewer-panel" role="tabpanel" aria-labelledby="robotTab" hidden>
+      <iframe id="robotViewer" title="S300 · 리프트 · RB5 · 그리퍼 3D 조립 뷰어" allow="fullscreen"></iframe>
+    </section>
+    <section id="replayPanel" class="viewer-panel" role="tabpanel" aria-labelledby="replayTab" hidden>
+      <iframe id="replayViewer" title="토마토 농장 저장된 실제 수확 실행 3D 재생" allow="fullscreen"></iframe>
+    </section>
   </main>
+  <script src="./versions.js?v=20261022-replay"></script>
 </body>
 </html>

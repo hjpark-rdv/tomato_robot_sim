@@ -1,0 +1,3 @@
+# Recreate from the source assembly and measured states documented in ../README.txt.
+/models/*.glb
+/models/*.glb.gz

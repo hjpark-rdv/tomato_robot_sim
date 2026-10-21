@@ -1,0 +1,33 @@
+{
+  "schema": "farmily-replay-validator-negative-controls-v1",
+  "passed": true,
+  "cases": [
+    {
+      "case": "wrong_actual_physical_model",
+      "rejected": true,
+      "reason": "Actual source scene SHA mismatch"
+    },
+    {
+      "case": "altered_saved_phase",
+      "rejected": true,
+      "reason": "Published phases differ from recording"
+    },
+    {
+      "case": "altered_pose_with_matching_served_hash",
+      "rejected": true,
+      "reason": "All recorded poses differs from recorded source values"
+    },
+    {
+      "case": "missing_recorded_body",
+      "rejected": true,
+      "reason": "Missing recorded body mapping"
+    },
+    {
+      "case": "altered_release_time",
+      "rejected": true,
+      "reason": "Release timestamp mismatch"
+    }
+  ],
+  "source_files_modified": false,
+  "physics_rerun": false
+}

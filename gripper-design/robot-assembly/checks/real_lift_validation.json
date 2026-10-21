@@ -1,0 +1,303 @@
+{
+  "branch": "codex/s300-real-lift-20261021",
+  "base_commit": "a37f9d0408bc442607696613046242ff90034cd2",
+  "output": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount",
+  "source_sha256": "8afc21eb6f44a698d056b860a88a040f27afcde536aa9b765f6d71327626f4cd",
+  "corrected_usd_sha256": "c6f7781dc09d33ef23c731efc705f427e47efb8908a4952f2f74f1fc409f0825",
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/real_lift_mount.py": "2576bb03ca021d9a1b537bb3b7d6ccf036163455e441307033190080715a0ea4",
+    "nvidia-sim/harvest_s300/check_real_lift.py": "37c7359d6cd94819f9ad813f2ec41a93cd61dcd4409dc4ca3eee67df3dfcc979",
+    "nvidia-sim/harvest_s300/test_real_lift_mount.py": "c6ae32d9b709b3f918aa98ac050f1b8ad18bad7ff0d6aa79951ee3c85c6e70b8",
+    "gripper-design/robot-assembly/export_model.py": "c052c0915947305c1dc49bd08fadf1f31398ec3ef099a1fcde84e33438714b55",
+    "gripper-design/robot-assembly/viewer.js": "8ce951d0f99e5dc7848df37410d6da675ae140923ee840732c5b08cac068593c"
+  },
+  "geometry_tests": {
+    "passed": 6,
+    "log": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/geometry_tests.log"
+  },
+  "cpu": {
+    "engine": "native_mujoco_cpu",
+    "scope": "robot-only lift mechanism regression; farm harvest not revalidated",
+    "completed": true,
+    "simulated_s": 23.0,
+    "elapsed_s": 1.066618112847209,
+    "setup_s": 2.998858690261841e-07,
+    "stop_reason": null,
+    "command_height_range_m": [
+      0.05,
+      0.7
+    ],
+    "measured_height_range_m": [
+      0.041333745406852106,
+      0.6916152834847547
+    ],
+    "maximum_hold_tracking_error_m": 0.008510181858604637,
+    "moving_carriage_height_consistency_m": 2.220446049250313e-16,
+    "moving_carriage_xy_change_m": 4.5354293521926436e-05,
+    "fixed_world_displacement_m": 4.5354293521926436e-05,
+    "maximum_penetration_m": 0.0,
+    "worst_contact_pair": null,
+    "physics_dt_s": 0.004166666666666667,
+    "finite_force_limited_source_drives": true,
+    "body_teleport_during_simulation": false,
+    "contact_distance_evaluation": "post-step measured qpos, native mj_forward",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "gpu": {
+    "engine": "Newton / MuJoCo Warp / CUDA",
+    "scope": "robot-only lift mechanism regression; farm harvest not revalidated",
+    "completed": true,
+    "simulated_s": 23.0,
+    "elapsed_s": 45.88993383385241,
+    "setup_s": 8.968169515952468,
+    "stop_reason": null,
+    "command_height_range_m": [
+      0.05,
+      0.7
+    ],
+    "measured_height_range_m": [
+      0.04133375361561775,
+      0.6916152238845825
+    ],
+    "maximum_hold_tracking_error_m": 0.008510303497314409,
+    "moving_carriage_height_consistency_m": 0.0,
+    "moving_carriage_xy_change_m": 4.535402695182711e-05,
+    "fixed_world_displacement_m": 4.535402695182711e-05,
+    "maximum_penetration_m": 0.0,
+    "worst_contact_pair": null,
+    "physics_dt_s": 0.004166666666666667,
+    "finite_force_limited_source_drives": true,
+    "body_teleport_during_simulation": false,
+    "contact_distance_evaluation": "post-step measured qpos, native mj_forward",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "comparison": {
+    "maximum_qpos_difference": 1.6905236011055536e-06,
+    "maximum_qvel_difference": 3.053999517936494e-05,
+    "exactly_equal": false
+  },
+  "web": {
+    "passed": true,
+    "checks": [
+      "Real carriage/arm/gripper move exactly 750mm together",
+      "Chassis and fixed mast do not move",
+      "Reset and automatic lift preview work",
+      "Stop freezes preview",
+      "Existing gripper tab preserved",
+      "390px mobile layout",
+      "No JavaScript errors"
+    ],
+    "low": {
+      "ready": true,
+      "source": "c6f7781dc09d33ef23c731efc705f427e47efb8908a4952f2f74f1fc409f0825",
+      "model": "a37d8c1c19569bbc19198a822eecfae0f7399f6d57f718aefbe10140c1085d5a",
+      "components": {
+        "lift": true,
+        "arm": true,
+        "carriage": true,
+        "gripper": true,
+        "chassis": true
+      },
+      "triangles": 2938929,
+      "sourceMeshes": 855,
+      "camera": [
+        -4.597454365048342,
+        1.1494020608763227,
+        -0.3267900198698041
+      ],
+      "target": [
+        0,
+        0.7816057116724551,
+        -0.3267900198698044
+      ],
+      "liftHeight_m": 0,
+      "componentBounds": {
+        "lift": [
+          [
+            -0.15600986778736115,
+            0.3139999806880951,
+            -0.6126245260238647
+          ],
+          [
+            0.15638965368270874,
+            1.5582114458084106,
+            -0.11037591844797134
+          ]
+        ],
+        "arm": [
+          [
+            -0.0864129588007927,
+            0.6611931137240166,
+            -0.2910791039466858
+          ],
+          [
+            0.2355341762304306,
+            1.307112138668322,
+            0.09447862952947617
+          ]
+        ],
+        "carriage": [
+          [
+            -0.11491513252258301,
+            0.34103260556819376,
+            -0.5355945229530334
+          ],
+          [
+            0.11875070631504059,
+            0.7612156681215996,
+            0.15659114718437195
+          ]
+        ],
+        "gripper": [
+          [
+            -0.31131675839424133,
+            0.7410910538828606,
+            -0.3463258445262909
+          ],
+          [
+            0.07187381386756897,
+            0.903084080616259,
+            -0.1360086053609848
+          ]
+        ],
+        "chassis": [
+          [
+            -0.4129999876022339,
+            0.0049999775364995,
+            -1.0955920219421387
+          ],
+          [
+            0.4129999876022339,
+            1.088085651397705,
+            0.4420119822025299
+          ]
+        ]
+      },
+      "renderer": "WebGL",
+      "bounds": [
+        [
+          -0.4129999876022339,
+          0.0049999775364995,
+          -1.0955920219421387
+        ],
+        [
+          0.4129999876022339,
+          1.5582114458084106,
+          0.4420119822025299
+        ]
+      ]
+    },
+    "high": {
+      "ready": true,
+      "source": "c6f7781dc09d33ef23c731efc705f427e47efb8908a4952f2f74f1fc409f0825",
+      "model": "a37d8c1c19569bbc19198a822eecfae0f7399f6d57f718aefbe10140c1085d5a",
+      "components": {
+        "lift": true,
+        "arm": true,
+        "carriage": true,
+        "gripper": true,
+        "chassis": true
+      },
+      "triangles": 2938929,
+      "sourceMeshes": 855,
+      "camera": [
+        -4.597454365048342,
+        1.1494020608763227,
+        -0.3267900198698041
+      ],
+      "target": [
+        0,
+        0.7816057116724551,
+        -0.3267900198698044
+      ],
+      "liftHeight_m": 0.75,
+      "componentBounds": {
+        "lift": [
+          [
+            -0.15600986778736115,
+            0.3139999806880951,
+            -0.6126245260238647
+          ],
+          [
+            0.15638965368270874,
+            1.5582114458084106,
+            -0.11037591844797134
+          ]
+        ],
+        "arm": [
+          [
+            -0.0864129588007927,
+            1.4111931137240166,
+            -0.2910791039466858
+          ],
+          [
+            0.2355341762304306,
+            2.057112138668322,
+            0.09447862952947617
+          ]
+        ],
+        "carriage": [
+          [
+            -0.11491513252258301,
+            1.0910326055681938,
+            -0.5355945229530334
+          ],
+          [
+            0.11875070631504059,
+            1.5112156681215996,
+            0.15659114718437195
+          ]
+        ],
+        "gripper": [
+          [
+            -0.31131675839424133,
+            1.4910910538828606,
+            -0.3463258445262909
+          ],
+          [
+            0.07187381386756897,
+            1.653084080616259,
+            -0.1360086053609848
+          ]
+        ],
+        "chassis": [
+          [
+            -0.4129999876022339,
+            0.0049999775364995,
+            -1.0955920219421387
+          ],
+          [
+            0.4129999876022339,
+            1.088085651397705,
+            0.4420119822025299
+          ]
+        ]
+      },
+      "renderer": "WebGL",
+      "bounds": [
+        [
+          -0.4129999876022339,
+          0.0049999775364995,
+          -1.0955920219421387
+        ],
+        [
+          0.4129999876022339,
+          2.057112138668322,
+          0.4420119822025299
+        ]
+      ]
+    },
+    "browser_errors": []
+  },
+  "limitations": [
+    "Robot-only lift test, not a new full farm harvesting trial",
+    "Existing source mass/inertia estimates and finite PD preserved; hold height error remains ~8.51mm",
+    "Plate collider replaced; remaining lift CAD visual-only as before",
+    "Browser slider animates assembly geometry, not live physics",
+    "Original stored models/plans are preserved; corrected assembly needs new harvest planning/export"
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -1,5 +1,23 @@
 # Farmily Tomato 작업 인수인계
 
+## 2026-10-21: 농장·수확 동작 웹 재생 탭
+
+- 브랜치 `codex/s300-farm-replay-web-20261021`. 기존 미커밋 리프트/그리퍼 작업을 보존했다. 웹 세 번째 탭 `http://lab.farmily.ai:8090/gripper-design/?tab=replay`에서 실제 저장된 Isaac 실행을 선택·재생한다. 시간 탐색, 일시정지, 0.25~2배속, 자유 시점·로봇/송이/농장/탑뷰 제공.
+- `gripper-design/harvest-replay/export_replay.py`가 기존 USD 메시·재질 판독기, `MeasuredPoseDisplay`, `transmission_transforms`와 같은 스킨 공식을 재사용한다. 농장31,538개 가시 메시 인스턴스/53,997,552삼각형(복제 포함)을 유지하고 반복 형상은 GPU instancing, 가지는 glTF skin으로 표시한다. 웹에서는 새 physics를 실행하지 않는다.
+- 등록 예제는 **Isaac Sim 6.1 / PhysX CPU TGS 60Hz**의 실제 완료 기록2개: `isaac_truss_57s`(3,421프레임×277바디/57초/분리5개), `isaac_move_83s`(4,969×136/82.8초/레일 약1.6424m 이동/분리4개). 원본은 로컬 `/root/docker_share/mujoko_debugging_data_bak`에 있으며 NAS의 같은 이름 백업과 다르다.
+- 모든 timestamp·pose·분리 이벤트와 실제 runtime composed USD SHA를 독립 비교했다. 추가 pose 정밀도 손실0, 스킨 계산 오차 최대2.86e−7m. 변조 음성 대조5개 검출. 코드/작은 증거는 `harvest-replay/checks/`, 대형 웹 번들은 `harvest-replay/assets/`이며 Git 제외이므로 머신 이동 때 별도 보존한다.
+- 두 기록은 최근 실제 리프트 수정 이전 모델이다. 기록 당시 형상을 재생하며 새 장착 형상으로 바꿔 과거 결과를 보여주지 않는다. 최신 로봇 조립 탭은 수정된 실제 리프트를 계속 사용한다.
+- 새 기록 추가는 `./nvidia-sim/.asset-venv/bin/python gripper-design/harvest-replay/register_run.py ASSEMBLY TRIAL --id NEW_ID --label "이름"`. 원본 결과는 덮어쓰지 않는다. 형식·재현은 `harvest-replay/README.txt`.
+
+## 2026-10-21: 실제 리프트 받침대에 RB5 연결
+
+- 브랜치 `codex/s300-real-lift-20261021`. 기존 미커밋 그리퍼 웹 작업을 보존했다. 새 웹 조립 탭: `http://lab.farmily.ai:8090/gripper-design/?tab=robot`.
+- 가상 `.30×.95m` 상판만 승강하던 오류를 수정했다. 원본 assy_lift의 받침판·뒤쪽 승강판·삼각 브래킷을 기존 `farmily_lift_height_joint`의 움직이는 바디에 연결했다. 기둥·모터·외측 바닥 지지대는 고정. 원본 리프트 삼각형120,881개 보존, 가상 판 제거, RB5 장착높이−2.931mm 보정.
+- `nvidia-sim/harvest_s300/real_lift_mount.py`는 새 assembly를 만들며 원본을 덮어쓰지 않는다. 기존 관절·drive·질량 추정 유지. 가상 상판 collider는 실제 받침판 hull로 교체; 나머지 리프트 CAD는 이전처럼 visual-only이며 전체 기구 충돌 인증이 아니다.
+- 결과 `/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/assembly/composed.usdc`. 농장 배경을 포함한 새 조립이다. **기존 저장된 수확 MJB/trace/간단 실행기는 원본 상태로 보존**했다. 새 장착 형상으로 수확을 하려면 새 입력과 경로 검증이 필요하다.
+- 로봇 단독 승강23초를 native MuJoCo CPU와 Newton/MuJoCo Warp GPU에서 각각 완료, 관통0. 기존 finite PD의 정지 높이오차 약8.51mm는 남는다. CAD·장착·FK 회귀6개 통과. 전체 농장 수확 재시험 및 실물 질량/강도/스트로크 인증은 미완료.
+- 웹에서 `리프트 상승량`과 `승강 보기`로 실제 받침대·RB5·그리퍼가 함께 움직이는 것을 볼 수 있다. 웹 조작은 기구 미리보기이며 라이브 물리가 아니다. CPU/GPU 결과와 브라우저 검증은 `gripper-design/robot-assembly/checks/real_lift_validation.json`, 재현 방법은 `gripper-design/README.txt`.
+
 ## 2026-10-18: 한쪽 베드 Newton GPU 속도 개선 및 추가 대안 검증
 
 - 현재 작업 브랜치 `codex/s300-newton-active-window-20261018`. 기존 선택기·계획기·GPU 실행기를 재사용해 Plant22→27→29 실제 연속 이동/수확3구간을 완료했다. 반대편Plant41 제외. 새 간단 실행: `./nvidia-sim/run_s300_newton.sh row-realtime` (화면 없는 새 캠페인).

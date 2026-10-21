@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "scenario": "A -> robot tab -> replay A -> select B -> Back robot -> Back replay A",
+  "final_url_run": "isaac_truss_57s",
+  "final_display_run": "isaac_truss_57s",
+  "browser_errors": [],
+  "execution": "actual published recorded runs, Chromium NVIDIA RTX 3090 Ti",
+  "script": "/tmp/check_replay_history.py"
+}

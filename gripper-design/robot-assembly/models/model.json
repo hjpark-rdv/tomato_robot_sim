@@ -1,0 +1,5307 @@
+{
+  "schema": "farmily-robot-assembly-web-v1",
+  "title": "S300 · 리프트 · RB5 · 벨트 그리퍼",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/assembly",
+  "source_sha256": "c6f7781dc09d33ef23c731efc705f427e47efb8908a4952f2f74f1fc409f0825",
+  "states": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/lift_cpu/states.npz",
+  "states_sha256": "c8be34f1f2ad421eba9e8e1dd707d1baa923230d73d0970d7b78984bb4c17821",
+  "frame": 0,
+  "simulation_time_s": 0.0,
+  "gripper": "V5.1-based simulation-modified tool, not standalone V6",
+  "source_origin_world_m": [
+    0.0,
+    1.25999999046,
+    0.0
+  ],
+  "export_axes": "glTF Y-up; x=x, y=z, z=-y; metres",
+  "file": "s300_lift_rb5_gripper.glb",
+  "bytes": 98710544,
+  "sha256": "a37d8c1c19569bbc19198a822eecfae0f7399f6d57f718aefbe10140c1085d5a",
+  "bounds_m": [
+    [
+      -0.4129999876022339,
+      0.0049999775364995,
+      -1.0955920219421387
+    ],
+    [
+      0.4129999876022339,
+      1.5582114458084106,
+      0.4420119822025299
+    ]
+  ],
+  "compressed_file": "s300_lift_rb5_gripper.glb.gz",
+  "compressed_bytes": 43223784,
+  "triangles": 2938929,
+  "visual_source_meshes": 855,
+  "source_surface_preserved": true,
+  "maximum_bounds_error_m": 3.337860099428269e-08,
+  "components": {
+    "lift": {
+      "label": "리프트 고정부",
+      "meshes": 1,
+      "triangles": 97101
+    },
+    "arm": {
+      "label": "RB5 로봇팔",
+      "meshes": 5,
+      "triangles": 142146
+    },
+    "carriage": {
+      "label": "승강 받침대",
+      "meshes": 1,
+      "triangles": 23780
+    },
+    "gripper": {
+      "label": "벨트 그리퍼",
+      "meshes": 12,
+      "triangles": 307958
+    },
+    "chassis": {
+      "label": "S300 기체",
+      "meshes": 32,
+      "triangles": 2367944
+    }
+  },
+  "source_inventory": [
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_00",
+      "group": "lift",
+      "triangles": 19548
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_02",
+      "group": "lift",
+      "triangles": 10616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_03",
+      "group": "lift",
+      "triangles": 9154
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_05",
+      "group": "lift",
+      "triangles": 6283
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_06",
+      "group": "lift",
+      "triangles": 6120
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_07",
+      "group": "lift",
+      "triangles": 5222
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_08",
+      "group": "lift",
+      "triangles": 3640
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_09",
+      "group": "lift",
+      "triangles": 3594
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_11",
+      "group": "lift",
+      "triangles": 2210
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_12",
+      "group": "lift",
+      "triangles": 1996
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_13",
+      "group": "lift",
+      "triangles": 1992
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_14",
+      "group": "lift",
+      "triangles": 1992
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_15",
+      "group": "lift",
+      "triangles": 1992
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_16",
+      "group": "lift",
+      "triangles": 1960
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_17",
+      "group": "lift",
+      "triangles": 1960
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_18",
+      "group": "lift",
+      "triangles": 1793
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_19",
+      "group": "lift",
+      "triangles": 1705
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_20",
+      "group": "lift",
+      "triangles": 1668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_21",
+      "group": "lift",
+      "triangles": 1668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_22",
+      "group": "lift",
+      "triangles": 1106
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_23",
+      "group": "lift",
+      "triangles": 917
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_24",
+      "group": "lift",
+      "triangles": 917
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_25",
+      "group": "lift",
+      "triangles": 900
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_26",
+      "group": "lift",
+      "triangles": 900
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_27",
+      "group": "lift",
+      "triangles": 682
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_28",
+      "group": "lift",
+      "triangles": 628
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_29",
+      "group": "lift",
+      "triangles": 627
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_30",
+      "group": "lift",
+      "triangles": 626
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_31",
+      "group": "lift",
+      "triangles": 594
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_32",
+      "group": "lift",
+      "triangles": 594
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_33",
+      "group": "lift",
+      "triangles": 551
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_34",
+      "group": "lift",
+      "triangles": 540
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_35",
+      "group": "lift",
+      "triangles": 266
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_36",
+      "group": "lift",
+      "triangles": 266
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_37",
+      "group": "lift",
+      "triangles": 266
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_38",
+      "group": "lift",
+      "triangles": 266
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_39",
+      "group": "lift",
+      "triangles": 250
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_40",
+      "group": "lift",
+      "triangles": 250
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_41",
+      "group": "lift",
+      "triangles": 201
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_42",
+      "group": "lift",
+      "triangles": 143
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_43",
+      "group": "lift",
+      "triangles": 118
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_44",
+      "group": "lift",
+      "triangles": 118
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_45",
+      "group": "lift",
+      "triangles": 118
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_46",
+      "group": "lift",
+      "triangles": 118
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_47",
+      "group": "lift",
+      "triangles": 26
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/link0/Scene/mesh",
+      "group": "arm",
+      "triangles": 33076
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/back_carriage",
+      "group": "carriage",
+      "triangles": 13510
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/mounting_plate",
+      "group": "carriage",
+      "triangles": 6988
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/cantilever_bracket",
+      "group": "carriage",
+      "triangles": 3282
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link1/visuals/link1/Scene/mesh",
+      "group": "arm",
+      "triangles": 16980
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link2/visuals/link2/Scene/mesh",
+      "group": "arm",
+      "triangles": 34258
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link3/visuals/link3/Scene/mesh",
+      "group": "arm",
+      "triangles": 26188
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link4/visuals/link4/Scene/mesh",
+      "group": "arm",
+      "triangles": 12654
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link5/visuals/link5/Scene/mesh",
+      "group": "arm",
+      "triangles": 12654
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link6/tcp/MountSpacer",
+      "group": "gripper",
+      "triangles": 256
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link6/visuals/link6/Scene/mesh",
+      "group": "arm",
+      "triangles": 6336
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0000",
+      "group": "chassis",
+      "triangles": 2100
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0001",
+      "group": "chassis",
+      "triangles": 132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0002",
+      "group": "chassis",
+      "triangles": 192
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0003",
+      "group": "chassis",
+      "triangles": 212
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0004",
+      "group": "chassis",
+      "triangles": 132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0005",
+      "group": "chassis",
+      "triangles": 132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0006",
+      "group": "chassis",
+      "triangles": 212
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0007",
+      "group": "chassis",
+      "triangles": 132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0008",
+      "group": "chassis",
+      "triangles": 84942
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0009",
+      "group": "chassis",
+      "triangles": 308
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0010",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0011",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0012",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0013",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0014",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0015",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0016",
+      "group": "chassis",
+      "triangles": 5488
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0017",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0018",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0019",
+      "group": "chassis",
+      "triangles": 5298
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0020",
+      "group": "chassis",
+      "triangles": 680
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0021",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0022",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0023",
+      "group": "chassis",
+      "triangles": 312
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0024",
+      "group": "chassis",
+      "triangles": 964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0025",
+      "group": "chassis",
+      "triangles": 616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0026",
+      "group": "chassis",
+      "triangles": 84942
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0027",
+      "group": "chassis",
+      "triangles": 308
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0028",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0029",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0030",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0031",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0032",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0033",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0034",
+      "group": "chassis",
+      "triangles": 5488
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0035",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0036",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0037",
+      "group": "chassis",
+      "triangles": 5298
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0038",
+      "group": "chassis",
+      "triangles": 680
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0039",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0040",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0041",
+      "group": "chassis",
+      "triangles": 312
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0042",
+      "group": "chassis",
+      "triangles": 964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0043",
+      "group": "chassis",
+      "triangles": 616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0044",
+      "group": "chassis",
+      "triangles": 84942
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0045",
+      "group": "chassis",
+      "triangles": 308
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0046",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0047",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0048",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0049",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0050",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0051",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0052",
+      "group": "chassis",
+      "triangles": 5488
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0053",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0054",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0055",
+      "group": "chassis",
+      "triangles": 5298
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0056",
+      "group": "chassis",
+      "triangles": 680
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0057",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0058",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0059",
+      "group": "chassis",
+      "triangles": 312
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0060",
+      "group": "chassis",
+      "triangles": 964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0061",
+      "group": "chassis",
+      "triangles": 616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0062",
+      "group": "chassis",
+      "triangles": 84942
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0063",
+      "group": "chassis",
+      "triangles": 308
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0064",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0065",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0066",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0067",
+      "group": "chassis",
+      "triangles": 392
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0068",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0069",
+      "group": "chassis",
+      "triangles": 1064
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0070",
+      "group": "chassis",
+      "triangles": 5488
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0071",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0072",
+      "group": "chassis",
+      "triangles": 1856
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0073",
+      "group": "chassis",
+      "triangles": 5298
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0074",
+      "group": "chassis",
+      "triangles": 680
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0075",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0076",
+      "group": "chassis",
+      "triangles": 1132
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0077",
+      "group": "chassis",
+      "triangles": 312
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0078",
+      "group": "chassis",
+      "triangles": 964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0079",
+      "group": "chassis",
+      "triangles": 616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0090",
+      "group": "chassis",
+      "triangles": 24820
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0091",
+      "group": "chassis",
+      "triangles": 24236
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0092",
+      "group": "chassis",
+      "triangles": 8428
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0093",
+      "group": "chassis",
+      "triangles": 6764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0094",
+      "group": "chassis",
+      "triangles": 24820
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0095",
+      "group": "chassis",
+      "triangles": 24236
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0096",
+      "group": "chassis",
+      "triangles": 8428
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0097",
+      "group": "chassis",
+      "triangles": 6764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0098",
+      "group": "chassis",
+      "triangles": 24820
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0099",
+      "group": "chassis",
+      "triangles": 24236
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0100",
+      "group": "chassis",
+      "triangles": 8428
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0101",
+      "group": "chassis",
+      "triangles": 6764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0102",
+      "group": "chassis",
+      "triangles": 24820
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0103",
+      "group": "chassis",
+      "triangles": 24236
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0104",
+      "group": "chassis",
+      "triangles": 8428
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0105",
+      "group": "chassis",
+      "triangles": 6764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0106",
+      "group": "chassis",
+      "triangles": 187706
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0107",
+      "group": "chassis",
+      "triangles": 36014
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0108",
+      "group": "chassis",
+      "triangles": 11092
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0109",
+      "group": "chassis",
+      "triangles": 3964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0110",
+      "group": "chassis",
+      "triangles": 4732
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0111",
+      "group": "chassis",
+      "triangles": 2556
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0112",
+      "group": "chassis",
+      "triangles": 2412
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0113",
+      "group": "chassis",
+      "triangles": 3004
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0114",
+      "group": "chassis",
+      "triangles": 3004
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0115",
+      "group": "chassis",
+      "triangles": 1476
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0116",
+      "group": "chassis",
+      "triangles": 3756
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0117",
+      "group": "chassis",
+      "triangles": 3756
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0118",
+      "group": "chassis",
+      "triangles": 4404
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0119",
+      "group": "chassis",
+      "triangles": 4404
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0120",
+      "group": "chassis",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0121",
+      "group": "chassis",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0122",
+      "group": "chassis",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0123",
+      "group": "chassis",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0124",
+      "group": "chassis",
+      "triangles": 3604
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0125",
+      "group": "chassis",
+      "triangles": 7292
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0126",
+      "group": "chassis",
+      "triangles": 1552
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0127",
+      "group": "chassis",
+      "triangles": 1852
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0128",
+      "group": "chassis",
+      "triangles": 616
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0129",
+      "group": "chassis",
+      "triangles": 4144
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0130",
+      "group": "chassis",
+      "triangles": 3528
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0131",
+      "group": "chassis",
+      "triangles": 892
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0132",
+      "group": "chassis",
+      "triangles": 496
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0133",
+      "group": "chassis",
+      "triangles": 860
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0134",
+      "group": "chassis",
+      "triangles": 972
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0135",
+      "group": "chassis",
+      "triangles": 908
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0136",
+      "group": "chassis",
+      "triangles": 828
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0137",
+      "group": "chassis",
+      "triangles": 1500
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0138",
+      "group": "chassis",
+      "triangles": 460
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0139",
+      "group": "chassis",
+      "triangles": 244
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0140",
+      "group": "chassis",
+      "triangles": 696
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0141",
+      "group": "chassis",
+      "triangles": 11092
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0142",
+      "group": "chassis",
+      "triangles": 828
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0143",
+      "group": "chassis",
+      "triangles": 221908
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0144",
+      "group": "chassis",
+      "triangles": 1304
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0145",
+      "group": "chassis",
+      "triangles": 1304
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0146",
+      "group": "chassis",
+      "triangles": 2556
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0147",
+      "group": "chassis",
+      "triangles": 1304
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0148",
+      "group": "chassis",
+      "triangles": 2556
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0149",
+      "group": "chassis",
+      "triangles": 1304
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0150",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0151",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0152",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0153",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0154",
+      "group": "chassis",
+      "triangles": 320
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0155",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0156",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0157",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0158",
+      "group": "chassis",
+      "triangles": 320
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0159",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0160",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0161",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0162",
+      "group": "chassis",
+      "triangles": 754
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0163",
+      "group": "chassis",
+      "triangles": 578
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0165",
+      "group": "chassis",
+      "triangles": 638
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0167",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0168",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0169",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0170",
+      "group": "chassis",
+      "triangles": 3918
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0171",
+      "group": "chassis",
+      "triangles": 7632
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0172",
+      "group": "chassis",
+      "triangles": 2556
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0173",
+      "group": "chassis",
+      "triangles": 244
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0174",
+      "group": "chassis",
+      "triangles": 646
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0175",
+      "group": "chassis",
+      "triangles": 646
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0176",
+      "group": "chassis",
+      "triangles": 1500
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0177",
+      "group": "chassis",
+      "triangles": 3604
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0178",
+      "group": "chassis",
+      "triangles": 6656
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0179",
+      "group": "chassis",
+      "triangles": 1232
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0180",
+      "group": "chassis",
+      "triangles": 666
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0181",
+      "group": "chassis",
+      "triangles": 1078
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0182",
+      "group": "chassis",
+      "triangles": 1280
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0183",
+      "group": "chassis",
+      "triangles": 990
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0184",
+      "group": "chassis",
+      "triangles": 246
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0185",
+      "group": "chassis",
+      "triangles": 52139
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0186",
+      "group": "chassis",
+      "triangles": 6436
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0187",
+      "group": "chassis",
+      "triangles": 420
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0188",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0189",
+      "group": "chassis",
+      "triangles": 496
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0190",
+      "group": "chassis",
+      "triangles": 460
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0191",
+      "group": "chassis",
+      "triangles": 532
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0192",
+      "group": "chassis",
+      "triangles": 972
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0193",
+      "group": "chassis",
+      "triangles": 964
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0194",
+      "group": "chassis",
+      "triangles": 860
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0195",
+      "group": "chassis",
+      "triangles": 1088
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0196",
+      "group": "chassis",
+      "triangles": 4988
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0197",
+      "group": "chassis",
+      "triangles": 4988
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0198",
+      "group": "chassis",
+      "triangles": 3336
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0208",
+      "group": "chassis",
+      "triangles": 1280
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0209",
+      "group": "chassis",
+      "triangles": 638
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0210",
+      "group": "chassis",
+      "triangles": 320
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0211",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0212",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0213",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0214",
+      "group": "chassis",
+      "triangles": 320
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0215",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0216",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0217",
+      "group": "chassis",
+      "triangles": 456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0218",
+      "group": "chassis",
+      "triangles": 436
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0219",
+      "group": "chassis",
+      "triangles": 464
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0220",
+      "group": "chassis",
+      "triangles": 476
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0221",
+      "group": "chassis",
+      "triangles": 608
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0256",
+      "group": "chassis",
+      "triangles": 532
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0257",
+      "group": "chassis",
+      "triangles": 532
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0262",
+      "group": "chassis",
+      "triangles": 20
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0263",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0264",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0265",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0266",
+      "group": "chassis",
+      "triangles": 20
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0267",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0268",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0269",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0270",
+      "group": "chassis",
+      "triangles": 140
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0271",
+      "group": "chassis",
+      "triangles": 28
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0272",
+      "group": "chassis",
+      "triangles": 28
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0273",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0274",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0275",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0280",
+      "group": "chassis",
+      "triangles": 12924
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0281",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0282",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0283",
+      "group": "chassis",
+      "triangles": 10809
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0284",
+      "group": "chassis",
+      "triangles": 87
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0285",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0286",
+      "group": "chassis",
+      "triangles": 12928
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0287",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0288",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0289",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0290",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0291",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0292",
+      "group": "chassis",
+      "triangles": 77669
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0293",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0294",
+      "group": "chassis",
+      "triangles": 31630
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0295",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0296",
+      "group": "chassis",
+      "triangles": 832
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0297",
+      "group": "chassis",
+      "triangles": 832
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0298",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0299",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0300",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0301",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0302",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0303",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0304",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0305",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0306",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0307",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0308",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0309",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0310",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0311",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0312",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0313",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0314",
+      "group": "chassis",
+      "triangles": 764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0315",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0316",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0317",
+      "group": "chassis",
+      "triangles": 668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0318",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0319",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0320",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0321",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0322",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0323",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0324",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0325",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0326",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0327",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0328",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0329",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0330",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0331",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0332",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0333",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0334",
+      "group": "chassis",
+      "triangles": 800
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0335",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0336",
+      "group": "chassis",
+      "triangles": 12924
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0337",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0338",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0339",
+      "group": "chassis",
+      "triangles": 10809
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0340",
+      "group": "chassis",
+      "triangles": 87
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0341",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0342",
+      "group": "chassis",
+      "triangles": 12928
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0343",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0344",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0345",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0346",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0347",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0348",
+      "group": "chassis",
+      "triangles": 77669
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0349",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0350",
+      "group": "chassis",
+      "triangles": 31630
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0351",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0352",
+      "group": "chassis",
+      "triangles": 832
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0353",
+      "group": "chassis",
+      "triangles": 552
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0354",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0355",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0356",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0357",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0358",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0359",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0360",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0361",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0362",
+      "group": "chassis",
+      "triangles": 764
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0363",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0364",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0365",
+      "group": "chassis",
+      "triangles": 668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0366",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0367",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0368",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0369",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0370",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0371",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0372",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0373",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0374",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0375",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0376",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0377",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0378",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0379",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0380",
+      "group": "chassis",
+      "triangles": 48
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0381",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0382",
+      "group": "chassis",
+      "triangles": 800
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0383",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0384",
+      "group": "chassis",
+      "triangles": 12924
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0385",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0386",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0387",
+      "group": "chassis",
+      "triangles": 10809
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0388",
+      "group": "chassis",
+      "triangles": 87
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0389",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0390",
+      "group": "chassis",
+      "triangles": 12928
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0391",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0392",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0393",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0394",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0395",
+      "group": "chassis",
+      "triangles": 15620
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0396",
+      "group": "chassis",
+      "triangles": 77669
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0397",
+      "group": "chassis",
+      "triangles": 12930
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0398",
+      "group": "chassis",
+      "triangles": 31630
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0399",
+      "group": "chassis",
+      "triangles": 6371
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0400",
+      "group": "chassis",
+      "triangles": 420
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0401",
+      "group": "chassis",
+      "triangles": 668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0402",
+      "group": "chassis",
+      "triangles": 80
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0403",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0404",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0405",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0406",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0407",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0408",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0409",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0410",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0411",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0412",
+      "group": "chassis",
+      "triangles": 668
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0413",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0414",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0415",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0416",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0417",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0418",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0419",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0420",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0421",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0422",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0423",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0424",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0425",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0426",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0427",
+      "group": "chassis",
+      "triangles": 64
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0428",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0429",
+      "group": "chassis",
+      "triangles": 660
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0430",
+      "group": "chassis",
+      "triangles": 384
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0431",
+      "group": "chassis",
+      "triangles": 484
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0432",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0433",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0434",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0435",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0436",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0437",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0438",
+      "group": "chassis",
+      "triangles": 396
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0439",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0440",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0441",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0442",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0443",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0444",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0445",
+      "group": "chassis",
+      "triangles": 484
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0446",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0447",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0448",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0449",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0450",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0451",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0452",
+      "group": "chassis",
+      "triangles": 380
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0453",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0454",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0455",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0456",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0457",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0458",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0459",
+      "group": "chassis",
+      "triangles": 380
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0460",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0461",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0462",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0463",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0464",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0465",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0466",
+      "group": "chassis",
+      "triangles": 380
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0467",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0468",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0469",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0470",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0471",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0472",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0473",
+      "group": "chassis",
+      "triangles": 484
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0474",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0475",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0476",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0477",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0478",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0479",
+      "group": "chassis",
+      "triangles": 128
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0480",
+      "group": "chassis",
+      "triangles": 5652
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0481",
+      "group": "chassis",
+      "triangles": 7398
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0482",
+      "group": "chassis",
+      "triangles": 7398
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0483",
+      "group": "chassis",
+      "triangles": 5124
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0484",
+      "group": "chassis",
+      "triangles": 5788
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0485",
+      "group": "chassis",
+      "triangles": 2396
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0486",
+      "group": "chassis",
+      "triangles": 54422
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0487",
+      "group": "chassis",
+      "triangles": 3152
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0488",
+      "group": "chassis",
+      "triangles": 3152
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0489",
+      "group": "chassis",
+      "triangles": 54422
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0490",
+      "group": "chassis",
+      "triangles": 1456
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0491",
+      "group": "chassis",
+      "triangles": 2728
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0492",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0493",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0494",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0495",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0496",
+      "group": "chassis",
+      "triangles": 32
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0497",
+      "group": "chassis",
+      "triangles": 412
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0498",
+      "group": "chassis",
+      "triangles": 220
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0499",
+      "group": "chassis",
+      "triangles": 220
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0500",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0501",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0502",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0503",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0504",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0505",
+      "group": "chassis",
+      "triangles": 512
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0506",
+      "group": "chassis",
+      "triangles": 24
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/Part_0507",
+      "group": "chassis",
+      "triangles": 96
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/S300Carrier/S300Chassis/FlatRearDeck",
+      "group": "chassis",
+      "triangles": 12
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_0",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_1",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_2",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_3",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_4",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_5",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_6",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_7",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_8",
+      "group": "gripper",
+      "triangles": 3364
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_9",
+      "group": "gripper",
+      "triangles": 8112
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_10",
+      "group": "gripper",
+      "triangles": 5100
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_11",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_12",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_13",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_14",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_15",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_16",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_17",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_18",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_19",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_20",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_21",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_22",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_23",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_24",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_25",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_26",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_27",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_28",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_29",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_30",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_31",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_32",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_33",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_34",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_35",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_36",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_37",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_38",
+      "group": "gripper",
+      "triangles": 3748
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_39",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_40",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_41",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_42",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_43",
+      "group": "gripper",
+      "triangles": 1272
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_44",
+      "group": "gripper",
+      "triangles": 1272
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_45",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_46",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_47",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_48",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_49",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_50",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_51",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_52",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_53",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_54",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_55",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_56",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_57",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_58",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_59",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_60",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_61",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_62",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_63",
+      "group": "gripper",
+      "triangles": 4396
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_64",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_65",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_66",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_67",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_68",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_69",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_70",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_71",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_72",
+      "group": "gripper",
+      "triangles": 1336
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_73",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_74",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_75",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_76",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_77",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_78",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_79",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_80",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_81",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_82",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_83",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_84",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_85",
+      "group": "gripper",
+      "triangles": 312
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_86",
+      "group": "gripper",
+      "triangles": 1006
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_87",
+      "group": "gripper",
+      "triangles": 1006
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_88",
+      "group": "gripper",
+      "triangles": 948
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_89",
+      "group": "gripper",
+      "triangles": 2234
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_90",
+      "group": "gripper",
+      "triangles": 700
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/part_91",
+      "group": "gripper",
+      "triangles": 12
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_92",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_93",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_94",
+      "group": "gripper",
+      "triangles": 2628
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_97",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_99",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_101",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_103",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_105",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_107",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_109",
+      "group": "gripper",
+      "triangles": 1260
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_111",
+      "group": "gripper",
+      "triangles": 1260
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_113",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/crank/part_115",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/linkL/part_95",
+      "group": "gripper",
+      "triangles": 1156
+    },
+    {
+      "path": "/World/ActuatedTool/fixed/Transmission/linkR/part_96",
+      "group": "gripper",
+      "triangles": 1156
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_98",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_102",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_106",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_110",
+      "group": "gripper",
+      "triangles": 1260
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_114",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_117",
+      "group": "gripper",
+      "triangles": 4360
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_118",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_119",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_120",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_121",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_122",
+      "group": "gripper",
+      "triangles": 7200
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_123",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_124",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_125",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_126",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_127",
+      "group": "gripper",
+      "triangles": 5964
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_128",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_129",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_130",
+      "group": "gripper",
+      "triangles": 2832
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_131",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_132",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_133",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_134",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_135",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_136",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_137",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_138",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_139",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_140",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_141",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_142",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_143",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_144",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_145",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_146",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_147",
+      "group": "gripper",
+      "triangles": 1588
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_148",
+      "group": "gripper",
+      "triangles": 1588
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_149",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_150",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_151",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_152",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_153",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_154",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_155",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_156",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_157",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_158",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_159",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_160",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_161",
+      "group": "gripper",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_162",
+      "group": "gripper",
+      "triangles": 3320
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_164",
+      "group": "gripper",
+      "triangles": 2528
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_165",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_166",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_167",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_168",
+      "group": "gripper",
+      "triangles": 892
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_169",
+      "group": "gripper",
+      "triangles": 892
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_170",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_171",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_172",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_173",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_174",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_175",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_176",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_177",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_178",
+      "group": "gripper",
+      "triangles": 2106
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_179",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_180",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_181",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_182",
+      "group": "gripper",
+      "triangles": 1754
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_183",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_184",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_185",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_186",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_187",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_188",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_189",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_190",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_191",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_192",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_193",
+      "group": "gripper",
+      "triangles": 5876
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_194",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_195",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_196",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_197",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_198",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_199",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_200",
+      "group": "gripper",
+      "triangles": 3260
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_201",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_202",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_203",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_204",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_205",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_206",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_207",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_208",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_209",
+      "group": "gripper",
+      "triangles": 1380
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_210",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_211",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_212",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_213",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_214",
+      "group": "gripper",
+      "triangles": 1080
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_215",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_216",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_217",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_218",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_219",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_220",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_221",
+      "group": "gripper",
+      "triangles": 1292
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_222",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_223",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_224",
+      "group": "gripper",
+      "triangles": 312
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_225",
+      "group": "gripper",
+      "triangles": 982
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_226",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_227",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_228",
+      "group": "gripper",
+      "triangles": 312
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_229",
+      "group": "gripper",
+      "triangles": 2228
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_230",
+      "group": "gripper",
+      "triangles": 318
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_231",
+      "group": "gripper",
+      "triangles": 2664
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_232",
+      "group": "gripper",
+      "triangles": 1264
+    },
+    {
+      "path": "/World/ActuatedTool/L/part_233",
+      "group": "gripper",
+      "triangles": 656
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_100",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_104",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_108",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_112",
+      "group": "gripper",
+      "triangles": 1260
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_116",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_239",
+      "group": "gripper",
+      "triangles": 4372
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_240",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_241",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_242",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_243",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_244",
+      "group": "gripper",
+      "triangles": 5904
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_245",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_246",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_247",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_248",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_249",
+      "group": "gripper",
+      "triangles": 5964
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_250",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_251",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_252",
+      "group": "gripper",
+      "triangles": 2832
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_253",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_254",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_255",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_256",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_257",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_258",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_259",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_260",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_261",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_262",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_263",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_264",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_265",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_266",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_267",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_268",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_269",
+      "group": "gripper",
+      "triangles": 1588
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_270",
+      "group": "gripper",
+      "triangles": 1588
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_271",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_272",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_273",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_274",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_275",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_276",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_277",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_278",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_279",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_280",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_281",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_282",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_283",
+      "group": "gripper",
+      "triangles": 2068
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_284",
+      "group": "gripper",
+      "triangles": 3320
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_286",
+      "group": "gripper",
+      "triangles": 2528
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_287",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_288",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_289",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_290",
+      "group": "gripper",
+      "triangles": 892
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_291",
+      "group": "gripper",
+      "triangles": 892
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_292",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_293",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_294",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_295",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_296",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_297",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_298",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_299",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_300",
+      "group": "gripper",
+      "triangles": 2106
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_301",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_302",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_303",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_304",
+      "group": "gripper",
+      "triangles": 1754
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_305",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_306",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_307",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_308",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_309",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_310",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_311",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_312",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_313",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_314",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_315",
+      "group": "gripper",
+      "triangles": 5876
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_316",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_317",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_318",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_319",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_320",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_321",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_322",
+      "group": "gripper",
+      "triangles": 3260
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_323",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_324",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_325",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_326",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_327",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_328",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_329",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_330",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_331",
+      "group": "gripper",
+      "triangles": 1380
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_332",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_333",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_334",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_335",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_336",
+      "group": "gripper",
+      "triangles": 1080
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_337",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_338",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_339",
+      "group": "gripper",
+      "triangles": 652
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_340",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_341",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_342",
+      "group": "gripper",
+      "triangles": 340
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_343",
+      "group": "gripper",
+      "triangles": 1292
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_344",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_345",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_346",
+      "group": "gripper",
+      "triangles": 312
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_347",
+      "group": "gripper",
+      "triangles": 982
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_348",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_349",
+      "group": "gripper",
+      "triangles": 632
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_350",
+      "group": "gripper",
+      "triangles": 312
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_351",
+      "group": "gripper",
+      "triangles": 2228
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_352",
+      "group": "gripper",
+      "triangles": 318
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_353",
+      "group": "gripper",
+      "triangles": 2664
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_354",
+      "group": "gripper",
+      "triangles": 1264
+    },
+    {
+      "path": "/World/ActuatedTool/R/part_355",
+      "group": "gripper",
+      "triangles": 656
+    },
+    {
+      "path": "/World/ActuatedTool/L_belt/part_163",
+      "group": "gripper",
+      "triangles": 656
+    },
+    {
+      "path": "/World/ActuatedTool/L_belt/PrototypeTread",
+      "group": "gripper",
+      "triangles": 12
+    },
+    {
+      "path": "/World/ActuatedTool/R_belt/part_285",
+      "group": "gripper",
+      "triangles": 656
+    },
+    {
+      "path": "/World/ActuatedTool/R_belt/PrototypeTread",
+      "group": "gripper",
+      "triangles": 12
+    }
+  ],
+  "simulation_rerun": false,
+  "lift": {
+    "reference_height_m": 0.1772361584508187,
+    "range_m": [
+      0.0,
+      0.75
+    ],
+    "moving_nodes": [
+      "carriage",
+      "arm",
+      "gripper"
+    ],
+    "fixed_nodes": [
+      "chassis",
+      "lift"
+    ],
+    "virtual_shelf_removed": true,
+    "correction": {
+      "schema": "s300-real-lift-mount-v1",
+      "source_mesh": "/World/HarvestRobot/Robot/world/visuals/assy_lift/node_STL_BINARY_/mesh",
+      "source_triangles": 120881,
+      "output_triangles": 120881,
+      "components": [
+        {
+          "component": 0,
+          "name": "fixed_00",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_00",
+          "triangles": 19548,
+          "source_world_bounds_m": [
+            [
+              -0.03149224406220192,
+              1.574574901101896,
+              0.41609230874567
+            ],
+            [
+              0.0486088186264394,
+              1.6500341911573744,
+              0.4961429183064795
+            ]
+          ]
+        },
+        {
+          "component": 1,
+          "name": "back_carriage",
+          "owner": "/World/HarvestRobot/Robot/farmily_lift_platform",
+          "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/back_carriage",
+          "triangles": 13510,
+          "source_world_bounds_m": [
+            [
+              -0.11491512907844897,
+              1.7634085106854218,
+              0.3410326435058505
+            ],
+            [
+              0.11875070325660102,
+              1.7955945342328903,
+              0.7612156615480109
+            ]
+          ]
+        },
+        {
+          "component": 2,
+          "name": "fixed_02",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_02",
+          "triangles": 10616,
+          "source_world_bounds_m": [
+            [
+              -0.10999316775126271,
+              1.7649283910012046,
+              0.31403663406525867
+            ],
+            [
+              0.1110501298626678,
+              1.8605857595297386,
+              1.5582114666559672
+            ]
+          ]
+        },
+        {
+          "component": 3,
+          "name": "fixed_03",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_03",
+          "triangles": 9154,
+          "source_world_bounds_m": [
+            [
+              -0.03658922049834563,
+              1.6469708875981794,
+              0.41108849009402043
+            ],
+            [
+              0.05355995530345678,
+              1.8115146520628418,
+              0.5011467322575756
+            ]
+          ]
+        },
+        {
+          "component": 4,
+          "name": "mounting_plate",
+          "owner": "/World/HarvestRobot/Robot/farmily_lift_platform",
+          "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/mounting_plate",
+          "triangles": 6988,
+          "source_world_bounds_m": [
+            [
+              -0.11461495979385776,
+              1.1034088735073952,
+              0.6510325554299762
+            ],
+            [
+              0.1158785449197691,
+              1.7135918424767682,
+              0.6612156876473843
+            ]
+          ]
+        },
+        {
+          "component": 5,
+          "name": "fixed_05",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_05",
+          "triangles": 6283,
+          "source_world_bounds_m": [
+            [
+              -0.03142806991370686,
+              1.5282750593414207,
+              0.41609907557785697
+            ],
+            [
+              0.0486393198263854,
+              1.5746384671996683,
+              0.49613614964130154
+            ]
+          ]
+        },
+        {
+          "component": 6,
+          "name": "fixed_06",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_06",
+          "triangles": 6120,
+          "source_world_bounds_m": [
+            [
+              -0.02958675929773265,
+              1.554076837530479,
+              0.41794258295702863
+            ],
+            [
+              0.04680015498142524,
+              1.5553367138060632,
+              0.4943176105094165
+            ]
+          ]
+        },
+        {
+          "component": 7,
+          "name": "fixed_07",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_07",
+          "triangles": 5222,
+          "source_world_bounds_m": [
+            [
+              0.04855702161509303,
+              1.5746386029597104,
+              0.44107899694182673
+            ],
+            [
+              0.061596233707502,
+              1.6046485452287875,
+              0.47108575692861787
+            ]
+          ]
+        },
+        {
+          "component": 8,
+          "name": "fixed_08",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_08",
+          "triangles": 3640,
+          "source_world_bounds_m": [
+            [
+              0.0486055794467721,
+              1.531688605433012,
+              0.4435821805709155
+            ],
+            [
+              0.05662884501922492,
+              1.5446945830909335,
+              0.4685857568491313
+            ]
+          ]
+        },
+        {
+          "component": 9,
+          "name": "fixed_09",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_09",
+          "triangles": 3594,
+          "source_world_bounds_m": [
+            [
+              0.04858647050958439,
+              1.5556886294832073,
+              0.44358218087468404
+            ],
+            [
+              0.05660973611857418,
+              1.5686945766235587,
+              0.46858575715289985
+            ]
+          ]
+        },
+        {
+          "component": 10,
+          "name": "cantilever_bracket",
+          "owner": "/World/HarvestRobot/Robot/farmily_lift_platform",
+          "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/cantilever_bracket",
+          "triangles": 3282,
+          "source_world_bounds_m": [
+            [
+              -0.11490159360209255,
+              1.1034088486559686,
+              0.3410326429995688
+            ],
+            [
+              0.11587058287012998,
+              1.76359189876103,
+              0.7612156613328414
+            ]
+          ]
+        },
+        {
+          "component": 11,
+          "name": "fixed_11",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_11",
+          "triangles": 2210,
+          "source_world_bounds_m": [
+            [
+              -0.0014639551473926277,
+              1.6427487925134312,
+              0.4461176124054853
+            ],
+            [
+              0.018536029785844083,
+              1.6436742827957782,
+              0.46611760701600635
+            ]
+          ]
+        },
+        {
+          "component": 12,
+          "name": "fixed_12",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_12",
+          "triangles": 1996,
+          "source_world_bounds_m": [
+            [
+              0.026671895150698847,
+              1.562921303752962,
+              0.4171004135431123
+            ],
+            [
+              0.033670445085803455,
+              1.5669267123519617,
+              0.42410041170489127
+            ]
+          ]
+        },
+        {
+          "component": 13,
+          "name": "fixed_13",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_13",
+          "triangles": 1992,
+          "source_world_bounds_m": [
+            [
+              -0.03041721632519951,
+              1.562875848915858,
+              0.4310458899102966
+            ],
+            [
+              -0.023418238914067264,
+              1.566881257685609,
+              0.4380458880720755
+            ]
+          ]
+        },
+        {
+          "component": 14,
+          "name": "fixed_14",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_14",
+          "triangles": 1992,
+          "source_world_bounds_m": [
+            [
+              -0.016475290645930875,
+              1.5628869514098256,
+              0.4881361228736413
+            ],
+            [
+              -0.009472270134657141,
+              1.5668923643839627,
+              0.4951334562049046
+            ]
+          ]
+        },
+        {
+          "component": 15,
+          "name": "fixed_15",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_15",
+          "triangles": 1992,
+          "source_world_bounds_m": [
+            [
+              0.04061360709802823,
+              1.5629324073845723,
+              0.47418938690428836
+            ],
+            [
+              0.047616628562975716,
+              1.5669378190510797,
+              0.4811892852428202
+            ]
+          ]
+        },
+        {
+          "component": 16,
+          "name": "fixed_16",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_16",
+          "triangles": 1960,
+          "source_world_bounds_m": [
+            [
+              -0.1560003066181249,
+              1.3703759172574148,
+              0.3142324952996452
+            ],
+            [
+              -0.13561017777216444,
+              1.8603920188145335,
+              0.7642483061716814
+            ]
+          ]
+        },
+        {
+          "component": 17,
+          "name": "fixed_17",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_17",
+          "triangles": 1960,
+          "source_world_bounds_m": [
+            [
+              0.13599952213986008,
+              1.3706084091068769,
+              0.31400000337942924
+            ],
+            [
+              0.15638965098582056,
+              1.8606245106639956,
+              0.7640158142514687
+            ]
+          ]
+        },
+        {
+          "component": 18,
+          "name": "fixed_18",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_18",
+          "triangles": 1793,
+          "source_world_bounds_m": [
+            [
+              -0.03018603975581204,
+              1.5250865078328981,
+              0.41730527447971516
+            ],
+            [
+              0.047439395577865945,
+              1.529437666121869,
+              0.49492994204799845
+            ]
+          ]
+        },
+        {
+          "component": 19,
+          "name": "fixed_19",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_19",
+          "triangles": 1705,
+          "source_world_bounds_m": [
+            [
+              -0.0050642450634859025,
+              1.6424487631230476,
+              0.4425200517030945
+            ],
+            [
+              0.022135825785798365,
+              1.643067570688658,
+              0.46971516772561134
+            ]
+          ]
+        },
+        {
+          "component": 20,
+          "name": "fixed_20",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_20",
+          "triangles": 1668,
+          "source_world_bounds_m": [
+            [
+              -0.1560098610818333,
+              1.8603758151367034,
+              0.3141847291831473
+            ],
+            [
+              -0.07564205366913877,
+              1.8724397894344758,
+              0.7642483063235659
+            ]
+          ]
+        },
+        {
+          "component": 21,
+          "name": "fixed_21",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_21",
+          "triangles": 1668,
+          "source_world_bounds_m": [
+            [
+              0.0759900028628671,
+              1.8605605346883307,
+              0.31400000958137914
+            ],
+            [
+              0.15635780264617155,
+              1.8726245089800286,
+              0.7640635867157257
+            ]
+          ]
+        },
+        {
+          "component": 22,
+          "name": "fixed_22",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_22",
+          "triangles": 1106,
+          "source_world_bounds_m": [
+            [
+              -0.0013192101248576996,
+              1.6438087150224836,
+              0.4462676216037925
+            ],
+            [
+              0.018379414054079682,
+              1.6820138554732214,
+              0.4659675979846138
+            ]
+          ]
+        },
+        {
+          "component": 23,
+          "name": "fixed_23",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_23",
+          "triangles": 917,
+          "source_world_bounds_m": [
+            [
+              0.057072836865128956,
+              1.5788963482448581,
+              0.44232774821196164
+            ],
+            [
+              0.059199165024008946,
+              1.5843956573718905,
+              0.44782899520514874
+            ]
+          ]
+        },
+        {
+          "component": 24,
+          "name": "fixed_24",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_24",
+          "triangles": 917,
+          "source_world_bounds_m": [
+            [
+              0.05709035337433501,
+              1.5788963619131429,
+              0.4643277422835348
+            ],
+            [
+              0.059216681533215,
+              1.5843956710401752,
+              0.46982898927672184
+            ]
+          ]
+        },
+        {
+          "component": 25,
+          "name": "fixed_25",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_25",
+          "triangles": 900,
+          "source_world_bounds_m": [
+            [
+              0.05706089378703584,
+              1.593896344202749,
+              0.44232774840181727
+            ],
+            [
+              0.05918722194591583,
+              1.5993956533297813,
+              0.4478289953950043
+            ]
+          ]
+        },
+        {
+          "component": 26,
+          "name": "fixed_26",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_26",
+          "triangles": 900,
+          "source_world_bounds_m": [
+            [
+              0.05707841029624189,
+              1.5938963578710337,
+              0.46432774247339037
+            ],
+            [
+              0.05920473845512188,
+              1.599395666998066,
+              0.4698289894665775
+            ]
+          ]
+        },
+        {
+          "component": 27,
+          "name": "fixed_27",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_27",
+          "triangles": 682,
+          "source_world_bounds_m": [
+            [
+              0.018351027574655912,
+              1.5255016526169873,
+              0.4190611620666946
+            ],
+            [
+              0.02285051685307121,
+              1.5272680940508232,
+              0.423558067127043
+            ]
+          ]
+        },
+        {
+          "component": 28,
+          "name": "fixed_28",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_28",
+          "triangles": 628,
+          "source_world_bounds_m": [
+            [
+              0.053604814261643666,
+              1.5599435058231168,
+              0.46283435519532523
+            ],
+            [
+              0.05537210327776596,
+              1.5644427581024787,
+              0.4673317764224489
+            ]
+          ]
+        },
+        {
+          "component": 29,
+          "name": "fixed_29",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_29",
+          "triangles": 627,
+          "source_world_bounds_m": [
+            [
+              0.0411910956221976,
+              1.52551984183784,
+              0.46584086434239663
+            ],
+            [
+              0.045688617699882354,
+              1.5272862772776397,
+              0.47033916520096003
+            ]
+          ]
+        },
+        {
+          "component": 30,
+          "name": "fixed_30",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_30",
+          "triangles": 626,
+          "source_world_bounds_m": [
+            [
+              -0.005590445223281309,
+              1.5254826083716453,
+              0.4886779825897881
+            ],
+            [
+              -0.001093204311419419,
+              1.527249029048309,
+              0.49317611087206603
+            ]
+          ]
+        },
+        {
+          "component": 31,
+          "name": "fixed_31",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_31",
+          "triangles": 594,
+          "source_world_bounds_m": [
+            [
+              -0.028431534605068358,
+              1.5254644417938712,
+              0.4418953200068738
+            ],
+            [
+              -0.023930452691478657,
+              1.527230846499473,
+              0.44639531881148187
+            ]
+          ]
+        },
+        {
+          "component": 32,
+          "name": "fixed_32",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_32",
+          "triangles": 594,
+          "source_world_bounds_m": [
+            [
+              0.053623925470588446,
+              1.535942627320885,
+              0.46283069278479394
+            ],
+            [
+              0.0553912795088886,
+              1.5404437106544409,
+              0.46733177611867993
+            ]
+          ]
+        },
+        {
+          "component": 33,
+          "name": "fixed_33",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_33",
+          "triangles": 551,
+          "source_world_bounds_m": [
+            [
+              0.05360958949261386,
+              1.5359472242012302,
+              0.44483185730389396
+            ],
+            [
+              0.05537699470303654,
+              1.5404436994712989,
+              0.44933063656125244
+            ]
+          ]
+        },
+        {
+          "component": 34,
+          "name": "fixed_34",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_34",
+          "triangles": 540,
+          "source_world_bounds_m": [
+            [
+              0.05359048315541624,
+              1.5599437388652573,
+              0.4448353213491093
+            ],
+            [
+              0.05535789278813957,
+              1.5644425028635007,
+              0.44933178127297996
+            ]
+          ]
+        },
+        {
+          "component": 35,
+          "name": "fixed_35",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_35",
+          "triangles": 266,
+          "source_world_bounds_m": [
+            [
+              -0.029182455518404447,
+              1.5278766601401845,
+              0.4411453202344471
+            ],
+            [
+              -0.02318206474916791,
+              1.5283814372321936,
+              0.4471453186239319
+            ]
+          ]
+        },
+        {
+          "component": 36,
+          "name": "fixed_36",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_36",
+          "triangles": 266,
+          "source_world_bounds_m": [
+            [
+              -0.006345208211228184,
+              1.5278948426881662,
+              0.4879271571972986
+            ],
+            [
+              -0.00034481654792250296,
+              1.5283996197808871,
+              0.49392715558678346
+            ]
+          ]
+        },
+        {
+          "component": 37,
+          "name": "fixed_37",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_37",
+          "triangles": 266,
+          "source_world_bounds_m": [
+            [
+              0.017599364710833593,
+              1.5279139083680964,
+              0.4183080609206158
+            ],
+            [
+              0.023599757387417642,
+              1.5284186854616242,
+              0.4243080593101006
+            ]
+          ]
+        },
+        {
+          "component": 38,
+          "name": "fixed_38",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_38",
+          "triangles": 266,
+          "source_world_bounds_m": [
+            [
+              0.04043661296560905,
+              1.5279320909168326,
+              0.4650898978828979
+            ],
+            [
+              0.046437003734845585,
+              1.5284368680088418,
+              0.47108989627238274
+            ]
+          ]
+        },
+        {
+          "component": 39,
+          "name": "fixed_39",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_39",
+          "triangles": 250,
+          "source_world_bounds_m": [
+            [
+              0.04759703597481677,
+              1.558494838123224,
+              0.4523797929928632
+            ],
+            [
+              0.056104339442494565,
+              1.5658943111716268,
+              0.45977978489524196
+            ]
+          ]
+        },
+        {
+          "component": 40,
+          "name": "fixed_40",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_40",
+          "triangles": 250,
+          "source_world_bounds_m": [
+            [
+              0.04761614487546751,
+              1.5344948445905988,
+              0.45237979268909423
+            ],
+            [
+              0.0561234483431453,
+              1.5418943176390014,
+              0.459779784591473
+            ]
+          ]
+        },
+        {
+          "component": 41,
+          "name": "fixed_41",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_41",
+          "triangles": 201,
+          "source_world_bounds_m": [
+            [
+              0.048562467185929235,
+              1.5986407950615866,
+              0.4499608958591741
+            ],
+            [
+              0.060567068783604135,
+              1.603448146246612,
+              0.46220943183430885
+            ]
+          ]
+        },
+        {
+          "component": 42,
+          "name": "fixed_42",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_42",
+          "triangles": 143,
+          "source_world_bounds_m": [
+            [
+              0.005495552769181257,
+              1.6570067129906063,
+              0.4441155430296866
+            ],
+            [
+              0.011517203632095286,
+              1.6820091133634332,
+              0.450119681957079
+            ]
+          ]
+        },
+        {
+          "component": 43,
+          "name": "fixed_43",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_43",
+          "triangles": 118,
+          "source_world_bounds_m": [
+            [
+              -0.028128220663690157,
+              1.5272275054889686,
+              0.4422000145341005
+            ],
+            [
+              -0.024235258353347455,
+              1.527880598396023,
+              0.4460918199499454
+            ]
+          ]
+        },
+        {
+          "component": 44,
+          "name": "fixed_44",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_44",
+          "triangles": 118,
+          "source_world_bounds_m": [
+            [
+              -0.005290495863063537,
+              1.5272456884168801,
+              0.4889826456044566
+            ],
+            [
+              -0.0013978172846548778,
+              1.5278987810985318,
+              0.4928735036615418
+            ]
+          ]
+        },
+        {
+          "component": 45,
+          "name": "fixed_45",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_45",
+          "triangles": 118,
+          "source_world_bounds_m": [
+            [
+              0.018655801849718393,
+              1.5272647554720602,
+              0.4193627316162167
+            ],
+            [
+              0.022539890555002932,
+              1.527917841310486,
+              0.4232532869114893
+            ]
+          ]
+        },
+        {
+          "component": 46,
+          "name": "fixed_46",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_46",
+          "triangles": 118,
+          "source_world_bounds_m": [
+            [
+              0.04149054417473195,
+              1.527282936024192,
+              0.46614383840422646
+            ],
+            [
+              0.04538323830374839,
+              1.5279360287170398,
+              0.4700362511311885
+            ]
+          ]
+        },
+        {
+          "component": 47,
+          "name": "fixed_47",
+          "owner": "/World/HarvestRobot/Robot/world",
+          "path": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_47",
+          "triangles": 26,
+          "source_world_bounds_m": [
+            [
+              0.045638250840187376,
+              1.5753362435913094,
+              0.4485857626645192
+            ],
+            [
+              0.04859568779274287,
+              1.5753385981288166,
+              0.46358810384134586
+            ]
+          ]
+        }
+      ],
+      "moving_components": [
+        1,
+        4,
+        10
+      ],
+      "joint": "/World/HarvestRobot/Robot/joints/farmily_lift_height_joint",
+      "range_m": [
+        0.0,
+        0.75
+      ],
+      "arm_mount_offset_z_m": -0.0029310769823583938,
+      "mounting_plane_z_ax_by_c": [
+        -0.0007962051784675665,
+        -6.212858355003625e-07,
+        0.6611255014788571
+      ],
+      "rb5_base_gap_range_m": [
+        0.0,
+        0.0001368357938880127
+      ],
+      "virtual_shelf_removed": true,
+      "existing_joint_drives_and_mass_estimates_preserved": true,
+      "collision_change": "Virtual shelf box replaced by actual top-plate convex hull. Remaining lift CAD stays visual-only as before.",
+      "hardware_stroke_and_mass_calibration_verified": false,
+      "old_harvest_plans_revalidated": false,
+      "training_eligible": false
+    },
+    "preview": "Rigid assembly motion along existing lift joint; not live physics"
+  }
+}
