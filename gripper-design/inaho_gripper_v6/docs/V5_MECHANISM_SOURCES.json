@@ -1,0 +1,119 @@
+[
+  {
+    "component": "원형 외관",
+    "used_facts": "inaho 공식 제품 사진. 긴 두 벨트 유닛, 후방 구동부, 하부 경사 받침의 외관 기준.",
+    "url": "https://inaho.co/product/tomato-harvesting-robot",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "원형 구조",
+    "used_facts": "WO2024248143A1 도 4~16. 상부 타이밍 전달, 후방 레일·링크, 좌측 받침 지지의 배치 기준. 공개되지 않은 실제 치수는 추정 복제하지 않고 새로 설계.",
+    "url": "https://patents.google.com/patent/WO2024248143A1/en",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "벨트 모터",
+    "used_facts": "OMC/OSM 11HS12-0674S Rev.A. 몸체28.2×31.5, 축5×20, 볼트 사각23, M2.5 깊이4 이상.",
+    "url": "https://www.omc-stepperonline.com/download/11HS12-0674S.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "벨트 모터 도면 사본",
+    "used_facts": "위 제조사 도면의 공개 사본. 장착면·축·나사 깊이를 육안 확인.",
+    "url": "https://images-na.ssl-images-amazon.com/images/I/81LzW9OkeKL.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "타이밍 풀리",
+    "used_facts": "MISUMI GPA32GT2060-A-P5 only. 20T A-P5 was invalid in V4 and removed. 32T bore5, W10.3, groove7; two M3x3 set screws.",
+    "url": "https://kr.misumi-ec.com/pdf/fa/2012/p1_1139.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "타이밍 벨트",
+    "used_facts": "Gates Unitta 220-2GT: 피치 길이220, 110치. 본 설계는 폭6을 사용.",
+    "url": "https://www.unitta.co.jp/products/industry/power/gt/gtbelt2",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "개폐 모터",
+    "used_facts": "Pololu2267 / SY42STH38-1684A. 31 mm 볼트 사각, M3 깊이4.5, 축5×24.",
+    "url": "https://www.pololu.com/file/0J714/SY42STH38-1684A.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "레일",
+    "used_facts": "HIWIN MGN12H / MGN12R. 블록45.4×27, 설치 높이13, M3 깊이3.5. 레일 구멍 피치25와 양 끝10을 사용.",
+    "url": "https://www.hiwin.co.uk/wp-content/uploads/2017/05/CRD-Hiwin-Linear-guides-MG-series.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "베어링",
+    "used_facts": "SKF 치수표의 625 계열5×16×5 및 608 계열8×22×7 인터페이스.",
+    "url": "https://www.skf.com/binaries/pub12/Images/0901d196802809de-Rolling-bearings---17000_1-EN_tcm_12-121486.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "숄더볼트",
+    "used_facts": "Ganter ISO7379-6-M5-12. 매끈한 어깨 직경6, 길이12, M5 나사 길이9.5.",
+    "url": "https://live-katalog.ganternorm.com/pdf/ganter/EN/7379.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "축 칼라",
+    "used_facts": "Ganter GN705-5-E 및 GN705-8-E. 포함된 세트스크루 사용.",
+    "url": "https://www.ganternorm.com/en/products/3.2-Mounting-Positioning-Leveling-with-Retaining-Cables-Screws-Clamping-and-Supporting-Elements/Shaft-collars/GN-705-Shaft-collars-blackened",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "커플링",
+    "used_facts": "STEPPERONLINE ST-FC04: 보어5/8, 외경18, 길이25.",
+    "url": "https://www.omc-stepperonline.com/5mm-8mm-flexible-coupling-18x25mm-cnc-stepper-motor-shaft-coupler-st-fc04",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "20T 모터 풀리",
+    "used_facts": "RobotDigg GT2-20T-5B-6. Manufacturer drawing: 17.5 total, 8 hub, 7.5 groove, 1mm flanges by dimension chain, OD18, tooth OD12.22, bore5 +0.02/0, 2xM3 at90deg, 4mm from hub end. Hub faces up in V5.",
+    "url": "https://www.robotdigg.com/product/9/GT2-Pulley-20-Tooth-4mm-or-5mm-Bore",
+    "drawing_url": "https://www.robotdigg.com/upload/attach/201503/8ff1ea84404b1316d12ba5fc394d80f9.png",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "원점 스위치",
+    "used_facts": "D2F-01F: body12.8x6.5x5.8, mounting pitch6.5, OP5.5 +/-0.3 from mounting-hole centre, PTmax0.5, OTmin0.25. Calibration required.",
+    "url": "https://omronfs.omron.com/en_US/ecb/products/pdf/en-d2f.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "상부 베어링 캡 볼트",
+    "used_facts": "Bossard ISO7380-1 M3 head diameter5.7, head height1.65, AF2. V5 uses M3x10.",
+    "url": "https://xonstorage.z8.web.core.windows.net/pdf/bossard_1805673_apr22_xonlink.pdf",
+    "checked_date": "2026-10-01"
+  },
+  {
+    "component": "노즈 축 고정 세트스크루",
+    "used_facts": "Accu SSF-M3-6-A2 / ISO4026 (DIN913): M3x6, 피치0.5, 평끝 지름2 (공차 +0/-0.25), 육각소켓 AF1.5, 소켓 깊이1.2~2.0. V5.1 CAD는 깊이1.5와 나사산 외경 포락형을 사용. 머리와 와셔 없는 조정식 축 고정.",
+    "url": "https://www.accu.co.uk/flat-point-set-screws/4514-SSF-M3-6-A2",
+    "checked_date": "2026-10-09"
+  },
+  {
+    "component": "텐셔너 잭 완전나사 볼트",
+    "used_facts": "Bossard BN3 ISO4762/DIN912 제품군은 완전나사형이다. V5.1 잭은 M3x25 완전나사형으로 지정하고 머리 밑1.5mm 이후 완전나사 요구. 반나사 대체 불가.",
+    "url": "https://www.bossard.com/au-en/eshop/screws-and-bolts-with-internal-drive/hex-socket-head-cap-screws-fully-threaded/p/3/",
+    "checked_date": "2026-10-09"
+  },
+  {
+    "component": "ISO4762 최소 나사산 구간 검토",
+    "used_facts": "Inoxmare DIN912/ISO4762 치수표: M2/M2.5/M3/M4 반나사 b=16/17/18/20mm; 짧은 완전나사형 머리 밑 불완전나사 최대3피치. Accu M3x25는 최소나사18mm, 완전나사 아님. 123개 독립 나사를 이 범위와 실제 너트 위치로 비교.",
+    "url": "https://www.inoxmare.com/media/wysiwyg/schede_tecniche/912.pdf",
+    "supporting_url": "https://www.accu.co.uk/metric-cap-head-screws/250234-SSC-M3-25-A4-R360",
+    "checked_date": "2026-10-09"
+  },
+  {
+    "component": "숄더볼트 나사 목 여유",
+    "used_facts": "Fuller Fasteners ISO7379 M5 표와 도면의 g2(어깨-나사 이음 목) 최대2mm를 보수적 검토값으로 사용. Ganter 지정 Ø6-M5 제품의9.5mm 나사길이와 목 존재는 기존 제조사 도면 확인; 목2mm 치수는 선택품 실물/도면 재확인 조건. V5.1 새들 너트 명목여유2.5mm, 포켓 축방향 여유 포함 최소2.2mm.",
+    "url": "https://fullerfasteners.com/tech/iso-7379-specifications-hex-socket-head-shoulder-screws/",
+    "drawing_url": "https://eadn-wc04-2716063.nxedge.io/wp-content/uploads/fuller/tech/mech/socket/tech-iso7379.png",
+    "checked_date": "2026-10-09"
+  }
+]

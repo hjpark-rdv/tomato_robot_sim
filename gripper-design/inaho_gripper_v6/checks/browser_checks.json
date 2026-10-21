@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "V6 356 parts; full gap range, opening/belt playback, tray toggle and fastener explosion ownership; no camera jump",
+    "V6 STEP/GLB/ZIP downloaded with matching content and original names; V6 PDF opens",
+    "V5.1 and V6 selection updates models/downloads; URL, reload, back/forward, mobile and project-home navigation work"
+  ],
+  "browser_errors": []
+}

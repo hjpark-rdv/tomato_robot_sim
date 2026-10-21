@@ -1,0 +1,44 @@
+﻿specification,quantity,instance IDs
+"2GT endless timing belt 220mm pitch length x6mm wide, 110 teeth",2,L_H17_timing_belt_220; R_H17_timing_belt_220
+608-2Z 8x22x7,2,H02_opening_608_-74; H02_opening_608_-57
+625-2Z bearing 5x16x5,8,L_H10_625_root_lower; L_H10_625_root_upper; L_H13_625_nose_lower; L_H13_625_nose_upper; R_H10_625_root_lower; R_H10_625_root_upper; R_H13_625_nose_lower; R_H13_625_nose_upper
+Ganter GN705-5-E collar 5ID x10OD x6; M3x4 screw included,2,L_H12_root_collar; R_H12_root_collar
+"Ganter GN705-8-E / DIN705 collar 8ID x16OD x8, M4x6 screw included",2,H04_opening_collar_-83; H04_opening_collar_-49
+"Ganter ISO7379-6-M5-12 shoulder Ø6x12, M5x9.5",4,K03_shoulder_-1_0; K03_shoulder_-1_1; K03_shoulder_1_0; K03_shoulder_1_1
+"Ground steel shaft Ø5 h6 L105, custom cut and deburr",2,L_H11_root_shaft; R_H11_root_shaft
+Ground steel shaft Ø5 h6 L90; custom cut and deburr,2,L_H14_nose_axle; R_H14_nose_axle
+"Ground steel shaft Ø8 h6 L76, deburred ends",1,H03_opening_shaft
+"HIWIN MGN12H 45.4x27, installed height13, M3 depth3.5",2,L_H01_MGN12H; R_H01_MGN12H
+"HIWIN MGN12R L195, E10, pitch25, eight mounting holes",1,F02_MGN12R_195
+"ISO 4026 M3x6 flat point set screw; tip OD2, AF1.5; no washer",4,L_C10_axle_lock_-5; L_C10_axle_lock_80; R_C10_axle_lock_-5; R_C10_axle_lock_80
+ISO 4032 M2,2,F08_sensor_nut_-43.85; F08_sensor_nut_-37.35
+ISO 4032 M3,77,F02_rail_nut_0; F02_rail_nut_1; F02_rail_nut_2; F02_rail_nut_3; F02_rail_nut_4; F02_rail_nut_5; F02_rail_nut_6; F02_rail_nut_7; F03_stop_closed_nut_-5; F03_stop_closed_nut_5; F03_stop_open_L_nut_-93.7; F03_stop_open_R_nut_93.7; F05_rear_nut_-15; F05_rear_nut_15; F05_front_nut_-15; F05_front_nut_15; L_C03_lower_nut_35; L_C03_upper_nut_35; L_C03_lower_nut_65; L_C03_upper_nut_65; L_C05_lower_nut_-13; L_C05_lower_nut_13; L_C05_upper_nut_-13; L_C05_upper_nut_13; L_C06_clamp_nut_-7_18; L_C06_clamp_nut_-7_56; L_C06_clamp_nut_7_18; L_C06_clamp_nut_7_56; L_C10_axle_nut_-5; L_C10_axle_nut_80; L_C10_top_arm_joint_nut; L_C10_jack_captive; L_C10_jack_locknut; L_C11_plate_nut_-20_-105.91; L_C11_plate_nut_20_-105.91; L_C11_plate_nut_-20_-61.91; L_C11_plate_nut_20_-61.91; L_C14_service_nut_24_-38; L_C14_service_nut_-20_-123; L_C14_service_nut_20_-123; R_C03_lower_nut_35; R_C03_upper_nut_35; R_C03_lower_nut_65; R_C03_upper_nut_65; R_C05_lower_nut_-13; R_C05_lower_nut_13; R_C05_upper_nut_-13; R_C05_upper_nut_13; R_C06_clamp_nut_-7_18; R_C06_clamp_nut_-7_56; R_C06_clamp_nut_7_18; R_C06_clamp_nut_7_56; R_C10_axle_nut_-5; R_C10_axle_nut_80; R_C10_top_arm_joint_nut; R_C10_jack_captive; R_C10_jack_locknut; R_C11_plate_nut_-20_-105.91; R_C11_plate_nut_20_-105.91; R_C11_plate_nut_-20_-61.91; R_C11_plate_nut_20_-61.91; R_C14_service_nut_24_-38; R_C14_service_nut_-20_-123; R_C14_service_nut_20_-123; K01_hub_nut; L_T01_post_nut_32; L_T01_post_nut_130; F08_mount_nut_14; F08_mount_nut_22; L_C13_lower_cover_nut_45; L_C13_lower_cover_nut_100; L_C13_upper_cover_nut_45; L_C13_upper_cover_nut_100; R_C13_lower_cover_nut_45; R_C13_lower_cover_nut_100; R_C13_upper_cover_nut_45; R_C13_upper_cover_nut_100
+ISO 4032 M4,22,F04_tower_nut_-25; F04_tower_nut_25; F07_yoke_nut_-26_-42; F07_yoke_nut_-26_6; F07_yoke_nut_26_-42; F07_yoke_nut_26_6; L_C02_lower_root_nut_0; L_C02_lower_root_nut_1; L_C02_upper_root_nut_0; L_C02_upper_root_nut_1; L_C10_clamp_nut_lower; L_C10_clamp_nut_upper; R_C02_lower_root_nut_0; R_C02_lower_root_nut_1; R_C02_upper_root_nut_0; R_C02_upper_root_nut_1; R_C10_clamp_nut_lower; R_C10_clamp_nut_upper; A01_nut_-78_2; A01_nut_-78_12; A01_nut_78_2; A01_nut_78_12
+ISO 4032 M5,4,K03_nut_-1_0; K03_nut_-1_1; K03_nut_1_0; K03_nut_1_1
+ISO 4762 M2.5x8,8,L_C12_motor_bolt_-11.5_-95.41; L_C12_motor_bolt_-11.5_-72.41; L_C12_motor_bolt_11.5_-95.41; L_C12_motor_bolt_11.5_-72.41; R_C12_motor_bolt_-11.5_-95.41; R_C12_motor_bolt_-11.5_-72.41; R_C12_motor_bolt_11.5_-95.41; R_C12_motor_bolt_11.5_-72.41
+ISO 4762 M2x12,2,F08_sensor_bolt_-43.85; F08_sensor_bolt_-37.35
+ISO 4762 M3x10,16,F05_rear_bolt_-15; F05_rear_bolt_15; F05_front_bolt_-15; F05_front_bolt_15; F07_motor_bolt_-15.5_-33.5; F07_motor_bolt_-15.5_-2.5; F07_motor_bolt_15.5_-33.5; F07_motor_bolt_15.5_-2.5; L_C13_lower_cover_bolt_45; L_C13_lower_cover_bolt_100; L_C13_upper_cover_bolt_45; L_C13_upper_cover_bolt_100; R_C13_lower_cover_bolt_45; R_C13_lower_cover_bolt_100; R_C13_upper_cover_bolt_45; R_C13_upper_cover_bolt_100
+ISO 4762 M3x12,14,L_C11_plate_bolt_-20_-105.91; L_C11_plate_bolt_20_-105.91; L_C11_plate_bolt_-20_-61.91; L_C11_plate_bolt_20_-61.91; R_C11_plate_bolt_-20_-105.91; R_C11_plate_bolt_20_-105.91; R_C11_plate_bolt_-20_-61.91; R_C11_plate_bolt_20_-61.91; L_C14_service_bolt_24_-38; L_C14_service_bolt_-20_-123; L_C14_service_bolt_20_-123; R_C14_service_bolt_24_-38; R_C14_service_bolt_-20_-123; R_C14_service_bolt_20_-123
+ISO 4762 M3x14,16,F02_rail_bolt_0; F02_rail_bolt_1; F02_rail_bolt_2; F02_rail_bolt_3; F02_rail_bolt_4; F02_rail_bolt_5; F02_rail_bolt_6; F02_rail_bolt_7; L_C03_lower_bolt_35; L_C03_upper_bolt_35; L_C03_lower_bolt_65; L_C03_upper_bolt_65; R_C03_lower_bolt_35; R_C03_upper_bolt_35; R_C03_lower_bolt_65; R_C03_upper_bolt_65
+ISO 4762 M3x16,6,L_C10_top_arm_joint_bolt; R_C10_top_arm_joint_bolt; L_T01_post_bolt_32; L_T01_post_bolt_130; F08_mount_bolt_14; F08_mount_bolt_22
+ISO 4762 M3x20,9,L_C06_clamp_bolt_-7_18; L_C06_clamp_bolt_-7_56; L_C06_clamp_bolt_7_18; L_C06_clamp_bolt_7_56; R_C06_clamp_bolt_-7_18; R_C06_clamp_bolt_-7_56; R_C06_clamp_bolt_7_18; R_C06_clamp_bolt_7_56; K01_hub_bolt
+ISO 4762 M3x25 fully threaded; Bossard BN3 or equivalent; AF2.5,2,L_C10_jack_screw; R_C10_jack_screw
+ISO 4762 M3x28,4,F03_stop_closed_bolt_-5; F03_stop_closed_bolt_5; F03_stop_open_L_bolt_-93.7; F03_stop_open_R_bolt_93.7
+ISO 4762 M3x8,12,L_C01_rail_bolt_-10_22; L_C01_rail_bolt_-10_42; L_C01_rail_bolt_10_22; L_C01_rail_bolt_10_42; R_C01_rail_bolt_-10_22; R_C01_rail_bolt_-10_42; R_C01_rail_bolt_10_22; R_C01_rail_bolt_10_42; L_C05_lower_bolt_-13; L_C05_lower_bolt_13; R_C05_lower_bolt_-13; R_C05_lower_bolt_13
+ISO 4762 M4x14,4,L_C10_clamp_lower; L_C10_clamp_upper; R_C10_clamp_lower; R_C10_clamp_upper
+ISO 4762 M4x18,6,F04_tower_bolt_-25; F04_tower_bolt_25; L_C02_lower_root_bolt_0; L_C02_lower_root_bolt_1; R_C02_lower_root_bolt_0; R_C02_lower_root_bolt_1
+ISO 4762 M4x20,4,F07_yoke_bolt_-26_-42; F07_yoke_bolt_-26_6; F07_yoke_bolt_26_-42; F07_yoke_bolt_26_6
+ISO 4762 M4x22,4,A01_bolt_-78_2; A01_bolt_-78_12; A01_bolt_78_2; A01_bolt_78_12
+ISO 4762 M4x25,4,L_C11_root_bolt_0; L_C11_root_bolt_1; R_C11_root_bolt_0; R_C11_root_bolt_1
+"ISO 7380-1 M3x10 button head; head OD5.7 x1.65, AF2",4,L_C05_upper_bolt_-13; L_C05_upper_bolt_13; R_C05_upper_bolt_-13; R_C05_upper_bolt_13
+MISUMI GPA32GT2060-A-P5; bore5; W10.3; groove7; M3x3 screws included,2,L_H16_2GT_pulley_32T; R_H16_2GT_pulley_32T
+"OMC 11HS12-0674S; 28.2 square x31.5, shaft5x20; M2.5 depth4 min",2,L_H15_NEMA11_belt_motor; R_H15_NEMA11_belt_motor
+"Omron D2F-01F, pin plunger, PCB straight terminals; body and 3 terminals; actuator separate CAD instance",1,H18_home_switch_D2F01F
+"Pololu2267 / SOYO SY42STH38-1684A, 42.3 square, shaft5x24",1,H06_opening_motor
+"RobotDigg GT2-20T-5B-6; bore5; OD18; L17.5; groove7.5; hub8; 2x M3 at90deg, screws included",2,L_H16_2GT_pulley_20T; R_H16_2GT_pulley_20T
+STEPPERONLINE ST-FC04 5x8 coupling Ø18x25; included screws,1,H05_opening_coupler
+Washer M2 t0.5,2,F08_sensor_washer_-43.85; F08_sensor_washer_-37.35
+Washer M2.5 t0.5,8,L_C12_motor_washer_-11.5_-95.41; L_C12_motor_washer_-11.5_-72.41; L_C12_motor_washer_11.5_-95.41; L_C12_motor_washer_11.5_-72.41; R_C12_motor_washer_-11.5_-95.41; R_C12_motor_washer_-11.5_-72.41; R_C12_motor_washer_11.5_-95.41; R_C12_motor_washer_11.5_-72.41
+Washer M3 t0.5,4,F07_motor_washer_-15.5_-33.5; F07_motor_washer_-15.5_-2.5; F07_motor_washer_15.5_-33.5; F07_motor_washer_15.5_-2.5
+Washer M4 t1,4,L_C10_clamp_washer_lower; L_C10_clamp_washer_upper; R_C10_clamp_washer_lower; R_C10_clamp_washer_upper
+Washer M6 t1,8,K03_rear_washer_-1_0; K03_front_washer_-1_0; K03_rear_washer_-1_1; K03_front_washer_-1_1; K03_rear_washer_1_0; K03_front_washer_1_0; K03_rear_washer_1_1; K03_front_washer_1_1
