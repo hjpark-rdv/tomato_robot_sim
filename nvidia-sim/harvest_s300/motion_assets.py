@@ -380,6 +380,17 @@ def build(scene, output, plant=22,target=None):
     report['mount_revision']=dict(robot_translation_y_m=-.20,reason='moving 0.95m lift shelf crosses restored S300 rear panel at original mount',
                                   rear_panel_preserved=True,source_assembly_unchanged=True)
     build_tool(s,report)
+    from real_lift_mount import apply as mount_real_lift, PLATFORM
+    if not s.GetPrimAtPath(PLATFORM+'/visuals/real_lift_carriage'):
+        report['real_lift_mount']=mount_real_lift(s)
+    else:
+        report['real_lift_mount']=dict(virtual_shelf_removed=True,
+            inherited_from_source_scene=str(scene),old_harvest_plans_revalidated=False)
+    from mounted_rgbd import mount as mount_rgbd, ROOT as RGBD_ROOT
+    if not s.GetPrimAtPath(RGBD_ROOT):
+        report['mounted_rgbd']=mount_rgbd(s)
+    else:
+        report['mounted_rgbd']=json.loads((scene.parent/'motion_manifest.json').read_text())['mounted_rgbd']
     sys.path.insert(0,str(REPO/'mujoco-benchmark/scripts'))
     build_plant(s,f'/World/Greenhouse/Plants/Plant_{plant:02d}',report,output)
     # Original stable diagnostic rate; no reduction in plant segmentation or collision coverage.

@@ -133,6 +133,60 @@ def release_fixture(xyz=(.2, .5, 0)):
 
 
 class RailEnvironmentTests(unittest.TestCase):
+    def test_opt_in_first_hard_hit_stops_blocked_path_with_unknown_suffix(self):
+        s,m,p=fixture();cube(s,'/World/Greenhouse/House/Gutter',(0,.5,0))
+        p['phases'].append(dict(name='approach',duration_s=1.,waypoint_q=[[0.]*7]*2,
+            end_gap_m=.044,rail_waypoint_positions_m=[1.,1.]))
+        def audit(early):
+            adapter=RailEnvironmentCheck(s,m,MotionSelfCollision(s,Kinematics()),
+                allowed_truss_key='Truss_02',scope='full',stop_on_first_hard_hit=early)
+            return screen_rail_plan(adapter,p,m,scope='full',hz=60,native_hz=60)
+        full=audit(False);early=audit(True)
+        self.assertTrue(full['complete']);self.assertFalse(full['passed'])
+        self.assertNotIn('early_terminated',full)
+        self.assertFalse(early['complete']);self.assertFalse(early['passed'])
+        self.assertEqual(early['status'],'blocked');self.assertTrue(early['early_terminated'])
+        self.assertFalse(early['eligible_for_native_execution'])
+        self.assertEqual(early['hard_intersection_sample_pairs'],1)
+        self.assertEqual(early['first_hard_hit'],full['hard_hits'][0])
+        self.assertEqual(early['all_hard_pair_counts'][0]['sample_pairs'],1)
+        self.assertLess(early['samples'],full['samples'])
+        self.assertLess(early['collision_queries'],full['collision_queries'])
+        self.assertEqual(early['unexamined_suffix']['status'],'UNKNOWN')
+        self.assertIsNone(early['unexamined_suffix']['other_collisions_absent'])
+        self.assertEqual(early['unexamined_suffix']['from_phase'],'rail_move')
+        self.assertEqual(early['unexamined_suffix']['from_time_s'],early['first_hard_hit']['time_s'])
+        self.assertEqual(early['unexamined_suffix']['nominal_path_end_s'],2.)
+
+    def test_opt_in_clear_path_still_checks_every_native_sample_and_keeps_diagnostics(self):
+        s,m,p=fixture();cube(s,'/World/ElasticTarget/Truss_02_Fruit_01',(3,.65,0))
+        adapter=RailEnvironmentCheck(s,m,MotionSelfCollision(s,Kinematics()),
+            allowed_truss_key='Truss_02',scope='full',stop_on_first_hard_hit=True)
+        report=screen_rail_plan(adapter,p,m,scope='full',hz=60,native_hz=60)
+        self.assertTrue(report['passed']);self.assertTrue(report['complete'])
+        self.assertTrue(report['eligible_for_native_execution'])
+        self.assertFalse(report['early_terminated']);self.assertNotIn('unexamined_suffix',report)
+        self.assertEqual(report['samples'],61)
+        self.assertEqual(report['sampling']['samples'],61)
+        self.assertGreater(report['diagnostic_intersection_sample_pairs'],0)
+        self.assertEqual(report['hard_intersection_sample_pairs'],0)
+
+    def test_external_first_hard_hit_flag_is_opt_in_and_blocked_still_raises(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            for enabled in (False,True):
+                output=Path(directory)/('early'+str(enabled)+'.json');commands=[]
+                def fake(command,**kwargs):
+                    commands.append(command)
+                    output.write_text(json.dumps(dict(status='blocked',passed=False,complete=False,
+                        eligible_for_native_execution=False,early_terminated=enabled)))
+                    return subprocess.CompletedProcess(command,2,'','')
+                with patch('subprocess.run',side_effect=fake),self.assertRaisesRegex(RuntimeError,'blocked commanded travel'):
+                    audit_external('/assembly',output,plan='/plan',scope='full',hz=60,native_hz=60,
+                        stop_on_first_hard_hit=enabled)
+                self.assertEqual('--stop-on-first-hard-hit' in commands[0],enabled)
+                self.assertTrue(output.exists());self.assertTrue(output.with_suffix('.log').exists())
+
     def test_60hz_rail_checks_actual_motion_and_rejects_period_mismatch(self):
         stage, manifest, plan = fixture()
         cube(stage, '/World/Greenhouse/House/Gutter', (0, .5, 0))
@@ -309,6 +363,65 @@ class RailEnvironmentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'complete robot/carrier/tool'):
             verify_initial_alignment(moving, p, m, actual)
 
+    def test_measured_open_and_asymmetric_jaws_use_exact_named_dofs(self):
+        s, m, p = fixture()
+        for side in ('L', 'R', 'L_belt', 'R_belt'):
+            cube(s, '/World/ActuatedTool/'+side, (3, .15, 0), .01, rigid=True)
+        moving = MotionSelfCollision(s, Kinematics())
+        for left, right in ((-.026, .026), (-.019, .031)):
+            with self.subTest(left=left, right=right):
+                actual = {name:t.copy() for name,t in moving.poses(np.zeros(7)).items()}
+                for side, offset in (('L',left), ('L_belt',left), ('R',right), ('R_belt',right)):
+                    t = actual['/World/ActuatedTool/'+side]
+                    t[:3,3] += t[:3,0]*offset
+                state = dict(initial_jaw_q_m=dict(jaw_L=left,jaw_R=right))
+                proof = verify_initial_alignment(moving, p, m, actual, checkpoint_robot_state=state)
+                self.assertEqual(proof['measured_jaw_q_m'], state['initial_jaw_q_m'])
+                self.assertLess(max(proof['measured_position_errors_m'].values()), 1e-12)
+                # A symmetric gap with the same width does not represent an
+                # asymmetric actual pose; do not silently refit either owner.
+                if left != -right:
+                    scalar = dict(initial_jaw_q_m=dict(jaw_L=(left-right)/2,jaw_R=(right-left)/2))
+                    with self.assertRaisesRegex(ValueError, 'measured/FK pose mismatch'):
+                        verify_initial_alignment(moving,p,m,actual,checkpoint_robot_state=scalar)
+                wrong = {name:t.copy() for name,t in actual.items()}
+                wrong['/World/ActuatedTool/L'][:3,3] += [.048,0,0]
+                with self.assertRaisesRegex(ValueError, 'measured/FK pose mismatch'):
+                    verify_initial_alignment(moving,p,m,wrong,checkpoint_robot_state=state)
+                wrong = {name:t.copy() for name,t in actual.items()}
+                for t in wrong.values(): t[1,3] += .048
+                with self.assertRaisesRegex(ValueError, 'rail displacement twice'):
+                    verify_initial_alignment(moving,p,m,wrong,checkpoint_robot_state=state)
+
+    def test_measured_jaw_owners_require_actual_finite_checkpoint_dofs(self):
+        s,m,p = fixture()
+        cube(s,'/World/ActuatedTool/L',(3,.15,0),.01,rigid=True)
+        moving=MotionSelfCollision(s,Kinematics());actual=moving.poses(np.zeros(7))
+        for state in (None,{},dict(initial_jaw_q_m=dict(jaw_L=float('nan')))):
+            with self.subTest(state=state), self.assertRaisesRegex(ValueError,'actual checkpoint jaw DOFs'):
+                verify_initial_alignment(moving,p,m,actual,checkpoint_robot_state=state)
+
+    def test_world_fixed_noncollider_rail_anchor_is_checked_without_platform_shift(self):
+        s,m,p=fixture();anchor='/World/HarvestRobot/Robot/rail_anchor'
+        prim=UsdGeom.Xform.Define(s,anchor).GetPrim();UsdPhysics.RigidBodyAPI.Apply(prim)
+        m['rail']['anchor_body']=anchor
+        moving=MotionSelfCollision(s,Kinematics())
+        p['phases'][0]['rail_waypoint_positions_m']=[.5,1.]
+        p['resume_rail_origin']=dict(schema='s300-measured-resume-rail-origin-v1',
+            axis_world=[0.,1.,0.],displacement_m=.5)
+        actual={name:t.copy() for name,t in moving.poses(np.zeros(7),rail_position_m=.5).items()}
+        actual[anchor]=moving.rest[anchor].copy()
+        proof=verify_initial_alignment(moving,p,m,actual)
+        self.assertEqual(proof['stationary_noncollider_anchor'],anchor)
+        self.assertLess(proof['measured_position_errors_m'][anchor],1e-12)
+        actual[anchor][0,3]+=.048
+        with self.assertRaisesRegex(ValueError,'measured/FK pose mismatch'):
+            verify_initial_alignment(moving,p,m,actual)
+        cube(s,anchor,(0,0,0),.01,rigid=True)
+        moving=MotionSelfCollision(s,Kinematics())
+        with self.assertRaisesRegex(ValueError,'anchor has collider geometry'):
+            verify_initial_alignment(moving,p,m,actual)
+
     def test_native_drive_target_is_not_used_for_geometric_rail_position(self):
         s, m, p = fixture(); cube(s, '/World/Greenhouse/House/Gutter', (0, .5, 0))
         p['phases'][0]['rail_native_command_positions_m'] = [10., 11.]
@@ -434,9 +547,10 @@ class RailEnvironmentTests(unittest.TestCase):
                 manifest=dict(plant=dict(root='/World/ElasticTarget'), compact_assets=dict(
                     materialized_dependency=dict(sha256='1'*64))), **completed())
             metadata['break_events'] = [dict(joint='/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01', t=.8)]
-            names = ['farmily_lift_height_joint', 'base', 'shoulder', 'elbow', 'wrist1', 'wrist2', 'wrist3']
+            names = ['farmily_lift_height_joint', 'base', 'shoulder', 'elbow', 'wrist1', 'wrist2', 'wrist3', 'jaw_R', 'jaw_L']
             arrays = dict(body_paths=np.array(['/World/ElasticTarget/Truss_02_Fruit_01']),
-                body_poses_world=np.array([[0,0,0,0,0,0,1.]]), robot_dof_names=np.array(names), robot_q=np.arange(7.))
+                body_poses_world=np.array([[0,0,0,0,0,0,1.]]), robot_dof_names=np.array(names),
+                robot_q=np.r_[np.arange(7.),.031,-.019])
             manifest = dict(scene_sha256='a'*64, compact_assets=dict(materialized_dependency=dict(sha256='2'*64)))
             with patch('native_route_checkpoint.load_checkpoint', return_value=(metadata, arrays)):
                 with self.assertRaisesRegex(ValueError, 'outside exact declared'):
@@ -451,6 +565,7 @@ class RailEnvironmentTests(unittest.TestCase):
                 self.assertNotIn('/World/ElasticTarget/Truss_02_Fruit_01', poses)
                 self.assertIn('/World/FrozenHarvestHistory/Plant_22/Truss_02_Fruit_01', poses)
                 np.testing.assert_array_equal(proof['initial_lift_arm_q'], np.arange(7.))
+                self.assertEqual(proof['initial_jaw_q_m'], dict(jaw_L=-.019,jaw_R=.031))
 
     def test_same_model_checkpoint_different_assembly_is_not_silently_accepted(self):
         manifest = dict(scene_sha256='a'*64)
@@ -674,11 +789,15 @@ class RailEnvironmentTests(unittest.TestCase):
         sphere = UsdGeom.Sphere.Define(s, body+'/Collider'); sphere.CreateRadiusAttr(.035)
         UsdPhysics.CollisionAPI.Apply(sphere.GetPrim()).CreateCollisionEnabledAttr(True)
         joint = UsdPhysics.FixedJoint.Define(s, joint_path); joint.CreateJointEnabledAttr(False)
+        frozen_anchor=frozen_root+original['anchor'][len(m['plant']['root']):]
+        UsdGeom.Xform.Define(s,frozen_anchor)
+        joint.CreateBody0Rel().SetTargets([frozen_anchor]);joint.CreateBody1Rel().SetTargets([body])
         events = [dict(joint=original['joint'], t=.8, type='native_joint_break')]
         metadata = dict(source_plant=source, scene_sha256='a'*64, metadata_sha256='b'*64,
             manifest=dict(plant=dict(root=m['plant']['root'], fruits=[original])),
             break_events=events, **completed())
         release = dict(name=name, path=body, joint=joint_path, original_joint=original['joint'],
+            anchor=frozen_anchor,
             source_plant=source, route_identity='Plant_22/'+name, source_scene_sha256='a'*64,
             checkpoint_metadata_sha256='b'*64, checkpoint_time_s=1., native_break_events=events)
         m['route_checkpoint'] = dict(outgoing_history=[dict(checkpoint='/verified/old/checkpoint',

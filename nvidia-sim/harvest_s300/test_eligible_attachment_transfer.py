@@ -59,6 +59,38 @@ def metadata(manifest):
 
 
 class EligibleAttachmentTransferTests(unittest.TestCase):
+    def test_selected_target_metadata_matches_actual_transferred_joint(self):
+        with tempfile.TemporaryDirectory() as temp:
+            stage,manifest,inventory,_=fixture(Path(temp)/'assembly')
+            manifest['target']=copy.deepcopy(manifest['plant']['fruits'][2])
+            report=apply_transfer(stage,manifest,metadata(manifest),inventory)
+            target=manifest['target'];joint=UsdPhysics.Joint(stage.GetPrimAtPath(target['joint']))
+            self.assertIn(target['name'],report['selected_fruit_names'])
+            self.assertEqual(target['break_force_n'],joint.GetBreakForceAttr().Get())
+            self.assertAlmostEqual(target['break_torque_nm'],joint.GetBreakTorqueAttr().Get(),places=8)
+            self.assertEqual(target['break_torque_nm'],.008)
+
+    def test_excluded_or_broken_target_metadata_remains_unchanged(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for which in ('excluded','broken'):
+                stage,manifest,inventory,_=fixture(Path(temp)/which)
+                if which=='broken':manifest['target']=copy.deepcopy(manifest['plant']['fruits'][2])
+                before=copy.deepcopy(manifest['target']);native=metadata(manifest)
+                if which=='broken':native['break_events'].append(dict(t=9.5,joint=before['joint']))
+                report=apply_transfer(stage,manifest,native,inventory)
+                self.assertNotIn(before['name'],report['selected_fruit_names'])
+                self.assertEqual(manifest['target'],before)
+
+    def test_selected_target_identity_mismatch_is_rejected_before_mutation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            stage,manifest,inventory,_=fixture(Path(temp)/'assembly')
+            manifest['target']=copy.deepcopy(manifest['plant']['fruits'][2])
+            manifest['target']['path']=manifest['plant']['fruits'][3]['path']
+            before=stage.GetRootLayer().ExportToString()
+            with self.assertRaisesRegex(ValueError,'inconsistent exact fruit/joint identity'):
+                apply_transfer(stage,manifest,metadata(manifest),inventory)
+            self.assertEqual(stage.GetRootLayer().ExportToString(),before)
+
     def test_fresh_independent_asset_preserves_normal_state_and_imports_zero_breaks(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);assembly=root/'assembly';stage,old,inventory,_=fixture(assembly)

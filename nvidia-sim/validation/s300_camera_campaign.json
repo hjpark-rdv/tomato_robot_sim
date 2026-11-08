@@ -1,0 +1,197 @@
+{
+  "schema": "s300-camera-region-native-campaign-validation-v1",
+  "updated_at_utc": "2026-10-22T08:04:07.954238+00:00",
+  "status": "incomplete_5_of_6_native_stopped_gpu_device_access_blocked",
+  "branch": "codex/s300-isaac-real-lift-20261022",
+  "base_head": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "data_root": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign",
+  "web_url": "http://lab.farmily.ai:8090/gripper-design/?tab=replay",
+  "requested_minimum_distinct_trusses": 6,
+  "current_distinct_native_harvested_trusses": [
+    "/World/Greenhouse/Plants/Plant_22/Truss_02",
+    "/World/Greenhouse/Plants/Plant_25/Truss_00",
+    "/World/Greenhouse/Plants/Plant_27/Truss_00",
+    "/World/Greenhouse/Plants/Plant_28/Truss_00",
+    "/World/Greenhouse/Plants/Plant_29/Truss_00"
+  ],
+  "current_count": 5,
+  "minimum_goal_met": false,
+  "current_new_red_native_detachments": 11,
+  "unripe_native_detachments": 0,
+  "whole_truss_completion_claimed": false,
+  "collection_verified": false,
+  "training_eligible": false,
+  "harvest_success": null,
+  "physics": {
+    "engine": "Isaac Sim 6.1 native PhysX",
+    "device": "cpu",
+    "hz": 60,
+    "camera_hz": 2,
+    "native_contact_limit_mm": 1,
+    "planning_self_clearance_mm": 2,
+    "background_colliders_preserved": true
+  },
+  "camera_selection": {
+    "source": "Visible owned SIM-GT RGB-D",
+    "learned_detector": false,
+    "minimum_ripe_group": 2,
+    "hidden_fruit_centers_used_for_aim": false,
+    "one_entry_two_close_open_cycles_per_visited_truss": true
+  },
+  "recording": {
+    "web_replays_measured_states_not_new_physics": true,
+    "future_camera_frames_never_shown": true,
+    "active_window_native_solver_restarts": true,
+    "outgoing_attached_plants_frozen_at_measured_shape": true
+  },
+  "tests": {
+    "run": 410,
+    "passed": 408,
+    "skipped": 2,
+    "log": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_serialized_recovery_guard_native_core_regressions.log",
+    "web_javascript_checks": 56,
+    "preliminary_real_browser_checks": 7,
+    "skip_reason": "Torch absent in asset Python; same2 passed separately with real existing CPU Torch",
+    "real_cpu_torch_tests": 2,
+    "direct_control_real_pip_checks": "RGB/GT/depth causal1.5s480x640 decoded;181measuredstates;0JS/networkerrors",
+    "web_javascript_log": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_web_fork_boundary_checks.log"
+  },
+  "current_actual_trial": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_connector24",
+  "source_parent_checkpoint": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_backup24/trials/station_000_plant_24/station_000_plant_24/cycle_checkpoints/000",
+  "source_parent_metadata_sha256": "45dc0dd60a107fd40fbead7d05dabca6ecc9c02f5bc18b3b3e02c5a354d2e94b",
+  "native_cover_trial_scope": "Captured all32 exact native pieces at t0; controller fault preserved. Cache/source validation passed, no manipulation or sixth-truss credit.",
+  "reports": {
+    "goal_audit": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_web_drafts/goal_audit.json",
+    "lift_reanchor_causal_evidence": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/lift_setpoint_causal_audit/report.json",
+    "all_test_report": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/camera_campaign_report.html",
+    "all_video_list": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_web_drafts/all_camera_videos.md",
+    "final_actual_preservation_audit": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_actual_preservation_audit.json"
+  },
+  "software_fault_branch": {
+    "trial": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_native_covers24",
+    "actual_saved_samples": 88,
+    "actual_duration_s": 1.45,
+    "full_checkpoint_available": false,
+    "native_completed": false,
+    "reason": "CPU target tensor aliased immutable initial q0 and repeatedly added lift bias",
+    "source_fix": "Opt-in target tensor owns q0.copy() in all3 constructors",
+    "native_revalidation_pending": false,
+    "next_retry_relationship": "explicit_independent_branch_from_last_normal24_checkpoint",
+    "native_fix_control": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/native_liftref_fixed_control24/independent_native_fix_audit_v2_named_dof.json",
+    "native_fix_control_passed": true
+  },
+  "prefix_connector": {
+    "status": "complete_geometry_pass_actual_preparation_open_feedback_stopped",
+    "independent_branch_parent": "camera_backup24_20261022_s00_plant24",
+    "heading_deg": -60,
+    "retract_mm": 50,
+    "harvest_only_lift_offset_mm": 150,
+    "initial_scan_lift_offset_mm": 0,
+    "existing_ompl_proposal_steps_m_rad": [
+      0.006,
+      "4degrees"
+    ],
+    "fine_edge_steps_m_rad": [
+      0.002,
+      "1degree"
+    ],
+    "self_clearance_mm": 2,
+    "full_native_period_hz": 60,
+    "exact_certificate_reuse": true,
+    "complete_open_feedback_on_every_forward_leg": true,
+    "offline_geometry_passed_samples": 6715,
+    "offline_geometry_is_not_actual_success": true,
+    "fresh_full_audit_samples": 6723,
+    "fresh_full_self_passed": true,
+    "fresh_full_environment_complete": true,
+    "fresh_full_environment_passed": true,
+    "native_manipulation_reached": false,
+    "actual_completed": false,
+    "native_harvest_credit": 0
+  },
+  "latest_actual_terminal_checkpoint": {
+    "path": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_connector24/trials/station_000_plant_24/station_000_plant_24/route_checkpoint",
+    "metadata_sha256": "f6c0afd62935b4d413eaf48e5ee32e519d457ecf6883a719305cce48bd770093",
+    "time_s": 16.1,
+    "physics_steps": 966,
+    "completed": false,
+    "stop_reason": "entry_open_not_reached",
+    "new_native_breaks": 0,
+    "full_native_state_saved": true,
+    "rollback_authorized": false,
+    "measured_gap_m": 0.09508248418569565,
+    "required_gap_m": 0.096,
+    "tracking_tolerance_m": 0.0005,
+    "actuated_tool_contact_count_during_connector": 0,
+    "geometric_path_failure": false,
+    "gravity_compliance_diagnosis": "normal jaw drive compliance as wrist tilts; no claim that waiting or slowing alone solves static error"
+  },
+  "gpu_block": {
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/gpu_access_block_20261022/diagnosis.json",
+    "nvidia_character_device_open_errno": "EPERM",
+    "nvml": "Unknown Error",
+    "cuInit_return": 100,
+    "host_available_ram_gib_approx": 97.6,
+    "cgroup_oom_events": 0,
+    "host_driver_health_verified": false,
+    "external_device_access_recovery_needed": true,
+    "reset_or_container_restart_performed": false,
+    "occurred_after_saved_opening_guard_stop": true
+  },
+  "actual_speed_limitations": {
+    "source": "per-trial native summary and original logs",
+    "earlier_completed_camera_loop_rtf_range_approx": [
+      0.14,
+      0.22
+    ],
+    "current_stopped_connector_simulated_s": 16.1,
+    "current_loop_including_paused_planning_wall_s": 968.8798035923392,
+    "current_paused_planning_wall_s": 881.6838265042752,
+    "current_including_planning_rtf": 0.016617128296312546,
+    "end_to_end_realtime_goal_claimed": false,
+    "previous_newton_gpu_benchmark_reused_as_current_speed": false
+  },
+  "web_replay_publication": {
+    "default_collection": "camera_region_route_20261022",
+    "label": "카메라 기반 이동·수확 시험 · 5/6송이 · 목표 미완료 · 11개 분리",
+    "registered_actual_route_segments": 14,
+    "registered_independent_diagnostics": 16,
+    "all_original_camera_mp4_count": 31,
+    "minimum_goal_met": false,
+    "independent_fork_autoplay_stops": true,
+    "software_only_final_browser_qa": "partial_functional_pass_workflow_inconclusive",
+    "previous_hardware_browser_and_direct_sensor_checks_preserved": true,
+    "software_qa_report": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/final_software_web_qa.json",
+    "actual_final_browser_scopes_passed": [
+      "SwiftShader software renderer verified",
+      "Published actual incomplete5/6 default main and pausedfirst22 fullfarm",
+      "Exact causal RGB/GT region/depth PIP decoded",
+      "Actual first22 to next recordedsegment automatic transition"
+    ],
+    "actual_final_browser_scopes_not_completed": [
+      "Real-browser independent-fork boundary stop",
+      "Manual stoppedconnector24 selection afterfork",
+      "Final one-model cache assertion afterthatselection"
+    ],
+    "browser_fully_closed": true,
+    "default_catalog_and_both_reports_http_status": 200
+  },
+  "terminal_recovery_preparation": {
+    "directory": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/connector24_terminal_recovery_preparation",
+    "proof": "validated_terminal_proof_v2.json",
+    "actual_measured_reverse_waypoints": 337,
+    "actual_source_time_range_s": [
+      10.5,
+      16.1
+    ],
+    "diagnostic_duration_s": 10.916666666666668,
+    "execution_eligible": false,
+    "recovery_controller_binding_pending": true,
+    "unsafe_runtime_execution_blocked_in_code": true,
+    "actual_source_runtime_guard_rejection_verified": true,
+    "reason": "Source fixed lift reference must be retained exactly; existing recovery controller does not yet bind it",
+    "gravity_approximation_evidence": "jaw_gravity_diagnostic.json",
+    "nominal_gravity_path_evidence": "nominal_actual_jaw_gravity_path.json",
+    "native_recovery_run": false
+  }
+}

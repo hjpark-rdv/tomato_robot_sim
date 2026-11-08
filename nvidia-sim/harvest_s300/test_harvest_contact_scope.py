@@ -17,7 +17,7 @@ FLOOR = '/World/Greenhouse/House/Environment/GroundCover_1_2/Mesh'
 
 def manifest():
     return dict(plant=dict(root=ROOT, fruits=[dict(name='Truss_02_Fruit_09', path=FRUIT,
-                                                joint=JOINT)]))
+                                                joint=JOINT,anchor=ROOT+'/Truss_02_Pedicel_distal_09_0')]))
 
 
 def contact(a=FRUIT + '/Collider', b=FLOOR, t=2.):
@@ -47,13 +47,15 @@ class HarvestContactScopeTests(unittest.TestCase):
                  checkpoint=str(checkpoint),source_scene_sha256=source_sha,
                  checkpoint_metadata_sha256=metadata['metadata_sha256'],checkpoint_time_s=2.)
         row['detached_fruits']=[dict(original['plant']['fruits'][0],path=frozen,joint=frozen_joint,
+            anchor='/World/RouteFrozen/Plant_22/Truss_02_Pedicel_distal_09_0',
             original_joint=JOINT,source_plant=row['source_plant'],route_identity='Plant_22/Truss_02_Fruit_09',
             native_break_events=events,source_scene_sha256=source_sha,checkpoint_time_s=2.,
             checkpoint_metadata_sha256=metadata['metadata_sha256'])]
         current=manifest();current['route_checkpoint']=dict(outgoing_history=[row])
         stage=Usd.Stage.CreateInMemory();UsdPhysics.RigidBodyAPI.Apply(stage.DefinePrim(frozen,'Xform'))
         UsdPhysics.CollisionAPI.Apply(stage.DefinePrim(frozen+'/Collider','Mesh')).CreateCollisionEnabledAttr(True)
-        UsdPhysics.FixedJoint.Define(stage,frozen_joint).GetPrim().SetActive(False)
+        anchor='/World/RouteFrozen/Plant_22/Truss_02_Pedicel_distal_09_0';stage.DefinePrim(anchor,'Xform')
+        j=UsdPhysics.FixedJoint.Define(stage,frozen_joint);j.CreateBody0Rel().SetTargets([anchor]);j.CreateBody1Rel().SetTargets([frozen]);j.GetPrim().SetActive(False)
         return current,stage,frozen,source
 
     def test_verified_frozen_route_release_retains_original_evidence_without_new_callbacks(self):
@@ -390,6 +392,39 @@ class ReleasedSameTrussTests(unittest.TestCase):
         for key in ['t','separation_m']:
             event=own.copy();event[key]=float('nan');self.assertFalse(scope.classify(event,breaks)['continuation_authorized'])
 
+    def test_same_plant_option_defers_exact_other_truss_after_release_only(self):
+        stage,m=self.fixture()
+        scope=HarvestContactScope(m,stage=stage,same_plant_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.)]
+        for name in ['Truss_03_Fruit_03','Truss_03_Rachis_0']:
+            path=ROOT+'/'+name+'/Collider'
+            for reverse in [False,True]:
+                event=contact(a=path if reverse else FRUIT+'/Collider',
+                              b=FRUIT+'/Collider' if reverse else path)
+                for invalid in [[],[dict(joint=JOINT,t=3.)],[dict(joint=JOINT+'_bad',t=1.)]]:
+                    self.assertEqual(scope.filter_invalid([event],invalid),[event])
+                self.assertEqual(scope.filter_invalid([event],breaks),[])
+                saved=scope.records[-1]
+                self.assertEqual(saved['scope'],'released_fruit_same_plant')
+                self.assertEqual(saved['raw_penetration_m'],.0013)
+                self.assertEqual(saved['force_n'],.7)
+                self.assertEqual(saved['same_plant_proof']['fruit']['plant_identity'],ROOT)
+        self.assertTrue(scope.metadata()['same_plant_enabled'])
+        self.assertEqual(len(scope.summarize()['released_fruit_same_plant_impacts']),2)
+        self.assertFalse(scope.summarize()['released_fruit_physics_verified'])
+
+    def test_same_plant_never_authorizes_stem_foreign_plant_tool_or_no_release(self):
+        stage,m=self.fixture();scope=HarvestContactScope(m,stage=stage,same_plant_enabled=True)
+        for path in [ROOT+'/Stem_MainStem_0/Collider', '/World/ActuatedTool/L/part_122',
+                     '/World/RouteFrozen/Plant_22/Truss_03_Fruit_03/Collider',
+                     '/World/Greenhouse/Plants/Plant_22/Truss_03_Rachis_0/Collider',
+                     ROOT+'/Truss_03_Rachis_999/Collider',FLOOR]:
+            event=contact(b=path)
+            self.assertEqual(scope.filter_invalid([event],[dict(joint=JOINT,t=1.)]),[event])
+        event=contact(b=ROOT+'/Truss_03_Fruit_03/Collider')
+        self.assertEqual(scope.filter_invalid([event],[]),[event])
+
+
     def test_source_mapping_collider_owner_or_missing_stage_fail(self):
         from pxr import UsdPhysics
         stage,m=self.fixture()
@@ -412,6 +447,284 @@ class ReleasedSameTrussTests(unittest.TestCase):
             event=contact(a=frozen+'/Collider',b=FRUIT+'/Collider')
             self.assertEqual(scope.filter_invalid([event],[]),[event])
             self.assertNotEqual(scope.same_truss_contacts[frozen+'/Collider']['truss_identity'],scope.same_truss_contacts[FRUIT+'/Collider']['truss_identity'])
+
+
+class ReleasedFruitPairTests(unittest.TestCase):
+    def fixture(self):
+        stage,m=ReleasedSameTrussTests().fixture()
+        return stage,m,FRUIT+'/Collider',ROOT+'/Truss_03_Fruit_03/Collider',ROOT+'/HarvestJoints/Truss_03_Fruit_03'
+
+    def test_independent_active_releases_both_orders_keep_raw_impact_and_physics(self):
+        stage,m,left,right,other_joint=self.fixture();before=stage.GetRootLayer().ExportToString()
+        scope=HarvestContactScope(m,stage=stage,released_pair_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.),dict(joint=other_joint,t=1.5)]
+        for a,b in [(left,right),(right,left)]:
+            event=contact(a=a,b=b);event.update(force_n=0.,separation_m=-.002355)
+            self.assertEqual(scope.filter_invalid([event],breaks),[])
+            saved=scope.records[-1]
+            self.assertEqual(saved['scope'],'released_fruit_pair')
+            self.assertTrue(saved['both_native_releases_verified'])
+            self.assertEqual({p['native_joint']for p in saved['released_pair_proof']},{JOINT,other_joint})
+            self.assertEqual(saved['raw_penetration_m'],.002355);self.assertEqual(saved['force_n'],0.)
+            self.assertFalse(saved['physical_collision_response_changed'])
+        self.assertEqual(before,stage.GetRootLayer().ExportToString())
+        summary=scope.summarize(breaks)
+        self.assertEqual(len(summary['released_fruit_pair_impacts']),2)
+        self.assertEqual(summary['released_fruit_collection_impacts'],[])
+        self.assertFalse(summary['released_fruit_physics_verified']);self.assertFalse(summary['collection_verified'])
+
+    def test_default_one_attached_future_unknown_duplicate_or_self_stay_strict(self):
+        stage,m,left,right,other_joint=self.fixture()
+        scope=HarvestContactScope(m,stage=stage,released_pair_enabled=True)
+        event=contact(a=left,b=right)
+        both=[dict(joint=JOINT,t=1.),dict(joint=other_joint,t=1.5)]
+        strict=HarvestContactScope(m,stage=stage)
+        self.assertEqual(strict.filter_invalid([event],both),[event])
+        for breaks in [[],both[:1],both[1:],[dict(joint=JOINT,t=1.)]*2,
+                       [dict(joint=JOINT,t=1.),dict(joint=other_joint,t=3.)],
+                       [dict(joint=JOINT,t=1.),dict(joint=other_joint+'_wrong',t=1.)]]:
+            self.assertEqual(scope.filter_invalid([event],breaks),[event])
+        for other in [left,ROOT+'/Truss_03_Rachis_0/Collider',ROOT+'/Stem_MainStem_0/Collider',
+                      '/World/ActuatedTool/L/part_122','/World/RouteFrozen/Plant_99/Truss_03_Fruit_03/Collider',FLOOR]:
+            wrong=contact(a=left,b=other);self.assertEqual(scope.filter_invalid([wrong],both),[wrong])
+
+    def test_finite_timestamp_distance_and_force_required_no_threshold_widening(self):
+        stage,m,left,right,other_joint=self.fixture();scope=HarvestContactScope(m,stage=stage,released_pair_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.),dict(joint=other_joint,t=2.)]
+        event=contact(a=left,b=right,t=2.)
+        self.assertEqual(scope.filter_invalid([event],breaks),[])
+        for key,value in [('t',1.99),('t',True),('t',float('nan')),('separation_m',True),
+                          ('separation_m',float('inf')),('force_n',None),('force_n',float('nan')),
+                          ('force_n',-1.),('impulse_ns',[0.,float('nan'),0.]),('impulse_ns',[0.,0.])]:
+            wrong=dict(event,**{key:value});self.assertEqual(scope.filter_invalid([wrong],breaks),[wrong])
+
+    def test_exact_enabled_mesh_and_rigid_owner_required(self):
+        from pxr import UsdPhysics
+        with self.assertRaisesRegex(ValueError,'exact current USD stage'):
+            HarvestContactScope(manifest(),released_pair_enabled=True)
+        for mutation in ['missing','disabled','shape','owner']:
+            stage,m,left,_,_=self.fixture();prim=stage.GetPrimAtPath(left)
+            if mutation=='missing':stage.RemovePrim(left)
+            elif mutation=='disabled':UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Set(False)
+            elif mutation=='shape':prim.SetTypeName('Capsule')
+            else:UsdPhysics.RigidBodyAPI.Apply(prim)
+            with self.assertRaises(ValueError):HarvestContactScope(m,stage=stage,released_pair_enabled=True)
+
+    def test_verified_frozen_and_active_release_use_separate_native_authorities(self):
+        from pxr import UsdPhysics
+        with tempfile.TemporaryDirectory()as temp:
+            m,stage,frozen,_=HarvestContactScopeTests().route_fixture(Path(temp))
+            UsdPhysics.RigidBodyAPI.Apply(stage.DefinePrim(FRUIT,'Xform'))
+            UsdPhysics.CollisionAPI.Apply(stage.DefinePrim(FRUIT+'/Collider','Mesh')).CreateCollisionEnabledAttr(True)
+            scope=HarvestContactScope(m,stage=stage,released_pair_enabled=True)
+            event=contact(a=frozen+'/Collider',b=FRUIT+'/Collider')
+            self.assertEqual(scope.filter_invalid([event],[]),[event])
+            self.assertEqual(scope.filter_invalid([event],[dict(joint=JOINT,t=3.)]),[event])
+            self.assertEqual(scope.filter_invalid([event],[dict(joint=JOINT,t=1.8)]),[])
+            proofs=scope.records[-1]['released_pair_proof']
+            self.assertEqual(proofs[0]['prior_route_release_proof']['original_break_events'][0]['t'],1.)
+            self.assertEqual(proofs[0]['native_break_t'],0.)
+            self.assertEqual(proofs[1]['native_break_t'],1.8)
+            self.assertIsNone(proofs[1]['prior_route_release_proof'])
+            bad=copy.deepcopy(m);bad['route_checkpoint']['outgoing_history'][0]['detached_fruits'][0]['native_break_events']=[]
+            with self.assertRaises(ValueError):HarvestContactScope(bad,stage=stage,released_pair_enabled=True)
+
+
+class StaticGutterBaseImpactTests(unittest.TestCase):
+    BASE='/World/Greenhouse/House/Environment/Gutter_1_Base_2/Mesh'
+
+    def fixture(self):
+        from pxr import Usd,UsdGeom,UsdPhysics
+        stage=Usd.Stage.CreateInMemory()
+        for path in [self.BASE,self.BASE.replace('_Base_2','_Side_2'),
+                     self.BASE.replace('Gutter_1_Base_2','GutterSuspensionWire_003'),
+                     self.BASE.replace('_Base_2','_Base_3'),self.BASE.replace('_Base_2','_Base_4')]:
+            mesh=UsdGeom.Mesh.Define(stage,path)
+            mesh.CreatePointsAttr([(0,0,0),(1,0,0),(0,1,0)])
+            mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+            UsdPhysics.CollisionAPI.Apply(mesh.GetPrim()).CreateCollisionEnabledAttr(True)
+        UsdPhysics.CollisionAPI(stage.GetPrimAtPath(self.BASE.replace('_Base_2','_Base_3'))).GetCollisionEnabledAttr().Set(False)
+        UsdPhysics.RigidBodyAPI.Apply(stage.GetPrimAtPath(self.BASE.replace('_Base_2','_Base_4')).GetParent())
+        return stage
+
+    def test_exact_enabled_static_inventory_excludes_side_wire_disabled_and_dynamic(self):
+        from harvest_contact_scope import static_gutter_base_inventory
+        stage=self.fixture();proofs=static_gutter_base_inventory(stage)
+        self.assertEqual(set(proofs),{self.BASE})
+        self.assertEqual(len(proofs[self.BASE]['authored_geometry_sha256']),64)
+        self.assertEqual(len(proofs[self.BASE]['world_transform_sha256']),64)
+        self.assertIsNone(proofs[self.BASE]['body'])
+        with self.assertRaisesRegex(ValueError,'current USD stage'):
+            HarvestContactScope(manifest(),static_gutter_base_enabled=True)
+
+    def test_default_strict_and_exact_native_break_time_with_raw_evidence(self):
+        stage=self.fixture();event=contact(b=self.BASE);events=[dict(joint=JOINT,t=1.)]
+        strict=HarvestContactScope(manifest(),stage=stage,enabled=True)
+        self.assertEqual(strict.filter_invalid([event],events),[event])
+        scope=HarvestContactScope(manifest(),stage=stage,static_gutter_base_enabled=True)
+        for missing in [[],[dict(joint=JOINT,t=3.)],[dict(joint=JOINT+'_wrong',t=1.)]]:
+            self.assertEqual(scope.filter_invalid([event],missing),[event])
+        self.assertEqual(scope.filter_invalid([event],events),[])
+        row=scope.records[-1]
+        self.assertEqual(row['scope'],'released_fruit_static_gutter_base')
+        self.assertEqual(row['raw_penetration_m'],.0013)
+        self.assertEqual(row['force_n'],event['force_n'])
+        self.assertEqual(row['impulse_ns'],event['impulse_ns'])
+        self.assertFalse(row['released_fruit_physics_verified'])
+        summary=scope.summarize(events)
+        self.assertEqual(len(summary['released_fruit_static_gutter_base_impacts']),1)
+        self.assertEqual(summary['released_fruit_collection_impacts'],[])
+        reversed_event=contact(a=self.BASE,b=FRUIT+'/Collider')
+        self.assertEqual(scope.filter_invalid([reversed_event],events),[])
+
+    def test_attached_robot_and_every_other_gutter_shape_stay_strict(self):
+        scope=HarvestContactScope(manifest(),stage=self.fixture(),static_gutter_base_enabled=True)
+        events=[dict(joint=JOINT,t=1.)]
+        for event in [contact(a='/World/ActuatedTool/L/part_209',b=self.BASE),
+                      contact(a=ROOT+'/Truss_02_Fruit_08/Collider',b=self.BASE),
+                      contact(b=self.BASE.replace('_Base_2','_Side_2')),
+                      contact(b=self.BASE.replace('Gutter_1_Base_2','GutterSuspensionWire_003')),
+                      contact(b=self.BASE.replace('_Base_2','_Base_3')),
+                      contact(b=self.BASE.replace('_Base_2','_Base_4'))]:
+            self.assertEqual(scope.filter_invalid([event],events),[event])
+
+
+class StaticFarmSupportImpactTests(unittest.TestCase):
+    BAG='/World/Greenhouse/House/Environment/GrowBag_1_0_PerforatedTop_2/Mesh'
+    ROW_SUPPLY='/World/Greenhouse/House/Environment/RowSupply_20mm/Mesh'
+
+    def fixture(self):
+        from pxr import Usd,UsdGeom,UsdPhysics
+        stage=Usd.Stage.CreateInMemory();m=manifest();m['scene_sha256']='a'*64
+        paths=[self.BAG,self.BAG.replace('GrowBag_1_0_PerforatedTop_2','GutterSuspensionWire_003'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','Rail_1_0'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','Plant_19'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','UnknownSupport_1'),
+               self.BAG.replace('House/Environment','Plants/Plant_19'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','GrowBag_1_1'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','GrowBag_1_2'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','GrowBag_1_3'),
+               self.BAG.replace('GrowBag_1_0_PerforatedTop_2','GrowBag_1_4')]
+        for path in paths:
+            mesh=UsdGeom.Mesh.Define(stage,path);mesh.CreatePointsAttr([(0,0,0),(1,0,0),(0,1,0)])
+            mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+            UsdPhysics.CollisionAPI.Apply(mesh.GetPrim()).CreateCollisionEnabledAttr(True)
+        UsdPhysics.RigidBodyAPI.Apply(stage.GetPrimAtPath(paths[6]).GetParent())
+        UsdPhysics.CollisionAPI(stage.GetPrimAtPath(paths[7])).GetCollisionEnabledAttr().Set(False)
+        UsdGeom.Xformable(stage.GetPrimAtPath(paths[8]).GetParent()).AddTranslateOp().Set((0,0,0),1.)
+        UsdGeom.Mesh(stage.GetPrimAtPath(paths[9])).GetPointsAttr().Set([(0,0,1),(1,0,1),(0,1,1)],1.)
+        return stage,m,paths
+
+    def test_inventory_pins_source_geometry_transform_and_only_known_enabled_static_roles(self):
+        from harvest_contact_scope import static_farm_support_inventory
+        stage,m,paths=self.fixture();before=stage.GetRootLayer().ExportToString()
+        inventory=static_farm_support_inventory(stage,m)
+        self.assertEqual(set(inventory),set(paths[:3]))
+        self.assertEqual(before,stage.GetRootLayer().ExportToString())
+        for row in inventory.values():
+            self.assertEqual(row['source_scene_sha256'],m['scene_sha256'])
+            self.assertEqual(len(row['authored_geometry_sha256']),64)
+            self.assertEqual(len(row['world_transform_sha256']),64)
+            self.assertFalse(row['physical_collision_response_changed'])
+        # The authored original structure has no duplication suffix.
+        original=paths[1].replace('GutterSuspensionWire_003','GutterSuspensionWire')
+        stage.DefinePrim(original,'Mesh').GetReferences().AddInternalReference(paths[1])
+        self.assertIn(original,static_farm_support_inventory(stage,m))
+        bad=copy.deepcopy(m);bad.pop('scene_sha256')
+        with self.assertRaisesRegex(ValueError,'source scene SHA256'):
+            static_farm_support_inventory(stage,bad)
+
+    def test_default_strict_release_time_proof_and_raw_evidence_both_orders(self):
+        stage,m,_=self.fixture();events=[dict(joint=JOINT,t=1.)];event=contact(b=self.BAG)
+        strict=HarvestContactScope(m,stage=stage,enabled=True,static_gutter_base_enabled=True)
+        self.assertEqual(strict.filter_invalid([event],events),[event])
+        scope=HarvestContactScope(m,stage=stage,static_farm_support_enabled=True)
+        for breaks in [[],[dict(joint=JOINT,t=3.)],[dict(joint=JOINT+'_other',t=1.)]]:
+            self.assertEqual(scope.filter_invalid([event],breaks),[event])
+        for one in [event,contact(a=self.BAG,b=FRUIT+'/Collider')]:
+            self.assertEqual(scope.filter_invalid([one],events),[])
+            row=scope.records[-1]
+            self.assertEqual(row['scope'],'released_fruit_static_farm_support')
+            self.assertEqual(row['force_n'],one['force_n']);self.assertEqual(row['impulse_ns'],one['impulse_ns'])
+            self.assertEqual(row['raw_separation_m'],one['separation_m'])
+            self.assertFalse(row['collection_verified']);self.assertFalse(row['released_fruit_physics_verified'])
+        self.assertEqual(scope.summarize(events)['released_fruit_collection_impacts'],[])
+
+    def test_attached_robot_foreign_plant_dynamic_disabled_animated_and_unknown_stay_strict(self):
+        stage,m,paths=self.fixture();scope=HarvestContactScope(m,stage=stage,static_farm_support_enabled=True)
+        breaks=[dict(joint=JOINT,t=1.)]
+        for other in paths[3:]:
+            event=contact(b=other);self.assertEqual(scope.filter_invalid([event],breaks),[event])
+        for obj in ['/World/ActuatedTool/L/part_209',ROOT+'/Truss_02_Fruit_08/Collider',
+                    '/World/Greenhouse/Plants/Plant_20/Truss_02_Fruit_09/Collider']:
+            event=contact(a=obj,b=self.BAG)
+            self.assertEqual(scope.filter_invalid([event],breaks),[event])
+
+    def test_animated_structural_ancestor_excludes_all_descendants(self):
+        from pxr import UsdGeom
+        from harvest_contact_scope import static_farm_support_inventory
+        stage,m,_=self.fixture()
+        UsdGeom.Xformable(stage.GetPrimAtPath('/World/Greenhouse/House')).AddTranslateOp().Set((0,0,0),1.)
+        self.assertEqual(static_farm_support_inventory(stage,m),{})
+
+    def test_exact_static_row_supply_is_post_release_only_with_raw_contact_preserved(self):
+        from pxr import UsdGeom,UsdPhysics
+        from harvest_contact_scope import static_farm_support_inventory
+        stage,m,_=self.fixture()
+        mesh=UsdGeom.Mesh.Define(stage,self.ROW_SUPPLY)
+        mesh.CreatePointsAttr([(0,0,0),(1,0,0),(0,1,0)])
+        mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+        UsdPhysics.CollisionAPI.Apply(mesh.GetPrim()).CreateCollisionEnabledAttr(True)
+        before=stage.GetRootLayer().ExportToString()
+        proof=static_farm_support_inventory(stage,m)[self.ROW_SUPPLY]
+        self.assertEqual(proof['structural_role'],'RowSupply')
+        self.assertEqual(proof['source_scene_sha256'],m['scene_sha256'])
+        self.assertFalse(proof['physical_collision_response_changed'])
+        strict=HarvestContactScope(m,stage=stage)
+        scope=HarvestContactScope(m,stage=stage,static_farm_support_enabled=True)
+        event=contact(b=self.ROW_SUPPLY,t=64.76666666666667)
+        event.update(separation_m=-.0017635952681303024,force_n=0.,impulse_ns=[0.,0.,0.])
+        events=[dict(joint=JOINT,t=64.01666666666667)]
+        self.assertEqual(strict.filter_invalid([event],events),[event])
+        for releases in [[],[dict(joint=JOINT,t=65.)],[dict(joint=JOINT+'_wrong',t=1.)]]:
+            self.assertEqual(scope.filter_invalid([event],releases),[event])
+        for row in [event,dict(event,a=event['b'],b=event['a'])]:
+            self.assertEqual(scope.filter_invalid([row],events),[])
+            recorded=scope.records[-1]
+            self.assertEqual(recorded['scope'],'released_fruit_static_farm_support')
+            self.assertEqual(recorded['raw_separation_m'],row['separation_m'])
+            self.assertEqual(recorded['force_n'],row['force_n'])
+            self.assertEqual(recorded['impulse_ns'],row['impulse_ns'])
+            self.assertFalse(recorded['collection_verified'])
+            self.assertFalse(recorded['released_fruit_physics_verified'])
+        for obj in ['/World/ActuatedTool/L/part_209',ROOT+'/Stem/Collider',ROOT+'/Truss_02_Pedicel_distal_09_0/Collider']:
+            row=contact(a=obj,b=self.ROW_SUPPLY)
+            self.assertEqual(scope.filter_invalid([row],events),[row])
+        self.assertEqual(before,stage.GetRootLayer().ExportToString())
+
+    def test_row_supply_dynamic_animated_disabled_unknown_or_foreign_path_stays_strict(self):
+        from pxr import UsdGeom,UsdPhysics
+        from harvest_contact_scope import static_farm_support_inventory
+        stage,m,_=self.fixture()
+        paths=[self.ROW_SUPPLY,self.ROW_SUPPLY.replace('_20mm','_20mm_001'),
+               self.ROW_SUPPLY.replace('_20mm','_20mm_002'),self.ROW_SUPPLY.replace('_20mm','_20mm_003'),
+               self.ROW_SUPPLY.replace('House/Environment','Plants/Plant_19'),
+               self.ROW_SUPPLY.replace('RowSupply','RowSupplyUnknown')]
+        for path in paths:
+            mesh=UsdGeom.Mesh.Define(stage,path)
+            mesh.CreatePointsAttr([(0,0,0),(1,0,0),(0,1,0)])
+            mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+            UsdPhysics.CollisionAPI.Apply(mesh.GetPrim()).CreateCollisionEnabledAttr(True)
+        UsdPhysics.RigidBodyAPI.Apply(stage.GetPrimAtPath(paths[0]).GetParent())
+        UsdGeom.Xformable(stage.GetPrimAtPath(paths[1]).GetParent()).AddTranslateOp().Set((0,0,0),1.)
+        UsdGeom.Mesh(stage.GetPrimAtPath(paths[2])).GetPointsAttr().Set([(0,0,1),(1,0,1),(0,1,1)],1.)
+        UsdPhysics.CollisionAPI(stage.GetPrimAtPath(paths[3])).GetCollisionEnabledAttr().Set(False)
+        inventory=static_farm_support_inventory(stage,m)
+        self.assertFalse(set(paths)&set(inventory))
+        scope=HarvestContactScope(m,stage=stage,static_farm_support_enabled=True)
+        for path in paths:
+            row=contact(b=path)
+            self.assertEqual(scope.filter_invalid([row],[dict(joint=JOINT,t=1.)]),[row])
 
 
 class DeclaredPassiveLeafTests(unittest.TestCase):

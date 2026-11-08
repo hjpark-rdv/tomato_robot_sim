@@ -10,6 +10,7 @@ elastic simulation. Source CAD/tool/mount and prior harvest evidence survive.
 import argparse
 import copy
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -285,6 +286,8 @@ def freeze_outgoing(stage,assembly,manifest,metadata,arrays):
         source_scene_sha256=metadata['scene_sha256'],
         checkpoint_metadata_sha256=metadata.get('metadata_sha256'),checkpoint_time_s=metadata['time_s'],
         frozen_attached_bodies=len(body_prims)-len(detached),detached_fruits=detached_records,
+        unharvested_reactivation_eligible=not metadata['break_events'],
+        reactivation_scope='Exact archived strain/preload; native restore required. Any prior native break remains unsupported',
         measured_shape_preserved=True,native_detach_evidence_preserved=True,
         approximation='Outgoing attached plant bodies become static at measured deformation; their velocities remain evidence, not continued elastic dynamics.',
         archived_plant_dof_names=list(map(str,arrays['plant_dof_names'])),
@@ -325,6 +328,87 @@ def restore_prior_detached(stage,manifest,metadata,arrays):
                 original_native_break_evidence_retained=True))
     return dict(updated_dynamic_fruit_count=len(records),
                 paths=[row[0]['path'] for row in records],native_break_proof_unchanged=True)
+
+
+def unharvested_reactivation_archive(stage,manifest,source_plant):
+    """Verify one frozen, never-detached plant's exact elastic-state archive.
+
+    This is deliberately narrower than general revisits. A plant with any
+    native fruit break is rejected until its own moving free-fruit remapping
+    has a separately verified implementation. No fruit is ever recreated.
+    """
+    from native_route_checkpoint import load_checkpoint
+    from resume_native_state import require_completed_checkpoint
+    from compact_motion_assets import verify_compact_dependencies
+    matches=[row for row in manifest.get('route_checkpoint',{}).get('outgoing_history',[])
+             if row.get('source_plant')==source_plant]
+    if len(matches)!=1:raise ValueError('Unharvested reactivation requires one exact frozen source archive')
+    row=matches[0];checkpoint=Path(row.get('checkpoint','')).resolve()
+    metadata,arrays=load_checkpoint(checkpoint,expected_scene_sha256=row['source_scene_sha256'])
+    require_completed_checkpoint(metadata)
+    archived=metadata['manifest'];assembly=Path(metadata['source_assembly']).resolve()
+    if (metadata.get('metadata_sha256')!=row['checkpoint_metadata_sha256'] or
+            metadata.get('source_plant')!=source_plant or metadata['time_s']!=row['checkpoint_time_s'] or
+            archived['plant']['source_plant']!=source_plant):
+        raise ValueError('Frozen reactivation archive source/hash/time identity mismatch')
+    verify_compact_dependencies(assembly,archived)
+    validate_snapshot(metadata,arrays,archived)
+    if row.get('detached_fruits') or metadata['break_events']:
+        raise ValueError('Frozen plant has prior native detachments; general free-fruit reactivation is unsupported and no fruit may be resurrected')
+    root=archived['plant']['root'];frozen=row['frozen_root'];prim=stage.GetPrimAtPath(frozen)
+    if not prim or not prim.IsActive():raise ValueError('Measured frozen plant geometry is unavailable')
+    oldstage=Usd.Stage.Open(str(assembly/'scene.usda'))
+    if not oldstage or not oldstage.GetPrimAtPath(root):raise ValueError('Original dynamic plant template is unavailable')
+    source={str(path):i for i,path in enumerate(arrays['body_paths'])};proof=[]
+    for body in Usd.PrimRange(oldstage.GetPrimAtPath(root)):
+        if not body.HasAPI(UsdPhysics.RigidBodyAPI):continue
+        path=str(body.GetPath());newpath=frozen+path[len(root):];current=stage.GetPrimAtPath(newpath)
+        if path not in source or not current or current.HasAPI(UsdPhysics.RigidBodyAPI):
+            raise ValueError('Frozen attached body identity/dynamic state differs from the archived unharvested plant')
+        actual=_world(stage,newpath);expected=_matrix(arrays['body_poses_world'][source[path]])
+        error=float(np.max(np.abs(actual-expected)))
+        if error>1e-7:raise ValueError('Frozen plant moved relative to its exact measured archive')
+        proof.append(dict(active_path=path,frozen_path=newpath,transform_max_abs_error=error))
+    if not proof:raise ValueError('Frozen reactivation has no complete measured rigid-body inventory')
+    if not (assembly/'skin.npz').is_file():raise ValueError('Frozen reactivation lacks its original deformation skin data')
+    return dict(row=copy.deepcopy(row),metadata=metadata,arrays=arrays,assembly=assembly,
+        stage=oldstage,proof=dict(schema='s300-unharvested-frozen-reactivation-v1',
+            source_plant=source_plant,checkpoint=str(checkpoint),source_assembly=str(assembly),
+            source_scene_sha256=metadata['scene_sha256'],checkpoint_metadata_sha256=metadata['metadata_sha256'],
+            archived_time_s=metadata['time_s'],frozen_root=frozen,active_root=root,
+            complete_body_transform_checks=proof,native_break_count=0,
+            archived_plant_dof_names=list(map(str,arrays['plant_dof_names'])),
+            archived_plant_q=np.asarray(arrays['plant_q']).tolist(),
+            archived_plant_qvel=np.asarray(arrays['plant_qvel']).tolist(),
+            restored_plant_qvel=np.zeros_like(arrays['plant_qvel']).tolist(),
+            archived_preload=np.asarray(arrays['preload']).tolist(),
+            attached_velocity_policy='Zero while inactive: bodies were explicitly static in the active-window approximation',
+            joint_frames_materials_and_colliders='Original immutable dynamic template, not regenerated',
+            native_state_restore_required=True,native_initialization_validation='pending',
+            training_eligible=False,harvest_success=None))
+
+
+def restore_unharvested_plant_template(stage,manifest,archive,output):
+    """Copy the verified original topology; native q/preload restore is mandatory."""
+    root=archive['metadata']['manifest']['plant']['root'];frozen=archive['row']['frozen_root']
+    if stage.GetPrimAtPath(root):raise ValueError('Outgoing active plant was not moved before reactivation')
+    if not Sdf.CopySpec(archive['stage'].Flatten(),root,stage.GetEditTarget().GetLayer(),root):
+        raise ValueError('Could not restore exact original dynamic plant template')
+    if not stage.RemovePrim(frozen):raise ValueError('Cannot remove duplicate frozen plant after exact template copy')
+    # Visual skin updates live in a session layer and can leave an empty
+    # stronger prim spec after root-layer removal. Deactivate that remainder
+    # explicitly; flatten must not retain a second visible/colliding plant.
+    remainder=stage.GetPrimAtPath(frozen)
+    if remainder:remainder.SetActive(False)
+    archived=archive['metadata']['manifest']
+    for key in ('plant','fruit_attachment','compliant_foliage','leaf_collision_geometry','leaf_contact_policy'):
+        if key in archived:manifest[key]=copy.deepcopy(archived[key])
+        else:manifest.pop(key,None)
+    shutil.copyfile(archive['assembly']/'skin.npz',Path(output)/'skin.npz')
+    history=manifest.get('route_checkpoint',{}).get('outgoing_history',[])
+    manifest.setdefault('route_checkpoint',{})['outgoing_history']=[row for row in history
+        if row.get('source_plant')!=archive['proof']['source_plant']]
+    return copy.deepcopy(archive['proof'])
 
 
 def _joint_snapshot(prim):
@@ -404,7 +488,8 @@ def inherit_leaf_contact_policy(stage,manifest,parent_policy):
     manifest['leaf_contact_policy']=policy
 
 
-def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_trusses_metadata=None):
+def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_trusses_metadata=None,
+                  allow_frozen_reactivation=False,fast_materialization=False):
     """Build new immutable asset; caller performs native startup and rail travel."""
     from native_route_checkpoint import load_checkpoint
     assembly,checkpoint,output=map(lambda p:Path(p).resolve(),(assembly,checkpoint,output))
@@ -433,17 +518,24 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
     if next_path==manifest['plant']['source_plant']:raise ValueError('Use continuous current-plant runner; do not reset its fruit inventory')
     original=Usd.Stage.Open(str(source));require_motion_units(original)
     interaction_policy=copy.deepcopy(manifest.get('plant_interaction_variant'))
-    if interaction_policy and interaction_policy.get('mode')=='target_truss_and_own_stem_only':
+    if interaction_policy and interaction_policy.get('mode') in (
+            'target_truss_and_own_stem_only', 'active_plant_and_own_stem_only'):
         from plant_interaction_variants import verified_disabled_colliders
         verified_disabled_colliders(original,manifest)
+    if type(allow_frozen_reactivation) is not bool:raise ValueError('Explicit boolean frozen reactivation policy required')
     stage=Usd.Stage.Open(original.Flatten());next_prim=stage.GetPrimAtPath(next_path)
-    if not next_prim or not next_prim.IsActive():raise ValueError('Next source plant unavailable or already visited')
+    frozen=[row for row in manifest.get('route_checkpoint',{}).get('outgoing_history',[]) if row.get('source_plant')==next_path]
+    archive=unharvested_reactivation_archive(stage,manifest,next_path) if frozen and allow_frozen_reactivation else None
+    if archive is None and (not next_prim or not next_prim.IsActive()):raise ValueError('Next source plant unavailable or already visited')
     output.mkdir(parents=True,exist_ok=False)
     robot=author_robot_state(stage,manifest,arrays,controller_state)
     background_state=author_background_state(stage,manifest,arrays,next_path)
     previous_dynamic=restore_prior_detached(stage,manifest,metadata,arrays)
     outgoing=freeze_outgoing(stage,assembly,manifest,metadata,arrays)
     outgoing['checkpoint']=str(checkpoint)
+    # Its active native releases now enter outgoing_history. A target-only
+    # revision of the previous active plant must not alias this NEW plant.
+    manifest.pop('same_plant_target_revision',None)
     attachment=copy.deepcopy(manifest.get('fruit_attachment'))
     foliage=copy.deepcopy(manifest.get('compliant_foliage'))
     leaf_proxy=copy.deepcopy(manifest.get('leaf_collision_geometry'))
@@ -452,8 +544,9 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
     # only build_plant avoids its full-build mount/tool side effects.
     if str(REPO/'mujoco-benchmark/scripts') not in sys.path:
         sys.path.insert(0,str(REPO/'mujoco-benchmark/scripts'))
-    build_plant(stage,next_path,manifest,output)
-    if attachment:
+    reactivation=restore_unharvested_plant_template(stage,manifest,archive,output) if archive is not None else None
+    if archive is None:build_plant(stage,next_path,manifest,output)
+    if attachment and archive is None:
         selected_names=None
         if near_metadata is not None:
             from row_harvest_targets import scoped_trusses,eligible_truss_fruits
@@ -463,50 +556,74 @@ def switch_window(assembly,checkpoint,output,next_plant_id,target_name,*,near_tr
             near_provenance.update(scope=scope)
         manifest['fruit_attachment']=_apply_attachment_template(stage,manifest,attachment,
             selected_names=selected_names,selection_provenance=near_provenance)
-    if foliage:
+    if foliage and archive is None:
         from compliant_foliage import convert
         first=foliage['leaves'][0]
         new_foliage=convert(stage,stiffness=first['stiffness'],damping=first['damping'],armature=foliage['numerical_armature_kg_m2'])
         manifest['compliant_foliage']=new_foliage;manifest['plant']['bodies'].extend(new_foliage['leaves'])
-    if leaf_proxy and leaf_proxy.get('enabled'):
+    if leaf_proxy and leaf_proxy.get('enabled') and archive is None:
         from leaf_collision_geometry import apply_refinement
         selection=None if leaf_proxy['selection']=='all_compliant_leaves' else leaf_proxy['leaf_source_names']
         manifest['leaf_collision_geometry']=apply_refinement(stage,manifest,selection)
         manifest['leaf_collision_geometry'].update(source_window_rule=leaf_proxy,
             scope='Same explicit compliant-leaf collision rule applied to the next active window; native cooking remains pending')
-    inherit_leaf_contact_policy(stage,manifest,leaf_policy)
+    if archive is None:inherit_leaf_contact_policy(stage,manifest,leaf_policy)
     target=select_build_target(manifest['plant']['fruits'],target_name);manifest['target']=target
     from plant_interaction_variants import inherit_target_only_contacts
-    inherit_target_only_contacts(stage,manifest,interaction_policy)
+    if interaction_policy and interaction_policy.get('mode') in (
+            'target_truss_and_own_stem_only','active_plant_and_own_stem_only'):
+        # freeze_outgoing writes measured skin points/extent in the session
+        # layer. Preserve those composed values in a self-contained root before
+        # the existing strict collision-only editor checks/edits exact specs.
+        stage=Usd.Stage.Open(stage.Flatten(addSourceFileComment=False))
+    # The newly frozen outgoing release proof is not yet in the final manifest.
+    # Include it now so real detached fruit never become ghost plant colliders.
+    history=manifest.get('route_checkpoint',{}).get('outgoing_history',[])
+    release_history=history+[outgoing]
+    inherit_target_only_contacts(stage,manifest,interaction_policy,release_history=release_history)
     prefix=target['name'].split('_Fruit_')[0]+'_Fruit_'
     selected=sorted([f for f in manifest['plant']['fruits'] if f['name'].startswith(prefix)],key=lambda f:f['center'][2],reverse=True)[:2]
     manifest['grasp_reference']=grasp_reference(manifest,[f['name'] for f in selected],manifest['grasp_reference'].get('height_offset_m',0.))
-    history=manifest.get('route_checkpoint',{}).get('outgoing_history',[])
     manifest['route_checkpoint']=dict(schema='s300-active-window-checkpoint-v1',source_assembly=str(assembly),
         source_scene_sha256=sha(source),checkpoint=str(checkpoint),checkpoint_time_s=metadata['time_s'],
-        robot=robot,outgoing=outgoing,outgoing_history=history+[outgoing],new_source_plant=next_path,
+        robot=robot,outgoing=outgoing,outgoing_history=release_history,new_source_plant=next_path,
         prior_detached_state_preservation=previous_dynamic,
         passive_background_state_preservation=background_state,
         restart='Native engine load boundary; same measured world cart state; actual subsequent travel uses the rail joint',
         native_initialization_validation='pending',training_eligible=False,harvest_success=None)
+    if reactivation is not None:manifest['route_checkpoint']['unharvested_reactivation']=reactivation
+    if manifest.get('plant_interaction_variant',{}).get('mode') in ('target_truss_and_own_stem_only','active_plant_and_own_stem_only'):
+        from plant_interaction_variants import verified_disabled_colliders
+        verified_disabled_colliders(stage,manifest)
     manifest['route_checkpoint']['transmission_zero_sign_canonicalization']=_canonicalize_transmission_zero_signs(stage)
     # Reuse lossless compact storage; stale source composed.usdc provenance must
     # never survive in the next window's runtime dependency record.
-    before=property_inventory(stage)
-    flat=stage.Flatten(addSourceFileComment=False)
-    if flat.subLayerPaths or any(flat.GetExternalReferences()):raise ValueError('Window retained external USD dependencies')
-    flat.Export(str(output/'composed.usdc'))
-    wrapper=Usd.Stage.CreateNew(str(output/'scene.usda'))
-    wrapper.GetRootLayer().subLayerPaths=['composed.usdc'];copy_stage_metrics(stage,wrapper)
-    wrapper.SetDefaultPrim(wrapper.GetPrimAtPath(stage.GetDefaultPrim().GetPath()))
-    wrapper.GetRootLayer().Save()
-    after=property_inventory(wrapper)
-    if before!=after:
-        (output/'checkpoint_materialization_property_differences.json').write_text(json.dumps(
-            dict(source_inventory=before,derived_inventory=after,differences=_property_differences(stage,wrapper)),indent=2)+'\n')
-        raise ValueError('Window USDC materialization changed effective properties; see checkpoint_materialization_property_differences.json')
-    geometry=compare_geometry(stage,wrapper)
-    (output/'checkpoint_geometry_inventory.json').write_text(json.dumps(geometry,indent=2,allow_nan=False)+'\n')
+    if type(fast_materialization) is not bool:
+        raise ValueError('Explicit boolean exact materialization policy required')
+    if fast_materialization:
+        from strict_window_storage import materialize_exact_layer
+        storage=materialize_exact_layer(stage,output)
+        manifest['route_checkpoint']['materialization_storage_identity']=dict(
+            mode=storage['schema'],report='checkpoint_materialization_identity.json',
+            canonical_equal=storage['canonical_equal'],
+            all_authored_fields_checked=True,world_vertex_inventory_recomputed=False,
+            native_validation='pending')
+    else:
+        before=property_inventory(stage)
+        flat=stage.Flatten(addSourceFileComment=False)
+        if flat.subLayerPaths or any(flat.GetExternalReferences()):raise ValueError('Window retained external USD dependencies')
+        flat.Export(str(output/'composed.usdc'))
+        wrapper=Usd.Stage.CreateNew(str(output/'scene.usda'))
+        wrapper.GetRootLayer().subLayerPaths=['composed.usdc'];copy_stage_metrics(stage,wrapper)
+        wrapper.SetDefaultPrim(wrapper.GetPrimAtPath(stage.GetDefaultPrim().GetPath()))
+        wrapper.GetRootLayer().Save()
+        after=property_inventory(wrapper)
+        if before!=after:
+            (output/'checkpoint_materialization_property_differences.json').write_text(json.dumps(
+                dict(source_inventory=before,derived_inventory=after,differences=_property_differences(stage,wrapper)),indent=2)+'\n')
+            raise ValueError('Window USDC materialization changed effective properties; see checkpoint_materialization_property_differences.json')
+        geometry=compare_geometry(stage,wrapper)
+        (output/'checkpoint_geometry_inventory.json').write_text(json.dumps(geometry,indent=2,allow_nan=False)+'\n')
     manifest['compact_assets']=dict(schema='s300-lossless-materialized-usdc-v1',source_assembly=str(assembly),
         source_scene_sha256=sha(source),source_manifest_sha256=sha(assembly/'motion_manifest.json'),
         materialized_dependency=dict(relative_path='composed.usdc',sha256=sha(output/'composed.usdc'),
@@ -524,8 +641,9 @@ def main():
     p.add_argument('assembly',type=Path);p.add_argument('checkpoint',type=Path);p.add_argument('output',type=Path)
     p.add_argument('--next-plant',type=int,required=True);p.add_argument('--target',required=True)
     p.add_argument('--near-trusses-metadata',type=Path,help='Opt-in exact rail-side attachment scope; excluded obstacle trusses retain original joints')
+    p.add_argument('--fast-materialization',action='store_true',help='Opt-in exact whole canonical self-contained layer storage proof; retains fresh native checks and does not certify source-to-window geometry')
     a=p.parse_args();print(json.dumps(switch_window(a.assembly,a.checkpoint,a.output,a.next_plant,a.target,
-        near_trusses_metadata=a.near_trusses_metadata),indent=2))
+        near_trusses_metadata=a.near_trusses_metadata,fast_materialization=a.fast_materialization),indent=2))
 
 
 if __name__=='__main__':main()

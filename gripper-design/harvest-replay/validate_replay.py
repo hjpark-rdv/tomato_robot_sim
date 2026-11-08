@@ -16,6 +16,8 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 import numpy as np
+from sensor_replay import validate_camera
+from partial_recording import KIND, partial_recording, published_partial_source
 
 
 class ReplayMismatch(ValueError):
@@ -239,18 +241,34 @@ def validate_skins(document, binary, info, assembly, manifest, paths, poses):
                 source_vertex_mapping_exact=True,inverse_bind_float32_exact=True)
 
 
-def validate(replay_path):
+def validate(replay_path, allow_partial_diagnostic=False):
     replay_path = Path(replay_path).resolve()
     replay = read_json(replay_path)
     require(replay.get('schema') == 'farmily-harvest-replay-v1','Unknown replay schema')
     source = replay['source']
     assembly = field_path(source,'assembly')
     trial = field_path(source,'trial')
-    summary = read_json(trial/'summary.json')
+    partial = None
+    if source.get('record_kind') == KIND:
+        require(allow_partial_diagnostic is True,'Partial replay requires explicit diagnostic validation opt-in')
+        partial = partial_recording(assembly,trial)
+        expected_source = published_partial_source(partial,trial)
+        require(all(source.get(k) == v for k,v in expected_source.items()),
+                'Published partial source identity/diagnostic flags differ')
+        require(replay.get('result_summary') == partial['result'],
+                'Partial diagnostic cannot acquire normal completion or harvest credit')
+        marker = replay.get('partial_diagnostic',{})
+        require(marker.get('schema') == 'incomplete-native-replay-v1' and
+                marker.get('complete') is False and marker.get('checkpoint_eligible') is False and
+                marker.get('harvest_credit') == 0 and marker.get('source_descriptor') == partial['descriptor'] and
+                marker.get('runtime_error') == partial['runtime_error'],
+                'Partial source descriptor/error or incomplete marker mismatch')
+        require(not replay.get('camera'),'Partial unfinalized camera must not be substituted')
+    summary = {} if partial else read_json(trial/'summary.json')
     runtime = read_json(trial/'runtime_settings.json')
     manifest = read_json(assembly/'motion_manifest.json')
     native = read_json(trial/'native_metadata.json')
-    states_path = trial/'states.npz'
+    states_path = partial['states_path'] if partial else trial/'states.npz'
     source_scene = assembly/('composed.usdc' if (assembly/'composed.usdc').is_file() else 'scene.usda')
     source_hash = checked_hash(source_scene,source['scene_sha256'],'Actual source scene')
     states_hash = checked_hash(states_path,source['states_sha256'],'Original recorded states')
@@ -261,13 +279,14 @@ def validate(replay_path):
     require(runtime.get('native_scene_sha256') == source_hash,
             'Runtime physical scene SHA differs from actual replay scene')
     wrapper_hash = sha256(assembly/'scene.usda')
-    require(summary['model_sha256'] == wrapper_hash,'Source wrapper differs from recorded execution')
+    recorded_wrapper = partial['native']['model_sha256'] if partial else summary['model_sha256']
+    require(recorded_wrapper == wrapper_hash,'Source wrapper differs from recorded execution')
     require(runtime.get('source_scene_sha256',wrapper_hash) == wrapper_hash,'Runtime wrapper SHA mismatch')
     engine = replay['engine']
     if isinstance(engine,dict) and 'recorded_result' in engine:
         require(engine['recorded_result'] == summary,'Published result differs from source summary')
     result = replay.get('result_summary',{})
-    for key in ('completed','stop_reason','harvest_success','physics_steps','physics_wall_s','simulated_s','training_eligible'):
+    for key in (() if partial else ('completed','stop_reason','harvest_success','physics_steps','physics_wall_s','simulated_s','training_eligible')):
         if key in result:
             require(result[key] == summary.get(key),'Published result differs from source summary: '+key)
     require(source.get('all_frames_exported') is True,'Replay omits source frames')
@@ -276,12 +295,32 @@ def validate(replay_path):
     info_path = local_url(replay_path,replay['scene_info_url'])
     info = read_json(info_path)
     require(info['source_scene_sha256'] == source_hash,'Scene metadata provenance mismatch')
+    geometry_reuse=replay.get('geometry_reuse')
+    reference_poses=None
+    if geometry_reuse is not None:
+        require(not partial,'Partial traces cannot reuse an actual complete scene')
+        require(info.get('geometry_reuse')==geometry_reuse,'Scene/replay reuse evidence differs')
+        from scene_reuse import verify_reference_proof
+        with np.load(states_path,allow_pickle=False) as current:
+            current_paths=current['body_paths'].tolist()
+        reference_info,reference_glb,reference_poses=verify_reference_proof(geometry_reuse,
+            scene_sha256=source_hash,manifest_sha256=sha256(assembly/'motion_manifest.json'),
+            body_paths=current_paths)
+        reference_validation=validate(Path(geometry_reuse['reference_replay']))
+        require(reference_validation['passed'] is True,'Cached original scene did not independently validate')
+        for field in ('origin_world_m','body_nodes','source_inventory','skin_checks','groups',
+                      'skinned_mesh_count','unique_glTF_meshes','static_instanced_mesh_count',
+                      'visible_source_meshes','source_triangles_with_instances','transmission_nodes'):
+            require(info[field]==reference_info[field],'Cached immutable scene metadata differs: '+field)
+    else:
+        require(info.get('geometry_reuse') is None,'Unexpected cached scene metadata')
     glb_path = local_url(replay_path,replay['scene_url'])
-    glb_hash = checked_hash(glb_path,info['sha256'],'Web scene GLB')
+    glb_hash = hashlib.sha256(read_binary(glb_path)).hexdigest()
+    require(glb_hash == info['sha256'], 'Web scene GLB SHA mismatch')
     if replay.get('scene_gzip_url'):
         compressed = local_url(replay_path,replay['scene_gzip_url'])
         checked_hash(compressed,info['compressed_sha256'],'Web compressed scene')
-        require(read_binary(compressed) == glb_path.read_bytes(),'Compressed scene does not contain exact GLB')
+        require(read_binary(compressed) == read_binary(glb_path),'Compressed scene does not contain exact GLB')
     document,binary = read_glb(glb_path)
     with np.load(states_path,allow_pickle=False) as original:
         times = original['time']
@@ -309,10 +348,11 @@ def validate(replay_path):
             require(row['body_index'] == index and row['body_path'] == path,'Body order/path mismatch')
             require(names.get(row['node']) == row['node_index'],'Mapped body node missing in GLB')
             node = document['nodes'][row['node_index']]
-            same_array(np.asarray(row['reference_pose_xyzw']),poses[0,index].astype(float),'Reference body pose')
-            require(np.allclose(node['translation'],C@(poses[0,index,:3].astype(float)-origin.astype(float)),rtol=0,atol=1e-12),'Initial glTF body translation mismatch')
-            require(np.allclose(quaternion_matrices(node['rotation']),C@quaternion_matrices(poses[0,index,3:])@C.T,rtol=0,atol=1e-12),'Initial glTF body rotation mismatch')
-        events_file = trial/('cumulative_break_events.json' if (trial/'cumulative_break_events.json').is_file() else 'break_events.json')
+            initial=poses[0,index] if reference_poses is None else reference_poses[index]
+            same_array(np.asarray(row['reference_pose_xyzw']),initial.astype(float),'Reference body pose')
+            require(np.allclose(node['translation'],C@(initial[:3].astype(float)-origin.astype(float)),rtol=0,atol=1e-12),'Initial glTF body translation mismatch')
+            require(np.allclose(quaternion_matrices(node['rotation']),C@quaternion_matrices(initial[3:])@C.T,rtol=0,atol=1e-12),'Initial glTF body rotation mismatch')
+        events_file = partial['events_path'] if partial else trial/('cumulative_break_events.json' if (trial/'cumulative_break_events.json').is_file() else 'break_events.json')
         events = read_json(events_file) if events_file.is_file() else []
         require(len(replay['releases']) == len(events),'Release event count mismatch')
         for exported,recorded in zip(replay['releases'],events):
@@ -333,13 +373,29 @@ def validate(replay_path):
             basis = np.eye(4)
             basis[:3,:3] = C
             checked_ticks = sorted(set((0,len(times)//2,len(times)-1)))
+            diagnostic=transmission.get('measured_cad_travel_diagnostic')
+            outside=np.flatnonzero((gap<.0279)|(gap>.0961)).tolist()
+            require(not outside or diagnostic is not None,
+                'Out-of-nominal measured jaw travel requires explicit display diagnostic provenance')
+            if diagnostic is not None:
+                require(diagnostic.get('enabled')is True and diagnostic.get('nominal_gap_bounds_m')==[.0279,.0961],
+                    'Unknown measured CAD travel diagnostic')
+                require(diagnostic.get('outside_nominal_frame_indices')==outside and
+                    diagnostic.get('minimum_measured_gap_m')==float(gap.min()) and
+                    diagnostic.get('maximum_measured_gap_m')==float(gap.max()),
+                    'Measured CAD travel diagnostic differs from original actual jaw values')
+                require(all(diagnostic.get(key)is False for key in ('actual_jaw_pose_changed',
+                    'measured_gap_clamped','physics_or_planning_limits_changed')),
+                    'Measured CAD travel diagnostic may not change actual physics or clamp jaws')
+                checked_ticks=sorted(set(checked_ticks+outside))
             for tick in checked_ticks:
-                reference = transmission_transforms(float(gap[tick]))
+                reference = transmission_transforms(float(gap[tick]),measured_display_diagnostic=diagnostic is not None)
                 require(transmission['nodes'] == ['transmission_'+name for name in reference], 'Transmission ordering mismatch')
                 expected_linkage = np.array([(basis@matrix@basis.T).T.reshape(-1)
                                              for matrix in reference.values()],dtype='<f4')
                 same_array(linkage[tick],expected_linkage,'Measured jaw transmission matrices')
             transmission_evidence = dict(nodes=3,frames=len(times),sampled_frames=checked_ticks,measured_gap_reference_exact=True)
+            if diagnostic is not None:transmission_evidence['measured_cad_travel_diagnostic']=diagnostic
         skins = validate_skins(document,binary,info,assembly,manifest,paths,poses)
         quantization_position = float(np.max(np.abs(motion[:,:,:3].astype(float)-poses[:,:,:3])))
         quantization_quaternion = float(np.max(np.abs(motion[:,:,3:].astype(float)-poses[:,:,3:])))
@@ -383,6 +439,7 @@ def validate(replay_path):
         require(row['visible_source_meshes'] == expected == group_counts[group], 'Scene group coverage mismatch: '+group)
     require(group_counts.get('background_plants',0) > 0 and group_counts.get('greenhouse',0) > 0,'Missing full-farm background or house geometry')
     require(group_counts.get('robot',0)>0 and group_counts.get('target',0)>0,'Missing robot or active target visuals')
+    camera = validate_camera(replay_path,replay['camera'],assembly,trial) if replay.get('camera') else None
     return dict(schema='farmily-harvest-replay-independent-validation-v1',passed=True,
                 replay=str(replay_path),source_trial=str(trial),source_assembly=str(assembly),
                 source_scene_sha256=source_hash,source_states_sha256=states_hash,web_glb_sha256=glb_hash,
@@ -391,18 +448,24 @@ def validate(replay_path):
                 maximum_position_quantization_m=quantization_position,
                 maximum_quaternion_component_quantization=quantization_quaternion,
                 phases_exact=True,release_events_exact=len(events),runtime_physical_model_hash_verified=True,
+                geometry_reuse_verified=geometry_reuse is not None,
+                geometry_reference_replay=geometry_reuse['reference_replay'] if geometry_reuse else None,
                 scene_source_meshes=len(inventory),scene_mesh_instances=actual_instances,
                 scene_triangles_with_instances=info['source_triangles_with_instances'],
-                scene_groups=group_counts,skins=skins,transmission=transmission_evidence,physics_rerun=False)
+                scene_groups=group_counts,skins=skins,transmission=transmission_evidence,camera=camera,physics_rerun=False,
+                record_kind=KIND if partial else 'recorded_run',
+                diagnostic_only=bool(partial),checkpoint_eligible=False if partial else None,
+                harvest_credit=0 if partial else None,finalized_native_audit_claimed=False if partial else None)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('bundle', type=Path, help='Published run directory or replay.json')
     parser.add_argument('--output', type=Path, help='Write JSON validation evidence to a new file')
+    parser.add_argument('--allow-partial-diagnostic', action='store_true', help='Validate only as incomplete actual diagnostic data; grants no harvest/checkpoint credit')
     args = parser.parse_args()
     replay_path = args.bundle/'replay.json' if args.bundle.is_dir() else args.bundle
-    evidence = validate(replay_path)
+    evidence = validate(replay_path,args.allow_partial_diagnostic)
     output = json.dumps(evidence, ensure_ascii=False, indent=2)+'\n'
     if args.output:
         with args.output.open('x') as stream:

@@ -21,6 +21,20 @@ LIFT_MESH = ROBOT + '/world/visuals/assy_lift/node_STL_BINARY_/mesh'
 MOVING_IDS = {1: 'back_carriage', 4: 'mounting_plate', 10: 'cantilever_bracket'}
 
 
+def resolve_carrier_archive(manifest, data_root=Path('/root/docker_share/mujoko_debugging_data')):
+    """Relocate only missing pinned source evidence; keep exact SHA checks."""
+    lineage=manifest.get('rail_chassis_body',{})
+    original=Path(lineage.get('source_assembly',''))
+    if not original.is_relative_to(data_root) or (original/'scene.usda').is_file():return
+    archived=data_root.with_name(data_root.name+'_bak')/original.relative_to(data_root)
+    if not (archived/'scene.usda').is_file():return
+    if sha(archived/'scene.usda')!=lineage.get('source_scene_sha256'):
+        raise ValueError('Archived carrier evidence SHA mismatch')
+    lineage['source_assembly']=str(archived)
+    manifest['real_lift_source_archive']=dict(original=str(original),resolved=str(archived),
+        source_scene_sha256=lineage['source_scene_sha256'],geometry_changed=False)
+
+
 def sha(path):
     with Path(path).open('rb') as f:
         return hashlib.file_digest(f, 'sha256').hexdigest()
@@ -171,9 +185,16 @@ def prepare(assembly, output, robot_check=False):
     UsdGeom.SetStageUpAxis(stage,'Z');UsdGeom.SetStageMetersPerUnit(stage,1.)
     stage.SetDefaultPrim(stage.GetPrimAtPath('/World'))
     result=apply(stage)
-    stage.GetRootLayer().Save()
     stage.Flatten().Export(str(output/'composed.usdc'))
+    # Publish a pure local wrapper, so native Isaac and replay open exactly the
+    # same self-contained materialization. Do not retain old source overrides.
+    stage.GetRootLayer().Clear()
+    stage.GetRootLayer().subLayerPaths=['composed.usdc']
+    UsdGeom.SetStageUpAxis(stage,'Z');UsdGeom.SetStageMetersPerUnit(stage,1.)
+    stage.SetDefaultPrim(stage.GetPrimAtPath('/World'))
+    stage.GetRootLayer().Save()
     manifest=json.loads((assembly/'motion_manifest.json').read_text())
+    resolve_carrier_archive(manifest)
     manifest['real_lift_mount']=result
     manifest['scene_sha256']=sha(output/'scene.usda')
     manifest.setdefault('compact_assets',{})['materialized_dependency']=dict(relative_path='composed.usdc',sha256=sha(output/'composed.usdc'),format='usdc',materialized=True,external_usd_sublayers=[])

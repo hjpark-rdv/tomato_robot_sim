@@ -44,9 +44,22 @@ def build_selected_cycle_evidence(manifest,sequence,breaks,body_paths=None,poses
         if isinstance(stamp,bool) or not isinstance(stamp,(int,float)) or not math.isfinite(stamp) or stamp<0:
             raise ValueError('Cycle native break timestamp is invalid')
         joint_events[event['joint']].append(dict(event))
-    cycles=[]
+    cycles=[];scans=[]
     for cycle in (sequence or {}).get('cycle_plans',[]):
         selected=cycle.get('fruits',[])
+        if cycle.get('purpose')=='camera_scan_prefix':
+            if selected or cycle.get('harvest_attempt') is not False:
+                raise ValueError('Camera scan cannot declare a harvest fruit attempt')
+            actual=[]
+            if arrays and measured_phases is not None and cycle.get('end_frame_index') is not None:
+                first=cycle['measured_frame_index'];last=cycle['end_frame_index']
+                if not 0<=first<=last<len(t):raise ValueError('Camera scan measured range is invalid')
+                actual=list(dict.fromkeys(map(str,measured_phases[first:last+1])))
+                if set(actual)&MANIPULATION_PHASES:raise ValueError('Camera scan executed a manipulation phase')
+            scans.append(dict(index=cycle['index'],purpose='camera_scan_prefix',
+                start_s=cycle.get('start_s'),end_s=cycle.get('end_s'),status=cycle.get('status'),
+                actual_recorded_phases=actual,harvest_attempt=False))
+            continue
         if not selected or len(set(selected))!=len(selected) or any(name not in fruits for name in selected):
             raise ValueError('Exact planned/selected cycle fruit mapping mismatch')
         status=cycle.get('status');recorded=status in ('motion_completed','stopped')
@@ -110,5 +123,5 @@ def build_selected_cycle_evidence(manifest,sequence,breaks,body_paths=None,poses
             target_displacement_max_m=summary.get('target_displacement_max_m'),
             target_displacement_final_m=summary.get('target_displacement_final_m'),target_force_max_n=summary.get('target_force_max_n')),
         legacy_field_scope='Existing target fields describe only the original manifest target, including imported prior release; they do not describe a different selected fruit or prove this cycle detached it',
-        cycles=cycles,physical_response_changed=False,training_eligible=False,collection_verified=False,harvest_success=None,
+        cycles=cycles,scans=scans,physical_response_changed=False,training_eligible=False,collection_verified=False,harvest_success=None,
         measurement_scope='Exact native joint events and optional stored measured body positions; displacement includes any later falling motion and is not an attached-fruit damage metric')

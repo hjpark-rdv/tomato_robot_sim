@@ -1,0 +1,147 @@
+{
+  "schema": "s300-worktree-commit-validation-v1",
+  "date": "2026-11-08",
+  "timezone": "Asia/Seoul",
+  "branch": "codex/s300-side-mount-patrol-20261023",
+  "parent_commit": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "scope": [
+    "mounted RGB-D and visible SIM-GT recognition",
+    "camera-led bounded rail/lift patrol",
+    "measured-state continuation and exact target collision scope",
+    "replay PIP, chunk prefetch and partial recording provenance",
+    "existing attachment-transfer target metadata consistency"
+  ],
+  "checks": {
+    "harvest_regressions": {
+      "test_modules": 69,
+      "test_executions": 947,
+      "passed": 930,
+      "skipped": [
+        {
+          "test": "test_server_actual_env_safe_200mm_arguments_make_valid_idle_cli (test_run_row_harvest.RunRowHarvestTests.test_server_actual_env_safe_200mm_arguments_make_valid_idle_cli)",
+          "reason": "Server input not installed; portable200mm CLI case has separate coverage"
+        },
+        {
+          "test": "test_default_retains_legacy_target_buffer_semantics (test_native_target_buffer.NativeTargetBufferTests.test_default_retains_legacy_target_buffer_semantics)",
+          "reason": "Run separately with the existing planning/native Torch Python"
+        },
+        {
+          "test": "test_opt_in_preserves_measured_start_through_repeated_native_target_writes (test_native_target_buffer.NativeTargetBufferTests.test_opt_in_preserves_measured_start_through_repeated_native_target_writes)",
+          "reason": "Run separately with the existing planning/native Torch Python"
+        },
+        {
+          "test": "test_double_correction_rejected (test_real_lift_mount.LiftMountIntegration.test_double_correction_rejected)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_existing_lift_drive_and_mass_are_preserved (test_real_lift_mount.LiftMountIntegration.test_existing_lift_drive_and_mass_are_preserved)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_full_stroke_fk_changes_only_height (test_real_lift_mount.LiftMountIntegration.test_full_stroke_fk_changes_only_height)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_native_materialized_model_has_same_carriage (test_real_lift_mount.LiftMountIntegration.test_native_materialized_model_has_same_carriage)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_original_cad_surfaces_stay_at_zero_pose (test_real_lift_mount.LiftMountIntegration.test_original_cad_surfaces_stay_at_zero_pose)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_rb5_sits_on_plate (test_real_lift_mount.LiftMountIntegration.test_rb5_sits_on_plate)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_virtual_platform_is_gone (test_real_lift_mount.LiftMountIntegration.test_virtual_platform_is_gone)",
+          "reason": "Requires original/corrected lift assets"
+        },
+        {
+          "test": "test_server_actual_env_safe_200mm_arguments_make_valid_idle_cli (test_run_row_harvest.RunRowHarvestTests.test_server_actual_env_safe_200mm_arguments_make_valid_idle_cli)",
+          "reason": "Server input not installed; portable200mm CLI case has separate coverage"
+        },
+        {
+          "test": "test_base_joint_frames_coincide_and_arm_mass_properties_are_unchanged (test_side_robot_mount.SideMountIntegration.test_base_joint_frames_coincide_and_arm_mass_properties_are_unchanged)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        },
+        {
+          "test": "test_fk_preserves_world_vertical_lift_not_rotated_lift_axis (test_side_robot_mount.SideMountIntegration.test_fk_preserves_world_vertical_lift_not_rotated_lift_axis)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        },
+        {
+          "test": "test_fresh_entry_rebase_moves_anchor_and_robot_together_not_farm (test_side_robot_mount.SideMountIntegration.test_fresh_entry_rebase_moves_anchor_and_robot_together_not_farm)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        },
+        {
+          "test": "test_mount_surface_and_base_are_in_contact_without_tilt_into_plate (test_side_robot_mount.SideMountIntegration.test_mount_surface_and_base_are_in_contact_without_tilt_into_plate)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        },
+        {
+          "test": "test_ready_state_is_physically_initialized_and_camera_faces_left (test_side_robot_mount.SideMountIntegration.test_ready_state_is_physically_initialized_and_camera_faces_left)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        },
+        {
+          "test": "test_removed_shelf_is_absent_and_vertical_plate_is_physical (test_side_robot_mount.SideMountIntegration.test_removed_shelf_is_absent_and_vertical_plate_is_physical)",
+          "reason": "Requires source and newly side-mounted CAD assets"
+        }
+      ],
+      "failures": 0,
+      "errors": 0,
+      "native_simulation_started": false
+    },
+    "web_python": {
+      "test_executions": 48,
+      "passed": 48
+    },
+    "web_javascript": {
+      "test_files": 7,
+      "passed": 7,
+      "runtime": "VS Code bundled Node"
+    },
+    "python_ast": {
+      "files": 139,
+      "passed": true
+    },
+    "json_parse": {
+      "files": 43,
+      "passed": true
+    },
+    "shell_syntax": {
+      "file": "nvidia-sim/run_s300_harvest.sh",
+      "passed": true
+    },
+    "git_diff_check": true
+  },
+  "commit_preparation_fixes": [
+    "Locate runner AST test seams by their production call instead of obsolete condition text",
+    "Supply current camera/depth defaults to near-scope continuation test fixtures"
+  ],
+  "local_environment": {
+    "psutil_installed_for_tests": "7.2.2",
+    "virtualenv_and_git_bundle_excluded_from_git": true
+  },
+  "previous_physics_evidence": {
+    "source": "HANDOFF.md, 2026-10-24 latest entry",
+    "distinct_trusses_with_native_detachment": 5,
+    "detached_fruit": 27,
+    "ripe_fruit": 25,
+    "incidental_unripe_fruit": 2,
+    "six_truss_goal_complete": false,
+    "collection_verified": false,
+    "P22_C6": "motion completed, zero native detachments; FixedJoint 3N/0.08Nm differs from the existing elastic 3N/0.008Nm model",
+    "new_physics_this_commit_validation": false
+  },
+  "limitations": [
+    "NAS /mnt/nas_rdv_md3 is not mounted/readable here; historical raw videos, USD and checkpoints were not reverified or uploaded",
+    "17 environment-dependent tests were skipped; this offline regression run does not establish native physics/GPU integration success",
+    "P22 attachment transfer and further harvesting remain unfinished; earlier results are not relabeled as success"
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "log_sha256": {
+    "native_tests_final.log": "ae13ee8307324fe5201188d0ecf8cb07fd864e2fe1d7afa29c43d8e2625e6217",
+    "replay_python_tests.log": "5d2541c6ec5bc4d97c91c4b97266a8a910f8432088f0929d27593cd88899cf8a",
+    "replay_node_tests.log": "c4f658471b5b4322ce9b0f7c56f4e6c5ea9a31c71fd76a1030d882fd3fe09683"
+  }
+}

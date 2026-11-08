@@ -153,7 +153,7 @@ class RunMotionConditioningTests(unittest.TestCase):
             poses=[[0., 0., 0., 0., 0., 0., 1.]], breaks=[],
             bodies=SimpleNamespace(get_velocities=lambda: [[0.] * 6]), arr=lambda value: value,
             contact_scope=Scope(), current_time=.25, restored_initialization=True, tick=0,
-            tensor_contacts=None, contact_buffer=None, stop_reason=None,
+            tensor_contacts=None, contact_buffer=None, stop_reason=None,tpu_indentation=None,
             initialization_validity=dict(valid=None), json=json)
         with redirect_stdout(io.StringIO()):
             exec(code(LOOP.body[first:last], inside_loop=True), namespace)

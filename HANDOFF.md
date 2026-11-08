@@ -1,4 +1,177 @@
+## 2026-11-08 커밋·푸시용 작업 상태 보존
+
+- 사용자가 지금까지의 작업 전체를 커밋·푸시하도록 요청했다. 현재 브랜치는 `codex/s300-side-mount-patrol-20261023`이며 카메라 순회·수확, 측정 상태 재개, 웹 PIP·구간 선로딩, 관련 회귀시험과 검증 문서를 함께 보존한다.
+- 이번 검증은 실제 물리 실행을 새로 시작하지 않은 오프라인 회귀시험이다. 수확 관련 69개 모듈에서 947회 실행/930통과/환경 의존 17skip, 웹 Python 48통과, JavaScript 7개 시험 파일 통과. 오래된 AST 조건문 탐색과 누락된 CLI 기본값 때문에 실패하던 테스트 3곳을 현재 실행기 구조에 맞췄다. 결과는 `nvidia-sim/validation/s300_commit_snapshot_20261108.json`에 기록했다.
+- 마지막 저장 문서의 실적은 **5송이에서 27알 분리(익은25·우발적 미숙2)**다. 6송이 목표, 송이 전체 수확, 포집 성공으로 승격하지 않는다. P22의 고정 연결과 기존 탄성 연결 차이 및 후속 이식·수확 시험은 미완료 상태로 남긴다. 아래 과거 기록의 ‘진행 중’ 표현은 해당 기록 시점의 상태다.
+- 현재 `/mnt/nas_rdv_md3` 원자료 저장소가 연결되지 않아 실제 USD·체크포인트·동영상은 이번에 재검증하거나 Git으로 전송하지 않았다. 로컬 렌더 가상환경과 Git 백업 bundle도 Git 대상에서 제외하고 그대로 보존한다.
+
+## 2026-10-24 최신: 실제5송이27알, P22 연결모델 차이 조사 중
+
+- 실제 native 분리 **5송이·27알 = 익은25 + 우발적 미숙2**. GPU 복구 이후 새분리는 Plant20/Truss01의 익은7알이다. 이 송이의 초기 익은7/7은 분리됐고 미숙3알은 남는다. 전역6송이·송이전체10알·포집 성공은 아직 달성하지 않았다.
+- **P22 실제 수확동작은 정상 완주했지만 분리0**. 현재 시야로 선택한1회 진입에서 닫기/열기2회와 후퇴를 실제49.1333초/2949상태/99RGBD·GT 노출로 저장했다. 초기검사·실제자가충돌 PASS/native 종료0이며 동작 완료를 분리 성공으로 세지 않는다. 최신 수락된 말단은 `/root/docker_share/mujoko_debugging_data/20261024_013419_gpu_restored_camera_harvest/p22_camera_harvest_from_retained_lift04/trials/p22_resume_camera_harvest/route_checkpoint`다. 다음 시험은 이 말단·현재 접촉 증거를 기준으로 하고 이전004/초기 상태로 롤백하지 않는다.
+- 중요 모델 차이: 실제 P22/T01 열매연결은 FixedJoint·3N·0.08Nm였고, 기존 elastic·0.008Nm 설정은 T02에만 적용돼 있었습니다. 따라서 C6 무분리를 위치·진입만의 문제로 단정하거나 의도한 elastic·0.008Nm와 동일조건 비교라고 해석할 수 없습니다. 대상별 연결모델과 attachment transfer 적용 범위를 조사하며 C7 실제 실행은 보류합니다. C6 원본·영상·native분리0 기록은 그대로 보존하고 물리모델을 바꿔 성공을 만들지 않았습니다.
+- 추가 모델감사: P22는 과거 미수확archive의 원래Fixed 연결을 보존했고 T01에 attachment transfer가 적용되지 않았습니다. 이를 임의 구현오류로 단정하지 않습니다. 읽기전용 실제USD 감사에서 이전 Plant20/T01 익은7개 성공은 세 실행 모두 d0378cef…의 PhysicsJoint·3N·약0.008Nm/±1° spring 설정임을 확인했습니다. 현재 P22/T01 Fixed·3N·약0.08Nm와 다른 모델입니다. 다음은 기존 eligible_attachment_transfer를 명시 적용하는 별도3N/.008 모델로, 깊이15mm를 유지하고25mm안은 보류합니다. 원본과 같은physics라고 부르지 않습니다. 근거 successful_T01_and_P22_actual_USD_joint_comparison.json/md.
+
+- 앞서 T00의19계획거절(닫기wire11/접근주줄기4/예산2/경로미발견2)과 T02의 집단창 부족(간격57/58mm>48mm)은 다른 병목이다. 관측0진입을 물리실패·수확불가능으로 바꾸지 않았다. P22 시작의 import 오류와 기존 retain-lift-drive-reference 누락 통제중단도 원본·증거를 보존했다. 통제중단 초기화의 내부 진단스텝 가능성은 명시하고 그 상태는 정규 연속경로로 수락하지 않았다. 이후 같은 P22 자산에서 해당flag를 보존한 실제1cm 상승/freshRGBD를 정상 검증했다.
+- 실제 native capture41형상/part163의15조각을 확인했다(sourceUSDC5f74ed6c…/capture31e345ba…는 T00 원자료). 현재 native조각의 FCL 계획교차도 실제 PhysX 접촉과 구분한다. 과거 누락cache의 단일 CAD envelope/source mesh6.9103배는 역사적 proxy 오차이며 SDK hull 부피비가 아니다. wire native cooking은 별도미검증/FCL depth는 물리침투·힘이 아니다. 근거 `part163_actual_native_capture_publication_receipt.json`.
+- 웹은 이전 canonical6 + fresh30 = **36개 실제 구성구간·678개 RGBD/GT 노출**이다. 정상종료기록29개(스캔·이동 포함)와 복구된 원래 중단prefix1개를 구분한다. NameError partial5초는 별도진단·정확말단 인계를 표시하고, 원래 completed=false/native_running 표시를 덮어쓰지 않았다. 기본 웹 선택도 보존했다.
+- 전체17개 영상은 `published_review_videos.md/json`에 전체 절대경로로 정리했다. 새 P22 영상은 실제 이동3회·리프트·추가1cm준비·진입을7구간/201노출/96.7833초로 연결한다(30fps 경계반올림 영상96.834초). T01 익은7개 영상은108.8초/220노출이다. 모두1배속·12px·전체 decode/입력SHA 검증이며 영상 재편집으로 새수확을 더하지 않는다.
+- 실행은 기존 native PhysX CPU60Hz/threads1/TGS64·4 + RTX 카메라2Hz다. 전체농장 시각과 타깃송이·자기주줄기 중심의 기존충돌범위를 유지했다. 게시 과정에서 충돌응답·1mm·actuator를 바꾸지 않았으나 자산별 native분리조건이 모두 동일했다는 주장은 철회한다. 현재 P22/T01은 FixedJoint·3N·0.08Nm이며 기대한 elastic·0.008Nm 동일조건이 아니다. Newton GPU physics 성공을 뜻하지 않는다. 각 프로세스의 solver cache는 재시작하므로 bitwise 엔진 연속성은 주장하지 않는다. `training_eligible=false`, `harvest_success=null`.
+
+## 2026-10-24 최신: 정확한 말단 후속 완주, 다음5송이v7 진행
+
+- 현재 정상 물리 말단은 `plant25_original_suffix_native/plant25_original_suffix_from64p766_threads1/route_checkpoint=24.033333초`다. 원본25실제64.7667초 stop에서 원래cycle clock을이어실행했고원본completed=false/stop은그대로다. 새결과completed=true/stopNone/init·actualselfPASS/새분리0. 끝간격43.999966mm, 후퇴전96mm가드PASS.
+- actual1442명령/full10DOF/jaw/belt가원래frozenrunner AST와float32완전동일하다. 기존분리15개 모두유한/정상floor지원유지, 새구간raw1mm초과0. 반면최종lift실제0.133435m vscommand0.139692m의−6.256834mm 정적추종오차가있다. 명령누락/완벽추종으로해석하지않고현재실측q와native제어target을각각인계한다.
+- source는현재도v5window25(c718…USDC)이며, 이최종completedCP의default `validated_initial_checkpoint` PASS 증거는 `plant25_original_suffix_final_checkpoint_proof.json`이다. 이전64.766/45.4/54.75/B27로돌아가지않는다.
+- 새 `gt_row_maximum_next5_threads1_v7_campaign` 실행중. 다음은20/Truss02→24→28→29→31, 현재20창생성. current25는native5분리/익은02·08미해결상태로명시적budget-unselected에남겼고전체송이완료로세지않는다. 충돌정책타깃송이·주줄기,원래물성/60Hz/1mm/native40, threads1현재성공설정을유지한다.
+- canonicalunique분리15(익은14+미숙1), 분리가발생한송이3개, 정상완료진입6회+같은진입의분할후속완료1건이다. 독립재시도/A원본/Frozen재초기화를합산하지않는다. freshRGBD/실제camera순회/NewtonGPU/포집성공은아직아니다. GPU EPERM/nativeCPU SIM-GT교사범위유지.
+
+## 2026-10-24 현재 물리 말단: Plant25 단일 스레드 후속64.7667초
+
+- 최신 trial은 `plant25_resume_threads1_native/plant25_resume_yaw0_seed5_threads1_harvest`, 최종 `route_checkpoint=64.7666667초`다. 이전45.4초 완료CP 또는54.75초 parent로 돌아가 연속이라 집계하지 않는다. 현재 SDK/native 프로세스는 종료됐고 정확한 이 말단의 forward suffix 복구를 구현 중이다.
+- v6 yaw0/seed5는 전체self/environment2623표본 PASS 뒤 SDK첫initialize simulate에서segfault139(복원전, 내부결과unknown). 원본격리 후 같은54.75정상parent의 명시적새복구시험에서threads16→1만 변경해 exactrestore/init를 통과했다. 다중스레드가원인이라고단정하지않는다.
+- 실제 첫45.4초 수확/후퇴완료: 새F03/F05분리. 두번째집단07/08은wire차단후다른heading/seed를fresh감사통과해 실행했고F04/F07도native분리됐다. 현재25누적F01/03/04/05/07=5개,19→27B→25누적15개(익은14+미숙1), 완료진입6회/분리가발생한송이3개다. 전체송이완료·포집성공이아니다.
+- 전체trial completed=false/penetration_over_contact_policy. 실제stop은이미분리F04↔RowSupply_20mm 정적관수관 raw1.763595mm/0N, 기존 --released-fruit-static-farm-support-diagnostic 역할누락이었다. 정적/무시간표본/원본sourcehash 증명 후 RowSupply역할1개만기존scope에추가했고134시험PASS/원본raw와stop불변. 부착/로봇/식물/moving·unknown물체 예외없다.
+- 두agent가 기존recovery/명령샘플러/감사/실행기를연결해원본cycleclock을그대로유지하는남은cycle_open→reclose→open→후퇴를준비한다. 원본cycle19.366667초에서이어가며부분열기구간을새smoothstep으로재보간하지않는다. exact64.7667만대상/원본physvalidfalse는보존하고모든stop의별도재분류증명필수다.
+- 공동회귀314PASS,새native0현재. GPU EPERM/freshRGBD불가/nativeCPU60Hz/SIM-GT교사범위는유지한다. 수확뒤다음cohort는20T02/24/28/29/31이며current25를명시적예산보류로뒤에둬초기그룹을재생성하지않을계획이다.
+
+## 2026-10-23 현재 물리 말단: Plant25 t54.75초, 계획 연결 수정 후 이어가기
+
+- 이전27B 이후 실제25가54.75초 진행했다. 현재 source는 `gt_row_maximum_local_heading_v5_campaign/windows/000_plant_25`, trial은 `plant25_entry_retract5_native/plant25_entry_retract5_harvest`, 정상 완료 cycle CP000과 terminal route_checkpoint는 같은54.75초 상태다. **새 물리를27B 또는 이전 CP에서 시작해 연속으로 집계하지 않는다.**
+- 5mm 실제 TCP 후퇴로 native40 도구↔주줄기 전체 경로 검사 통과 후 첫 진입/닫기·열기2회/후퇴를 완료했다. Fruit01이29.4833초 close 중 native 분리됐다. 누적19→27B→25는11개(익은10+미숙1), 완료 진입5회, 분리가 발생한 송이3개다. 전체 송이 완료·포집·카메라 순회 성공이 아니다.
+- 다음 집단03/04/05의 계획에서 GutterSuspensionWire_005 접촉을 찾고 조기 종료한 audit(complete=false)를 전체 unknown 오류로 처리해 `gt_group_planning_inconclusive`로 멈췄다. 첫 cycle 이후 물리는 진행되지 않았다. 원본 전체 trial completed=false/stop은 그대로 보존한다.
+- 조기 음성을 검증된 현재 후보 거절로만 처리하는 GT opt-in 연결 수정236시험 PASS. 나머지 미검사 경로 UNKNOWN은 유지한다. 정상 완료 cycle과 실제 terminal의11배열·제어기·분리이력·최종trace가 정확히 같을 때만 software-only stop 재개를 허용하는 별도 opt-in을 검증 중이다. default stopped-run 거부와 더 이른 CP rollback 금지는 유지한다.
+- 실제 self3286표본 PASS, 주줄기↔공구 raw 접촉0. 이전10분리 과실은 모두 정상 바닥 높이를 유지했다. raw1mm초과1점은 분리 후 Fruit01↔GroundCover 접촉1.2865mm이며 기존 released-support 진단에 기록됐다. 부착 기준/물성/충돌체/분리조건은 바꾸지 않았다.
+- GPU EPERM 때문에 fresh RGB-D는 불가하며 nativeCPU60Hz/SIM-GT 교사 시험이다. 다음은 현재25 남은 집단의 방향/IK 유한 탐색 후20/Truss02→24→28→29→31. 이전 내용보다 이 물리 말단이 최신이다.
+
+## 2026-10-23 최신: 분리 과실 충돌 수정 후27B 실제 재검증 완료
+
+- 아래27A 바닥 누락 오류는 원본을 보존하고 수정27B로 검증했다. 기존 정상19 CP001=93.3167초에서 새 모델/새 출력으로 재실행했다. frozen native-released 과실만 collider ON을 유지하며 attached 식물/다른 송이 ghost 정책과 물성/1mm 부착 접촉 기준은 유지한다.
+- `gt_row_floor_retained27_b_campaign`:127.7333초 정상완료, 두 번 진입·후퇴, 새 익은 과실4개 분리, 실제 자기충돌 감사 PASS. 이전19 과실6개는7,665개 전체 frame에서 바닥 통과 없이 유지됐고 실제 바닥 접촉·힘이 기록됐다. 원본A와B는 독립 분기이므로 더하지 않는다.
+- A/B의 로봇/도구/현재식물/Frozen19 56,084spec·218,213field를 비교해 물리 필드 차이가 정확6개 기존 분리 과실 collisionEnabled False→True뿐임을 확인했다. source19 CP의 관절/몸체/속도/이력 인계는 동일하다. 311회귀+별도9시험 PASS.
+- 검증된19→27B 계보는 실제 분리10개(익은9+미숙1), 두 송이에서 진입·후퇴4회, local sim 시간 합221.05초다. 전체 송이 수확·전체식물 완료·포집·실물 손상 안전성을 의미하지 않는다. 이미 분리된 열매의 바닥/등록지지물 접촉은 원래 물리 응답을 유지하는 진단 범위다.
+- 근거는 최대수확 원자료 폴더의 `completed19_to27b_harvest_chain.json`, `plant27b_terminal_resume_proof.json`, `released_fruit_lifecycle_actual_validation_b.json`, `plant27_floor_retained_ab_independent_review.json`이다. 다음 정상 source는 `gt_row_floor_retained27_b_campaign/windows/000_plant_27`, 최종CP는 해당trial의001이다. 잘못된27A 말단으로 돌아가지 않는다.
+- 다음 유한 대상은25→20/Truss02→24→28→29→31이다. GT group heading suffix search opt-in은225회귀+독립8시험을 통과했고 새v5 캠페인을 실행 중이다. GPU EPERM으로 fresh RGB-D가 불가하므로 SIM-GT 교사 실행과 카메라 순회 성공을 구분한다.
+
+## 2026-10-23 추가 발견: 진단27A의 이전 분리 과실 바닥 충돌 누락
+
+- 중요: 아래의19→27 측정 상태 인계/새4개 분리는 실제 기록이지만,27A의 전체 환경은 정상으로 판정하면 안 된다. target-only 창 전환이 이미 분리된 Frozen 과실 collider까지 꺼서 이전19 과실6개가 바닥을 통과했고,127.7333초에서Z약-80,042m까지 낙하했다. 원본states/영상/모델은 수정하지 않는다. 포집/전체환경 유효성 미검증을 단순 문구로 처리할 문제가 아니라 실제 lifecycle 오류다.
+- 새25 v4 준비는 native 실행 전에 중단했다. exact native 분리·완료CP·원래joint·Frozen body에 묶인 과실만 collider ON을 보존하고, 다른 부착 식물의ghost 정책은 유지하도록 수정 중이다. 물성/형상/1mm 기준/pose clamp/강제분리로 고치지 않는다.
+- 수정 검증은 정상19 CP001에서 새27B로 분기해 실제 재실행한다. 이미-80km가 된27A 상태를 바닥으로 순간 이동하거나 되돌린 뒤 연속이라 주장하지 않는다. A를 보존하고 명시적인 수정 A/B 시험으로 구분한다.
+- 최신 상태: 원자료 progress_status.json/current_blocker. GPU EPERM으로 새 카메라는 여전히 불가, current task는nativeCPU/SIM-GT 교사탐색이며학습자료에섞지않는다.
+
+## 2026-10-23 최대 수확 후속: 완료된 1송이 2회 진입과 다음 창 연결
+
+- 아래 기존 Run09의 보류/질문 상태보다 이 항목이 최신이다. 사용자 최대 수확 요청에 따라 기존 실행기·실제 native PhysX CPU60Hz·부착 과실1mm 기준으로 작업한다. GPU 장치 open EPERM 때문에 새 RTX RGB-D는 불가하며, 이번 SIM-GT 위치·색상 교사 탐색을 카메라/뉴턴 GPU 검증으로 표시하지 않는다.
+- 원자료 `/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/index.html`. 독립 trial 재시도는 합산하지 않는다. strict7 trial은 두 송이에서7개 분리/3회 동작 완료 후 실제 개방 문제로 중단했다.
+- 최신 `plant19_target_truss01_support_native/plant19_truss01_static_support_harvest`:93.3167초, 두 번 진입·각 두 번 열닫·후퇴 정상 완료, 실제 자기충돌검사 PASS. 분리6개는 익은01/02/03/05/07 + 미숙09이다. 익은04/08은 남았으며 기존 최소2개 footprint를 찾지 못했다. 전체 송이 수확·포집 성공이 아니다.
+- 이 trial은 기존 선택 정책인 타깃 송이+자기 주줄기만 충돌한다. 전체 농장 시각 형상 유지. 이미 native 분리된 과실이 등록된 정적 재배판/거터 지지물에 닿는 경우는 원래 충돌 응답·힘·침투를 보존하며 진단 기록한다. 부착 과실/로봇/미등록·동적 물체의1mm 가드는 유지한다.
+- 원본 중단과 비교해 첫25.1333초/1509표본 전체 state·command·phase·belt는 bitwise동일,39606접촉점도 동일하다. 원본 stop을 삭제하지 않았다. 최종 CP001=93.3167초의 모델/몸체/관절/기존 분리/실제 audit를 검증했고 더 이른 상태로 롤백하지 않았다.
+- `--target-truss-windows`로 기존 다음 식물 창 전환을 재사용한다. near-truss 강제 옵션만 생략하고 정확한 plant/truss/body/joint를 검증한다. 첫 후속25창은 실제 skin 변형이 session layer에 있어 root-spec guard에 걸렸다(native0). 기존 Flatten→Stage.Open으로 합성 형상 보존 후 엄격한 편집 검사를 적용했고 재현/원본불변 시험 포함112개 PASS. 이전 오류 결과 보존.
+- `gt_row_target_only_next6_v2_campaign`은 위 정확한 최종 CP에서25/24/27/28/29/31 순서를 시도한다. 현재 진행 상태는 row_campaign.json 참조. source19 다른 두 송이와 미선택 식물을 완료로 세지 않는다. 측정 상태·제어기 전달이며 PhysX 솔버 캐시는 새 프로세스에서 재시작한다.
+- 전체 웹 재생 `http://lab.farmily.ai:8090/gripper-design/harvest-replay/?run=max_teacher_plant19_truss01_6detach_20261023`의5600프레임/270몸체/전체54.2M삼각형 검증 PASS. 새 영상은 실제 저장 상태 발췌이며 새 물리·새 RGB-D가 아니다. 영상 전체 목록은 원자료 published_review_videos.json/md.
+- 관련 회귀246개 PASS와 창 전환112개 PASS 로그를 각각 보존했다. `training_eligible=false`, `harvest_success=null`. 기존 대량 dirty 작업 보존, 이 요청에서 새 commit/push하지 않았다.
+
+## 2026-10-23: RB5 측면 장착과 카메라 증분 순회 (실제 2열매 분리, 6송이 미완료)
+
+- 작업 브랜치 `codex/s300-side-mount-patrol-20261023`, 시작 HEAD `74a9098915fd4d052716ce7e7ecb82a03bd87c89`. 이전 미커밋 변경과 원자료를 보존했다.
+- 사용자 표시의 돌출 상판/삼각 받침(CAD4/10)을 제거하고 실제 이동 carriage 수직판에 RB5 전체 체인/베이스 조인트/그리퍼를 함께 옮겼다. 실제 리프트 유지. 장착판 질량은 제거 형상을 제외한 CAD 체적 비율 추정이며 하드웨어 강도 인증은 아니다. link1 고정 세로 RGB-D는 새 ready FK에서 왼쪽 작물을 정면으로 본다.
+- 새 기본 `bash nvidia-sim/run_s300_harvest.sh camera-patrol`: 레일 입구0m부터 실제 카메라/깊이/GT 관측을 사용해 보이는 익음 proxy 집단을 기억하고 최대15cm(명령 상한20cm)씩 전진한다. 전체106송이/68주 인벤토리는 소속/한쪽 줄 정책에만 사용하며 숨은 과실 중심으로 목표를 정하지 않는다. 같은 식물의 미해결 관측 집단을 먼저 처리한다.
+- 기준은 기존 실제 native PhysX CPU60Hz, RGB-D2Hz,1mm 관통/실제 벨트2회 닫기·열기/잎 무시/기존 주변 충돌체다. 이번은 Newton GPU 성능 검증이 아니다. 측면 장착 전용 수확 동작의 실제6송이 검증은 진행 중이며 성공으로 보고하지 않는다.
+- 보이는 집단의 새 IK 경로가 저장된 계획/장면SHA에 묶인 충돌 증거로 거부될 때만 같은 집단·방향에서5/8 IK branch를 추가 검사한다. 원래 최대12제안과 기존 전체 경로 검사 유지. 실제 물리 중단은 재시도/롤백하지 않는다.
+- 초기 배치 오류는 로봇 접근 실패와 분리한다. 독립 idle/warmup에서 이미 관절이 끊어지는 full-plant는 이 캠페인에서 운영 보류하고 다른 미시도 송이도 같은 모델을 반복 시작하지 않는다. 원본 증거와 관측은 유지하며 불가능/독립 타깃 실패/수확으로 세지 않는다. 이전 식물은 저장 실제 상태로 동결하고, 새로 관측된 미수확 식물만 제한적으로 재활성화한다.
+- 웹 재생은 다음 구간 모델/상태/카메라와 일부 PIP 프레임을 미리 읽는다. 실제 브라우저에서 다음 구간 첫 프레임의277바디 좌표 오차0, 시점/PIP 시각/공유 모델1회 다운로드/자동 연결 확인. 독립 재시험이나 중단 구간은 자동 연결하지 않는다. 동일 모델의 새 저장상태는 정확한 모델/바디순서SHA 확인 후 GLB만 공유하고 각 구간을 독립 검증한다.
+- 최신 Run09는 Plant20/Truss02의 첫 카메라 제안에서 기존 준비 연결·전체 self/environment 검사를 통과해 실제로 접근/벨트/닫기를 실행했다. 선택한 Fruit01은23.8167초, Fruit02는24.3333초에 native joint가 새로 분리됐다. 그러나24.55초에 이미 분리된 Fruit02↔같은 주줄기의 다른 Truss00 Fruit09 접촉(전체4접촉점 최대3.7332mm/0.07478N)으로 기존1mm 규칙이 중단시켰다. 실제 분리2개와 수확 구간 완주는 다르므로 완료 송이 집계는0/6이다. 영상·기준을 바꿔 성공으로 처리하지 않았다.
+- Run09의 실제 마지막 상태는 `patrol_run_09/trials/segment_001_harvest/segment_001_harvest/route_checkpoint`의24.55초다. 완전한 native q/qvel/몸체 속도/plant preload/제어기 목표와2개 분리 이벤트가 있다. 정상5초의 `cycle_checkpoints/000`으로 되돌려 연속 실행했다고 주장하면 안 된다. 분리된 과실↔다른 송이 열매 접촉을 별도 진단으로 기록하며 계속할지 사용자에게 확인 중이며, 미응답을 허가로 간주하지 않는다.
+- 별도6개 관측 기반 얕은 진입 오프라인 질의(35/20/15mm)는 전체 경로 통과0개다. 일부는 준비 자세 자기충돌, 일부는 같은 주줄기의 다른 송이 과실/중심가지에서 막혔다. 실제 physics는0회이며 특정 유한 표본 실패를 수확 불가능으로 바꾸지 않는다. 원자료 `shallow_observed_probe/index.html`에 실패도 모두 보존했다.
+- 웹7개 JavaScript 회귀 모음은 통과했다. 앞선 실제14개 prefetch 브라우저 항목도 통과했지만, 최신 중단 Run09의 별도 소프트웨어 브라우저 검사는120초 안에 ready에 도달하지 못해 **미확정**이다(page JavaScript 오류 기록0). 이 항목을 통과로 보고하지 않는다. 실제 상태 MP42개는 첫/중간/끝 모두 검은 화면 아님과277바디 위치·회전 행렬 오차0을 독립 확인했다.
+- 실제 결과/로그/소스 스냅샷: `/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/index.html`. 실행별 `controller_source/`, `camera_patrol.json`, `camera_patrol_queue.json`, prior-campaign SHA체인에 보존한다. `training_eligible=false`, `harvest_success=null`. 현재 동작의 단계별 실제 수확 집계와 영상은 해당 인덱스가 기준이다.
+- 조립 웹: http://lab.farmily.ai:8090/gripper-design/robot-assembly/ ; 실제 재생: http://lab.farmily.ai:8090/gripper-design/harvest-replay/?collection=camera_side_patrol_20261023 . 상세 실행/보류/재개/웹 자동등록: `nvidia-sim/harvest_s300/CAMERA_PATROL.txt`.
+
+## 2026-10-23: 정면 카메라·전체 기록 탐색 및 지나친 송이 원인 확인
+
+- 기존 정차점 순회는 카메라 감지 즉시 정차하는 알고리즘이 아니다. 실제 예시22→25는0.762m,25→27은0.499m,27→29는0.570m이며 후속28→20 재시험에는약1.998m역주행도 있었다. 기본 시험은 정차당 실제 수확1회 제한이었다. 전역 이동간격 제한·관측 송이 대기열·자동 수확 정차점 최적화는 이번에 구현 완료하지 않았다.
+- `run_motion.py --camera-harvest`의 스캔 기본은 `--camera-scan-view row-front`: 카메라 고정 장착을 유지하고 실제 base yaw로 레일에 수직인 작물 방향을 본다. `target-point`는 이전 사선 방식을 재현한다. 수확 중에는 link1과 함께 회전하며 독립 짐벌이 아니다. 원본 카메라 영상/행렬을 수정하지 않았다. 실제 스캔의 정면 대비 yaw45.4462°→-0.00308° 확인. 새 시험 정차는1.600→1.873662m,약27.4cm이며 전역20cm정차 규칙이 아니다.
+- 웹에 '전체 기록' 시간 막대 추가. 기존14구간499.5초(8분19.5초)를 구간을 넘겨 탐색하며 실제 source clock과카메라를 함께 전환한다. 독립 재시험의 자동 정지·수동 선택 안내 유지. 묶음 전체를 하나의 연속 물리 실행으로 해석하지 않는다. 실제 브라우저에서55초 선택→두번째 구간0.6초 및GT카메라decode PASS.
+- 새 원자료 `/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/`. 첫 정상 시험은13.633초/819상태,정면스캔완료 후고정팔자세19계획(15self여유거리,4IK)거절,수확0. 시야86열매중14개만후보:다른식물56,등록된현재대상외10,익음정책제외6. '화면에 보이는 모든 송이 자동 수확'은 미완료이며 제외된 송이를 수확 불가능으로 분류하지 않는다.
+- 추가 독립 시험은 기존 자동IK·OMPL·실제cooked tool기하를 재사용했다. 6번째 후보의 전체경로 검사를 통과하고 실제 접근/닫기까지 진행,37.5초에Truss_02_Fruit_02의native joint분리1건.37.7667초 분리열매↔RB5 link3 접촉의겹침5.35158mm로기존1mm규칙에따라중단.2267상태/77RGB-D프레임. 동작 완주·포집·6송이 완료 아님. 접촉/물성/충돌체/중단기준을완화하지않았다. 이번은native PhysX CPU60Hz+RGBD2Hz이고NewtonGPU속도검증이아니다.
+- 앞선첫시작은사라진`/root/docker_share/mujoko_debugging_data_bak`경로때문에검사inconclusive였다. NAS의기존동일SHA자료를확인하고원래경로의symlink만복구했다. 추가OMPL의첫CLI시도는필수cooked-shape옵션누락으로실행전차단되어로그보존;실제2회와구분한다.
+- 새웹묶음 `camera_front_review_20261023`은독립초기상태2개기록이며기존기본5/6송이묶음을바꾸지않았다. 두원본`rgbd/analysis.mp4`와웹export/모든실패로그보존. 결과 `nvidia-sim/validation/s300_front_camera_review.json`. Python90PASS,마지막FK오류메시지수정후해당17회귀재검사PASS(중복합산하지않음),기존JS56항목+새전체시간막대모듈PASS. 개별웹export는원본전체상태/카메라/모델로독립검증한다.
+
+## 2026-10-23: 카메라·웹 재생 기록의 무손실 저장 최적화
+
+- 최근 수확 원자료 18.810→12.231GB, 웹 재생 자산 15.072→5.563GB, 초기 mounted-GT 전체 0.966→0.474GB. 총34.848→18.269GB, 약16.579GB(47.6%) 감소. GB는10진수이며 웹 hardlink의 동일 inode를 한 번만 센 크기다. 열려 있던 `lift_gt_final`은461.65→224.27MB. 별도 감사 로그 용량은 결과 디렉터리에서 확인한다.
+- `recording_storage.py`: depth/renderer-instance/instance/semantic을 원본 NPY 바이트 그대로 `.npy.gz`에 저장한다. dtype/NaN payload/shape를 포함해 무손실이다. 동일 renderer label은 RGB-D 디렉터리 내부 상대 링크로 공유한다. 새 촬영은 최대4개 파일 I/O 작업만 병렬화하고 전부 완료 후 프레임을 공개한다. 물리·렌더러를 별도 스레드에서 실행하지 않는다.
+- `compact_camera_storage.py`: 기본 dry-run, `--apply`로 완료된 결과만 이관. 모든 기존 NPY는 압축을 다시 읽어 원본 전체 바이트 일치 확인 후 교체하며 `storage.json`에 원본/압축 SHA를 남긴다. 원본 frames.jsonl/camera.json/objects.json·실제 상태·결과·이미지·영상은 변경하지 않는다. 예전 로그의 .npy 논리 경로는 `load_array`에서 gzip을 찾는다. 외부에서 np.load(path)만 쓰던 코드는 gzip.open을 사용하거나 `gzip -dk`/`--restore-arrays`로 복원해야 한다.
+- 새 웹 export는 SHA를 검증한 `scene.glb.gz`만 유지하며 같은 웹 자산만 `assets/_shared` hardlink로 공유한다. 원본 NAS와 웹 파일은 hardlink하지 않는다. 다른 모델을 동일 모델로 합치지 않았다. 공유 자산은 불변으로 취급하고 수정 시 atomic replace한다.
+- Python87개, 실제 JS함수56항목 통과. 실제 리프트·수확2개 기록 및 새 exporter의 임시 전체 농장 export를 독립 검증했다. 새 export 임시 파일은 검사 후 제거했다. 실제 브라우저에서 gzip 장면 로딩·RGB/GT/Depth PNG decode·10초 이동과47프레임/2761상태 확인. 소프트웨어 WebGL screenshot은 시간초과로 미확정이며 캡처 성공으로 보고하지 않는다. 초기 브라우저 검사 RAF 대기 문제는 polling=100ms로 검사기를 수정했고 원래 시도 로그도 보존했다.
+- NAS 동시 이관 부하 중 교대6회 비교에서4개 카메라 배열+label 저장 중앙값은 기존0.520초→새0.299초. 파일 I/O 시험이며 전체 물리 RTF 개선 근거가 아니다. 새 native physics는 실행하지 않았다.
+- 결과/복원 안내: `gripper-design/harvest-replay/README.txt`, `nvidia-sim/validation/s300_recording_storage.json`. 실제 감사·원본 SHA·metadata backup·테스트 로그는 `/root/docker_share/mujoko_debugging_data/20261022_storage_compaction/`에 보존한다. 기존 미커밋 작업을 보존했으며 이 요청에서는 commit/push하지 않았다.
+
+## 2026-10-22: 카메라 영역 선택·연속 수확·웹 PIP (5/6송이, GPU 접근 복구 대기)
+
+- **현재 결론:** 웹 오른쪽 RGB/GT/Depth PIP와 실제 저장 상태 선택/재생은 구현했다. 카메라 관측으로 선택한 **서로 다른5송이에서 익은 열매11개 native joint 분리**를 확인했다. 요청한 최소6송이에는 아직1송이가 부족하며, 송이 전체 수확·포집·실물 성공으로 보고하지 않는다. 아래 중간 진행 기록은 시간순 원인 분석이며, 최신 상태는 이 항목을 우선한다.
+- 24번 후속의 새 OMPL 경로는 fine edge 검사와 **전체60Hz self/environment 검사6,723표본 COMPLETE PASS** 뒤 실제 실행됐다. 그러나 준비 이동16.1초에 측정 열림폭95.0825mm가 기존96mm±0.5mm guard를 통과하지 못해 정지했다. 첫 두 경계는95.8558/95.5073mm로 통과했고, 이 이동 구간의 ActuatedTool 접촉은0건이다. 손목 기울기에 따른 기존 jaw drive의 중력 탄성 오차와 맞는다. 단순 대기/감속으로 해결된다고 단정하거나 gate를 완화하지 않는다. 수확 동작·분리는 아직0건이며 경로의 기하 통과와 실제 추종 실패를 분리한다.
+- 최신 실제 중단 상태는 `continuous_camera_connector24/.../route_checkpoint`의16.1초/966step, canonical SHA `f6c0afd62935b4d413eaf48e5ee32e519d457ecf6883a719305cce48bd770093`다. 완전한 q/qvel·controller·식물 preload를 보존했다. **이전 정상8.5초 checkpoint로 조용히 되돌리지 않는다.** 새 실행 자체는 앞선88표본 소프트웨어 오류 뒤 정상24에서 시작한 명시적 독립 분기이며 웹 이력에도 표시한다.
+- 정지 결과 저장 **이후** Vulkan `ERROR_OUT_OF_HOST_MEMORY`가 발생했고, 현재 `/dev/nvidiactl`, `/dev/nvidia0`, `/dev/nvidia-uvm` open은 mode666에서도 `EPERM`, `nvidia-smi`는 NVML UnknownError, 최소 `cuInit(0)`은100(NO_DEVICE)이다. 호스트 가용RAM 약97GiB/cgroup OOM0이므로 RAM 소진으로 단정하지 않는다. GPU PCI 활성/driver-library570.211.01 일치지만 호스트 Xid·GPU 건강은 미확인이다. 도커 device/cgroup 접근 복구를 요청했으며 GPU reset/도커 재시작/host-key 우회는 수행하지 않았다. 이 자원 오류를 이미 저장된 열림 guard 정지의 원인으로 바꾸지 않는다.
+- 중단 상태의 실제 준비 이동337개 측정 표본(16.1→10.5초)을 역순으로 만드는 **진단용** 복구 자료를 보존했다. 기존 정상 상태로의 rollback이나 실제 복구 실행이 아니다. 기존 recovery 제어기가 이번 고정 lift bias8.3152987mm를 보존하지 않으므로 실행을 코드에서 차단했다. 움직이는 terminal의 목표−측정8.3580464mm를 새 보정값으로 삼지 않는다. 다음 실제 시험 전 이 연결을 먼저 검증해야 한다. 순수FK로 본 충돌 통과 경로의 이후 구간은 jaw축이 최대약79° 기울어 기존 drive에서 약4.95mm 정적 열림 손실이 예상된다. 이는 근사 진단이며, 다음 수정은 guard 완화보다 손목/그리퍼 자세의 실행 가능성을 계획에 포함하는 방향이다.
+- 최종 CPU 회귀410개 중408PASS/2SKIP(asset Python의 Torch 부재), 해당 실제 Torch2회귀는 기존 별도 환경에서 PASS. 웹 실제 함수56개 및 JS syntax PASS. 수확5송이와 마지막 중단 기록의 source summary/배열 SHA, 전체60Hz timestamp, 종료시각, actual-self 검사도 독립 대조PASS했다. 현재 GPU 장치 차단 이후 새 physics 성공이나 새 GUI/headless 동등성을 주장하지 않는다.
+- 최종 웹 기본 모음은 `camera_region_route_20261022`이며 **5/6송이·목표 미완료·11개 분리**를 표시한다. 실제 정상/중단 경로14개와 독립 진단16개를 따로 선택한다. 실제 카메라 MP4는31개(수확5, 이동·스캔·중단9, 독립 진단15, 미검증 초기 원본2)이며 원본 전체경로 목록과 로그 묶음을 결과 폴더에 둔다. 88표본 오류는 완성된 카메라 MP4가 없어 실제 일부 상태3D만 제공한다. 기본 catalog와 두 보고서 HTTP200 확인.
+- GPU 차단 뒤 최종 실제 브라우저 검사는 명시 SwiftShader 소프트웨어 렌더러로만 수행했다. 기본5/6 모음/처음22 정지/전체 농장/오른쪽 RGB·GT선택영역·Depth PIP/22→다음 기록 자동 전환은 실제 PASS. 이후 독립 분기에서 자동 정지·수동24선택·최종 모델캐시 검사는 CPU 렌더링 시간한도로 **미확정**이며 전체 브라우저 검사를 PASS로 바꾸지 않는다. 이 동작의 실제 소스 함수56회귀는 PASS이고, 이전 하드웨어 브라우저22→28 선택/카메라 검증도 보존한다. 마지막 소프트웨어 브라우저·driver 등 소유 프로세스10개 종료 확인. 증거 `final_software_web_qa.json`과 `20261022_final_camera_web_check/final_incomplete_default_swiftshader/default5of6_recognition_pip.png`.
+
+- 브랜치 `codex/s300-isaac-real-lift-20261022`, 기반 HEAD `74a9098915fd4d052716ce7e7ecb82a03bd87c89`. 기존 미커밋 실제 리프트/카메라 작업을 보존했다. 이번 사용자 요청은 웹 오른쪽 카메라 PIP, 카메라로 집단 선택, 최소6송이 실제 시험 및 모든 이력 선택/재생이다.
+- 기존 native `run_row_harvest.py`/`run_motion.py`/checkpoint/웹 exporter를 연결한다. **현재 실행은 Isaac6.1 native PhysX CPU60Hz, RGB-D/GT nominal2Hz**이며 이전 Newton GPU 속도 결과와 구분한다. 전체 농장 외형·현재 장면의 주변 충돌체를 유지한다. 실제 리프트/link1 세로 카메라 입력은 `20261022_065240_shoulder_rgbd/assembly_exposure`에서 이어진 모델이다.
+- `--camera-harvest`: 실제 준비·개방·레일 이동·base yaw 촬영 뒤 현재 보이는 빨간 열매 최소2개를 선택한다. 기존 익음 정책∩visible GT∩valid depth∩현재 식물/허용 송이∩미분리로 제한한다. 표면 중앙값+알려진 반경은 근사 중심이다. visible Rachis/PCA 방향의 부호는 카메라→관측 중심으로 정하고, 수직에서15° 안의 가지는 관측 중심 radial yaw를 제안한다. 관측 기준0,+15,-15,+30,-30°마다 footprint와 중앙 보정을 다시 구한다. 실제 IK/자가충돌/환경 검사 뒤 기존 수평 벨트 동작을 실행한다.
+- 원본 RGB/depth/instance/semantic은 보존하고, 선택한 열매의 현재 보이는 픽셀에만 얇은 분홍 테두리를 파생 표시한다. 신경망 인식·가려진 열매 중심·실물 숙도 판정이 아니다. 지도는 정차 제안/촬영 준비용이며 이동 순서 최적화는 아니다.
+- `mounted_rgbd.py`/`mounted_gt.py`: RGB·depth·camera parameter·instance/label을 같은 렌더 묶음의 CPU 소유 복사본으로 읽는다. borrowed texture를 파일 저장 뒤 늦게 읽던 문제를 수정했다. 잘못된 payload는 원본/labels/오류를 보존하고 같은 물리 시각에서만 최대3회 전체 묶음을 재촬영한다. 미지 ID를 배경으로 바꾸거나 매핑/좌표 기준을 완화하지 않는다. 이전20의0.5초 센서 실패와 수정 후3초7프레임 대조는 겹치는 전체 native 상태가 bit-exact이며 별도 진단이다.
+- 카메라 초기 스캔은 기존 ready/open/선택 ready-lift/rail/pan 명령만 생성한다. 실제 촬영에 쓰지 않을 수확 staging IK 때문에 정상 스캔이 차단되던 연결 오류를 제거했다. 실제 카메라 수확은 이후 전체 IK를 수행한다. 기존 비카메라 명령과 수확 phase/물성/1mm 기준은 유지한다.
+- 카메라 경계에서 `camera_boundary_rail_state`가 현재 completed-cycle checkpoint를 검증하고 기존 `measured_resume_rail_origin`/`attach_resume_rail_hold`를 재사용한다. **기하 원점은 실제 측정 레일 위치, 제어는 native getter의 원래 목표값**이다. 20번에서 명목 목적지를 현재 위치로 쓰던101µm 오류를 수정했다. 같은0.1mm 수치 검사가 수정 뒤 실제1.05µm 이하로 통과한다. 원본 경로/오류와 실제 후속 후보의 다른 송이 과실 충돌을 구분해 보존한다.
+- 환경 검사의 독립 jaw_L/R 측정 위치 및 고정 rail_anchor 정렬도 바로잡았다. 카메라별 현재 checkpoint/정확한 송이로60Hz 전체 환경 검사를 한다. complete PASS만 실행 가능하다. 첫 금지 충돌로 조기 거절한 suffix는 UNKNOWN이다. 22의2537표본 전체 경로 검사는 **사후 명목 검사**이며 당시 새 camera-boundary gate가 실행됐다고 소급하지 않는다.
+- 현재 실제 완료된 집단 진입은 **22/25/27/29/28의5개 송이, 빨간 열매11개 native joint 분리, 미숙 분리0개**다. 각 송이 진입1회/닫기·열기2회를 검증했으며 익은 열매24개가 남아 송이 전체 완료가 아니다. 20은45.9667초 이동·스캔과8.5초 재스캔을 정상 완료했으나 수확 경로11개씩이 거절돼 수확 실적0이다. 이어30도 최신20 상태에서56.1초 실제 이동·스캔을 정상 완료했으나 기존 범위11후보는 IK/자가충돌로 거절됐다. 다음 실행의 부모는 이 최신30 normal checkpoint이며 이전 좋은 상태로 되돌리지 않는다.
+- 30의 추가 오프라인 유한 검사에서는 카메라 yaw+60도 경로의 전체 자가충돌2537표본이 통과했지만 접근 중 그리퍼 오른쪽 덮개↔주줄기5 충돌이 남았다. 기존 native cooking 도구로 실제 덮개16조각을 모두 읽어 동일 경로를 재검사해도 막혔다. 별도0.01667초 idle 형상 캡처는 실제 연속 경로 상태나 수확 실적에 포함하지 않는다. Cartesian 두 연결도 준비 중 실제 리프트 받침대 간섭으로 거절됐다. 기준/형상을 바꾸지 않고 다른 높이의 송이 촬영을 준비한다.
+- 지도 기반 수확 경로가 차단됐다는 이유로 촬영 자체를 막지 않도록 행 실행기에 명시적인 `--allow-camera-scan-only-proposals`를 추가했다. 원래 차단 상태/해시를 보존하고 새 장면 초기 검사·실제 스캔·카메라 수확 경로의 기존 전체 검사를 각각 요구한다. 23은 초기화 중 외부 송이↔주줄기 간섭으로2개 native joint가 조기 분리돼 **미사용 장면**으로 제외했다. 19는 먼저 C++ 초기화 exit139가 발생했고, 동일 모델의16→8스레드 대조는 초기화를 지나갔지만 최대10.27mm/약3984N 접촉과17개 조기 분리로 제외됐다. 어느 것도 수확이나 실제 이동으로 세지 않으며 마지막 유효 부모는30 normal56.1초다. 17은 주줄기↔외부 송이 source 검사는 맑았으나, 실제 첫 idle 스텝에서 낮은 비선택Truss00 Fruit10↔CoirSlab 9.4077mm 및 Fruit10/08 조기 분리로 미사용 제외됐다. 이 범위 누락을 반영해24의 전체10과실을1097개 구조물(coir/growbag/wire/gutter 포함), 자체/외부 과실·주줄기와 비교했다. 요청 범위의 source 겹침 증거0으로24의 기존 행 실행을 진행 중이며, 새 native 초기 유효성은 별도 요구한다.
+- 연속 운전의 공통 제어 문제도 발견했다. 8개 정상 실행의 getter 목표값/실제q/명령을 대조하면 매 scan 종료에서 lift가 원래 drive 목표보다 약8.315mm 낮고, 다음 구간/수확 suffix가 그 측정값을 새 목표로 재사용한다. 따라서 22 시작0.177236m→30 종료0.027565m로 정지 높이가 누적 하강했다. 고의 리프트 이동이나 물리 관통이 아니라 반복된 setpoint 재기준화 문제이며, 원본은 보존했다. `--retain-lift-drive-reference` opt-in이 검증된 getter 목표−측정 위치 차이를 lift 명령에 한 번만 더하고, 별도 `desired_command`와 실제 `command`를 저장한다. 이 모드는 물성/강성/초기 상태를 바꾸지 않는다. 기존24 이동·스캔은 변경 전 코드이며, 새 실제 후속에서 보정·물리 결과를 검증 중이다.
+- 24는 초기3초 native 검사와35.833초 실제 이동·스캔을 정상 완료했지만 수확 후보11개는7 IK 미발견/3 준비 중 양의 간격 부족/1 주줄기 woody stub 충돌로 막혔다. 최신 정상 부모는24 CP000(`45dc0dd6…`)이다. depth35→15mm의 단일 얕은 진입은 전체 self2537표본 PASS 뒤 덮개↔주줄기로 막혔다. 후속 native에서 L/part_209·R/part_331의 실제 볼록 조각32개를 모두 읽었다. 동일 원본/reader SHA에 결합된 이 형상으로 재검사해도 위쪽 집단의 덮개↔주줄기 충돌은 남는다. source envelope의 거짓 차단이라고 단정하지 않는다. 물리 충돌체/마진/1mm 기준은 변경하지 않았다.
+- `continuous_camera_native_covers24`의 새 lift-reference 실행은 **소프트웨어 오류로1.45초/88실제 표본 뒤 중단**됐다. CPU `torch.as_tensor(q0)`와 NumPy 초기 q0가 메모리를 공유하여 보정값을 매번 누적했다. 세 생성 경로의 opt-in 버퍼에 `q0.copy()`를 적용했고 실제 CPU Torch 반복쓰기2회귀를 통과했다. 원본 부분 trace·오류·해시는 그대로 보존한다. 이 실패에는 완전한 native qvel checkpoint가 없으므로 후속을 그 마지막 상태에서 연속 재개했다고 주장하지 않는다. 재시도는 마지막 정상24 CP에서 분기하는 **별도 진단 시험**으로 표시하고 웹에도 분기를 공개한다. 아직 수정 후 native 완료 검증이나 여섯 번째 송이 실적은 없다.
+- `--camera-ik-seed-indices`는 기존9개 IK seed 중 명시 목록만 같은 총12제안 예산 안에서 유한 순회한다. heading/seed별 거절 집합·fingerprint를 분리하며 기본 단일 seed 순서는 보존한다. 추가 대안들은 실패도 모두 보존했다. 1mm **계획 여유** counterfactual도 이후0.879mm로 막혔고, 해당 준비 끝점은 실제 자기 교차가 있어 운영2mm 계획 기준을 완화하지 않았다.
+- 정상25→준비 중 옆24의 woody pruned stub가 턱을96→86.914mm로 밀어 진입 전에 정지한 이력도 보존한다. 잎으로 취급하지 않았다. `terminal25_recovery`가 그 마지막16.5초 상태의 실제 경로를 역행해11.5167초 정상 복귀했다. 이전 좋은 checkpoint로 되감지 않았다.
+- 31/21의 미사용 장면 초기 실패는 source 과실↔와이어/다른 과실의 실제 초기 겹침과 대응한다. startup CLI 오류·센서 오류·IK/자가충돌/환경 충돌·불완전 검사를 구분하며, finite failure를 절대 수확 불가능으로 바꾸지 않는다. unused probe는 실제 수확/이동 이력의 상태로 채택하지 않는다.
+- 웹 `http://lab.farmily.ai:8090/gripper-design/?tab=replay`의 오른쪽 PIP RGB/GT/Depth는 실제 촬영 timestamp를 사용하고 미래 프레임을 표시하지 않는다. 시험 묶음/구간/순차 재생/실패 로그 첨부를 지원한다. 전체 농장 model cache는 활성+현재 loading만 보존한다. **웹은 실제 저장 상태 재생이며 새 physics가 아니다.** 카메라2Hz와 실제 상태60Hz를 구분한다.
+- 상태 인계는 실제 로봇·제어기·분리 과실을 이어받고, 지나간 부착 식물은 측정 변형 상태로 동결하는 기존 active-window 근사다. PhysX 인스턴스/접촉 캐시는 구간마다 재시작한다. 하나의 persistent solver 실행이나 전체 주변 식물 탄성화를 주장하지 않는다.
+- 원자료 `/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign`. `camera_campaign_report.py DATA_ROOT`로 전체 실제/실패 JSON·HTML을 갱신한다. `final_web_drafts`의 목표/영상/아카이브는 **실제6개 실적과 모든 실행 terminal**이 확인된 뒤 게시한다. 큰 자산/배열/영상은 NAS·웹 assets에 보존하며 Git 제외다.
+- alias 수정 뒤 현재 관련 회귀385실행/383통과/Torch 없는 asset환경2skip(`post_alias_core_regressions.log`), 실제 CPU Torch에서는 해당2개 PASS(`real_torch_lift_reference_alias_regression.log`)다. 이전 다른 모듈 집합371실행/364통과/Isaac 전용7skip 기록도 보존한다. 반복 검사는 고유 테스트 수로 합산하지 않는다. PIP/선택/순차재생/분기표시 JavaScript38검사 PASS. 실제 브라우저 예비7항목도 PASS(오른쪽PIP·RGB/GT/Depth·실제22→28전환·한 모델 cache·오류0). 최종 기본 시험 묶음·순차 재생 검사는 실제6송이와 모든 physics 종료 뒤 수행한다.
+- 현재25의 실제50.5sim초 루프는372.45wall초(0.136RTF)이며 planning124.04초+촬영183.07초가82.5%다. simulate/fetch54.18초만 따로 보면0.932RTF다. 이 수치는 전체 운영 실시간 달성이나 이전 Newton GPU 성능으로 해석하지 않는다.
+- `training_eligible=false`, `harvest_success=null`; native 연결 분리·송이 전체 수확·포집·실물 성공을 구분한다. 이번 변경은 아직 커밋하지 않았다.
+
 # Farmily Tomato 작업 인수인계
+
+## 2026-10-22: 카메라에 보이는 모델 GT 마스크·인식/깊이 표시
+
+- 사용자가 이제 모델의 알려진 객체 정보를 이용한 마스크 표시를 요청했다. 기존 RGB-D 전용 저장은 유지하고 `--capture-gt` / `./nvidia-sim/run_s300_harvest.sh rgbd-gt`를 추가했다. 분류 신경망 없이 Replicator visible instance ID를 실제 USD mesh/sourceName에 연결한다. 기존 원본 scene/물리/카메라/재질은 편집하지 않는다.
+- `mounted_gt.py`: 전체 농장 instanced mesh와 활성 식물의 변형 skin을 함께 읽는다. `semantic.npy`(uint8 종류), `instance.npy`(uint32 안정 객체 ID), renderer 원본 ID/경로 대응, `objects.json`, `gt_catalog.json` 저장. 열매는 plant/truss/Fruit ID로 구별하고, 주줄기·Rachis·pedicel·peduncle·calyx·잎·거터·레일·구조물·로봇을 구분한다.
+- RGB/Recognition/Depth Overlay3화면을 `analysis.png`/`analysis.mp4`/`rgbd/index.html`로 저장한다. 작은 제목·열매 corner box, 줄기 초록색, 깊이 고정0.1~2m 색상표시(원본0.1~5m)를 사용한다. 과실 색상은 USD authored RGB proxy이며 생물학적 숙도나 수확 가능성 판단이 아니다.
+- 카메라에 실제 보이는 픽셀만 저장한다. 가려진 부분을 채우지 않으며 박스는 보이는 부분의 외곽이다. 3D 좌표는 visible depth 표면 중앙값이지 전체 열매 중심이 아니다. 수확 영역 선택/도달성/동작 순서는 아직 결정하지 않는다. `training_eligible=false`, `harvest_region_selected=false`.
+- 회귀9개와 1m/2m 깊이·객체종류·완전가림·부분가림·화면밖 대조PASS. 원자료 `/root/docker_share/mujoko_debugging_data/20261022_072000_mounted_gt/index.html`. 최종 GT 승강23초47쌍도 기존 RGB-D 실행과 전체 상태·명령 정확일치,47프레임 전체 픽셀 ID/클래스/카메라시각 대조PASS. 후처리 벡터화는 동일 프레임 출력 정확일치,2.081→0.221초(물리 전체 가속 수치가 아님). 최종 native loop130.98초/0.176RTF이며 촬영·파일저장 평균1.35초/프레임이 남는다. 최종 자료는 `lift_gt_final/rgbd/`, 작은 검증은 `nvidia-sim/validation/s300_mounted_gt.json`.
+- 현재 native Isaac 센서 시험이며 Newton GPU 실행기의 GT 연결과 카메라 기반 수확 알고리즘은 미검증이다. 기존 웹 조립/과거 재생 및 기존 수확 학습 데이터는 변경하지 않았다.
+
+## 2026-10-22: RB5 하단 관절 세로 RGB-D 카메라
+
+- 사용자 표시 위치인 `link1` 바깥쪽(+Y) 원형 커버에 원본 D435 외형을 세로로 부착했다. 베이스 yaw/리프트/기체 이동을 따르고 어깨 pitch에는 돌아가지 않는다. 실제 준비 자세에서 왼쪽 작물을 바라본다. 장착 브래킷·카메라는 visual-only이며 기존 물리 바디·조인트·충돌체2630개 속성/변환 동일; 카메라 하드웨어 무게/충돌 인증은 아니다.
+- `DISPLAY=:0 ./nvidia-sim/run_s300_harvest.sh rgbd-test` → 로딩 후 START. 기존 native Isaac 승강 실행기에 촬영을 opt-in 연결했다. GUI의 `RGB-D view` 버튼으로 Robot/RGB-D 시점을 선택한다. `--headless`로 화면 없이도 RGB-D를 렌더/저장한다. `--physics-only`와 촬영을 함께 쓰면 거부한다. 새 기본 장면은 `20261022_065240_shoulder_rgbd/assembly_exposure`이며 기존 경로는 `S300_ISAAC_ASSEMBLY`로 지정 가능하다.
+- `mounted_rgbd.py`: 기존 69.4° landscape RGB FOV 근사를 세로480×640으로 회전, 이상적인 aligned RGB/optical-Z depth(m,float32,무효NaN)를 저장한다. depth 범위0.1~5m, 별도 segmentation/mask 없음. RGB는 렌더러 ISO100→400(+2EV), depth는 동일이다. 프레임마다 K/실제 world_from_camera_optical/로봇q/physics step/timestamp를 저장한다. 실제 D435 stereo matching·noise·노출시간 모션블러·장치 보정은 미구현이다.
+- PhysX Fabric이 움직이는 부모 밑 USD 카메라 좌표 갱신을 놓치는 문제를 검출했다(8.47mm). 실제 측정된 link1 자세×고정 장착변환으로 world 렌더 카메라를 동기화하며 GT 타깃을 향해 카메라를 임의 회전하지 않는다. Replicator `delta_time=0` 촬영 전후 physics step/time 동일을 강제한다. 카메라 좌표를 렌더러와 매 프레임 대조한다.
+- 23초/120Hz 승강을 실제 Isaac6.1 PhysX CPU로 완료, 2Hz RGB-D47쌍(0~23초), 전체 native 상태/명령/timestamp가 카메라 없는 이전 시험과 정확 일치했다. 렌더 카메라 변환오차 최대4.44e−16, 유효 depth 비율 최소99.595%。1m/2m 기준판 깊이 및 RGB 방향/위치 검사PASS, 관련10개 회귀PASS.
+- 최종 loop118.58초에는 최초 센서 캡처46.06초가 포함됐다. 이후46회 캡처 합11.42초; 최초 캡처를 뺀 루프 약0.317RTF. 이 native RGB-D 시험은 기존 Newton GPU 수확 속도 결과를 대체하지 않는다. Newton GPU 실행기 센서 연결/카메라 기반 수확 알고리즘/ROS 전송은 이번에 검증하지 않았다.
+- 원자료·미완료 시험·영상: `/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/index.html`. 최종 `lift_rgbd_final/rgbd/`, 작은 증거 `nvidia-sim/validation/s300_mounted_rgbd.json`. 기존 수확 데이터에 섞지 않았고 `training_eligible=false`다.
+
+## 2026-10-22: 실제 리프트 수정 모델을 Isaac 실행기에 연결
+
+- 브랜치 `codex/s300-isaac-real-lift-20261022`, 시작점 `74a9098915fd4d052716ce7e7ecb82a03bd87c89`. 웹과 같은 실제 받침판·뒤쪽 승강판·삼각 브래킷이 RB5·그리퍼와 함께 움직이고 기둥·기체는 고정된다. 새 `motion_assets.build()`에도 동일 수정기를 연결했다. 기존 수확 결과와 Newton GPU 입력은 덮어쓰지 않았다.
+- `DISPLAY=:0 ./nvidia-sim/run_s300_harvest.sh lift-test`로 전체 농장 안에서 실제 Isaac 승강을 확인한다. 로딩 뒤 `START`를 눌러 시작하고 완료 후 창은 유지된다. 새 결과 폴더에 저장한다. `real-lift`는 수정 모델 보기, `lift-test --headless --physics-only`는 화면 없는 검사다. 환경변수 `S300_ISAAC_ASSEMBLY`/`S300_ISAAC_OUTPUT`으로 경로를 지정할 수 있다.
+- 최종 사용 장면은 이전 native 수확 완료 이력이 있는 **전체 농장 외형 + 활성 식물1개**의 수정본 `20261022_062713_isaac_real_lift/assembly_verified_scene`이다. 처음 사용한 탄성 식물3개 장면은 Plant29 줄기↔Plant30 송이의 초기 겹침1.383mm로 중단했고, 그 실패도 별도 보존했다. 임계값을 늘리거나 동일 작업량인 것처럼 비교하지 않았다.
+- Isaac Sim6.1 / PhysX CPU TGS /120Hz/16threads에서 상승→유지→하강→복귀23초를 headless·GUI 각각 완료했다. 두 실행의 전체 저장 timestamp/pose/q/명령과 분리 기록이 정확히 일치한다. 감시 대상 관통0, 새 분리0, 사전·실제 팔 자기충돌 검사 통과. 실제 승강량 약41.5~691.5mm, 기존 유한 구동기의 정지 높이오차 약8.5mm는 남는다. 기구 검증이며 수확 성공 시험은 아니다.
+- 이번 native 속도는 headless0.430RTF, GUI0.149RTF다. 이전 Newton GPU 속도 개선 결과를 대체하지 않으며 **수정 모델의 Newton GPU 수확 입력 재생성/경로 재검증은 미완료**다. 기둥 고정/받침대 연동을 검증했지만 나머지 리프트 CAD는 이전처럼 visual-only이고 실물 스트로크·질량 인증도 아니다.
+- native materialized USD 선택, 원본 SHA가 같은 아카이브 자산 경로, 이웃 관절 armature 판독을 수정했다. 실제 USD 값을 읽을 뿐 물성은 바꾸지 않는다. 관련24개 회귀 통과. 작은 결과는 `nvidia-sim/validation/s300_isaac_real_lift.json`, 전체 로그·상태·영상은 `/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/`에 있다.
 
 ## 2026-10-21: 농장·수확 동작 웹 재생 탭
 

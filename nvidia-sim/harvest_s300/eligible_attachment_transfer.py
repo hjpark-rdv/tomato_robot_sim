@@ -53,6 +53,10 @@ def apply_transfer(stage,manifest,metadata,inventory,*,truss_index=1,selection_p
     selected=[fruit['name'] for fruit in chosen]
     if set(selected)&{row['name'] for row in template['joints']}:
         raise ValueError('Refusing to reconfigure an already revised target-neck joint')
+    target=manifest.get('target',{})
+    selected_target=next((fruit for fruit in chosen if fruit['name']==target.get('name')),None)
+    if selected_target is not None and any(target.get(key)!=selected_target[key] for key in ('path','joint')):
+        raise ValueError('Selected transfer target has an inconsistent exact fruit/joint identity')
     # Verify every break relation before any mutation. Original break callbacks
     # are inventory proof, not newly emitted callbacks in the revised run.
     for path in broken:
@@ -65,6 +69,8 @@ def apply_transfer(stage,manifest,metadata,inventory,*,truss_index=1,selection_p
     before={fruit['joint']:_joint_snapshot(stage.GetPrimAtPath(fruit['joint'])) for fruit in fruits}
     transferred=_apply_attachment_template(stage,manifest,template,selected_names=selected,
         selection_provenance=selection_provenance)
+    if selected_target is not None:
+        target.update(break_force_n=APPROVED_FORCE_N,break_torque_nm=APPROVED_TORQUE_NM)
     for path in broken:UsdPhysics.Joint(stage.GetPrimAtPath(path)).CreateJointEnabledAttr(False)
     changed=[fruit['joint'] for fruit in chosen]
     for path,snapshot in before.items():

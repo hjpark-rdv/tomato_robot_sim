@@ -3,11 +3,33 @@ import json
 import os
 from pathlib import Path
 import unittest
+import tempfile
 
 import numpy as np
 from pxr import Usd, UsdGeom, UsdPhysics
 
-from real_lift_mount import ROBOT, PLATFORM, LIFT_MESH, apply, matrix, components
+from real_lift_mount import ROBOT, PLATFORM, LIFT_MESH, apply, matrix, components, resolve_carrier_archive, sha
+
+
+class CarrierArchiveTests(unittest.TestCase):
+    def test_relocation_requires_same_recorded_source(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)/'data';original=root/'run/assembly'
+            backup=Path(folder)/'data_bak/run/assembly';backup.mkdir(parents=True)
+            source=backup/'scene.usda';source.write_text('#usda 1.0\n')
+            manifest={'rail_chassis_body':dict(source_assembly=str(original),source_scene_sha256=sha(source))}
+            resolve_carrier_archive(manifest,root)
+            self.assertEqual(manifest['rail_chassis_body']['source_assembly'],str(backup))
+            wrong={'rail_chassis_body':dict(source_assembly=str(original),source_scene_sha256='bad')}
+            with self.assertRaises(ValueError):resolve_carrier_archive(wrong,root)
+
+    def test_existing_source_is_not_redirected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)/'data';original=root/'assembly';original.mkdir(parents=True)
+            (original/'scene.usda').write_text('#usda 1.0\n')
+            manifest={'rail_chassis_body':dict(source_assembly=str(original))}
+            resolve_carrier_archive(manifest,root)
+            self.assertNotIn('real_lift_source_archive',manifest)
 from motion_kinematics import ToolKinematics
 
 
@@ -59,6 +81,14 @@ class LiftMountIntegration(unittest.TestCase):
     def test_double_correction_rejected(self):
         with self.assertRaisesRegex(ValueError,'already present'):
             apply(self.corrected)
+
+    def test_native_materialized_model_has_same_carriage(self):
+        from native_stage_selection import select_native_scene
+        selected=select_native_scene(os.environ['S300_LIFT_CORRECTED'],use_materialized=True)
+        stage=Usd.Stage.Open(selected['native_scene'])
+        self.assertEqual(selected['mode'],'verified_materialized_direct')
+        for row in self.report['components']:
+            np.testing.assert_array_equal(matrix(stage,row['path']),matrix(self.corrected,row['path']))
 
 
 if __name__=='__main__':unittest.main()

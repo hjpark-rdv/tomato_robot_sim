@@ -107,6 +107,66 @@ class NativeRouteStartTests(unittest.TestCase):
         self.assertFalse(report['new_active_plant_native_state_set']);self.assertFalse(report['new_active_plant_preload_set'])
         self.assertEqual(report['new_active_rest_diagnostics']['bodies'][0]['measured_initial_velocity_world'],[1.,2.,3.,4.,5.,6.])
 
+    def test_opt_in_unharvested_plant_restores_q_preload_and_freeze_zero_velocities(self):
+        context=self.prepare();robot=Articulation(self.names)
+        plant=Articulation(['new_leaf:0','new_leaf:1'])
+        oldpose=np.array([[3.2,4.3,5.4,0.,0.,0.,1.]])
+        context['unharvested_reactivation']=dict(arrays=dict(body_paths=np.array([self.old_fruit]),
+            body_poses_world=oldpose,body_velocities_world=np.ones((1,6)),plant_dof_names=np.array(plant.shared_metatype.dof_names),
+            plant_q=np.array([.2,.3]),plant_qvel=np.array([.04,.05]),preload=np.array([.07,.08])),
+            proof=dict(active_root='/World/ElasticTarget'),standalone_fruit_paths=[self.old_fruit])
+        context['standalone_paths'].append(self.old_fruit)
+        paths=[self.base,self.carrier,self.tool,self.old_fruit,self.frozen]
+        bodies=Bodies(paths,np.vstack([self.poses,self.poses[-1]]),np.vstack([self.velocities,self.velocities[-1]]))
+        report=apply_route_start(context,robot,plant,bodies)
+        np.testing.assert_array_equal(plant.q,[[.2,.3]]);np.testing.assert_array_equal(plant.qvel,[[0.,0.]])
+        np.testing.assert_array_equal(plant.preload,[[.07,.08]])
+        np.testing.assert_array_equal(bodies.poses[3],oldpose[0]);np.testing.assert_array_equal(bodies.velocities[3],np.zeros(6))
+        self.assertTrue(report['new_active_plant_native_state_set']);self.assertTrue(report['new_active_plant_preload_set'])
+        self.assertEqual(report['unharvested_reactivation']['native_body_count'],1)
+        self.assertEqual(report['unharvested_reactivation']['native_q_max_abs_error'],0.)
+        self.assertFalse(report['unharvested_reactivation']['fruit_resurrected'])
+        self.assertEqual(report['max_position_error_m'],0.)
+        # Other plants' detached fruit still uses the CURRENT parent state.
+        np.testing.assert_array_equal(bodies.poses[4],self.poses[-1])
+
+    def test_reactivation_pose_mismatch_remains_a_real_failure_in_existing_guard_metrics(self):
+        context=self.prepare();plant=Articulation(['new_leaf:0','new_leaf:1'])
+        archived=dict(body_paths=np.array([self.old_fruit]),body_poses_world=np.array([[8.,9.,10.,0.,0.,0.,1.]]),
+            plant_dof_names=np.array(plant.shared_metatype.dof_names),plant_q=np.array([.2,.3]),preload=np.array([.07,.08]))
+        context['unharvested_reactivation']=dict(arrays=archived,proof=dict(active_root='/World/ElasticTarget'))
+        paths=[self.base,self.carrier,self.tool,self.old_fruit,self.frozen]
+        bodies=Bodies(paths,np.vstack([self.poses,self.poses[-1]]),np.vstack([self.velocities,self.velocities[-1]]))
+        # No standalone authorization for this body: native FK must reproduce
+        # its archived pose; it must not receive a direct transform write.
+        report=apply_route_start(context,Articulation(self.names),plant,bodies)
+        self.assertGreater(report['max_position_error_m'],1e-4)
+        self.assertEqual(report['unharvested_reactivation']['native_body_count'],1)
+        self.assertNotIn(paths.index(self.old_fruit),bodies.set_rows[0])
+
+    def test_prepare_reactivation_revalidates_archive_and_rejects_any_prior_break(self):
+        self.manifest['plant']['fruits']=[dict(path=self.old_fruit)]
+        archived_arrays=dict(body_paths=np.array([self.old_fruit]),body_poses_world=self.poses[-1:,:].copy(),
+            plant_dof_names=np.array(['new_leaf:0','new_leaf:1']),plant_q=np.array([.1,.2]),
+            plant_qvel=np.array([.03,.04]),preload=np.array([.05,.06]))
+        archived_meta=dict(scene_sha256='c'*64,metadata_sha256='d'*64,time_s=40.,
+            source_plant=self.manifest['plant']['source_plant'],manifest=dict(plant=copy.deepcopy(self.manifest['plant'])),
+            break_events=[],sequence=copy.deepcopy(self.metadata['sequence']))
+        proof=dict(schema='s300-unharvested-frozen-reactivation-v1',source_plant=self.manifest['plant']['source_plant'],
+            active_root='/World/ElasticTarget',native_break_count=0,native_state_restore_required=True,
+            checkpoint=str(self.root/'archive'),source_scene_sha256='c'*64,checkpoint_metadata_sha256='d'*64,
+            archived_plant_dof_names=archived_arrays['plant_dof_names'].tolist(),archived_plant_q=[.1,.2],
+            archived_preload=[.05,.06],restored_plant_qvel=[0.,0.])
+        self.manifest['route_checkpoint']['unharvested_reactivation']=proof
+        def load(path,**kwargs):
+            return (archived_meta,archived_arrays) if str(path)==proof['checkpoint'] else (self.metadata,self.arrays)
+        with patch('native_route_start.load_checkpoint',side_effect=load):
+            context=prepare_route_start(self.stage,self.assembly,self.manifest)
+            self.assertEqual(context['unharvested_reactivation']['standalone_fruit_paths'],[self.old_fruit])
+            archived_meta['break_events']=[dict(joint='/old/fruit',t=1.)]
+            with self.assertRaisesRegex(ValueError,'resurrected'):
+                prepare_route_start(self.stage,self.assembly,self.manifest)
+
     def test_rail_rebase_is_exact_documented_coordinate_change(self):
         self.manifest['rail']['checkpoint_rebase']['previous_native_q_m']=.8
         with self.assertRaisesRegex(ValueError,'measured source q'):self.prepare()

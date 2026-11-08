@@ -1,0 +1,181 @@
+{
+  "schema": "s300-source-initial-plant-recovery-preparation-v1",
+  "assets": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/assembly_active_plant_only",
+      "source_plant": "/World/Greenhouse/Plants/Plant_22",
+      "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed_sha256": "88dab65148af58f543f5efb191a0821e516c11eb20eb041271e3c19d80487c13",
+      "manifest_sha256": "17a7b2d9737f1ea7ca1cdc8f52d79282d55950e230a9c48d728ad34281e36e7d",
+      "interaction_mode": "active_plant_and_own_stem_only",
+      "layout_revision": null,
+      "native_validation": "pending",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/assembly_with_layout_repairs",
+      "source_plant": "/World/Greenhouse/Plants/Plant_22",
+      "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed_sha256": "15da196e66a58698d4e8ddc017d4a9d69a83ed3cd60d655dea5f61a58b317720",
+      "manifest_sha256": "d066915976752275a42d4825a0af4459aa66e0216802c20099ac0ed4b9eada15",
+      "interaction_mode": "active_plant_and_own_stem_only",
+      "layout_revision": {
+        "plant17_translation_world_m": [
+          0.015,
+          0.0,
+          0.0
+        ],
+        "plant21_truss02_yaw_world_z_deg": 15.0,
+        "plant18_truss02_yaw_world_z_deg": null,
+        "all_world_vertices_checked": 643809,
+        "world_vertex_rigid_transform_max_error_m": 2.220446049250313e-16,
+        "attachment_pivot_error_m": 1.5700924586837752e-16,
+        "plant18_attachment_pivot_error_m": null,
+        "all_other_authored_fields_exact": true
+      },
+      "native_validation": "pending",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/assembly_with_layout_repairs_x18",
+      "source_plant": "/World/Greenhouse/Plants/Plant_22",
+      "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed_sha256": "706435925b7645bd565cd2b74cda7e2468cee5957f3a7961f4d446db2e721933",
+      "manifest_sha256": "c7b40ddd3feaa163a4764e388ee87fe1ee4d661f30cc11086fa49da7f3b89c0e",
+      "interaction_mode": "active_plant_and_own_stem_only",
+      "layout_revision": {
+        "plant17_translation_world_m": [
+          0.018,
+          0.0,
+          0.0
+        ],
+        "plant21_truss02_yaw_world_z_deg": 15.0,
+        "plant18_truss02_yaw_world_z_deg": null,
+        "all_world_vertices_checked": 643809,
+        "world_vertex_rigid_transform_max_error_m": 2.220446049250313e-16,
+        "attachment_pivot_error_m": 1.5700924586837752e-16,
+        "plant18_attachment_pivot_error_m": null,
+        "all_other_authored_fields_exact": true
+      },
+      "native_validation": "pending",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/plant20_active_plant_only",
+      "source_plant": "/World/Greenhouse/Plants/Plant_20",
+      "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed_sha256": "0bda87641977f8ceb5bfbd712cbe3662af93983e16f39961cd07dd9281c5eed5",
+      "manifest_sha256": "b6d141054128bf3b06e43f46f3b6962576c3308f590ee707ccc0bfe0ba386146",
+      "interaction_mode": "active_plant_and_own_stem_only",
+      "layout_revision": null,
+      "native_validation": "pending",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/plant20_active_plant_layout_v3",
+      "source_plant": "/World/Greenhouse/Plants/Plant_20",
+      "scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+      "composed_sha256": "7da20ff20d79c891a187816fadf0708518f28d5f233ef737fe163862d8b41f20",
+      "manifest_sha256": "e180dc7c779daba6eada6535805565f8727ad634e7223de46b26716b12de0a01",
+      "interaction_mode": "active_plant_and_own_stem_only",
+      "layout_revision": {
+        "plant17_translation_world_m": [
+          0.018,
+          0.0,
+          0.0
+        ],
+        "plant21_truss02_yaw_world_z_deg": 15.0,
+        "plant18_truss02_yaw_world_z_deg": -15.0,
+        "all_world_vertices_checked": 752198,
+        "world_vertex_rigid_transform_max_error_m": 3.3306690738754696e-16,
+        "attachment_pivot_error_m": 1.5700924586837752e-16,
+        "plant18_attachment_pivot_error_m": 1.1102230246251565e-16,
+        "all_other_authored_fields_exact": true
+      },
+      "native_validation": "pending",
+      "training_eligible": false,
+      "harvest_success": null
+    }
+  ],
+  "diagnostic_inputs": {
+    "plant17_structural": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/plant17_all_structural_collision_pairs_x20_assessment.json",
+      "sha256": "584d846a6f9d809c122dd665509a40e5fb46296234a2e957da7daa37bc4f45a3"
+    },
+    "plant17_root_substrate": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/plant17_root_substrate_x18_assessment.json",
+      "sha256": "f86cdda552072856c022d784efe54e584411c9ee558a30302600bdc6fe0d1f9b"
+    },
+    "plant18_own_pairs": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/plant18_all_active_collision_pairs_yaw_assessment.json",
+      "sha256": "4453b53dee65d5e55fa4b11b5392395691a43775379fb9d54ae8a46ceea31c73"
+    },
+    "plant21_own_pairs": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/plant21_all_active_collision_pairs_yaw_assessment.json",
+      "sha256": "50313956675c6d444a5b6313d361ed8d76a35dfdb94569fc0c12d4c25f9f5e98"
+    },
+    "authored_vs_warmup": {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/source_initial_pair_geometry_review.json",
+      "sha256": "4073b2bc8dfa3cc0fd5f63a5e704ed42c6e71decfc8bc6627dc00fbfdd63e38e"
+    }
+  },
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/plant_interaction_variants.py": "455a331b8ef069bc91806d277cbe73cff42371eb343e0438d190f4e5ebaf59be",
+    "nvidia-sim/harvest_s300/test_plant_interaction_variants.py": "3cbf19973cc0f5ebdc7d161eb3c961d338b097e45aa8c4aaaad2ad4316113a21",
+    "nvidia-sim/harvest_s300/source_plant_layout_revision.py": "4c2a52f0507192b4a3052aeedb8df594178cccf2e768371bcca73ab214afb6d8",
+    "nvidia-sim/harvest_s300/test_source_plant_layout_revision.py": "788f17a3c53dc3da0b90c475749080ad89595730f32f7f1ad26e30475a0aa02e",
+    "nvidia-sim/harvest_s300/motion_replay_clip.py": "c5b9729e4b585a4b8f89ccde2f59233dd367e30095cfab06ef3f3693cacb0d18"
+  },
+  "regression_tests": {
+    "command": "/root/farmily_tomato/nvidia-sim/.asset-venv/bin/python -m unittest test_source_plant_layout_revision test_plant_interaction_variants test_motion_replay_clip -q",
+    "workdir": "/root/farmily_tomato/nvidia-sim/harvest_s300",
+    "passed": 25,
+    "failed": 0
+  },
+  "selected_placement_repairs": {
+    "plant17": {
+      "world_translation_m": [
+        0.018,
+        0,
+        0
+      ],
+      "structural_pair_checks": 5640,
+      "relevant_structural_colliders": 24,
+      "additional_far_structural_clear_aabb": 1072,
+      "deep_dynamic_pairs_original": 5,
+      "deep_dynamic_pairs_after": 0,
+      "remaining_pairs_are_fixed_root_substrate": 2,
+      "root_x_radius_margin_m": 0.0016218214322097973
+    },
+    "plant18": {
+      "truss": "Truss_02",
+      "world_z_yaw_deg": -15,
+      "checked_pairs": 27249,
+      "deep_pairs_before": 3,
+      "deep_pairs_after": 0,
+      "remaining_intratruss_pairs": 2
+    },
+    "plant21": {
+      "truss": "Truss_02",
+      "world_z_yaw_deg": 15,
+      "checked_pairs": 27249,
+      "deep_pairs_before": 7,
+      "deep_pairs_after": 0,
+      "remaining_intratruss_pairs": 2
+    }
+  },
+  "interpretation": [
+    "Explicit collision scope experiment: all current plant trusses/stem remain physical; other plant contacts omitted. Not obstacle avoidance success in old all-plants environment.",
+    "Source repairs affect only uninitialized source Xforms. Normalized complete canonical comparison preserves all other authored fields including current active plant/robot/joints/materials.",
+    "Existing FCL source capsule/convex/triangle diagnostics are not native PhysX validity or harvest success.",
+    "Original scenes, failed runs, rejected placement variants preserved. Never rewrite an old checkpoint to match new model.",
+    "Generate fresh exact-model native completed checkpoint, or use separately verified explicit model-revision continuation. Old conditioned-start permission is insufficient."
+  ],
+  "native_runs_performed_by_preparation_agent": 0,
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -122,6 +122,10 @@ def scoped_plan(plan, scope):
     if scope not in ('rail', 'preparation', 'full'):
         raise ValueError('Environment scope must be rail, preparation or full')
     phases = plan.get('phases', [])
+    if plan.get('terminal_forward_suffix')is not None and scope=='preparation':
+        # The verified terminal source clock is already inside cycle_open.
+        # No old preparation commands are re-audited or re-executed.
+        return None
     if scope == 'rail':
         indices = [i for i, p in enumerate(phases) if p.get('name') == 'rail_move']
         if not indices:
@@ -299,11 +303,45 @@ def verified_release_context(stage, manifest, checkpoint_proof, *, collection_en
                     released_fruit_physics_verified=False, physics_response_unchanged=True))
 
 
-def verify_initial_alignment(checker, plan, manifest, checkpoint_poses=None, tolerance_m=1e-4):
+def verify_initial_alignment(checker, plan, manifest, checkpoint_poses=None, tolerance_m=1e-4,
+                             *, checkpoint_robot_state=None):
     """Reuse native FK positional tolerance; never align by changing geometry."""
-    phase = plan['phases'][0]; q = np.asarray(phase['waypoint_q'][0], float)
+    phase = plan['phases'][0]
+    retained=plan.get('retained_camera_arm_hold')
+    if retained is not None and retained!=(checkpoint_robot_state or {}).get('verified_camera_arm_hold'):
+        raise ValueError('Measured camera alignment requires a verified distinct native hold command')
+    q = np.asarray(plan['start']if plan.get('terminal_forward_suffix')is not None or retained is not None else phase['waypoint_q'][0], float)
     rail = initial_plan_rail_position(plan)
     predicted = checker.poses(q, .044, rail_position_m=rail)
+    # The physical rail's world-fixed anchor is not part of the translating
+    # platform. It has no collision geometry; retain an exact authored-frame
+    # check rather than treating its unchanged native pose as a double shift.
+    anchor = manifest['rail'].get('anchor_body')
+    stationary_anchor = None
+    if anchor in checker.bodies:
+        if any(shape['body'] == anchor for shape in checker.shapes):
+            raise ValueError('Stationary rail anchor has collider geometry outside moving-FK representation')
+        predicted[anchor] = checker.rest[anchor].copy()
+        stationary_anchor = anchor
+    # FK's gap argument assumes symmetric jaws. A resumed native checkpoint can
+    # have an open or asymmetric measured configuration, so use each actual DOF
+    # for its exact owner rather than fitting a gap to measured body positions.
+    jaw_owners = {name:('/World/ActuatedTool/'+side, '/World/ActuatedTool/'+side+'_belt')
+                  for name, side in (('jaw_L', 'L'), ('jaw_R', 'R'))}
+    represented_jaws = {name:tuple(body for body in bodies if body in checker.bodies)
+                        for name, bodies in jaw_owners.items()}
+    represented_jaws = {name:bodies for name, bodies in represented_jaws.items() if bodies}
+    measured_jaws = {}
+    if checkpoint_poses is not None and represented_jaws:
+        state = (checkpoint_robot_state or {}).get('initial_jaw_q_m', {})
+        for name, bodies in represented_jaws.items():
+            value = state.get(name)
+            if value is None or isinstance(value, bool) or not np.isfinite(float(value)):
+                raise ValueError('Measured start lacks finite actual checkpoint jaw DOFs: '+name)
+            measured_jaws[name] = float(value)
+            for body in bodies:
+                predicted[body] = predicted[body].copy()
+                predicted[body][:3, 3] += predicted[body][:3, 0]*float(value)
     base = manifest['rail']['base_body']
     expected = np.asarray(manifest['rail']['source_base_position_world_m'], float) + [0., rail, 0.]
     base_error = float(np.linalg.norm(predicted[base][:3, 3]-expected))
@@ -318,21 +356,36 @@ def verify_initial_alignment(checker, plan, manifest, checkpoint_poses=None, tol
             if body not in checker.bodies: continue
             errors[body] = float(np.linalg.norm(predicted[body][:3, 3]-checkpoint_poses[body][:3, 3]))
         if errors and max(errors.values()) > tolerance_m:
-            raise ValueError('Initial measured/FK pose mismatch; do not apply rail displacement twice')
+            worst = sorted(errors.items(), key=lambda item:item[1], reverse=True)[:3]
+            raise ValueError('Initial measured/FK pose mismatch; do not apply rail displacement twice; '+
+                '; '.join(body+' error_m='+str(error) for body,error in worst))
     return dict(source_base_error_m=base_error, measured_position_errors_m=errors,
+                stationary_noncollider_anchor=stationary_anchor,
+                measured_jaw_q_m=measured_jaws,
+                jaw_configuration_source='actual named checkpoint DOFs; independent local-X offsets' if measured_jaws else None,
                 numerical_fk_position_tolerance_m=tolerance_m,
                 rail_geometry_origin='measured rail_waypoint_positions_m; native drive targets unused',
-                geometry_shift_applied_once=True, measured_start_available=checkpoint_poses is not None)
+                geometry_shift_applied_once=True, measured_start_available=checkpoint_poses is not None,
+                **(dict(measured_state_distinct_from_retained_arm_command=True,
+                        retained_camera_arm_hold=retained) if retained is not None else {}))
+
+
+class FirstHardIntersection(RuntimeError):
+    """A recorded collision witness ends an explicitly requested short audit."""
 
 
 class RailEnvironmentCheck:
     def __init__(self, stage, manifest, moving, *, allowed_truss_key, checkpoint_poses=None,
                  max_distance_queries=200000, release_context=None, released_colliders=(), scope='rail',
+                 stop_on_first_hard_hit=False,
                  wheel_floor_overlap_limit_m=0.):
         if scope not in ('rail', 'preparation', 'full'):
             raise ValueError('Environment scope must be rail, preparation or full')
         if isinstance(max_distance_queries, bool) or not isinstance(max_distance_queries, (int, np.integer)) or max_distance_queries < 1:
             raise ValueError('Positive finite query budget required')
+        if type(stop_on_first_hard_hit) is not bool:
+            raise ValueError('stop_on_first_hard_hit must be an explicit boolean')
+        self.stop_on_first_hard_hit = stop_on_first_hard_hit
         self.moving = moving; self.fcl = moving.fcl; self.rows = []; self.objects = {}
         if not np.isfinite(wheel_floor_overlap_limit_m) or not 0 <= wheel_floor_overlap_limit_m <= .001:
             raise ValueError('Wheel/floor diagnostic must be within the approved 0..1mm limit')
@@ -427,7 +480,13 @@ class RailEnvironmentCheck:
     def prepare_path_sweep(self, plan, hz):
         """Bound every sampled joint arc using the existing exact sampler."""
         self.sample_schedule = []; elapsed = 0.
-        for phase in plan['phases']:
+        phases=plan['phases']
+        if plan.get('terminal_forward_suffix')is not None:
+            from motion_continuation import terminal_suffix_samples
+            self.sample_schedule=[(s['phase'],s['source_time_s'])for s in terminal_suffix_samples(plan,hz)]
+            phases=[]
+            self.metadata['path_sampling_scope']='Remaining original-clock suffix only; executed prefix excluded'
+        for phase in phases:
             duration = float(phase['duration_s'])
             if not np.isfinite(duration) or duration <= 0:
                 raise ValueError('Finite positive preparation duration required')
@@ -530,8 +589,8 @@ class RailEnvironmentCheck:
         return result
 
     def _check_configuration(self, q, gap, *, rail_position_m, candidates, phase,
-                             time_s, record, lifecycle_boundary=False):
-        poses = self.moving.poses(q, gap, rail_position_m=rail_position_m)
+                             time_s, record, lifecycle_boundary=False, measured_poses=None):
+        poses = self.moving.poses(q, gap, rail_position_m=rail_position_m)if measured_poses is None else measured_poses
         transforms = np.array([poses[b] for b in self.moving.bodies])[self.moving.body_ids]
         corners = np.einsum('nij,nkj->nki', transforms[:, :3, :3], self.moving.corners) + transforms[:, None, :3, 3]
         if lifecycle_boundary:
@@ -627,9 +686,14 @@ class RailEnvironmentCheck:
         if self.scope in ('preparation', 'full'):
             counts = item.setdefault('phase_sample_pairs', {})
             counts[self.current_phase] = counts.get(self.current_phase, 0)+1
+        if hard and self.stop_on_first_hard_hit:
+            # Preserve this exact FCL witness and its counters before stopping.
+            # The rest of this configuration and the path remain unexamined.
+            raise FirstHardIntersection('First recorded hard environment intersection')
 
 
-def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, scope='rail', native_hz=120):
+def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, checkpoint_robot_state=None,
+                     hz=120, scope='rail', native_hz=120):
     result = dict(schema='s300-rail-environment-preflight-v1', passed=False, complete=False,
                   status='inconclusive', scope='initial rail_move only', native_runs=0,
                   physics_unchanged=True, training_eligible=False, harvest_success=None,
@@ -637,6 +701,8 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
     if scope in ('preparation', 'full'):
         result.update(scope='all existing phases before first approach', requested_hz=hz,
             strict_native_period_sampling=hz == native_hz, eligible_for_native_execution=False)
+    if adapter is not None and adapter.stop_on_first_hard_hit:
+        result.update(stop_on_first_hard_hit=True, early_terminated=False)
     try:
         selected = scoped_plan(plan, scope)
         if selected is None:
@@ -647,7 +713,25 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
                 isinstance(hz, bool) or not isinstance(hz, (int, np.integer)) or
                 hz < 1 or hz > 120 or scope == 'rail' and hz != native_hz):
             raise ValueError('Rail samples must match declared native60/120Hz; preparation supports1..120Hz diagnostic samples')
-        result['initial_alignment'] = verify_initial_alignment(adapter.moving, selected, manifest, checkpoint_poses)
+        result['initial_alignment'] = verify_initial_alignment(adapter.moving, selected, manifest, checkpoint_poses,
+            checkpoint_robot_state=checkpoint_robot_state)
+        if selected.get('terminal_forward_suffix')is not None or selected.get('retained_camera_arm_hold')is not None:
+            if scope!='full' or checkpoint_poses is None:
+                raise ValueError('Terminal suffix requires full environment scope and actual measured checkpoint poses')
+            from motion_continuation import execution_duration_s
+            adapter.current_phase='terminal_initial_actual';adapter.current_time_s=0.
+            before=adapter.total_hits
+            adapter._check_configuration(np.asarray(selected['start'],float),
+                .044+checkpoint_robot_state['initial_jaw_q_m']['jaw_R']-checkpoint_robot_state['initial_jaw_q_m']['jaw_L'],
+                rail_position_m=initial_plan_rail_position(selected),candidates=np.arange(len(adapter.rows)),
+                phase='terminal_initial_actual',time_s=0.,record=adapter._record_sample_hit,
+                lifecycle_boundary=True,measured_poses=checkpoint_poses)
+            result['initial_actual_state_audit']=dict(passed=adapter.total_hits==before,
+                source='Exact measured checkpoint body poses, independent asymmetric jaws; no nominal command substituted',
+                hard_intersection_sample_pairs=adapter.total_hits-before)
+            if selected.get('terminal_forward_suffix')is not None:
+                result['terminal_forward_suffix']=dict(initial_source_elapsed_s=selected['terminal_forward_suffix']['initial_source_elapsed_s'],
+                    remaining_duration_s=execution_duration_s(selected),executed_prefix_included=False)
         if scope == 'rail':
             adapter.prepare_sweep(selected['phases'][0], hz)
         else:
@@ -661,6 +745,18 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
                       status='blocked' if adapter.total_hits else 'sampled_clear', passed=not adapter.total_hits)
         if scope in ('preparation', 'full'):
             result['eligible_for_native_execution'] = bool(result['complete'] and result['passed'] and hz == native_hz)
+    except FirstHardIntersection:
+        result.update(status='blocked', passed=False, complete=False,
+            eligible_for_native_execution=False, early_terminated=True,
+            termination_reason='first_recorded_hard_intersection',
+            samples=adapter.sample_index,
+            sample_count_scope='Includes the partially inspected first blocked configuration',
+            first_hard_hit=adapter.hits[0],
+            unexamined_suffix=dict(status='UNKNOWN', from_time_s=adapter.current_time_s,
+                from_phase=adapter.current_phase,
+                includes_remaining_pairs_at_first_blocked_sample=True,
+                other_collisions_absent=None,
+                nominal_path_end_s=sum(p['duration_s'] for p in selected['phases'])))
     except Exception as error:
         result.update(error=type(error).__name__ + ': ' + str(error), status='blocked' if adapter.total_hits else 'inconclusive')
     result.update(hard_intersection_sample_pairs=adapter.total_hits, hard_hits=adapter.hits,
@@ -678,21 +774,37 @@ def screen_rail_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, 
     if scope == 'full':
         result['scope']='all nominal phases including approach/grasp/opening/withdrawal'
         result['nominal_full_path_duration_s']=result.pop('nominal_prefix_duration_s', None)
+        if plan.get('terminal_forward_suffix')is not None:
+            from motion_continuation import execution_duration_s
+            result['scope']='Exact actual terminal start and remaining original-clock suffix; already executed prefix excluded'
+            result['nominal_full_path_duration_s']=execution_duration_s(plan)
     return result
 
 
-def screen_preparation_plan(adapter, plan, manifest, *, checkpoint_poses=None, hz=120, native_hz=120):
-    return screen_rail_plan(adapter, plan, manifest, checkpoint_poses=checkpoint_poses, hz=hz, scope='preparation', native_hz=native_hz)
+def screen_preparation_plan(adapter, plan, manifest, *, checkpoint_poses=None, checkpoint_robot_state=None,
+                            hz=120, native_hz=120):
+    return screen_rail_plan(adapter, plan, manifest, checkpoint_poses=checkpoint_poses,
+        checkpoint_robot_state=checkpoint_robot_state, hz=hz, scope='preparation', native_hz=native_hz)
 
 
-def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfer=False):
+def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfer=False, terminal_forward_suffix=None,
+                     allow_target_truss_revision=False):
     from native_route_checkpoint import load_checkpoint
     from resume_native_state import require_completed_checkpoint, imported_break_markers
+    if type(allow_target_truss_revision)is not bool or (allow_target_truss_revision and allow_attachment_transfer):
+        raise ValueError('Select one explicitly authorized checkpoint revision mode')
     route = manifest.get('route_checkpoint')
     path = Path(checkpoint) if checkpoint is not None else Path(route['checkpoint']) if route else None
     if path is None: return None, None
     metadata, arrays = load_checkpoint(path)
-    require_completed_checkpoint(metadata)
+    if terminal_forward_suffix is None:
+        require_completed_checkpoint(metadata)
+    else:
+        if allow_attachment_transfer or allow_target_truss_revision:raise ValueError('Terminal suffix cannot change physical model or attachment representation')
+        from terminal_motion_recovery import validate_terminal_forward_suffix
+        verified=validate_terminal_forward_suffix(assembly,manifest,path,metadata,arrays)
+        if terminal_forward_suffix.get('proof')!=verified:
+            raise ValueError('Terminal suffix checkpoint proof mismatch during environment audit')
     def dependency_sha(value):
         return value.get('compact_assets', {}).get('materialized_dependency', {}).get('sha256')
     # Thin scene.usda wrappers can be byte-identical while materialized plant
@@ -704,10 +816,13 @@ def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfe
     if same and metadata['manifest'] != manifest:
         raise ValueError('Same-model checkpoint manifest identity mismatch')
     revision = None
+    if not same and allow_target_truss_revision:
+        from same_plant_target_revision import validate_resume_revision
+        revision = validate_resume_revision(assembly, manifest, metadata)
     if not same and allow_attachment_transfer:
         from eligible_attachment_transfer import validate_resume_revision
         revision = validate_resume_revision(assembly, manifest, metadata)
-    if not same and revision is None and (not route or path.resolve() != Path(route['checkpoint']).resolve() or
+    if not same and revision is None and (not route or not route.get('checkpoint') or path.resolve() != Path(route['checkpoint']).resolve() or
                      metadata['scene_sha256'] != route['source_scene_sha256'] or
                      metadata['metadata_sha256'] != route['outgoing']['checkpoint_metadata_sha256']):
         raise ValueError('Current model/checkpoint SHA mismatch outside exact declared active-window handoff')
@@ -721,13 +836,18 @@ def start_checkpoint(assembly, manifest, checkpoint, *, allow_attachment_transfe
     proof = dict(checkpoint=str(path.resolve()), metadata_sha256=metadata['metadata_sha256'],
         checkpoint_json_sha256=file_sha256(path/'checkpoint.json'), npz_sha256=file_sha256(path/'checkpoint.npz'),
         initial_lift_arm_q=[float(arrays['robot_q'][names.index(n)]) for n in names_expected],
+        initial_jaw_q_m={n:float(arrays['robot_q'][names.index(n)]) for n in ('jaw_L', 'jaw_R') if n in names},
         source_materialized_dependency_sha256=dependency_sha(metadata['manifest']),
         current_materialized_dependency_sha256=dependency_sha(manifest),
         native_break_events=imported_break_markers(metadata) if same or revision is not None else [],
         model_relation='same immutable model' if same else 'exact declared active-window handoff')
     if revision is not None:
-        proof.update(explicit_attachment_revision=revision,
-            model_relation='Explicit approved attachment transfer; exact preserved active body/joint mapping')
+        if allow_target_truss_revision:
+            proof.update(explicit_target_truss_revision=revision,
+                model_relation='Explicit same-active-plant target/collision revision; exact preserved active body/joint mapping')
+        else:
+            proof.update(explicit_attachment_revision=revision,
+                model_relation='Explicit approved attachment transfer; exact preserved active body/joint mapping')
     return poses, proof
 
 
@@ -735,7 +855,8 @@ def audit_external_rail(assembly, output, *, plan, checkpoint=None, hz=120,
                         allowed_truss_key=None, max_distance_queries=200000,
                         released_fruit_collection_diagnostic=False, scope='rail', allow_attachment_transfer=False,
                         native_tool_cache=None, native_hz=120, wheel_floor_overlap_limit_m=0.,
-                        released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False):
+                        released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False,
+                        stop_on_first_hard_hit=False,allow_target_truss_revision=False):
     """Use the existing asset-Python boundary; refuse incomplete/blocked travel.
 
     This is an opt-in preflight, not a replacement executor or path planner.
@@ -755,7 +876,9 @@ def audit_external_rail(assembly, output, *, plan, checkpoint=None, hz=120,
                '--plan', str(plan), '--output', str(output), '--hz', str(hz),
                '--max-distance-queries', str(max_distance_queries), '--native-hz', str(native_hz)]
     if scope != 'rail': command += ['--scope', scope]
+    if stop_on_first_hard_hit: command += ['--stop-on-first-hard-hit']
     if allow_attachment_transfer: command += ['--allow-resume-attachment-transfer']
+    if allow_target_truss_revision: command += ['--allow-resume-target-truss-revision']
     if checkpoint is not None: command += ['--checkpoint', str(checkpoint)]
     if allowed_truss_key is not None: command += ['--allowed-truss-key', allowed_truss_key]
     if released_fruit_collection_diagnostic: command += ['--released-fruit-collection-diagnostic']
@@ -795,7 +918,8 @@ def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=
                       allowed_truss_key=None, max_distance_queries=200000,
                       released_fruit_collection_diagnostic=False, scope='rail', allow_attachment_transfer=False,
                       native_tool_cache=None, native_hz=120, wheel_floor_overlap_limit_m=0.,
-                      released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False):
+                      released_fruit_gripper_support_diagnostic=False, released_fruit_same_truss_diagnostic=False,
+                      stop_on_first_hard_hit=False,allow_target_truss_revision=False):
     """Read-only source/trace/checkpoint verification and the existing FK sampler."""
     started = time.perf_counter(); assembly = Path(assembly).resolve(); plan_path = Path(plan_path)
     result = dict(schema='s300-rail-environment-preflight-v1', passed=False, complete=False,
@@ -816,9 +940,11 @@ def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=
             if key in plan and plan[key] != manifest['scene_sha256']:
                 raise ValueError('Plan/model SHA mismatch')
         poses, checkpoint_proof = start_checkpoint(assembly, manifest, checkpoint,
-            allow_attachment_transfer=allow_attachment_transfer)
-        if checkpoint_proof is not None and plan.get('phases'):
-            initial = np.asarray(plan['phases'][0]['waypoint_q'][0], float)
+            allow_attachment_transfer=allow_attachment_transfer,
+            **({'allow_target_truss_revision':True} if allow_target_truss_revision else {}),
+            **({'terminal_forward_suffix':plan['terminal_forward_suffix']}if plan.get('terminal_forward_suffix')is not None else{}))
+        if checkpoint_proof is not None and plan.get('phases') and plan.get('retained_camera_arm_hold')is None:
+            initial = np.asarray(plan['start']if plan.get('terminal_forward_suffix')is not None else plan['phases'][0]['waypoint_q'][0], float)
             if initial.shape != (7,) or not np.allclose(initial, checkpoint_proof['initial_lift_arm_q'], atol=1e-9, rtol=0):
                 raise ValueError('Rail command does not start from exact measured checkpoint lift/arm q')
         from motion_kinematics import ToolKinematics
@@ -827,6 +953,12 @@ def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=
         cache_hash=None if native_tool_cache is None else file_sha256(native_tool_cache)
         moving = (MotionSelfCollision(stage, ToolKinematics(stage)) if native_tool_cache is None else
             MotionSelfCollision(stage, ToolKinematics(stage), native_tool_cache=native_tool_cache, assembly=assembly))
+        if plan.get('retained_camera_arm_hold')is not None:
+            from camera_scan_prefix import verify_retained_camera_arm_hold
+            hold_proof=verify_retained_camera_arm_hold(moving.kin,plan,(checkpoint_proof or {}).get('checkpoint'))
+            if not np.array_equal(plan['start'],checkpoint_proof['initial_lift_arm_q']):
+                raise ValueError('Retained camera hold changed the measured checkpoint state')
+            checkpoint_proof=dict(checkpoint_proof,verified_camera_arm_hold=hold_proof)
         truss = allowed_truss(manifest, plan, allowed_truss_key)
         release_context = verified_release_context(stage, manifest, checkpoint_proof,
             collection_enabled=released_fruit_collection_diagnostic,
@@ -837,8 +969,10 @@ def audit_rail_transit(assembly, plan_path, *, checkpoint=None, output=None, hz=
                               if f.get('joint') in current_breaks}
         adapter = RailEnvironmentCheck(stage, manifest, moving, allowed_truss_key=truss,
             checkpoint_poses=poses, max_distance_queries=max_distance_queries, release_context=release_context,
+            stop_on_first_hard_hit=stop_on_first_hard_hit,
             released_colliders=released_colliders, scope=scope, wheel_floor_overlap_limit_m=wheel_floor_overlap_limit_m)
-        result = screen_rail_plan(adapter, plan, manifest, checkpoint_poses=poses, hz=hz, scope=scope, native_hz=native_hz)
+        result = screen_rail_plan(adapter, plan, manifest, checkpoint_poses=poses,
+            checkpoint_robot_state=checkpoint_proof, hz=hz, scope=scope, native_hz=native_hz)
         result.update(allowed_truss_key=truss, checkpoint_proof=checkpoint_proof,
             source_sha256=dict(scene=manifest['scene_sha256'], manifest=manifest_hash,
                               materialized_dependency=None if dependency is None else dependency['sha256'], plan=plan_hash),
@@ -871,7 +1005,10 @@ if __name__ == '__main__':
     parser.add_argument('--wheel-floor-overlap-limit-m', type=float, default=0.)
     parser.add_argument('--allowed-truss-key'); parser.add_argument('--max-distance-queries', type=int, default=200000)
     parser.add_argument('--scope', choices=('rail', 'preparation', 'full'), default='rail')
+    parser.add_argument('--stop-on-first-hard-hit', action='store_true',
+        help='Opt-in early blocked witness only; unexamined suffix remains UNKNOWN; clear paths still require all samples')
     parser.add_argument('--allow-resume-attachment-transfer', action='store_true')
+    parser.add_argument('--allow-resume-target-truss-revision', action='store_true')
     parser.add_argument('--released-fruit-collection-diagnostic', action='store_true')
     parser.add_argument('--released-fruit-gripper-support-diagnostic', action='store_true')
     parser.add_argument('--released-fruit-same-truss-diagnostic', action='store_true')
@@ -883,7 +1020,9 @@ if __name__ == '__main__':
         released_fruit_collection_diagnostic=args.released_fruit_collection_diagnostic, scope=args.scope,
         released_fruit_gripper_support_diagnostic=args.released_fruit_gripper_support_diagnostic,
         released_fruit_same_truss_diagnostic=args.released_fruit_same_truss_diagnostic,
+        stop_on_first_hard_hit=args.stop_on_first_hard_hit,
         allow_attachment_transfer=args.allow_resume_attachment_transfer,native_tool_cache=args.native_tool_cache,native_hz=args.native_hz,
+        **({'allow_target_truss_revision':True} if args.allow_resume_target_truss_revision else {}),
         wheel_floor_overlap_limit_m=args.wheel_floor_overlap_limit_m)
     print(json.dumps({k:report[k] for k in ('status','passed','complete')}), flush=True)
     raise SystemExit(0 if report['passed'] or report['status'] == 'not_applicable' else 2)

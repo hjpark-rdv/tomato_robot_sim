@@ -2,13 +2,18 @@ import copy
 import json
 from pathlib import Path
 import tempfile
+import subprocess
 import unittest
 from unittest.mock import patch
 
 from compact_motion_assets import file_sha256
 from run_row_harvest import (DEFAULT_ARGUMENTS, campaign, completed_final_checkpoint,
-                             motion_arguments, select_stations,select_preferred_stations,
-                             validated_initial_checkpoint,startup_preflight_arguments,preflight_result,
+                             measured_harvested_trusses,
+                             unexecuted_planning_failure,
+                             station_heading_choice,station_heading_alternatives,station_heading_arguments,
+                             native_tool_capture_paths,capture_window_native_tool_cache,verified_window_native_tool_cache,
+                             motion_arguments,validate_target_truss_window,camera_campaign_arguments,validate_camera_scan_proposal_mode, select_stations,select_preferred_stations,
+                             validated_initial_checkpoint,same_plant_resume_station_proof,startup_preflight_arguments,preflight_result,
                              current_plant_completion_evidence,exclude_completed_current_plant,
                              current_plant_budget_deferral_evidence,defer_exhausted_current_plant_proposals,
                              blocked_other_trusses_evidence,defer_blocked_other_truss_proposals)
@@ -52,6 +57,699 @@ class RunRowHarvestTests(unittest.TestCase):
         self.screen_path=self.root/'screen.json'; self.screen_path.write_text(json.dumps(self.screen))
 
     def tearDown(self): self.tmp.cleanup()
+
+    def camera_scan_preferred(self,order=(20,19)):
+        preferred=self.preferred(order=order)
+        self.screen['results']=[row for row in self.screen['results'] if row['plant_id'] in order]
+        for row in self.screen['results']:
+            query=row['queries'][0]
+            query.update(status='self_path_blocked_coarse',
+                preparation_variant=dict(name='jointauto',horizontal_ready_connector='joint'),
+                first_block=dict(phase='prepare_joint_branch',hits=[dict(a='tool',b='arm')]))
+            query.pop('full_self_audit_complete');query.pop('full_self_audit_passed')
+        original=self.root/'original_finite_screen.json';original.write_text(json.dumps(self.screen))
+        for row in self.screen['results']:
+            query=row['queries'][0];query.update(source_report=str(original),source_report_sha256=file_sha256(original))
+        self.screen_path.write_text(json.dumps(self.screen));preferred['union_report_sha256']=file_sha256(self.screen_path)
+        for candidate in preferred['candidates']:
+            candidate.update(proposal_kind='camera_scan_station_only',source_query_status='self_path_blocked_coarse',
+                full_self_audit_complete=None,full_self_audit_passed=None,
+                preparation_variant=dict(name='jointauto',horizontal_ready_connector='joint'),
+                selected_preparation_arguments=['--horizontal-ready-connector','joint'],
+                source_report=str(original),source_report_sha256=file_sha256(original))
+        return preferred
+
+    def test_camera_scan_station_keeps_old_blocked_truth_and_finite_budget(self):
+        preferred=self.camera_scan_preferred();before=self.screen_path.read_bytes()
+        with self.assertRaisesRegex(ValueError,'explicit camera'):
+            select_preferred_stations(self.inventory,self.screen,preferred,self.screen_path,
+                current_plant_id=22,current_station_y_m=1.6)
+        result=select_preferred_stations(self.inventory,self.screen,preferred,self.screen_path,
+            current_plant_id=22,current_station_y_m=1.6,max_plants=1,allow_camera_scan_only=True)
+        self.assertEqual([s['plant_id'] for s in result['stations']],[20])
+        self.assertEqual([s['plant_id'] for s in result['budget_unselected']],[19])
+        station=result['stations'][0]
+        self.assertEqual(station['source_query_status'],'self_path_blocked_coarse')
+        self.assertEqual(station['source_full_self_audit'],dict(complete=None,passed=None))
+        self.assertIn('Unverified camera scan station only',station['certificate'])
+        self.assertEqual(before,self.screen_path.read_bytes())
+        self.assertTrue(all(q['status']=='self_path_blocked_coarse' for r in self.screen['results'] for q in r['queries']))
+
+    def test_camera_scan_station_source_status_sha_and_joint_policy_fail_closed(self):
+        preferred=self.camera_scan_preferred()
+        def check(p):return select_preferred_stations(self.inventory,self.screen,p,self.screen_path,
+            current_plant_id=22,current_station_y_m=1.6,allow_camera_scan_only=True)
+        for field,value in [('source_query_status','self_path_clear_full'),('source_plan_sha256','0'*64),
+                            ('source_report_sha256','0'*64),('full_self_audit_passed',True)]:
+            bad=copy.deepcopy(preferred);bad['candidates'][0][field]=value
+            with self.subTest(field=field),self.assertRaises(ValueError):check(bad)
+        query=next(r for r in self.screen['results'] if r['plant_id']==preferred['candidates'][0]['plant_id'])['queries'][0]
+        query['status']='ik_path_not_found_finite';preferred['candidates'][0]['source_query_status']=query['status']
+        with self.assertRaisesRegex(ValueError,'original finite report'):check(preferred)
+
+    def test_scan_only_mode_requires_actual_camera_startup_and_existing_guards(self):
+        args=camera_campaign_arguments(DEFAULT_ARGUMENTS,camera_capture=True)+[
+            '--camera-harvest','--verify-full-environment-preflight','--horizontal-ready-connector','joint']
+        validate_camera_scan_proposal_mode(args,preflight_new_windows=True,preferred_selection_path='preferred.json')
+        for flag in ['--camera-harvest','--capture-gt','--verify-full-environment-preflight',
+                     '--verify-harvest-contact-after-step','--checkpoint-cycle-states']:
+            with self.subTest(flag=flag),self.assertRaises(ValueError):
+                validate_camera_scan_proposal_mode([a for a in args if a!=flag],
+                    preflight_new_windows=True,preferred_selection_path='preferred.json')
+        with self.assertRaises(ValueError):validate_camera_scan_proposal_mode(args,preflight_new_windows=False,preferred_selection_path='p')
+        with self.assertRaises(ValueError):validate_camera_scan_proposal_mode(args,preflight_new_windows=True,preferred_selection_path=None)
+        wrong=args.copy();wrong[-1]='cartesian'
+        with self.assertRaisesRegex(ValueError,'joint/ready'):validate_camera_scan_proposal_mode(wrong,preflight_new_windows=True,preferred_selection_path='p')
+        with self.assertRaises(ValueError):validate_camera_scan_proposal_mode(args+['--preparation-opening','transfer'],preflight_new_windows=True,preferred_selection_path='p')
+        # The independent idle probe retains the real sensors and physical guards.
+        from test_run_motion_conditioning import actual_cli
+        idle=actual_cli(startup_preflight_arguments(args))
+        self.assertEqual(idle.mode,'idle');self.assertTrue(idle.capture_gt)
+        self.assertTrue(idle.verify_harvest_contact_after_step);self.assertEqual(idle.contact_limit_mm,1.)
+
+    def test_non_camera_campaign_cannot_opt_into_scan_only_station_proposals(self):
+        with self.assertRaisesRegex(ValueError,'GT camera mode'):
+            campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'badscan',
+                allow_camera_scan_only_proposals=True,preflight_new_windows=True,preferred_selection_path='p')
+
+    def test_scan_station_still_runs_independent_startup_and_blocks_before_main_on_failure(self):
+        preferred=self.camera_scan_preferred(order=(20,));path=self.root/'scan_preferred.json';path.write_text(json.dumps(preferred))
+        self.manifest['mounted_rgbd']={'schema':'fixture'}
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        checkpoint,row,_=self.initial_checkpoint();calls=[]
+        args=camera_campaign_arguments(DEFAULT_ARGUMENTS,camera_capture=True)+[
+            '--camera-harvest','--verify-full-environment-preflight','--horizontal-ready-connector','joint']
+        def switch(source,prior,output,plant,target,**kwargs):
+            self.assertEqual((source,prior),(self.assembly.resolve(),checkpoint.resolve()))
+            output.mkdir(parents=True);manifest=copy.deepcopy(self.manifest)
+            manifest['plant']['source_plant']='/World/Greenhouse/Plants/Plant_20'
+            (output/'motion_manifest.json').write_text(json.dumps(manifest))
+            (output/'scene.usda').write_bytes((self.assembly/'scene.usda').read_bytes());return {}
+        def runner(command,check):
+            case_path=Path(command[4]);case=json.loads(case_path.read_text())[0];calls.append(case)
+            self.assertTrue(case['name'].startswith('startup_'))
+            self.assertIn('--capture-gt',case['arguments']);self.assertIn('--verify-harvest-contact-after-step',case['arguments'])
+            folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+            result=dict(returncode=2,timeout=False,summary=None)
+            trial=folder/case['name'];trial.mkdir();(trial/'runtime_error.json').write_text(json.dumps(dict(error='argument parser fixture failure')))
+            (folder/(case_path.stem+'_results.json')).write_text(json.dumps([result]))
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'scan_startup_blocked',
+                execute=True,max_plants=1,base_arguments=args,preferred_selection_path=path,
+                initial_native_checkpoint=checkpoint,preflight_new_windows=True,
+                allow_camera_scan_only_proposals=True,window_switch=switch,benchmark_runner=runner)
+        self.assertEqual(len(calls),1)
+        self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+        self.assertFalse(report['stations'][0]['physics_execution'])
+        self.assertNotIn('measured_harvest_budget',report)
+
+    def harvest_evidence(self):
+        joint='/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01'
+        return dict(cycles=[dict(status='motion_completed',recorded_physical_cycle=True,
+            actual_trace_measurements_available=True,actual_recorded_phases=['approach','close','withdraw'],
+            selected_fruits=[dict(name='Truss_02_Fruit_01',native_joint=joint,
+                native_detached_at_cycle_start=False,native_detached_at_cycle_end=True,
+                new_native_break_events_during_cycle=[dict(joint=joint,phase='close')])])])
+
+    def test_harvest_budget_excludes_scans_imported_breaks_and_incomplete_motion(self):
+        value=dict(completed=True,stop_reason=None,selected_cycle_evidence=self.harvest_evidence())
+        self.assertEqual(measured_harvested_trusses(value,'/Plant_22'),['/Plant_22/Truss_02'])
+        variants=[]
+        for field,replacement in [('status','stopped'),('recorded_physical_cycle',False),
+                ('actual_trace_measurements_available',False),('actual_recorded_phases',['camera_pan'])]:
+            bad=copy.deepcopy(value);bad['selected_cycle_evidence']['cycles'][0][field]=replacement;variants.append(bad)
+        for field,replacement in [('native_detached_at_cycle_start',True),('native_detached_at_cycle_end',False)]:
+            bad=copy.deepcopy(value);bad['selected_cycle_evidence']['cycles'][0]['selected_fruits'][0][field]=replacement;variants.append(bad)
+        for field,replacement in [('phase','settle'),('native_new_event',False),('type','imported_native_prior'),('joint','other')]:
+            bad=copy.deepcopy(value);bad['selected_cycle_evidence']['cycles'][0]['selected_fruits'][0]['new_native_break_events_during_cycle'][0][field]=replacement;variants.append(bad)
+        for bad in variants:self.assertEqual(measured_harvested_trusses(bad,'/Plant_22'),[])
+        for field,replacement in [('completed',False),('stop_reason','contact_limit')]:
+            bad=copy.deepcopy(value);bad[field]=replacement
+            self.assertEqual(measured_harvested_trusses(bad,'/Plant_22'),[])
+
+    def test_completed_belt_cycle_counts_selected_break_while_belts_start_open(self):
+        value=dict(completed=True,stop_reason=None,selected_cycle_evidence=self.harvest_evidence())
+        fruit=value['selected_cycle_evidence']['cycles'][0]['selected_fruits'][0]
+        fruit['new_native_break_events_during_cycle'][0]['phase']='belt_start_open'
+        self.assertEqual(measured_harvested_trusses(value,'/Plant_22'),['/Plant_22/Truss_02'])
+        value['selected_cycle_evidence']['cycles'][0]['status']='stopped'
+        self.assertEqual(measured_harvested_trusses(value,'/Plant_22'),[])
+
+    def planning_failure(self,trial):
+        trial.mkdir(parents=True)
+        error='Traceback (most recent call last):\n  File "motion_kinematics.py", line 431, in plan_motion\nRuntimeError: Fixed entry preparation IK not found (finite probe)\n'
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error=error)))
+        return dict(returncode=1,timeout=False,summary=None)
+
+    def test_unexecuted_planning_failure_needs_specific_error_and_no_physics_artifacts(self):
+        trial=self.root/'trial';result=self.planning_failure(trial)
+        proof=unexecuted_planning_failure(result,trial,self.assembly)
+        self.assertEqual(proof['reason'],'finite_ik_or_waypoint_proposal_rejected')
+        self.assertFalse(proof['native_physics_started']);self.assertEqual(proof['harvest_credit'],0)
+        for artifact in ['states.npz','states_partial.npz','native_initialization_timing.json',
+                         'resume_native_validation.json','summary.json','route_checkpoint','rgbd']:
+            path=trial/artifact;path.write_text('actual initialization/state evidence')
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly),artifact)
+            path.unlink()
+        for change in [dict(timeout=True),dict(timeout=None),dict(returncode=None),dict(summary={'completed':False})]:
+            self.assertIsNone(unexecuted_planning_failure(dict(result,**change),trial,self.assembly))
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error='Traceback (most recent call last):\nRuntimeError: unknown error')))
+        self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly))
+
+    def test_environment_planning_failure_requires_complete_hash_bound_collision(self):
+        trial=self.root/'trial';result=self.planning_failure(trial)
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error='Traceback (most recent call last):\nRuntimeError: Rail environment preflight blocked commanded travel')))
+        plan=trial/'plan.json';plan.write_text(json.dumps(dict(phases=[{'name':'prepare'}])))
+        audit=dict(status='blocked',passed=False,complete=True,native_runs=0,physics_unchanged=True,
+            hard_hits=[{'obstacle':'stem'}],source_sha256=dict(scene=self.manifest['scene_sha256'],
+                manifest=file_sha256(self.assembly/'motion_manifest.json'),plan=file_sha256(plan),materialized_dependency=None))
+        path=trial/'full_environment_preflight.json';path.write_text(json.dumps(audit))
+        self.assertEqual(unexecuted_planning_failure(result,trial,self.assembly)['reason'],'nominal_environment_proposal_blocked')
+        for field,value in [('complete',False),('status','inconclusive'),('native_runs',1),('hard_hits',[])]:
+            path.write_text(json.dumps(dict(audit,**{field:value})))
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly))
+        audit['source_sha256']['plan']='wrong';path.write_text(json.dumps(audit))
+        self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly))
+
+    def early_environment_failure(self):
+        trial=self.root/'early_trial';result=self.planning_failure(trial)
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error='Traceback (most recent call last):\nRuntimeError: Rail environment preflight blocked commanded travel')))
+        plan=trial/'plan.json';plan.write_text(json.dumps(dict(phases=[{'name':'prepare_joint_branch'}])))
+        first=dict(robot_geom='/World/ActuatedTool/L/part_214',
+            environment_geom='/World/Greenhouse/House/Environment/GutterSuspensionWire_005/Mesh',
+            obstacle_class='gutter',phase='prepare_joint_branch',time_s=6.85)
+        audit=dict(schema='s300-rail-environment-preflight-v1',status='blocked',passed=False,complete=False,
+            native_runs=0,physics_unchanged=True,eligible_for_native_execution=False,
+            stop_on_first_hard_hit=True,early_terminated=True,
+            termination_reason='first_recorded_hard_intersection',samples=415,
+            hard_intersection_sample_pairs=1,hard_hits=[first],first_hard_hit=first,
+            last_sample_time_s=6.85,unexamined_suffix=dict(status='UNKNOWN',from_time_s=6.85,
+                from_phase='prepare_joint_branch',includes_remaining_pairs_at_first_blocked_sample=True,
+                other_collisions_absent=None,nominal_path_end_s=43.4),
+            source_sha256=dict(scene=self.manifest['scene_sha256'],
+                manifest=file_sha256(self.assembly/'motion_manifest.json'),plan=file_sha256(plan),materialized_dependency=None))
+        path=trial/'full_environment_preflight.json';path.write_text(json.dumps(audit))
+        return result,trial,path,audit
+
+    def test_early_environment_negative_is_opt_in_and_never_promoted_to_full_path_clear(self):
+        result,trial,path,audit=self.early_environment_failure()
+        self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly))
+        proof=unexecuted_planning_failure(result,trial,self.assembly,allow_early_blocked_environment=True)
+        self.assertEqual(proof['reason'],'nominal_environment_proposal_blocked_early_witness')
+        early=proof['evidence']['early_blocked_environment_witness']
+        self.assertFalse(early['environment_audit_complete']);self.assertFalse(early['eligible_for_native_execution'])
+        self.assertTrue(early['only_current_proposal_rejected']);self.assertIsNone(early['other_collisions_absent'])
+        self.assertEqual(early['unexamined_suffix']['status'],'UNKNOWN')
+        self.assertFalse(proof['accepted_physical_state_changed']);self.assertFalse(proof['checkpoint_rollback'])
+        self.assertFalse(proof['native_physics_started']);self.assertEqual(proof['harvest_credit'],0)
+        self.assertEqual(json.loads(path.read_text()),audit)  # source negative remains immutable
+
+    def test_early_environment_negative_requires_all_known_witness_fields(self):
+        result,trial,path,audit=self.early_environment_failure()
+        mutations=[('schema','other'),('status','inconclusive'),('passed',True),('native_runs',1),
+            ('native_runs',False),('physics_unchanged',False),('stop_on_first_hard_hit',False),
+            ('early_terminated',False),('termination_reason','query_budget_exhausted'),
+            ('eligible_for_native_execution',True),('error','query failed'),('hard_hits',[]),
+            ('first_hard_hit',{}),('samples',0),('hard_intersection_sample_pairs',0),
+            ('last_sample_time_s',7.)]
+        for key,value in mutations:
+            path.write_text(json.dumps(dict(audit,**{key:value})))
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+                allow_early_blocked_environment=True),(key,value))
+        for key in ('stop_on_first_hard_hit','early_terminated','termination_reason','first_hard_hit','unexamined_suffix'):
+            changed=copy.deepcopy(audit);del changed[key];path.write_text(json.dumps(changed))
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+                allow_early_blocked_environment=True),key)
+
+    def test_early_environment_negative_requires_unknown_remaining_suffix_and_bound_hashes(self):
+        result,trial,path,audit=self.early_environment_failure()
+        for key,value in [('status','clear'),('from_time_s',7.),('from_phase','approach'),
+                ('includes_remaining_pairs_at_first_blocked_sample',False),('other_collisions_absent',True),
+                ('nominal_path_end_s',6.)]:
+            changed=copy.deepcopy(audit);changed['unexamined_suffix'][key]=value;path.write_text(json.dumps(changed))
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+                allow_early_blocked_environment=True),(key,value))
+        changed=copy.deepcopy(audit);del changed['unexamined_suffix']['other_collisions_absent']
+        path.write_text(json.dumps(changed));self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+            allow_early_blocked_environment=True))
+        for key in ('scene','plan','manifest','materialized_dependency'):
+            changed=copy.deepcopy(audit);changed['source_sha256'][key]='wrong';path.write_text(json.dumps(changed))
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+                allow_early_blocked_environment=True),key)
+
+    def test_early_environment_opt_in_does_not_accept_physics_artifacts_timeout_or_summary(self):
+        result,trial,path,audit=self.early_environment_failure()
+        for key,value in [('timeout',True),('summary',{'completed':False}),('returncode',None)]:
+            self.assertIsNone(unexecuted_planning_failure(dict(result,**{key:value}),trial,self.assembly,
+                allow_early_blocked_environment=True))
+        for artifact in ('states.npz','summary.json','route_start_native_validation.json','warmup.json'):
+            p=trial/artifact;p.write_text('native evidence')
+            self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+                allow_early_blocked_environment=True),artifact);p.unlink()
+        self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly,
+            allow_early_blocked_environment=1))
+
+    def test_self_planning_failure_requires_actual_hash_bound_hit(self):
+        trial=self.root/'trial';result=self.planning_failure(trial)
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error='Traceback (most recent call last):\nCalledProcessError: nominal self preflight rejected')))
+        plan=trial/'plan.json';plan.write_text('{"phases":[]}')
+        audit=dict(passed=False,complete=False,samples=12,scene_sha256=self.manifest['scene_sha256'],
+            input_sha256=file_sha256(plan),physics_rerun=False,phases=[dict(hits=[dict(a='arm',b='tool')])])
+        path=trial/'self_collision_preflight.json';path.write_text(json.dumps(audit))
+        self.assertEqual(unexecuted_planning_failure(result,trial,self.assembly)['reason'],'nominal_self_collision_proposal_blocked')
+        audit['phases'][0]['hits']=[];path.write_text(json.dumps(audit))
+        self.assertIsNone(unexecuted_planning_failure(result,trial,self.assembly))
+
+    def test_first_same_plant_planning_failure_keeps_normal_parent_for_next_window(self):
+        checkpoint,row,_=self.initial_checkpoint();switches=[]
+        def runner(command,check):
+            cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+            folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+            result=self.planning_failure(folder/case['name'])
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([result]))
+        def switch(source,prior,output,plant,target,*,near_trusses_metadata):
+            switches.append((source,prior,plant));raise RuntimeError('Sentinel confirms exact accepted parent')
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'first_same',execute=True,max_plants=2,
+                initial_native_checkpoint=checkpoint,window_switch=switch,benchmark_runner=runner,
+                defer_unexecuted_planning_failures=True)
+        self.assertEqual(report['stations'][0]['status'],'unexecuted_planning_failure_deferred')
+        self.assertEqual(switches,[(self.assembly.resolve(),checkpoint.resolve(),19)])
+        self.assertFalse(report['stations'][1]['physics_execution'])
+
+    def heading_arguments(self):
+        return list(DEFAULT_ARGUMENTS)+['--horizontal-ready-connector','joint',
+            '--horizontal-ready-seed-index','8']
+
+    def heading_planning_failure(self,command):
+        """A fresh exact-plan blocked self audit, with no native artifacts."""
+        cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+        folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+        trial=folder/case['name'];result=self.planning_failure(trial)
+        choice=station_heading_choice(case['arguments'])
+        plan=dict(selected_seed_index=choice['seed_index'],
+            truss_entry_yaw_offset_deg=choice['heading_offset_deg'],
+            approach_direction_world=[1.,0.,0.],phases=[dict(name='prepare_joint_branch')])
+        (trial/'plan.json').write_text(json.dumps(plan))
+        (trial/'runtime_error.json').write_text(json.dumps(dict(error=
+            'Traceback (most recent call last):\nRuntimeError: Native self preflight blocked commanded path')))
+        manifest=json.loads((Path(command[3])/'motion_manifest.json').read_text())
+        audit=dict(passed=False,complete=True,samples=12,scene_sha256=manifest['scene_sha256'],
+            input_sha256=file_sha256(trial/'plan.json'),physics_rerun=False,
+            phases=[dict(hits=[dict(a='arm',b='tool')])])
+        (trial/'self_collision_preflight.json').write_text(json.dumps(audit))
+        result_path=folder/(cases.stem+'_results.json');result_path.write_text(json.dumps([result]))
+        return case,trial,result,result_path
+
+    def test_heading_alternatives_are_fresh_finite_and_try_same_yaw_other_branch_first(self):
+        for yaw in (0.,-30.):
+            args=self.heading_arguments()+['--truss-entry-yaw-offset-deg',str(yaw)]
+            original=list(args);alternatives=station_heading_alternatives(args)
+            keys=[(row['heading_offset_deg'],row['seed_index']) for row in alternatives]
+            self.assertEqual(len(keys),9);self.assertEqual(len(set(keys)),9)
+            self.assertNotIn((yaw,8),keys);self.assertEqual(keys[0],(0.,5))
+            self.assertEqual(set(keys),{(heading,seed) for heading in (0.,-30.,30.,-60.,60.) for seed in (8,5)}-{(yaw,8)})
+            self.assertEqual(args,original)
+        auto=[token for token in self.heading_arguments()[:-2]]
+        alternatives=station_heading_alternatives(auto,dict(selected_seed_index=8))
+        self.assertNotIn((0.,8),[(row['heading_offset_deg'],row['seed_index']) for row in alternatives])
+
+    def test_heading_override_changes_only_post_station_yaw_and_existing_seed(self):
+        station=dict(plant_id=22,station_y_m=1.6,
+            preparation_variant=dict(name='jointseed8',horizontal_ready_connector='joint',horizontal_ready_seed_index=8))
+        original=motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,station)
+        args=station_heading_arguments(original,dict(heading_offset_deg=-30.,seed_index=5))
+        self.assertEqual(station_heading_choice(args),dict(heading_offset_deg=-30.,seed_index=5))
+        self.assertEqual(args.count('--horizontal-ready-seed-index'),1)
+        expected=list(original);i=expected.index('--horizontal-ready-seed-index');del expected[i:i+2]
+        self.assertEqual(args,expected+['--truss-entry-yaw-offset-deg','-30.0','--horizontal-ready-seed-index','5'])
+        self.assertEqual(station_heading_choice(original)['seed_index'],8)
+
+    def test_heading_retries_default_off_preserves_nominal_case_and_command_arrays(self):
+        calls=[]
+        def runner(command,check):
+            calls.append(command);self.heading_planning_failure(command)
+        for number,options in enumerate(({},dict(heading_retries=False))):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/f'headingdefault{number}',
+                execute=True,max_plants=1,base_arguments=self.heading_arguments(),benchmark_runner=runner,**options)
+            self.assertNotIn('heading_retries',report);self.assertNotIn('heading_attempts',report['stations'][0])
+            self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+        self.assertEqual(len(calls),2)
+        left,right=calls
+        self.assertEqual(left[:4],right[:4]);self.assertEqual(left[7:],right[7:])
+        self.assertEqual(Path(left[4]).name,Path(right[4]).name)
+        self.assertEqual(Path(left[6]).name,Path(right[6]).name)
+        self.assertEqual(json.loads(Path(left[4]).read_text()),json.loads(Path(right[4]).read_text()))
+
+    def test_heading_retries_stop_at_nine_and_do_not_repeat_source_cache_or_policy(self):
+        calls=[];source_scene=(self.assembly/'scene.usda').read_bytes();source_manifest=(self.assembly/'motion_manifest.json').read_bytes()
+        def runner(command,check):
+            calls.append(command);self.heading_planning_failure(command)
+            if len(calls)==1:raise subprocess.CalledProcessError(1,command)
+        cache=dict(cache=str(self.root/'exact_source_native_cache.json'))
+        def group(assembly,path,args):
+            return args+['--harvest-group-policy',str(path)],dict(policy=str(path),source_hashes_verified=True)
+        args=self.heading_arguments();i=args.index('--truss-order');args[i+1]='highest-first'
+        i=args.index('--single-fruit-when-remaining');args[i+1]='0'
+        with patch('run_row_harvest.capture_window_native_tool_cache',return_value=cache) as captured,\
+                patch('run_row_harvest.automatic_ripe_group_arguments',side_effect=group) as policy,\
+                patch('run_row_harvest.switch_window') as unused_switch:
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headingbounded',
+                execute=True,max_plants=1,base_arguments=args,benchmark_runner=runner,
+                heading_retries=True,auto_native_tool_cache=True,auto_ripe_group_policy=True,preflight_new_windows=True)
+        self.assertEqual(len(calls),10);self.assertEqual(captured.call_count,1);self.assertEqual(policy.call_count,1)
+        self.assertEqual(unused_switch.call_count,0)
+        record=report['stations'][0];attempts=record['heading_attempts']
+        self.assertTrue(record['heading_retry_budget_exhausted']);self.assertEqual(len(attempts),10)
+        self.assertEqual(attempts[0]['alternative_key'],[0.,8]);self.assertEqual(attempts[1]['alternative_key'],[0.,5])
+        self.assertEqual(len({row['trial'] for row in attempts}),10)
+        self.assertTrue(all(row['status']=='proven_unexecuted_planning_failure' for row in attempts))
+        for row in attempts:
+            case=json.loads(Path(row['cases']).read_text())[0]
+            self.assertEqual(case['arguments'][case['arguments'].index('--native-tool-collision-cache')+1],cache['cache'])
+            self.assertEqual(case['arguments'][case['arguments'].index('--harvest-group-policy')+1],record['automatic_ripe_group_policy']['policy'])
+            proof=row['fresh_plan_evidence'];self.assertFalse(proof['old_screen_collision_certificate_reused'])
+            self.assertEqual(proof['selected_seed_evidence']['selected_staging_seed_index'],row['alternative_key'][1])
+            self.assertTrue(Path(row['trial']).is_dir())
+        self.assertEqual((self.assembly/'scene.usda').read_bytes(),source_scene)
+        self.assertEqual((self.assembly/'motion_manifest.json').read_bytes(),source_manifest)
+
+    def test_heading_retry_first_completed_actual_run_uses_its_own_final_checkpoint(self):
+        calls=[]
+        def runner(command,check):
+            calls.append(command)
+            if len(calls)==1:self.heading_planning_failure(command);return
+            cases=Path(command[4]);case=json.loads(cases.read_text())[0];folder=Path(command[command.index('--output')+1])
+            trial=folder/case['name'];(trial/'cycle_checkpoints/000').mkdir(parents=True)
+            choice=station_heading_choice(case['arguments'])
+            (trial/'plan.json').write_text(json.dumps(dict(selected_seed_index=choice['seed_index'],
+                truss_entry_yaw_offset_deg=choice['heading_offset_deg'],approach_direction_world=[1.,0.,0.])))
+            summary=self.final_summary(trial,dict(completed=True,stop_reason=None,initialization_valid=True,simulated_s=10.))
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=0,timeout=False,summary=summary)]))
+        with patch('run_row_harvest.load_checkpoint',return_value=(metadata(),{})):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headingcompleted',
+                execute=True,max_plants=1,base_arguments=self.heading_arguments(),heading_retries=True,benchmark_runner=runner)
+        self.assertEqual(len(calls),2);record=report['stations'][0]
+        self.assertEqual(record['status'],'completed_physics',record)
+        self.assertIn('_heading_01_',record['checkpoint'])
+        self.assertEqual(record['heading_attempts'][1]['alternative_key'],[0.,5])
+        self.assertFalse(report['rollback_performed'])
+
+    def test_heading_retry_stops_after_partial_native_state_on_first_alternative(self):
+        checkpoint,row,_=self.initial_checkpoint();calls=[]
+        def runner(command,check):
+            calls.append(command);case,trial,result,path=self.heading_planning_failure(command)
+            if len(calls)==2:(trial/'states_partial.npz').write_bytes(b'Actual latest physical state; no retry or rollback')
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headinglaterstate',
+                execute=True,max_plants=1,base_arguments=self.heading_arguments(),heading_retries=True,
+                initial_native_checkpoint=checkpoint,defer_unexecuted_planning_failures=True,benchmark_runner=runner)
+        self.assertEqual(len(calls),2);record=report['stations'][0]
+        self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+        self.assertEqual(record['status'],'route_blocked');self.assertEqual(len(record['heading_attempts']),2)
+        self.assertNotIn('planning_deferral',record);self.assertTrue(record['physics_execution'])
+        self.assertTrue((Path(record['heading_attempts'][-1]['trial'])/'states_partial.npz').is_file())
+        self.assertFalse(report['rollback_performed'])
+
+    def test_heading_retries_prepare_new_window_startup_and_native_capture_once(self):
+        checkpoint,row,_=self.initial_checkpoint();calls=[];switches=[]
+        variant=dict(name='jointseed8',horizontal_ready_connector='joint',horizontal_ready_seed_index=8)
+        for source in self.screen['results']:
+            source['queries'][0].update(preparation_variant=variant,selected_staging_seed_index=8)
+        preferred=self.preferred(order=(20,19,22))
+        for candidate in preferred['candidates']:
+            candidate.update(preparation_variant=variant,
+                selected_preparation_arguments=['--horizontal-ready-connector','joint','--horizontal-ready-seed-index','8'])
+        preferred_path=self.root/'headingpreferred.json';preferred_path.write_text(json.dumps(preferred))
+        def switch(source,prior,output,plant,target,**kwargs):
+            switches.append((source,prior,plant,target));output.mkdir(parents=True)
+            manifest=copy.deepcopy(self.manifest);manifest['plant']['source_plant']=f'/World/Greenhouse/Plants/Plant_{plant:02d}'
+            (output/'motion_manifest.json').write_text(json.dumps(manifest))
+            (output/'scene.usda').write_bytes((self.assembly/'scene.usda').read_bytes());return {}
+        def runner(command,check):
+            cases=Path(command[4]);case=json.loads(cases.read_text())[0];calls.append(case)
+            if case['name'].startswith('startup_'):
+                folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+                (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=0,timeout=False,summary={'completed':True})]))
+            else:self.heading_planning_failure(command)
+        args=self.heading_arguments();i=args.index('--truss-order');args[i+1]='highest-first'
+        i=args.index('--single-fruit-when-remaining');args[i+1]='0'
+        args+=['--capture-tool-colliders','/World/ActuatedTool/L/part_209',
+            '/World/ActuatedTool/R/part_249','/World/ActuatedTool/L/part_214']
+        def policy(assembly,path,arguments):return arguments+['--harvest-group-policy',str(path)],dict(policy=str(path))
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())),\
+                patch('run_row_harvest.preflight_result',return_value=dict(passed=True,native_physics_initialization_observed=True)),\
+                patch('run_row_harvest.verified_window_native_tool_cache',return_value=dict(cache=str(self.root/'new_window_cache.json'))) as capture,\
+                patch('run_row_harvest.capture_window_native_tool_cache') as duplicate_capture,\
+                patch('run_row_harvest.automatic_ripe_group_arguments',side_effect=policy) as grouped:
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headingnewwindow',
+                execute=True,max_plants=1,base_arguments=args,heading_retries=True,
+                initial_native_checkpoint=checkpoint,preferred_selection_path=preferred_path,preflight_new_windows=True,
+                auto_native_tool_cache=True,auto_ripe_group_policy=True,defer_unexecuted_planning_failures=True,
+                window_switch=switch,benchmark_runner=runner)
+        self.assertEqual(len(switches),1);self.assertEqual(len(calls),11)
+        self.assertEqual(sum(case['name'].startswith('startup_') for case in calls),1)
+        capture_paths=native_tool_capture_paths(args);startup=calls[0]['arguments']
+        self.assertEqual(startup[startup.index('--capture-tool-colliders')+1:],capture_paths)
+        self.assertEqual(report['automatic_native_tool_cache']['capture_paths'],capture_paths)
+        self.assertEqual(report['stations'][0]['startup_native_tool_capture_paths'],capture_paths)
+        self.assertEqual(capture.call_args.kwargs['requested_paths'],capture_paths)
+        self.assertEqual(capture.call_count,1);self.assertEqual(duplicate_capture.call_count,0);self.assertEqual(grouped.call_count,1)
+        record=report['stations'][0];self.assertEqual(record['status'],'unexecuted_planning_failure_deferred')
+        self.assertEqual(len(record['heading_attempts']),10)
+        self.assertEqual(record['planning_deferral']['accepted_parent_checkpoint'],str(checkpoint.resolve()))
+        self.assertFalse(record['physics_execution']);self.assertFalse(report['rollback_performed'])
+
+    def test_native_tool_capture_requests_merge_defaults_and_validate_exact_scope(self):
+        defaults=['/World/ActuatedTool/L/part_209','/World/ActuatedTool/R/part_331']
+        self.assertEqual(native_tool_capture_paths(DEFAULT_ARGUMENTS),defaults)
+        original=list(DEFAULT_ARGUMENTS)+['--capture-tool-colliders',defaults[0],
+            '/World/ActuatedTool/R/part_249','/World/ActuatedTool/L/part_214',defaults[1],
+            '/World/ActuatedTool/R/part_249','--seconds','3']
+        before=list(original)
+        self.assertEqual(native_tool_capture_paths(original),defaults+[
+            '/World/ActuatedTool/R/part_249','/World/ActuatedTool/L/part_214'])
+        self.assertEqual(original,before)
+        for invalid in (['--capture-tool-colliders'],['--capture-tool-colliders','--seconds','3'],
+                ['--capture-tool-colliders',''],['--capture-tool-colliders','/World/HarvestRobot/Robot/link6'],
+                ['--capture-tool-colliders','/World/ActuatedTool'],
+                ['--capture-tool-colliders','/World/ActuatedTool/../Robot/collider'],
+                ['--capture-tool-colliders','/World/ActuatedTool//part_1'],
+                ['--capture-tool-colliders='+defaults[0]],
+                ['--capture-tool-colliders',defaults[0],'--capture-tool-colliders',defaults[1]]):
+            with self.subTest(invalid=invalid),self.assertRaises(ValueError):native_tool_capture_paths(invalid)
+
+    def test_existing_idle_capture_receives_all_extra_requested_native_tool_parts(self):
+        calls=[];args=self.heading_arguments()+['--capture-tool-colliders',
+            '/World/ActuatedTool/L/part_209','/World/ActuatedTool/R/part_249','/World/ActuatedTool/L/part_214']
+        expected=native_tool_capture_paths(args)
+        def runner(command,check):
+            calls.append(command);cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+            values=case['arguments'];self.assertEqual(values[values.index('--capture-tool-colliders')+1:],expected)
+            self.assertEqual(values[values.index('--mode')+1],'idle');self.assertEqual(values[values.index('--seconds')+1],'3')
+            folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=0,timeout=False,
+                summary=dict(mode='idle',completed=True,stop_reason=None,initialization_valid=True,
+                             simulated_s=3.,rail_destination=None,native_new_break_count=0))]))
+        with patch('run_row_harvest.verified_window_native_tool_cache',return_value=dict(cache='/exact/fresh/cache.json')) as loader:
+            result=capture_window_native_tool_cache(self.assembly,args,self.root/'capture_expanded','expanded',
+                '/benchmark/python','/native/python',120,runner)
+        self.assertEqual(len(calls),1);self.assertEqual(loader.call_args.kwargs['requested_paths'],expected)
+        proof=json.loads((self.root/'capture_expanded/probe_result.json').read_text())
+        self.assertEqual(proof['capture_paths'],expected);self.assertFalse(proof['diagnostic_native_state_accepted'])
+        self.assertEqual(result['cache'],'/exact/fresh/cache.json')
+
+    def test_existing_exact_native_cache_cannot_be_rebound_to_unobserved_parts(self):
+        from test_native_tool_hulls import NativeToolHullTests
+        fixture=NativeToolHullTests();fixture.setUp()
+        try:
+            original=fixture.cache.read_bytes()
+            proof=verified_window_native_tool_cache(fixture.assembly,fixture.cache,requested_paths=[fixture.collider])
+            self.assertEqual(proof['requested_capture_paths'],[fixture.collider])
+            with self.assertRaisesRegex(ValueError,'lacks requested collider observations'):
+                verified_window_native_tool_cache(fixture.assembly,fixture.cache,
+                    requested_paths=[fixture.collider,'/World/ActuatedTool/R/part_249'])
+            self.assertEqual(fixture.cache.read_bytes(),original)
+        finally:fixture.tearDown()
+
+    def test_heading_retries_never_follow_state_initialization_timeout_or_unknown_evidence(self):
+        for artifact in ('states.npz','states_partial.npz','native_metadata.json','warmup.json',
+                'route_start_native_validation.json','native_initialization_timing.json','route_checkpoint','summary.json',
+                'unknown_error','timeout','actual_stop','seed_mismatch','yaw_mismatch'):
+            with self.subTest(artifact=artifact):
+                calls=[]
+                def runner(command,check):
+                    calls.append(command);case,trial,result,path=self.heading_planning_failure(command)
+                    if artifact=='unknown_error':
+                        (trial/'runtime_error.json').write_text(json.dumps(dict(error='Traceback (most recent call last):\nRuntimeError: unknown failure')))
+                        (trial/'self_collision_preflight.json').unlink()
+                    elif artifact=='timeout':result['timeout']=True
+                    elif artifact=='actual_stop':result.update(returncode=0,summary=dict(completed=False,stop_reason='actual_contact_stop'))
+                    elif artifact in ('seed_mismatch','yaw_mismatch'):
+                        plan=json.loads((trial/'plan.json').read_text())
+                        plan['selected_seed_index' if artifact=='seed_mismatch' else 'truss_entry_yaw_offset_deg']=5 if artifact=='seed_mismatch' else 30.
+                        (trial/'plan.json').write_text(json.dumps(plan))
+                    else:(trial/artifact).write_bytes(b'Native initialization/state evidence; never retry')
+                    path.write_text(json.dumps([result]))
+                report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/('headingguard_'+artifact.replace('.','_')),
+                    execute=True,max_plants=1,base_arguments=self.heading_arguments(),heading_retries=True,benchmark_runner=runner)
+                self.assertEqual(len(calls),1);self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+                self.assertFalse(report['rollback_performed'])
+
+    def test_heading_retries_cli_opt_in_and_camera_mode_rejection(self):
+        from run_row_harvest import main
+        for enabled in (False,True):
+            command=['run_row_harvest.py','assembly','inventory','screen','output']
+            if enabled:command.append('--heading-retries')
+            with patch('sys.argv',command),patch('run_row_harvest.campaign',return_value=dict(status='planned_only')) as runner,patch('builtins.print'):
+                self.assertEqual(main(),0)
+            self.assertIs(runner.call_args.kwargs['heading_retries'],enabled)
+        for invalid in (None,1,'true'):
+            with self.assertRaisesRegex(ValueError,'boolean heading'):
+                campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headingbad',heading_retries=invalid)
+        with self.assertRaisesRegex(ValueError,'GT truss-axis joint'):
+            campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'headingcamera',
+                heading_retries=True,base_arguments=self.heading_arguments()+['--camera-harvest'])
+
+    def test_unused_window_planning_deferral_keeps_exact_accepted_parent(self):
+        checkpoint,row,_=self.initial_checkpoint();switches=[];commands=[]
+        preferred=self.preferred(order=(20,19,22));preferred_path=self.root/'preferred.json';preferred_path.write_text(json.dumps(preferred))
+        def switch(source,prior,output,plant,target,*,near_trusses_metadata):
+            switches.append((source,prior,plant));output.mkdir(parents=True)
+            manifest=copy.deepcopy(self.manifest);manifest['plant']['source_plant']=f'/World/Greenhouse/Plants/Plant_{plant:02d}'
+            (output/'motion_manifest.json').write_text(json.dumps(manifest))
+            (output/'scene.usda').write_bytes((self.assembly/'scene.usda').read_bytes())
+            return {}
+        def runner(command,check):
+            commands.append(command);cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+            folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+            trial=folder/case['name']
+            if len(commands)==1:result=self.planning_failure(trial)
+            else:
+                (trial/'cycle_checkpoints/000').mkdir(parents=True)
+                summary=self.final_summary(trial,dict(completed=True,stop_reason=None,initialization_valid=True,simulated_s=10.))
+                result=dict(returncode=0,timeout=False,summary=summary)
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([result]))
+        def loader(path,**kwargs):return (row,self.initial_arrays())if Path(path)==checkpoint else (metadata(),{})
+        with patch('run_row_harvest.load_checkpoint',side_effect=loader):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'deferred',execute=True,max_plants=2,
+                initial_native_checkpoint=checkpoint,preferred_selection_path=preferred_path,
+                window_switch=switch,benchmark_runner=runner,defer_unexecuted_planning_failures=True)
+        self.assertEqual(switches,[(self.assembly.resolve(),checkpoint.resolve(),20),(self.assembly.resolve(),checkpoint.resolve(),19)])
+        self.assertEqual(report['stations'][0]['status'],'unexecuted_planning_failure_deferred')
+        self.assertFalse(report['stations'][0]['physics_execution'])
+        self.assertTrue(Path(report['stations'][0]['assembly']).is_dir())
+        self.assertTrue(Path(report['stations'][0]['planning_deferral']['evidence']['runtime_error']['path']).is_file())
+        self.assertEqual(report['stations'][1]['status'],'completed_physics')
+        self.assertFalse(report['rollback_performed'])
+
+    def test_planning_deferral_default_off_and_any_actual_state_never_deferred(self):
+        for enabled,actual_state in [(False,False),(True,True)]:
+            with self.subTest(enabled=enabled,actual_state=actual_state):
+                case_root=self.root/f'case{enabled}';calls=[]
+                def runner(command,check):
+                    calls.append(command);cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+                    folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+                    trial=folder/case['name'];result=self.planning_failure(trial)
+                    if actual_state:(trial/'states_partial.npz').write_bytes(b'actual stepped state')
+                    (folder/(cases.stem+'_results.json')).write_text(json.dumps([result]))
+                # The accepted parent fixture is supplied explicitly; the
+                # first same-plant proposal avoids unrelated window fixtures.
+                checkpoint,row,_=self.initial_checkpoint() if not enabled else (self.root/'previous_trial/cycle_checkpoints/000',metadata(),None)
+                if enabled:
+                    row.update(source_assembly=str(self.assembly),manifest=copy.deepcopy(self.manifest),scene_sha256=self.manifest['scene_sha256'])
+                with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+                    report=campaign(self.assembly,self.inventory_path,self.screen_path,case_root,execute=True,max_plants=2,
+                        initial_native_checkpoint=checkpoint,benchmark_runner=runner,
+                        defer_unexecuted_planning_failures=enabled)
+                self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+                self.assertEqual(len(calls),1);self.assertEqual(len(report['stations']),1)
+                self.assertTrue(report['stations'][0]['physics_execution'])
+
+    def test_measured_harvest_budget_stops_before_loading_another_window(self):
+        calls=[]
+        def runner(command,check):
+            calls.append(command);cases=Path(command[4]);name=json.loads(cases.read_text())[0]['name']
+            folder=Path(command[command.index('--output')+1]);(folder/name/'cycle_checkpoints/000').mkdir(parents=True)
+            summary=self.final_summary(folder/name,dict(completed=True,stop_reason=None,
+                initialization_valid=True,simulated_s=10.,selected_cycle_evidence=self.harvest_evidence()))
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=0,timeout=False,summary=summary)]))
+        with patch('run_row_harvest.load_checkpoint',return_value=(metadata(),{})):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'budget',
+                execute=True,max_plants=3,stop_after_harvested_trusses=1,benchmark_runner=runner,
+                window_switch=lambda *a,**k:self.fail('No extra window after measured harvest budget'))
+        self.assertEqual(len(calls),1);self.assertEqual(report['status'],'measured_harvest_budget_reached')
+        self.assertEqual(report['measured_harvest_budget']['achieved'],1)
+
+    def test_camera_campaign_opt_in_keeps_legacy_commands_and_checkpoint_flags(self):
+        original=list(DEFAULT_ARGUMENTS)
+        self.assertEqual(camera_campaign_arguments(original),original)
+        rendered=camera_campaign_arguments(original,camera_capture=True)
+        self.assertEqual(original,DEFAULT_ARGUMENTS)
+        self.assertEqual(rendered,[value for value in original if value!='--physics-only']+['--capture-gt'])
+        arguments=motion_arguments(rendered,self.inventory_path,dict(station_y_m=1.6))
+        for option in ('--headless','--capture-gt','--native-materialized-stage',
+                       '--save-route-checkpoint','--checkpoint-cycle-states'):
+            self.assertIn(option,arguments)
+        self.assertNotIn('--physics-only',arguments)
+        for option in ('--hz','--contact-limit-mm','--fruit-contact-limit-mm','--plant-dynamics'):
+            self.assertEqual(arguments[arguments.index(option)+1],original[original.index(option)+1])
+
+    def test_camera_motion_arguments_require_explicit_capture_and_one_rendered_environment(self):
+        without=[value for value in DEFAULT_ARGUMENTS if value!='--physics-only']
+        with self.assertRaisesRegex(ValueError,'headless whole-truss'):
+            motion_arguments(without,self.inventory_path,dict(station_y_m=1.6))
+        for flag in ('--capture-rgbd','--capture-gt'):
+            accepted=motion_arguments(without+[flag],self.inventory_path,dict(station_y_m=1.6))
+            self.assertIn(flag,accepted)
+            with self.assertRaisesRegex(ValueError,'rendered headless'):
+                motion_arguments(DEFAULT_ARGUMENTS+[flag],self.inventory_path,dict(station_y_m=1.6))
+            for count in ('2','0'):
+                with self.assertRaisesRegex(ValueError,'exactly one'):
+                    motion_arguments(without+[flag,'--num-envs',count],self.inventory_path,dict(station_y_m=1.6))
+            with self.assertRaisesRegex(ValueError,'reset/fixture'):
+                motion_arguments(without+[flag,'--replicate'],self.inventory_path,dict(station_y_m=1.6))
+
+    def test_camera_campaign_requires_mount_and_records_rendered_mode(self):
+        with self.assertRaisesRegex(ValueError,'mounted_rgbd'):
+            campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'missing_camera',
+                     camera_capture=True,max_plants=1)
+        self.assertFalse((self.root/'missing_camera').exists())
+        self.manifest['mounted_rgbd']=dict(parent='/World/Robot/link1')
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'camera_plan',
+                        camera_capture=True,max_plants=1)
+        self.assertEqual(report['status'],'planned_only')
+        self.assertEqual(report['camera_capture'],dict(enabled=True,gt=True,
+            rendered_headless=True,physics_step_control='existing native runner'))
+
+    def test_fresh_station_policy_preserves_screened_proposal_only_with_opt_in(self):
+        additional=placement(22,y=1.3,truss=1)
+        inventory=copy.deepcopy(self.inventory);inventory['trusses'].append(additional)
+        screen=copy.deepcopy(self.screen);screen['results'].append(proposal(additional,1.26))
+        legacy=select_stations(inventory,screen,22,1.6,max_plants=1)
+        explicit=select_stations(inventory,screen,22,1.6,max_plants=1,pin_current_station=True)
+        self.assertEqual(legacy,explicit)
+        self.assertEqual(legacy['stations'][0]['station_y_m'],1.6)
+        fresh=select_stations(inventory,screen,22,1.6,max_plants=1,pin_current_station=False)
+        self.assertEqual(fresh['stations'][0]['station_y_m'],1.26)
+        self.assertEqual(fresh['stations'][0]['truss_index'],1)
+        self.assertTrue(fresh['stations'][0]['initial_current_plant'])
+
+    def test_camera_harvest_fresh_plan_retains_screen_station_but_resume_pins_measured(self):
+        self.manifest['mounted_rgbd']=dict(parent='/World/Robot/link1')
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        arguments=DEFAULT_ARGUMENTS+['--camera-harvest']
+        fresh=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'fresh_camera',
+                       camera_capture=True,base_arguments=arguments,max_plants=1)
+        self.assertEqual(fresh['selection']['stations'][0]['station_y_m'],1.4)
+        self.assertFalse(fresh['selection']['initial_station_policy']['pin_current_station'])
+        checkpoint,row,_=self.initial_checkpoint()
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+            resumed=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'resumed_camera',
+                camera_capture=True,base_arguments=arguments,max_plants=1,initial_native_checkpoint=checkpoint)
+        self.assertAlmostEqual(resumed['selection']['stations'][0]['station_y_m'],1.6)
+        self.assertTrue(resumed['selection']['initial_station_policy']['pin_current_station'])
 
     def final_summary(self,trial,summary,scene_sha256='c'*64):
         trial=Path(trial);trial.mkdir(parents=True,exist_ok=True)
@@ -156,6 +854,50 @@ class RunRowHarvestTests(unittest.TestCase):
         self.assertAlmostEqual(report['selection']['stations'][0]['station_y_m'],2.8)
         self.assertEqual(self.manifest['rail']['initial_station_y_m'],1.6)
 
+    def test_same_plant_retains_exact_drive_command_despite_measured_tracking_error(self):
+        self.manifest['rail']['dof_name']='root_joint'
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        checkpoint,row,_=self.initial_checkpoint();arrays=self.initial_arrays()
+        requested=2.1540962239837422
+        retained=2.154096212387085
+        measured=retained+.0000403
+        arrays['body_poses_world'][0][1]+=measured-self.manifest['rail']['initial_station_y_m']
+        arrays['robot_dof_names']=['root_joint','base']
+        arrays['robot_q']=[measured-self.manifest['rail']['initial_station_y_m'],.25]
+        row['controller_state']=dict(robot_dof_names=['root_joint','base'],
+            position_source='native_get_dof_position_targets',
+            position_targets=[retained-self.manifest['rail']['initial_station_y_m'],.25])
+        original=copy.deepcopy(arrays)
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,arrays)):
+            _,proof=validated_initial_checkpoint(self.assembly,self.manifest,checkpoint)
+        accepted=same_plant_resume_station_proof(requested,proof)
+        self.assertGreater(accepted['measured_request_difference_m'],1e-6)
+        self.assertLess(accepted['retained_command_request_difference_m'],1e-6)
+        self.assertTrue(accepted['unchanged_command_proven'])
+        self.assertEqual(accepted['command_identity_tolerance_m'],1e-6)
+        self.assertAlmostEqual(proof['measured_initial_station_y_m'],measured)
+        self.assertEqual(arrays,original)
+        self.assertFalse(accepted['physical_state_modified'])
+        for new_station in (requested+.001,retained+1.01e-6):
+            with self.assertRaisesRegex(ValueError,'additional physical rail travel'):
+                same_plant_resume_station_proof(new_station,proof)
+        # Legacy measured-station continuation remains accepted without a
+        # retained-target certificate; no substitute target is fabricated.
+        legacy=copy.deepcopy(proof);legacy['retained_native_rail_command']=None
+        self.assertFalse(same_plant_resume_station_proof(measured,legacy)['unchanged_command_proven'])
+        with self.assertRaisesRegex(ValueError,'additional physical rail travel'):
+            same_plant_resume_station_proof(requested,legacy)
+
+    def test_retained_rail_command_requires_native_target_identity(self):
+        self.manifest['rail']['dof_name']='root_joint'
+        checkpoint,row,_=self.initial_checkpoint();arrays=self.initial_arrays()
+        arrays['robot_dof_names']=['root_joint','base']
+        row['controller_state']=dict(robot_dof_names=['root_joint','base'],
+            position_source='measured_robot_q',position_targets=[0.,0.])
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,arrays)):
+            with self.assertRaisesRegex(ValueError,'native rail controller provenance'):
+                validated_initial_checkpoint(self.assembly,self.manifest,checkpoint)
+
     def test_first_new_plant_uses_initial_checkpoint_for_measured_window_handoff(self):
         checkpoint,row,_=self.initial_checkpoint();calls=[]
         preferred=self.preferred(order=(20,22,19));preferred_path=self.root/'preferred.json'
@@ -197,6 +939,108 @@ class RunRowHarvestTests(unittest.TestCase):
             wrong=copy.deepcopy(passed);wrong['summary'].update(patchvalue)
             report=preflight_result(wrong,self.root)
             self.assertFalse(report['passed']);self.assertEqual(report['diagnostic_break_harvest_credit'],0)
+
+    def test_static_farm_support_optin_is_default_off_and_removed_from_idle_probe(self):
+        from test_run_motion_conditioning import actual_cli
+        flag='--released-fruit-static-farm-support-diagnostic'
+        self.assertFalse(actual_cli([]).released_fruit_static_farm_support_diagnostic)
+        source=motion_arguments(DEFAULT_ARGUMENTS+[flag],self.inventory_path,dict(station_y_m=.81))
+        self.assertTrue(actual_cli(source).released_fruit_static_farm_support_diagnostic)
+        idle=startup_preflight_arguments(source)
+        self.assertNotIn(flag,idle)
+        parsed=actual_cli(idle)
+        self.assertFalse(parsed.released_fruit_static_farm_support_diagnostic)
+        self.assertEqual(parsed.contact_limit_mm,actual_cli(source).contact_limit_mm)
+        self.assertEqual(parsed.fruit_contact_limit_mm,actual_cli(source).fruit_contact_limit_mm)
+
+    def test_camera_campaign_idle_preflight_real_cli_keeps_sensor_and_guards(self):
+        from test_run_motion_conditioning import actual_cli
+        base=camera_campaign_arguments(DEFAULT_ARGUMENTS,camera_capture=True)
+        source=motion_arguments(base+['--camera-harvest','--camera-max-harvest-cycles','1',
+            '--camera-minimum-fruits','2','--camera-min-visible-pixels','12',
+            '--truss-order','highest-first','--single-fruit-when-remaining','0',
+            '--entry-retract-mm','200','--grasp-lateral-offset-mm','5',
+            '--last-fruit-depth-mm','20','--last-fruit-height-offset-mm','-5',
+            '--last-fruit-grasp-sway-mm','1','--camera-heading-offsets-deg','0','15','-15',
+            '--horizontal-ready-connector','joint','--camera-ik-seed-indices','2','8',
+            '--retain-lift-drive-reference','--use-captured-tool-colliders',
+            '--verify-full-environment-preflight','--capture-tool-colliders','/World/ActuatedTool/R/part_331'],
+            self.inventory_path,dict(station_y_m=1.6))
+        idle=startup_preflight_arguments(source)
+        for name in ['--camera-harvest','--camera-max-harvest-cycles','--camera-minimum-fruits','--camera-min-visible-pixels']:
+            self.assertNotIn(name,idle)
+        for name in ['--entry-retract-mm','--grasp-lateral-offset-mm','--last-fruit-depth-mm',
+                     '--last-fruit-height-offset-mm','--last-fruit-grasp-sway-mm','--camera-heading-offsets-deg',
+                     '--camera-ik-seed-indices','--retain-lift-drive-reference',
+                     '--use-captured-tool-colliders','--capture-tool-colliders']:
+            self.assertNotIn(name,idle)
+        self.assertIn('--capture-gt',idle);self.assertNotIn('--physics-only',idle)
+        parsed=actual_cli(idle)
+        self.assertEqual(parsed.mode,'idle');self.assertEqual(parsed.seconds,3.)
+        self.assertTrue(parsed.capture_gt);self.assertTrue(parsed.capture_rgbd)
+        self.assertFalse(parsed.camera_harvest);self.assertEqual(parsed.camera_max_harvest_cycles,0)
+        self.assertTrue(parsed.verify_leaf_contact_after_step)
+        self.assertTrue(parsed.verify_harvest_contact_after_step)
+        self.assertTrue(parsed.verify_structural_scene_query)
+        source_parsed=actual_cli(source)
+        self.assertEqual(source_parsed.camera_ik_seed_indices,[2,8])
+        self.assertTrue(source_parsed.retain_lift_drive_reference)
+        self.assertTrue(source_parsed.use_captured_tool_colliders)
+        self.assertIsNone(parsed.camera_ik_seed_indices)
+        self.assertFalse(parsed.retain_lift_drive_reference)
+        self.assertFalse(parsed.use_captured_tool_colliders)
+        for key in ['hz','solver','device','threads','position_iterations','velocity_iterations',
+                'contact_limit_mm','fruit_contact_limit_mm','fruit_fruit_limit_mm','scene_ccd','plant_dynamics']:
+            self.assertEqual(getattr(parsed,key),getattr(source_parsed,key),key)
+
+    def test_server_actual_env_safe_200mm_arguments_make_valid_idle_cli(self):
+        from test_run_motion_conditioning import actual_cli
+        path=Path('/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/motion_arguments_env_safe.json')
+        if not path.is_file():self.skipTest('Server input not installed; portable200mm CLI case has separate coverage')
+        source=motion_arguments(json.loads(path.read_text()),self.inventory_path,dict(station_y_m=1.6))
+        actual_cli(source)
+        idle=startup_preflight_arguments(source);args=actual_cli(idle)
+        self.assertEqual(args.mode,'idle');self.assertEqual(args.seconds,3.)
+        self.assertTrue(args.capture_gt);self.assertTrue(args.verify_leaf_contact_after_step)
+        self.assertEqual(args.entry_retract_mm,100.)
+        self.assertNotIn('--entry-retract-mm',idle)
+
+    def test_preflight_cli_and_runtime_errors_are_not_scene_failures(self):
+        trial=self.root/'bad_probe';trial.mkdir()
+        result=dict(returncode=1,timeout=False,summary=None)
+        log=trial.with_suffix('.log');log.write_text('usage: run_motion.py\nrun_motion.py: error: invalid mode combination\n')
+        proof=preflight_result(result,trial)
+        self.assertEqual(proof['status'],'pipeline_cli_integration_error')
+        self.assertFalse(proof['can_defer_unused_placement']);self.assertFalse(proof['native_physics_initialization_observed'])
+        self.assertIn('native_process_log',proof['evidence'])
+        log.unlink();(trial/'runtime_error.json').write_text(json.dumps(dict(error='ImportError: code integration failure')))
+        proof=preflight_result(result,trial)
+        self.assertEqual(proof['status'],'pipeline_runtime_integration_error')
+        self.assertFalse(proof['can_defer_unused_placement'])
+        self.assertFalse(preflight_result(dict(result,timeout=True),trial)['can_defer_unused_placement'])
+
+    def test_common_startup_cli_error_stops_campaign_without_skipping_plants(self):
+        checkpoint,row,_=self.initial_checkpoint();switches=[];commands=[]
+        preferred=self.preferred(order=(20,19,22));path=self.root/'preferred.json';path.write_text(json.dumps(preferred))
+        def switch(source,prior,output,plant,target,*,near_trusses_metadata):
+            switches.append((source,prior,plant));output.mkdir(parents=True)
+            manifest=copy.deepcopy(self.manifest);manifest['plant']['source_plant']=f'/World/Greenhouse/Plants/Plant_{plant:02d}'
+            (output/'motion_manifest.json').write_text(json.dumps(manifest));return {}
+        def runner(command,check):
+            commands.append(command);cases=Path(command[4]);case=json.loads(cases.read_text())[0]
+            folder=Path(command[command.index('--output')+1]);folder.mkdir(parents=True)
+            trial=folder/case['name'];trial.with_suffix('.log').write_text('run_motion.py: error: common CLI bug\n')
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=1,timeout=False,summary=None)]))
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'cli_failure',execute=True,max_plants=2,
+                initial_native_checkpoint=checkpoint,preferred_selection_path=path,preflight_new_windows=True,
+                window_switch=switch,benchmark_runner=runner)
+        self.assertEqual(len(commands),1);self.assertEqual(len(switches),1)
+        self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+        first=report['stations'][0];self.assertFalse(first['physics_execution'])
+        self.assertFalse(first['startup_preflight']['native_probe_executed'])
+        self.assertEqual(first['startup_preflight']['status'],'pipeline_cli_integration_error')
+        self.assertFalse(report['rollback_performed'])
 
     def test_failed_unused_window_preflight_keeps_same_parent_for_next_proposal(self):
         checkpoint,row,_=self.initial_checkpoint();switches=[];commands=[]
@@ -357,6 +1201,180 @@ class RunRowHarvestTests(unittest.TestCase):
             motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,
                 dict(station,preparation_variant=dict(name='unsafe',horizontal_ready_connector='joint',
                     collision_filter='disabled')))
+
+    def target_window_manifest(self,plant_id=22,truss=2):
+        manifest=copy.deepcopy(self.manifest);root='/World/ElasticTarget'
+        name=f'Truss_{truss:02d}_Fruit_01'
+        target=dict(name=name,path=root+'/'+name,joint=root+'/HarvestJoints/'+name)
+        manifest['plant'].update(source_plant=f'/World/Greenhouse/Plants/Plant_{plant_id:02d}',
+            root=root,fruits=[dict(name=f'Truss_{t:02d}_Fruit_{n:02d}',
+                path=root+f'/Truss_{t:02d}_Fruit_{n:02d}',
+                joint=root+f'/HarvestJoints/Truss_{t:02d}_Fruit_{n:02d}')
+                for t in range(3) for n in range(1,11)])
+        manifest.update(target=target,plant_interaction_variant=dict(
+            mode='target_truss_and_own_stem_only',target_root=root,target_truss=f'Truss_{truss:02d}'))
+        return manifest
+
+    def test_target_window_arguments_omit_only_near_scope_options_and_preserve_strict_defaults(self):
+        station=dict(station_y_m=.66,preparation_variant=dict(name='joint8',
+            horizontal_ready_connector='joint',horizontal_ready_seed_index=8))
+        original=motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,station)
+        expected=original.copy();i=expected.index('--near-trusses-metadata');del expected[i:i+2]
+        expected.remove('--initial-truss-first')
+        self.assertEqual(motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,station,
+            target_truss_windows=True),expected)
+        from test_run_motion_conditioning import actual_cli
+        parsed=actual_cli(expected)
+        self.assertIsNone(parsed.near_trusses_metadata);self.assertFalse(parsed.initial_truss_first)
+        self.assertEqual(motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,station,
+            target_truss_windows=False),original)
+        for value in (None,1,'true'):
+            with self.assertRaisesRegex(ValueError,'boolean'):
+                motion_arguments(DEFAULT_ARGUMENTS,self.inventory_path,station,target_truss_windows=value)
+
+    def test_target_window_validation_rejects_wrong_mode_source_and_fruit_mapping(self):
+        manifest=self.target_window_manifest();station=dict(plant_id=22,truss_index=2,target_name='Truss_02_Fruit_01')
+        before=copy.deepcopy(manifest)
+        proof=validate_target_truss_window(manifest,station)
+        self.assertEqual(proof['source_plant_fruit_count'],30)
+        self.assertFalse(proof['entire_plant_completion_claim']);self.assertEqual(manifest,before)
+        changes=[('plant_interaction_variant','mode','active_plant_and_own_stem_only'),
+                 ('plant_interaction_variant','target_truss','Truss_01'),
+                 ('plant_interaction_variant','target_root','/World/OtherPlant'),
+                 ('plant','source_plant','/World/Other/Plant_22'),
+                 ('target','path','/World/OtherPlant/Truss_02_Fruit_01'),
+                 ('target','joint','/World/ElasticTarget/HarvestJoints/Truss_01_Fruit_01')]
+        for section,field,value in changes:
+            bad=copy.deepcopy(manifest);bad[section][field]=value
+            with self.subTest(field=field),self.assertRaises(ValueError):validate_target_truss_window(bad,station)
+        for field,value in [('plant_id',19),('truss_index',1),('target_name','Truss_01_Fruit_01')]:
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'station'):
+                validate_target_truss_window(manifest,dict(station,**{field:value}))
+        bad=copy.deepcopy(manifest);bad['plant']['fruits'][20]['joint']='/wrong/native/joint'
+        with self.assertRaisesRegex(ValueError,'mapping'):validate_target_truss_window(bad,station)
+
+    def test_target_window_planning_requires_matching_initial_station_and_keeps_full_state_scope(self):
+        self.manifest=self.target_window_manifest()
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'target_plan',
+            max_plants=1,target_truss_windows=True)
+        self.assertEqual(report['status'],'planned_only')
+        self.assertEqual(report['target_truss_windows']['initial_window']['source_plant_fruit_count'],30)
+        self.assertFalse(report['target_truss_windows']['entire_plant_completion_claim'])
+        self.manifest['target']=copy.deepcopy(self.manifest['plant']['fruits'][10])
+        self.manifest['plant_interaction_variant']['target_truss']='Truss_01'
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        with self.assertRaisesRegex(ValueError,'station'):
+            campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'wrong_initial_target',
+                max_plants=1,target_truss_windows=True)
+
+    def test_target_window_derived_mismatch_blocks_before_startup_or_native(self):
+        self.manifest=self.target_window_manifest()
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        checkpoint,row,_=self.initial_checkpoint()
+        preferred=self.preferred(order=(20,19,22));path=self.root/'target_preferred.json';path.write_text(json.dumps(preferred))
+        calls=[]
+        def switch(source,prior,output,plant,target,**kwargs):
+            output.mkdir(parents=True);manifest=self.target_window_manifest(plant_id=plant,truss=1)
+            (output/'motion_manifest.json').write_text(json.dumps(manifest))
+            (output/'scene.usda').write_bytes((self.assembly/'scene.usda').read_bytes())
+            return dict(source_state_preserved=True)
+        with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())),\
+                patch('run_row_harvest.current_plant_completion_evidence',return_value=dict(all_eligible_native_detached=False)):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'target_derived',
+                execute=True,max_plants=1,target_truss_windows=True,initial_native_checkpoint=checkpoint,
+                preferred_selection_path=path,preflight_new_windows=True,window_switch=switch,
+                benchmark_runner=lambda *a,**k:calls.append(a))
+        self.assertEqual(calls,[])
+        self.assertEqual(report['status'],'blocked_preserving_last_physical_history')
+        self.assertIn('station',report['stations'][0]['blocker'])
+        self.assertFalse(report['stations'][0]['physics_execution'])
+
+    def test_preferred_current_plant_can_be_budget_unselected_without_completion_credit(self):
+        preferred=self.preferred(order=(20,19,22))
+        selected=select_preferred_stations(self.inventory,self.screen,preferred,self.screen_path,
+            current_plant_id=22,current_station_y_m=1.6,max_plants=2)
+        self.assertEqual([s['plant_id'] for s in selected['stations']],[20,19])
+        self.assertEqual([s['plant_id'] for s in selected['budget_unselected']],[22])
+        manifest,inventory,row,summary,path,proof=self.exact_scope_fixture()
+        seq=summary['truss_sequence'];only=[n for n in seq['fruit_names'] if n.startswith('Truss_02_')]
+        seq.update(fruit_names=only,fruit_joints={n:seq['fruit_joints'][n] for n in only},
+            inventory=dict(detached=only,remaining=[]))
+        path.write_text(json.dumps(summary));proof['final_native_summary_sha256']=file_sha256(path)
+        completion=current_plant_completion_evidence(manifest,inventory,row,proof)
+        self.assertFalse(completion['all_eligible_native_detached'])
+        self.assertEqual(exclude_completed_current_plant(selected,completion,2),selected)
+
+    def test_fast_materialization_is_explicit_and_does_not_add_default_switch_kwargs(self):
+        checkpoint,row,_=self.initial_checkpoint()
+        preferred=self.preferred(order=(20,19,22));path=self.root/'storage_preferred.json';path.write_text(json.dumps(preferred))
+        for enabled in (False,True):
+            seen=[]
+            def switch(*args,**kwargs):
+                seen.append(kwargs);raise RuntimeError('No native: capture the existing window-switch call')
+            with patch('run_row_harvest.load_checkpoint',return_value=(row,self.initial_arrays())):
+                report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/f'storage{enabled}',
+                    execute=True,max_plants=1,initial_native_checkpoint=checkpoint,preferred_selection_path=path,
+                    window_switch=switch,fast_materialization=enabled,
+                    benchmark_runner=lambda *a,**k:self.fail('No native run in this contract test'))
+            expected=dict(near_trusses_metadata=self.inventory_path.resolve())
+            if enabled:expected['fast_materialization']=True
+            self.assertEqual(seen,[expected])
+            self.assertEqual('window_materialization' in report,enabled)
+            if enabled:
+                self.assertEqual(report['window_materialization']['mode'],'s300-whole-canonical-layer-storage-identity-v1')
+                self.assertTrue(report['window_materialization']['fresh_native_validation_still_required'])
+        for invalid in (None,1,'true'):
+            with self.assertRaisesRegex(ValueError,'boolean exact'):
+                campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'badstorage',fast_materialization=invalid)
+
+    def test_fast_materialization_cli_reaches_existing_campaign_without_changing_default(self):
+        from run_row_harvest import main
+        for enabled in (False,True):
+            command=['run_row_harvest.py','assembly','inventory','screen','output']
+            if enabled:command.append('--fast-materialization')
+            with patch('sys.argv',command),patch('run_row_harvest.campaign',return_value=dict(status='planned_only')) as runner,\
+                    patch('builtins.print'):
+                self.assertEqual(main(),0)
+            self.assertIs(runner.call_args.kwargs['fast_materialization'],enabled)
+
+    def test_target_window_startup_and_execution_both_keep_exact_manifest_selection(self):
+        self.manifest=self.target_window_manifest()
+        (self.assembly/'motion_manifest.json').write_text(json.dumps(self.manifest))
+        checkpoint,row,_=self.initial_checkpoint();calls=[];switches=[]
+        preferred=self.preferred(order=(20,19,22));path=self.root/'target_order.json';path.write_text(json.dumps(preferred))
+        def switch(source,prior,output,plant,target,**kwargs):
+            switches.append((source,prior,plant,target,kwargs));output.mkdir(parents=True)
+            (output/'motion_manifest.json').write_text(json.dumps(self.target_window_manifest(plant_id=plant)))
+            (output/'scene.usda').write_bytes((self.assembly/'scene.usda').read_bytes())
+            return dict(source_state_preserved=True)
+        def runner(command,check):
+            cases=Path(command[4]);case=json.loads(cases.read_text())[0];arguments=case['arguments'];calls.append(arguments)
+            self.assertNotIn('--near-trusses-metadata',arguments)
+            self.assertNotIn('--initial-truss-first',arguments)
+            folder=Path(command[command.index('--output')+1]);trial=folder/case['name'];trial.mkdir(parents=True)
+            idle=arguments[arguments.index('--mode')+1]=='idle'
+            if idle:
+                self.assertNotIn('--rail-to-y',arguments)
+                summary=dict(mode='idle',completed=True,stop_reason=None,initialization_valid=True,
+                    simulated_s=3.,rail_destination=None,native_new_break_count=0)
+            else:
+                self.assertIn('--rail-to-y',arguments)
+                (trial/'cycle_checkpoints/000').mkdir(parents=True)
+                summary=self.final_summary(trial,dict(completed=True,stop_reason=None,initialization_valid=True,simulated_s=10.))
+            (folder/(cases.stem+'_results.json')).write_text(json.dumps([dict(returncode=0,timeout=False,summary=summary)]))
+        def loader(path,**kwargs):return (row,self.initial_arrays()) if Path(path)==checkpoint else (metadata(),{})
+        with patch('run_row_harvest.load_checkpoint',side_effect=loader),\
+                patch('run_row_harvest.current_plant_completion_evidence',return_value=dict(all_eligible_native_detached=False)):
+            report=campaign(self.assembly,self.inventory_path,self.screen_path,self.root/'target_routed',
+                execute=True,max_plants=1,target_truss_windows=True,initial_native_checkpoint=checkpoint,
+                preferred_selection_path=path,preflight_new_windows=True,window_switch=switch,benchmark_runner=runner)
+        self.assertEqual(len(calls),2);self.assertEqual(len(switches),1)
+        self.assertEqual(switches[0][0:4],(self.assembly.resolve(),checkpoint.resolve(),20,'Truss_02_Fruit_01'))
+        self.assertEqual(switches[0][4]['near_trusses_metadata'],self.inventory_path.resolve())
+        self.assertEqual(report['status'],'finite_campaign_completed',report)
+        self.assertEqual(report['stations'][0]['target_truss_window']['source_plant_fruit_count'],30)
+        self.assertFalse(report['stations'][0]['target_truss_window']['entire_plant_completion_claim'])
 
     def test_planning_mode_never_builds_new_assets_or_launches_native(self):
         calls=[]

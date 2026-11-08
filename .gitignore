@@ -12,3 +12,7 @@
 # Python generated files
 __pycache__/
 *.py[cod]
+
+# Local renderer environment and repository backup (keep on disk, not in Git)
+/mujoco-benchmark/.mujoco315-render-venv/
+/farmily_mjlab-performance.bundle

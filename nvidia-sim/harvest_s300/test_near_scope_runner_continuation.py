@@ -23,9 +23,11 @@ class NearScopeRunnerContinuationTests(unittest.TestCase):
         nodes=main.body
         first=next(i for i,node in enumerate(nodes) if isinstance(node,ast.Assign) and
             any(isinstance(t,ast.Name) and t.id=='initial_sequence_group' for t in node.targets))
-        end=next(i for i in range(first,len(nodes)) if isinstance(nodes[i],ast.Assign) and
-            any(isinstance(t,ast.Tuple) and any(isinstance(v,ast.Name) and v.id=='phases' for v in t.elts)
-                for t in nodes[i].targets))
+        end=next(i for i in range(first,len(nodes)) if
+            isinstance(nodes[i],ast.Assign) and any(isinstance(t,ast.Tuple) and
+                any(isinstance(v,ast.Name) and v.id=='phases' for v in t.elts)for t in nodes[i].targets) or
+            isinstance(nodes[i],ast.If) and any(isinstance(call,ast.Call) and
+                isinstance(call.func,ast.Name) and call.func.id=='direct_scan_prefix'for call in ast.walk(nodes[i])))
         fruits=[dict(name=f'Truss_{truss:02d}_Fruit_{j+1:02d}',path=f'/fruit/{truss}/{j}',
                      joint=f'/joint/{truss}/{j}',center=[10.+j,20.,30.])
                 for truss in (1,2) for j in range(3)]
@@ -39,6 +41,7 @@ class NearScopeRunnerContinuationTests(unittest.TestCase):
         metadata=dict(sequence=dict(initial_axis=prior_axis,cycle_plans=[prior_cycle]))
         with tempfile.TemporaryDirectory() as temporary:
             options=SimpleNamespace(whole_truss=True,truss_order='highest-first',
+                camera_harvest=False,camera_target_truss_window=False,later_grasp_depth_scope='truss',
                 near_trusses_metadata=Path('/explicit-inventory'),initial_truss_first=True,
                 max_fruit_attempts=6,single_fruit_when_remaining=2,output=Path(temporary),
                 truss_axis_min_fruits=3,grasp_depth_mm=65.,later_grasp_depth_mm=50.,
@@ -54,6 +57,7 @@ class NearScopeRunnerContinuationTests(unittest.TestCase):
                 manifest=dict(target=dict(name=fruits[3]['name']),plant=dict(fruits=fruits),
                               grasp_reference=dict(height_offset_m=0.)),
                 resume_context=dict(metadata=metadata),truss_fruits=truss_fruits,
+                group_policy_selector=None,
                 sequence_selector=select_scoped_group,
                 initial_inventory_breaks=native_breaks,
                 initial_body_paths=[f['path'] for f in fruits],initial_body_poses=positions,

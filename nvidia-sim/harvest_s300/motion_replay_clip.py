@@ -10,6 +10,8 @@ def plant_contact_caption(manifest, portable_metadata=None):
             return f'FIXED NEIGHBOR PLANTS: {len(roots)}; OTHER BACKGROUND PLANTS NONCOLLIDING'
     if manifest.get('plant_interaction_variant',{}).get('mode')=='target_truss_and_own_stem_only':
         return 'NON-TARGET PLANT CONTACTS OFF'
+    if manifest.get('plant_interaction_variant',{}).get('mode')=='active_plant_and_own_stem_only':
+        return 'ALL ACTIVE-PLANT TRUSSES PHYSICAL; OTHER PLANT CONTACTS OFF'
     if manifest.get('elastic_neighbors'):
         return f'DYNAMIC PLANTS: {1+len(manifest["elastic_neighbors"])}'
     return ''

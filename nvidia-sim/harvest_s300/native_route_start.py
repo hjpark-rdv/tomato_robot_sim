@@ -102,8 +102,34 @@ def prepare_route_start(stage, assembly, manifest):
         if not prim.HasAPI(UsdPhysics.RigidBodyAPI):continue
         world=np.asarray(cache.GetLocalToWorldTransform(prim)).T
         new_rest[str(prim.GetPath())]=np.r_[world[:3,3],Rotation.from_matrix(world[:3,:3]).as_quat()].tolist()
+    reactivation=None
+    proof=route.get('unharvested_reactivation')
+    if proof is not None:
+        if (proof.get('schema')!='s300-unharvested-frozen-reactivation-v1' or
+                proof.get('source_plant')!=manifest['plant']['source_plant'] or
+                proof.get('active_root')!=manifest['plant']['root'] or proof.get('native_break_count')!=0 or
+                proof.get('native_state_restore_required')is not True):
+            raise ValueError('Exact unharvested reactivation declaration required')
+        archived_meta,archived_arrays=load_checkpoint(proof['checkpoint'],expected_scene_sha256=proof['source_scene_sha256'])
+        require_completed_checkpoint(archived_meta)
+        if (archived_meta['metadata_sha256']!=proof['checkpoint_metadata_sha256'] or
+                archived_meta['source_plant']!=manifest['plant']['source_plant'] or archived_meta['break_events'] or
+                archived_meta['manifest']['plant']!=manifest['plant']):
+            raise ValueError('Reactivation topology/state/hash changed or a detached fruit could be resurrected')
+        if (list(map(str,archived_arrays['plant_dof_names']))!=proof['archived_plant_dof_names'] or
+                not np.array_equal(archived_arrays['plant_q'],proof['archived_plant_q']) or
+                not np.array_equal(archived_arrays['preload'],proof['archived_preload']) or
+                not np.array_equal(np.zeros_like(archived_arrays['plant_qvel']),proof['restored_plant_qvel'])):
+            raise ValueError('Reactivation q/preload or explicit frozen velocity declaration mismatch')
+        reactivation=dict(metadata=archived_meta,arrays=archived_arrays,proof=copy.deepcopy(proof))
+        reactivation['standalone_fruit_paths']=[fruit['path'] for fruit in manifest['plant']['fruits']]
+        for path in reactivation['standalone_fruit_paths']:
+            prim=stage.GetPrimAtPath(path)
+            if not prim or not prim.HasAPI(UsdPhysics.RigidBodyAPI):
+                raise ValueError('Reactivated exact native fruit body is missing')
+            expected_standalone.add(path)
     return dict(metadata=metadata, source_arrays=arrays, body_mapping=mapping,
-        new_active_authored_rest=new_rest,
+        new_active_authored_rest=new_rest,unharvested_reactivation=reactivation,
         controller_state=controller_state,
         standalone_paths=sorted(expected_standalone), robot_q=robot_q,
         robot_qvel=arrays['robot_qvel'].copy(), robot_dof_names=names,
@@ -143,12 +169,30 @@ def apply_route_start(context, robot, plant, bodies, *, to_native=lambda a: a,
     for path, prior in context['body_mapping'].items():
         expected_poses[index[path]] = source_arrays['body_poses_world'][source[prior]]
         expected_velocities[index[path]] = source_arrays['body_velocities_world'][source[prior]]
+    reactivation=context.get('unharvested_reactivation');reactivated_paths=[]
+    if reactivation is not None:
+        archived=reactivation['arrays'];names=list(map(str,plant.shared_metatype.dof_names))
+        if names!=list(map(str,archived['plant_dof_names'])):
+            raise ValueError('Reactivated native articulation DOF identity differs from the archived topology')
+        plant_q=np.asarray(archived['plant_q'])[None].copy();plant_qvel=np.zeros_like(plant_q)
+        active_root=reactivation['proof']['active_root'];old={str(path):i for i,path in enumerate(archived['body_paths'])}
+        for path in context['new_active_authored_rest']:
+            if not path.startswith(active_root+'/') or path not in old or path not in index:
+                raise ValueError('Reactivated native body inventory differs from the archived unharvested plant')
+            expected_poses[index[path]]=archived['body_poses_world'][old[path]]
+            expected_velocities[index[path]]=0.
+            reactivated_paths.append(path)
+        if not reactivated_paths:raise ValueError('No reactivated plant bodies available for mandatory native validation')
     ids = indices_to_native(np.array([0], np.uint32)) if environment_indices is None else environment_indices
     robot.set_dof_positions(to_native(context['robot_q'][None].copy()), ids)
     robot.set_dof_velocities(to_native(context['robot_qvel'][None].copy()), ids)
     from robot_controller_state import restore_controller_targets
     controller_report=restore_controller_targets(robot,context['controller_state'],ids,
         to_native=to_native,fallback_position=context['robot_q'])
+    if reactivation is not None:
+        plant.set_dof_positions(to_native(plant_q),ids)
+        plant.set_dof_velocities(to_native(plant_qvel),ids)
+        plant.set_dof_actuation_forces(to_native(np.asarray(reactivation['arrays']['preload'])[None].copy()),ids)
     if refresh_articulations is not None: refresh_articulations()
     poses = _array(bodies.get_transforms()).copy(); velocities = _array(bodies.get_velocities()).copy()
     for path in context['standalone_paths']:
@@ -168,20 +212,22 @@ def apply_route_start(context, robot, plant, bodies, *, to_native=lambda a: a,
     report = copy.deepcopy(context['report'])
     report['restored_controller_state']=controller_report
     preserved = [row for row in comparison['body_errors'] if row['path'] in context['body_mapping']]
+    reactivated=[row for row in comparison['body_errors'] if row['path'] in reactivated_paths]
     # Native quaternions are float32. Compare normalized rotations instead of
     # letting their harmless norm rounding appear as an acos angular error.
     measured_poses = _array(bodies.get_transforms())
-    for row in preserved:
+    for row in preserved+reactivated:
         native_quaternion=measured_poses[index[row['path']],3:].astype(np.float64)
         expected_quaternion=expected_poses[index[row['path']],3:].astype(np.float64)
         row['orientation_error_rad']=float((Rotation.from_quat(expected_quaternion).inv()*
             Rotation.from_quat(native_quaternion)).magnitude())
     report['preserved_body_errors'] = preserved
+    verification_bodies=preserved+reactivated
     for key in ('position_error_m', 'orientation_error_rad', 'linear_velocity_error_m_s', 'angular_velocity_error_rad_s'):
-        worst = max(preserved, key=lambda row: row[key])
+        worst = max(verification_bodies, key=lambda row: row[key])
         report['max_'+key] = worst[key]; report['worst_'+key+'_body'] = worst['path']
-    standalone=[row for row in preserved if row['path'] in context['standalone_paths']]
-    articulated=[row for row in preserved if row['path'] not in context['standalone_paths']]
+    standalone=[row for row in verification_bodies if row['path'] in context['standalone_paths']]
+    articulated=[row for row in verification_bodies if row['path'] not in context['standalone_paths']]
     report['standalone_body_errors']=standalone;report['articulated_body_errors']=articulated
     for group,rows in (('standalone',standalone),('articulated',articulated)):
         for key in ('linear_velocity_error_m_s','angular_velocity_error_rad_s'):
@@ -190,11 +236,19 @@ def apply_route_start(context, robot, plant, bodies, *, to_native=lambda a: a,
         report[key] = comparison[key]
     if comparison['plant_q_max_abs_error'] != 0. or comparison['plant_qvel_max_abs_error'] != 0.:
         raise ValueError('Route-window restore changed new active-plant native state')
-    report.update(new_active_plant_native_state_set=False, new_active_plant_preload_set=False,
+    report.update(new_active_plant_native_state_set=reactivation is not None, new_active_plant_preload_set=reactivation is not None,
         articulated_link_transforms_set_directly=False,
         native_articulation_kinematics_refreshed=refresh_articulations is not None,
         body_count=len(paths), preserved_body_count=len(preserved),
         verification_scope='Measured parent robot/standalone state immediately before travel; new active plant retains its initialized state')
+    if reactivation is not None:
+        report['unharvested_reactivation']=dict(source=reactivation['proof'],
+            native_body_errors=reactivated,native_body_count=len(reactivated),
+            native_q_max_abs_error=comparison['plant_q_max_abs_error'],
+            native_qvel_max_abs_error=comparison['plant_qvel_max_abs_error'],
+            original_preload_command_restored=True,prior_breaks=0,fruit_resurrected=False,
+            velocity_policy='Explicit zero for previously static attached plant',native_validation='measured; existing position/orientation/q guards apply')
+        report['verification_scope']='Current robot/standalone state plus exact archived unharvested plant q/strain/preload; frozen attached velocities explicitly zero'
     report['articulated_velocity_scope']='Diagnostic: exact q/qvel replay plus native FK refresh may differ from previous cached solver link velocities; link velocities are never directly overwritten'
     rest_diagnostics=[]
     for path,expected in context.get('new_active_authored_rest',{}).items():

@@ -1,0 +1,105 @@
+{
+  "schema": "s300-storage-optimization-result-v1",
+  "date": "2026-10-23",
+  "completed": true,
+  "roots": [
+    {
+      "name": "campaign",
+      "before_bytes": 18810329912,
+      "after_bytes": 12231224578,
+      "before_allocated_bytes": 18899566592,
+      "after_allocated_bytes": 12310831104,
+      "completed": true,
+      "protected_evidence_unchanged": true
+    },
+    {
+      "name": "web_assets",
+      "before_bytes": 15071511135,
+      "after_bytes": 5563197822,
+      "before_allocated_bytes": 15089573888,
+      "after_allocated_bytes": 5580595200,
+      "completed": true,
+      "protected_evidence_unchanged": true
+    },
+    {
+      "name": "mounted_gt_all",
+      "before_bytes": 966187009,
+      "after_bytes": 474395814,
+      "completed": true,
+      "protected_evidence_unchanged": true
+    }
+  ],
+  "before_bytes": 34848028056,
+  "after_bytes": 18268818214,
+  "saved_bytes": 16579209842,
+  "reduction_percent": 47.575747515347445,
+  "current_open_trial": {
+    "before_bytes": 461649307,
+    "after_bytes": 224272440
+  },
+  "arrays_compressed": 5725,
+  "renderer_label_files_shared": 1432,
+  "raw_web_models_removed": 32,
+  "validation": {
+    "numeric_file_bytes_exact": true,
+    "protected_source_files_checked": {
+      "lift_gt_final": 385,
+      "mounted_remaining": 814,
+      "web_assets": 7196,
+      "campaign": 12774
+    },
+    "python_tests": 87,
+    "javascript_assertions": 56,
+    "full_replay_checks": [
+      "lift_replay_validation.json",
+      "harvest_replay_validation.json",
+      "fresh_export_validation.json"
+    ],
+    "browser_functional_check": "browser_check_v4.json",
+    "browser_functional_passed": true,
+    "browser_rendering": "Explicit software WebGL; 3D raster screenshot inconclusive, no physics rerun",
+    "http_check": "http_check.json"
+  },
+  "write_benchmark": {
+    "test": "alternating original writer vs final grouped lossless writer; 4 sensor arrays + labels; concurrent NAS compaction",
+    "trials_s": {
+      "old_raw": [
+        0.6178294233977795,
+        0.5471269115805626,
+        0.4489353187382221,
+        0.49326828867197037,
+        0.6266822330653667,
+        0.3668471723794937
+      ],
+      "new_gzip": [
+        0.3648985121399164,
+        0.30106643214821815,
+        0.29780287481844425,
+        0.4350915513932705,
+        0.2333094570785761,
+        0.24374848417937756
+      ]
+    },
+    "median_s": {
+      "old_raw": 0.5201976001262665,
+      "new_gzip": 0.2994346534833312
+    },
+    "simulation_rerun": false
+  },
+  "compatibility": {
+    "array_format": "gzip containing original NPY bytes, no quantization",
+    "legacy_reader": "recording_storage.load_array(path) resolves .npy or .npy.gz",
+    "external_numpy": "gzip.open(path, rb), then np.load(stream, allow_pickle=False)",
+    "restore": "gzip -dk file.npy.gz; batch legacy restore: compact_camera_storage.py ROOT --restore-arrays --apply --report NEW.json",
+    "legacy_manifests_unchanged": true,
+    "web": "old GLB and gzip-only GLB supported; shared exact asset hardlinks inside web assets",
+    "images_and_videos": "original PNG and MP4 retained byte-for-byte"
+  },
+  "limitations": [
+    "All recordings remain experimental; no new harvest success or physics result claimed.",
+    "Already-open external clients which insist on the former physical .npy file need the compatible reader or an exact NPY restore.",
+    "One legacy user-facing report ZIP remains a historical snapshot.",
+    "Remaining PNG views and distinct physics models remain available for review/reproducibility."
+  ],
+  "committed": false
+}

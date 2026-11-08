@@ -21,9 +21,13 @@ class TerminalCycleCheckpointTests(unittest.TestCase):
         self.trial=self.root/'trial';self.trial.mkdir()
         self.raw=self.trial/'route_checkpoint';self.output=self.trial/'cycle_checkpoints/000'
         self.args=copy.deepcopy(self.fixture.args)
-        self.args.update(robot_position_targets=[.408,.028,.019],robot_velocity_targets=[.07,.02,-.03])
+        # This fixture validates a rail-route checkpoint, so retain its named
+        # rail DOF and native getter targets as well as the original lift/jaws.
+        self.args.update(robot_dof_names=['root_joint']+self.args['robot_dof_names'],
+            robot_q=[0.]+self.args['robot_q'],robot_qvel=[0.]+self.args['robot_qvel'],
+            robot_position_targets=[.00001,.408,.028,.019],robot_velocity_targets=[0.,.07,.02,-.03])
         self.args['manifest']['rail']=dict(base_body='/World/HarvestRobot/Robot/world',
-            initial_station_y_m=1.6,source_base_position_world_m=[2.,3.,4.])
+            dof_name='root_joint',initial_station_y_m=1.6,source_base_position_world_m=[2.,3.,4.])
         (self.assembly/'motion_manifest.json').write_text(json.dumps(self.args['manifest']))
         self.record=dict(index=0,status='motion_completed',start_s=1.,planned_end_s=2.,end_s=2.,
             stop_reason=None,fruits=['Truss_02_Fruit_01'],measured_frame_index=0,end_frame_index=8,

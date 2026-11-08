@@ -21,7 +21,26 @@ def gravity_preload(jac, masses, link_names, plant):
     return preload
 
 
-def initialize(view, manifest, *, arr, tensor, indices):
+def authored_armatures(stage, root, names):
+    """Read the actual native USD input, including PhysX's zero default.
+
+    Display assemblies exported for Newton can omit old neighbor foliage
+    metadata. Inventing a .0005 value for every DOF then misidentifies the
+    unchanged native joints. This function never changes those joint values.
+    """
+    from pxr import Usd, UsdPhysics
+    joints={p.GetName():p for p in Usd.PrimRange(stage.GetPrimAtPath(root))
+            if p.IsA(UsdPhysics.Joint)}
+    values=[]
+    for name in names:
+        prim=joints.get(name.split(':')[0])
+        if prim is None:raise ValueError('Missing authored neighbor joint: '+name)
+        value=prim.GetAttribute('physxJoint:armature').Get()
+        values.append(0. if value is None else float(value))
+    return np.array(values)
+
+
+def initialize(view, manifest, *, arr, tensor, indices, stage=None):
     from compliant_foliage import armature_values
     handles=[]; records=[]
     for row in manifest.get('elastic_neighbors', []):
@@ -29,7 +48,8 @@ def initialize(view, manifest, *, arr, tensor, indices):
         if plant.count != 1:
             raise ValueError('Neighbor articulation identity mismatch: '+row['root'])
         names=list(plant.shared_metatype.dof_names)
-        expected=armature_values(row, names)
+        expected=(authored_armatures(stage,row['root'],names) if stage is not None
+                  else armature_values(row, names))
         if not np.allclose(arr(plant.get_dof_armatures()), expected[None], rtol=0., atol=1e-10):
             raise ValueError('Neighbor native armature mismatch')
         preload=gravity_preload(arr(plant.get_jacobians())[0], arr(plant.get_masses())[0],
@@ -39,6 +59,8 @@ def initialize(view, manifest, *, arr, tensor, indices):
         handles.append((plant,native))
         records.append(dict(root=row['root'],source_plant=row['source_plant'],
             dof_count=plant.max_dofs,dof_names=names,preload=preload.tolist(),
+            armature_source='actual USD joints/default zero' if stage is not None else 'legacy manifest',
+            native_armatures=arr(plant.get_dof_armatures())[0].tolist(),
             initial_q=arr(plant.get_dof_positions())[0].tolist(),
             initial_qvel=arr(plant.get_dof_velocities())[0].tolist(),
             method='Same fixed authored-pose gravity preload as active target; no continuous gravity cancellation'))

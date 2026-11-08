@@ -39,6 +39,33 @@ class GroupPolicyTests(unittest.TestCase):
         self.assertIsNone(self.select())
         self.assertEqual(self.selector.last_decision['reason'],'no_group_meets_minimum')
 
+    def test_opt_in_yaw_recomputes_real_footprint_and_matches_actual_grasp_transform(self):
+        from motion_kinematics import grasp_pose
+        self.fixture([[-.045,0,1],[.045,0,1]],minimum=2)
+        original=self.positions.copy()
+        self.assertIsNone(self.select())
+        self.selector.set_yaw_offset_deg(90.)
+        selected=self.select();self.assertIsNotNone(selected)
+        self.assertEqual(len(selected['fruits']),2)
+        info=selected['group_selection'];direction=np.asarray(info['direction_world'])
+        np.testing.assert_allclose(direction,[-1.,0.,0.],atol=1e-12)
+        np.testing.assert_array_equal(info['unrotated_direction_world'],[0.,1.,0.])
+        pose=grasp_pose(np.array(selected['aim_world_m'])+[0,0,.0075],direction,depth=self.selector.depth_m)
+        local=(self.positions-pose[:3,3])@pose[:3,:3]
+        np.testing.assert_allclose(local,info['fruit_centers_tool_m'],atol=1e-12)
+        self.assertTrue(np.all(np.abs(local[:,0])+.0115<=.048+1e-10))
+        np.testing.assert_array_equal(self.positions,original)
+        self.assertFalse(info['training_eligible']);self.assertIn('no camera observation',info['heading_source'])
+
+    def test_default_selector_and_zero_yaw_keep_identical_aim_geometry(self):
+        self.fixture([[0,0,1],[.015,.01,.98]],minimum=2)
+        before=self.select();self.assertNotIn('heading_source',before['group_selection'])
+        self.selector.set_yaw_offset_deg(0.);after=self.select()
+        np.testing.assert_array_equal(before['aim_world_m'],after['aim_world_m'])
+        np.testing.assert_array_equal(before['group_selection']['fruit_centers_tool_m'],after['group_selection']['fruit_centers_tool_m'])
+        for invalid in (True,float('nan'),float('inf'),91.,-91.):
+            with self.assertRaises(ValueError):self.selector.set_yaw_offset_deg(invalid)
+
     def test_asymmetric_group_is_centered_in_commanded_grasp_at_different_yaws(self):
         from motion_kinematics import grasp_pose
         for angle in (0., .7, -2.2):
@@ -163,6 +190,33 @@ class GroupPolicyTests(unittest.TestCase):
             self.assertEqual(load_policy(p/'policy.json',p,self.fruits),self.policy)
             (p/'composed.usdc').write_text('changed')
             with self.assertRaisesRegex(ValueError,'hash mismatch'):load_policy(p/'policy.json',p,self.fruits)
+
+    def test_actual_cli_accepts_existing_exact_near_scope_plus_hash_bound_color_policy(self):
+        from test_run_motion_conditioning import actual_cli
+        flags=['--harvest-group-policy','/verified/color.json',
+               '--near-trusses-metadata','/verified/inventory.json','--whole-truss',
+               '--truss-order','highest-first','--approach-yaw-mode','truss-axis',
+               '--preparation','horizontal_ready','--harvest-profile','belt_open_close_cycle']
+        parsed=actual_cli(flags)
+        self.assertEqual(parsed.harvest_group_policy,Path('/verified/color.json'))
+        self.assertEqual(parsed.near_trusses_metadata,Path('/verified/inventory.json'))
+        self.assertFalse(parsed.camera_harvest)
+        for extra in [['--single-fruit-when-remaining','1'],['--split-unproductive-pairs'],
+                      ['--grasp-lateral-offset-mm','1']]:
+            from contextlib import redirect_stderr
+            import io
+            with redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):actual_cli(flags+extra)
+
+    def test_near_scope_grouping_never_mixes_trusses_or_invents_color_eligibility(self):
+        self.fixture([[0,0,1.08],[.01,0,1.06],[0,0,1.5],[.01,0,1.48]],
+                     eligible={0,1},minimum=2)
+        for i in [2,3]:self.fruits[i]['name']='Truss_03_Fruit_'+f'{i+1:02d}'
+        self.policy['fruit_eligibility']=[dict(**f,eligible=i<2)for i,f in enumerate(self.fruits)]
+        selector=HarvestGroupSelector(self.policy,lambda *args:[0,1,0],height_offset_m=.0075)
+        group=selector(self.fruits,[],self.paths,self.positions,{},order='highest-first')
+        self.assertEqual(group['truss_key'],'Truss_02')
+        self.assertEqual(set(group['fruits']),{'Truss_02_Fruit_01','Truss_02_Fruit_02'})
+
 
     def test_historical_paired_selector_remains_identical(self):
         from truss_sequence import select_group

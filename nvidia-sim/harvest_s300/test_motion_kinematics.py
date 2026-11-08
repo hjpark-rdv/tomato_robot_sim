@@ -29,6 +29,27 @@ class LinkageTests(unittest.TestCase):
         for gap in (.020,.105):
             with self.assertRaises(ValueError):transmission_transforms(gap)
 
+    def test_actual_display_overshoot_keeps_exact_linkage_and_default_command_guard(self):
+        gap=.09628970336914062
+        with self.assertRaises(ValueError):transmission_transforms(gap)
+        tf=transmission_transforms(gap,measured_display_diagnostic=True)
+        pivot=np.array([0.,-.031,-.018]);s0=.044/2+.018
+        a0=np.arccos((s0*s0+.025**2-.045**2)/(2*s0*.025))
+        for name,sign in [('linkL',-1),('linkR',1)]:
+            a=pivot+np.array([sign*.025*np.cos(a0),0,sign*.025*np.sin(a0)])
+            b=pivot+np.array([sign*s0,0,0])
+            actual_a=tf[name][:3,:3]@a+tf[name][:3,3]
+            actual_b=tf[name][:3,:3]@b+tf[name][:3,3]
+            np.testing.assert_allclose(actual_b,pivot+[sign*(gap/2+.018),0,0],atol=1e-13)
+            self.assertAlmostEqual(np.linalg.norm(actual_b-actual_a),.045,places=12)
+        for invalid in (float('nan'),float('inf'),.004,.104,.105):
+            with self.subTest(invalid=invalid),self.assertRaises(ValueError):
+                transmission_transforms(invalid,measured_display_diagnostic=True)
+        for normal in (.028,.044,.096):
+            default=transmission_transforms(normal)
+            diagnostic=transmission_transforms(normal,measured_display_diagnostic=True)
+            for name in default:np.testing.assert_array_equal(default[name],diagnostic[name])
+
     def test_tilt_keeps_fruit_at_same_tool_contact_location(self):
         center=np.array([.2,1.3,1.]);inward=np.array([1.,2.,0.])
         for pitch in (-60.,-30.,0.,30.):

@@ -1,0 +1,61 @@
+{
+  "schema": "farmily-harvest-replay-independent-validation-v1",
+  "passed": true,
+  "replay": "/root/farmily_tomato/gripper-design/harvest-replay/assets/camera_gt_lift_20261022/replay.json",
+  "source_trial": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_072000_mounted_gt/lift_gt_final",
+  "source_assembly": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_065240_shoulder_rgbd/assembly_exposure",
+  "source_scene_sha256": "b03f7aa0ddf0874be7421f7cf77b8355d38c5eecb3a43198407d3ae6b779fe5d",
+  "source_states_sha256": "70c7047a2d7857a07d2d2207cb1154aaf02f3c8dde9466e1c09cc5bd85b2d4e3",
+  "web_glb_sha256": "8dbf9d90f9b9c494abda1bb12ca200fca6adf9d44ff967a0e153f7c7e39ad8e9",
+  "frames": 2761,
+  "bodies": 277,
+  "duration_s": 23.0,
+  "exact_original_timestamps": true,
+  "all_frames_preserved": true,
+  "all_body_paths_mapped": true,
+  "maximum_position_quantization_m": 0.0,
+  "maximum_quaternion_component_quantization": 0.0,
+  "phases_exact": true,
+  "release_events_exact": 0,
+  "runtime_physical_model_hash_verified": true,
+  "scene_source_meshes": 31586,
+  "scene_mesh_instances": 31586,
+  "scene_triangles_with_instances": 54228738,
+  "scene_groups": {
+    "greenhouse": 1097,
+    "background_plants": 28971,
+    "target": 661,
+    "active_neighbors": 0,
+    "robot": 857
+  },
+  "skins": {
+    "meshes": 145,
+    "source_vertices": 89136,
+    "sampled_vertex_frames": 13920,
+    "maximum_sampled_position_error_m": 1.378274936403301e-07,
+    "influence_ids_exact": true,
+    "influence_weights_float32_exact": true,
+    "source_vertex_mapping_exact": true,
+    "inverse_bind_float32_exact": true
+  },
+  "transmission": {
+    "nodes": 3,
+    "frames": 2761,
+    "sampled_frames": [
+      0,
+      1380,
+      2760
+    ],
+    "measured_gap_reference_exact": true
+  },
+  "camera": {
+    "frames": 47,
+    "images": 141,
+    "actual_timestamps_exact": true,
+    "recorded_mount_and_q_verified": true,
+    "served_asset_hashes_exact": true,
+    "mode": "live_physics_capture",
+    "source_states_sha256": "70c7047a2d7857a07d2d2207cb1154aaf02f3c8dde9466e1c09cc5bd85b2d4e3"
+  },
+  "physics_rerun": false
+}

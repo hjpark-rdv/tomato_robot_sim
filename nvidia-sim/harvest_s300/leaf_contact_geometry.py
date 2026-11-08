@@ -6,6 +6,8 @@ the selected truss's fruit/tool, fruit/fruit, fruit/own-branch-capsule and
 tool/own-branch-capsule pairs. Exact active-plant fruit/leaf, fruit/capsule and
 capsule/leaf pairs use a separate full-plant geometry inventory. These are
 post-solve geometry checks; contact authorization remains a separate policy.
+An independent opt-in also verifies exact active-plant fruit versus measured,
+enabled ActuatedTool meshes, including fruits outside the selected truss.
 A projected overlap bounds the translation needed to separate that convex
 pair from above. Face normals and edge-cross-edge axes are both required for
 complete convex SAT. Every cooked hull pair must meet the original limit.
@@ -230,7 +232,8 @@ def convex_capsule_gap(vertices, normals, edges, endpoints, radius):
 
 class CookedLeafContactGeometry:
     def __init__(self, stage, manifest, body_paths, *, verify_fruit_contacts=False,
-                 verify_background_component_hulls=False,verify_structural_scene_queries=False):
+                 verify_background_component_hulls=False,verify_structural_scene_queries=False,
+                 verify_all_active_fruit_contacts=False):
         self.stage=stage;self.body_ids={p:i for i,p in enumerate(body_paths)}
         self.leaves={p for r in manifest.get('compliant_foliage',{}).get('leaves',[]) for p in r['meshes'] if '/Appendage_' in p}
         from harvest_contact_scope import background_leaf_colliders_from_manifest
@@ -238,6 +241,9 @@ class CookedLeafContactGeometry:
         self.background_leaves=set(self.background_leaf_inventory)
         self.leaves.update(self.background_leaves)
         self.verify_fruit_contacts=bool(verify_fruit_contacts)
+        self.verify_all_active_fruit_contacts=bool(verify_all_active_fruit_contacts)
+        if self.verify_all_active_fruit_contacts and not self.verify_fruit_contacts:
+            raise ValueError('All-active-fruit geometry verification requires fruit verification')
         self.verify_background_component_hulls=bool(verify_background_component_hulls)
         self.verify_structural_scene_queries=bool(verify_structural_scene_queries)
         self.fruits=set();self.capsules=set();self.retarget_history=[]
@@ -295,10 +301,44 @@ class CookedLeafContactGeometry:
         self.retarget_history.append(row)
         return row
 
+    def _active_fruit_tool_pair(self,a,b):
+        """Exact optional geometry scope, never contact authorization.
+
+        Both enabled convex Mesh colliders must resolve to their measured
+        rigid owners. A path prefix alone cannot add an arm, mount, missing
+        collider, foreign fruit or unmeasured tool owner to this scope.
+        """
+        if not self.verify_fruit_contacts or not self.verify_all_active_fruit_contacts or self.stage is None:
+            return False
+        for fruit,tool in ((a,b),(b,a)):
+            if fruit not in self.active_plant_fruits or not tool.startswith('/World/ActuatedTool/'):
+                continue
+            fruit_owner=fruit.rsplit('/',1)[0]
+            if fruit_owner not in self.body_ids:continue
+            valid=True
+            for path in (fruit,tool):
+                prim=self.stage.GetPrimAtPath(path)
+                if (not prim or not prim.IsA(UsdGeom.Mesh) or
+                        not prim.HasAPI(UsdPhysics.CollisionAPI) or
+                        UsdPhysics.CollisionAPI(prim).GetCollisionEnabledAttr().Get() is not True or
+                        not prim.HasAPI(UsdPhysics.MeshCollisionAPI) or
+                        UsdPhysics.MeshCollisionAPI(prim).GetApproximationAttr().Get() not in ('convexHull','convexDecomposition')):
+                    valid=False;break
+                owner=prim
+                while owner and not owner.HasAPI(UsdPhysics.RigidBodyAPI):owner=owner.GetParent()
+                if (not owner or str(owner.GetPath()) not in self.body_ids or
+                        UsdPhysics.RigidBodyAPI(owner).GetRigidBodyEnabledAttr().Get() is not True or
+                        (str(owner.GetPath())!=fruit_owner if path==fruit else
+                         not str(owner.GetPath()).startswith('/World/ActuatedTool/'))):
+                    valid=False;break
+            if valid:return True
+        return False
+
     def eligible(self, a, b):
         if a in self.leaves and b in self.background_leaves or b in self.leaves and a in self.background_leaves:
             return a!=b
         if self.verify_fruit_contacts:
+            if self._active_fruit_tool_pair(a,b):return True
             for leaf,other in ((a,b),(b,a)):
                 if leaf not in self.active_plant_leaves or other not in self.structural_colliders:continue
                 first=self.stage.GetPrimAtPath(leaf);second=self.stage.GetPrimAtPath(other)
@@ -501,11 +541,13 @@ class CookedLeafContactGeometry:
         own_fruit_capsule=(a in self.fruits and b in self.capsules or b in self.fruits and a in self.capsules)
         structural_leaf=(a in self.active_plant_leaves and b in self.structural_colliders or
                          b in self.active_plant_leaves and a in self.structural_colliders)
+        active_fruit_tool=self._active_fruit_tool_pair(a,b)
         passive_leaf=(a in self.background_leaves or b in self.background_leaves)
         row=dict(t=float(timestamp),a=a,b=b,native_callback_separation_m=float(reported_separation),
                  certified_clear=False,certified_within_limit=False,
                  limit_m=float(limit_m),numerical_guard_m=.000001,
                  contact_scope='declared_passive_leaf_measured_geometry' if passive_leaf else
+                               'active_plant_fruit_tool' if active_fruit_tool else
                                'active_plant_leaf_structural' if structural_leaf else
                                'active_plant_fruit_leaf' if active_fruit_leaf else
                                'active_plant_capsule_leaf' if active_capsule_leaf else
@@ -658,6 +700,7 @@ class CookedLeafContactGeometry:
         return dict(helper_source_sha256=SOURCE_SHA256,
                     positive_world_aabb_shortcut='Exact native vertices at current measured pose; only support gap >1um skips full SAT. Ambiguous/overlapping pairs retain full face and edge-cross axes. No geometry change; recorded per-query diagnostic limits.',
                     verify_current_truss_fruit_contacts=self.verify_fruit_contacts,
+                    verify_all_active_fruit_contacts=self.verify_all_active_fruit_contacts,
                     verify_background_component_hulls=self.verify_background_component_hulls,
                     verify_structural_scene_queries=self.verify_structural_scene_queries,
                     exact_fruit_colliders=sorted(self.fruits),exact_active_leaf_colliders=sorted(self.leaves),
@@ -674,6 +717,7 @@ class CookedLeafContactGeometry:
                     default_limit_m=.0005,effective_limits_m=sorted({r["limit_m"] for r in self.records}),numerical_guard_m=.000001,
                     fruit_scope='Exact current-truss fruit versus another exact current-truss fruit, enabled actuated-tool collider or exact own-truss pedicel/rachis/peduncle capsule; enabled actuated-tool Mesh versus exact own-truss capsule only; geometry validity, not contact permission',
                     active_plant_geometry_scope='Exact manifest active-plant fruit/leaf, fruit/capsule and capsule/leaf only; exact enabled Mesh/Capsule types and measured owners required. Tool/background contact authorization is unchanged.',
+                    active_plant_fruit_tool_geometry_scope='Independent opt-in: exact manifest active-plant fruit collider versus enabled convex ActuatedTool Mesh with both measured exact rigid owners; no arm, mount, foreign plant or additional branch scope. Contact authorization, native geometry and per-query penetration limit unchanged.',
                     structural_geometry_scope='Exact active-plant compliant leaf versus enabled House/Environment Mesh/Capsule inventory only. Native convex or uniform static/rigid-owned exact Capsule required; static triangle Mesh remains inconclusive without native cooked triangle evidence. Contact authorization unchanged.',
                     raw_callback_evidence='unchanged; solved geometry certificate is recorded separately',
                     geometry_basis='Native cooked convex hulls; static background leaf fallback is explicitly marked',

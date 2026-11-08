@@ -500,4 +500,93 @@ class StructuralLeafGeometryTests(unittest.TestCase):
         self.assertFalse(c.verify(leaf,path,poses,5.,-.001276)['certified_within_limit'])
 
 
+class AllActiveFruitToolGeometryTests(unittest.TestCase):
+    """Other active trusses require the same measured native geometry standard."""
+    def fixture(self,enabled=False):
+        stage=Usd.Stage.CreateInMemory();fruits=[];owners=[]
+        for truss in range(3):
+            for number in range(1,11):
+                name=f'Truss_{truss:02d}_Fruit_{number:02d}';owner='/World/ElasticTarget/'+name
+                UsdPhysics.RigidBodyAPI.Apply(UsdGeom.Xform.Define(stage,owner).GetPrim())
+                prim=UsdGeom.Mesh.Define(stage,owner+'/Collider').GetPrim()
+                UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(True)
+                UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr('convexHull')
+                fruits.append(dict(name=name,path=owner));owners.append(owner)
+        tool_owner='/World/ActuatedTool/R';tool=tool_owner+'/part_244'
+        UsdPhysics.RigidBodyAPI.Apply(UsdGeom.Xform.Define(stage,tool_owner).GetPrim())
+        prim=UsdGeom.Mesh.Define(stage,tool).GetPrim()
+        UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(True)
+        UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr('convexDecomposition')
+        manifest=dict(target=dict(name=fruits[-1]['name'],path=fruits[-1]['path']),
+            plant=dict(root='/World/ElasticTarget',fruits=fruits,bodies=[]))
+        reader=CookedLeafContactGeometry(stage,manifest,owners+[tool_owner],verify_fruit_contacts=True,
+            verify_all_active_fruit_contacts=enabled)
+        return reader,manifest,tool
+
+    def test_default_ten_fruits_opt_in_thirty_and_retarget_preserves_scope(self):
+        default,_,tool=self.fixture();reader,manifest,_=self.fixture(True)
+        for fruit in manifest['plant']['fruits']:
+            path=fruit['path']+'/Collider';selected=fruit['name'].startswith('Truss_02_')
+            for a,b in [(path,tool),(tool,path)]:
+                self.assertEqual(default.eligible(a,b),selected)
+                self.assertTrue(reader.eligible(a,b))
+        self.assertEqual(len(default.fruits),10);self.assertEqual(len(reader.active_plant_fruits),30)
+        reader.cache['sentinel']='unchanged';reader.records.append(dict(limit_m=.001))
+        reader.retarget_fruit_truss(manifest,'Truss_00_Fruit_01')
+        self.assertEqual(reader.cache['sentinel'],'unchanged');self.assertEqual(len(reader.records),1)
+        self.assertTrue(reader.eligible('/World/ElasticTarget/Truss_02_Fruit_01/Collider',tool))
+        self.assertEqual(len(reader.fruits),10)
+        metadata=reader.policy_metadata()
+        self.assertTrue(metadata['verify_all_active_fruit_contacts'])
+        self.assertEqual(metadata['effective_limits_m'],[.001])
+
+    def test_other_active_fruit_postsolve_clear_shallow_deep_and_missing_geometry(self):
+        reader,_,tool=self.fixture(True);fruit='/World/ElasticTarget/Truss_00_Fruit_01/Collider'
+        v=np.array([[x,y,z]for x in [-.001,.001]for y in [-.001,.001]for z in [-.001,.001]])
+        n,e=convex_axes(v);tool_owner=tool.rsplit('/',1)[0];fruit_owner=fruit.rsplit('/',1)[0]
+        reader.cooked=lambda path:dict(body=tool_owner if path==tool else fruit_owner,hulls=[(v,n,e)])
+        poses=np.tile([0.,0.,0.,0.,0.,0.,1.],(len(reader.body_ids),1));idx=reader.body_ids[tool_owner]
+        for tool_x,expected_clear,expected_within in [(.0035,True,True),(.0012,False,True),(.0008,False,False)]:
+            poses[idx,0]=tool_x
+            for a,b in [(tool,fruit),(fruit,tool)]:
+                row=reader.verify(a,b,poses,27.8666667,-.00109572988,limit_m=.001)
+                self.assertEqual(row['certified_clear'],expected_clear)
+                self.assertEqual(row['certified_within_limit'],expected_within)
+                self.assertEqual(row['contact_scope'],'active_plant_fruit_tool')
+                self.assertEqual(row['native_callback_separation_m'],-.00109572988)
+                self.assertEqual(row['limit_m'],.001)
+        reader.cooked=lambda path:(_ for _ in ()).throw(ValueError('native shape missing'))
+        row=reader.verify(tool,fruit,poses,28.,-.00109572988,limit_m=.001)
+        self.assertFalse(row['certified_within_limit']);self.assertIn('native shape missing',row['error'])
+
+    def test_foreign_fruit_arm_mount_stem_other_truss_pair_and_wrong_owner_stay_out(self):
+        reader,_,tool=self.fixture(True);fruit='/World/ElasticTarget/Truss_00_Fruit_01/Collider'
+        foreign='/World/Greenhouse/Plants/Plant_21/Truss_00/Fruit_01/Collider'
+        wrong_owner='/World/ActuatedTool/Unmeasured/part_244'
+        UsdPhysics.RigidBodyAPI.Apply(UsdGeom.Xform.Define(reader.stage,wrong_owner.rsplit('/',1)[0]).GetPrim())
+        for path in [foreign,wrong_owner,'/World/HarvestRobot/Robot/link4/Mesh','/World/HarvestRobot/ToolMount/Mesh']:
+            prim=UsdGeom.Mesh.Define(reader.stage,path).GetPrim()
+            UsdPhysics.CollisionAPI.Apply(prim).CreateCollisionEnabledAttr(True)
+            UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr('convexHull')
+        for a,b in [(foreign,tool),(fruit,wrong_owner),(fruit,'/World/HarvestRobot/Robot/link4/Mesh'),
+                    (fruit,'/World/HarvestRobot/ToolMount/Mesh'),
+                    ('/World/ElasticTarget/Stem_MainStem_0/Collider',tool),
+                    (fruit,'/World/ElasticTarget/Truss_01_Fruit_01/Collider')]:
+            self.assertFalse(reader.eligible(a,b));self.assertFalse(reader.eligible(b,a))
+        UsdPhysics.CollisionAPI(reader.stage.GetPrimAtPath(fruit)).GetCollisionEnabledAttr().Set(False)
+        self.assertFalse(reader.eligible(fruit,tool))
+        UsdPhysics.CollisionAPI(reader.stage.GetPrimAtPath(fruit)).GetCollisionEnabledAttr().Set(True)
+        rigid=UsdPhysics.RigidBodyAPI(reader.stage.GetPrimAtPath(fruit.rsplit('/',1)[0]))
+        rigid.GetRigidBodyEnabledAttr().Set(False)
+        self.assertFalse(reader.eligible(fruit,tool))
+        rigid.GetRigidBodyEnabledAttr().Set(True)
+        # Removed measured ownership must not be substituted by a path prefix.
+        reader.body_ids.pop(fruit.rsplit('/',1)[0])
+        self.assertFalse(reader.eligible(fruit,tool))
+
+    def test_all_active_scope_requires_existing_fruit_verification(self):
+        with self.assertRaisesRegex(ValueError,'requires fruit verification'):
+            CookedLeafContactGeometry(None,{},[],verify_all_active_fruit_contacts=True)
+
+
 if __name__=='__main__':unittest.main()

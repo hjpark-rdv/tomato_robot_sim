@@ -1,0 +1,71 @@
+{
+  "schema": "s300-maximum-harvest-server-validation-v1",
+  "updated_utc": "2026-10-23T11:42:47.225713+00:00",
+  "branch": "codex/s300-side-mount-patrol-20261023",
+  "base_HEAD": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "new_commit_created": false,
+  "existing_dirty_work_preserved": true,
+  "output": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest",
+  "actual_executor": "Isaac Sim native PhysX CPU",
+  "device": "cpu",
+  "fresh_rgbd": false,
+  "gpu_blocker": "NVIDIA device open EPERM in current container",
+  "training_eligible": false,
+  "harvest_success": null,
+  "focused_regression_tests": {
+    "count": 246,
+    "passed": true,
+    "log": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/final_focused_tests.log"
+  },
+  "latest_completed_single_truss": {
+    "trial": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/plant19_target_truss01_support_native/plant19_truss01_static_support_harvest",
+    "simulated_s": 93.31666666666666,
+    "physics_wall_s": 147.15194613859057,
+    "native_detached": 6,
+    "ripe_detached": 5,
+    "unripe_detached": 1,
+    "ripe_remaining": [
+      "Truss_01_Fruit_04",
+      "Truss_01_Fruit_08"
+    ],
+    "completed_manipulation_cycles": 2,
+    "final_actual_self_collision_audit_passed": true,
+    "all_truss_harvested": false,
+    "collection_verified": false,
+    "collision_scope": "target_truss_and_own_stem_only",
+    "contact_limit_mm": 1,
+    "post_release_support_contacts": "native collision response retained; exact known static farm supports diagnostic only",
+    "nativeHz": 60,
+    "recordedHz": 60,
+    "evidence": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/target01_completed_evidence.json"
+  },
+  "strict_other_trial": {
+    "trial": "/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/gt_row_poststep_relief_campaign",
+    "native_detached": 7,
+    "completed_manipulation_cycles": 3,
+    "distinct_trusses_with_native_detachment": 2,
+    "trial_completed": false,
+    "not_additive_with_independent_single_truss": true
+  },
+  "next_six_status": "Paused before new native: fix released fruit floor collision lifecycle; source27A remains active-target diagnostic evidence",
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/run_motion.py": "80c0628f36746acfc50f5b3e5fcf41a03813cb79288729d11530f0e4ae1ea05c",
+    "nvidia-sim/harvest_s300/run_row_harvest.py": "6ee3743be5497544ae5401b1f520cf27283797f1526a71474078d9ad5c14dc11",
+    "nvidia-sim/harvest_s300/harvest_contact_scope.py": "be77c02e424a15713b417ec1653f21098bfaeb20775c83a3f80a481a3517be12",
+    "nvidia-sim/harvest_s300/leaf_contact_geometry.py": "9fa5690c90c71c44a0bc35616d9f489666b3a5e52ebf474fe2198760111b55e7",
+    "nvidia-sim/harvest_s300/grasp_depth_schedule.py": "052a65e9cdb235beb179d1fef773c5ac5be50f16823e04930de5013b2a870835",
+    "nvidia-sim/harvest_s300/maximum_camera_patrol_arguments.json": "3341f5e210858268be90a505e92d3161fecbe9a28648a0a6104a9b7f78147391"
+  },
+  "current_blocker": {
+    "kind": "released_fruit_collision_lifecycle_bug",
+    "observed_in": "gt_row_target_only_remaining5_v3_campaign/trials/station_001_plant_27/station_001_plant_27",
+    "observation": "previous source19 detached6 retain native dynamics but their collider disabled by target-only window scope; z about -80042m at27final",
+    "active_target27_new_detachment": 4,
+    "whole_environment_validated": false,
+    "v4": "stopped before new native execution; original27A preserved",
+    "repair": "Keep exact historically native-released frozen fruit colliders active for real floor/structural collision; keep other background plant ghost scope",
+    "next_validation": "Separate corrected27B branch from original normal source19 CP001; no pose clamp/teleport/overwriting A",
+    "training_eligible": false
+  },
+  "whole_environment_validated": false
+}

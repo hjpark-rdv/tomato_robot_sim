@@ -65,4 +65,15 @@ class SelectedCycleEvidenceTests(unittest.TestCase):
         self.assertEqual(fruit['new_native_break_events_during_cycle'],[])
         self.assertEqual(fruit['displacement_max_from_measured_cycle_baseline_m'],0.)
 
+    def test_camera_scan_has_no_harvest_credit_and_cannot_hide_entry(self):
+        m,s,b,n,p,t=self.fixture();cycle=s['cycle_plans'][0]
+        cycle.update(fruits=[],purpose='camera_scan_prefix',harvest_attempt=False)
+        report=build_selected_cycle_evidence(m,s,b,n,p,t,measured_phases=['settle','prepare_open','prepare_lift_branch'])
+        self.assertEqual(report['cycles'],[]);self.assertEqual(len(report['scans']),1)
+        with self.assertRaisesRegex(ValueError,'manipulation'):
+            build_selected_cycle_evidence(m,s,b,n,p,t,measured_phases=['settle','prepare_open','approach'])
+        cycle['fruits']=['Truss_02_Fruit_02']
+        with self.assertRaisesRegex(ValueError,'harvest fruit'):
+            build_selected_cycle_evidence(m,s,b,n,p,t)
+
 if __name__=='__main__':unittest.main()

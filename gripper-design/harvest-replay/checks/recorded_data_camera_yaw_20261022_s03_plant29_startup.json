@@ -1,0 +1,61 @@
+{
+  "schema": "farmily-harvest-replay-independent-validation-v1",
+  "passed": true,
+  "replay": "/root/farmily_tomato/gripper-design/harvest-replay/assets/camera_yaw_20261022_s03_plant29_startup/replay.json",
+  "source_trial": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_yaw/startup_preflight/startup_003_plant_29/startup_003_plant_29",
+  "source_assembly": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_yaw/windows/003_plant_29",
+  "source_scene_sha256": "49c73ede9536d267afac0243917ac91ee1e61f15d0934f65914798a95590b80a",
+  "source_states_sha256": "ba1318675ae3838f6ab974e222a9c3666a23e2b9c896d8c25b091fa7f620776b",
+  "web_glb_sha256": "48dad460c723aeb6d294efa819ab6c7fc04fedde918ea67915ac6f5169b4a9c2",
+  "frames": 181,
+  "bodies": 138,
+  "duration_s": 3.0,
+  "exact_original_timestamps": true,
+  "all_frames_preserved": true,
+  "all_body_paths_mapped": true,
+  "maximum_position_quantization_m": 0.0,
+  "maximum_quaternion_component_quantization": 0.0,
+  "phases_exact": true,
+  "release_events_exact": 0,
+  "runtime_physical_model_hash_verified": true,
+  "scene_source_meshes": 31586,
+  "scene_mesh_instances": 31586,
+  "scene_triangles_with_instances": 54228738,
+  "scene_groups": {
+    "greenhouse": 2468,
+    "background_plants": 27892,
+    "target": 369,
+    "active_neighbors": 0,
+    "robot": 857
+  },
+  "skins": {
+    "meshes": 49,
+    "source_vertices": 43312,
+    "sampled_vertex_frames": 4704,
+    "maximum_sampled_position_error_m": 1.4632650136015002e-07,
+    "influence_ids_exact": true,
+    "influence_weights_float32_exact": true,
+    "source_vertex_mapping_exact": true,
+    "inverse_bind_float32_exact": true
+  },
+  "transmission": {
+    "nodes": 3,
+    "frames": 181,
+    "sampled_frames": [
+      0,
+      90,
+      180
+    ],
+    "measured_gap_reference_exact": true
+  },
+  "camera": {
+    "frames": 7,
+    "images": 21,
+    "actual_timestamps_exact": true,
+    "recorded_mount_and_q_verified": true,
+    "served_asset_hashes_exact": true,
+    "mode": "live_physics_capture",
+    "source_states_sha256": "ba1318675ae3838f6ab974e222a9c3666a23e2b9c896d8c25b091fa7f620776b"
+  },
+  "physics_rerun": false
+}

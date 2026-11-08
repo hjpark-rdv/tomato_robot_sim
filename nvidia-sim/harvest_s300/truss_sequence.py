@@ -37,7 +37,7 @@ def entry_direction(axis, yaw_offset_deg=0.):
             abs(direction[2])>1e-12 or abs(np.linalg.norm(direction)-1.)>1e-6 or
             not np.isfinite(yaw_offset_deg) or abs(yaw_offset_deg)>90.):
         raise ValueError('Unit horizontal truss axis and finite yaw offset within +/-90 degrees required')
-    if yaw_offset_deg==0.:return direction.copy()
+    if yaw_offset_deg==0. or axis.get('direction_offset_already_applied') is True:return direction.copy()
     theta=np.radians(yaw_offset_deg);c,s=np.cos(theta),np.sin(theta)
     return np.array([c*direction[0]-s*direction[1],s*direction[0]+c*direction[1],0.])
 

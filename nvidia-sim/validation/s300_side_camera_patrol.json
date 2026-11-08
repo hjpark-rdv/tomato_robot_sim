@@ -1,0 +1,174 @@
+{
+  "schema": "s300-side-camera-patrol-server-validation-v1",
+  "recorded_utc": "2026-10-23T02:11:09.229017+00:00",
+  "branch": "codex/s300-side-mount-patrol-20261023",
+  "base_head": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "working_tree_committed": false,
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol",
+  "requested_distinct_trusses": 6,
+  "feature_status": {
+    "side_mount": "implemented_and_actual_idle_validated",
+    "camera_incremental_patrol": "implemented_actual_scan_and_rail_moves_validated",
+    "next_segment_prefetch": "implemented_actual_browser_validated",
+    "visible_truss_queue": "implemented_finite_view_retry_and_startup_quarantine_preserve_evidence",
+    "six_distinct_truss_goal": "implemented_but_actual_six_not_achieved"
+  },
+  "actual_latest": {
+    "trial": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/patrol_run_09/trials/segment_001_harvest/segment_001_harvest",
+    "source_plant": "/World/Greenhouse/Plants/Plant_20",
+    "target_truss": "Truss_02",
+    "completed": false,
+    "stop_reason": "penetration_over_contact_policy",
+    "simulated_s": 24.55,
+    "physics_loop_wall_s": 248.95578821375966,
+    "physics_loop_rtf": 0.09861188677774689,
+    "model_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "initialization_valid": true,
+    "actual_self_collision_audit_passed": true,
+    "native_break_events": [
+      {
+        "t": 23.816666666666666,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_01"
+      },
+      {
+        "t": 24.333333333333332,
+        "phase": "close",
+        "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+      }
+    ],
+    "actual_new_detached_fruits": 2,
+    "distinct_trusses_with_actual_detachment": 1,
+    "distinct_trusses_with_completed_harvest_cycle": 0,
+    "stopped_contact": "Verified released Truss02 Fruit02 versus different Truss00 Fruit09 on same active source plant",
+    "stopped_contact_max_penetration_mm_approx": 3.7332,
+    "stopped_contact_force_n_approx": 0.0747781,
+    "terminal_checkpoint": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/patrol_run_09/trials/segment_001_harvest/segment_001_harvest/route_checkpoint",
+    "do_not_resume_earlier_scan_checkpoint": true,
+    "stopped_contact_point_count": 4,
+    "stopped_contact_statistic": "Maximum over all four reported terminal contact points, not only the representative first two log points"
+  },
+  "goal_reached": false,
+  "physics": {
+    "engine": "Isaac Sim 6.1 PhysX native CPU",
+    "physics_hz": 60,
+    "camera_hz": 2,
+    "contact_limit_mm": 1.0,
+    "newton_gpu_benchmark": false,
+    "collision_scope_changed_for_success": false
+  },
+  "finite_offline_probe": {
+    "queries": 6,
+    "full_path_pass": 0,
+    "new_physics_executions": 0,
+    "proof": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/shallow_observed_probe/index.html",
+    "interpretation": "Finite observed-view failure; not absolute harvest impossibility"
+  },
+  "remaining": [
+    "Complete opening/retreat of new side-mounted manipulation",
+    "Resolve whether verified released-fruit contact with another truss is diagnostic-only; no response assumed",
+    "Validate exact terminal-state continuation under explicit matching policy",
+    "Demonstrate six distinct completed camera-selected truss harvests"
+  ],
+  "proofs": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/side_robot_mount_validation.json",
+      "sha256": "b5d988e7544bf297cf3459ed9ae3fb13d1b6c6c1e1128c4cba6b1033ac658272"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/web_robot_qa.json",
+      "sha256": "4bcecce6d0cc42613d40a0271562353309fcbb094edcaa66b15a48ad382b797b"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/web_publication/actual_prefetch_browser.json",
+      "sha256": "fa132bd8d4c926fdd8776d93af23fe4fb5a2cb890b38d727db2559637ba394ef"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/auto_ik_fallback_review.json",
+      "sha256": "95f3d53478dd91711e1d0274f3b5f7672342ba0d51170c01c0396fac48224194"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/native_display_precheck_review.json",
+      "sha256": "7894a782e96065d4f4c8aafdea5f0b0ed1543c7920806c8fe96705d77e439468"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/known_budget_classifier_review.json",
+      "sha256": "6054c9cc8eaf03fc1d15ce48e253c182ad4f2b432ec145fc6bc637336986ed5a"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/completed_scan_same_state_review.json",
+      "sha256": "9cdb0d7a12a1ea885af77be0364279593bd53f6656f74db232b368a40d7ea37e"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/startup_physics_only_ab_validation.json",
+      "sha256": "68ce00d2b6ce865a69bcc27f4f71bd994306391804abb8238e7f7d630d71cc4f"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/window_storage_optimization_review.json",
+      "sha256": "462035b51e871dbd73e442c68367feecf6c3330ff4fb3e9b8eeb3cbaec0ee348"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/run09_terminal_checkpoint_proof.json",
+      "sha256": "d2c05b5ee1561641396ffc72a3ab66ce5e40cce74292a63f718aaef937bc0533"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/shallow_observed_probe/final.json",
+      "sha256": "2e1b4c341952d856e75de5156281dd374d6625c6e68ce2744069e7f0cb17c1dc"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/run09_terminal_contact_pair.json",
+      "sha256": "9ba8471b010629aa3ffd5028c5a4afdcfca2dbe7389710d3356d96d9c92d39e4"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/run09_video_validation.json",
+      "sha256": "0329f812b2262de2afb29e02d4011d49eff651115c61a1b6f8df3b92eac0ad6d"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/run09_render_pose_mapping_validation.json",
+      "sha256": "a7433bff49521d6f805ab2f9004210e67536c24fc531f42eb31811068ee9d1ba"
+    }
+  ],
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/side_robot_mount.py": "ffdbfc882628cdcb15c1c6fe5be8999d8949f10ecf067dbeee3c51beca743709",
+    "nvidia-sim/harvest_s300/mounted_rgbd.py": "2ab8cd0eb71e5a9a5e0655fa5a81eecf35194fa163f15b34c7e7328c905ffcfa",
+    "nvidia-sim/harvest_s300/camera_patrol.py": "67904f51cb595c3f991c89bc63e38b17215071fe911cdf59e2f584c67a3fa7c6",
+    "nvidia-sim/harvest_s300/camera_patrol_runner.py": "3034fa2a4c67722da48cc08f3c7da832ad6d1b98cfe050f108f641086231a08d",
+    "nvidia-sim/harvest_s300/camera_plan_alternatives.py": "b8f36e901857efea9561030c7b9066ec0d3fd97e907b2eb50e5699a69f3822ca",
+    "nvidia-sim/harvest_s300/camera_patrol_startup_cache.py": "775920e9eb0195a1e0d674ae6ab546bac5d487edaa1075223df4afe53dc90440",
+    "nvidia-sim/harvest_s300/native_display.py": "d3e3b35ae43cf1037a2bfde3577c97655d002ac3ee6a1d353a9396c7c0997737",
+    "nvidia-sim/harvest_s300/run_motion.py": "68a99ee8ef7dec64f7ed86a0060088a5308bed27a63738ff10e5cba0b3492162",
+    "nvidia-sim/harvest_s300/run_row_harvest.py": "90f718e43b44b8785b2eef6a1f190fb3c3449bad3b96f6caeeb94743a1d12b47",
+    "nvidia-sim/harvest_s300/side_camera_patrol_arguments.json": "fbe60ee50003b34ccb28082d97d7b6dbfb34fd385671ca7701ede33cd5d8054f",
+    "gripper-design/harvest-replay/viewer.js": "5f9785bea596eac4a63edd2a0f7ca6076aa319142cfe5785a8499ff6df067ddc",
+    "gripper-design/harvest-replay/publish_patrol.py": "9b92dc8dc429f044d07ed5bb014f1b349e8697c10af8fc53bf920d1d18fb2291",
+    "gripper-design/harvest-replay/patrol_handoff.py": "6731175561e668a55264a40a5a66825c1ed9770e546a4d60b9a2a9a84aa4d102",
+    "gripper-design/harvest-replay/scene_reuse.py": "0926e6a0a76bb89b885c63d4e4b92c1a2890c576f74aa93d0eec3bbb4e1f102f",
+    "gripper-design/harvest-replay/export_replay.py": "cf99568d9334c2b7272e94f48466158d438db3da1cc27c90eccf4722470d0afa",
+    "gripper-design/harvest-replay/validate_replay.py": "f384c9a9aebe071d61f179317f101594ffe02986174fed642a00cfeeaa66641c"
+  },
+  "web": {
+    "robot_assembly": "http://lab.farmily.ai:8090/gripper-design/robot-assembly/",
+    "recorded_actual_states": "http://lab.farmily.ai:8090/gripper-design/harvest-replay/?collection=camera_side_patrol_20261023",
+    "web_runs_new_physics": false,
+    "latest_stopped_run_browser_qa": {
+      "status": "inconclusive_load_timeout",
+      "timeout_s": 120,
+      "page_javascript_errors": [],
+      "proof": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/web_publication/run09_terminal_browser.json",
+      "sha256": "7ab44d03b2cdc6ed73cd114d9a5b37f2917b50d4bc457e26f2947dc7bc8c7083",
+      "not_a_simulator_or_physics_execution": true
+    },
+    "regression_note": "All seven JavaScript suites pass; earlier fourteen actual prefetch/browser checks pass separately. The latest stopped-run software browser did not reach ready within120seconds."
+  },
+  "video_list": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/video_list.md",
+  "report": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/index.html",
+  "training_eligible": false,
+  "harvest_success": null,
+  "limitations": [
+    "CAD-based mass is not a hardware strength calibration",
+    "Visible authored red color is a simulation ripeness proxy",
+    "Active-window transitions restart native solver contact caches",
+    "Stopped fruit release evidence is not completed manipulation, collection, or real-world harvest validation"
+  ],
+  "video_count": 25
+}

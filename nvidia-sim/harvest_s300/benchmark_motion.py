@@ -10,6 +10,25 @@ import subprocess
 import sys
 import time
 import psutil
+from native_display import NativeDisplayError,validated_native_display_environment
+
+
+def native_launch_environment(case,output):
+    """Keep existing native env controls, then validate the selected X server."""
+    env=os.environ.copy();env['OMNI_KIT_ALLOW_ROOT']='1'
+    env.update(case.get('environment',{}))
+    for key in ('PYTHONPATH','PYTHONHOME','VIRTUAL_ENV'):env.pop(key,None)
+    path=Path(output)/(case['name']+'_display_precheck.json')
+    if path.exists():raise RuntimeError('Refusing to overwrite display precheck '+str(path))
+    try:env,proof=validated_native_display_environment(env)
+    except NativeDisplayError as error:
+        path.write_text(json.dumps(error.proof,indent=2)+'\n')
+        print('[BENCH] display prelaunch failure',case['name'],str(error),'evidence',str(path),flush=True)
+        raise
+    path.write_text(json.dumps(proof,indent=2)+'\n')
+    print('[BENCH] display',case['name'],proof['selected_display'],proof['selection'],
+        'inherited',repr(proof['inherited_display']),'evidence',str(path),flush=True)
+    return env,proof
 
 
 def sample_tree(process,tracked):
@@ -65,7 +84,7 @@ def validate_parallel_cases(cases, output, jobs):
             raise ValueError('Concurrent native trials are CPU-only: '+name)
         if any(x=='--start-gate' or x.startswith('--start-gate=') for x in arguments):
             raise ValueError('The controller owns the synchronized start gate')
-        for path in (output/name,output/(name+'.log'),output/(name+'_resources.json')):
+        for path in (output/name,output/(name+'.log'),output/(name+'_resources.json'),output/(name+'_display_precheck.json')):
             if path.exists():raise RuntimeError('Refusing to overwrite existing trial evidence '+str(path))
     for index in range((len(cases)+jobs-1)//jobs):
         for suffix in ('gate','resources'):
@@ -160,13 +179,11 @@ def run_parallel_group(a, cases, index):
     group_started=time.perf_counter();gate_released=None;blocker=None
     workers=[];group_samples=[];last_notice=0.;last_resource=-float('inf')
     try:
-        for case in cases:
+        prepared=[(case,*native_launch_environment(case,a.output)) for case in cases]
+        for case,env,display_proof in prepared:
             name=case['name'];folder=(a.output/name).resolve()
             command=[str(a.python),'--no-ros-env','-u',str(Path(__file__).with_name('run_motion.py')),
                      str(a.assembly),'--output',str(folder)]+list(case['arguments'])+['--start-gate',str(gate)]
-            env=os.environ.copy();env['OMNI_KIT_ALLOW_ROOT']='1';env.setdefault('DISPLAY',':0')
-            env.update(case.get('environment',{}))
-            for key in ('PYTHONPATH','PYTHONHOME','VIRTUAL_ENV'):env.pop(key,None)
             log=(a.output/(name+'.log')).open('x')
             launched=time.perf_counter()
             try:child=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT,env=env,start_new_session=True)
@@ -174,7 +191,7 @@ def run_parallel_group(a, cases, index):
             proc=psutil.Process(child.pid)
             workers.append(dict(name=name,folder=folder,command=command,child=child,process=proc,
                                 log=log,tracked={proc.pid:proc},samples=[],started=launched,
-                                ready=None,timed_out=False))
+                                ready=None,timed_out=False,display_precheck=display_proof))
             print('[BENCH] parallel start',name,'pid',child.pid,flush=True)
         while True:
             now=time.perf_counter();elapsed=now-group_started
@@ -236,6 +253,7 @@ def run_parallel_group(a, cases, index):
                          startup_wall_s=None if w['ready'] is None else w['ready']['ready_monotonic_s']-w['started'],
                          ready_gate_wait_s=None if w['ready'] is None or gate_released is None else gate_released-w['ready']['ready_monotonic_s'],
                          ready=w['ready'],resource_samples=str(resource),
+                         display_precheck=w['display_precheck'],
                          physics_interpretation='diagnostic component fixture' if '--isolate-background' in w['command'] else 'farm collision enabled'))
     resource_path.write_text(json.dumps(group_samples,indent=2))
     group=dict(index=index,jobs=len(workers),names=[w['name'] for w in workers],start_gate=str(gate),
@@ -271,9 +289,7 @@ def main():
         if folder.exists():raise RuntimeError('Refusing to overwrite existing trial '+str(folder))
         command=[str(a.python),'--no-ros-env','-u',str(Path(__file__).with_name('run_motion.py')),
                  str(a.assembly),'--output',str(folder)]+list(case['arguments'])
-        env=os.environ.copy();env['OMNI_KIT_ALLOW_ROOT']='1';env.setdefault('DISPLAY',':0')
-        env.update(case.get('environment',{}))
-        for key in ('PYTHONPATH','PYTHONHOME','VIRTUAL_ENV'):env.pop(key,None)
+        env,display_proof=native_launch_environment(case,a.output)
         print('[BENCH] start',name,' '.join(command),flush=True)
         started=time.perf_counter();samples=[];timed_out=False
         with (a.output/(name+'.log')).open('w') as log:
@@ -294,6 +310,7 @@ def main():
         summary=json.loads((folder/'summary.json').read_text()) if (folder/'summary.json').exists() else None
         row=dict(name=name,command=command,returncode=child.returncode,timeout=timed_out,
                  total_wall_s=time.perf_counter()-started,summary=summary,
+                 display_precheck=display_proof,
                  resource_samples=str(a.output/(name+'_resources.json')),
                  physics_interpretation='diagnostic component fixture' if '--isolate-background' in command else 'farm collision enabled')
         results.append(row);(a.output/(a.cases.stem+'_results.json')).write_text(json.dumps(results,indent=2))

@@ -22,9 +22,25 @@ def cycle_opening_check(gaps_m, required_gap_m=.096, tolerance_m=.0005):
                              (np.abs(gaps-required_gap_m)<=tolerance_m).all()))
 
 
-def transmission_transforms(gap):
+def release_relief_opening_check(gaps_m,minimum_gap_m=.090):
+    """Explicit minimum for bounded unloading, never full withdrawal."""
+    if (isinstance(minimum_gap_m,(bool,np.bool_)) or not np.isfinite(minimum_gap_m) or
+            not .085<=minimum_gap_m<=.096):raise ValueError('Release-relief minimum must be finite85..96mm')
+    gaps=np.asarray(gaps_m,dtype=float)
+    return dict(actual_gap_m=gaps.tolist(),minimum_gap_m=minimum_gap_m,
+                reached=bool(gaps.size and np.isfinite(gaps).all() and (gaps>=minimum_gap_m).all()),
+                full_withdraw_required_gap_m=.096,full_withdraw_tolerance_m=.0005)
+
+
+def transmission_transforms(gap,*,measured_display_diagnostic=False):
     """CAD shape_at linkage equations, driven by measured slider gap (metres)."""
-    if not .0279<=gap<=.0961:raise ValueError('Measured gap exceeds CAD mechanism travel')
+    if measured_display_diagnostic:
+        # Display-only review of a recorded tracking overshoot. Preserve the
+        # real slider measurement; the exact25/45mm linkage triangle must
+        # still close. Existing command/planning calls retain their guard.
+        if not np.isfinite(gap) or not .004<gap<.104:
+            raise ValueError('Measured diagnostic gap cannot close the CAD linkage triangle')
+    elif not .0279<=gap<=.0961:raise ValueError('Measured gap exceeds CAD mechanism travel')
     def theta(g):
         s=g/2+.018
         return np.arccos(np.clip((s*s+.025**2-.045**2)/(2*s*.025),-1,1))
@@ -273,7 +289,8 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                 preparation_opening='ready',
                 max_grasp_translation_m=.5,allow_measured_ready_start=False,
                 horizontal_ready_connector='cartesian',horizontal_ready_seed_index=None,
-                horizontal_ready_normalize_turns=False,approach_distance_m=.10):
+                horizontal_ready_normalize_turns=False,approach_distance_m=.10,
+                release_relief_before_withdraw=False,release_relief_minimum_gap_m=.090):
     """Plan one fixed entry orientation, without silently changing its pitch.
 
     CAD +Y is the insertion direction and CAD +Z points up at pitch zero.
@@ -297,6 +314,12 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     negative offset puts the unchanged fruit farther toward tool +X.
     """
     center=np.asarray(center,dtype=float)
+    if not isinstance(release_relief_before_withdraw,(bool,np.bool_)) or (release_relief_before_withdraw and
+            (preparation!='horizontal_ready' or harvest_profile!='belt_open_close_cycle' or entry_only)):
+        raise ValueError('Release relief requires boolean horizontal-ready belt-open-close harvest')
+    release_relief_opening_check([.096],release_relief_minimum_gap_m)
+    if release_relief_minimum_gap_m!=.090 and not release_relief_before_withdraw:
+        raise ValueError('Nondefault release-relief minimum requires explicit unloading option')
     if entry_only and preparation!='horizontal_ready':
         raise ValueError('Entry-only demonstration requires horizontal_ready')
     if preparation_height_first and preparation!='horizontal_ready':
@@ -623,8 +646,35 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                ('belt_finish',float(belt_seconds),np.array([q,q]),float(grasp_gap_m),left,right),
                ('cycle_open_final',1.,np.array([q,q]),approach_gap,left,right),
                ('cycle_open_final_hold',.5,np.array([q,q]),approach_gap,left,right)]
-        phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.)]+cycle+[
-            ('withdraw',entry_seconds,np.array(waypoints[::-1]),approach_gap,0.,0.),
+        unload=[];withdraw_waypoints=np.array(waypoints[::-1]);withdraw_seconds=entry_seconds
+        relief=None
+        if release_relief_before_withdraw:
+            # Reuse an exact bounded prefix of the existing reverse insertion,
+            # then hold to unload the jaws. Never jump back to the grasp pose.
+            steps=min(range(1,len(waypoints)-1),key=lambda n:abs(
+                float(np.linalg.norm(poses[-1][:3,3]-poses[-1-n][:3,3]))-.015))
+            distance=float(np.linalg.norm(poses[-1][:3,3]-poses[-1-steps][:3,3]))
+            reverse=np.array(waypoints[::-1]);limited=reverse[:steps+1]
+            if not 0<distance<=.020000001:raise RuntimeError('Existing reverse insertion has no bounded20mm release-relief prefix')
+            begin_fk=kin.fk(limited[0]) if hasattr(kin,'fk') else None
+            end_fk=kin.fk(limited[-1]) if hasattr(kin,'fk') else None
+            fk_distance=None if begin_fk is None else float(np.linalg.norm(end_fk[:3,3]-begin_fk[:3,3]))
+            if fk_distance is not None and not 0<fk_distance<=.020:
+                raise RuntimeError('Actual planned FK release-relief exceeds the bounded20mm prefix')
+            unload=[('release_relief',1.,limited,approach_gap,0.,0.),
+                    ('release_relief_hold',1.,np.array([limited[-1],limited[-1]]),approach_gap,0.,0.)]
+            withdraw_waypoints=reverse[steps:];withdraw_seconds=entry_seconds*(len(withdraw_waypoints)-1)/(len(reverse)-1)
+            relief=dict(enabled=True,minimum_measured_gap_m=float(release_relief_minimum_gap_m),maximum_prefix_m=.020,
+                target_prefix_m=.015,nominal_prefix_m=distance,planned_fk_prefix_m=fk_distance,
+                reused_reverse_waypoint_indices=list(range(steps+1)),
+                planned_begin_fk_pose=None if begin_fk is None else begin_fk.tolist(),
+                planned_end_fk_pose=None if end_fk is None else end_fk.tolist(),
+                motion_seconds=1.,stationary_hold_seconds=1.,belts_off=True,
+                full_withdraw_required_gap_m=.096,full_withdraw_tracking_tolerance_m=.0005,
+                new_ik_solved=False,collision_checks_unchanged=True,training_eligible=False,
+                scope='Experimental bounded unloading along existing reverse insertion, then unchanged full-open guard')
+        phases=prefix+[('approach',entry_seconds,np.array(waypoints),approach_gap,0.,0.)]+cycle+unload+[
+            ('withdraw',withdraw_seconds,withdraw_waypoints,approach_gap,0.,0.),
             *return_phases,
             ('ready_close',1.,np.array([start,start]),.044,0.,0.),
             ('hold',1.,np.array([start,start]),.044,0.,0.)]
@@ -638,6 +688,9 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                         withdraw_requires_measured_open=True,
                         detachment_during_close_is_allowed=True,
                         finish='second complete opening with belts running, verify open, stop belts and withdraw open')
+        if relief is not None:
+            belt_cycle['release_relief']=relief
+            belt_cycle['finish']='second opening, stop belts, bounded reverse-entry unloading and hold, verify full opening, withdraw'
     if hasattr(kin,'bounds'):
         for name,_,qs,_,_,_ in phases:
             if np.any(qs<kin.bounds[0]-1e-8) or np.any(qs>kin.bounds[1]+1e-8):

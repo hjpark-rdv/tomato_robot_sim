@@ -16,6 +16,8 @@ def completed_native_cycles(records,truss_key=None):
     for record in records:
         if not isinstance(record,dict) or record.get('status')!='motion_completed' or record.get('stop_reason') is not None:
             continue
+        if record.get('purpose')=='camera_scan_prefix' or record.get('harvest_attempt') is False:
+            continue
         if truss_key is not None:
             fruits=record.get('fruits')
             if not isinstance(fruits,list) or not fruits or any(not isinstance(n,str) for n in fruits):
@@ -61,3 +63,33 @@ def grasp_depth_for_cycle(base_depth_mm,later_depth_mm,completed_cycles):
         source='later_depth_after_completed_native_cycle' if active else 'global_grasp_depth',
         cumulative_translation=False,
         scope='Existing waypoint/IK/full-FCL replanning only; physical model and native detach criteria unchanged')
+
+
+def grasp_depth_for_selected_group(base_depth_mm,later_depth_mm,records,truss_key,
+                                   *,scope='truss',near_trusses=False):
+    """One depth decision for the selector footprint and actual selected plan."""
+    if scope not in ('truss','trial'):raise ValueError('Depth schedule scope must be truss or trial')
+    if type(near_trusses)is not bool:raise ValueError('Explicit near-truss scheduling flag required')
+    if near_trusses and scope=='truss':
+        value,evidence=grasp_depth_for_truss_cycle(base_depth_mm,later_depth_mm,records,truss_key)
+    else:
+        value,evidence=grasp_depth_for_cycle(base_depth_mm,later_depth_mm,completed_native_cycles(records))
+    evidence.update(configured_depth_scope=scope,
+        effective_depth_scope='truss'if near_trusses and scope=='truss'else'trial',
+        global_completed_native_cycles=completed_native_cycles(records))
+    return value,evidence
+
+
+def configure_group_selector_depth(selector,base_depth_mm,later_depth_mm,records,
+                                    *,scope='truss',near_trusses=False):
+    """Bind one measured boundary's same depth rule to each candidate truss."""
+    import copy
+    if scope not in ('truss','trial'):raise ValueError('Depth schedule scope must be truss or trial')
+    snapshot=copy.deepcopy(records)
+    if near_trusses and scope=='truss':
+        selector.depth_for_truss=lambda key:grasp_depth_for_selected_group(
+            base_depth_mm,later_depth_mm,snapshot,key,scope=scope,near_trusses=True)[0]/1000
+    else:
+        selector.depth_for_truss=None
+        selector.depth_m=grasp_depth_for_selected_group(base_depth_mm,later_depth_mm,snapshot,
+            None,scope=scope,near_trusses=near_trusses)[0]/1000

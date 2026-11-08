@@ -74,16 +74,27 @@ class HarvestGroupSelector:
     jaws. This translates the aim along tool X only; yaw, depth and height stay
     at the seed values. The translated footprint is checked again before use.
     """
-    def __init__(self, policy, direction, *, depth_m=.065, height_offset_m=0., output=None):
+    def __init__(self, policy, direction, *, depth_m=.065, height_offset_m=0., output=None, depth_for_truss=None):
         self.minimum = policy['minimum_fruits']
         self.eligible = {e['name'] for e in policy['fruit_eligibility'] if e['eligible']}
         self.direction = direction
         self.depth_m = depth_m
+        if depth_for_truss is not None and not callable(depth_for_truss):raise ValueError('Truss depth rule must be callable')
+        self.depth_for_truss=depth_for_truss
         self.height_offset_m = height_offset_m
         self.output = Path(output) if output else None
         self.history = []
         self.last_decision = None
         self.initial_rejected_groups = policy.get('initial_rejected_groups', [])
+        self._heading_search_offset_deg = 0.
+        self._heading_search_enabled = False
+
+    def set_yaw_offset_deg(self,value):
+        """Opt-in SIM-GT proposal yaw; rerun the ordinary measured footprint."""
+        if isinstance(value,(bool,np.bool_)) or not np.isfinite(value) or abs(value)>90.:
+            raise ValueError('Finite SIM-GT heading within +/-90 degrees required')
+        self._heading_search_offset_deg=float(value)
+        self._heading_search_enabled=True
 
     def __call__(self, fruits, breaks, body_paths, poses, attempts, max_attempts=2,
                  order='highest-first', single_fruit_when_remaining=0, rejected_groups=()):
@@ -107,6 +118,8 @@ class HarvestGroupSelector:
         if len(set(paths)) != len(paths):
             raise ValueError('Ambiguous body paths')
         for key in sorted({truss_key(f['name']) for f in fruits}):
+            depth_m=self.depth_m if self.depth_for_truss is None else self.depth_for_truss(key)
+            if isinstance(depth_m,bool) or not np.isfinite(depth_m):raise ValueError('Finite exact candidate depth required')
             subset = [f for f in fruits if truss_key(f['name']) == key and f['name'] in attached]
             if not subset: continue
             points = np.array([coords[paths.index(f['path']), :3] for f in subset])
@@ -118,6 +131,10 @@ class HarvestGroupSelector:
             if direction.shape != (3,) or not np.isfinite(direction).all() or abs(direction[2]) > 1e-8 or np.linalg.norm(direction) < 1e-9:
                 raise ValueError('Finite horizontal group direction required')
             y = direction/np.linalg.norm(direction)
+            unrotated_direction=y.copy()
+            if self._heading_search_offset_deg:
+                from truss_sequence import entry_direction
+                y=entry_direction(dict(direction_world=y),self._heading_search_offset_deg)
             rotation = np.column_stack((np.cross(y, [0., 0., 1.]), y, [0., 0., 1.]))
             names = [f['name'] for f in subset]
             ripe = np.array([name in self.eligible for name in names])
@@ -132,7 +149,7 @@ class HarvestGroupSelector:
                 for dz in (0., -.024, .024):
                     aim = seed.copy(); aim[2] += dz
                     actual_center = aim + [0., 0., self.height_offset_m]
-                    local = (points-actual_center)@rotation + [0., .158-self.depth_m, .037]
+                    local = (points-actual_center)@rotation + [0., .158-depth_m, .037]
                     inside = ((np.abs(local[:,0])+radii <= .048+1e-10) &
                               (local[:,1]-radii >= -1e-10) & (local[:,1]+radii <= .158+1e-10) &
                               (local[:,2] >= .013-1e-10) & (local[:,2] <= .061+1e-10))
@@ -148,7 +165,7 @@ class HarvestGroupSelector:
                     lateral_shift = float(local[ids, 0].mean())
                     aim = seed_aim + rotation[:, 0]*lateral_shift
                     actual_center = aim + [0., 0., self.height_offset_m]
-                    local = (points-actual_center)@rotation + [0., .158-self.depth_m, .037]
+                    local = (points-actual_center)@rotation + [0., .158-depth_m, .037]
                     inside = ((np.abs(local[:,0])+radii <= .048+1e-10) &
                               (local[:,1]-radii >= -1e-10) & (local[:,1]+radii <= .158+1e-10) &
                               (local[:,2] >= .013-1e-10) & (local[:,2] <= .061+1e-10))
@@ -170,7 +187,7 @@ class HarvestGroupSelector:
                         aim_world_m=aim.tolist(),
                         group_selection=dict(eligible_count=count, minimum_fruits=self.minimum,
                             direction_world=y.tolist(), belt_aim_world_m=actual_center.tolist(),
-                            depth_m=self.depth_m, height_offset_m=self.height_offset_m,
+                            depth_m=depth_m, height_offset_m=self.height_offset_m,
                             fruit_centers_tool_m=local[ids].tolist(),
                             lateral_centering=dict(method='selected_group_centroid_tool_x',
                                 seed_aim_world_m=seed_aim.tolist(),
@@ -186,6 +203,11 @@ class HarvestGroupSelector:
                             detachment='unknown_until_native_physics',
                             maturity_source='explicit_SIM_GT_eligibility',
                             training_eligible=False))
+                    if self._heading_search_enabled:
+                        group['group_selection'].update(
+                            unrotated_direction_world=unrotated_direction.tolist(),
+                            heading_offset_deg=self._heading_search_offset_deg,
+                            heading_source='SIM-GT measured group proposal; no camera observation')
                     # Try unattempted groups first, then the highest ripe group.
                     rank = (max(attempts.get(name, 0) for name in group_names),
                             -float(centers[:,2].max()), -count,

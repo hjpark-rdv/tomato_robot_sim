@@ -31,7 +31,12 @@ class MotionContinuationTests(unittest.TestCase):
         containing=next(node.body for node in ast.walk(tree) if isinstance(node,ast.Try) and
             any(assigned(item,'initial_robot_q') for item in node.body))
         first=next(i for i,node in enumerate(containing) if assigned(node,'initial_robot_q'))
-        last=next(i for i,node in enumerate(containing[first:],first) if assigned(node,'phases'))
+        # Initial camera planning now lives in an opt-in conditional. Stop at
+        # that execution boundary, retaining the same actual selection block.
+        last=next(i for i,node in enumerate(containing[first:],first) if assigned(node,'phases') or
+            isinstance(node,ast.If) and any(isinstance(call,ast.Call) and
+                isinstance(call.func,ast.Name) and call.func.id=='direct_scan_prefix'
+                for call in ast.walk(node)))
         from resume_native_state import imported_break_markers
         manifest=context['metadata']['manifest']
         names=list(map(str,context['arrays']['robot_dof_names']))
@@ -41,7 +46,8 @@ class MotionContinuationTests(unittest.TestCase):
             later_grasp_depth_mm=None,grasp_depth_mm=65.,split_unproductive_pairs=False,
             grasp_height_offset_mm=-10.,last_fruit_height_offset_mm=None,last_fruit_depth_mm=None,
             whole_truss=True,truss_order='highest-first',initial_truss_first=False,
-            max_fruit_attempts=4,single_fruit_when_remaining=0,harvest_group_policy=None)
+            max_fruit_attempts=4,single_fruit_when_remaining=0,harvest_group_policy=None,camera_harvest=False,
+            camera_target_truss_window=False,allow_resume_target_truss_revision=False)
         env=dict(np=np,json=__import__('json'),manifest=manifest,resume_context=context,
             kin=kin,planning_kin=kin,a=args,imported_break_markers=imported_break_markers)
         from contextlib import redirect_stdout

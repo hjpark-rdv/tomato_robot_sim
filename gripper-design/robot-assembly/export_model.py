@@ -22,7 +22,7 @@ from motion_pose_display import MeasuredPoseDisplay
 from motion_kinematics import transmission_transforms
 
 ROOTS = ('/World/HarvestRobot', '/World/ActuatedTool')
-LABELS = dict(chassis='S300 기체', lift='리프트 고정부', carriage='승강 받침대', arm='RB5 로봇팔', gripper='벨트 그리퍼')
+LABELS = dict(chassis='S300 기체', lift='리프트 고정부', carriage='승강 캐리지', arm='RB5 로봇팔', gripper='벨트 그리퍼')
 # Source is Z-up in metres; glTF is Y-up in metres.
 TO_GLTF = np.array([[1., 0., 0.], [0., 0., 1.], [0., -1., 0.]])
 
@@ -128,6 +128,7 @@ def export(assembly, states, output, frame):
     source = assembly / 'composed.usdc'
     before = sha(source)
     lift_info = json.loads((assembly/'real_lift_mount.json').read_text()) if (assembly/'real_lift_mount.json').exists() else None
+    side_info = json.loads((assembly/'side_robot_mount.json').read_text()) if (assembly/'side_robot_mount.json').exists() else None
     stage = Usd.Stage.Open(str(source))
     if UsdGeom.GetStageUpAxis(stage) != 'Z' or UsdGeom.GetStageMetersPerUnit(stage) != 1.:
         raise ValueError('Expected current metre/Z-up assembly')
@@ -223,6 +224,11 @@ def export(assembly, states, output, frame):
                             moving_nodes=['carriage','arm','gripper'],
                             fixed_nodes=['chassis','lift'], virtual_shelf_removed=True,
                             correction=lift_info, preview='Rigid assembly motion along existing lift joint; not live physics')
+    if side_info:
+        info['side_robot_mount']=side_info
+        info['title']='S300 · 실제 승강 캐리지 · RB5 측면 장착 · 벨트 그리퍼'
+        info['lift']['protruding_shelf_and_triangular_support_removed']=True
+        info['lift']['robot_mount']='RB5 base on vertical moving carriage; horizontal base joint axis; actual lift joint remains world vertical'
     (output / 'model.json').write_text(json.dumps(info, ensure_ascii=False, indent=2)+'\n')
     print(json.dumps({k: info[k] for k in ('file', 'bytes', 'triangles', 'visual_source_meshes', 'maximum_bounds_error_m', 'components')}, ensure_ascii=False), flush=True)
 

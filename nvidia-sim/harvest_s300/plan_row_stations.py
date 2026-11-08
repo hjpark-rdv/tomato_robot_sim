@@ -134,7 +134,7 @@ def initial_group(row):
 
 
 def _initialize(assembly,output,full_hz,measured_ready_start=False,
-                preparation_variants=None,station_index=None):
+                preparation_variants=None,station_index=None,ready_lift_offset_m=-.15):
     global _CONTEXT
     started=time.perf_counter();assembly=Path(assembly)
     manifest=json.loads((assembly/'motion_manifest.json').read_text())
@@ -145,6 +145,7 @@ def _initialize(assembly,output,full_hz,measured_ready_start=False,
     _CONTEXT=dict(assembly=assembly,output=Path(output),full_hz=full_hz,manifest=manifest,stage=stage,
                   kin=kin,checker=checker,measured_ready_start=bool(measured_ready_start),
                   preparation_variants=preparation_variants,station_index=station_index,
+                  ready_lift_offset_m=ready_lift_offset_m,
                   initialization_wall_s=time.perf_counter()-started)
 
 
@@ -164,6 +165,8 @@ def _screen(row):
         query=output/f'query_{index:02d}';query.mkdir()
         record=dict(index=index,**proposal,group=group,status='planning',
                     environment_audit='not performed',physics_execution=False)
+        if ctx['ready_lift_offset_m']!=-.15:
+            record['ready_lift_offset_m']=ctx['ready_lift_offset_m']
         tick=time.perf_counter();queries=checker.queries
         try:
             destination=rail_destination(manifest,proposal['station_y_m'])
@@ -177,7 +180,7 @@ def _screen(row):
                 key:value for key,value in variant.items() if key!='name'}
             phases,plan=plan_motion(station_kin,local_reference,start=start,
                 preparation='horizontal_ready',harvest_profile='belt_open_close_cycle',
-                preparation_gap_m=.044,ready_lift_offset_m=-.15,preparation_height_first=True,
+                preparation_gap_m=.044,ready_lift_offset_m=ctx['ready_lift_offset_m'],preparation_height_first=True,
                 belt_speed_m_s=.05,belt_seconds=2.,close_seconds=6.,belt_ramp_seconds=.5,
                 grasp_height_offset_m=-.010,grasp_depth_m=.065,grasp_gap_m=.028,
                 grasp_translation_world_m=translation,max_grasp_translation_m=1.5,
@@ -244,8 +247,10 @@ def main():
     p.add_argument('--eligible-only',action='store_true',help='Exclude opposite stems and trusses whose centroid lies behind their gutter')
     p.add_argument('--preparation-variants',type=Path,help='Opt-in JSON list of existing connector/seed controls; every named variant is retained')
     p.add_argument('--station-index',type=int,choices=[0,1],help='Limit each variant to this existing station proposal; clamped duplicate station remains unevaluated')
+    p.add_argument('--ready-lift-offset-mm',type=float,default=-150.,help='Existing planner ready-lift control; opt in to match the actual campaign. Joint limits remain enforced.')
     args=p.parse_args()
     if not 1<=args.workers<=8 or args.full_hz<10:p.error('Workers1..8 and full sampling>=10Hz required')
+    if not np.isfinite(args.ready_lift_offset_mm):p.error('Finite ready-lift offset required')
     manifest=json.loads((args.assembly/'motion_manifest.json').read_text())
     if sha(args.assembly/'scene.usda')!=manifest['scene_sha256'] or not manifest.get('rail'):
         raise ValueError('Source hash mismatch or missing physical rail asset')
@@ -261,7 +266,7 @@ def main():
     args.output.mkdir(parents=True,exist_ok=False)
     began=time.perf_counter();results=[]
     with ProcessPoolExecutor(max_workers=args.workers,initializer=_initialize,
-                             initargs=(args.assembly,args.output,args.full_hz,args.measured_ready_start,variants,args.station_index)) as pool:
+                             initargs=(args.assembly,args.output,args.full_hz,args.measured_ready_start,variants,args.station_index,args.ready_lift_offset_mm/1000)) as pool:
         futures={pool.submit(_screen,row):row for row in selected}
         for future in as_completed(futures):
             row=futures[future]
@@ -291,6 +296,8 @@ def main():
         report.update(preparation_variants=variants,station_proposal_index=args.station_index,
             preparation_variants_source=(str(args.preparation_variants.resolve()) if args.preparation_variants else None),
             preparation_variants_source_sha256=(sha(args.preparation_variants) if args.preparation_variants else None))
+    if args.ready_lift_offset_mm!=-150.:
+        report['ready_lift_offset_m']=args.ready_lift_offset_mm/1000
     (args.output/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(json.dumps({k:report[k] for k in ['total_queries','status_counts','wall_s']},indent=2),flush=True)
 

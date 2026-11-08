@@ -101,6 +101,8 @@ class BenchmarkTests(unittest.TestCase):
             children.append(child);return child
         def stop(child):child.returncode=-2
         with patch.object(benchmark.subprocess,'Popen',side_effect=launch),\
+             patch.object(benchmark,'validated_native_display_environment',side_effect=lambda env:(dict(env,DISPLAY=':unit'),
+                 dict(selected_display=':unit',selection='unit_fixture',inherited_display=env.get('DISPLAY')))),\
              patch.object(benchmark.psutil,'Process',side_effect=lambda pid:ProcessTree(pid)),\
              patch.object(benchmark.os,'getpgid',side_effect=lambda pid:pid),\
              patch.object(benchmark,'sample_tree',return_value=dict(cpu_percent=100,rss_bytes=1234)),\

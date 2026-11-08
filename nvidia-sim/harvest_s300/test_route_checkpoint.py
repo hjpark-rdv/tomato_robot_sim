@@ -89,6 +89,47 @@ class Kinematics:
 
 
 class RouteCheckpointTests(unittest.TestCase):
+    def test_unharvested_frozen_reactivation_keeps_exact_template_q_preload_and_static_velocity_policy(self):
+        with tempfile.TemporaryDirectory() as directory:
+            assembly=Path(directory)/'assembly';stage,m,metadata,arrays=fixture(assembly)
+            metadata['break_events']=[];arrays['preload']=np.array([.07])
+            frozen=rc.freeze_outgoing(stage,assembly,m,metadata,arrays)
+            frozen['checkpoint']=str(Path(directory)/'checkpoint')
+            self.assertTrue(frozen['unharvested_reactivation_eligible'])
+            m['route_checkpoint']=dict(outgoing_history=[frozen])
+            with patch('native_route_checkpoint.load_checkpoint',return_value=(metadata,arrays)):
+                archive=rc.unharvested_reactivation_archive(stage,m,m['plant']['source_plant'])
+            proof=archive['proof'];self.assertEqual(proof['native_break_count'],0)
+            self.assertEqual(proof['archived_plant_q'],[.1]);self.assertEqual(proof['archived_preload'],[.07])
+            self.assertEqual(proof['restored_plant_qvel'],[0.]);self.assertTrue(proof['complete_body_transform_checks'])
+            out=Path(directory)/'reactivated';out.mkdir()
+            restored=rc.restore_unharvested_plant_template(stage,m,archive,out)
+            remainder=stage.GetPrimAtPath(frozen['frozen_root'])
+            self.assertTrue(not remainder or not remainder.IsActive())
+            self.assertTrue(stage.GetPrimAtPath('/World/ElasticTarget/rod').HasAPI(UsdPhysics.RigidBodyAPI))
+            self.assertTrue(stage.GetPrimAtPath('/World/ElasticTarget').HasAPI(UsdPhysics.ArticulationRootAPI))
+            joint=UsdPhysics.Joint(stage.GetPrimAtPath(m['plant']['fruits'][0]['joint']))
+            self.assertIsNot(joint.GetJointEnabledAttr().Get(),False)
+            self.assertEqual((out/'skin.npz').read_bytes(),(assembly/'skin.npz').read_bytes())
+            self.assertEqual(m['route_checkpoint']['outgoing_history'],[])
+            self.assertTrue(restored['native_state_restore_required'])
+
+    def test_reactivation_rejects_native_breaks_and_changed_frozen_shape(self):
+        with tempfile.TemporaryDirectory() as directory:
+            assembly=Path(directory)/'assembly';stage,m,metadata,arrays=fixture(assembly)
+            metadata['break_events']=[];arrays['preload']=np.array([.07])
+            frozen=rc.freeze_outgoing(stage,assembly,m,metadata,arrays);frozen['checkpoint']=str(Path(directory)/'checkpoint')
+            m['route_checkpoint']=dict(outgoing_history=[frozen])
+            with patch('native_route_checkpoint.load_checkpoint',return_value=(metadata,arrays)):
+                metadata['break_events']=[dict(joint=m['plant']['fruits'][0]['joint'],t=1.)]
+                with self.assertRaisesRegex(ValueError,'resurrected'):
+                    rc.unharvested_reactivation_archive(stage,m,m['plant']['source_plant'])
+                metadata['break_events']=[]
+                transform=rc._world(stage,frozen['frozen_root']+'/rod');transform[1,3]+=.001
+                rc._set_world(stage,frozen['frozen_root']+'/rod',transform)
+                with self.assertRaisesRegex(ValueError,'moved relative'):
+                    rc.unharvested_reactivation_archive(stage,m,m['plant']['source_plant'])
+
     def test_next_window_inherits_leaf_ignore_without_removing_obstacles(self):
         stage=Usd.Stage.CreateInMemory()
         for name,source in [('leaf','CompoundLeaf_01'),('stem','MainStem_01'),('fruit','Fruit_01')]:
@@ -276,6 +317,61 @@ class RouteCheckpointTests(unittest.TestCase):
                 self.assertEqual(new['compact_assets']['materialized_dependency']['sha256'],sha(output/'composed.usdc'))
                 with self.assertRaises(FileExistsError):rc.switch_window(assembly,Path(directory)/'checkpoint',output,19,'Truss_00_Fruit_01')
                 with self.assertRaises(ValueError):rc.switch_window(assembly,Path(directory)/'checkpoint',Path(directory)/'reset',22,'Truss_00_Fruit_01')
+
+    def test_target_scope_switch_preserves_measured_session_skin_before_strict_policy_edit(self):
+        from plant_interaction_variants import disable_other_plant_contacts,verified_disabled_colliders
+        from compact_motion_assets import verify_compact_dependencies
+        with tempfile.TemporaryDirectory() as directory:
+            assembly=Path(directory)/'assembly';stage,m,metadata,arrays=fixture(assembly)
+            # Native release preservation now shares the real checkpoint/hash
+            # verifier; use a real saved checkpoint and a mesh fruit collider.
+            cap=stage.GetPrimAtPath(m['plant']['fruits'][0]['path']+'/Collider');cap.SetTypeName('Mesh')
+            mesh=UsdGeom.Mesh(cap);mesh.CreatePointsAttr([(0,0,0),(.01,0,0),(0,.01,0)])
+            mesh.CreateFaceVertexCountsAttr([3]);mesh.CreateFaceVertexIndicesAttr([0,1,2])
+            skin='/World/ElasticTarget/Skin/mesh_0'
+            UsdPhysics.CollisionAPI.Apply(stage.GetPrimAtPath(skin)).CreateCollisionEnabledAttr(False)
+            foreign='/World/Greenhouse/Plants/Plant_19/Collider'
+            UsdPhysics.CollisionAPI.Apply(UsdGeom.Sphere.Define(stage,foreign).GetPrim()).CreateCollisionEnabledAttr(True)
+            m['plant_interaction_variant']=disable_other_plant_contacts(stage,m,include_already_disabled=True)
+            stage.GetRootLayer().Export(str(assembly/'scene.usda'));m['scene_sha256']=sha(assembly/'scene.usda')
+            (assembly/'motion_manifest.json').write_text(json.dumps(m));source_sha=m['scene_sha256']
+            metadata.update(scene_sha256=source_sha,manifest=copy.deepcopy(m))
+            from native_route_checkpoint import save_checkpoint
+            metadata=save_checkpoint(Path(directory)/'checkpoint',assembly=assembly,scene_sha256=source_sha,
+                time_s=metadata['time_s'],**{k:arrays[k]for k in ['body_paths','body_poses_world','body_velocities_world',
+                    'robot_dof_names','robot_q','robot_qvel','plant_dof_names','plant_q','plant_qvel']},
+                preload=np.zeros(len(arrays['plant_q'])),breaks=metadata['break_events'],manifest=m,
+                sequence=metadata['sequence'],robot_position_targets=metadata['controller_state']['position_targets'],
+                robot_velocity_targets=metadata['controller_state']['velocity_targets'])
+            def new_plant(stage,path,report,output):
+                root='/World/ElasticTarget';UsdGeom.Xform.Define(stage,root)
+                body(stage,root+'/rod',(1,1,0));fruit_path=root+'/Truss_00_Fruit_01';body(stage,fruit_path,(1,1,.2))
+                fruit=dict(name='Truss_00_Fruit_01',path=fruit_path,joint=root+'/HarvestJoints/new',
+                    anchor=root+'/rod',center=[1,1,.2],mass=.001)
+                for collider in (fruit_path+'/Collider',root+'/Stem_MainStem_0/Collider',root+'/Truss_01_Fruit_01/Collider'):
+                    UsdPhysics.CollisionAPI.Apply(UsdGeom.Sphere.Define(stage,collider).GetPrim()).CreateCollisionEnabledAttr(True)
+                report['plant']=dict(root=root,source_plant=path,fruits=[fruit],bodies=[],skin_paths=[])
+                stage.GetPrimAtPath(path).SetActive(False);np.savez_compressed(output/'skin.npz')
+            with patch.object(rc,'ToolKinematics',Kinematics),patch.object(rc,'build_plant',new_plant):
+                output=Path(directory)/'target_next';rc.switch_window(assembly,Path(directory)/'checkpoint',output,19,'Truss_00_Fruit_01')
+            derived=json.loads((output/'motion_manifest.json').read_text());saved=Usd.Stage.Open(str(output/'scene.usda'))
+            frozen='/World/RouteFrozen/Plant_22';mesh=UsdGeom.Mesh(saved.GetPrimAtPath(frozen+'/Skin/mesh_0'))
+            np.testing.assert_allclose(mesh.GetPointsAttr().Get(),[[1.1,.2,0],[1.1,.3,0],[1.1,.2,.1]],atol=1e-7)
+            np.testing.assert_allclose(mesh.GetExtentAttr().Get(),[[1.1,.2,0],[1.1,.3,.1]],atol=1e-7)
+            self.assertEqual(verified_disabled_colliders(saved,derived),{
+                frozen+'/Skin/mesh_0',
+                '/World/ElasticTarget/Truss_01_Fruit_01/Collider'})
+            self.assertTrue(saved.GetPrimAtPath(frozen+'/Truss_00_Fruit_01/Collider').GetAttribute('physics:collisionEnabled').Get())
+            for path in ('/World/ElasticTarget/Truss_00_Fruit_01/Collider','/World/ElasticTarget/Stem_MainStem_0/Collider'):
+                self.assertTrue(UsdPhysics.CollisionAPI(saved.GetPrimAtPath(path)).GetCollisionEnabledAttr().Get())
+            fallen=saved.GetPrimAtPath(frozen+'/Truss_00_Fruit_01')
+            self.assertTrue(fallen.HasAPI(UsdPhysics.RigidBodyAPI))
+            np.testing.assert_allclose(UsdPhysics.RigidBodyAPI(fallen).GetVelocityAttr().Get(),[.002]*3)
+            self.assertFalse(UsdPhysics.Joint(saved.GetPrimAtPath(frozen+'/HarvestJoints/Truss_00_Fruit_01')).GetJointEnabledAttr().Get())
+            self.assertEqual(derived['tool'],m['tool']);self.assertEqual(derived['mount_revision'],m['mount_revision'])
+            self.assertTrue(derived['plant_interaction_variant']['exact_property_preservation']['passed'])
+            self.assertEqual(derived['route_checkpoint']['checkpoint_time_s'],metadata['time_s'])
+            self.assertEqual(sha(assembly/'scene.usda'),source_sha);verify_compact_dependencies(output,derived)
 
     def test_same_wrapper_sha_does_not_authorize_other_parent_manifest(self):
         with tempfile.TemporaryDirectory() as directory:

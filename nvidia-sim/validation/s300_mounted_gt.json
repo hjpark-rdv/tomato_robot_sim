@@ -1,0 +1,1220 @@
+{
+  "schema": "s300-mounted-gt-validation-v1",
+  "date_kst": "2026-10-22",
+  "branch": "codex/s300-isaac-real-lift-20261022",
+  "base_commit": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "output": "/root/docker_share/mujoko_debugging_data/20261022_072000_mounted_gt",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/assembly_exposure",
+  "unchanged_physics_vs_rgbd_only": {
+    "time": true,
+    "poses": true,
+    "robot_q": true,
+    "command": true,
+    "body_paths": true
+  },
+  "completed": true,
+  "simulated_seconds": 23,
+  "physics_steps": 2760,
+  "frames": 47,
+  "frame_identity_pixel_depth_pose_checks": true,
+  "optical_and_occlusion_control": {
+    "scope": "known planes, rendering only, no physics or harvesting",
+    "marker_checks": [
+      {
+        "pixel": [
+          166,
+          246
+        ],
+        "expected_rgb": [
+          1,
+          0,
+          0
+        ],
+        "measured_rgb": [
+          252.0,
+          127.0,
+          127.0
+        ],
+        "expected_optical_depth_m": 1.0,
+        "measured_depth_m": 1.0,
+        "pass_color": true,
+        "pass_depth": true
+      },
+      {
+        "pixel": [
+          314,
+          246
+        ],
+        "expected_rgb": [
+          0,
+          1,
+          0
+        ],
+        "measured_rgb": [
+          133.0,
+          252.0,
+          132.0
+        ],
+        "expected_optical_depth_m": 1.0,
+        "measured_depth_m": 1.0,
+        "pass_color": true,
+        "pass_depth": true
+      },
+      {
+        "pixel": [
+          166,
+          394
+        ],
+        "expected_rgb": [
+          0,
+          0,
+          1
+        ],
+        "measured_rgb": [
+          124.0,
+          124.0,
+          252.0
+        ],
+        "expected_optical_depth_m": 1.0,
+        "measured_depth_m": 1.0,
+        "pass_color": true,
+        "pass_depth": true
+      },
+      {
+        "pixel": [
+          314,
+          394
+        ],
+        "expected_rgb": [
+          1,
+          1,
+          0
+        ],
+        "measured_rgb": [
+          252.0,
+          252.0,
+          130.0
+        ],
+        "expected_optical_depth_m": 1.0,
+        "measured_depth_m": 1.0,
+        "pass_color": true,
+        "pass_depth": true
+      }
+    ],
+    "background_center_depth_m": 2.000000238418579,
+    "expected_background_depth_m": 2.0,
+    "passed": true,
+    "depth_units": "metres",
+    "segmentation_saved": true,
+    "gt": {
+      "correct_classes": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "hidden_and_outside_absent": true,
+      "partial_occlusion_remains_leaf": true,
+      "visible_keys": [
+        "/World/Greenhouse/Plants/Plant_00/Truss_00/Background",
+        "/World/Greenhouse/Plants/Plant_00/MainStem",
+        "/World/Greenhouse/Plants/Plant_00/Truss_00/Fruit_01",
+        "/World/Greenhouse/Plants/Plant_00/Truss_00/CompoundLeaf_02",
+        "/World/Greenhouse/Plants/Plant_00/Truss_00/Fruit_02",
+        "/World/Greenhouse/Plants/Plant_00/Truss_00/CompoundLeaf_01"
+      ]
+    }
+  },
+  "postprocessing_optimization": {
+    "all_outputs_exact": true,
+    "one_frame_old_s": 2.0810554958879948,
+    "one_frame_new_s": 0.22142460569739342,
+    "postprocess_speedup": 9.398483467244095,
+    "scope": "single captured frame; CPU GT postprocessing only, not physics or total capture"
+  },
+  "physics_backend": "Isaac Sim 6.1 native PhysX CPU TGS 120Hz, 16 threads; not Newton GPU performance",
+  "timing": {
+    "loop_wall_s": 130.97898731939495,
+    "rtf": 0.17560068581011418,
+    "initial_capture_s": 3.51467153057456,
+    "subsequent_capture_total_s": 62.131294030696154,
+    "subsequent_capture_mean_s": 1.3506803050151337
+  },
+  "frame_statistics": [
+    {
+      "frame_id": 0,
+      "time": 0.0,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 621,
+        "fruit": 15776,
+        "main_stem": 8755,
+        "rachis": 1556,
+        "pedicel": 1150,
+        "peduncle": 695,
+        "calyx": 3540,
+        "leaf": 112209,
+        "gutter": 1971,
+        "rail": 0,
+        "structure": 157980,
+        "robot": 0,
+        "ground": 2947
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 3.51467153057456
+    },
+    {
+      "frame_id": 1,
+      "time": 0.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15692,
+        "main_stem": 8917,
+        "rachis": 1571,
+        "pedicel": 1133,
+        "peduncle": 701,
+        "calyx": 3558,
+        "leaf": 111427,
+        "gutter": 1807,
+        "rail": 0,
+        "structure": 158304,
+        "robot": 0,
+        "ground": 3520
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.5401557236909866
+    },
+    {
+      "frame_id": 2,
+      "time": 1.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15697,
+        "main_stem": 8918,
+        "rachis": 1568,
+        "pedicel": 1136,
+        "peduncle": 703,
+        "calyx": 3550,
+        "leaf": 111448,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158287,
+        "robot": 0,
+        "ground": 3520
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4629475772380829
+    },
+    {
+      "frame_id": 3,
+      "time": 1.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15691,
+        "main_stem": 8920,
+        "rachis": 1571,
+        "pedicel": 1136,
+        "peduncle": 702,
+        "calyx": 3551,
+        "leaf": 111450,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158286,
+        "robot": 0,
+        "ground": 3520
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4094924945384264
+    },
+    {
+      "frame_id": 4,
+      "time": 2.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15694,
+        "main_stem": 8921,
+        "rachis": 1570,
+        "pedicel": 1136,
+        "peduncle": 702,
+        "calyx": 3550,
+        "leaf": 111448,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158286,
+        "robot": 0,
+        "ground": 3520
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4405353982001543
+    },
+    {
+      "frame_id": 5,
+      "time": 2.5,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 619,
+        "fruit": 15743,
+        "main_stem": 8755,
+        "rachis": 1574,
+        "pedicel": 1145,
+        "peduncle": 677,
+        "calyx": 3576,
+        "leaf": 112230,
+        "gutter": 1970,
+        "rail": 0,
+        "structure": 157947,
+        "robot": 0,
+        "ground": 2964
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.416138106957078
+    },
+    {
+      "frame_id": 6,
+      "time": 3.0,
+      "visible_fruits": 89,
+      "visible_classes": {
+        "unknown": 783,
+        "fruit": 15834,
+        "main_stem": 8068,
+        "rachis": 1604,
+        "pedicel": 1163,
+        "peduncle": 713,
+        "calyx": 3620,
+        "leaf": 115131,
+        "gutter": 2141,
+        "rail": 0,
+        "structure": 156523,
+        "robot": 0,
+        "ground": 1620
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4371317997574806
+    },
+    {
+      "frame_id": 7,
+      "time": 3.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 787,
+        "fruit": 15412,
+        "main_stem": 7218,
+        "rachis": 1683,
+        "pedicel": 1180,
+        "peduncle": 735,
+        "calyx": 3736,
+        "leaf": 115399,
+        "gutter": 2093,
+        "rail": 0,
+        "structure": 157878,
+        "robot": 0,
+        "ground": 1079
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.406865417957306
+    },
+    {
+      "frame_id": 8,
+      "time": 4.0,
+      "visible_fruits": 83,
+      "visible_classes": {
+        "unknown": 869,
+        "fruit": 14726,
+        "main_stem": 5790,
+        "rachis": 1689,
+        "pedicel": 1162,
+        "peduncle": 790,
+        "calyx": 3641,
+        "leaf": 115924,
+        "gutter": 2066,
+        "rail": 0,
+        "structure": 160349,
+        "robot": 0,
+        "ground": 194
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4197913128882647
+    },
+    {
+      "frame_id": 9,
+      "time": 4.5,
+      "visible_fruits": 77,
+      "visible_classes": {
+        "unknown": 1044,
+        "fruit": 13703,
+        "main_stem": 4904,
+        "rachis": 1602,
+        "pedicel": 1128,
+        "peduncle": 792,
+        "calyx": 3595,
+        "leaf": 110114,
+        "gutter": 2410,
+        "rail": 0,
+        "structure": 167908,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3934088498353958
+    },
+    {
+      "frame_id": 10,
+      "time": 5.0,
+      "visible_fruits": 57,
+      "visible_classes": {
+        "unknown": 1112,
+        "fruit": 10443,
+        "main_stem": 4301,
+        "rachis": 1296,
+        "pedicel": 904,
+        "peduncle": 708,
+        "calyx": 2983,
+        "leaf": 102641,
+        "gutter": 2491,
+        "rail": 0,
+        "structure": 180321,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.368122175335884
+    },
+    {
+      "frame_id": 11,
+      "time": 5.5,
+      "visible_fruits": 44,
+      "visible_classes": {
+        "unknown": 1184,
+        "fruit": 7776,
+        "main_stem": 3580,
+        "rachis": 993,
+        "pedicel": 603,
+        "peduncle": 640,
+        "calyx": 2232,
+        "leaf": 97651,
+        "gutter": 2479,
+        "rail": 0,
+        "structure": 190062,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.295813538134098
+    },
+    {
+      "frame_id": 12,
+      "time": 6.0,
+      "visible_fruits": 29,
+      "visible_classes": {
+        "unknown": 1209,
+        "fruit": 4202,
+        "main_stem": 2708,
+        "rachis": 616,
+        "pedicel": 310,
+        "peduncle": 454,
+        "calyx": 1267,
+        "leaf": 96681,
+        "gutter": 2514,
+        "rail": 0,
+        "structure": 197239,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.2581361532211304
+    },
+    {
+      "frame_id": 13,
+      "time": 6.5,
+      "visible_fruits": 19,
+      "visible_classes": {
+        "unknown": 1230,
+        "fruit": 1885,
+        "main_stem": 2329,
+        "rachis": 392,
+        "pedicel": 186,
+        "peduncle": 309,
+        "calyx": 779,
+        "leaf": 91694,
+        "gutter": 2488,
+        "rail": 0,
+        "structure": 205908,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.20778070949018
+    },
+    {
+      "frame_id": 14,
+      "time": 7.0,
+      "visible_fruits": 15,
+      "visible_classes": {
+        "unknown": 1244,
+        "fruit": 1418,
+        "main_stem": 2055,
+        "rachis": 220,
+        "pedicel": 127,
+        "peduncle": 290,
+        "calyx": 489,
+        "leaf": 83524,
+        "gutter": 2491,
+        "rail": 0,
+        "structure": 215342,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.2141292449086905
+    },
+    {
+      "frame_id": 15,
+      "time": 7.5,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1226,
+        "fruit": 1397,
+        "main_stem": 2092,
+        "rachis": 224,
+        "pedicel": 122,
+        "peduncle": 255,
+        "calyx": 541,
+        "leaf": 77001,
+        "gutter": 2480,
+        "rail": 0,
+        "structure": 221862,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.1844627410173416
+    },
+    {
+      "frame_id": 16,
+      "time": 8.0,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1222,
+        "fruit": 1447,
+        "main_stem": 2053,
+        "rachis": 225,
+        "pedicel": 115,
+        "peduncle": 247,
+        "calyx": 564,
+        "leaf": 74523,
+        "gutter": 2475,
+        "rail": 0,
+        "structure": 224329,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.1766472961753607
+    },
+    {
+      "frame_id": 17,
+      "time": 8.5,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1222,
+        "fruit": 1450,
+        "main_stem": 2045,
+        "rachis": 227,
+        "pedicel": 117,
+        "peduncle": 248,
+        "calyx": 562,
+        "leaf": 74476,
+        "gutter": 2477,
+        "rail": 0,
+        "structure": 224376,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.2047948893159628
+    },
+    {
+      "frame_id": 18,
+      "time": 9.0,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1222,
+        "fruit": 1450,
+        "main_stem": 2044,
+        "rachis": 227,
+        "pedicel": 117,
+        "peduncle": 248,
+        "calyx": 562,
+        "leaf": 74476,
+        "gutter": 2477,
+        "rail": 0,
+        "structure": 224377,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.190667763352394
+    },
+    {
+      "frame_id": 19,
+      "time": 9.5,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1222,
+        "fruit": 1450,
+        "main_stem": 2044,
+        "rachis": 227,
+        "pedicel": 117,
+        "peduncle": 248,
+        "calyx": 562,
+        "leaf": 74475,
+        "gutter": 2477,
+        "rail": 0,
+        "structure": 224378,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.1836625784635544
+    },
+    {
+      "frame_id": 20,
+      "time": 10.0,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1222,
+        "fruit": 1450,
+        "main_stem": 2044,
+        "rachis": 227,
+        "pedicel": 117,
+        "peduncle": 248,
+        "calyx": 562,
+        "leaf": 74476,
+        "gutter": 2477,
+        "rail": 0,
+        "structure": 224377,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.1752624083310366
+    },
+    {
+      "frame_id": 21,
+      "time": 10.5,
+      "visible_fruits": 13,
+      "visible_classes": {
+        "unknown": 1220,
+        "fruit": 1412,
+        "main_stem": 2085,
+        "rachis": 223,
+        "pedicel": 115,
+        "peduncle": 250,
+        "calyx": 556,
+        "leaf": 76521,
+        "gutter": 2476,
+        "rail": 0,
+        "structure": 222342,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.2091317791491747
+    },
+    {
+      "frame_id": 22,
+      "time": 11.0,
+      "visible_fruits": 15,
+      "visible_classes": {
+        "unknown": 1242,
+        "fruit": 1410,
+        "main_stem": 2057,
+        "rachis": 224,
+        "pedicel": 117,
+        "peduncle": 292,
+        "calyx": 492,
+        "leaf": 83751,
+        "gutter": 2494,
+        "rail": 0,
+        "structure": 215121,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.201762594282627
+    },
+    {
+      "frame_id": 23,
+      "time": 11.5,
+      "visible_fruits": 20,
+      "visible_classes": {
+        "unknown": 1231,
+        "fruit": 2029,
+        "main_stem": 2408,
+        "rachis": 444,
+        "pedicel": 227,
+        "peduncle": 307,
+        "calyx": 863,
+        "leaf": 92632,
+        "gutter": 2488,
+        "rail": 0,
+        "structure": 204571,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.1903427001088858
+    },
+    {
+      "frame_id": 24,
+      "time": 12.0,
+      "visible_fruits": 36,
+      "visible_classes": {
+        "unknown": 1211,
+        "fruit": 5052,
+        "main_stem": 2975,
+        "rachis": 743,
+        "pedicel": 373,
+        "peduncle": 496,
+        "calyx": 1439,
+        "leaf": 97196,
+        "gutter": 2490,
+        "rail": 0,
+        "structure": 195225,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.2528514247387648
+    },
+    {
+      "frame_id": 25,
+      "time": 12.5,
+      "visible_fruits": 48,
+      "visible_classes": {
+        "unknown": 1149,
+        "fruit": 9136,
+        "main_stem": 4085,
+        "rachis": 1199,
+        "pedicel": 742,
+        "peduncle": 641,
+        "calyx": 2428,
+        "leaf": 99456,
+        "gutter": 2499,
+        "rail": 0,
+        "structure": 185865,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.306210309267044
+    },
+    {
+      "frame_id": 26,
+      "time": 13.0,
+      "visible_fruits": 69,
+      "visible_classes": {
+        "unknown": 1103,
+        "fruit": 12851,
+        "main_stem": 4659,
+        "rachis": 1518,
+        "pedicel": 1079,
+        "peduncle": 793,
+        "calyx": 3440,
+        "leaf": 107976,
+        "gutter": 1914,
+        "rail": 0,
+        "structure": 171867,
+        "robot": 0,
+        "ground": 0
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4026536997407675
+    },
+    {
+      "frame_id": 27,
+      "time": 13.5,
+      "visible_fruits": 82,
+      "visible_classes": {
+        "unknown": 847,
+        "fruit": 14724,
+        "main_stem": 5872,
+        "rachis": 1695,
+        "pedicel": 1146,
+        "peduncle": 772,
+        "calyx": 3724,
+        "leaf": 116212,
+        "gutter": 2037,
+        "rail": 0,
+        "structure": 159945,
+        "robot": 0,
+        "ground": 226
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3972105253487825
+    },
+    {
+      "frame_id": 28,
+      "time": 14.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 742,
+        "fruit": 15593,
+        "main_stem": 7773,
+        "rachis": 1625,
+        "pedicel": 1190,
+        "peduncle": 716,
+        "calyx": 3643,
+        "leaf": 115857,
+        "gutter": 2125,
+        "rail": 0,
+        "structure": 156431,
+        "robot": 0,
+        "ground": 1505
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3960559479892254
+    },
+    {
+      "frame_id": 29,
+      "time": 14.5,
+      "visible_fruits": 88,
+      "visible_classes": {
+        "unknown": 352,
+        "fruit": 15544,
+        "main_stem": 9428,
+        "rachis": 1541,
+        "pedicel": 1157,
+        "peduncle": 716,
+        "calyx": 3483,
+        "leaf": 109913,
+        "gutter": 1230,
+        "rail": 0,
+        "structure": 159610,
+        "robot": 0,
+        "ground": 4226
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4341810755431652
+    },
+    {
+      "frame_id": 30,
+      "time": 15.0,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 242,
+        "fruit": 15435,
+        "main_stem": 10984,
+        "rachis": 1472,
+        "pedicel": 1089,
+        "peduncle": 700,
+        "calyx": 3208,
+        "leaf": 104428,
+        "gutter": 1297,
+        "rail": 0,
+        "structure": 159420,
+        "robot": 0,
+        "ground": 8925
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4102105554193258
+    },
+    {
+      "frame_id": 31,
+      "time": 15.5,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 149,
+        "fruit": 15132,
+        "main_stem": 11509,
+        "rachis": 1460,
+        "pedicel": 1031,
+        "peduncle": 725,
+        "calyx": 3051,
+        "leaf": 101811,
+        "gutter": 1129,
+        "rail": 0,
+        "structure": 161234,
+        "robot": 0,
+        "ground": 9969
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4320222828537226
+    },
+    {
+      "frame_id": 32,
+      "time": 16.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 186,
+        "fruit": 15158,
+        "main_stem": 11539,
+        "rachis": 1442,
+        "pedicel": 1016,
+        "peduncle": 730,
+        "calyx": 2898,
+        "leaf": 100311,
+        "gutter": 1103,
+        "rail": 0,
+        "structure": 162375,
+        "robot": 0,
+        "ground": 10442
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3761963117867708
+    },
+    {
+      "frame_id": 33,
+      "time": 16.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 187,
+        "fruit": 15143,
+        "main_stem": 11540,
+        "rachis": 1423,
+        "pedicel": 1023,
+        "peduncle": 731,
+        "calyx": 2940,
+        "leaf": 100264,
+        "gutter": 1106,
+        "rail": 0,
+        "structure": 162384,
+        "robot": 0,
+        "ground": 10459
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3949742875993252
+    },
+    {
+      "frame_id": 34,
+      "time": 17.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 187,
+        "fruit": 15146,
+        "main_stem": 11540,
+        "rachis": 1424,
+        "pedicel": 1023,
+        "peduncle": 731,
+        "calyx": 2937,
+        "leaf": 100267,
+        "gutter": 1106,
+        "rail": 0,
+        "structure": 162380,
+        "robot": 0,
+        "ground": 10459
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4008943866938353
+    },
+    {
+      "frame_id": 35,
+      "time": 17.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 187,
+        "fruit": 15144,
+        "main_stem": 11540,
+        "rachis": 1423,
+        "pedicel": 1024,
+        "peduncle": 731,
+        "calyx": 2936,
+        "leaf": 100265,
+        "gutter": 1106,
+        "rail": 0,
+        "structure": 162385,
+        "robot": 0,
+        "ground": 10459
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3972140662372112
+    },
+    {
+      "frame_id": 36,
+      "time": 18.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 187,
+        "fruit": 15143,
+        "main_stem": 11540,
+        "rachis": 1423,
+        "pedicel": 1024,
+        "peduncle": 731,
+        "calyx": 2936,
+        "leaf": 100264,
+        "gutter": 1106,
+        "rail": 0,
+        "structure": 162387,
+        "robot": 0,
+        "ground": 10459
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4049545917659998
+    },
+    {
+      "frame_id": 37,
+      "time": 18.5,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 177,
+        "fruit": 15164,
+        "main_stem": 11563,
+        "rachis": 1450,
+        "pedicel": 1031,
+        "peduncle": 731,
+        "calyx": 2940,
+        "leaf": 100896,
+        "gutter": 1092,
+        "rail": 0,
+        "structure": 161937,
+        "robot": 0,
+        "ground": 10219
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3759941179305315
+    },
+    {
+      "frame_id": 38,
+      "time": 19.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 166,
+        "fruit": 15255,
+        "main_stem": 11420,
+        "rachis": 1470,
+        "pedicel": 1061,
+        "peduncle": 715,
+        "calyx": 3072,
+        "leaf": 103134,
+        "gutter": 1147,
+        "rail": 0,
+        "structure": 160174,
+        "robot": 0,
+        "ground": 9586
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.3989123534411192
+    },
+    {
+      "frame_id": 39,
+      "time": 19.5,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 237,
+        "fruit": 15486,
+        "main_stem": 10770,
+        "rachis": 1458,
+        "pedicel": 1088,
+        "peduncle": 704,
+        "calyx": 3228,
+        "leaf": 104940,
+        "gutter": 1302,
+        "rail": 0,
+        "structure": 159483,
+        "robot": 0,
+        "ground": 8504
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.4043038338422775
+    },
+    {
+      "frame_id": 40,
+      "time": 20.0,
+      "visible_fruits": 85,
+      "visible_classes": {
+        "unknown": 161,
+        "fruit": 15499,
+        "main_stem": 9956,
+        "rachis": 1527,
+        "pedicel": 1137,
+        "peduncle": 722,
+        "calyx": 3367,
+        "leaf": 108726,
+        "gutter": 1287,
+        "rail": 0,
+        "structure": 159485,
+        "robot": 0,
+        "ground": 5333
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4105330687016249
+    },
+    {
+      "frame_id": 41,
+      "time": 20.5,
+      "visible_fruits": 87,
+      "visible_classes": {
+        "unknown": 452,
+        "fruit": 15586,
+        "main_stem": 9214,
+        "rachis": 1544,
+        "pedicel": 1145,
+        "peduncle": 727,
+        "calyx": 3511,
+        "leaf": 110534,
+        "gutter": 1317,
+        "rail": 0,
+        "structure": 159216,
+        "robot": 0,
+        "ground": 3954
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.418497458100319
+    },
+    {
+      "frame_id": 42,
+      "time": 21.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 567,
+        "fruit": 15665,
+        "main_stem": 8922,
+        "rachis": 1562,
+        "pedicel": 1143,
+        "peduncle": 705,
+        "calyx": 3592,
+        "leaf": 111423,
+        "gutter": 1800,
+        "rail": 0,
+        "structure": 158292,
+        "robot": 0,
+        "ground": 3529
+      },
+      "render_error": 2.220446049250313e-16,
+      "capture_wall_s": 1.429048627614975
+    },
+    {
+      "frame_id": 43,
+      "time": 21.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15690,
+        "main_stem": 8921,
+        "rachis": 1568,
+        "pedicel": 1136,
+        "peduncle": 703,
+        "calyx": 3551,
+        "leaf": 111438,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158299,
+        "robot": 0,
+        "ground": 3521
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4298495147377253
+    },
+    {
+      "frame_id": 44,
+      "time": 22.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15690,
+        "main_stem": 8921,
+        "rachis": 1567,
+        "pedicel": 1137,
+        "peduncle": 703,
+        "calyx": 3551,
+        "leaf": 111436,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158301,
+        "robot": 0,
+        "ground": 3521
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4372431579977274
+    },
+    {
+      "frame_id": 45,
+      "time": 22.5,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15691,
+        "main_stem": 8921,
+        "rachis": 1567,
+        "pedicel": 1137,
+        "peduncle": 703,
+        "calyx": 3551,
+        "leaf": 111436,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158300,
+        "robot": 0,
+        "ground": 3521
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4183090161532164
+    },
+    {
+      "frame_id": 46,
+      "time": 23.0,
+      "visible_fruits": 86,
+      "visible_classes": {
+        "unknown": 570,
+        "fruit": 15692,
+        "main_stem": 8921,
+        "rachis": 1568,
+        "pedicel": 1136,
+        "peduncle": 703,
+        "calyx": 3551,
+        "leaf": 111439,
+        "gutter": 1803,
+        "rail": 0,
+        "structure": 158296,
+        "robot": 0,
+        "ground": 3521
+      },
+      "render_error": 4.440892098500626e-16,
+      "capture_wall_s": 1.4157901648432016
+    }
+  ],
+  "tests": {
+    "unit_passed": 9,
+    "optical_gt_passed": true
+  },
+  "input_sha256": {
+    "states.npz": "70c7047a2d7857a07d2d2207cb1154aaf02f3c8dde9466e1c09cc5bd85b2d4e3",
+    "code_sha256.json": "1d4e4d9a4ae510d47140009fec64fcd9984be795e1870d221d158aa625b2a8a5",
+    "native_stage_selection.json": "a2794d6490614460f8297388551c08989f8955cd715d177f56365dc31c751798"
+  },
+  "final_videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261022_072000_mounted_gt/lift_gt_final/rgbd/analysis.mp4",
+      "sha256": "0e222052896bbf5a2c7851ad82c9c78e21bd8e24faa330dda354cd66b8655712",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1440,
+            "height": 670,
+            "nb_frames": "235"
+          }
+        ],
+        "format": {
+          "duration": "23.500000",
+          "size": "6798271"
+        }
+      },
+      "source": "actual RGB/GT/depth captures, played at simulation-time 1x"
+    }
+  ],
+  "training_eligible": false,
+  "harvest_region_selected": false,
+  "harvest_success": null,
+  "limitations": [
+    "Authored RGB color proxy is not calibrated biological ripeness.",
+    "Only visible pixels/surface positions; no hidden fruit completion or full 3D center estimate.",
+    "Native headless sensor validation; full camera-GT GUI and Newton GPU integration not tested.",
+    "Harvest area/region choice, reachability, robot ordering and learned perception remain future work."
+  ],
+  "api_reference": "https://docs.omniverse.nvidia.com/kit/docs/omni_replicator/1.13.30/source/extensions/omni.replicator.core/docs/API.html"
+}

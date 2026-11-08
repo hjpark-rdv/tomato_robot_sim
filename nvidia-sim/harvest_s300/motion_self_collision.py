@@ -181,6 +181,8 @@ class MotionSelfCollision:
 def check_plan(checker,plan,hz=120,*,cache_exact_repeats=True):
     """Check every nominal control tick, including jaw interpolation and endpoints."""
     if hz<=0 or not plan.get('phases'):raise ValueError('Nonempty plan and positive Hz are required')
+    if plan.get('terminal_forward_suffix')is not None:
+        return _check_terminal_suffix(checker,plan,hz,cache_exact_repeats=cache_exact_repeats)
     from motion_continuation import initial_plan_rail_position
     previous_gap=.044;previous_rail=initial_plan_rail_position(plan);rows=[];total=0
     # This checker is an immutable geometry query. Reuse only bit-identical
@@ -220,6 +222,49 @@ def check_plan(checker,plan,hz=120,*,cache_exact_repeats=True):
                 query_cache=dict(enabled=memo is not None,exact_configuration_queries=query_calls,
                                  reused_exact_configuration_queries=cache_hits,
                                  rounded_configuration_keys=False,all_sample_times_evaluated=True))
+
+
+def _check_terminal_suffix(checker,plan,hz,*,cache_exact_repeats=True):
+    """Use the unchanged source curve on its remaining native ticks only."""
+    from motion_continuation import terminal_suffix_samples,execution_duration_s
+    from terminal_motion_recovery import validate_suffix_plan_binding
+    validate_suffix_plan_binding(plan)
+    samples=terminal_suffix_samples(plan,hz);rows=[];total=0;query_calls=0;cache_hits=0
+    memo={}if cache_exact_repeats and type(checker)is MotionSelfCollision else None
+    initial=None
+    if type(checker)is MotionSelfCollision:
+        from scipy.spatial.transform import Rotation
+        proof=plan['terminal_forward_suffix']['proof'];measured={}
+        for path,pose in zip(proof['measured_body_paths'],proof['measured_body_poses_world']):
+            matrix=np.eye(4);matrix[:3,:3]=Rotation.from_quat(pose[3:]).as_matrix();matrix[:3,3]=pose[:3];measured[path]=matrix
+        initial_hits=checker.check(poses=measured)
+        initial=dict(passed=not initial_hits,hits=initial_hits,source='Exact terminal measured body poses; includes independent asymmetric jaws',
+            included_in_nominal_command_samples=False)
+        if initial_hits:
+            return dict(passed=False,complete=False,samples=0,hz=hz,phases=[],geometry=checker.metadata,
+                initial_actual_state_audit=initial,training_eligible=False,
+                scope='Initial actual state blocked; original-clock suffix unexamined')
+    for sample in samples:
+        q=sample['q'];gap=sample['gap_m'];rail=sample['rail_position_m']
+        key=(q.tobytes(),np.float64(gap).tobytes(),np.float64(rail).tobytes())
+        if memo is not None and key in memo:hits=memo[key];cache_hits+=1
+        else:
+            hits=checker.check(q,gap,rail_position_m=rail);query_calls+=1
+            if memo is not None:memo[key]=hits
+        total+=1
+        if not rows or rows[-1]['phase']!=sample['phase']:
+            rows.append(dict(phase=sample['phase'],clear=True,first_hit_fraction=None,hits=[],
+                first_source_time_s=sample['source_time_s'],last_source_time_s=sample['source_time_s']))
+        rows[-1]['last_source_time_s']=sample['source_time_s']
+        if hits:
+            rows[-1].update(clear=False,first_hit_fraction=sample['fraction'],hits=hits);break
+    return dict(passed=not hits,complete=total==len(samples)and not hits,samples=total,hz=hz,phases=rows,
+        geometry=checker.metadata,training_eligible=False,initial_actual_state_audit=initial,
+        scope='Only remaining original-clock native command ticks and final endpoint; already executed prefix excluded',
+        initial_source_elapsed_s=plan['terminal_forward_suffix']['initial_source_elapsed_s'],
+        remaining_duration_s=execution_duration_s(plan),
+        query_cache=dict(enabled=memo is not None,exact_configuration_queries=query_calls,reused_exact_configuration_queries=cache_hits,
+            rounded_configuration_keys=False,all_sample_times_evaluated=True))
 
 
 def main():

@@ -8,7 +8,8 @@ import unittest
 from unittest.mock import patch
 import numpy as np
 
-from grasp_depth_schedule import completed_native_cycles,grasp_depth_for_cycle,grasp_depth_for_truss_cycle
+from grasp_depth_schedule import (completed_native_cycles,grasp_depth_for_cycle,grasp_depth_for_truss_cycle,
+    grasp_depth_for_selected_group,configure_group_selector_depth)
 from motion_kinematics import plan_motion,grasp_pose
 from test_motion_branch import RedundantCartesianRobot
 
@@ -37,6 +38,12 @@ class GraspDepthScheduleTests(unittest.TestCase):
             self.assertEqual(grasp_depth_for_cycle(50.,None,count)[0],50.)
         value,evidence=grasp_depth_for_cycle(65.,50.,completed_native_cycles([self.completed()]))
         self.assertEqual(value,50.);self.assertEqual(evidence['completed_native_cycles'],1)
+
+    def test_camera_scan_and_nonharvest_timelines_do_not_consume_physical_cycle_budget(self):
+        scan=dict(self.completed(),purpose='camera_scan_prefix',harvest_attempt=False,fruits=[])
+        rejected=dict(self.completed(),status='planning_rejected')
+        self.assertEqual(completed_native_cycles([scan,rejected]),0)
+        self.assertEqual(completed_native_cycles([scan,rejected,self.completed()]),1)
 
     def test_invalid_depth_or_noninteger_completion_is_rejected(self):
         for bad in (None,True,14.,101.,float('nan'),float('inf')):
@@ -68,6 +75,62 @@ class GraspDepthScheduleTests(unittest.TestCase):
         for bad in ('Truss_01_Fruit_01','Truss_0bad',True):
             with self.assertRaises(ValueError):completed_native_cycles(completed,truss_key=bad)
 
+    def test_trial_scope_uses_first_completed_cycle_for_new_truss_and_checkpoint_history(self):
+        parent=[dict(self.completed(),fruits=['Truss_02_Fruit_01','Truss_02_Fruit_02'])]
+        new=[dict(self.completed(),purpose='camera_scan_prefix',harvest_attempt=False,fruits=[]),
+             dict(self.completed(),status='planning_rejected',fruits=['Truss_00_Fruit_01'])]
+        records=parent+new
+        self.assertEqual(grasp_depth_for_selected_group(35,15,records,'Truss_00',
+            near_trusses=True)[0],35)
+        depth,proof=grasp_depth_for_selected_group(35,15,records,'Truss_00',
+            scope='trial',near_trusses=True)
+        self.assertEqual(depth,15);self.assertEqual(proof['global_completed_native_cycles'],1)
+        self.assertEqual(proof['effective_depth_scope'],'trial')
+        self.assertEqual(grasp_depth_for_selected_group(35,15,new,'Truss_00',
+            scope='trial',near_trusses=True)[0],35)
+
+    def test_selector_footprint_and_actual_second_truss_plan_use_the_same_depth(self):
+        from harvest_group_policy import HarvestGroupSelector
+        fruits=[dict(name='Truss_'+f'{key:02d}'+'_Fruit_'+f'{i:02d}',
+            path='/fruit/'+str(key)+'/'+str(i),joint='/joint/'+str(key)+'/'+str(i),dimensions_m=[.023]*3)
+            for key in [0,2]for i in [1,2]]
+        positions=np.array([[0,0,1.08],[.01,0,1.06],[0,0,1.02],[.01,0,1.00]])
+        policy=dict(minimum_fruits=2,fruit_eligibility=[dict(**f,eligible=True)for f in fruits])
+        paths=[f['path']for f in fruits]
+        records=[dict(self.completed(),fruits=['Truss_02_Fruit_01','Truss_02_Fruit_02'])]
+        for scope,wanted in [('truss',35),('trial',15)]:
+            selector=HarvestGroupSelector(policy,lambda *args:[0,1,0],height_offset_m=.0075)
+            configure_group_selector_depth(selector,35,15,records,scope=scope,near_trusses=True)
+            selected=selector(fruits,[],paths,positions,{},order='highest-first')
+            self.assertEqual(selected['truss_key'],'Truss_00')
+            self.assertEqual(selected['group_selection']['depth_m'],wanted/1000)
+            actual,proof=grasp_depth_for_selected_group(35,15,records,selected['truss_key'],
+                scope=scope,near_trusses=True)
+            self.assertEqual(actual,wanted)
+            if scope=='truss':self.assertEqual(selector.depth_for_truss('Truss_02'),.015)
+            # Exercise the ACTUAL runner's second-group branch, not a mirror.
+            from types import SimpleNamespace
+            _,tree,_=self.real_parser()
+            node=next(n for n in ast.walk(tree)if isinstance(n,ast.Assign)and
+                any(isinstance(t,ast.Tuple)and any(isinstance(x,ast.Name)and x.id=='effective_depth_mm'for x in t.elts)for t in n.targets)
+                and isinstance(n.value,ast.Call)and isinstance(n.value.func,ast.Name)and n.value.func.id=='grasp_depth_for_selected_group')
+            env=dict(a=SimpleNamespace(grasp_depth_mm=35,later_grasp_depth_mm=15,later_grasp_depth_scope=scope),
+                previous_cycle_records=records,sequence=dict(cycle_plans=[]),group=selected,
+                grasp_depth_for_selected_group=grasp_depth_for_selected_group)
+            exec(compile(ast.Module(body=[node],type_ignores=[]),'actual_depth_branch','exec'),env)
+            self.assertEqual(env['effective_depth_mm']/1000,selected['group_selection']['depth_m'])
+
+    def test_real_cli_trial_scope_is_explicit_and_requires_later_depth(self):
+        source,_,code=self.real_parser();base=[str(source),'/unused','--output','/unused-output',
+            '--whole-truss','--preparation','horizontal_ready','--harvest-profile','belt_open_close_cycle']
+        with patch.object(sys,'argv',base):
+            env={};exec(code,env);self.assertEqual(env['a'].later_grasp_depth_scope,'truss')
+        with patch.object(sys,'argv',base+['--later-grasp-depth-mm','15','--later-grasp-depth-scope','trial']):
+            env={};exec(code,env);self.assertEqual(env['a'].later_grasp_depth_scope,'trial')
+        with patch.object(sys,'argv',base+['--later-grasp-depth-scope','trial']),redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
+            exec(code,{})
+
+
     def real_parser(self):
         source=Path(__file__).with_name('run_motion.py');tree=ast.parse(source.read_text());prefix=[]
         for node in tree.body:
@@ -80,6 +143,9 @@ class GraspDepthScheduleTests(unittest.TestCase):
         argv=[str(source),'/unused','--output','/unused-output']
         with patch.object(sys,'argv',argv):
             env={};exec(code,env);self.assertIsNone(env['a'].later_grasp_depth_mm)
+            self.assertEqual(env['completed_native_cycles']([
+                dict(self.completed(),purpose='camera_scan_prefix',harvest_attempt=False)]),0)
+            self.assertEqual(env['a'].camera_max_harvest_cycles,0)
         scope=['--whole-truss','--preparation','horizontal_ready','--harvest-profile','belt_open_close_cycle']
         for value in ('15','50','100'):
             with patch.object(sys,'argv',argv+scope+['--later-grasp-depth-mm',value]):

@@ -1,9 +1,48 @@
 import unittest
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
+from types import SimpleNamespace
+import numpy as np
+import plan_row_stations as screen
 from plan_row_stations import (station_candidates,initial_group,screen_selection,
     screen_query_proposals,validate_preparation_variants,preparation_variant_arguments)
 
 
 class RowStationTests(unittest.TestCase):
+    def test_actual_screen_passes_opt_in_ready_lift_to_same_planner_and_audits(self):
+        row=dict(plant_id=23,truss_index=0,fruit_centroid_world_m=[-.5,1.,.8],
+            fruits={'Fruit_01':[-.5,1.,.81],'Fruit_02':[-.5,1.01,.79]})
+        calls=[]
+        with tempfile.TemporaryDirectory() as directory:
+            for index,offset in enumerate([-.15,0.]):
+                output=Path(directory)/str(index);output.mkdir()
+                manifest=dict(grasp_reference=dict(center=[0.,0.,0.]),initial_robot_q=[0.]*7,
+                    rail=dict(limits_world_y_m=[0.,5.]),scene_sha256='source')
+                source=output/'assembly';source.mkdir();(source/'motion_manifest.json').write_text('{}')
+                context=dict(output=output,manifest=manifest,kin=object(),checker=SimpleNamespace(queries=0),
+                    measured_ready_start=True,preparation_variants=None,station_index=0,
+                    ready_lift_offset_m=offset,full_hz=60,assembly=source,initialization_wall_s=0.)
+                def plan(*args,**kwargs):
+                    calls.append(kwargs);return [],{}
+                destination=dict(axis_world=[0.,1.,0.],displacement_m=0.)
+                with patch.object(screen,'_CONTEXT',context),patch.object(screen,'plan_motion',side_effect=plan), \
+                     patch.object(screen,'rail_destination',return_value=destination), \
+                     patch.object(screen,'station_kinematics',return_value=SimpleNamespace(world=np.eye(4))), \
+                     patch.object(screen,'attach_rail_commands',side_effect=lambda phases,plan,*args,**kw:(phases,plan)), \
+                     patch.object(screen,'check_plan',return_value=dict(passed=True,complete=True,phases=[])) as audit:
+                    result=screen._screen(row)
+                self.assertEqual(result['queries'][0]['status'],'self_path_clear_full')
+                self.assertEqual([call.kwargs['hz'] for call in audit.call_args_list],[10,60])
+                self.assertEqual('ready_lift_offset_m' in result['queries'][0],offset!=-.15)
+        self.assertEqual(calls[0]['ready_lift_offset_m'],-.15)
+        self.assertEqual(calls[1]['ready_lift_offset_m'],0.)
+        self.assertEqual(set(calls[0]),set(calls[1]))
+        for key,value in calls[0].items():
+            if key=='ready_lift_offset_m':continue
+            if isinstance(value,np.ndarray):np.testing.assert_array_equal(value,calls[1][key])
+            else:self.assertEqual(value,calls[1][key])
+
     def test_unspecified_preparation_variants_preserve_exact_station_proposals(self):
         row=dict(fruit_centroid_world_m=[-.5,1.5,.8])
         self.assertEqual(screen_query_proposals(row),station_candidates(row))

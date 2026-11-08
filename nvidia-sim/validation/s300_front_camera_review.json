@@ -1,0 +1,650 @@
+{
+  "schema": "s300-front-camera-and-record-review-v1",
+  "branch": "codex/s300-isaac-real-lift-20261022",
+  "base_commit": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "preexisting_uncommitted_changes_preserved": true,
+  "training_eligible": false,
+  "harvest_success": null,
+  "movement": {
+    "existing_algorithm": "Preselected finite station list, not camera-triggered incremental row traversal",
+    "recorded_station_examples_y_m": [
+      1.3920259074118901,
+      2.1540962239837422,
+      2.6526433225443835,
+      3.222384591770679,
+      3.15602881080738,
+      1.1580931860669101
+    ],
+    "ordinary_examples_step_m": [
+      0.7620703165718521,
+      0.4985470985606413,
+      0.5697412692262955
+    ],
+    "retry_reverse_step_m": -1.9979356247404698,
+    "initial_front_test_move_m": 0.27366174634977924,
+    "global_station_step_limit_added": false,
+    "rail_limits_m": [
+      0,
+      5
+    ],
+    "next_policy_needed": "Short scan increments, visible eligible-truss queue, harvest station search and re-observation before moving; no absolute impossibility inference"
+  },
+  "camera": {
+    "previous": {
+      "timestamp_s": 12.0,
+      "world_forward": [
+        -0.7015786744888296,
+        0.7125920035352722,
+        2.8953104602352397e-07
+      ],
+      "deviation_from_row_normal_deg": 45.44620110278957,
+      "frame": "/root/docker_share/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous6_camera/trials/station_000_plant_22/station_000_plant_22/rgbd/frame_00024/rgb.png",
+      "actual_measured_pose": true
+    },
+    "row_front": {
+      "timestamp_s": 13.5,
+      "world_forward": [
+        -0.9999999985538576,
+        -5.377937511430453e-05,
+        2.517144590665081e-07
+      ],
+      "deviation_from_row_normal_deg": -0.003081331220385952,
+      "frame": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/rgbd/frame_00027/rgb.png",
+      "actual_measured_pose": true
+    }
+  },
+  "observation": {
+    "source": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest",
+    "physical_frames": 819,
+    "scan_completed": true,
+    "harvest_executed": false,
+    "detached": 0,
+    "termination": "attempt_budget_exhausted_remaining_fruit",
+    "planning_rejections": {
+      "self_path_clearance": 15,
+      "IK_not_found": 4
+    },
+    "visible_fruits": 86,
+    "eligible_visible_fruits": 14,
+    "observation_exclusions": {
+      "other_source_plant": 56,
+      "original_policy_ineligible": 6,
+      "unknown_target_fruit_key": 10
+    },
+    "video": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/rgbd/analysis.mp4"
+  },
+  "recording": {
+    "prior_collection": "camera_region_route_20261022",
+    "segments": 14,
+    "total_recorded_seconds": 499.5,
+    "new_collection_timeline": true,
+    "independent_trials_not_continuous_physics": true,
+    "source_time_axes_and_original_records_unchanged": true,
+    "old_per_station_harvest_cycle_limit": 1,
+    "new_trial_limits": [
+      3,
+      2
+    ],
+    "short_trial_causes": [
+      "Finite single-entry pilot limit",
+      "Planning or native execution stops"
+    ],
+    "wall_clock_planning_pauses_not_extra_simulation_frames": true
+  },
+  "trials": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest",
+      "independent_fresh_test": true,
+      "summary": {
+        "completed": true,
+        "stop_reason": null,
+        "native_new_break_count": 0,
+        "physics_steps": 818,
+        "simulated_s": 13.633333333333333,
+        "physics_wall_s": 225.10956181026995,
+        "planning_paused_wall_s": 154.78126640804112,
+        "model_sha256": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a"
+      },
+      "termination": "attempt_budget_exhausted_remaining_fruit",
+      "scan_audit": {
+        "passed": true,
+        "complete": true,
+        "samples": 704
+      },
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [],
+          "status": "motion_completed",
+          "error": null,
+          "start_s": 2.0,
+          "end_s": 13.633333333333333
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/001/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 253
+          }
+        },
+        {
+          "index": 2,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Fixed entry preparation IK not found (pitch=0.0, yaw_offset=0.0): position=0.03412741463811803 orientation=0.17742578947465884; pitch was not relaxed",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 3,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/003/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 344
+          }
+        },
+        {
+          "index": 4,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/004/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 420
+          }
+        },
+        {
+          "index": 5,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/005/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 335
+          }
+        },
+        {
+          "index": 6,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/006/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 254
+          }
+        },
+        {
+          "index": 7,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "planning_rejected",
+          "error": "Fixed entry preparation IK not found (pitch=0.0, yaw_offset=0.0): position=0.03493016162654394 orientation=0.18000924522185865; pitch was not relaxed",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 8,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/008/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 340
+          }
+        },
+        {
+          "index": 9,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/009/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 472
+          }
+        },
+        {
+          "index": 10,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/010/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 330
+          }
+        },
+        {
+          "index": 11,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/011/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 298
+          }
+        },
+        {
+          "index": 12,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Fixed entry preparation IK not found (pitch=0.0, yaw_offset=0.0): position=0.03424656857404681 orientation=0.15763858166538872; pitch was not relaxed",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 13,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04",
+            "Truss_02_Fruit_05"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/013/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 351
+          }
+        },
+        {
+          "index": 14,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/014/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 477
+          }
+        },
+        {
+          "index": 15,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04",
+            "Truss_02_Fruit_05"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/015/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 340
+          }
+        },
+        {
+          "index": 16,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/016/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 293
+          }
+        },
+        {
+          "index": 17,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Fixed entry preparation IK not found (pitch=0.0, yaw_offset=0.0): position=0.03679845613538677 orientation=0.22378572280863956; pitch was not relaxed",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 18,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/018/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 349
+          }
+        },
+        {
+          "index": 19,
+          "fruits": [
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Self-collision audit blocked motion: /root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/cycles/019/self_collision_preflight.json",
+          "start_s": 13.633333333333333,
+          "end_s": null,
+          "self_collision_preflight.json": {
+            "passed": false,
+            "complete": false,
+            "status": null,
+            "samples": 384
+          }
+        }
+      ],
+      "breaks": [],
+      "terminal_arm_fruit_contacts": [],
+      "source_hashes": {
+        "states.npz": "c05a224d2e3152ba7c4f30b27b5716085dbf78245ec6d80c0e315104868364a2",
+        "summary.json": "a6888e69dff3b2dfee843ac7e6e18eba707cb6e27e4afeccaf1ecf27d24dcc66",
+        "plan.json": "f4e26efd54372ff68ba1f57eb0f3e24dc5b3ac62537806d12fa768b10804a04f",
+        "contacts.json": "cafa9bb163f522df1fa4454f4e573a2f3ffd03617f39bd4a7223c1ea509eeea1",
+        "break_events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "code_sha256.json": "719e9939d157d5d3e5a760d809d7d62908f3affe40b1529d045b0790163a0a04"
+      },
+      "video": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_v2/front_scan_repeated_harvest/rgbd/analysis.mp4"
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik",
+      "independent_fresh_test": true,
+      "summary": {
+        "completed": false,
+        "stop_reason": "penetration_over_contact_policy",
+        "native_new_break_count": 1,
+        "physics_steps": 2266,
+        "simulated_s": 37.766666666666666,
+        "physics_wall_s": 457.20203894749284,
+        "planning_paused_wall_s": 252.79635457508266,
+        "model_sha256": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a"
+      },
+      "termination": "penetration_over_contact_policy",
+      "scan_audit": {
+        "passed": true,
+        "complete": true,
+        "samples": 704
+      },
+      "cycles": [
+        {
+          "index": 0,
+          "fruits": [],
+          "status": "motion_completed",
+          "error": null,
+          "start_s": 2.0,
+          "end_s": 13.633333333333333
+        },
+        {
+          "index": 1,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Camera prefix connector failed; see /mnt/nas_rdv_md3/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik/cycles/001/prefix_connection.log",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 2,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Fixed entry preparation IK not found (pitch=0.0, yaw_offset=0.0): position=0.03412741463811803 orientation=0.17742578947465884; pitch was not relaxed",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 3,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Camera prefix connector failed; see /mnt/nas_rdv_md3/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik/cycles/003/prefix_connection.log",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 4,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03",
+            "Truss_02_Fruit_04"
+          ],
+          "status": "planning_rejected",
+          "error": "Camera prefix connector failed; see /mnt/nas_rdv_md3/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik/cycles/004/prefix_connection.log",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 5,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02",
+            "Truss_02_Fruit_03"
+          ],
+          "status": "planning_rejected",
+          "error": "Camera prefix connector failed; see /mnt/nas_rdv_md3/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik/cycles/005/prefix_connection.log",
+          "start_s": 13.633333333333333,
+          "end_s": null
+        },
+        {
+          "index": 6,
+          "fruits": [
+            "Truss_02_Fruit_01",
+            "Truss_02_Fruit_02"
+          ],
+          "status": "stopped",
+          "error": null,
+          "start_s": 13.633333333333333,
+          "end_s": 37.766666666666666,
+          "self_collision_preflight.json": {
+            "passed": true,
+            "complete": true,
+            "status": null,
+            "samples": 3433
+          },
+          "full_environment_preflight.json": {
+            "passed": true,
+            "complete": true,
+            "status": "sampled_clear",
+            "samples": 3433
+          }
+        }
+      ],
+      "breaks": [
+        {
+          "t": 37.5,
+          "phase": "close",
+          "joint": "/World/ElasticTarget/HarvestJoints/Truss_02_Fruit_02"
+        }
+      ],
+      "terminal_arm_fruit_contacts": [
+        {
+          "t": 37.766666666666666,
+          "phase": "close",
+          "a": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_02/Collider",
+          "separation_m": -0.003561660647392273,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ]
+        },
+        {
+          "t": 37.766666666666666,
+          "phase": "close",
+          "a": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_02/Collider",
+          "separation_m": -0.0053515806794166565,
+          "force_n": 0.7125242945338537,
+          "impulse_ns": [
+            0.010006428696215153,
+            -8.32219811854884e-05,
+            -0.006394505500793457
+          ]
+        },
+        {
+          "t": 37.766666666666666,
+          "phase": "close",
+          "a": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+          "b": "/World/ElasticTarget/Truss_02_Fruit_02/Collider",
+          "separation_m": -0.0027821213006973267,
+          "force_n": 0.0,
+          "impulse_ns": [
+            0.0,
+            -0.0,
+            -0.0
+          ]
+        }
+      ],
+      "source_hashes": {
+        "states.npz": "be36d19391081f67fb430feea7d3c93d4ec205a535eaf4111a1134ef4338f443",
+        "summary.json": "d9e8c372adbd6503068bac2e9d1771b56e60fbf157428cf6cff01b9ab8831c0e",
+        "plan.json": "f4e26efd54372ff68ba1f57eb0f3e24dc5b3ac62537806d12fa768b10804a04f",
+        "contacts.json": "38a50dd4be170411cc8058f09f9fc171fb873fa68b12c222c0dbbf75c0f6bd09",
+        "break_events.json": "c1a6ab7a7a9bec5b67cbb876b1af801a6fa510664dde35ee1d9f3bd250a1d869",
+        "code_sha256.json": "719e9939d157d5d3e5a760d809d7d62908f3affe40b1529d045b0790163a0a04"
+      },
+      "video": "/root/docker_share/mujoko_debugging_data/20261023_front_camera_review/trials_auto_v2/front_scan_auto_ik/rgbd/analysis.mp4"
+    }
+  ],
+  "validation": {
+    "python_tests": 90,
+    "final_camera_regression_tests": 17,
+    "javascript_existing_assertions": 56,
+    "new_collection_timeline_tests": "PASS",
+    "browser": true,
+    "first_replay": true,
+    "second_replay": true
+  },
+  "source_file_sha256": {
+    "nvidia-sim/harvest_s300/camera_scan_prefix.py": "9eb2f649e5f09b635a742e4e7dfa7ad58795e4fd27c5e37e0697255cd3887a60",
+    "nvidia-sim/harvest_s300/run_motion.py": "05f65fd9273e021ee1632c2bfb0a8ecaf6d375dd919d56dee017c26c5ddb73e7",
+    "gripper-design/harvest-replay/viewer.js": "63da5c1d864d4e3930eb01acc70c80ed96b53f85ee48d9d5fbc8f83152119ec6",
+    "gripper-design/harvest-replay/index.html": "f51f86e81b6e52c334ac23ab22a4a653e7b074b6dc8801422199e7a910436f8b"
+  },
+  "environment_repair": {
+    "link": "/root/docker_share/mujoko_debugging_data_bak",
+    "target": "/mnt/nas_rdv_md3/mujoko_debugging_data_bak",
+    "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "matched": true,
+    "source_bytes_changed": false
+  },
+  "limitations": [
+    "Camera is rigidly mounted to link1: frontal at scan, follows body yaw during manipulation",
+    "No new complete harvest cycle: second run detached one fruit then stopped at released fruit vs arm penetration",
+    "No six-truss completion or camera-driven incremental routing claim",
+    "Native PhysX CPU60Hz plus RGBD2Hz; not Newton GPU performance benchmark"
+  ]
+}

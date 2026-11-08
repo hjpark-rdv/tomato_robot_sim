@@ -1,0 +1,160 @@
+{
+  "engine": "Isaac Sim 6.1 native PhysX CPU TGS",
+  "model_sha256": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a",
+  "completed": true,
+  "stop_reason": null,
+  "simulated_s": 23.0,
+  "physics_steps": 2760,
+  "hz": 120,
+  "physics_wall_s": 53.43318079970777,
+  "rtf": 0.43044414829457034,
+  "measured_lift_range_m": [
+    0.041529033333063126,
+    0.6915355324745178
+  ],
+  "carriage_relative_height_vs_joint_max_error_m": 1.7881393432617188e-07,
+  "fixed_mast_body_displacement_m": 5.960464477539062e-07,
+  "maximum_active_reported_penetration_m": 0.0,
+  "native_break_events": [],
+  "preflight": true,
+  "actual_self_collision": true,
+  "source_scope": "Previously completed native single-active-plant full-farm scene, corrected real carriage. Separate three-elastic-plant scene has initial neighbor penetration 1.383mm and did not run.",
+  "training_eligible": false,
+  "harvest_success": null,
+  "schema": "s300-isaac-real-lift-v1",
+  "branch": "codex/s300-isaac-real-lift-20261022",
+  "base_commit": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "result_root": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift",
+  "assembly": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/assembly_verified_scene",
+  "source": {
+    "assembly": "/root/docker_share/mujoko_debugging_data_bak/20261011_140011_move_harvest_repeat/assembly_installation_corrected",
+    "sha256": "63889e19d975da99f5b3082dd652c84d969027bc38b543759e9389428040052a"
+  },
+  "archive": {
+    "original": "/root/docker_share/mujoko_debugging_data/20261011_013045_row_harvest_recovery/assembly_rail_anchor_v4",
+    "resolved": "/root/docker_share/mujoko_debugging_data_bak/20261011_013045_row_harvest_recovery/assembly_rail_anchor_v4",
+    "source_scene_sha256": "6f51daeeff1f62bdd8d028469e5247df9eb67561bb8bea7413c0ea35c4bfd58f",
+    "geometry_changed": false
+  },
+  "gui_headless": {
+    "gui_completed": true,
+    "gui_stop_reason": null,
+    "gui_physics_wall_s": 154.85984399914742,
+    "gui_rtf": 0.14852139461103053,
+    "arrays": {
+      "time": {
+        "shape_equal": true,
+        "exact": true,
+        "max_absolute_difference": 0.0,
+        "first_different_record": null
+      },
+      "poses": {
+        "shape_equal": true,
+        "exact": true,
+        "max_absolute_difference": 0.0,
+        "first_different_record": null
+      },
+      "robot_q": {
+        "shape_equal": true,
+        "exact": true,
+        "max_absolute_difference": 0.0,
+        "first_different_record": null
+      },
+      "command": {
+        "shape_equal": true,
+        "exact": true,
+        "max_absolute_difference": 0.0,
+        "first_different_record": null
+      },
+      "phase": {
+        "shape_equal": true,
+        "exact": true
+      },
+      "body_paths": {
+        "shape_equal": true,
+        "exact": true
+      },
+      "all_environment_robot_q": {
+        "shape_equal": true,
+        "exact": true,
+        "max_absolute_difference": 0.0,
+        "first_different_record": null
+      }
+    },
+    "camera_movement_during_physics_tested": false,
+    "break_events_equal": true
+  },
+  "tests": {
+    "passed": 24,
+    "log": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/unit_tests_verified_scene.log",
+    "modules": [
+      "test_real_lift_mount",
+      "test_lift_motion",
+      "test_neighbor_authored_armatures",
+      "test_motion_kinematics",
+      "test_native_stage_selection"
+    ]
+  },
+  "mechanics": {
+    "moving": [
+      "original mounting plate",
+      "original back carriage",
+      "original cantilever bracket",
+      "RB5",
+      "gripper"
+    ],
+    "fixed": [
+      "mast",
+      "motor",
+      "outer base supports",
+      "S300 chassis"
+    ],
+    "old_virtual_plate_removed": true,
+    "lift_drive_and_mass_preserved": true,
+    "other_lift_CAD_remains_visual_only": true
+  },
+  "limits": [
+    "Existing finite-drive height offset approximately 8.5mm remains.",
+    "Full corrected Newton GPU harvesting input and path have not been regenerated/validated.",
+    "Three-elastic-plant source scene fails the existing native initial penetration guard (Plant29 stem vs Plant30 truss, 1.383mm); final tested assembly uses the previous native-completed one-active-plant source with full visual farm.",
+    "GUI camera was not deliberately moved during the parity test.",
+    "No harvesting or physical hardware certification is claimed."
+  ],
+  "commands": {
+    "gui": "DISPLAY=:0 ./nvidia-sim/run_s300_harvest.sh lift-test",
+    "headless": "./nvidia-sim/run_s300_harvest.sh lift-test --headless --physics-only",
+    "view": "DISPLAY=:0 ./nvidia-sim/run_s300_harvest.sh real-lift"
+  },
+  "artifacts": {
+    "headless": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/lift_verified_native",
+    "gui": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/lift_gui_display0",
+    "initial_overlap_failure": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/native_lift_final",
+    "gui_screenshot": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/gui_completed.png"
+  },
+  "asset_sha256": {
+    "scene.usda": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a",
+    "composed.usdc": "daafe49122d52051a4f0b611d301018994831c17478ab86ee5d3fc98bb58c31d",
+    "motion_manifest.json": "25fea4a9ba638de24dd93b738404ba746f2203a0546abeeea4fa802b405bd672"
+  },
+  "changed_code_sha256": {
+    "nvidia-sim/harvest_s300/motion_assets.py": "be813eed360bb48677d2f226de1898653b94a3fb283df369071ca6a425f48a82",
+    "nvidia-sim/harvest_s300/neighbor_plant_runtime.py": "bd3df6e3a1f8711f23fcad129235601b51401df8cd3819f297449d9470b470fb",
+    "nvidia-sim/harvest_s300/real_lift_mount.py": "282cb39323440661c01b37395bdbfc74469fcbd92dce2ce14e927c3261258292",
+    "nvidia-sim/harvest_s300/run_motion.py": "f90f2fd76bf8fafe0c55441be3b6f9f8abdf27e32fc117fe7dec922c79087800",
+    "nvidia-sim/harvest_s300/lift_motion.py": "6d078912a758d7b117511f5101d48125a7ad185f58667f18f8319686f09f0932",
+    "nvidia-sim/run_s300_harvest.sh": "a898563e17776aac5681340fb055d2fffb463a4a3a9f997462e2e782235a35fa"
+  },
+  "videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/lift_verified_native/actual_real_lift_full.mp4",
+      "sha256": "69ed6dee5918b99f8518e48ff151fb9de4c1f2dac88ed0e14e938f4be82ee770",
+      "source": "saved actual native physics states",
+      "speed": 1.0,
+      "fps": 10,
+      "frames": 231,
+      "physics_rerun_for_render": false,
+      "subtitle_style": "FontSize=6,Outline=1,Shadow=0,MarginV=6",
+      "source_scene_sha256": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a"
+    }
+  ]
+}

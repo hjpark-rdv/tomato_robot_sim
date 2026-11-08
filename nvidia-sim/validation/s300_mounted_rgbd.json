@@ -1,0 +1,320 @@
+{
+  "schema": "s300-mounted-rgbd-validation-v1",
+  "date_kst": "2026-10-22",
+  "branch": "codex/s300-isaac-real-lift-20261022",
+  "base_commit": "74a9098915fd4d052716ce7e7ecb82a03bd87c89",
+  "training_eligible": false,
+  "harvest_success": null,
+  "output": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/assembly_verified_scene",
+  "camera_assembly": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/assembly_exposure",
+  "sensor": {
+    "schema": "s300-mounted-rgbd-v1",
+    "body_path": "/World/HarvestRobot/Robot/link1",
+    "root_path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD",
+    "camera_path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD/Camera",
+    "body_from_camera_optical": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.098
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0,
+        0.0325
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "resolution_wh": [
+      480,
+      640
+    ],
+    "K": [
+      [
+        462.1386898729645,
+        0.0,
+        240.0
+      ],
+      [
+        0.0,
+        462.1386898729645,
+        320.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "depth_units": "m",
+    "exposure_ev": 2.0,
+    "depth_definition": "optical +Z distance_to_image_plane, not radial distance",
+    "depth_range_m": [
+      0.1,
+      5.0
+    ],
+    "invalid_depth": "NaN",
+    "camera_model": "D435-style ideal aligned RGB-D; existing 69.4deg landscape FOV rotated to portrait",
+    "sensor_model_limit": "No stereo matching, holes/noise, exposure or real-device calibration",
+    "housing_source": "/root/farmily_tomato/nvidia-sim/robot_usd/rb5_farmily.usd",
+    "housing_source_sha256": "bb4c228e91333800f3be0e8030b6a03a9fbefaf36efde301ee5cc3b67c8ececb",
+    "housing_source_prim": "/rb5_farmily/link6/visuals/d435/ID1",
+    "housing_size_m": [
+      0.025,
+      0.02505,
+      0.09
+    ],
+    "mount_description": "link1 outward +Y round shoulder cover; follows base yaw and lift, not shoulder pitch",
+    "housing_and_bracket_collision": false,
+    "physical_payload_changed": false,
+    "segmentation_saved": false,
+    "training_eligible": false,
+    "render_exposure": {
+      "method": "RTX tone-mapper ISO; USD camera exposure zero to avoid double application",
+      "original_iso": 100.0,
+      "capture_iso": 400.0,
+      "exposure_time_s": 0.019999999552965164,
+      "f_number": 5.0,
+      "scope": "this capture process; restored when recorder closes"
+    },
+    "frames": 47,
+    "fps": 2.0,
+    "capture_wall_s": 57.47902312874794,
+    "captures": "frames.jsonl",
+    "physics_time_unchanged_by_all_captures": true
+  },
+  "validation": {
+    "completed": true,
+    "stop_reason": null,
+    "simulated_s": 23.0,
+    "physics_steps": 2760,
+    "physics_hz": 120,
+    "backend": "Isaac Sim 6.1 native PhysX CPU TGS, 16 threads",
+    "gui_enabled": false,
+    "self_collision_pass": true,
+    "new_break_count": 0,
+    "camera_off_baseline": "/root/docker_share/mujoko_debugging_data/20261022_062713_isaac_real_lift/lift_verified_native/states.npz",
+    "physics_and_camera_checks": {
+      "time": {
+        "exact": true,
+        "shape_equal": true
+      },
+      "poses": {
+        "exact": true,
+        "shape_equal": true
+      },
+      "robot_q": {
+        "exact": true,
+        "shape_equal": true
+      },
+      "command": {
+        "exact": true,
+        "shape_equal": true
+      },
+      "body_paths": {
+        "exact": true,
+        "shape_equal": true
+      },
+      "frames": 47,
+      "time_range_s": [
+        0.0,
+        23.0
+      ],
+      "maximum_extrinsic_error": 4.440892098500626e-16,
+      "depth_valid_fraction_min": 0.9959505208333334,
+      "first_capture_wall_s": 46.06369306333363,
+      "later_capture_wall_s": 11.41533006541431,
+      "source_states_aligned": true
+    },
+    "physics_model_invariance": {
+      "physical_prims_before": 2630,
+      "physical_prims_after": 2630,
+      "different_physical_prims": [],
+      "unchanged": true,
+      "camera_collision_and_mass_added": false
+    },
+    "optical_control": {
+      "scope": "known planes, rendering only, no physics or harvesting",
+      "marker_checks": [
+        {
+          "pixel": [
+            166,
+            246
+          ],
+          "expected_rgb": [
+            1,
+            0,
+            0
+          ],
+          "measured_rgb": [
+            252.0,
+            130.0,
+            130.0
+          ],
+          "expected_optical_depth_m": 1.0,
+          "measured_depth_m": 1.0,
+          "pass_color": true,
+          "pass_depth": true
+        },
+        {
+          "pixel": [
+            314,
+            246
+          ],
+          "expected_rgb": [
+            0,
+            1,
+            0
+          ],
+          "measured_rgb": [
+            133.0,
+            252.0,
+            133.0
+          ],
+          "expected_optical_depth_m": 1.0,
+          "measured_depth_m": 1.0,
+          "pass_color": true,
+          "pass_depth": true
+        },
+        {
+          "pixel": [
+            166,
+            394
+          ],
+          "expected_rgb": [
+            0,
+            0,
+            1
+          ],
+          "measured_rgb": [
+            124.0,
+            124.0,
+            252.0
+          ],
+          "expected_optical_depth_m": 1.0,
+          "measured_depth_m": 1.0,
+          "pass_color": true,
+          "pass_depth": true
+        },
+        {
+          "pixel": [
+            314,
+            394
+          ],
+          "expected_rgb": [
+            1,
+            1,
+            0
+          ],
+          "measured_rgb": [
+            252.0,
+            252.0,
+            130.0
+          ],
+          "expected_optical_depth_m": 1.0,
+          "measured_depth_m": 1.0,
+          "pass_color": true,
+          "pass_depth": true
+        }
+      ],
+      "background_center_depth_m": 2.000000238418579,
+      "expected_background_depth_m": 2.0,
+      "passed": true,
+      "depth_units": "metres",
+      "segmentation_saved": false
+    },
+    "unit_tests_passed": 10
+  },
+  "timing": {
+    "loop_wall_s": 118.58453399688005,
+    "loop_rtf": 0.19395446627639593,
+    "initial_capture_s": 46.06369306333363,
+    "later_captures_total_s": 11.41533006541431,
+    "loop_rtf_excluding_first_capture": 0.3171502109452339,
+    "note": "Native lift + sensor validation; not Newton GPU performance. Model loading/warmup are outside this loop; no cold-start speed claim."
+  },
+  "final_videos": [
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/lift_rgbd_final/camera_mount_verified.mp4",
+      "relative": "lift_rgbd_final/camera_mount_verified.mp4",
+      "sha256": "15df92bc529965385cee79fcb7b40749ea0aaddbf25b341da9c7097c19083808",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 720,
+            "nb_frames": "231"
+          }
+        ],
+        "format": {
+          "duration": "23.100000",
+          "size": "1990482"
+        }
+      }
+    },
+    {
+      "path": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/lift_rgbd_final/rgbd/rgbd_lift.mp4",
+      "relative": "lift_rgbd_final/rgbd/rgbd_lift.mp4",
+      "sha256": "2fa13ecd1e483f702c62939af2f3cd79c2dd7b033bbfa1ed3d3b169038c7ae8b",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 640,
+            "nb_frames": "235"
+          }
+        ],
+        "format": {
+          "duration": "23.500000",
+          "size": "3240294"
+        }
+      }
+    }
+  ],
+  "current_code_sha256": {
+    "nvidia-sim/harvest_s300/mounted_rgbd.py": "5c81e70284dd50bbbe210d007363bfc37fa5a1ebf851403e8ee7350fe00e1a37",
+    "nvidia-sim/harvest_s300/run_motion.py": "20ac85e8f078658d23a6cb884cccbd169474036e6af473b5374093552908a4cd",
+    "nvidia-sim/harvest_s300/motion_assets.py": "bde2e89d2527e6e706fb963557354b8ea890850259a4ce077cdd86b2d132ae28",
+    "nvidia-sim/harvest_s300/render_motion.py": "0573d7e1fbd389c92d29563bce09f9258fa386a5f6bd20012ee2ed27a6a5c824",
+    "nvidia-sim/harvest_s300/validate_mounted_rgbd_render.py": "216ae9aaf0af60ba78e5afd1f45053272186765b2dbca9876a9d9320f71703e4",
+    "nvidia-sim/harvest_s300/test_mounted_rgbd.py": "7c6f57e576b16797dbd7e699c402dd631207a48954d382c65f72002c82b24e20"
+  },
+  "runtime_code_sha256_file": "/root/docker_share/mujoko_debugging_data/20261022_065240_shoulder_rgbd/lift_rgbd_final/code_sha256.json",
+  "input_hashes": {
+    "assembly_exposure/scene.usda": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a",
+    "assembly_exposure/composed.usdc": "b03f7aa0ddf0874be7421f7cf77b8355d38c5eecb3a43198407d3ae6b779fe5d",
+    "assembly_exposure/motion_manifest.json": "5f834207bad83696eb6e59bac632e9f4f4fc70092d57f6125892df947b25cb58",
+    "lift_rgbd_final/states.npz": "70c7047a2d7857a07d2d2207cb1154aaf02f3c8dde9466e1c09cc5bd85b2d4e3"
+  },
+  "limitations": [
+    "Ideal aligned RGB-D; no stereo matching or calibrated sensor noise/motion blur.",
+    "Camera housing/bracket are visual only; hardware collision and mass are not modeled.",
+    "GUI camera switch provided but camera-enabled full GUI run was not validated in this test.",
+    "Newton GPU sensor integration, perception and camera-driven harvesting were not run.",
+    "Web assembly GLB and historical replay data were not changed."
+  ],
+  "preserved_trials": {
+    "idle_rgbd": "Failed before physics: annotator empty with plain app.update; corrected using explicit Replicator step(delta_time=0).",
+    "lift_rgbd": "Rejected inherited camera pose lag at 0.5s (8.47mm); fixed using measured-body world camera mirror.",
+    "lift_rgbd_v2": "Completed; USD exposure ineffective, superseded by supported tone-mapper ISO capture.",
+    "lift_rgbd_final/camera_mount_actual.mp4": "Superseded review render: first frame retained zero pose. Verified version holds/reapplies measured state after loading."
+  }
+}

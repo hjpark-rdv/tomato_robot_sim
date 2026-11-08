@@ -1,40 +1,40 @@
 {
   "schema": "farmily-robot-assembly-web-v1",
-  "title": "S300 · 리프트 · RB5 · 벨트 그리퍼",
-  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/assembly",
-  "source_sha256": "c6f7781dc09d33ef23c731efc705f427e47efb8908a4952f2f74f1fc409f0825",
-  "states": "/root/docker_share/mujoko_debugging_data/20261021_230320_real_lift_mount/lift_cpu/states.npz",
-  "states_sha256": "c8be34f1f2ad421eba9e8e1dd707d1baa923230d73d0970d7b78984bb4c17821",
-  "frame": 0,
-  "simulation_time_s": 0.0,
+  "title": "S300 · 실제 승강 캐리지 · RB5 측면 장착 · 벨트 그리퍼",
+  "source_assembly": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/assembly_side_v2",
+  "source_sha256": "f90b6bc98c04a545589db2c9eca3f7c0f704b63555a0c37d3f6d6fdabe690e64",
+  "states": "/root/docker_share/mujoko_debugging_data/20261023_side_mount_camera_patrol/side_idle/side_mount_idle3/states.npz",
+  "states_sha256": "2e76ec569954207d1d7044746f72997de6192de2ae7d40f6a22764fb6eb26db7",
+  "frame": -1,
+  "simulation_time_s": 3.0,
   "gripper": "V5.1-based simulation-modified tool, not standalone V6",
   "source_origin_world_m": [
     0.0,
-    1.25999999046,
+    1.260000467300415,
     0.0
   ],
   "export_axes": "glTF Y-up; x=x, y=z, z=-y; metres",
   "file": "s300_lift_rb5_gripper.glb",
-  "bytes": 98710544,
-  "sha256": "a37d8c1c19569bbc19198a822eecfae0f7399f6d57f718aefbe10140c1085d5a",
+  "bytes": 104710208,
+  "sha256": "b4ed2a7efae16814058eba353a6181abaf225e7ecb3d08d6985809d0464f0a21",
   "bounds_m": [
     [
-      -0.4129999876022339,
-      0.0049999775364995,
-      -1.0955920219421387
+      -0.4130001962184906,
+      0.004999544471502304,
+      -1.0955911874771118
     ],
     [
-      0.4129999876022339,
-      1.5582114458084106,
-      0.4420119822025299
+      0.41299980878829956,
+      1.5582112073898315,
+      0.44201281666755676
     ]
   ],
   "compressed_file": "s300_lift_rb5_gripper.glb.gz",
-  "compressed_bytes": 43223784,
-  "triangles": 2938929,
+  "compressed_bytes": 48297098,
+  "triangles": 3159857,
   "visual_source_meshes": 855,
   "source_surface_preserved": true,
-  "maximum_bounds_error_m": 3.337860099428269e-08,
+  "maximum_bounds_error_m": 2.6447718681765764e-08,
   "components": {
     "lift": {
       "label": "리프트 고정부",
@@ -43,13 +43,13 @@
     },
     "arm": {
       "label": "RB5 로봇팔",
-      "meshes": 5,
-      "triangles": 142146
+      "meshes": 7,
+      "triangles": 373344
     },
     "carriage": {
-      "label": "승강 받침대",
+      "label": "승강 캐리지",
       "meshes": 1,
-      "triangles": 23780
+      "triangles": 13510
     },
     "gripper": {
       "label": "벨트 그리퍼",
@@ -299,19 +299,19 @@
       "triangles": 13510
     },
     {
-      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/mounting_plate",
-      "group": "carriage",
-      "triangles": 6988
-    },
-    {
-      "path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/cantilever_bracket",
-      "group": "carriage",
-      "triangles": 3282
-    },
-    {
       "path": "/World/HarvestRobot/Robot/link1/visuals/link1/Scene/mesh",
       "group": "arm",
       "triangles": 16980
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD/Housing/mesh",
+      "group": "arm",
+      "triangles": 231186
+    },
+    {
+      "path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD/Bracket",
+      "group": "arm",
+      "triangles": 12
     },
     {
       "path": "/World/HarvestRobot/Robot/link2/visuals/link2/Scene/mesh",
@@ -4341,7 +4341,7 @@
   ],
   "simulation_rerun": false,
   "lift": {
-    "reference_height_m": 0.1772361584508187,
+    "reference_height_m": 0.17097792029380798,
     "range_m": [
       0.0,
       0.75
@@ -5302,6 +5302,279 @@
       "old_harvest_plans_revalidated": false,
       "training_eligible": false
     },
-    "preview": "Rigid assembly motion along existing lift joint; not live physics"
+    "preview": "Rigid assembly motion along existing lift joint; not live physics",
+    "protruding_shelf_and_triangular_support_removed": true,
+    "robot_mount": "RB5 base on vertical moving carriage; horizontal base joint axis; actual lift joint remains world vertical"
+  },
+  "side_robot_mount": {
+    "schema": "s300-vertical-carriage-side-mount-v1",
+    "removed_paths": [
+      "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/mounting_plate",
+      "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/cantilever_bracket",
+      "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/real_mounting_plate"
+    ],
+    "retained_carriage": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/back_carriage",
+    "physical_carriage_collider": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/side_carriage",
+    "old_base_world": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        1.26
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.6611931362873741
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "new_base_world": [
+      [
+        0.9999996830203356,
+        1.0184886023593815e-11,
+        0.000796215566537364,
+        0.0019177868960804836
+      ],
+      [
+        0.0007962155665373642,
+        -1.279161476267635e-08,
+        -0.9999996830203354,
+        1.7635015195923807
+      ],
+      [
+        -0.0,
+        0.9999999999999999,
+        -1.279161881735939e-08,
+        0.671215663862867
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "arm_delta_world": [
+      [
+        0.9999996830203356,
+        1.0184886023593815e-11,
+        0.000796215566537364,
+        0.0013913346156478592
+      ],
+      [
+        0.0007962155665373642,
+        -1.279161476267635e-08,
+        -0.9999996830203354,
+        2.4246944624124107
+      ],
+      [
+        0.0,
+        0.9999999999999999,
+        -1.279161881735939e-08,
+        -0.5887843276794023
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "mount_contact_world_m": [
+      0.0019177868962287903,
+      1.763501519406116,
+      0.671215663862867
+    ],
+    "mount_normal_world": [
+      0.000796215566537364,
+      -0.9999996830203354,
+      -1.279161881735939e-08
+    ],
+    "front_plane_y_ax_bz_c": [
+      0.0007962158189215872,
+      -1.2791622872043718e-08,
+      1.7635000010197897
+    ],
+    "plane_fit_max_error_m": 3.105064338981833e-08,
+    "mount_height_from_plate_top_m": 0.09,
+    "base_surface_min_local_z_m": 1.862645593320167e-10,
+    "moving_rigid_bodies": [
+      "/World/HarvestRobot/Robot/link1",
+      "/World/HarvestRobot/Robot/link2",
+      "/World/HarvestRobot/Robot/link3",
+      "/World/HarvestRobot/Robot/link4",
+      "/World/HarvestRobot/Robot/link5",
+      "/World/HarvestRobot/Robot/link6",
+      "/World/ActuatedTool/fixed",
+      "/World/ActuatedTool/L",
+      "/World/ActuatedTool/R",
+      "/World/ActuatedTool/L_belt",
+      "/World/ActuatedTool/R_belt"
+    ],
+    "mass_properties": {
+      "mass_kg": 7.774043432784339,
+      "carriage_mass_kg": 4.274043432784339,
+      "base_mass_kg": 3.5,
+      "removed_mass_kg": 10.725956567215661,
+      "center_of_mass_local_m": [
+        0.00017941233019320944,
+        0.4729165732971281,
+        -0.039435124581751246
+      ],
+      "diagonal_inertia_kg_m2": [
+        0.03943751858051512,
+        0.11396946852505543,
+        0.12186409337100004
+      ],
+      "principal_axes_xyzw": [
+        0.5564931394463527,
+        0.5586946084292376,
+        -0.44510366316507016,
+        0.4243329462795444
+      ],
+      "model": "Source 15kg carriage estimate allocated by closed original CAD volume; retained 3.5kg RB5 link0 URDF estimate and inertia; removed bracket/plate mass excluded",
+      "source_urdf": "/root/farmily_tomato/nvidia-sim/robot_usd/rb5_farmily.urdf",
+      "source_urdf_sha256": "f9479dcfdddff94c9d22b021ab6f9a142c59090389d228bcca74917bbdd2ea6d",
+      "hardware_mass_calibrated": false
+    },
+    "lift_joint_unchanged": true,
+    "base_joint_parent_frame_changed": true,
+    "arm_and_tool_local_inertias_and_drives_preserved": true,
+    "camera": {
+      "schema": "s300-mounted-rgbd-v1",
+      "body_path": "/World/HarvestRobot/Robot/link1",
+      "root_path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD",
+      "camera_path": "/World/HarvestRobot/Robot/link1/ShoulderRGBD/Camera",
+      "body_from_camera_optical": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0325
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.098
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "resolution_wh": [
+        480,
+        640
+      ],
+      "K": [
+        [
+          462.1386898729645,
+          0.0,
+          240.0
+        ],
+        [
+          0.0,
+          462.1386898729645,
+          320.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "depth_units": "m",
+      "exposure_ev": 2.0,
+      "depth_definition": "optical +Z distance_to_image_plane, not radial distance",
+      "depth_range_m": [
+        0.1,
+        5.0
+      ],
+      "invalid_depth": "NaN",
+      "camera_model": "D435-style ideal aligned RGB-D; existing 69.4deg landscape FOV rotated to portrait",
+      "sensor_model_limit": "No stereo matching, holes/noise, exposure or real-device calibration",
+      "housing_source": "/root/farmily_tomato/nvidia-sim/robot_usd/rb5_farmily.usd",
+      "housing_source_sha256": "bb4c228e91333800f3be0e8030b6a03a9fbefaf36efde301ee5cc3b67c8ececb",
+      "housing_source_prim": "/rb5_farmily/link6/visuals/d435/ID1",
+      "housing_size_m": [
+        0.025,
+        0.02505,
+        0.09
+      ],
+      "mount_description": "link1 outward +Y cover; camera housing rolled 90deg on side-mounted base so long housing axis is world vertical at base=+90deg; all fixed to actual measured link1",
+      "housing_and_bracket_collision": false,
+      "physical_payload_changed": false,
+      "segmentation_saved": false,
+      "training_eligible": false,
+      "mount_calibration_revision": "Physical rigid housing/bracket roll on existing link1 cover"
+    },
+    "bolt_pattern_and_strength_validated": false,
+    "old_harvest_plans_revalidated": false,
+    "training_eligible": false,
+    "ready_state": {
+      "q": [
+        0.1772361584508187,
+        1.5707963267948966,
+        -0.8433796855771658,
+        2.507443674795259,
+        -0.07737928186451346,
+        3.14079650682554,
+        0.015888372798979956
+      ],
+      "tool_world": [
+        [
+          -1.6937411936905916e-07,
+          -0.9999999999199879,
+          -1.2648939049585502e-05,
+          -0.1897532152242037
+        ],
+        [
+          0.9999999999999856,
+          -1.6937399202547726e-07,
+          -1.0068628593970321e-08,
+          1.350055930601763
+        ],
+        [
+          1.0066486211213935e-08,
+          -1.264893905129066e-05,
+          0.9999999999200019,
+          1.0500000001067742
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "self_clearance_m": 0.002,
+      "gaps_checked_m": [
+        0.044,
+        0.096
+      ],
+      "native_gravity_tracking_verified": false
+    }
   }
 }

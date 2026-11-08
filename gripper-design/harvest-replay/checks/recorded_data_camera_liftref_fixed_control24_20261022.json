@@ -1,0 +1,66 @@
+{
+  "schema": "farmily-harvest-replay-independent-validation-v1",
+  "passed": true,
+  "replay": "/root/farmily_tomato/gripper-design/harvest-replay/assets/camera_liftref_fixed_control24_20261022/replay.json",
+  "source_trial": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_075300_camera_region_campaign/native_liftref_fixed_control24/trial",
+  "source_assembly": "/mnt/nas_rdv_md3/mujoko_debugging_data/20261022_075300_camera_region_campaign/continuous_camera_backup24/windows/000_plant_24",
+  "source_scene_sha256": "c504af5bb0c37441580bba05ee244d44b1a2c8a06fb4e531942ead4d361dab23",
+  "source_states_sha256": "72331c1306ca00c8c55aae267013fcb7b422fb0bedf841d825d068648c1298ad",
+  "web_glb_sha256": "a85bd218f2d92a5911e8595d86401d28ad2257a8944c2ee308a07579bd219627",
+  "frames": 181,
+  "bodies": 135,
+  "duration_s": 3.0,
+  "exact_original_timestamps": true,
+  "all_frames_preserved": true,
+  "all_body_paths_mapped": true,
+  "maximum_position_quantization_m": 0.0,
+  "maximum_quaternion_component_quantization": 0.0,
+  "phases_exact": true,
+  "release_events_exact": 0,
+  "runtime_physical_model_hash_verified": true,
+  "scene_source_meshes": 31586,
+  "scene_mesh_instances": 31586,
+  "scene_triangles_with_instances": 54228738,
+  "scene_groups": {
+    "greenhouse": 4208,
+    "background_plants": 26180,
+    "target": 341,
+    "active_neighbors": 0,
+    "robot": 857
+  },
+  "skins": {
+    "meshes": 49,
+    "source_vertices": 43312,
+    "sampled_vertex_frames": 4704,
+    "maximum_sampled_position_error_m": 1.0374098935450604e-07,
+    "influence_ids_exact": true,
+    "influence_weights_float32_exact": true,
+    "source_vertex_mapping_exact": true,
+    "inverse_bind_float32_exact": true
+  },
+  "transmission": {
+    "nodes": 3,
+    "frames": 181,
+    "sampled_frames": [
+      0,
+      90,
+      180
+    ],
+    "measured_gap_reference_exact": true
+  },
+  "camera": {
+    "frames": 7,
+    "images": 21,
+    "actual_timestamps_exact": true,
+    "recorded_mount_and_q_verified": true,
+    "served_asset_hashes_exact": true,
+    "mode": "live_physics_capture",
+    "source_states_sha256": "72331c1306ca00c8c55aae267013fcb7b422fb0bedf841d825d068648c1298ad"
+  },
+  "physics_rerun": false,
+  "record_kind": "recorded_run",
+  "diagnostic_only": false,
+  "checkpoint_eligible": null,
+  "harvest_credit": null,
+  "finalized_native_audit_claimed": null
+}

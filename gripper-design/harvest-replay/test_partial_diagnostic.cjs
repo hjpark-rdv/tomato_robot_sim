@@ -1,0 +1,18 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const source = fs.readFileSync(path.join(__dirname, 'viewer.js'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const start = source.indexOf('function isPartialDiagnostic('), end = source.indexOf('\nfunction renderNow(', start);
+assert(start >= 0 && end > start);
+const partial = vm.runInNewContext(source.slice(start, end) + '\nisPartialDiagnostic');
+assert.equal(partial({}, {}), false);
+assert.equal(partial({record_kind: 'partial_diagnostic'}, {}), true);
+assert.equal(partial({}, {source: {record_kind: 'partial_diagnostic'}}), true);
+assert.equal(partial({record_kind: 'complete'}, {source: {record_kind: 'actual'}}), false);
+assert.equal(partial({diagnostic_only: true}, {source: {record_kind: 'startup'}}), false);
+assert(/id="recordBadge"[^>]*hidden/.test(html));
+assert(source.includes("$('recordBadge').hidden = !partial"));
+assert(source.includes('수확 실적·재개 상태 아님'));
+console.log('8 actual partial-record checks PASS: exact diagnostic kind, complete/startup distinctions and visible opt-in error/no-credit badge; no browser/GPU');

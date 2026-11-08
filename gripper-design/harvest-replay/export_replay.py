@@ -12,6 +12,8 @@ import gzip
 import hashlib
 import importlib.util
 import json
+import copy
+import os
 from pathlib import Path
 import struct
 import sys
@@ -25,6 +27,9 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / 'nvidia-sim/harvest_s300'))
 from motion_pose_display import MeasuredPoseDisplay, restore_recorded_display_fixture
 from motion_kinematics import transmission_transforms
+from recording_storage import share_file
+from sensor_replay import export_camera
+from partial_recording import partial_recording, published_partial_source
 
 _spec = importlib.util.spec_from_file_location('assembly_web_export',
     REPO / 'gripper-design/robot-assembly/export_model.py')
@@ -245,18 +250,24 @@ def compress_file(source, dest):
                 comp.write(chunk)
 
 
-def export(assembly, trial, output, title=None):
+def export(assembly, trial, output, title=None, sensor_data=None, allow_partial_diagnostic=False, reuse_scene_from=None,
+           allow_measured_linkage_diagnostic=False):
     started = time.monotonic()
     assembly, trial, output = map(lambda x: Path(x).resolve(), (assembly, trial, output))
     if output.exists() and any(output.iterdir()):
         raise FileExistsError('Use a new output directory: ' + str(output))
     output.mkdir(parents=True, exist_ok=True)
     source = assembly / ('composed.usdc' if (assembly / 'composed.usdc').is_file() else 'scene.usda')
-    states = trial / 'states.npz'
+    partial = None
+    if allow_partial_diagnostic and not (trial/'summary.json').is_file():
+        if sensor_data is not None:
+            raise ValueError('Partial camera metadata must not be substituted from another capture')
+        partial = partial_recording(assembly, trial)
+    states = partial['states_path'] if partial else trial / 'states.npz'
     before = sha(source)
     state_sha = sha(states)
     manifest = json.loads((assembly / 'motion_manifest.json').read_text())
-    summary = json.loads((trial / 'summary.json').read_text())
+    summary = {} if partial else json.loads((trial / 'summary.json').read_text())
     runtime = json.loads((trial / 'runtime_settings.json').read_text()) if (trial / 'runtime_settings.json').is_file() else {}
     wrapper_sha = sha(assembly / 'scene.usda') if (assembly / 'scene.usda').is_file() else None
     if summary.get('model_sha256') and wrapper_sha != summary['model_sha256']:
@@ -275,164 +286,217 @@ def export(assembly, trial, output, title=None):
         raise ValueError('Finite poses and strictly increasing original timestamps required')
     dofs = json.loads((trial / 'native_metadata.json').read_text())['robot_dofs']
     gap = .044 + robot[:, dofs.index('jaw_R')] - robot[:, dofs.index('jaw_L')]
-    stage = Usd.Stage.Open(str(source))
-    if UsdGeom.GetStageUpAxis(stage) != 'Z' or UsdGeom.GetStageMetersPerUnit(stage) != 1.:
-        raise ValueError('Expected metre/Z-up source scene')
-    fixture = restore_recorded_display_fixture(stage, trial)
-    display = MeasuredPoseDisplay(stage, paths)
-    display.update(poses[0])
-    with Usd.EditContext(stage, stage.GetSessionLayer()):
+    reused_info = None
+    reuse_proof = None
+    if reuse_scene_from is not None:
+        if partial or (trial/'belt_fixture.json').exists():
+            raise ValueError('Partial/transient-fixture records cannot reuse geometry')
+        from scene_reuse import reference_identity
+        from validate_replay import validate
+        reference_path=Path(reuse_scene_from).resolve()
+        if reference_path.is_dir():reference_path=reference_path/'replay.json'
+        reference_validation=validate(reference_path)
+        if reference_validation.get('passed') is not True:
+            raise ValueError('Reference replay has not passed independent validation')
+        reuse_proof,reused_info,scene_path,_=reference_identity(reference_path,
+            scene_sha256=before,manifest_sha256=sha(assembly/'motion_manifest.json'),body_paths=paths)
+        reused_info=copy.deepcopy(reused_info)
+        scene_relative=os.path.relpath(scene_path,output)
+        # Same served URL permits the existing browser model cache to work.
+        # No farm GLB bytes are copied or regenerated for this recording.
+        fixture=None;origin=np.asarray(reused_info['origin_world_m'],float)
+        index={p:i for i,p in enumerate(paths)}
+        body_nodes=reused_info['body_nodes'];bounds=np.asarray(reused_info['bounds_m'])
+        skin_checks=reused_info['skin_checks'];inventory=reused_info['source_inventory']
+        geom_counts={name:value['visible_source_meshes'] for name,value in reused_info['groups'].items()}
+        groups={name:value['node'] for name,value in reused_info['groups'].items()}
+        total_triangles=reused_info['source_triangles_with_instances']
+        instanced_count=reused_info['static_instanced_mesh_count']
+        max_instance_error=reused_info['maximum_instance_decomposition_error']
+        transmission_nodes={name.removeprefix('transmission_'):None for name in reused_info['transmission_nodes']}
+        scene_bytes=reused_info['bytes'];scene_sha=reused_info['sha256']
+        compressed_scene_sha=reused_info['compressed_sha256'];compressed_scene_bytes=scene_path.stat().st_size
+        unique_meshes=reused_info['unique_glTF_meshes']
+        glb=None;dest=None
+        print('[scene] reusing independently verified identical physical model',before,flush=True)
+    else:
+        stage = Usd.Stage.Open(str(source))
+        if UsdGeom.GetStageUpAxis(stage) != 'Z' or UsdGeom.GetStageMetersPerUnit(stage) != 1.:
+            raise ValueError('Expected metre/Z-up source scene')
+        fixture = restore_recorded_display_fixture(stage, trial)
+        display = MeasuredPoseDisplay(stage, paths)
+        display.update(poses[0])
+        with Usd.EditContext(stage, stage.GetSessionLayer()):
+            for name, tf in transmission_transforms(float(gap[0])).items():
+                prim = stage.GetPrimAtPath(TRANSMISSION + name)
+                if prim:
+                    UsdGeom.Xformable(prim).MakeMatrixXform().Set(Gf.Matrix4d(tf.T.tolist()))
+        index = {p: i for i, p in enumerate(paths)}
+        origin = poses[0, index.get('/World/HarvestRobot/Robot/world', 0), :3].copy()
+        origin[2] = 0.
+        skins = read_skins(assembly, manifest, index, origin)
+        cache = UsdGeom.XformCache()
+        glb = GLB()
+        groups = {name: glb.node(name) for name in ('greenhouse', 'background_plants', 'target', 'active_neighbors', 'robot')}
+        body_nodes = []
+        for i, (path, pose) in enumerate(zip(paths, poses[0])):
+            tf = body_matrix(pose, origin)
+            # Joint transforms must remain TRS so GLTFLoader can create bones.
+            node = glb.node(f'body_{i:04}', parent=groups[group_name(path)],
+                            translation=tf[:3, 3].tolist(),
+                            rotation=Rotation.from_matrix(tf[:3, :3]).as_quat().tolist())
+            body_nodes.append(dict(node=f'body_{i:04}', node_index=node, body_path=path,
+                                   body_index=i, reference_pose_xyzw=pose.tolist()))
+        transmission_nodes = {}
         for name, tf in transmission_transforms(float(gap[0])).items():
-            prim = stage.GetPrimAtPath(TRANSMISSION + name)
-            if prim:
-                UsdGeom.Xformable(prim).MakeMatrixXform().Set(Gf.Matrix4d(tf.T.tolist()))
-    index = {p: i for i, p in enumerate(paths)}
-    origin = poses[0, index.get('/World/HarvestRobot/Robot/world', 0), :3].copy()
-    origin[2] = 0.
-    skins = read_skins(assembly, manifest, index, origin)
-    cache = UsdGeom.XformCache()
-    glb = GLB()
-    groups = {name: glb.node(name) for name in ('greenhouse', 'background_plants', 'target', 'active_neighbors', 'robot')}
-    body_nodes = []
-    for i, (path, pose) in enumerate(zip(paths, poses[0])):
-        tf = body_matrix(pose, origin)
-        # Joint transforms must remain TRS so GLTFLoader can create bones.
-        node = glb.node(f'body_{i:04}', parent=groups[group_name(path)],
-                        translation=tf[:3, 3].tolist(),
-                        rotation=Rotation.from_matrix(tf[:3, :3]).as_quat().tolist())
-        body_nodes.append(dict(node=f'body_{i:04}', node_index=node, body_path=path,
-                               body_index=i, reference_pose_xyzw=pose.tolist()))
-    transmission_nodes = {}
-    for name, tf in transmission_transforms(float(gap[0])).items():
-        node = glb.node('transmission_' + name, matrix=C4 @ tf @ C4.T,
-                        parent=body_nodes[index['/World/ActuatedTool/fixed']]['node_index'])
-        transmission_nodes[name] = node
-    owners = {}
-    for path in paths:
-        owners[path] = body_nodes[index[path]]['node_index']
-    for name, node in transmission_nodes.items():
-        owners[TRANSMISSION + name] = node
-    local_cache, geometry_cache = {}, {}
-    instances = defaultdict(list)
-    inventory = []
-    bounds = np.array([np.full(3, np.inf), np.full(3, -np.inf)])
-    skin_checks = []
-    geom_counts = Counter()
-    total_triangles = 0
-    for prim in Usd.PrimRange.Stage(stage, Usd.TraverseInstanceProxies()):
-        if not prim.IsA(UsdGeom.Gprim):
-            continue
-        path = str(prim.GetPath())
-        image = UsdGeom.Imageable(prim)
-        if '/collisions/' in path or image.ComputeVisibility() == 'invisible' or image.ComputePurpose() == 'guide':
-            continue
-        tf = np.asarray(cache.GetLocalToWorldTransform(prim)).T
-        skin = skins.get(path)
-        group = group_name(path)
-        prototype = str(prim.GetPrimInPrototype().GetPath()) if prim.IsInstanceProxy() else path
-        material, _ = UsdShade.MaterialBindingAPI(prim).ComputeBoundMaterial()
-        material_key = str(material.GetPath()) if material else ''
-        key = (prototype, material_key, path if skin is not None else '')
-        if key not in geometry_cache:
-            geometry_cache[key] = geometry(glb, prim, skin)
-        mesh_index, triangles, box = geometry_cache[key]
-        total_triangles += triangles
-        geom_counts[group] += 1
-        if skin is not None:
-            if not np.allclose(tf, np.eye(4), atol=1e-9, rtol=0):
-                raise ValueError('Rod skin has a nonidentity world parent transform: ' + path)
-            inverse_bind = np.repeat(np.eye(4)[None], len(skin['body_ids']), axis=0)
-            inverse_bind[:, :3, 3] = -(skin['rest'] - origin) @ C.T
-            si = len(glb.doc['skins'])
-            glb.doc['skins'].append(dict(name=f'rod_skin_{si}',
-                joints=[body_nodes[i]['node_index'] for i in skin['body_ids']],
-                inverseBindMatrices=glb.accessor(inverse_bind.transpose(0, 2, 1).reshape(-1, 16), 'MAT4')))
-            skin_node = glb.node(f'skin_{si:04}', parent=groups[group], mesh=mesh_index, skin=si,
-                                 extras=dict(source_path=path, group=group))
-            # Independently compare shader formula to existing CPU skinning at
-            # start/mid/end, using actual export float32 storage precision.
-            ids = skin['ids']; rest = skin['rest']; weights = skin['weights']
-            pick = np.unique(np.linspace(0, len(ids)-1, min(256, len(ids))).astype(int))
-            ticks = sorted(set((0, len(stamps)//2, len(stamps)-1)))
-            maximum = 0.
-            for tick in ticks:
-                p = poses[tick, skin['body_ids']]
-                r = Rotation.from_quat(p[:, 3:]).as_matrix()
-                source_points = skin['vertices'][pick]
-                expected = ((np.einsum('nkij,nkj->nki', r[ids[pick]],
-                    source_points[:, None] - rest[ids[pick]]) + p[:, :3][ids[pick]]) * weights[pick, :, None]).sum(1)
-                encoded = poses[tick, skin['body_ids']].astype(np.float32).astype(float)
-                er = Rotation.from_quat(encoded[:, 3:]).as_matrix()
-                got = ((np.einsum('nkij,nkj->nki', er[ids[pick]],
-                    source_points.astype(np.float32).astype(float)[:, None] - rest[ids[pick]]) +
-                    encoded[:, :3][ids[pick]]) * weights[pick, :, None]).sum(1)
-                maximum = max(maximum, float(np.linalg.norm(got - expected, axis=1).max()))
-            skin_checks.append(dict(path=path, node=f'skin_{si:04}', node_index=skin_node,
-                                   skin_index=si, mesh_index=mesh_index,
-                                   vertices=len(ids), influences=ids.shape[1],
-                                   maximum_float32_position_error_m=maximum))
-            world_box = box
-        else:
-            owner = prim
-            while owner and str(owner.GetPath()) not in owners:
-                owner = owner.GetParent()
-            owner_path = str(owner.GetPath()) if owner else None
-            world_tf = source_transform(tf, origin)
-            if owner_path:
-                if owner_path not in local_cache:
-                    local_cache[owner_path] = np.linalg.inv(source_transform(np.asarray(
-                        cache.GetLocalToWorldTransform(stage.GetPrimAtPath(owner_path))).T, origin))
-                local = local_cache[owner_path] @ world_tf
-                glb.node(f'visual_{len(inventory):05}', matrix=local, parent=owners[owner_path], mesh=mesh_index,
-                         extras=dict(source_path=path, measured_owner_path=owner_path, group=group))
+            node = glb.node('transmission_' + name, matrix=C4 @ tf @ C4.T,
+                            parent=body_nodes[index['/World/ActuatedTool/fixed']]['node_index'])
+            transmission_nodes[name] = node
+        owners = {}
+        for path in paths:
+            owners[path] = body_nodes[index[path]]['node_index']
+        for name, node in transmission_nodes.items():
+            owners[TRANSMISSION + name] = node
+        local_cache, geometry_cache = {}, {}
+        instances = defaultdict(list)
+        inventory = []
+        bounds = np.array([np.full(3, np.inf), np.full(3, -np.inf)])
+        skin_checks = []
+        geom_counts = Counter()
+        total_triangles = 0
+        for prim in Usd.PrimRange.Stage(stage, Usd.TraverseInstanceProxies()):
+            if not prim.IsA(UsdGeom.Gprim):
+                continue
+            path = str(prim.GetPath())
+            image = UsdGeom.Imageable(prim)
+            if '/collisions/' in path or image.ComputeVisibility() == 'invisible' or image.ComputePurpose() == 'guide':
+                continue
+            tf = np.asarray(cache.GetLocalToWorldTransform(prim)).T
+            skin = skins.get(path)
+            group = group_name(path)
+            prototype = str(prim.GetPrimInPrototype().GetPath()) if prim.IsInstanceProxy() else path
+            material, _ = UsdShade.MaterialBindingAPI(prim).ComputeBoundMaterial()
+            material_key = str(material.GetPath()) if material else ''
+            key = (prototype, material_key, path if skin is not None else '')
+            if key not in geometry_cache:
+                geometry_cache[key] = geometry(glb, prim, skin)
+            mesh_index, triangles, box = geometry_cache[key]
+            total_triangles += triangles
+            geom_counts[group] += 1
+            if skin is not None:
+                if not np.allclose(tf, np.eye(4), atol=1e-9, rtol=0):
+                    raise ValueError('Rod skin has a nonidentity world parent transform: ' + path)
+                inverse_bind = np.repeat(np.eye(4)[None], len(skin['body_ids']), axis=0)
+                inverse_bind[:, :3, 3] = -(skin['rest'] - origin) @ C.T
+                si = len(glb.doc['skins'])
+                glb.doc['skins'].append(dict(name=f'rod_skin_{si}',
+                    joints=[body_nodes[i]['node_index'] for i in skin['body_ids']],
+                    inverseBindMatrices=glb.accessor(inverse_bind.transpose(0, 2, 1).reshape(-1, 16), 'MAT4')))
+                skin_node = glb.node(f'skin_{si:04}', parent=groups[group], mesh=mesh_index, skin=si,
+                                     extras=dict(source_path=path, group=group))
+                # Independently compare shader formula to existing CPU skinning at
+                # start/mid/end, using actual export float32 storage precision.
+                ids = skin['ids']; rest = skin['rest']; weights = skin['weights']
+                pick = np.unique(np.linspace(0, len(ids)-1, min(256, len(ids))).astype(int))
+                ticks = sorted(set((0, len(stamps)//2, len(stamps)-1)))
+                maximum = 0.
+                for tick in ticks:
+                    p = poses[tick, skin['body_ids']]
+                    r = Rotation.from_quat(p[:, 3:]).as_matrix()
+                    source_points = skin['vertices'][pick]
+                    expected = ((np.einsum('nkij,nkj->nki', r[ids[pick]],
+                        source_points[:, None] - rest[ids[pick]]) + p[:, :3][ids[pick]]) * weights[pick, :, None]).sum(1)
+                    encoded = poses[tick, skin['body_ids']].astype(np.float32).astype(float)
+                    er = Rotation.from_quat(encoded[:, 3:]).as_matrix()
+                    got = ((np.einsum('nkij,nkj->nki', er[ids[pick]],
+                        source_points.astype(np.float32).astype(float)[:, None] - rest[ids[pick]]) +
+                        encoded[:, :3][ids[pick]]) * weights[pick, :, None]).sum(1)
+                    maximum = max(maximum, float(np.linalg.norm(got - expected, axis=1).max()))
+                skin_checks.append(dict(path=path, node=f'skin_{si:04}', node_index=skin_node,
+                                       skin_index=si, mesh_index=mesh_index,
+                                       vertices=len(ids), influences=ids.shape[1],
+                                       maximum_float32_position_error_m=maximum))
+                world_box = box
             else:
-                instances[(group, mesh_index)].append(world_tf)
-            corners = np.array(np.meshgrid(*zip(box[0], box[1]), indexing='ij')).reshape(3, -1).T
-            transformed = corners @ world_tf[:3, :3].T + world_tf[:3, 3]
-            world_box = np.array([transformed.min(0), transformed.max(0)])
-        bounds[0] = np.minimum(bounds[0], world_box[0])
-        bounds[1] = np.maximum(bounds[1], world_box[1])
-        inventory.append(dict(path=path, group=group, triangles=triangles, mesh=mesh_index,
-                              skinned=skin is not None))
-        if len(inventory) % 1000 == 0:
-            print(f'[scene] {len(inventory)} visible meshes; {len(glb.doc["meshes"])} unique geometries', flush=True)
-    instanced_count = 0
-    max_instance_error = 0.
-    for (group, mesh_index), matrices in instances.items():
-        if len(matrices) == 1:
-            glb.node(f'static_{mesh_index:05}', parent=groups[group], matrix=matrices[0], mesh=mesh_index)
-            continue
-        translation, rotation, scale, error = decompose_matrices(matrices)
-        if error > 1e-8:
-            for i, tf in enumerate(matrices):
-                glb.node(f'static_{mesh_index:05}_{i}', parent=groups[group], matrix=tf, mesh=mesh_index)
-            continue
-        max_instance_error = max(max_instance_error, error)
-        attributes = dict(TRANSLATION=glb.accessor(translation, 'VEC3', target=34962),
-                          ROTATION=glb.accessor(rotation, 'VEC4', target=34962),
-                          SCALE=glb.accessor(scale, 'VEC3', target=34962))
-        glb.node(f'instances_{mesh_index:05}', parent=groups[group], mesh=mesh_index,
-                 extensions=dict(EXT_mesh_gpu_instancing=dict(attributes=attributes)))
-        instanced_count += len(matrices)
-    if instanced_count:
-        glb.doc['extensionsUsed'] = ['EXT_mesh_gpu_instancing']
-        glb.doc['extensionsRequired'] = ['EXT_mesh_gpu_instancing']
-    dest = output / 'scene.glb'
-    glb.finish(dest)
-    print('[scene] compressing', dest.stat().st_size, 'bytes', flush=True)
-    compress_file(dest, output / 'scene.glb.gz')
+                owner = prim
+                while owner and str(owner.GetPath()) not in owners:
+                    owner = owner.GetParent()
+                owner_path = str(owner.GetPath()) if owner else None
+                world_tf = source_transform(tf, origin)
+                if owner_path:
+                    if owner_path not in local_cache:
+                        local_cache[owner_path] = np.linalg.inv(source_transform(np.asarray(
+                            cache.GetLocalToWorldTransform(stage.GetPrimAtPath(owner_path))).T, origin))
+                    local = local_cache[owner_path] @ world_tf
+                    glb.node(f'visual_{len(inventory):05}', matrix=local, parent=owners[owner_path], mesh=mesh_index,
+                             extras=dict(source_path=path, measured_owner_path=owner_path, group=group))
+                else:
+                    instances[(group, mesh_index)].append(world_tf)
+                corners = np.array(np.meshgrid(*zip(box[0], box[1]), indexing='ij')).reshape(3, -1).T
+                transformed = corners @ world_tf[:3, :3].T + world_tf[:3, 3]
+                world_box = np.array([transformed.min(0), transformed.max(0)])
+            bounds[0] = np.minimum(bounds[0], world_box[0])
+            bounds[1] = np.maximum(bounds[1], world_box[1])
+            inventory.append(dict(path=path, group=group, triangles=triangles, mesh=mesh_index,
+                                  skinned=skin is not None))
+            if len(inventory) % 1000 == 0:
+                print(f'[scene] {len(inventory)} visible meshes; {len(glb.doc["meshes"])} unique geometries', flush=True)
+        instanced_count = 0
+        max_instance_error = 0.
+        for (group, mesh_index), matrices in instances.items():
+            if len(matrices) == 1:
+                glb.node(f'static_{mesh_index:05}', parent=groups[group], matrix=matrices[0], mesh=mesh_index)
+                continue
+            translation, rotation, scale, error = decompose_matrices(matrices)
+            if error > 1e-8:
+                for i, tf in enumerate(matrices):
+                    glb.node(f'static_{mesh_index:05}_{i}', parent=groups[group], matrix=tf, mesh=mesh_index)
+                continue
+            max_instance_error = max(max_instance_error, error)
+            attributes = dict(TRANSLATION=glb.accessor(translation, 'VEC3', target=34962),
+                              ROTATION=glb.accessor(rotation, 'VEC4', target=34962),
+                              SCALE=glb.accessor(scale, 'VEC3', target=34962))
+            glb.node(f'instances_{mesh_index:05}', parent=groups[group], mesh=mesh_index,
+                     extensions=dict(EXT_mesh_gpu_instancing=dict(attributes=attributes)))
+            instanced_count += len(matrices)
+        if instanced_count:
+            glb.doc['extensionsUsed'] = ['EXT_mesh_gpu_instancing']
+            glb.doc['extensionsRequired'] = ['EXT_mesh_gpu_instancing']
+        dest = output / 'scene.glb'
+        glb.finish(dest)
+        print('[scene] compressing', dest.stat().st_size, 'bytes', flush=True)
+        compress_file(dest, output / 'scene.glb.gz')
+        scene_bytes = dest.stat().st_size
+        scene_sha = sha(dest)
+        with gzip.open(output/'scene.glb.gz', 'rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != scene_sha:
+                raise ValueError('Compressed scene does not preserve original GLB')
+        share_file(output/'scene.glb.gz', output.parent/'_shared')
+        scene_relative='scene.glb.gz'
+        compressed_scene_sha=sha(output/'scene.glb.gz')
+        compressed_scene_bytes=(output/'scene.glb.gz').stat().st_size
+        unique_meshes=len(glb.doc['meshes'])
     poses32 = poses.astype('<f4')
     with gzip.GzipFile(filename=str(output / 'poses.bin.gz'), mode='wb', mtime=0) as f:
         f.write(poses32.tobytes())
     stamps.astype('<f8').tofile(output / 'times.bin')
     linkage = np.empty((len(stamps), 3, 16), dtype='<f4')
+    outside_cad=np.flatnonzero((gap<.0279)|(gap>.0961))
+    linkage_diagnostic=None
+    if allow_measured_linkage_diagnostic:
+        linkage_diagnostic=dict(enabled=True,nominal_gap_bounds_m=[.0279,.0961],
+            minimum_measured_gap_m=float(gap.min()),maximum_measured_gap_m=float(gap.max()),
+            outside_nominal_frame_indices=outside_cad.tolist(),
+            actual_jaw_pose_changed=False,measured_gap_clamped=False,physics_or_planning_limits_changed=False,
+            scope='Recorded display only; exact CAD linkage equations within triangle closure; out-of-nominal measured travel is not a validated hardware motion')
     for tick, width in enumerate(gap):
-        for j, tf in enumerate(transmission_transforms(float(width)).values()):
+        for j, tf in enumerate(transmission_transforms(float(width),
+                measured_display_diagnostic=allow_measured_linkage_diagnostic).values()):
             linkage[tick, j] = (C4 @ tf @ C4.T).T.reshape(-1)
     with gzip.GzipFile(filename=str(output / 'transmission.bin.gz'), mode='wb', mtime=0) as f:
         f.write(linkage.tobytes())
     releases = []
-    events = trial / ('cumulative_break_events.json' if (trial / 'cumulative_break_events.json').exists() else 'break_events.json')
+    events = partial['events_path'] if partial else trial / ('cumulative_break_events.json' if (trial / 'cumulative_break_events.json').exists() else 'break_events.json')
     if events.exists():
         releases = json.loads(events.read_text())
         fruit_rows = manifest['plant']['fruits'] + [f for r in manifest.get('elastic_neighbors', []) for f in r['plant']['fruits']]
@@ -457,22 +521,23 @@ def export(assembly, trial, output, title=None):
         target_center_world_m=poses[0, index[manifest['target']['path']], :3].tolist(),
         source_scene=str(source), source_scene_sha256=before,
         source_wrapper_sha256=wrapper_sha, recorded_runtime_native_scene_sha256=runtime.get('native_scene_sha256'),
-        runtime_native_hash_verified=bool(runtime.get('native_scene_sha256')), file=dest.name,
-        sha256=sha(dest), compressed_file='scene.glb.gz', compressed_sha256=sha(output/'scene.glb.gz'),
+        runtime_native_hash_verified=bool(runtime.get('native_scene_sha256')), file=scene_relative, encoding='gzip', bytes=scene_bytes,
+        sha256=scene_sha, compressed_file=scene_relative, compressed_sha256=compressed_scene_sha,
         bounds_m=bounds.tolist(), body_nodes=body_nodes,
         transmission_nodes=['transmission_' + n for n in transmission_nodes],
         groups={k: dict(node=k, visible_source_meshes=geom_counts[k]) for k in groups},
         visible_source_meshes=len(inventory), source_triangles_with_instances=total_triangles,
-        unique_glTF_meshes=len(glb.doc['meshes']), static_instanced_mesh_count=instanced_count,
+        unique_glTF_meshes=unique_meshes, static_instanced_mesh_count=instanced_count,
         maximum_instance_decomposition_error= max_instance_error,
         skinned_mesh_count=len(skin_checks), skin_checks=skin_checks,
         source_surface_preserved=True, source_inventory=inventory,
         fixture=fixture, physics_rerun=False)
+    if reuse_proof is not None:scene_info['geometry_reuse']=reuse_proof
     write_json(output/'replay_scene.json', scene_info)
     p_error = float(np.max(np.abs(poses32[:, :, :3].astype(float) - poses[:, :, :3])))
     q_error = float(np.max(np.abs(poses32[:, :, 3:].astype(float) - poses[:, :, 3:])))
     replay = dict(schema='farmily-harvest-replay-v1', title=title or trial.name,
-        scene_url='scene.glb', scene_gzip_url='scene.glb.gz', scene_info_url='replay_scene.json',
+        scene_url=scene_relative, scene_encoding='gzip', scene_gzip_url=scene_relative, scene_info_url='replay_scene.json',
         target_body_path=manifest['target']['path'],
         target_center_world_m=scene_info['target_center_world_m'],
         motion=dict(url='poses.bin.gz', compression='gzip', dtype='float32', shape=list(poses.shape),
@@ -499,20 +564,38 @@ def export(assembly, trial, output, title=None):
                     wrapper_sha256=wrapper_sha, recorded_model_sha256=summary.get('model_sha256'),
                     recorded_runtime_native_scene_sha256=runtime.get('native_scene_sha256'),
                     runtime_native_hash_verified=bool(runtime.get('native_scene_sha256')),
-                    summary_sha256=sha(trial/'summary.json'),
+                    summary_sha256=sha(trial/'summary.json') if not partial else None,
                     runtime_sha256=sha(trial/'runtime_settings.json') if (trial/'runtime_settings.json').is_file() else None,
                     manifest_sha256=sha(assembly/'motion_manifest.json'),
                     states_sha256=state_sha, all_frames_exported=True,
                     physics_rerun=False, new_simulation=False),
         body_count=len(paths), frames=len(stamps), duration_s=float(stamps[-1]-stamps[0]),
         source_geometry_modified=False, export_elapsed_s=time.monotonic()-started)
+    if partial:
+        replay['source'].update(published_partial_source(partial, trial))
+        replay['source']['recorded_model_sha256'] = wrapper_sha
+        replay['result_summary'] = partial['result']
+        replay['engine'].update(backend=runtime.get('device'), solver=runtime.get('solver'), hz=runtime.get('hz'))
+        replay['partial_diagnostic'] = dict(schema='incomplete-native-replay-v1',
+            complete=False, checkpoint_eligible=False, harvest_credit=0,
+            camera_unavailable_reason='Native exception interrupted camera finalization; no substituted camera data',
+            source_descriptor=partial['descriptor'], runtime_error=partial['runtime_error'])
+    if reuse_proof is not None:replay['geometry_reuse']=reuse_proof
+    if linkage_diagnostic is not None:
+        replay['transmission']['measured_cad_travel_diagnostic']=linkage_diagnostic
+    camera = None if partial else export_camera(assembly, trial, output, sensor_data)
+    if camera is not None:
+        replay['camera'] = camera
     if before != sha(source) or state_sha != sha(states):
         raise ValueError('Source asset or recorded states changed during export')
     write_json(output/'replay.json', replay)
+    # Both manifests now point to verified lossless bytes; remove only the redundant GLB.
+    if dest is not None:dest.unlink()
     print(json.dumps(dict(output=str(output), frames=len(stamps), bodies=len(paths),
-        source_meshes=len(inventory), unique_meshes=len(glb.doc['meshes']),
+        source_meshes=len(inventory), unique_meshes=unique_meshes,
         instanced_meshes=instanced_count, skinned_meshes=len(skin_checks),
-        scene_bytes=dest.stat().st_size, scene_gzip_bytes=(output/'scene.glb.gz').stat().st_size,
+        scene_bytes=scene_bytes, scene_gzip_bytes=compressed_scene_bytes,
+        scene_geometry_reused=reuse_proof is not None,
         elapsed_s=replay['export_elapsed_s']), ensure_ascii=False), flush=True)
     return replay
 
@@ -523,5 +606,10 @@ if __name__ == '__main__':
     p.add_argument('trial', type=Path)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--title')
+    p.add_argument('--sensor-data', type=Path, help='Camera directory from this recording; external captures require source-SHA provenance')
+    p.add_argument('--allow-partial-diagnostic', action='store_true', help='Opt in to an explicitly incomplete actual partial trace, never a normal result/checkpoint')
+    p.add_argument('--reuse-scene-from',type=Path,help='Opt-in reuse of an independently verified replay scene with identical actual physical scene/manifest SHA and complete body mapping; exports new actual motion/camera only')
+    p.add_argument('--allow-measured-linkage-diagnostic',action='store_true',help='Display-only exact linkage equations for measured travel outside the nominal CAD slider range; retains actual raw jaw poses and records all affected frames')
     a = p.parse_args()
-    export(a.assembly, a.trial, a.output, a.title)
+    export(a.assembly, a.trial, a.output, a.title, a.sensor_data, a.allow_partial_diagnostic,a.reuse_scene_from,
+           a.allow_measured_linkage_diagnostic)

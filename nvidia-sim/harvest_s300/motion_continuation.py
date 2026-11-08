@@ -81,22 +81,94 @@ def measured_resume_rail_origin(manifest, resume_context):
         controller_target_is_not_measured_displacement=True, physical_history_reset=False)
 
 
-def attach_resume_rail_hold(phases, metadata, origin):
+def attach_resume_rail_hold(phases, metadata, origin, *, preserve_existing_hold=False):
     """Stamp measured checker offsets and prior drive commands independently."""
     result = copy.deepcopy(metadata)
     if len(result['phases']) != len(phases):
         raise ValueError('Continuation phase metadata does not match the actual motion phases')
     for phase, row in zip(phases, result['phases']):
-        if row['name'] != phase[0] or 'rail_waypoint_positions_m' in row:
+        if row['name'] != phase[0] or ('rail_waypoint_positions_m' in row and not preserve_existing_hold):
             raise ValueError('Rail resume hold cannot replace an existing travel command')
         count = len(row['waypoint_q'])
         if count != len(phase[2]) or count < 2:
             raise ValueError('Complete continuation joint waypoint arrays required')
+        if preserve_existing_hold:
+            geometry=np.asarray(row.get('rail_waypoint_positions_m'),float)
+            commands=np.asarray(row.get('rail_native_command_positions_m'),float)
+            if (geometry.shape!=(count,) or commands.shape!=(count,) or
+                    not np.isfinite(geometry).all() or not np.array_equal(geometry,np.repeat(geometry[0],count)) or
+                    not np.array_equal(commands,np.repeat(origin['native_position_target_m'],count))):
+                raise ValueError('Original-cycle suffix must retain the exact stationary native rail drive target')
         row['rail_waypoint_positions_m'] = [origin['displacement_m']]*count
-        row['rail_native_command_positions_m'] = [origin['native_position_target_m']]*count
+        if not preserve_existing_hold:
+            row['rail_native_command_positions_m'] = [origin['native_position_target_m']]*count
+    if preserve_existing_hold:
+        result['terminal_forward_suffix']['source_rail_origin']=copy.deepcopy(result.get('resume_rail_origin'))
+        result['terminal_forward_suffix']['rail_geometry_origin_updated_from_exact_terminal_measurement']=True
     result['resume_rail_origin'] = copy.deepcopy(origin)
     result['rail_motion_scope'] = 'Measured existing station and preserved native drive target; no added rail motion phase'
     return phases, result
+
+
+def source_cycle_elapsed(plan, local_elapsed_s):
+    """Original cycle clock for an explicit terminal suffix; default unchanged."""
+    suffix=plan.get('terminal_forward_suffix')
+    if suffix is None:return local_elapsed_s
+    if suffix.get('schema')!='s300-terminal-forward-suffix-clock-v1':
+        raise ValueError('Unknown terminal forward suffix clock')
+    offset=suffix.get('initial_source_elapsed_s')
+    if (isinstance(offset,bool) or not isinstance(offset,(int,float)) or
+            not np.isfinite(offset) or offset<=0 or not np.isfinite(local_elapsed_s) or local_elapsed_s<0):
+        raise ValueError('Finite positive source clock and nonnegative local elapsed required')
+    hz=suffix.get('source_hz');tick=suffix.get('source_checkpoint_tick');start=suffix.get('source_cycle_start_s')
+    if (hz!=60 or not isinstance(tick,int) or isinstance(tick,bool) or tick<=0 or
+            not isinstance(start,(int,float)) or isinstance(start,bool) or not np.isfinite(start) or
+            abs(tick/hz-start-offset)>1e-8 or abs(local_elapsed_s*hz-round(local_elapsed_s*hz))>1e-7):
+        raise ValueError('Terminal suffix must retain the exact original native command tick clock')
+    # Reproduce the original runner's operation order as well as its clock.
+    return (tick+round(local_elapsed_s*hz))/hz-start
+
+
+def execution_duration_s(plan):
+    """Remaining duration only for the explicit original-clock suffix."""
+    total=sum(float(p['duration_s'])for p in plan['phases'])
+    if plan.get('terminal_forward_suffix') is None:return total
+    offset=source_cycle_elapsed(plan,0.)
+    remaining=plan['terminal_forward_suffix'].get('remaining_duration_s')
+    if (not isinstance(remaining,(int,float)) or isinstance(remaining,bool) or not np.isfinite(remaining) or
+            remaining<=0 or abs(total-offset-remaining)>1e-8):
+        raise ValueError('Terminal suffix clock/duration mismatch')
+    return float(remaining)
+
+
+def source_command_sample(plan, elapsed_s):
+    """The existing six-field smoothstep command, with no retiming or IK."""
+    if not np.isfinite(elapsed_s) or elapsed_s<0:raise ValueError('Finite nonnegative source command clock required')
+    offset=float(elapsed_s);previous_gap=.044;previous_rail=initial_plan_rail_position(plan)
+    for index,p in enumerate(plan['phases']):
+        duration=float(p['duration_s']);qs=np.asarray(p['waypoint_q'],float)
+        rail=np.asarray(p.get('rail_waypoint_positions_m',[previous_rail]*len(qs)),float)
+        if (not np.isfinite(duration) or duration<=0 or qs.ndim!=2 or qs.shape[1]!=7 or len(qs)<2 or
+                not np.isfinite(qs).all() or rail.shape!=(len(qs),) or not np.isfinite(rail).all()):
+            raise ValueError('Malformed source command phase')
+        if offset<duration or index==len(plan['phases'])-1 and offset<=duration+1e-8:
+            u=min(1.,offset/duration);smooth=u*u*(3-2*u);f=smooth*(len(qs)-1);lo=min(int(f),len(qs)-2)
+            return dict(phase=p['name'],phase_index=index,source_time_s=float(elapsed_s),fraction=u,
+                q=qs[lo]*(1-(f-lo))+qs[lo+1]*(f-lo),
+                gap_m=previous_gap+(p['end_gap_m']-previous_gap)*smooth,
+                rail_position_m=float(rail[lo]*(1-(f-lo))+rail[lo+1]*(f-lo)),
+                belt_local_y_m_s=list(p['belt_local_y_m_s']))
+        offset-=duration;previous_gap=p['end_gap_m'];previous_rail=float(rail[-1])
+    raise ValueError('Source command clock exceeds original plan')
+
+
+def terminal_suffix_samples(plan,hz):
+    """Every remaining native command tick plus endpoint on its ORIGINAL clock."""
+    if not isinstance(hz,(int,np.integer)) or isinstance(hz,bool) or hz<=0:raise ValueError('Positive integer sampling Hz required')
+    duration=execution_duration_s(plan);start=source_cycle_elapsed(plan,0.)
+    count=duration*hz
+    if abs(count-round(count))>1e-7:raise ValueError('Terminal suffix duration is not on the unchanged native tick grid')
+    return [source_command_sample(plan,source_cycle_elapsed(plan,i/hz))for i in range(round(count)+1)]
 
 
 def initial_plan_rail_position(plan):

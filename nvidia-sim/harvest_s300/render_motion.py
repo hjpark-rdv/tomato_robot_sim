@@ -209,6 +209,13 @@ try:
         gap=.044+float(data['robot_q'][tick,lids[1]]-data['robot_q'][tick,lids[0]])
         visuals.update(poses,gap)
         if frame==0:print('[RENDER] first state applied; waiting for render update',flush=True)
+        if frame==0:
+            # Newly materialized sensor scenes can finish Hydra/Fabric loading
+            # after the first transform write. Hold the first measured state,
+            # then reapply it before capture so the video cannot start at the
+            # USD zero pose. Timeline is stopped; no physics is advanced.
+            for _ in range(12):app.update()
+            pose_display.invalidate();pose_display.update(poses);visuals.update(poses,gap)
         for _ in range(2):app.update()
         if frame==0:print('[RENDER] first render update complete',flush=True)
         png=output/f'{frame:05d}.png'

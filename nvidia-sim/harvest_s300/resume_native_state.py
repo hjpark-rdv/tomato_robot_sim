@@ -101,18 +101,30 @@ def _leaf_revision_proof(assembly, manifest, metadata):
 
 def prepare_resume(stage, assembly, manifest, checkpoint, output_json=None, *,
                    allow_leaf_proxy_revision=False, allow_accuracy_proxy_revision=False,
-                   allow_attachment_transfer=False,allow_conditioned_start=False):
+                   allow_attachment_transfer=False,allow_conditioned_start=False,
+                   allow_terminal_recovery=False,allow_original_cycle_suffix=False,
+                   allow_target_truss_revision=False):
     """Validate state and disable only proven fruit attachments in SESSION USD.
 
     Invoke before native physics compilation. The source scene, composed USDC,
     authored collider/filter/material values and unbroken joints remain intact.
     """
+    if type(allow_target_truss_revision) is not bool:
+        raise ValueError('Explicit boolean target-truss revision authorization required')
+    if allow_target_truss_revision and any((allow_leaf_proxy_revision,allow_accuracy_proxy_revision,
+            allow_attachment_transfer,allow_conditioned_start,allow_terminal_recovery,allow_original_cycle_suffix)):
+        raise ValueError('Target-truss revision authorization cannot be combined with other resume revision/recovery modes')
     if allow_leaf_proxy_revision and allow_accuracy_proxy_revision:
         raise ValueError('Choose one explicit proxy revision proof; leaf authorization does not authorize tool cooking changes')
     if allow_attachment_transfer and (allow_leaf_proxy_revision or allow_accuracy_proxy_revision):
         raise ValueError('Choose one explicit revision proof; proxy and attachment transfer authorizations cannot be combined')
     if allow_conditioned_start and (allow_leaf_proxy_revision or allow_accuracy_proxy_revision or allow_attachment_transfer):
         raise ValueError('Canonical conditioned start requires the exact same assembly; model revision authorization cannot be combined')
+    if allow_terminal_recovery and any((allow_conditioned_start,allow_leaf_proxy_revision,
+                                      allow_accuracy_proxy_revision,allow_attachment_transfer)):
+        raise ValueError('Terminal recovery requires the exact same model without other resume revision modes')
+    if allow_original_cycle_suffix and not allow_terminal_recovery:
+        raise ValueError('Original cycle suffix requires explicit terminal recovery mode')
     assembly, checkpoint = Path(assembly).resolve(), Path(checkpoint).resolve()
     scene_sha = file_sha256(assembly/'scene.usda')
     if scene_sha != manifest.get('scene_sha256'):
@@ -126,7 +138,10 @@ def prepare_resume(stage, assembly, manifest, checkpoint, output_json=None, *,
     controller_state=resolve_robot_controller_state(metadata,arrays,checkpoint)
     revision_proof = None
     if metadata['scene_sha256'] != scene_sha or Path(metadata['source_assembly']).resolve() != assembly:
-        if allow_attachment_transfer:
+        if allow_target_truss_revision:
+            from same_plant_target_revision import validate_resume_revision
+            revision_proof = validate_resume_revision(assembly,manifest,metadata)
+        elif allow_attachment_transfer:
             from eligible_attachment_transfer import validate_resume_revision
             revision_proof = validate_resume_revision(assembly, manifest, metadata)
         elif allow_accuracy_proxy_revision:
@@ -140,8 +155,14 @@ def prepare_resume(stage, assembly, manifest, checkpoint, output_json=None, *,
         raise ValueError('Resume checkpoint/current manifest mismatch')
     if metadata['source_plant'] != manifest['plant']['source_plant']:
         raise ValueError('Resume active plant mismatch')
-    conditioned_start_proof=None
-    if allow_conditioned_start:
+    conditioned_start_proof=None;terminal_recovery_proof=None
+    if allow_original_cycle_suffix:
+        from terminal_motion_recovery import validate_terminal_forward_suffix
+        terminal_recovery_proof=validate_terminal_forward_suffix(assembly,manifest,checkpoint,metadata,arrays,stage=stage)
+    elif allow_terminal_recovery:
+        from terminal_motion_recovery import validate_terminal_recovery
+        terminal_recovery_proof=validate_terminal_recovery(assembly,manifest,checkpoint,metadata,arrays)
+    elif allow_conditioned_start:
         from conditioned_start_checkpoint import require_conditioned_checkpoint
         conditioned_start_proof=require_conditioned_checkpoint(metadata,arrays,checkpoint)
     else:require_completed_checkpoint(metadata)
@@ -192,7 +213,9 @@ def prepare_resume(stage, assembly, manifest, checkpoint, output_json=None, *,
         standalone_body_paths=sorted(standalone),
         original_sequence=copy.deepcopy(metadata['sequence']),
         source_asset_modified=False, native_initialization_validation='pending',
-        checkpoint_kind='completed_cycle' if conditioned_start_proof is None else 'canonical_conditioned_start',
+        checkpoint_kind=('terminal_original_cycle_suffix' if allow_original_cycle_suffix else
+                         'terminal_opening_guard_recovery' if terminal_recovery_proof is not None else
+                         'completed_cycle' if conditioned_start_proof is None else 'canonical_conditioned_start'),
         canonical_conditioned_start=conditioned_start_proof,
         controller_state=controller_state['provenance'],
         restart='New PhysX engine instance; measured state restore, without solver/contact warm-start cache continuation',
@@ -202,7 +225,8 @@ def prepare_resume(stage, assembly, manifest, checkpoint, output_json=None, *,
             json.dump(report, stream, ensure_ascii=False, indent=2, allow_nan=False)
             stream.write('\n')
     return dict(metadata=metadata, arrays=arrays, report=report,controller_state=controller_state,
-        checkpoint_kind=report['checkpoint_kind'],conditioned_start_proof=conditioned_start_proof)
+        checkpoint_kind=report['checkpoint_kind'],conditioned_start_proof=conditioned_start_proof,
+        terminal_recovery_proof=terminal_recovery_proof)
 
 
 def _native_mapping(context, robot, plant, bodies):

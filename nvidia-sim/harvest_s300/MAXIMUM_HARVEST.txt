@@ -1,0 +1,153 @@
+2026-10-23 최대 수확 실험 연결
+
+이번 실험은 기존 run_motion / run_row_harvest / native PhysX / FK·IK·FCL /
+route_checkpoint / RGB-D / 웹 저장 상태 재생기를 재사용한다.
+기존 결과·미커밋 변경을 덮어쓰지 않는다. 기존 학습 자료에 넣지 않는다.
+
+원자료와 최신 결과:
+/root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/index.html
+같은 폴더 actual_results.json, progress_status.json, published_review_videos.json.
+
+카메라 기반 순회
+1. maximum_camera_patrol_arguments.json: 수평 world-Z yaw9개 × IK seed2개.
+   기존 총 제안20개 한도와 물리60Hz/부착 물체1mm 기준 유지.
+2. run_row_harvest.py --camera-patrol --patrol-adaptive-lift:
+   실제 보이는 미해결 집단의 깊이·리프트 스트로크를 사용한다.
+   전진하기 전에 같은 위치에서 최대3개 서로 다른 높이로 실제 스캔을
+   제안한다. 기존 리프트 구동·전체 경로 검사·새 노출이 필요하다.
+   관측 없는 GT 높이를 카메라 관측으로 바꾸지 않는다.
+3. 실제 시작 명령:
+   bash /root/docker_share/mujoko_debugging_data/20261023_164703_maximum_camera_harvest/START_CAMERA_MAXIMUM.sh
+   독립 새 실험, 레일 입구0m/Plant22에서 시작한다.
+   GPU 장치가 EPERM이면 즉시 종료하며 카메라 성공으로 집계하지 않는다.
+
+GPU 장치 접근 장애 중 별도 SIM-GT 교사 탐색
+--auto-ripe-group-policy: 실제 각 모델 창에서 기존 authored-color 정책을
+  생성하고 source manifest/USDC SHA를 다시 검증한다. 카메라 관측이 아니다.
+--auto-native-tool-cache --preflight-new-windows: 기존3초 idle 실행에서
+  실제 PhysX cooked tool hull을 얻는다. 검증한 캐시만 동일 창에 사용한다.
+  다른 모델로 이전 캐시를 넘기거나 idle 상태를 완료 수확으로 승격하지 않는다.
+--later-grasp-depth-mm15 --later-grasp-depth-scope trial:
+  첫 완료 수확은 기존 깊이, 이후 다른 송이 진입도15mm로 재계획한다.
+  기본 scope=truss는 송이별 첫 진입을 유지한다. 후보 footprint와 실제
+  계획이 같은 범위·깊이를 사용하도록 연결했다.
+
+공통 오류 수정
+- GT 집단 선정의 방향 콜백이 선택 송이 key를 무시하고 여러 송이를 함께
+  PCA에 넣던 오류를 수정했다. 실제 계획과 같은 exact-truss 방향·참조점·
+  yaw offset을 사용한다. 앞선 저장 실행에서75.01도/23.75도 불일치를
+  독립 확인했으며, 수정 콜백은 세 송이와 실제45초 상태에서 일치했다.
+- 방향만 라벨을 고친 것이 아니다. 올바른 footprint로 목표 중심을 다시
+  계산한다. 앞선 두 번째 예는 X+5.98mm/Z-4.01mm가 바뀐다.
+
+접촉 범위
+- 비교 모델 active_plant_and_own_stem_only는 현재 한 식물의 모든 송이·
+  주줄기·동역학·로봇·구조물을 유지하고 다른 식물만 통과시킨다.
+  전체 장애물 회피 검증과 구분한다. 시각 농장은 유지한다.
+- --released-fruit-same-plant-diagnostic: 실제 native 분리 증거가 있는
+  열매와 같은 식물의 다른 송이 접촉만 별도 진단으로 남긴다.
+- --released-fruit-static-gutter-base-diagnostic: 정확히 등록한 고정 거터
+  바닥과 이미 분리된 과실의 충돌만 별도 기록한다. 로봇/부착 과실,
+  거터 옆판/와이어, 주줄기 등에는 확대 적용하지 않는다.
+- 실제 충돌 응답·힘·침투·조인트 분리 기준·마찰·강성은 유지한다.
+  떨어진 열매의 해당 물리/포집 검증은 미확정이다.
+
+초기 배치 별도 복구 모델
+Plant17 전체 X+18mm, Plant18/Truss02 연결점에서 Z yaw-15도,
+Plant21/Truss02 연결점에서 Z yaw+15도. 원본과 별도 자산에만 적용한다.
+뿌리·부착점·다른 물성 보존과 전체 pair 검사를 기록한다. 기하 검사는
+실제 native 초기화나 수확 성공을 대신하지 않는다.
+
+기록 해석
+- independent fresh-start 시험의 같은 열매를 합산하지 않는다.
+- native 열매 분리 / 완료 수확 주기 / 송이 전체 수확 / 포집은 다르다.
+- 이전 실패 말단과 원래 stop_reason을 보존한다. 더 이른 정상 완료
+  체크포인트로 롤백해 연속 실행했다고 주장하지 않는다.
+- 실제 q/qvel/몸체 속도/컨트롤러 상태를 저장한다. 영상은 저장 상태
+  재생이며 새 물리 실행이 아니다. CPU 소프트웨어 영상 렌더링 속도를
+  physics RTF 또는 GUI/headless 동등성으로 해석하지 않는다.
+- training_eligible=false, harvest_success=null.
+
+엄격한 물리 재검증과 실제 제한 후퇴
+- 기존 post-fetch 검사가 현재 선택한 송이10열매에만 적용되고 있었다.
+  여러 송이를 동시에 처리하는 near-truss 실행에서는 같은 활성 식물의
+  정확한30과실과 실제 도구 collider 쌍도 native cooked 형상으로 확인한다.
+  기본 단일송이 범위는 유지하며, raw callback 값과 실제 해결 후 간격을
+  별도 보존한다. 관통 기준은1mm 그대로다.
+- 저장 상태/실제 native hull로 다른 송이 접촉2개를 독립 재계산했다.
+  raw1.612mm/1.003mm 관통 이벤트의 실제 post-fetch 거리는 각각
+  +0.0693mm/+0.9712mm였다. 기존120Hz 중단 전체를 오탐으로 소급하지 않는다.
+- --release-relief-before-withdraw는 마지막 열기 뒤 기존 역방향 삽입
+  경로의15mm만 실제 이동하고1초 유지한다. 벨트 OFF, 계속96mm 개방
+  명령, 실제 개방최소90mm를 확인하고, 본후퇴96±0.5mm 가드를 유지한다.
+  새 IK/물성/관통기준/강제분리 없이 접촉 하중을 실제 이동으로 푼다.
+- 두번째 수확에서93.834mm 개방→실제15.015mm 후퇴→95.668mm 개방으로
+  원래 본후퇴 가드를 통과했다. 닫기·열기2회와 나머지 후퇴까지 완료했다.
+- gt_row_poststep_relief_campaign: 독립 연속실행163.2초, native7개분리,
+  완료수확주기3회, 두송이에서 분리.4회째 최소개방90mm 대비87.756mm로
+  중단했다. 중단말단을 보존하며 완성송이/포집/카메라 성공으로 세지 않는다.
+- --release-relief-minimum-gap-mm85는 기본90mm보다 낮은 최소개방으로
+  제한15mm후퇴만 시험하는 별도 옵션이다. 유효범위85..96mm이며 본후퇴
+  96±0.5mm는 바뀌지 않는다. 부착 과실 관통/force 허용 확대가 아니다.
+  기본명령동일/85허용·84NaN거부/본후퇴96유지 포함208회귀시험PASS.
+- 이전 TPU2 비교는 닫기 단계의 정확한 TPU↔과실만2mm로 기록한 별도
+  진단이다. 실제 탄성 벨트 구현이 아니며 strict7 실행에는 사용하지 않았다.
+- 중단의 실제 원인은 떨어진 Fruit00_04가 L상판209와 거터 현수와이어
+  사이에 끼인 것이다. 주줄기hardjam/수확 불가능으로 일반화하지 않는다.
+
+이번 요청에서는 기존 대량 미커밋 작업을 보존했고, 별도 commit/push를
+요청받지 않았다. 최신 실제 결과와 영상 목록은 위 원자료 페이지를 본다.
+
+최신 완료 실행: target-only Truss01
+- plant19_target_truss01_support_native/plant19_truss01_static_support_harvest:
+  native93.3167초, 실제자기충돌검사PASS, 두 번 진입 및 후퇴 완료.
+  분리6개=익은01/02/03/05/07 + 미숙09. 익은04/08 잔여.
+  남은 익은2개가 같은 footprint에 함께 들어오지 않아 기존 min2 정책으로
+  종료(no_group_meets_minimum). 열매/꼭지 강제분리·물성완화 없음.
+- --released-fruit-static-farm-support-diagnostic:
+  실제 native 분리가 확인된 과실과 등록된 정적 House/EnvironmentMesh
+  지지물만 별도 기록한다. attached 과실·로봇·동적/미등록 물체는 제외.
+  원래 충돌 응답/힘/침투는 보존한다. 원본 실패와 첫25.1333초 전체
+  state/command/phase/belt 값 및39606접촉점이 동일함을 확인했다.
+- --target-truss-windows: 기존 target_truss_and_own_stem_only 창 전환을
+  사용한다. 강제 near-truss 옵션만 생략하며 초기/파생 target body/joint/
+  plant/truss를 검사한다. 기본 명령은 불변. 다른 두 송이는 미시도이며
+  현재 송이 부분 수확을 전체 식물 완료로 집계하지 않는다.
+- 정확한 마지막93.3167초 checkpoint에서 다음25/24/27/28/29/31을
+  시도하는 별도 gt_row_target_only_next6_campaign을 실행한다. 시작 상태와
+  조인트/속도/기존분리 이력은 이어받되 PhysX 솔버 캐시는 새 프로세스에서
+  재시작한다. 이전 실패 시각으로 되돌려 연속 성공처럼 사용하지 않는다.
+- 최신 변경 관련246개 회귀시험 PASS.
+
+수정27B 실제 검증 및 잔여 집단 대안 탐색
+- 27A의 이미 분리된 과실 collider 누락은 고쳤다. 원본 실패 자료는 보존,
+  정상19 CP001부터 별도27B를 실행해127.7333초/7665개 frame에서 이전6개
+  과실의 실제 바닥 반응과 유한 궤적을 확인했다. 새4개 분리/2진입 완료.
+  검증된19→27B는10개(익음9+미숙1)/두송이/4진입이며 완전수확이 아니다.
+- --group-heading-search는 기존 camera heading/IK 경계 루프를 SIM-GT
+  HarvestGroupSelector에도 opt-in으로 재사용한다. 새 카메라 관측이 아니다.
+  완료한 실제 cycle checkpoint/q/qvel/rail에서 footprint와 waypoint yaw를
+  같이 계산하고 새 IK/전체self/환경 검사를 통과한 경로 하나만 실행한다.
+  미실행 방향별 거절은 다른 방향/IK seed의 열매 시도를 오염시키지 않는다.
+  현재 물리 상태를 되돌리지 않으며 실제 접촉 중단은 그대로 보존한다.
+- 기본 명령/정책 불변, 최소2개 집단 유지. 기존 --max-truss-cycles는 실제
+  동작과 거절된 계획을 포함한 유한 제안 상한이다. 새 프로필은12로 명시.
+  --camera-heading-offsets-deg는 기존 전역yaw에 더하는 상대값이며 ±90도
+  범위를 벗어난 합은 제외된다. 이름이 camera인 기존 seed/offset 옵션을
+  재사용해도 결과에는 gt_group_heading_search로 기록한다.
+- GT 연결225회귀+별도8개 독립시험 PASS. 첫 물리 진입 전 대안 탐색은
+  기존 run_row_harvest --heading-retries가 담당하고, 이 opt-in은 첫 완료
+  cycle 뒤의 잔여 집단 계획에만 적용한다.
+- 새 실제 대상은25/Truss00→20/Truss02→24→28→29→31이다.
+  원본 query/plan SHA는 제안 증거로만 사용하고 새 모델/캐시/상태를 검증한다.
+  기존20의 독립 성공4개를 새 캠페인 성공으로 합산하지 않는다.
+- 결과 gt_row_maximum_local_heading_v5_campaign/row_campaign.json.
+  GPU EPERM이 지속돼 현재 물리는native PhysX CPU60Hz, SIM-GT 교사 자료다.
+
+창 준비/로딩 시간과 물리 RTF 구분
+- v7 Plant20의159MiB USDC를 전체 canonical 텍스트4.731GB로 펼쳐
+  저장 동일성을 확인하는 데183.38초가 들었고, 텍스트 변환2회가146.86초다.
+  충돌 정책 보존에서도 같은 변환2회가 추가되지만 그 구간의 시간은
+  따로 측정하지 않았다. 준비 지연을 physics RTF 저하로 해석하지 않는다.
+- 원본 검증과 파이프라인은 유지한다. 측정/추정/코드/자산 SHA 근거:
+  20261023_164703_maximum_camera_harvest/v7_plant20_window_materialization_cost_review.json.
