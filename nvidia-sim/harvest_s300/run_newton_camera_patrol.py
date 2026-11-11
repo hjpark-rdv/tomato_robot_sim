@@ -419,16 +419,19 @@ def select_start_assets(args,out):
         viewer=PatrolViewer(preview_models[selected],port=args.port,geometric=config.get('harvest_mode')==MODE,
             entry_yaw_limit_deg=MAX_ENTRY_YAW_DEG,elbow_mode=selected,
             harvest_volume=read(profiles[selected]/'patrol_assets.json').get('geometric_harvest'))
+        ros_control=getattr(args,'control_mode',None)=='ros'
+        if ros_control:viewer.start.label='ROS 제어 시작';viewer.stop.label='ROS 제어 종료'
         current=[selected]
         def preview(mode):
             if mode!=current[0]:viewer.replace_robot_model(preview_models[mode]);current[0]=mode
             viewer.update(preview_states[mode])
             limit=route_end(read(profiles[mode]/'patrol_assets.json'),args.end_station)
-            viewer.status.content=(f'**시작 자세: {viewer.mode_labels[mode]}**\n\n'
-                f'순회 구간: 입구 → {limit:g}m\n\n자세를 선택한 뒤 순회 시작을 누르세요.')
+            viewer.status.content=(f'**시작 자세: {viewer.mode_labels[mode]}**\n\n'+
+                (f'ROS 명령 제어 범위: 0 → {limit:g}m\n\n자세를 선택한 뒤 ROS 제어 시작을 누르세요.' if ros_control else
+                 f'순회 구간: 입구 → {limit:g}m\n\n자세를 선택한 뒤 순회 시작을 누르세요.'))
         started=time.perf_counter()
         selected=viewer.wait_start(preview);wait_s=time.perf_counter()-started
-        viewer.status.content=f'**{viewer.mode_labels[selected]} · 카메라 준비 중**\n\n준비가 끝나면 순회를 시작합니다.'
+        viewer.status.content=f'**{viewer.mode_labels[selected]} · 카메라 준비 중**\n\n'+('준비가 끝나면 ROS 명령을 기다립니다.' if ros_control else '준비가 끝나면 순회를 시작합니다.')
     path=profiles[selected]
     write(out/'start_selection.json',dict(requested=getattr(args,'elbow_mode','auto'),selected=selected,
         assets=str(path),available_modes=[m for m in profiles if m],selection_wait_s=wait_s,

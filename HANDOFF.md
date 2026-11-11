@@ -1,4 +1,15 @@
-## 2026-11-11 최신: Newton 순회 ROS 2 토픽 연동
+## 2026-11-11 최신: ROS 토픽으로 로봇암·기체·리프트·그리퍼 제어
+
+- 사용자의 추가 요청에 따라 `./nvidia-sim/run_s300_newton.sh ros-control`을 구현했다. 자동 순회 `camera-patrol --ros2`와 별도 명령 권한 모드다. 기본5905/domain42, 시작 자세 선택 후 **ROS 제어 시작**. 실제 장비 드라이버는 실행하지 않는다.
+- `arm_controller/joint_trajectory`/`joint_trajectory`(JointTrajectory), `cmd_vel`(Twist.linear.x 레일1축), `lift/command`/`gripper/command`(Float64), `stop`(Bool) 구독. 이름·위치·속도·가속도 극값/시각을 검증하고 실제 GPU actuator에 전달한다. qpos 강제 대입 없음. 완료는 실제 q/v로 판정하며 정지 해제는 이전 취소 경로를 재개하지 않는다. cmd_vel0.5wall초 timeout, 브리지 단절 시 전체 감속 정지.
+- 기존 Newton GPU 모델/주줄기 충돌/1mm 가드 유지, 물리220Hz·2스텝 CUDA graph 버퍼 반복으로 세션 길이에 GPU 메모리가 비례하지 않는다. 상태20Hz, 실제 카메라 기본1simHz는 별도 스레드. 지연된 영상은 노출 시각 TF를 유지하고 clock/최신 joint_states를 되감지 않는다. observations.age_s는 최신 시뮬레이션 시각과 실제 노출 차이를 표시한다.
+- 최신 실제 DDS+GPU: 여섯 암 관절 동시 이동/리프트/그리퍼/기체 전진·후진/timeout/stop/잘못된 명령 거부/카메라 통과. 4400스텝19.9996sim초/20.0047wall초,6축 최대 목표 오차0.0001473rad, 활성 관통0. 앞선45초headless/9초GUI도 통과. 녹화 GUI는 손목 한 축 시험이며 최신6축 검증은 headless다.
+- ROS 실시간 실제 명령9900스텝을 기존 GPU 실행기로 다시 실행하여4950배치의 qpos/qvel/time 비트 일치. GUI/headless의 wall-clock 명령 도착은 달라질 수 있으므로 독립 입력의 궤적 일치 주장 아님. 연결 단절 시험은 실제0.08m/s 주행 중 브리지 종료 후 최대 속도0.000154미만/관통0/ros_disconnected 종료.
+- 온라인 입력free-Hz 정리 중 기본 프리셋60Hz가 과거 계획 재샘플링을 유발한 초기화 실패를 보존했다. 명시적220Hz 옵션과 조기 온라인 버퍼 검증으로 수정했다. 실험 `final_six_axis` 실패를 `final_six_axis_v2` 성공으로 덮어쓰지 않았다.
+- 원자료 `/root/farmily_runtime/newton/runs/20261111_ros2_control`, 검증 `nvidia-sim/validation/s300_ros2_control_20261111.json`, 실행/토픽 문서 `nvidia-sim/S300_NEWTON_ROS2_KO.md`. 영상 `ros2_control_live.mp4`(13px,실제wall-clock9.84초)와 전체원본 `gui_video/page@3835a254accb64cd2e1caf26083aeeec.webm`.5905는 ROS 제어 시작 대기 화면으로 전환했다.
+- 이 결과는 초기 로딩/자동 순회 플래너 대기 시간 해결이나 실제 모터 제어 완료가 아니다. ROS 액션 서버/MoveIt/하드웨어 드라이버/외부PC DDS는 별도 연결 단계다. 초기 수동 자세에서는 카메라에 로봇/구조물이 크게 보일 수 있으며 촬영 자세 역시 ROS 명령으로 지정한다.
+
+## 2026-11-11: Newton 순회 ROS 2 토픽 연동
 
 - 요청대로 기존 누적 작업 먼저 `b35858a`에 커밋했다. 같은 브랜치 `codex/s300-newton-standalone-20261108`에서 ROS 연동을 추가했다. 푸시는 요청하지 않아 하지 않았다.
 - `camera-patrol --ros2`: Python3.12 Newton GPU 물리는 그대로, 별도 Python3.10 ROS2 Humble 프로세스가 실제 관절/리프트/기체/TCP/TF/clock/RGB/depth/GT mask/CameraInfo/가시 객체/상태를 발행한다. domain42, namespace `/farmily/sim`. 제어 구독이나 하드웨어 드라이버 실행 없음.

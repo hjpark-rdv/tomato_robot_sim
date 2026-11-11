@@ -1,0 +1,317 @@
+{
+  "schema": "s300-ros2-control-validation-v1",
+  "date": "2026-11-11",
+  "base_commit": "d80c5e6",
+  "artifact_root": "/root/farmily_runtime/newton/runs/20261111_ros2_control",
+  "physics": "Existing Newton SolverMuJoCo / MuJoCo Warp CUDA with actuator control",
+  "modes": {
+    "ros_control": "Topic command authority",
+    "camera_patrol_ros2": "Automatic patrol with read-only telemetry"
+  },
+  "physics_hz": 220,
+  "control_graph_steps": 2,
+  "default_ros_domain_id": 42,
+  "trials": {
+    "headless": {
+      "path": "/root/farmily_runtime/newton/runs/20261111_ros2_control/commands_headless",
+      "passed": true,
+      "summary": {
+        "status": "completed",
+        "stop": "duration_limit",
+        "actual_steps": 9900,
+        "simulated_s": 45.00368118286133,
+        "wall_s": 45.004700555000454,
+        "camera_exposures": 45,
+        "maximum_active_penetration_m": 0.0,
+        "source_model_mjb_sha256": "1f79415ffc07007941023b02ab54d053ca1ba21d97734b44e4d22aa927f082ed"
+      },
+      "checks": [
+        {
+          "test": "arm",
+          "accepted_latency_s": 0.04325512703508139,
+          "first_motion_s": 0.34508799598552287,
+          "target_rad": -1.1688255500793456,
+          "actual_rad": -1.1689493656158447
+        },
+        {
+          "test": "lift_and_gripper",
+          "lift_m": 0.21987384557724,
+          "gap_m": 0.09598868736624717
+        },
+        {
+          "test": "base_forward_and_watchdog",
+          "start_m": 1.0448731018186663e-06,
+          "end_m": 0.12032320350408554,
+          "stopped_speed": 0.0006976178265176713
+        },
+        {
+          "test": "base_reverse",
+          "end_m": 0.07388214021921158
+        },
+        {
+          "test": "stop_latch",
+          "maximum_speed": 0.00444585457444191
+        },
+        {
+          "test": "invalid_limits_and_names",
+          "passed": true
+        },
+        {
+          "test": "live_camera",
+          "frames": 8,
+          "distinct_timestamps": 8
+        }
+      ],
+      "joint_timestamps_monotonic": false
+    },
+    "gui": {
+      "path": "/root/farmily_runtime/newton/runs/20261111_ros2_control/commands_gui",
+      "passed": true,
+      "summary": {
+        "status": "completed",
+        "stop": "operator_exit",
+        "actual_steps": 1980,
+        "simulated_s": 9.00014877319336,
+        "wall_s": 9.006495204987004,
+        "camera_exposures": 9,
+        "maximum_active_penetration_m": 0.0,
+        "source_model_mjb_sha256": "1f79415ffc07007941023b02ab54d053ca1ba21d97734b44e4d22aa927f082ed"
+      },
+      "checks": [
+        {
+          "test": "arm",
+          "accepted_latency_s": 0.14462135592475533,
+          "first_motion_s": 0.398568538017571,
+          "target_rad": -1.1688255500793456,
+          "actual_rad": -1.1690788269042969
+        },
+        {
+          "test": "lift_and_gripper",
+          "lift_m": 0.21970409154891968,
+          "gap_m": 0.09599656449258327
+        },
+        {
+          "test": "base_forward_and_watchdog",
+          "start_m": 9.507057256996632e-07,
+          "end_m": 0.12850502133369446,
+          "stopped_speed": 0.0006977735320106149
+        },
+        {
+          "test": "base_reverse",
+          "end_m": 0.08170032501220703
+        },
+        {
+          "test": "stop_latch",
+          "maximum_speed": 0.004256245214492083
+        },
+        {
+          "test": "invalid_limits_and_names",
+          "passed": true
+        },
+        {
+          "test": "live_camera",
+          "frames": 8,
+          "distinct_timestamps": 8
+        }
+      ],
+      "joint_timestamps_monotonic": true
+    },
+    "six_axis_final": {
+      "path": "/root/farmily_runtime/newton/runs/20261111_ros2_control/final_six_axis_v2",
+      "passed": true,
+      "summary": {
+        "status": "completed",
+        "stop": "duration_limit",
+        "actual_steps": 4400,
+        "simulated_s": 19.999561309814453,
+        "wall_s": 20.004725326085463,
+        "camera_exposures": 20,
+        "maximum_active_penetration_m": 0.0,
+        "source_model_mjb_sha256": "1f79415ffc07007941023b02ab54d053ca1ba21d97734b44e4d22aa927f082ed"
+      },
+      "checks": [
+        {
+          "test": "arm",
+          "accepted_latency_s": 0.04582831100560725,
+          "first_motion_s": 0.3357290958520025,
+          "target_rad": -1.1688255500793456,
+          "actual_rad": -1.1689728498458862,
+          "joint_names": [
+            "base",
+            "shoulder",
+            "elbow",
+            "wrist1",
+            "wrist2",
+            "wrist3"
+          ],
+          "targets_rad": [
+            -1.8777723169326783,
+            1.0224218273162842,
+            -2.218736162185669,
+            -0.3844792342185974,
+            -1.5607857608795166,
+            -1.1688255500793456
+          ],
+          "actual_rad_all_axes": [
+            -1.8777650594711304,
+            1.0224277973175049,
+            -2.2187340259552,
+            -0.3844604790210724,
+            -1.5608006715774536,
+            -1.1689728498458862
+          ]
+        },
+        {
+          "test": "lift_and_gripper",
+          "lift_m": 0.21987372636795044,
+          "gap_m": 0.09597117663919925
+        },
+        {
+          "test": "base_forward_and_watchdog",
+          "start_m": 1.032258751365589e-06,
+          "end_m": 0.12195969372987747,
+          "stopped_speed": 0.0007014957955107093
+        },
+        {
+          "test": "base_reverse",
+          "end_m": 0.07551847398281097
+        },
+        {
+          "test": "stop_latch",
+          "maximum_speed": 0.004428569693118334
+        },
+        {
+          "test": "invalid_limits_and_names",
+          "passed": true
+        },
+        {
+          "test": "live_camera",
+          "frames": 8,
+          "distinct_timestamps": 8
+        }
+      ],
+      "joint_timestamps_monotonic": true
+    }
+  },
+  "deterministic_same_command_replay": {
+    "passed": true,
+    "physical_steps": 9900,
+    "recorded_batches": 4950,
+    "qpos_qvel_time_bit_exact": true,
+    "replay_status": "completed"
+  },
+  "bridge_disconnect": {
+    "stop": "ros_disconnected",
+    "status": "physics_stopped",
+    "steps": 500,
+    "simulated_s": 2.2727253437042236,
+    "wall_s": 2.2718783270101994,
+    "final_q": [
+      0.08363592624664307,
+      0.18000009655952454,
+      -1.8927686214447021,
+      1.032432198524475,
+      -2.2287280559539795,
+      -0.3744787871837616,
+      -1.5707859992980957,
+      -1.2488256692886353,
+      -1.8458221973105537e-07,
+      -1.7907858307353308e-07
+    ],
+    "max_abs_velocity": 0.00015328169683925807,
+    "max_penetration_m": 0.0,
+    "before": {
+      "q": [
+        0.06024259701371193,
+        0.18000005185604095,
+        -1.8927788734436035,
+        1.0324056148529053,
+        -2.2287440299987793,
+        -0.3744787573814392,
+        -1.5707855224609375,
+        -1.2488254308700562,
+        1.0317838814444258e-06,
+        9.95460709418694e-07
+      ],
+      "v": [
+        0.07999996095895767,
+        -4.0366739995079115e-06,
+        -9.336037692264654e-06,
+        -6.988710083533078e-05,
+        -0.0001217680619447492,
+        -2.0239162040525116e-05,
+        -9.136159860645421e-06,
+        -6.6178813540318515e-06,
+        -1.1075807378801983e-05,
+        -1.0647560884535778e-05
+      ],
+      "time": 1.154544592
+    },
+    "passed": true
+  },
+  "browser": {
+    "errors": [],
+    "text": "Farmily camera patrol\n\nROS 제어 · 정지 유지\n\n기체 0.082m · 리프트 0.220m · 물리 8.7s\n\nROS_DOMAIN_ID=42 · /farmily/sim\n\n시작 자세\n\nROS 제어 중\nROS 제어 종료\n\n장착 카메라 · 현재 관측",
+    "video": "/root/farmily_runtime/newton/runs/20261111_ros2_control/gui_video/page@3835a254accb64cd2e1caf26083aeeec.webm",
+    "ready_video_offset": 43.422267984133214
+  },
+  "ready_ui": {
+    "errors": [],
+    "text": "Farmily camera patrol\n\n시작 자세: 엘보우 위\n\nROS 명령 제어 범위: 0 → 3.85m\n\n자세를 선택한 뒤 ROS 제어 시작을 누르세요.\n\n시작 자세\n\nROS 제어 시작\nROS 제어 종료",
+    "started": false
+  },
+  "video": {
+    "source": "/root/farmily_runtime/newton/runs/20261111_ros2_control/gui_video/page@3835a254accb64cd2e1caf26083aeeec.webm",
+    "output": "/root/farmily_runtime/newton/runs/20261111_ros2_control/ros2_control_live.mp4",
+    "source_trim_start_seconds": 40.0,
+    "speed_factor": 1.0,
+    "caption_font_px": 13,
+    "ready_wall_offset_in_browser_json": 43.422267984133214,
+    "trim_note": "Browser wall offset includes browser startup overhead; visual frame 41.0 s shows physics 0.9 s, so source 40.0 retains the beginning of live control.",
+    "camera_pip_note": "Manual initial camera pose sees mostly robot/white structure; camera view is not replaced.",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "9.840000",
+        "size": "578186"
+      }
+    },
+    "sha256": "79ff30ac86c6272c6e7294a191b8880d0017fbb6ade4552893392fc26571483f"
+  },
+  "preserved_failures": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261111_ros2_control/smoke",
+      "reason": "Initial input timeline descriptor missing; fixed"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261111_ros2_control/final_six_axis",
+      "reason": "Mismatched free-Hz preset caused resampling; fixed and early online buffer validation added"
+    }
+  ],
+  "limitations": [
+    "Same-host DDS only; external PC networking not verified",
+    "No physical robot drivers or FollowJointTrajectory action server",
+    "Manual commands do not perform autonomous planning or harvesting",
+    "GUI/headless command arrival steps differ; identical-input GPU replay checked separately",
+    "Real-time paced manual tests exclude initial loading and do not claim patrol planner speedup",
+    "Camera begins at model initial pose and can see the robot structure"
+  ],
+  "passed": true,
+  "regression_tests": {
+    "native_unittest": 37,
+    "ros_message_unittest": 3,
+    "passed": true,
+    "logs": [
+      "/root/farmily_runtime/newton/runs/20261111_ros2_control/ros_control_final_native.log",
+      "/root/farmily_runtime/newton/runs/20261111_ros2_control/ros_control_final_messages.log"
+    ]
+  }
+}

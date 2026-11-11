@@ -1,10 +1,93 @@
-# Newton 순회 시뮬레이터 → ROS 2
+# Newton GPU 시뮬레이터 ↔ ROS 2
 
-현재 Newton GPU 순회 실행에 **읽기 전용 ROS 2 Humble 데이터 발행**을 연결했다.
+현재 Newton GPU 시뮬레이터는 **ROS 명령 제어 모드**와 **자동 순회 + 상태 발행 모드**를 지원한다.
 관절, 기체/리프트 위치, TCP, TF, 시뮬레이션 시각, 장착 카메라 RGB·깊이·GT 마스크를 수신할 수 있다.
-ROS에서 로봇을 명령하는 기능은 이번 범위가 아니다. 기존 하드웨어 드라이버는 실행하지 않는다.
+실제 모터 드라이버는 실행하지 않는다. 아래 명령은 시뮬레이터의 실제 GPU actuator로 전달된다.
 
-## 실행
+## ROS 명령으로 로봇 움직이기
+
+자동 순회 대신 ROS가 명령을 결정하는 실행 모드다. 로봇암·기체·리프트·그리퍼를
+ROS 프로그램에서 제어하며 기존 Newton GPU 솔버와 actuator/충돌 검사를 사용한다.
+자동 수확 플래너가 외부 명령을 덮어쓰지 않는다.
+
+```bash
+cd /root/farmily_tomato
+./nvidia-sim/run_s300_newton.sh ros-control
+```
+
+5905 화면에서 자세를 선택하고 **ROS 제어 시작**을 누른다. 준비가 끝나면
+`명령 수신 중` 상태에서 기다린다. `--headless`는 화면 없이 바로 초기화한다.
+명령이 없어도 물리와 상태/카메라 토픽이 계속 실행된다. 기본 종료 시간 제한은 없고,
+`--seconds 60`은 준비 이후 wall-clock 60초 시험이다. `Ctrl+C` 또는 화면의
+`ROS 제어 종료`로 종료한다. 다른 실행이 5905를 사용 중이면 먼저 종료한다.
+
+다른 터미널에서 다음 명령들을 사용할 수 있다. 기본 domain42다.
+
+```bash
+cd /root/farmily_tomato
+
+# 로봇암 손목을 지정 각도(rad)까지 2초 동안 이동. 기본 엘보우 위 자세의 작은 시험 동작.
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \
+  "{joint_names: [wrist3], points: [{positions: [-1.17], time_from_start: {sec: 2}}]}"
+
+# 레일 정방향으로 0.06m/s 전진. Ctrl+C로 발행을 끊으면 감속해 정지.
+./nvidia-sim/run_s300_ros2.sh topic pub --rate 10 \
+  /farmily/sim/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.06}}"
+
+# 리프트 직동 관절의 절대 높이0.22m
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/lift/command std_msgs/msg/Float64 "{data: 0.22}"
+
+# 그리퍼 안쪽 간격96mm로 열기
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/gripper/command std_msgs/msg/Float64 "{data: 0.096}"
+
+# 진행 명령을 취소하고 정지 유지
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/stop std_msgs/msg/Bool "{data: true}"
+
+# 새 명령을 다시 허용. 취소된 이전 경로는 재개하지 않는다.
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/stop std_msgs/msg/Bool "{data: false}"
+
+# 수락/거절/완료/선점/타임아웃 및 실제 관절 피드백
+./nvidia-sim/run_s300_ros2.sh topic echo /farmily/sim/command_feedback
+./nvidia-sim/run_s300_ros2.sh topic echo /farmily/sim/joint_states
+```
+
+- `/arm_controller/joint_trajectory`는 `base, shoulder, elbow, wrist1, wrist2, wrist3` 중 이름으로 선택한 관절을 제어한다.
+- `/farmily/sim/joint_trajectory`는 같은 메시지로 전체 10축 중 일부/전부를 제어한다.
+  `root_joint`는 기체 레일 위치(m), `farmily_lift_height_joint`는 리프트(m), `jaw_L/R`은 좌우 직동 관절(m)이다.
+  현재 관절 이름/위치는 `joint_states`를 기준으로 사용한다. 이름 순서와 positions 순서를 맞춰야 한다.
+- 현재 기체는 레일1축 모델이다. `cmd_vel.linear.x` 양수=입구에서 전진, 음수=후진이며 월드Y 방향으로 움직인다.
+  나머지 linear/angular 성분은0이어야 한다. 평면 회전/횡이동을 지원하는 이동체 모델은 아니다.
+- `cmd_vel`은 기본 wall-clock0.5초 동안 새 메시지가 없으면 감속 정지한다(`--cmd-vel-timeout`).
+  단일 arm trajectory는 발행 노드가 종료돼도 지정 경로를 완료한다. ROS 브리지 연결 자체가 끊기면 모든 축의 진행 명령을 취소하고 정지한다.
+- 유효 범위: 기체0..등록 종점(기본3.85m), 리프트0..0.75m, 그리퍼 간격0.028..0.096m.
+  기체/리프트 속도 최대0.12m/s, 가속도0.3m/s² 등 기존 시뮬레이션 명령 한도를 유지한다. 실제 기구 한도 인증값은 아니다.
+- `JointTrajectory`는 positions 필수, 선택적 velocities/accelerations를 받는다. positions만 있으면 각 점에서 정지하는 quintic 보간,
+  velocity까지 있으면 cubic, acceleration도 있으면 quintic이다. 전체 구간의 위치/속도/가속도 극값을 검사한다.
+  잘못된 이름/NaN/범위 초과/너무 짧은 이동 시간/effort 명령은 거절한다. 마지막 점은 정지 상태여야 한다.
+  최대512점/300초 경로, header stamp0은 즉시 시작이며 지정 stamp는 `/clock` 기준이다.
+- 완료 판정은 보낸 목표만 보는 것이 아니라 실제 GPU 관절 위치·속도의 도달 여부를 확인한다.
+  이 토픽은 충돌 없는 경로를 생성하는 OMPL/MoveIt 플래너 자체가 아니다. 주줄기/기체 접촉의 기존1mm 검사와 solver 유효성 검사는 유지된다.
+- `command_feedback` JSON은 최근64개 이벤트를 포함한다. 이벤트 번호로 중복을 제거하면 된다.
+  실행 폴더 `commands.jsonl`에는 전체 판정이 기록되고 `states.jsonl`에는 실제 관절 상태/목표가 기록된다.
+
+카메라는 이 모드에서 기본 시뮬레이션1Hz(`--camera-hz`,0이면 끔)로 실제 RGB-D/GT를 촬영한다.
+물리와 별도 작업 스레드로 촬영하며 노출 시각의 TF와 함께 발행한다. 렌더 지연이 있어도
+`/clock`이나 최신 `joint_states`를 과거 시각으로 되돌리지 않는다. GUI는30Hz, 관절/TF는 기본20Hz 목표다.
+물리 계산은220Hz이며 GPU 기록 버퍼는2스텝으로 재사용하므로 세션 길이에 비례해 GPU 메모리를 늘리지 않는다.
+초기 자세는 모델의 시작 자세다. 자동 순회의 촬영 자세로 임의 이동하지 않으므로 처음에는
+카메라에 로봇/구조물이 크게 보일 수 있다. 원하는 관측 자세도 ROS 관절 명령으로 지정한다.
+`observations.timestamp_s`는 노출 시각, `current_timestamp_s`는 브리지가 알고 있는 최신 시뮬레이션 시각,
+`age_s`는 두 시각의 차이다. `/clock`과 비교하면 구독 시점의 추가 지연도 확인할 수 있다.
+
+ROS 제어 예제는 현재 위치를 확인한 뒤 사용한다. `JointTrajectory` 토픽 입력을 지원하며,
+MoveIt/ros2_control의 `FollowJointTrajectory` 액션 서버나 실제 모터 드라이버 연결까지 구현한 것은 아니다.
+
+## 자동 순회 + 상태 발행 실행
 
 저장소 `/root/farmily_tomato`에서 최초 1회:
 
@@ -66,7 +149,7 @@ namespace 변경은 실행기 `--ros-namespace`, inspector `--namespace`로 맞�
 
 카메라·관측·CameraInfo·clock은 **best effort**, 깊이 2다. 이미지 구독자는
 `qos_profile_sensor_data` 또는 `BEST_EFFORT` QoS를 사용한다.
-관절·TCP·TF는 reliable, labels/status는 reliable + transient local이다.
+관절·TCP·TF는 reliable, labels/status/command_feedback는 reliable + transient local이다. 제어 명령 구독은 reliable/volatile이다.
 
 ```bash
 ./nvidia-sim/run_s300_ros2.sh topic echo /farmily/sim/camera/camera_info \
@@ -80,11 +163,11 @@ optical 축은 x 오른쪽, y 아래쪽, z 전방이다. 외부 노드의 시뮬
 메시지 의미는 ROS 공식 [Image 정의](https://github.com/ros2/common_interfaces/blob/humble/sensor_msgs/msg/Image.msg)와
 [CameraInfo 정의](https://github.com/ros2/common_interfaces/blob/humble/sensor_msgs/msg/CameraInfo.msg)를 따른다.
 
-주기적 관절/TF 표본은 기본 시뮬레이션 10Hz(`--ros-state-hz`, 최대 설정 60Hz)이며
+자동 순회의 주기적 관절/TF 표본은 기본 시뮬레이션 10Hz(`--ros-state-hz`, 최대 설정 60Hz)이며
 노출 시각과 구간 경계 표본이 추가된다. 최초 t=0은 입력 초기 자세이고, 이후 표본은 GPU 실행에서 읽은 실제 상태다.
 계획·카메라 준비 때문에 물리가 멈춘 동안 clock을 임의로 전진시키지 않는다.
 
-**카메라는 기존 실제 촬영 이벤트에서만 발행한다. 고정 30FPS 스트림이 아니다.**
+**자동 순회의 카메라는 기존 실제 촬영 이벤트에서만 발행한다. 고정 30FPS 스트림이 아니다.**
 기존 순회의 이동 중 관측과 정차 촬영을 사용하므로 촬영 사이에는 이미지가 오지 않는다.
 새 타임스탬프를 붙여 과거 프레임을 반복하지 않고 추가 렌더도 하지 않는다.
 기본 출력은 240×320이며 실제 크기/K는 CameraInfo를 기준으로 사용한다.
@@ -107,12 +190,16 @@ Newton GPU 순회 (기존 Python 3.12)
   → 개수 제한된 비동기 Unix socket 전송
   → ROS 2 Humble 발행 프로세스 (/usr/bin/python3, Python 3.10)
   → DDS 토픽 구독
+
+ROS 제어 모드: DDS 명령 → 별도 ROS 프로세스 → 순서가 보존되는 제한 길이 명령 큐
+  → 이름·범위·속도·가속도 검증 → 기존 GPU actuator → 실제 상태 피드백
 ```
 
 rclpy를 Newton 가상환경에 넣지 않는다. 별도 ROS 프로세스가 DDS 처리를 맡는다.
 느린 구독/전송 때문에 상태를 무한히 쌓지 않으며 데이터 종류마다 가장 최근 대기 표본만 유지한다.
 합쳐진 표본 수는 실행 폴더 `ros2/transport.json`의 `dropped`에 기록한다.
-구독 지연·ROS 런타임 연결 종료는 경고/보고서로 남기고 GPU 물리를 계속 진행한다.
+자동 순회에서는 구독 지연·ROS 런타임 연결 종료를 경고/보고서로 남기고 GPU 물리를 계속 진행한다.
+ROS 제어 모드에서는 브리지 단절 시 모든 명령을 취소하고 감속 정지 후 실행을 끝낸다.
 ROS 초기화 자체가 실패한 경우에는 START 뒤 오류를 명시한다.
 물리 솔버, 초기값, 입력 명령, 수확 판정, 충돌 정책은 바꾸지 않는다.
 
@@ -125,7 +212,31 @@ DDS discovery와 데이터 통신이 PC↔서버/컨테이너 사이에서 가�
 이번 검증은 **같은 호스트에서 실제 DDS 구독**까지이며 외부 PC 네트워크 수신은 검증하지 않았다.
 독립 시뮬레이션 여러 개를 동시에 실행할 때는 각각 다른 domain을 써서 전역 `/clock` 충돌을 피한다.
 
-## 2026-11-11 검증
+## 2026-11-11 ROS 명령 제어 검증
+
+- 기존 GPU actuator를 통해 실제 관절을 구동했다. 목표를 화면에만 적용하거나 qpos를 강제로 쓰지 않았다.
+- 최신 headless 시험: 여섯 관절 동시 이동, 리프트/그리퍼 동시 제어, 기체 전진/후진,
+  속도 발행 중단 후 감속, 정지 유지/해제, 잘못된 이름/범위 거절, 실제 카메라 발행을 모두 통과했다.
+  4,400스텝/19.9996sim초/20.0047wall초, 카메라20노출, 활성 관통0이었다.
+- 앞선 headless45초와 GUI9초 시험에서도 같은 제어 항목을 통과했다(이때 arm 시험은 손목 한 축).
+  명령 수락 관측은 각각 약43ms/145ms였다. DDS·GUI 부하에 따른 단일 표본이며 최악 지연 보장은 아니다.
+- ROS 실시간 실행에서 기록한9,900스텝의 실제 actuator 명령을 기존 GPU 실행기에 다시 넣었을 때,
+  4,950개 배치 경계의 qpos/qvel/time이 비트 단위로 일치했다.
+  GUI/headless에서 wall-clock으로 보내는 명령의 도착 스텝은 달라질 수 있으므로 두 시험의 궤적이 같다고 주장하지 않는다.
+- 실제 기체0.08m/s 이동 중 테스트 ROS 브리지 프로세스를 종료했다. 명령을 취소하고 감속하여
+  최종 최대 관절 속도0.000154미만, `ros_disconnected`로 정상적으로 실행을 끝냈다. 활성 관통0.
+- 시작 설정의 free-Hz가 다른 경우 온라인 버퍼를 과거 계획으로 재샘플링하려던 초기화 실패도 보존했다.
+  입력/옵션 모두220Hz로 고정하고, 온라인 모드의 재샘플링을 초기 검사에서 거절하도록 수정했다.
+- 초기 모델·카메라 로딩 시간은 위 실행 시간에 포함하지 않았다. ROS 명령 제어 시험이며 자동 순회의
+  경로 계획 대기·전체 수확 속도를 해결했다는 결과가 아니다. 현재 물리/기하학적 수확 정책을 유지한다.
+- 실제 하드웨어, 외부 PC DDS 통신, ROS 액션 서버는 이번 시험 범위가 아니다.
+- 최종 회귀: native unittest37개와 ROS 메시지 unittest3개 통과. 로컬 colcon 빌드 및 의존성 검사 통과.
+- 검증: `nvidia-sim/validation/s300_ros2_control_20261111.json`.
+- 원자료: `/root/farmily_runtime/newton/runs/20261111_ros2_control`.
+- 영상: `ros2_control_live.mp4`(실제 GUI wall-clock,13px 자막). 초기 로딩을 자른 원본 속도의9.84초이며
+  원본 전체 기록은 `gui_video/page@3835a254accb64cd2e1caf26083aeeec.webm`이다.
+
+## 2026-11-11 자동 순회 텔레메트리 검증
 
 - 기존 작업 보존 커밋: `b35858a`.
 - 동일 초기 모델·명령으로 headless ROS OFF/ON 각각 새 실행: 4개 구간,

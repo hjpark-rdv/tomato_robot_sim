@@ -15,7 +15,7 @@ case "$mode" in
     exec /usr/bin/colcon build --packages-select farmily_newton_bridge --symlink-install "$@"
     ;;
   check)
-    exec /usr/bin/python3 -c 'import rclpy,numpy; from sensor_msgs.msg import Image,CameraInfo,JointState; from tf2_msgs.msg import TFMessage; from rosgraph_msgs.msg import Clock; print("ROS 2 telemetry dependencies ready")'
+    exec /usr/bin/python3 -c 'import rclpy,numpy; from sensor_msgs.msg import Image,CameraInfo,JointState; from tf2_msgs.msg import TFMessage; from rosgraph_msgs.msg import Clock; from trajectory_msgs.msg import JointTrajectory; print("ROS 2 telemetry/control dependencies ready")'
     ;;
   bridge)
     # Source invocation also works before colcon install. No rclpy is imported

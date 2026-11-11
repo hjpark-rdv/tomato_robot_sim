@@ -17,6 +17,7 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh standalone [INPUTS] [--headless] [runner options]' \
     '       run_s300_newton.sh prepare-standalone [OUTPUT] [builder options]' \
     '       run_s300_newton.sh camera-patrol [ASSETS] [--headless] [--ros2] [patrol options]' \
+    '       run_s300_newton.sh ros-control [ASSETS] [--headless] [ROS control options]' \
     '       run_s300_newton.sh render-patrol RUN --output VIDEO.mp4 [--fps 6]' \
     '       run_s300_newton.sh prepare-patrol OUTPUT [--end-station METRES]' \
     '       run_s300_newton.sh prepare-route REFERENCE_ASSETS OUTPUT --end-station METRES' \
@@ -70,12 +71,14 @@ case "$mode" in
     asset_python="${S300_ASSET_PYTHON:-$task_dir/.asset-venv/bin/python}"
     exec env -u PYTHONPATH "$asset_python" -u "$scripts/prepare_static_patrol_route.py" "$@"
     ;;
-  camera-patrol)
+  camera-patrol|ros-control)
     runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"
     patrol_assets="${S300_NEWTON_PATROL_ASSETS:-$runtime/assets/patrol_current}"
     if (($#)) && [[ "$1" != -* ]]; then patrol_assets="$1"; shift; fi
-    exec env -u PYTHONPATH "$python" -u "$scripts/run_newton_camera_patrol.py" "$patrol_assets" \
-      --output "$runtime/runs/$(date +%Y%m%d_%H%M%S)_camera_patrol" "$@"
+    patrol_script="$scripts/run_newton_camera_patrol.py"
+    if [[ "$mode" == 'ros-control' ]]; then patrol_script="$scripts/run_newton_ros_control.py"; fi
+    exec env -u PYTHONPATH "$python" -u "$patrol_script" "$patrol_assets" \
+      --output "$runtime/runs/$(date +%Y%m%d_%H%M%S)_$mode" "$@"
     ;;
   prepare-standalone)
     runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"

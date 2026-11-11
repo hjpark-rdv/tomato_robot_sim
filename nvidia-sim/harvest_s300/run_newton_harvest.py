@@ -81,7 +81,7 @@ def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report
     return staged_model, cache_evidence, {name: verified[name] for name in files}
 
 
-def run(args, *, session_cache=None, verification_context=None, progress_callback=None):
+def run(args, *, session_cache=None, verification_context=None, progress_callback=None, online_session=None):
     started = time.perf_counter()
     setup_marks={};setup_last=started
     def setup_mark(name):
@@ -119,6 +119,36 @@ def run(args, *, session_cache=None, verification_context=None, progress_callbac
         metadata = (verification_context.readonly_json(p/'source_export.json') if verification_context is not None
                     else json.loads((p/'source_export.json').read_text()))
         metadata = dict(metadata, released_gutter_diagnostic=bool(getattr(args, 'released_gutter_diagnostic', False)))
+        if online_session is not None:
+            if (args.worlds!=1 or args.backend!='gpu' or args.gui or args.publish_live
+                    or args.adaptive_hz or args.recording!='summary' or not args.native_observables_only
+                    or metadata.get('active_window',{}).get('all_plants_static') is not True):
+                raise ValueError('Online ROS control requires one static-plant GPU world, bounded summary buffers and external display')
+            # A preset frequency mismatch must never regenerate the saved patrol
+            # plan in place of the live command buffer. Reject it before model
+            # loading, solver creation, or any prerecorded-plan resampling.
+            online_hz = float(sampling_description.get('hz', float('nan')))
+            if (not np.isfinite(online_hz) or online_hz<=0
+                    or sampling_description.get('free_hz')!=online_hz
+                    or (args.hz is not None and args.hz!=online_hz)
+                    or (args.free_hz is not None and args.free_hz!=online_hz)
+                    or args.belt_hold_hz is not None):
+                raise ValueError('Online ROS control forbids schedule resampling; requested Hz/free-Hz must match the fixed prepared buffer')
+            edges = np.asarray(timeline.get('time_edges', []), dtype=float)
+            expected_steps = args.batch
+            expected_shape = (expected_steps, len(initial['robot_qpos_addresses']))
+            if (sampling_description.get('online_control') is not True
+                    or sampling_description.get('buffer_steps')!=expected_steps
+                    or expected_steps<1 or expected_steps%2 or args.no_graph
+                    or np.shape(timeline.get('command'))!=expected_shape
+                    or np.shape(timeline.get('time'))!=(expected_steps,)
+                    or np.shape(timeline.get('dt'))!=(expected_steps,)
+                    or edges.shape!=(expected_steps+1,)
+                    or not np.isfinite(edges).all()
+                    or not np.allclose(np.diff(edges), 1./online_hz, rtol=0., atol=1e-12)
+                    or not np.allclose(timeline['dt'], 1./online_hz, rtol=0., atol=1e-12)
+                    or not np.allclose(timeline['time'], edges[1:], rtol=0., atol=1e-12)):
+                raise ValueError('Online ROS control requires one fixed-size prepared CUDA graph buffer')
         continuation_identity = model_identity(initial, metadata)
         resume_state = None
         inherited_breaks = []
@@ -177,6 +207,8 @@ def run(args, *, session_cache=None, verification_context=None, progress_callbac
         steps = len(timeline['time'])
         if args.seconds is not None and adaptive is None:
             steps = min(steps, int(np.searchsorted(edges, args.seconds+1e-9, side='right')-1))
+        if online_session is not None and steps!=args.batch:
+            raise ValueError('Online ROS control cannot truncate its fixed command buffer')
         if steps <= 0:
             raise ValueError('At least one physics step required')
         if args.batch < 1 or args.batch % 2:
@@ -541,6 +573,14 @@ def run(args, *, session_cache=None, verification_context=None, progress_callbac
             record_stride=stride, unrecorded_warmup_steps=0, setup_wall_s=time.perf_counter()-started,
             setup_sections_wall_s=setup_marks)
         write(out/'summary.json', report)
+        if online_session is not None:
+            if steps!=args.batch or len(graphs)!=1 or args.no_graph:
+                raise ValueError('Online control requires exactly one fixed-size CUDA graph buffer')
+            result=online_session.run(engine,ctrl,next(iter(graphs.values())),float(durations[0]),
+                args.batch,initial,report,nonfinite,packed_status,
+                [x for x in (linear_backend,inertia_backend,fixed_reductions) if x is not None])
+            write(out/'summary.json',result)
+            return result
         if args.interactive_viewer:
             report.update(status='waiting_for_start', actual_steps=0,
                 simulated_s=float(d.time.numpy()[0]), interactive_viewer=True,

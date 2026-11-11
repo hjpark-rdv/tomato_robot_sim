@@ -38,7 +38,7 @@ def image_message(array, encoding, timestamp, frame):
 
 
 class Bridge(Node):
-    def __init__(self, namespace):
+    def __init__(self, namespace, command_sink=None):
         super().__init__('newton_bridge', namespace=namespace)
         self.prefix = namespace.strip('/')
         self.sensor_qos = QoSProfile(depth=2, reliability=ReliabilityPolicy.BEST_EFFORT)
@@ -56,21 +56,26 @@ class Bridge(Node):
                               ('instance','instance/image_raw'),('semantic','semantic/image_raw'),
                               ('recognition','recognition/image_raw')]}
         self.last_time = -1.; self.counts = {}; self.error = None
+        if command_sink is not None:
+            from .commands import attach
+            self.command_feedback=self.create_publisher(String,'command_feedback',retained)
+            attach(self,command_sink)
 
     def frame(self, name):return self.prefix+'/'+name
 
-    def publish_packet(self, data, arrays):
+    def publish_packet(self, data, arrays, *, exposure_state=False):
         kind = data['kind']; self.counts[kind] = self.counts.get(kind,0)+1
         if kind == 'labels':
             self.labels.publish(String(data=json.dumps(data['labels'],allow_nan=False)));return
         timestamp = stamp(data['time'])
-        if data['time'] < self.last_time-1e-9:raise ValueError('Telemetry clock moved backwards')
+        delayed=data['time'] < self.last_time-1e-9
+        if delayed and kind!='camera' and not exposure_state:raise ValueError('Telemetry clock moved backwards')
         self.last_time = max(self.last_time,data['time'])
-        self.clock.publish(Clock(clock=timestamp))
+        if not delayed:self.clock.publish(Clock(clock=timestamp))
         if kind == 'state':
             msg = JointState(); msg.header.stamp=timestamp; msg.header.frame_id=self.frame('world')
             msg.name=data['joint_names']; msg.position=data['positions']; msg.velocity=data['velocities']
-            self.joints.publish(msg)
+            if not (exposure_state and delayed):self.joints.publish(msg)
             transforms=[]
             for row in data['transforms']:
                 t=TransformStamped();t.header.stamp=timestamp;t.header.frame_id=self.frame(row['parent'])
@@ -82,11 +87,11 @@ class Bridge(Node):
             pose=PoseStamped();pose.header=msg.header
             pose.pose.position.x,pose.pose.position.y,pose.pose.position.z=data['tool_pose'][:3]
             pose.pose.orientation.x,pose.pose.orientation.y,pose.pose.orientation.z,pose.pose.orientation.w=data['tool_pose'][3:]
-            self.tool.publish(pose)
+            if not (exposure_state and delayed):self.tool.publish(pose)
         elif kind == 'camera':
             # Preserve an exact exposure-time TF even if intermediate state
             # samples were coalesced while the subscriber/transport was slow.
-            self.publish_packet(data['state'],{})
+            self.publish_packet(data['state'],{},exposure_state=True)
             frame=self.frame('camera_optical_frame')
             encodings={'rgb':'rgb8','recognition':'rgb8','depth_m':'32FC1','instance':'32SC1','semantic':'mono8'}
             for key,pub in self.images.items():
@@ -101,11 +106,14 @@ class Bridge(Node):
             info.d=[0.]*5;info.k=k.ravel().tolist();info.r=np.eye(3).ravel().tolist()
             info.p=np.column_stack((k,np.zeros(3))).ravel().tolist();self.info.publish(info)
             visible=copy.deepcopy(obs)
+            visible['current_timestamp_s']=self.last_time
+            visible['age_s']=max(0.,self.last_time-data['time'])
             for item in visible.get('objects',[]):
                 item['source_instance_id']=item['instance_id']
                 item['instance_id']=ros_instance_id(item['instance_id'])
             self.observations.publish(String(data=json.dumps(visible,allow_nan=False)))
         elif kind == 'status':self.status.publish(String(data=json.dumps(data['status'],allow_nan=False)))
+        elif kind == 'control_feedback':self.command_feedback.publish(String(data=json.dumps(data['feedback'],allow_nan=False)))
         else:raise ValueError('Unknown telemetry packet '+kind)
 
 
@@ -113,11 +121,18 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--socket',required=True);parser.add_argument('--namespace',default='/farmily/sim')
     parser.add_argument('--report',type=Path,required=True)
+    parser.add_argument('--control',action='store_true')
     args,ros_args=parser.parse_known_args();rclpy.init(args=ros_args)
-    node=Bridge(args.namespace);sock=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
+    sock=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
+    sock.connect(args.socket)
+    forwarder=None
+    if args.control:
+        from .commands import CommandForwarder
+        forwarder=CommandForwarder(sock)
+    node=Bridge(args.namespace,None if forwarder is None else forwarder.submit)
     stop=threading.Event();inbox=queue.Queue(maxsize=4);failure=[]
     try:
-        sock.connect(args.socket);sock.sendall(encode(dict(kind='ready')))
+        sock.sendall(encode(dict(kind='ready')))
         def reader():
             try:
                 while not stop.is_set():
@@ -136,6 +151,7 @@ def main():
     except Exception as error:
         failure.append(repr(error));raise
     finally:
+        if forwarder is not None:forwarder.closed.set()
         stop.set();sock.close()
         args.report.write_text(json.dumps(dict(published=node.counts,last_simulation_time=node.last_time,
             errors=failure,namespace=args.namespace),indent=2)+'\n')

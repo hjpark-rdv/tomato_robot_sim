@@ -46,6 +46,16 @@ class MessageTests(unittest.TestCase):
         self.assertTrue((np.frombuffer(bytes(node.images['instance'].messages[0].data),'<i4')==-1).all())
         item=json.loads(node.observations.messages[0].data)['objects'][0]
         self.assertEqual(item,dict(instance_id=-1,source_instance_id=4294967295))
+        clocks=len(node.clock.messages);joints=len(node.joints.messages)
+        node.last_time=3.
+        node.publish_packet(data,images)
+        self.assertEqual(len(node.clock.messages),clocks)
+        self.assertEqual(len(node.joints.messages),joints)
+        self.assertEqual(node.images['rgb'].messages[-1].header.stamp,stamp(2.5))
+        self.assertEqual(node.last_time,3.)
+        delayed=json.loads(node.observations.messages[-1].data)
+        self.assertEqual(delayed['current_timestamp_s'],3.)
+        self.assertEqual(delayed['age_s'],.5)
         with self.assertRaisesRegex(ValueError,'backwards'):node.publish_packet(dict(kind='state',time=1.),{})
 
 

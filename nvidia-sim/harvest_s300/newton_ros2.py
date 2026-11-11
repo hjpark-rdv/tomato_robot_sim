@@ -1,6 +1,7 @@
-"""Optional, bounded, read-only live ROS transport; all DDS work stays outside Newton."""
+"""Bounded ROS telemetry and optional command transport; DDS stays outside Newton."""
 from collections import Counter
 import copy
+from collections import deque
 import json
 import os
 from pathlib import Path
@@ -46,7 +47,7 @@ class LatestSender:
                 self.sock.sendall(encode(message,arrays));self.sent[key]+=1
         except Exception as error:
             self.error=repr(error)
-            print('ROS 2 telemetry disconnected; physics continues: '+self.error,file=sys.stderr,flush=True)
+            print('ROS 2 transport disconnected: '+self.error,file=sys.stderr,flush=True)
 
     def close(self):
         with self.condition:self.closed=True;self.condition.notify()
@@ -57,7 +58,7 @@ class LatestSender:
 
 
 class PatrolROS2:
-    def __init__(self,model,initial,mount,camera_body,assets,output,*,rate=10.,domain=42,namespace='/farmily/sim'):
+    def __init__(self,model,initial,mount,camera_body,assets,output,*,rate=10.,domain=42,namespace='/farmily/sim',control=False):
         self.model=model;self.data=mj.MjData(model);self.mount=mount;self.camera_body=camera_body
         self.rate=rate;self.last_state=-1.;self.last_time=0.;self.closed=False
         self.qadr=np.array(initial['robot_qpos_addresses']);self.vadr=np.array(initial['robot_dof_addresses'])
@@ -72,7 +73,7 @@ class PatrolROS2:
         self.log=(self.output/'bridge.log').open('w')
         env=dict(os.environ,S300_ROS_DOMAIN_ID=str(domain));env.pop('PYTHONPATH',None);env.pop('VIRTUAL_ENV',None)
         self.process=subprocess.Popen(['bash',str(ROOT/'nvidia-sim/run_s300_ros2.sh'),'bridge',
-            '--socket',path,'--namespace',namespace,'--report',str(self.output/'publisher.json')],
+            '--socket',path,'--namespace',namespace,'--report',str(self.output/'publisher.json')]+(['--control'] if control else []),
             stdout=self.log,stderr=subprocess.STDOUT,env=env)
         try:
             connection,_=server.accept();connection.settimeout(5.)
@@ -82,6 +83,7 @@ class PatrolROS2:
             self.process.terminate();self.process.wait(timeout=5);self.log.close();self.temp.cleanup();raise
         finally:server.close()
         self.sender=LatestSender(connection)
+        self.commands=CommandInbox(connection) if control else None
         catalog=json.loads((Path(assets)/'sensor_catalog.json').read_text())
         from mounted_gt import CLASSES
         fields=('key','class_name','class_id','plant','truss','source_name','red_proxy','authored_rgb')
@@ -93,7 +95,7 @@ class PatrolROS2:
         self.config=dict(namespace=namespace,ros_domain_id=domain,state_periodic_hz=rate,
             extra_state_samples='Actual camera exposures and phase boundaries',
             camera_rate='Existing actual exposure events only; no additional rendering or fresh-stamped repeats',
-            read_only=True,physics_control_subscriptions=False,transport='bounded latest-slot Unix socket',
+            read_only=not control,physics_control_subscriptions=control,transport='bounded latest-slot Unix socket',
             ros_python='/usr/bin/python3',clock='/clock',camera_frame=namespace.strip('/')+'/camera_optical_frame')
         (self.output/'config.json').write_text(json.dumps(self.config,indent=2)+'\n')
 
@@ -118,22 +120,29 @@ class PatrolROS2:
             velocities=np.asarray(qvel)[self.vadr].astype(float).tolist(),transforms=transforms,
             tool_pose=np.r_[self.data.xpos[tool],self.data.xquat[tool][[1,2,3,0]]].tolist())
         self.sender.put(self.latest_state)
+        return self.latest_state
 
-    def camera(self,observation,images):
-        self.last_time=float(observation['timestamp_s'])
-        if abs(self.latest_state['time']-self.last_time)>1e-9:raise ValueError('Camera and measured ROS state must share the exposure time')
+    def camera(self,observation,images,*,state=None):
+        timestamp=float(observation['timestamp_s']);self.last_time=max(self.last_time,timestamp)
+        state=self.latest_state if state is None else state
+        if abs(state['time']-timestamp)>1e-9:raise ValueError('Camera and measured ROS state must share the exposure time')
         keys=('rgb','depth_m','instance','semantic','recognition')
-        self.sender.put(dict(kind='camera',time=self.last_time,observation=copy.deepcopy(observation),state=self.latest_state),
+        self.sender.put(dict(kind='camera',time=timestamp,observation=copy.deepcopy(observation),state=state),
                         {key:images[key] for key in keys})
+
+    def feedback(self,value):
+        self.sender.put(dict(kind='control_feedback',time=self.last_time,feedback=copy.deepcopy(value)))
 
     def status(self,report):
         keys=('status','reason','error','last_station_m','completed_harvest_motions',
-              'assumed_harvest_count','physics_clock_s','harvest_mode')
+              'assumed_harvest_count','physics_clock_s','harvest_mode','stop','control_mode','simulated_s')
         self.sender.put(dict(kind='status',time=self.last_time,status={k:report[k] for k in keys if k in report}))
 
     def close(self):
         if self.closed:return
-        self.closed=True;self.sender.close()
+        self.closed=True
+        if self.commands:self.commands.closed=True
+        self.sender.close()
         try:self.process.wait(timeout=5.)
         except subprocess.TimeoutExpired:self.process.terminate();self.process.wait(timeout=5.)
         report=dict(self.config,sent=dict(self.sender.sent),dropped=dict(self.sender.dropped),
@@ -141,3 +150,27 @@ class PatrolROS2:
         (self.output/'transport.json').write_text(json.dumps(report,indent=2)+'\n')
         self.log.close();self.temp.cleanup()
         return report
+
+
+class CommandInbox:
+    """Bounded reverse transport; a lost ROS process is visible to the controller."""
+    def __init__(self,sock):
+        self.sock=sock;self.pending=deque();self.lock=threading.Lock();self.closed=False;self.error=None
+        self.thread=threading.Thread(target=self.run,daemon=True,name='ros2-commands');self.thread.start()
+
+    def run(self):
+        try:
+            while not self.closed:
+                try:message,arrays=receive(self.sock)
+                except socket.timeout:continue
+                if message.get('kind')!='command' or arrays:raise ValueError('Invalid control packet')
+                with self.lock:
+                    if message['command_type']=='stop' and message['value']:self.pending.clear()
+                    if len(self.pending)>=64:raise ValueError('Command intake overflow')
+                    self.pending.append(message)
+        except Exception as error:
+            if not self.closed:self.error=repr(error)
+
+    def drain(self):
+        with self.lock:
+            result=list(self.pending);self.pending.clear();return result
