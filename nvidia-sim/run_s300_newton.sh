@@ -16,7 +16,7 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh row-realtime [PREPARED_ROUTE] [row runner options]' \
     '       run_s300_newton.sh standalone [INPUTS] [--headless] [runner options]' \
     '       run_s300_newton.sh prepare-standalone [OUTPUT] [builder options]' \
-    '       run_s300_newton.sh camera-patrol [ASSETS] [--headless] [patrol options]' \
+    '       run_s300_newton.sh camera-patrol [ASSETS] [--headless] [--ros2] [patrol options]' \
     '       run_s300_newton.sh render-patrol RUN --output VIDEO.mp4 [--fps 6]' \
     '       run_s300_newton.sh prepare-patrol OUTPUT [--end-station METRES]' \
     '       run_s300_newton.sh prepare-route REFERENCE_ASSETS OUTPUT --end-station METRES' \
@@ -34,6 +34,7 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     'row-realtime reuses the one-bed route runner: current plant elastic, other plants fixed with colliders, released fruit dynamic; 220/60 Hz and unchanged contact policy. Segment preparation/loading is separate from loop RTF.' \
     'standalone uses the same GPU-realtime physics with a live Viser browser at port8091. Press START; repeat without reloading the scene. Minimal logs by default; --recording full enables optional state archives.' \
     'prepare-standalone rebuilds reusable local inputs from source USD/GLB using .asset-venv. No old trial states or NAS are required.' \
+    'camera-patrol --ros2 publishes measured joints, TF, clock and actual RGB-D/GT exposures on ROS_DOMAIN_ID42; see S300_NEWTON_ROS2_KO.md.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
     'GPU single-world full GUI/headless equivalence passed; the original 400/60 Hz presets remain below the contact-phase realtime target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \

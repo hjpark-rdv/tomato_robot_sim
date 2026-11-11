@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>farmily_newton_bridge</name><version>0.1.0</version>
+  <description>Read-only live Newton telemetry and RGB-D ground truth for ROS 2.</description>
+  <maintainer email="user@example.com">farmily</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend><exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend><exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend><exec_depend>std_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <test_depend>python3-pytest</test_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>

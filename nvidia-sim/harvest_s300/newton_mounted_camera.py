@@ -97,7 +97,7 @@ class MountedCamera:
         self.ids=self.sensor.allocate_image_shape_index(1,self.width,self.height)
         self.setup_wall_s=time.perf_counter()-started
 
-    def capture(self, body_poses, camera_body_name, timestamp, *, output=None, station=None):
+    def capture(self, body_poses, camera_body_name, timestamp, *, output=None, station=None, include_raw=False):
         started=time.perf_counter()
         missing=set(self.body_names)-body_poses.keys()
         if missing:raise ValueError('Measured camera scene body poses missing: '+str(sorted(missing)[:5]))
@@ -138,4 +138,6 @@ class MountedCamera:
             Image.fromarray(rgb).save(output/'rgb.png');rec.save(output/'recognition.png');trip.save(output/'camera.png')
             np.savez_compressed(output/'rgbd_gt.npz',depth_m=depth,instance=instance,semantic=semantic)
             (output/'observation.json').write_text(json.dumps(observation,indent=2,allow_nan=False)+'\n')
-        return observation,dict(rgb=rgb,recognition=np.asarray(rec),depth_overlay=np.asarray(dep))
+        images=dict(rgb=rgb,recognition=np.asarray(rec),depth_overlay=np.asarray(dep))
+        if include_raw:images.update(depth_m=depth,instance=instance,semantic=semantic)
+        return observation,images

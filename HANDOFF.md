@@ -1,3 +1,12 @@
+## 2026-11-11 최신: Newton 순회 ROS 2 토픽 연동
+
+- 요청대로 기존 누적 작업 먼저 `b35858a`에 커밋했다. 같은 브랜치 `codex/s300-newton-standalone-20261108`에서 ROS 연동을 추가했다. 푸시는 요청하지 않아 하지 않았다.
+- `camera-patrol --ros2`: Python3.12 Newton GPU 물리는 그대로, 별도 Python3.10 ROS2 Humble 프로세스가 실제 관절/리프트/기체/TCP/TF/clock/RGB/depth/GT mask/CameraInfo/가시 객체/상태를 발행한다. domain42, namespace `/farmily/sim`. 제어 구독이나 하드웨어 드라이버 실행 없음.
+- `nvidia-sim/run_s300_ros2.sh build/check/topic/inspect` 및 `ros2_ws/src/farmily_newton_bridge` 추가. 카메라는 기존 촬영 시점만 발행하며 고정 영상 FPS가 아니다. nominal 상태10Hz + 촬영/구간경계 표본, exposure-time TF, 깊이32FC1 m/NaN, instance uint32 bit-pattern을32SC1로 보존한다. 음수도 유효 ID이고 `source_instance_id`로 원본 ID가 보존된다. 느린 DDS는 최신 대기 표본으로 합치고 런타임 ROS 단절이 물리를 중단하지 않는다.
+- 실제 새 headless ROS OFF/ON 각각4개 구간/1회 동작/6개 영역 수확. 기록1,890상태와224개 물리·명령·접촉 배열이 정확히 같다. ROS 실제 관절97개/카메라7세트 수신,35개 이미지 바이트 동일, TF 오차6.67e-16, 전송 오류/누락0. 12.027sim초 대비 OFF17.348/ON17.994wall초(초기 별도): 짧은 단일 표본의3.7% 차이이며 가속/실시간 달성 주장이 아니다.
+- 새 GUI+ROS도224개 물리 배열 동일,1회/6개 영역 수확,관절98개/초기 미리보기 포함 카메라8세트 수신,브라우저 오류0. 마지막5905는 ROS옵션/3.85m/1000회 한도로 입구 시작 대기 화면을 다시 띄웠다. START 뒤 초기 준비 후 토픽이 나타나며 종료하면 발행도 종료한다.
+- 전체3.85m ROS 반복/외부PC DDS 네트워크는 미검증. 카메라30FPS 스트림이나 ROS제어를 구현했다고 해석하지 않는다. 상세 `nvidia-sim/S300_NEWTON_ROS2_KO.md`, 검증 `nvidia-sim/validation/s300_ros2_bridge_20261111.json`, 원자료 `/root/farmily_runtime/newton/runs/20261111_ros2_bridge`. 새 영상 저장 없이 실제 GUI와DDS로 검증했다. native36개/ROS3개 회귀 통과.
+
 ## 2026-11-11 최신: 순회 시작 범위와 짧은 종점 감속 오류 수정
 
 - 사용자 마지막 명령 `camera-patrol --end-station 3.85 --max-harvests 1000 --max-decisions 10000`은 기본 자산이0.85m를 가리켜 START 뒤 실패했다. 기존3m 농장 자산에 이미 있는4그루/40열매 ID와64개 주줄기 collider를 추가 등록하여3.85m로 확장했다. 새 메시/식물 조인트0, 준비46.42초. `patrol_current` → `/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111`. 실제 실행 중 농장을 새로 변환하지 않는다.

@@ -447,7 +447,9 @@ def campaign(args):
             physics_started=False,assets=str(args.assets),requested_end_station_m=str(args.end_station)))
         raise
     try:
-        return run_campaign(args,out)
+        from contextlib import ExitStack
+        with ExitStack() as resources:
+            return run_campaign(args,out,resources=resources)
     except Exception as error:
         # Early model/camera failures used to leave only start_selection.json.
         # Preserve the full-run report when the physics loop already wrote one.
@@ -458,7 +460,7 @@ def campaign(args):
         raise
 
 
-def run_campaign(args,out):
+def run_campaign(args,out,*,resources):
     launch_start=time.perf_counter()
     assets,viewer,selection_wait_s=select_start_assets(args,out)
     config=read(assets/'patrol_assets.json');common=(assets/'inputs').resolve()
@@ -507,12 +509,21 @@ def run_campaign(args,out):
         camera=MountedCamera(assets,scale=args.camera_scale)
     cold_preparation_wall_s=time.perf_counter()-launch_start-selection_wait_s
     camera_body=proof['source_body_to_native_name'][camera.mount['body_path']]
+    ros=None
+    if getattr(args,'ros2',False):
+        from newton_ros2 import PatrolROS2
+        ros=PatrolROS2(model,initial,camera.mount,camera_body,assets,out/'ros2',
+            rate=args.ros_state_hz,domain=args.ros_domain_id,namespace=args.ros_namespace)
+        resources.callback(ros.close)
+        ros.state(bank['qpos'],bank['qvel'],float(bank['time'][0]),force=True)
+        cold_preparation_wall_s=time.perf_counter()-launch_start-selection_wait_s
     if not args.headless:
         from newton_patrol_viewer import PatrolViewer
         if viewer is None:viewer=PatrolViewer(camera.visual,port=args.port,geometric=ideal,entry_yaw_limit_deg=MAX_ENTRY_YAW_DEG,
             harvest_volume=config.get('geometric_harvest'))
         ready_poses=poses_from_bank(model,bank);viewer.update(ready_poses)
-        _,images=camera.capture(ready_poses,camera_body,float(bank['time'][0]),station=float(q0[0]))
+        ready_obs,images=camera.capture(ready_poses,camera_body,float(bank['time'][0]),station=float(q0[0]),include_raw=ros is not None)
+        if ros:ros.camera(ready_obs,images)
         viewer.observation(images,0.,0)
         if not viewer.event.is_set():
             viewer.start.disabled=False
@@ -592,7 +603,10 @@ def run_campaign(args,out):
                         stamp=float(data.time.numpy()[0]);rolling_count[0]+=1
                         folder=step/'rolling_camera'/f'frame_{rolling_count[0]:03d}'
                         actual_poses=poses_from_bank(model,dict(qpos=actual_q))
-                        rolling_obs,rolling_images=camera.capture(sensor_poses(actual_poses,collected),camera_body,stamp,output=folder,station=actual_station)
+                        if ros:ros.state(actual_q,data.qvel.numpy()[0],stamp,force=True)
+                        rolling_obs,rolling_images=camera.capture(sensor_poses(actual_poses,collected),camera_body,stamp,
+                            output=folder,station=actual_station,include_raw=ros is not None)
+                        if ros:ros.camera(rolling_obs,rolling_images)
                         rolling_obs['observation_id']=str(folder/'observation.json')
                         ingested=patrol.observe(rolling_obs,current_station_y_m=actual_station,
                             current_lift_m=float(actual_q[qadr[1]]),native_detached_keys=detached+assumed_keys)
@@ -614,6 +628,15 @@ def run_campaign(args,out):
                             return dict(observation=str(folder/'observation.json'),decision=probe,
                                         actual_station_m=actual_station,solver_step=tick)
                         return None
+                if ros:
+                    camera_callback=rolling_callback
+                    next_telemetry=[0.]
+                    def telemetry_callback(data,tick,elapsed):
+                        if elapsed>=next_telemetry[0]:
+                            next_telemetry[0]=elapsed+1/args.ros_state_hz
+                            ros.state(data.qpos.numpy()[0],data.qvel.numpy()[0],float(data.time.numpy()[0]))
+                        return camera_callback(data,tick,elapsed) if camera_callback else None
+                    rolling_callback=telemetry_callback
                 if not args.fresh_process:
                     from run_newton_harvest import arguments,run
                     import contextlib,threading
@@ -702,7 +725,10 @@ def run_campaign(args,out):
                         if viewer:viewer.mark_harvested(collected)
             measured=bank['qpos'][qadr];station=float(measured[0]);poses=poses_from_bank(model,bank)
             if viewer:viewer.update(poses)
-            obs,images=camera.capture(sensor_poses(poses,collected),camera_body,float(bank['time'][0]),output=step/'camera',station=station)
+            if ros:ros.state(bank['qpos'],bank['qvel'],float(bank['time'][0]),force=True)
+            obs,images=camera.capture(sensor_poses(poses,collected),camera_body,float(bank['time'][0]),
+                output=step/'camera',station=station,include_raw=ros is not None)
+            if ros:ros.camera(obs,images)
             obs['observation_id']=str(step/'camera/observation.json')
             if viewer:viewer.observation(images,station,harvests,len(collected))
             detached=[];assumed_keys=[]
@@ -725,6 +751,7 @@ def run_campaign(args,out):
                           physics_clock_s=float(bank['time'][0]),last_valid_state_clock_s=float(bank['time'][0]),
                           wall_s=time.perf_counter()-start)
             write(out/'patrol.json',patrol.to_dict());write(out/'summary.json',report)
+            if ros:ros.status(report)
             if harvests>=args.max_harvests:
                 report['status']='harvest_attempt_budget_exhausted';break
             decision=patrol.decide(current_station_y_m=station,active_source_plant=f'/World/Greenhouse/Plants/Plant_{active:02d}')
@@ -857,6 +884,9 @@ def run_campaign(args,out):
             report['display_rate']=args.display_rate
             report['display_target_fps']=30
         if verification_context is not None:report['verification_scope']=verification_context.evidence()
+        if ros:
+            ros.status(report)
+            report['ros2']=ros.close()
         write(out/'summary.json',report);write(out/'patrol.json',patrol.to_dict())
         if viewer:viewer.finish(report)
     return report
@@ -866,6 +896,10 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('assets',type=Path);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--headless',action='store_true');p.add_argument('--port',type=int,default=5905)
+    p.add_argument('--ros2',action='store_true',help='Publish live measured ROS 2 telemetry in a separate process')
+    p.add_argument('--ros-domain-id',type=int,default=42,help='Dedicated simulator DDS domain')
+    p.add_argument('--ros-namespace',default='/farmily/sim')
+    p.add_argument('--ros-state-hz',type=float,default=10.,help='Periodic joint/TF sampling per simulated second, plus camera exposure and phase-boundary samples')
     p.add_argument('--display-rate',type=float,default=1.,help='Live display speed; default1x, 0 maximum throughput')
     p.add_argument('--elbow-mode',choices=['auto','up','down'],default='auto',help='Start posture; GUI permits selection before START, headless uses the specified profile')
     p.add_argument('--fresh-process',action='store_true',help='Comparison only: reload GPU physics for each segment')
@@ -893,6 +927,9 @@ def main():
     if a.graph_batch<2 or a.graph_batch%2:p.error('GPU graph batch must be a positive even number')
     if min(a.nconmax,a.njmax)<1:p.error('Positive GPU contact and constraint capacities required')
     if a.proposals_per_view<1:p.error('Positive per-view planning budget required')
+    if not 0<=a.ros_domain_id<=232:p.error('ROS domain ID must be within0..232')
+    if not np.isfinite(a.ros_state_hz) or not 0<a.ros_state_hz<=60:p.error('ROS state rate must be within0..60Hz')
+    if a.ros2 and a.fresh_process:p.error('ROS telemetry requires the resident GPU executor; omit --fresh-process')
     result=campaign(a);print(json.dumps(result,indent=2,ensure_ascii=False))
 
 

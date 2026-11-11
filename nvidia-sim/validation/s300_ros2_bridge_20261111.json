@@ -1,0 +1,110 @@
+{
+  "checkpoint_commit": "b35858a",
+  "passed": true,
+  "actual_live_dds_subscription": true,
+  "ros2_counts": {
+    "/clock": 109,
+    "/farmily/sim/joint_states": 97,
+    "/farmily/sim/tool_pose": 97,
+    "/tf": 97,
+    "/farmily/sim/camera/labels": 1,
+    "/farmily/sim/camera/color/image_raw": 7,
+    "/farmily/sim/camera/depth/image_raw": 7,
+    "/farmily/sim/camera/instance/image_raw": 7,
+    "/farmily/sim/camera/semantic/image_raw": 7,
+    "/farmily/sim/camera/recognition/image_raw": 7,
+    "/farmily/sim/camera/camera_info": 7,
+    "/farmily/sim/camera/observations": 7,
+    "/farmily/sim/status": 5
+  },
+  "synchronized_exposures": 7,
+  "distinct_exposure_timestamps": 6,
+  "image_payloads_identical": 35,
+  "joint_samples_identical_to_source": 97,
+  "initial_authored_samples": 1,
+  "negative_ros_ids_preserved": 228,
+  "camera_tf_max_absolute_error": 6.661338147750939e-16,
+  "monotonic_clock": true,
+  "physics_comparison": {
+    "segments": 4,
+    "exactly_equal_arrays": 224,
+    "recorded_states": 1890,
+    "fields": "all recorded positions, velocities, body poses, commands, contact metrics and terminal solver state",
+    "ros_enabled_wall_s": 17.994042359059677,
+    "ros_disabled_wall_s": 17.34801639802754,
+    "simulation_s": 12.027233123779297
+  },
+  "harvest": {
+    "motions": 1,
+    "geometric_fruit": 6
+  },
+  "transport": {
+    "namespace": "/farmily/sim",
+    "ros_domain_id": 42,
+    "state_max_hz": 10.0,
+    "camera_rate": "Existing actual exposure events only; no additional rendering or fresh-stamped repeats",
+    "read_only": true,
+    "physics_control_subscriptions": false,
+    "transport": "bounded latest-slot Unix socket",
+    "ros_python": "/usr/bin/python3",
+    "clock": "/clock",
+    "camera_frame": "farmily/sim/camera_optical_frame",
+    "sent": {
+      "labels": 1,
+      "state": 90,
+      "camera": 7,
+      "status": 5
+    },
+    "dropped": {},
+    "transport_error": null,
+    "publisher_exit_code": 0
+  },
+  "scope": "Single environment, elbow-up headless sample; same-host DDS only. No external PC verification or ROS control.",
+  "artifacts": "/root/farmily_runtime/newton/runs/20261111_ros2_bridge",
+  "gui": {
+    "passed": true,
+    "arrays_identical_to_headless": 224,
+    "ros_counts": {
+      "/clock": 111,
+      "/farmily/sim/joint_states": 98,
+      "/farmily/sim/tool_pose": 98,
+      "/tf": 98,
+      "/farmily/sim/camera/labels": 1,
+      "/farmily/sim/camera/color/image_raw": 8,
+      "/farmily/sim/camera/depth/image_raw": 8,
+      "/farmily/sim/camera/instance/image_raw": 8,
+      "/farmily/sim/camera/semantic/image_raw": 8,
+      "/farmily/sim/camera/recognition/image_raw": 8,
+      "/farmily/sim/camera/camera_info": 8,
+      "/farmily/sim/camera/observations": 8,
+      "/farmily/sim/status": 5
+    },
+    "transport": {
+      "namespace": "/farmily/sim",
+      "ros_domain_id": 42,
+      "state_periodic_hz": 10.0,
+      "extra_state_samples": "Actual camera exposures and phase boundaries",
+      "camera_rate": "Existing actual exposure events only; no additional rendering or fresh-stamped repeats",
+      "read_only": true,
+      "physics_control_subscriptions": false,
+      "transport": "bounded latest-slot Unix socket",
+      "ros_python": "/usr/bin/python3",
+      "clock": "/clock",
+      "camera_frame": "farmily/sim/camera_optical_frame",
+      "sent": {
+        "labels": 1,
+        "state": 90,
+        "camera": 8,
+        "status": 5
+      },
+      "dropped": {},
+      "transport_error": null,
+      "publisher_exit_code": 0
+    },
+    "browser": {
+      "errors": [],
+      "text": "Farmily camera patrol\n\n순회 종료: harvest_attempt_budget_exhausted\n\n수확 시도 1회 · 영역 기준 수확 6개\n\n마지막 위치: 입구에서 0.50m\n\n시작 자세\n\n완료\n순회 중지 / 화면 닫기\n\n장착 카메라 · 현재 관측"
+    },
+    "wall_s": 28.6490325180348
+  }
+}

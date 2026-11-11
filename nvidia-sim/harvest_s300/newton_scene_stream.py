@@ -33,7 +33,7 @@ def _camera_worker(connection,assets,manifest_path,index,scale,poses,body,log):
                 message=connection.recv()
                 if message['kind']=='close':break
                 observation,images=camera.capture(message['poses'],message['body'],message['timestamp'],
-                                                  output=message['output'])
+                                                  output=message['output'],include_raw=message.get('include_raw',False))
                 connection.send(dict(kind='frame',observation=observation,images=images))
         except (EOFError,BrokenPipeError):pass
         except BaseException:
@@ -59,10 +59,10 @@ class CameraWorker:
         elif not self.process.is_alive():raise RuntimeError('Camera prefetch worker died')
         return self.ready
 
-    def capture(self,poses,body,timestamp,output):
+    def capture(self,poses,body,timestamp,output,include_raw=False):
         if not self.ready:raise RuntimeError('Attempted exposure on an unprepared camera')
         self.pipe.send(dict(kind='capture',poses=poses,body=body,timestamp=timestamp,
-                            output=None if output is None else str(output)))
+                            output=None if output is None else str(output),include_raw=include_raw))
         if not self.pipe.poll(30.):raise RuntimeError('Active camera exposure timed out; see worker log')
         message=self.pipe.recv()
         if message['kind']!='frame':raise RuntimeError('Active camera failed: '+str(message))
@@ -173,11 +173,11 @@ class StreamingCamera:
             raise RuntimeError('Measured camera is outside the prepared optical coverage')
         return self.active_index
 
-    def capture(self,poses,body,timestamp,*,output=None,station=None):
+    def capture(self,poses,body,timestamp,*,output=None,station=None,include_raw=False):
         if station is None:raise ValueError('Scene stream requires measured rail station')
         index=self.advance(float(station),poses,body)
         started=time.perf_counter()
-        observation,images=self.active['worker'].capture(poses,body,timestamp,output)
+        observation,images=self.active['worker'].capture(poses,body,timestamp,output,include_raw=include_raw)
         observation['stream_section']=index
         observation['camera_rpc_wall_s']=time.perf_counter()-started
         if output is not None:
